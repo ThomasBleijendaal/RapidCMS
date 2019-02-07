@@ -1,0 +1,15 @@
+﻿@page "/"
+@using RapidCMS.Common.Services
+@inject ICollectionService CollectionService
+
+<dl>
+    @foreach (var collection in CollectionService.GetCollections())
+    {
+        <dt>@collection.Name</dt>
+
+        @foreach (var entity in collection.Entities)
+        {
+            <dd>@entity.Id : @entity.Name</dd>
+        }
+    }
+</dl>
