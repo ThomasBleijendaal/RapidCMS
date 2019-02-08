@@ -1,0 +1,38 @@
+﻿@using TestClient.App.Models
+@using RapidCMS.Common.Models.DTOs
+
+@if (Collection == null)
+{
+    <li>Loading tree..</li>
+}
+else
+{
+    @* TODO: combine lists *@
+
+    @*@if (string.IsNullOrEmpty(Collection?.Name))
+        {*@
+
+    <li>
+        <strong><NavLink href=@($"collection/{Collection.Alias}/{ParentId}")>@Collection.Name</NavLink></strong>
+
+        <ul>
+            @foreach (var node in Collection.Nodes)
+            {
+                <li>
+                    <NavLink href=@($"node/{Collection.Alias}/{node.Id}")>@node.Name</NavLink>
+
+                    <ul>
+                        @foreach (var subCollection in node.Collections)
+                        {
+                            <CollectionTreeView Collection="@subCollection" ParentId="node.Id" />
+                        }
+                    </ul>
+                </li>
+            }
+        </ul>
+    </li>
+}
+@functions {
+    [Parameter] CollectionTreeCollectionDTO Collection { get; set; }
+    [Parameter] int? ParentId { get; set; } = null;
+}

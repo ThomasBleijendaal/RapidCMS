@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,12 +29,13 @@ namespace RapidCMS.Common.Extensions
 
     public static class RootExtensions
     {
-        public static void AddCollection<TEntity>(this Root root, string name, Action<CollectionConfig<TEntity>> configure)
+        public static void AddCollection<TEntity>(this Root root, string alias, string name, Action<CollectionConfig<TEntity>> configure)
             where TEntity : IEntity
         {
             var collection = new Collection
             {
-                Name = name
+                Name = name,
+                Alias = alias
             };
 
             var configReceiver = new CollectionConfig<TEntity>();
@@ -53,6 +55,28 @@ namespace RapidCMS.Common.Extensions
                     NameGetter = prop.Getter
                 };
             }
+
+            if (configReceiver.ListView != null)
+            {
+                collection.ListView = new ListView
+                {
+                    ViewPanes = configReceiver.ListView.ListViewPanes.Select(pane =>
+                    {
+                        return new ViewPane<ListViewProperty>
+                        {
+                            Properties = pane.Properties.Select(property => new ListViewProperty
+                            {
+                                Description = property.Description,
+                                Formatter = property.Formatter,
+                                Getter = property.GetterAndSetter.Getter,
+                                Name = property.Name
+                            }).ToList()
+                        };
+                    }).ToList()
+                };
+            }
+
+            collection.SubCollections = configReceiver.SubCollections;
             
             root.Collections.Add(collection);
         }

@@ -78,7 +78,8 @@ namespace RapidCMS.Common.Helpers
                 while (true);
 
                 var parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
-                var valueAsType = Expression.Convert(parameterTProperty, parameterTPropertyType) as Expression;
+                var valueToType = Expression.Convert(parameterTProperty, parameterTPropertyType) as Expression;
+                var valueToObject = Expression.Convert(Expression.Parameter(parameterTPropertyType, "z"), typeof(object));
 
                 var instanceExpression = (getNestedObjectMethods.Count == 0)
                     ? parameterTAsType
@@ -89,14 +90,14 @@ namespace RapidCMS.Common.Helpers
 
                 var setExpression =
                     Expression.Lambda<Action<object, object>>(
-                        Expression.Call(instanceExpression, setValueMethod, valueAsType),
+                        Expression.Call(instanceExpression, setValueMethod, valueToType),
                         parameterT,
                         parameterTProperty
                     );
 
                 var getExpression =
                     Expression.Lambda<Func<object, object>>(
-                        Expression.Call(instanceExpression, getValueMethod),
+                        Expression.Convert(Expression.Call(instanceExpression, getValueMethod), typeof(object)),
                         parameterT
                     );
 

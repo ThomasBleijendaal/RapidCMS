@@ -1,0 +1,11 @@
+﻿@page "/node/{Alias}/{Id:int}"
+
+<h1>Node editor of @Alias @Id</h1>
+
+@functions {
+    [Parameter]
+    private string Alias { get; set; }
+
+    [Parameter]
+    private int Id { get; set; }
+}

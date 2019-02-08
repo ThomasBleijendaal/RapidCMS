@@ -7,15 +7,32 @@ namespace RapidCMS.Common.Models
 {
     public class Root
     {
-        public List<Collection> Collections { get; set; } = new List<Collection>();
+        private Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
 
+        public List<Collection> Collections { get; set; } = new List<Collection>();
+        
         public void MaterializeRepositories(IServiceProvider serviceProvider)
         {
-            foreach (var collection in Collections)
+            FindRepositoryForCollections(serviceProvider, Collections);
+        }
+
+        public Collection GetCollection(string alias)
+        {
+            return _collectionMap[alias];
+        }
+
+        private void FindRepositoryForCollections(IServiceProvider serviceProvider, IEnumerable<Collection> collections)
+        {
+            foreach (var collection in collections)
             {
+                // register each collection in flat dictionary
+                _collectionMap.Add(collection.Alias, collection);
+
                 var repo = serviceProvider.GetService(collection.RepositoryType);
 
                 collection.Repository = (IRepository)repo;
+
+                FindRepositoryForCollections(serviceProvider, collection.SubCollections);
             }
         }
     }
@@ -23,11 +40,13 @@ namespace RapidCMS.Common.Models
     public class Collection
     {
         public string Name { get; set; }
+        public string Alias { get; set; }
 
         public Type RepositoryType { get; set; }
         public IRepository Repository { get; set; }
 
         public TreeView TreeView { get; set; }
+        public List<Collection> SubCollections { get; set; }
 
         public ListView ListView { get; set; }
         public ListEditor ListEditor { get; set; }
@@ -111,7 +130,7 @@ namespace RapidCMS.Common.Models
         public string Description { get; set; }
 
         public Func<object, object> Getter { get; set; }
-        public Func<object, string> Formatter { get; set; } = (o) => $"{o}";
+        public Func<object, string> Formatter { get; set; }
     }
 
     public class ListViewProperty : Property
@@ -146,7 +165,7 @@ namespace RapidCMS.Common.Models
 
         public Func<object, object> Getter { get; set; }
         public Action<object, object> Setter { get; set; }
-        public Func<object, string> Formatter { get; set; } = (o) => $"{o}";
+        public Func<object, string> Formatter { get; set; }
 
 
     }

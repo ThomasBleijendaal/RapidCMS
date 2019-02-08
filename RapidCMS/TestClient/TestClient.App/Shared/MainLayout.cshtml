@@ -1,7 +1,28 @@
 ﻿@inherits LayoutComponentBase
+@using RapidCMS.Common.Models.DTOs
+@using RapidCMS.Common.Services
+@inject ICollectionService CollectionService
 
 <div class="sidebar">
     <NavMenu />
+</div>
+
+<div class="main">
+    <div class="top-row px-4">
+
+    </div>
+
+    <div class="content px-4">
+        <ul>
+            @if (RootEntity != null)
+            {
+                @foreach (var collection in RootEntity.Collections)
+                {
+                    <CollectionTreeView Collection="@collection" />
+                }
+            }
+        </ul>
+    </div>
 </div>
 
 <div class="main">
@@ -13,3 +34,12 @@
         @Body
     </div>
 </div>
+
+@functions {
+    CollectionTreeRootDTO RootEntity;
+
+    protected override async Task OnInitAsync()
+    {
+        RootEntity = await CollectionService.GetCollectionsAsync();
+    }
+}

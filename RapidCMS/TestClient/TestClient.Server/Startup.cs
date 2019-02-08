@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models;
+using RapidCMS.Common.Models.Config;
 using TestLibrary;
 
 namespace TestClient.Server
@@ -21,25 +22,68 @@ namespace TestClient.Server
         {
             var hacky = new RapidCMS.Common.Startup();
 
-            services.AddSingleton<TestRepository>();
+            services.AddSingleton<RepositoryA>();
+            services.AddSingleton<RepositoryB>();
+            services.AddSingleton<RepositoryC>();
+            services.AddSingleton<RepositoryD>();
+            services.AddSingleton<RepositoryE>();
+
+            void listView(ListViewConfig<TestEntity> listViewConfig)
+            {
+                listViewConfig
+                    .AddListPane(pane =>
+                    {
+                        pane.AddProperty(x => x.Id);
+                        pane.AddProperty(x => x.Name).SetDescription("This is a description");
+                    })
+                    .AddListPane(pane =>
+                    {
+                        pane.AddProperty(x => x.Id);
+                    });
+            }
 
             services.AddRapidCMS(root =>
             {
-                root.AddCollection<TestEntity>("Collection 1", collection =>
+                root.AddCollection<TestEntity>("collection-1", "Collection 1", collection =>
                 {
                     collection
-                        .SetRepository<TestRepository>()
-                        .SetTreeView("Tree", ViewType.List, entity => entity.Name);
+                        .SetRepository<RepositoryA>()
+                        .SetTreeView("Tree 1", ViewType.List, entity => entity.Name)
+                        .SetListView(listView)
+                        .AddSubCollection<TestEntity>("sub-collection-1", "Sub Collection 1", subCollection =>
+                        {
+                            subCollection
+                                .SetRepository<RepositoryB>()
+                                .SetTreeView("SubTree1", ViewType.List, entity => entity.Name)
+                                .SetListView(listView)
+                                .AddSubCollection<TestEntity>("sub-sub-collection", "Sub Sub Collection", subSubCollection =>
+                                {
+                                    subSubCollection
+                                        .SetRepository<RepositoryC>()
+                                        .SetTreeView("SubSubTree", ViewType.List, entity => entity.Name)
+                                        .SetListView(listView);
+                                });
+                        })
+                        .AddSubCollection<TestEntity>("sub-collection-2", "Sub Collection 2", subCollection =>
+                        {
+                            subCollection
+                                .SetRepository<RepositoryD>()
+                                .SetTreeView("SubTree2", ViewType.List, entity => entity.Name)
+                                .SetListView(listView);
+                        });
                 });
 
-                //root.AddCollection("Collection 2", collection =>
-                //{
-
-                //});
+                root.AddCollection<TestEntity>("collection-2", "Collection 2", collection =>
+                {
+                    collection
+                        .SetRepository<RepositoryE>()
+                        .SetTreeView("Tree 2", ViewType.List, entity => entity.Name)
+                        .SetListView(listView);
+                });
             });
-            
+
             services.AddRazorComponents<App.Startup>();
-            
+
             // TODO: 
             hacky.ConfigureServices(services);
             //services.AddRazorComponents<RapidCMS.Common.Startup>();
@@ -57,7 +101,7 @@ namespace TestClient.Server
             // app.UseRazorComponents<RapidCMS.Common.Startup>();
             var root = app.ApplicationServices.GetService<Root>();
             root.MaterializeRepositories(app.ApplicationServices);
-            
+
             app.UseStaticFiles();
             app.UseRazorComponents<App.Startup>();
 
