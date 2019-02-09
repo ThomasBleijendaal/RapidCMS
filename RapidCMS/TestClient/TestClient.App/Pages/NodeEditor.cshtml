@@ -1,11 +1,63 @@
 ﻿@page "/node/{Alias}/{Id:int}"
+@page "/node/{Alias}/{ParentId:int}/{Id:int}"
 
-<h1>Node editor of @Alias @Id</h1>
+@using RapidCMS.Common.Models.DTOs
+@using RapidCMS.Common.Services
+@using RapidCMS.Common.Extensions
+@inject ICollectionService CollectionService
+
+<h1>Node editor of @Alias :: @ParentId :: @Id</h1>
+
+@if (Editor == null)
+{
+    <p>Loading..</p>
+}
+else
+{
+    <div class="top-row px-4">
+
+    </div>
+
+    @foreach (var pane in Editor.EditorPanes)
+    {
+        <div class="content px-4">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>Field</td>
+                        <td>Editor</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var field in pane.Fields)
+                    {
+                        <tr>
+                            <td>@field.label.Name<br /><small>@field.label.Description</small></td>
+                            <td>
+                                <DefaultEditor Alias="@Alias" Type="@field.editor.Type" Value="@field.editor.Value" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
 
 @functions {
     [Parameter]
     private string Alias { get; set; }
 
     [Parameter]
+    private int ParentId { get; set; }
+
+    [Parameter]
     private int Id { get; set; }
+
+    NodeEditorDTO Editor;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Editor = await CollectionService.GetNodeEditorAsync(Alias, ParentId, Id);
+    }
 }

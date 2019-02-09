@@ -8,7 +8,7 @@ using RapidCMS.Common.Models;
 
 namespace RapidCMS.Common.Helpers
 {
-    internal static class GetterAndSetterHelper
+    internal static class PropertyMetadataHelper
     {
         /// <summary>
         /// Converts a given LambdaExpression containing MemberExpressions to getters and setters, and the name of each nested object plus the name of the property.
@@ -20,7 +20,7 @@ namespace RapidCMS.Common.Helpers
         /// </summary>
         /// <param name="lambdaExpression">The LambdaExpression to be converted</param>
         /// <returns>GetterAndSetter object when successful, null when not.</returns>
-        internal static GetterAndSetter Create(LambdaExpression lambdaExpression)
+        internal static PropertyMetadata Create(LambdaExpression lambdaExpression)
         {
             try
             {
@@ -105,11 +105,13 @@ namespace RapidCMS.Common.Helpers
                 var setter = setExpression.Compile();
                 var getter = getExpression.Compile();
 
-                return new GetterAndSetter
+                return new PropertyMetadata
                 {
+                    ObjectType = parameterTType,
                     Getter = getter,
                     Setter = setter,
-                    PropertyName = name
+                    PropertyName = name,
+                    PropertyType = parameterTPropertyType
                 };
             }
             catch (Exception)

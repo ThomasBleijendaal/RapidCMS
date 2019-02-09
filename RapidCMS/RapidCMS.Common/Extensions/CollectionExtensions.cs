@@ -27,9 +27,9 @@ namespace RapidCMS.Common.Extensions
         }
     }
 
-    public static class RootExtensions
+    public static class ICollectionRootExtensions
     {
-        public static void AddCollection<TEntity>(this Root root, string alias, string name, Action<CollectionConfig<TEntity>> configure)
+        public static ICollectionRoot AddCollection<TEntity>(this ICollectionRoot root, string alias, string name, Action<CollectionConfig<TEntity>> configure)
             where TEntity : IEntity
         {
             var collection = new Collection
@@ -46,7 +46,7 @@ namespace RapidCMS.Common.Extensions
 
             if (configReceiver.TreeView != null)
             {
-                var prop = GetterAndSetterHelper.Create(configReceiver.TreeView.NameGetter);
+                var prop = PropertyMetadataHelper.Create(configReceiver.TreeView.NameGetter);
 
                 collection.TreeView = new TreeView
                 {
@@ -76,9 +76,32 @@ namespace RapidCMS.Common.Extensions
                 };
             }
 
-            collection.SubCollections = configReceiver.SubCollections;
+            if (configReceiver.NodeEditor != null)
+            {
+                collection.NodeEditor = new NodeEditor
+                {
+                    EditorPanes = configReceiver.NodeEditor.EditorPanes.Select(pane =>
+                    {
+                        return new EditorPane<Field>
+                        {
+                            Fields = pane.Fields.Select(field => new Field
+                            {
+                                DataType = field.Type,
+                                Description = field.Description,
+                                Getter = field.GetterAndSetter.Getter,
+                                Name = field.Name,
+                                Setter = field.GetterAndSetter.Setter
+                            }).ToList()
+                        };
+                    }).ToList()
+                };
+            }
+
+            collection.Collections = configReceiver.Collections;
             
             root.Collections.Add(collection);
+
+            return root;
         }
     }
 }

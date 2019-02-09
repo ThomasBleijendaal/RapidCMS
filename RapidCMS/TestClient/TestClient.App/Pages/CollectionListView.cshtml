@@ -14,33 +14,37 @@
 }
 else
 {
+    <div class="top-row px-4">
+
+    </div>
+
     @foreach (var pane in ListView.ViewPanes)
     {
-        var data = pane.Properties.Select(x => x.Value).Pivot();
+        var data = pane.Properties.Select(x => x.values).Pivot();
 
-        <table class="table">
-            <thead>
-                <tr>
-                    @foreach (var header in pane.Properties.Keys)
-                    {
-                        <td>@header.Name<br /><small>@header.Description</small></td>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var row in data)
-                {
+        <div class="content px-4">
+            <table class="table">
+                <thead>
                     <tr>
-                        @foreach (var col in row)
+                        @foreach (var header in pane.Properties.Select(x => x.property))
                         {
-                            <td>@col</td>
+                            <td>@header.Name<br /><small>@header.Description</small></td>
                         }
                     </tr>
-                }
-            </tbody>
-        </table>
-
-        <hr />
+                </thead>
+                <tbody>
+                    @foreach (var row in data)
+                    {
+                        <tr>
+                            @foreach (var col in row)
+                            {
+                                <td>@col</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
 }
 

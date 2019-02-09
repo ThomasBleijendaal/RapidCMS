@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
@@ -34,11 +35,28 @@ namespace TestClient.Server
                     .AddListPane(pane =>
                     {
                         pane.AddProperty(x => x.Id);
-                        pane.AddProperty(x => x.Name).SetDescription("This is a description");
+                        pane.AddProperty(x => x.Name).SetDescription("This is a name");
                     })
                     .AddListPane(pane =>
                     {
                         pane.AddProperty(x => x.Id);
+                        pane.AddProperty(x => x.Description).SetDescription("This is a description");
+                    });
+            }
+
+            void nodeEditor(NodeEditorConfig<TestEntity> nodeEditorConfig)
+            {
+                nodeEditorConfig
+                    .AddEditorPane(pane =>
+                    {
+                        pane.AddField(x => x.Id);
+
+                        pane.AddField(x => x.Name)
+                            .SetDescription("This is a name");
+
+                        pane.AddField(x => x.Description)
+                            .SetDescription("This is a description")
+                            .SetType(EditorType.TextArea);
                     });
             }
 
@@ -50,26 +68,30 @@ namespace TestClient.Server
                         .SetRepository<RepositoryA>()
                         .SetTreeView("Tree 1", ViewType.List, entity => entity.Name)
                         .SetListView(listView)
-                        .AddSubCollection<TestEntity>("sub-collection-1", "Sub Collection 1", subCollection =>
+                        .SetNodeEditor(nodeEditor)
+                        .AddCollection<TestEntity>("sub-collection-1", "Sub Collection 1", subCollection =>
                         {
                             subCollection
                                 .SetRepository<RepositoryB>()
                                 .SetTreeView("SubTree1", ViewType.List, entity => entity.Name)
                                 .SetListView(listView)
-                                .AddSubCollection<TestEntity>("sub-sub-collection", "Sub Sub Collection", subSubCollection =>
+                                .SetNodeEditor(nodeEditor)
+                                .AddCollection<TestEntity>("sub-sub-collection", "Sub Sub Collection", subSubCollection =>
                                 {
                                     subSubCollection
                                         .SetRepository<RepositoryC>()
                                         .SetTreeView("SubSubTree", ViewType.List, entity => entity.Name)
-                                        .SetListView(listView);
+                                        .SetListView(listView)
+                                        .SetNodeEditor(nodeEditor);
                                 });
                         })
-                        .AddSubCollection<TestEntity>("sub-collection-2", "Sub Collection 2", subCollection =>
+                        .AddCollection<TestEntity>("sub-collection-2", "Sub Collection 2", subCollection =>
                         {
                             subCollection
                                 .SetRepository<RepositoryD>()
                                 .SetTreeView("SubTree2", ViewType.List, entity => entity.Name)
-                                .SetListView(listView);
+                                .SetListView(listView)
+                                .SetNodeEditor(nodeEditor);
                         });
                 });
 
@@ -78,7 +100,8 @@ namespace TestClient.Server
                     collection
                         .SetRepository<RepositoryE>()
                         .SetTreeView("Tree 2", ViewType.List, entity => entity.Name)
-                        .SetListView(listView);
+                        .SetListView(listView)
+                        .SetNodeEditor(nodeEditor);
                 });
             });
 

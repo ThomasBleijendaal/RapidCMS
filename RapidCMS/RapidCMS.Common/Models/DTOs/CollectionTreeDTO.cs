@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models.DTOs
 {
@@ -12,7 +13,7 @@ namespace RapidCMS.Common.Models.DTOs
     {
 
     }
-
+    
     public class CollectionTreeCollectionDTO
     {
         public string Alias { get; set; }
@@ -27,12 +28,37 @@ namespace RapidCMS.Common.Models.DTOs
 
     public class CollectionListViewPaneDTO
     {
-        public Dictionary<PropertyDTO, List<string>> Properties { get; set; }
+        public List<(PropertyDTO property, List<string> values)> Properties { get; set; }
     }
 
     public class PropertyDTO
     {
         public string Name { get; set; }
         public string Description { get; set; }
+    }
+
+    public class NodeEditorDTO
+    {
+        public int Id { get; set; }
+        public string Alias { get; set; }
+
+        public List<NodeEditorPaneDTO> EditorPanes { get; set; }
+    }
+
+    public class NodeEditorPaneDTO
+    {
+        public List<(LabelDTO label, EditorDTO editor)> Fields { get; set; }
+    }
+
+    public class LabelDTO
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class EditorDTO
+    {
+        public EditorType Type { get; set; }
+        public object Value { get; set; }
     }
 }

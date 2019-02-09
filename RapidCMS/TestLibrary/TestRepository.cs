@@ -10,17 +10,32 @@ namespace TestLibrary
 {
     public abstract class TestRepository : BaseRepository<int, TestEntity>
     {
+        private List<TestEntity> _data = null;
+
+        private List<TestEntity> Data
+        {
+            get
+            {
+                if (_data == null)
+                {
+                    _data = new[]
+                    {
+                        new TestEntity { Id = 1, Name = Guid.NewGuid().ToString(), Description = "Entity 1 Description" },
+                        new TestEntity { Id = 2, Name = Guid.NewGuid().ToString(), Description = "Entity 2 Description" }
+                    }.ToList();
+                }
+
+                return _data;
+            }
+        }
+
         protected abstract string Name { get; }
 
         public override async Task<IEnumerable<TestEntity>> GetAllAsync(int? parentId)
         {
             await Task.Delay(1);
 
-            return new[]
-            {
-                new TestEntity { Id = (parentId ?? 0) * 10 + 1, Name = $"{Name} Entity 1" },
-                new TestEntity { Id = (parentId ?? 0) * 10 + 2, Name = $"{Name} Entity 2" }
-            };
+            return Data;
         }
 
         public override async Task<TestEntity> GetByIdAsync(int id, int? parentId)
@@ -55,5 +70,6 @@ namespace TestLibrary
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
     }
 }

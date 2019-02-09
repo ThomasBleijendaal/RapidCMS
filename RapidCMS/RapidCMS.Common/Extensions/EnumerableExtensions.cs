@@ -17,5 +17,10 @@ namespace RapidCMS.Common.Extensions
 
             return data;
         }
+
+        public static List<TResult> ToList<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
+        {
+            return source.Select(selector).ToList();
+        }
     }
 }

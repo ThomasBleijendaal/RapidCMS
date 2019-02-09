@@ -1,0 +1,44 @@
+﻿@*
+    // TODO: this should be made more nicer
+    // TODO: this limits extensibility from outside
+    // perhaps try https://docs.microsoft.com/en-us/aspnet/core/razor-components/components?view=aspnetcore-3.0#child-content
+
+    // TODO: weird binding issue which results in not updating any editor
+*@
+@using RapidCMS.Common.Enums
+
+@if (Type.HasValue)
+{
+    switch (Type)
+    {
+        case EditorType.Numeric:
+
+            <NumericEditor Alias="Alias" Value="Value" />
+
+            break;
+
+        case EditorType.TextArea:
+
+            <TextAreaEditor Alias="Alias" Value="Value" />
+
+            break;
+
+        case EditorType.TextBox:
+        default:
+
+            <TextBoxEditor Alias="Alias" Value="Value" />
+
+            break;
+    }
+}
+
+@functions {
+    [Parameter]
+    private object Value { get; set; }
+
+    [Parameter]
+    private EditorType? Type { get; set; } = null;
+
+    [Parameter]
+    private string Alias { get; set; }
+}

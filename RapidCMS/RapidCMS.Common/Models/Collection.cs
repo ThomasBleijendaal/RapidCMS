@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models
 {
-    public class Root
+    public class Root : ICollectionRoot
     {
         private Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
 
@@ -32,7 +33,7 @@ namespace RapidCMS.Common.Models
 
                 collection.Repository = (IRepository)repo;
 
-                FindRepositoryForCollections(serviceProvider, collection.SubCollections);
+                FindRepositoryForCollections(serviceProvider, collection.Collections);
             }
         }
     }
@@ -42,18 +43,24 @@ namespace RapidCMS.Common.Models
         public string Name { get; set; }
         public string Alias { get; set; }
 
+        public List<Collection> Collections { get; set; } = new List<Collection>();
+
         public Type RepositoryType { get; set; }
         public IRepository Repository { get; set; }
 
         public TreeView TreeView { get; set; }
-        public List<Collection> SubCollections { get; set; }
 
         public ListView ListView { get; set; }
         public ListEditor ListEditor { get; set; }
 
-        public EntityView EntityView { get; set; }
-        public EntityEditor EntityEditor { get; set; }
+        public NodeView NodeView { get; set; }
+        public NodeEditor NodeEditor { get; set; }
 
+    }
+
+    public interface ICollectionRoot
+    {
+        List<Collection> Collections { get; set; }
     }
 
     public class View
@@ -96,13 +103,13 @@ namespace RapidCMS.Common.Models
         public List<Button> ButtonBar { get; set; }
     }
 
-    public class EntityView : View
+    public class NodeView : View
     {
-        public List<ViewPane<EntityViewProperty>> ViewPanes { get; set; }
+        public List<ViewPane<NodeViewProperty>> ViewPanes { get; set; }
         public List<Button> ButtonBar { get; set; }
     }
 
-    public class EntityEditor : Editor
+    public class NodeEditor : Editor
     {
         public List<EditorPane<Field>> EditorPanes { get; set; }
         public List<Button> ButtonBar { get; set; }
@@ -130,15 +137,18 @@ namespace RapidCMS.Common.Models
         public string Description { get; set; }
 
         public Func<object, object> Getter { get; set; }
+
+        // TODO: value mapper?
         public Func<object, string> Formatter { get; set; }
     }
 
+    // TODO: required?
     public class ListViewProperty : Property
     {
 
     }
 
-    public class EntityViewProperty : Property
+    public class NodeViewProperty : Property
     {
 
     }
@@ -161,10 +171,12 @@ namespace RapidCMS.Common.Models
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public string DataType { get; set; }
+        public EditorType DataType { get; set; }
 
         public Func<object, object> Getter { get; set; }
         public Action<object, object> Setter { get; set; }
+
+        // TODO: value mapper?
         public Func<object, string> Formatter { get; set; }
 
 

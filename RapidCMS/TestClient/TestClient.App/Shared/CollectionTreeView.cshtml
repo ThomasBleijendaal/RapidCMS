@@ -7,11 +7,6 @@
 }
 else
 {
-    @* TODO: combine lists *@
-
-    @*@if (string.IsNullOrEmpty(Collection?.Name))
-        {*@
-
     <li>
         <strong><NavLink href=@($"collection/{Collection.Alias}/{ParentId}")>@Collection.Name</NavLink></strong>
 
@@ -19,7 +14,7 @@ else
             @foreach (var node in Collection.Nodes)
             {
                 <li>
-                    <NavLink href=@($"node/{Collection.Alias}/{node.Id}")>@node.Name</NavLink>
+                    <NavLink href=@($"node/{Collection.Alias}/{(ParentId.HasValue ? $"{ParentId.Value}/" : "")}{node.Id}")>@node.Name</NavLink>
 
                     <ul>
                         @foreach (var subCollection in node.Collections)

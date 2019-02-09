@@ -3,23 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Enums;
+using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Interfaces;
 
 namespace RapidCMS.Common.Models.Config
 {
     // TODO: validate incoming parameters
-    public class CollectionConfig<TEntity>
+    // TODO: work out what polymorphistic optimizations can be used
+    // TODO: this will contain a lot of logic (move to extensions?)
+
+    public class CollectionConfig<TEntity> : ICollectionRoot
         where TEntity : IEntity
     {
         internal Type RepositoryType { get; set; }   
 
-        public TreeViewConfig<TEntity> TreeView { get; set; }
-
-        public ListViewConfig<TEntity> ListView { get; set; }
-
-        public List<Collection> SubCollections { get; set; } = new List<Collection>();
+        public List<Collection> Collections { get; set; } = new List<Collection>();
 
         public CollectionConfig<TEntity> SetRepository<TRepository>()
            where TRepository : IRepository<int, TEntity>
@@ -28,6 +30,12 @@ namespace RapidCMS.Common.Models.Config
 
             return this;
         }
+
+        public TreeViewConfig<TEntity> TreeView { get; set; }
+
+        public ListViewConfig<TEntity> ListView { get; set; }
+        
+        public NodeEditorConfig<TEntity> NodeEditor { get; set; }
 
         public CollectionConfig<TEntity> SetTreeView(string name, ViewType viewType, Expression<Func<TEntity, string>> nameExpression)
         {
@@ -52,57 +60,13 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionConfig<TEntity> AddSubCollection<TSubEntity>(string alias, string name, Action<CollectionConfig<TEntity>> configure)
-            where TSubEntity : IEntity
+        public CollectionConfig<TEntity> SetNodeEditor(Action<NodeEditorConfig<TEntity>> configure)
         {
-            // TODO: merge this function RootExtensions.AddCollection
-            var collection = new Collection
-            {
-                Name = name,
-                Alias = alias
-            };
+            var config = new NodeEditorConfig<TEntity>();
 
-            var configReceiver = new CollectionConfig<TEntity>();
+            configure.Invoke(config);
 
-            configure.Invoke(configReceiver);
-
-            collection.RepositoryType = configReceiver.RepositoryType;
-
-            if (configReceiver.TreeView != null)
-            {
-                var prop = GetterAndSetterHelper.Create(configReceiver.TreeView.NameGetter);
-                
-                collection.TreeView = new TreeView
-                {
-                    Name = configReceiver.TreeView.Name,
-                    EntityViewType = configReceiver.TreeView.ViewType,
-                    NameGetter = prop.Getter
-                };
-            }
-
-            if (configReceiver.ListView != null)
-            {
-                collection.ListView = new ListView
-                {
-                    ViewPanes = configReceiver.ListView.ListViewPanes.Select(pane =>
-                    {
-                        return new ViewPane<ListViewProperty>
-                        {
-                            Properties = pane.Properties.Select(property => new ListViewProperty
-                            {
-                                Description = property.Description,
-                                Formatter = property.Formatter,
-                                Getter = property.GetterAndSetter.Getter,
-                                Name = property.Name
-                            }).ToList()
-                        };
-                    }).ToList()
-                };
-            }
-
-            collection.SubCollections = configReceiver.SubCollections;
-
-            SubCollections.Add(collection);
+            NodeEditor = config;
 
             return this;
         }
@@ -142,7 +106,7 @@ namespace RapidCMS.Common.Models.Config
         {
             var config = new PropertyConfig<TEntity>
             {
-                GetterAndSetter = GetterAndSetterHelper.Create(propertyExpression)
+                GetterAndSetter = PropertyMetadataHelper.Create(propertyExpression)
             };
             config.Name = config.GetterAndSetter.PropertyName;
 
@@ -160,7 +124,7 @@ namespace RapidCMS.Common.Models.Config
         internal string Name { get; set; }
         internal string Description { get; set; }
 
-        internal GetterAndSetter GetterAndSetter { get; set; }
+        internal PropertyMetadata GetterAndSetter { get; set; }
         internal Func<object, string> Formatter { get; set; } = (o) => $"{o}";
 
         public PropertyConfig<TEntity> SetName(string name)
@@ -173,5 +137,81 @@ namespace RapidCMS.Common.Models.Config
             Description = description;
             return this;
         }
+    }
+
+    public class NodeEditorConfig<TEntity>
+        where TEntity : IEntity
+    {
+        public List<EditorPaneConfig<TEntity>> EditorPanes { get; set; } = new List<EditorPaneConfig<TEntity>>();
+
+        public NodeEditorConfig<TEntity> AddEditorPane(Action<EditorPaneConfig<TEntity>> configure)
+        {
+            var config = new EditorPaneConfig<TEntity>();
+
+            configure.Invoke(config);
+
+            EditorPanes.Add(config);
+
+            return this;
+        }
+    }
+
+    public class EditorPaneConfig<TEntity>
+        where TEntity : IEntity
+    {
+        public List<FieldConfig<TEntity>> Fields { get; set; } = new List<FieldConfig<TEntity>>();
+        
+        public FieldConfig<TEntity> AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<FieldConfig<TEntity>> configure = null)
+        {
+            var config = new FieldConfig<TEntity>()
+            {
+                GetterAndSetter = PropertyMetadataHelper.Create(propertyExpression)
+            };
+            config.Name = config.GetterAndSetter.PropertyName;
+            
+            // try to find the default editor for this type
+            foreach (var type in EnumHelper.GetValues<EditorType>())
+            {
+                if (type.GetCustomAttribute<DefaultTypeAttribute>()?.Types.Contains(config.GetterAndSetter.PropertyType) ?? false)
+                {
+                    config.Type = type;
+
+                    break;
+                }
+            }
+            
+            configure?.Invoke(config);
+
+            Fields.Add(config);
+
+            return config;
+        }
+    }
+
+    public class FieldConfig<TEntity>
+        where TEntity : IEntity
+    {
+        internal string Name { get; set; }
+        internal string Description { get; set; }
+
+        internal PropertyMetadata GetterAndSetter { get; set; }
+        internal EditorType Type { get; set; }
+
+        public FieldConfig<TEntity> SetName(string name)
+        {
+            Name = name;
+            return this;
+        }
+        public FieldConfig<TEntity> SetDescription(string description)
+        {
+            Description = description;
+            return this;
+        }
+        public FieldConfig<TEntity> SetType(EditorType type)
+        {
+            Type = type;
+            return this;
+        }
+
     }
 }
