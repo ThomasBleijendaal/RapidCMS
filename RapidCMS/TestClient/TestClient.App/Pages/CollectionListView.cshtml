@@ -58,13 +58,7 @@ else
     }
 }
 
-<div style="visibility: hidden">
-    <NavLink bind-href="@Goto" ref="navlink"></NavLink>
-</div>
-
 @functions {
-    ElementRef navlink;
-
     [Parameter]
     private string Alias { get; set; }
 
@@ -72,8 +66,6 @@ else
     private int? ParentId { get; set; } = null;
 
     CollectionListViewDTO ListView;
-
-    private string Goto { get; set; }
     
     protected override async Task OnParametersSetAsync()
     {

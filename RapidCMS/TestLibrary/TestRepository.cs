@@ -53,6 +53,14 @@ namespace TestLibrary
             element.Description = entity.Description;
             element.Name = entity.Name;
         }
+
+        public override Task<TestEntity> NewAsync(int? parentId)
+        {
+            return Task.FromResult(new TestEntity
+            {
+
+            });
+        }
     }
 
     public class RepositoryA : TestRepository

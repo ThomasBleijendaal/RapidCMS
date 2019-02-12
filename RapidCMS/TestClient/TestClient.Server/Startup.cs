@@ -33,6 +33,7 @@ namespace TestClient.Server
             void listView(ListViewConfig<TestEntity> listViewConfig)
             {
                 listViewConfig
+                    .AddDefaultButton(DefaultButtonType.New, "New")
                     .AddListPane(pane =>
                     {
                         pane.AddProperty(x => x.Id);

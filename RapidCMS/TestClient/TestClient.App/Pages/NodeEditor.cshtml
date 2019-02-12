@@ -77,7 +77,7 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        Editor = await CollectionService.GetNodeEditorAsync(Alias, ParentId, Id);
+        Editor = await CollectionService.GetNodeEditorAsync(Action, Alias, ParentId, Id);
     }
 
     async Task ButtonCallbackAsync(string actionId)

@@ -20,7 +20,7 @@ namespace RapidCMS.Common.Services
 
         Task<CollectionListViewDTO> GetCollectionListViewAsync(string alias, int? parentId);
 
-        Task<NodeEditorDTO> GetNodeEditorAsync(string alias, string action, int? parentId, int id);
+        Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, int? parentId, int id);
 
         Task ProcessListViewActionAsync(string alias, int? parentId, string actionId);
 
@@ -91,6 +91,15 @@ namespace RapidCMS.Common.Services
 
             return new CollectionListViewDTO()
             {
+                Buttons = listView.Buttons.ToList(button =>
+                {
+                    return new ButtonDTO
+                    {
+                        Icon = button.Icon,
+                        Id = button.Id,
+                        Label = button.Label
+                    };
+                }),
                 ViewPanes = listView.ViewPanes.ToList(pane =>
                 {
                     return new CollectionListViewPaneDTO
@@ -107,7 +116,7 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public async Task<NodeEditorDTO> GetNodeEditorAsync(string alias, string action, int? parentId, int id)
+        public async Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, int? parentId, int id)
         {
             var collection = _root.GetCollection(alias);
 
