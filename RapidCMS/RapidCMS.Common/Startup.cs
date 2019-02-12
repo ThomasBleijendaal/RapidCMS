@@ -21,6 +21,8 @@ namespace RapidCMS.Common
             var root = app.Services.GetService<Root>();
 
             root.MaterializeRepositories(app.Services);
+
+            // TODO: populate value mappers
         }
     }
 }

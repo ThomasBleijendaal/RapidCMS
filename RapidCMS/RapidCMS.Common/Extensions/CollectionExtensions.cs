@@ -60,19 +60,31 @@ namespace RapidCMS.Common.Extensions
             {
                 collection.ListView = new ListView
                 {
-                    ViewPanes = configReceiver.ListView.ListViewPanes.Select(pane =>
+                    Buttons = configReceiver.ListView.Buttons.ToList(button => button switch
+                    {
+                        DefaultButtonConfig defaultButton => new DefaultButton
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            DefaultButtonType = defaultButton.ButtonType,
+                            Icon = defaultButton.Icon,
+                            Label = defaultButton.Label
+                        },
+                        _ => default(Button)
+                    }),
+                    ViewPanes = configReceiver.ListView.ListViewPanes.ToList(pane =>
                     {
                         return new ViewPane<ListViewProperty>
                         {
-                            Properties = pane.Properties.Select(property => new ListViewProperty
+                            Properties = pane.Properties.ToList(property => new ListViewProperty
                             {
                                 Description = property.Description,
-                                Formatter = property.Formatter,
-                                Getter = property.GetterAndSetter.Getter,
-                                Name = property.Name
-                            }).ToList()
+                                Name = property.Name,
+                                NodeProperty = property.NodeProperty,
+                                ValueMapper = property.ValueMapper ?? new DefaultViewValueMapper(),
+                                ValueMapperType = property.ValueMapperType
+                            })
                         };
-                    }).ToList()
+                    })
                 };
             }
 
@@ -80,20 +92,36 @@ namespace RapidCMS.Common.Extensions
             {
                 collection.NodeEditor = new NodeEditor
                 {
-                    EditorPanes = configReceiver.NodeEditor.EditorPanes.Select(pane =>
+                    Buttons = configReceiver.NodeEditor.Buttons.ToList(button => button switch
+                    {
+                        DefaultButtonConfig defaultButton => new DefaultButton
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            DefaultButtonType = defaultButton.ButtonType,
+                            Icon = defaultButton.Icon,
+                            Label = defaultButton.Label
+                        },
+                        _ => default(Button)
+                    }),
+
+                    EditorPanes = configReceiver.NodeEditor.EditorPanes.ToList(pane =>
                     {
                         return new EditorPane<Field>
                         {
-                            Fields = pane.Fields.Select(field => new Field
-                            {
-                                DataType = field.Type,
-                                Description = field.Description,
-                                Getter = field.GetterAndSetter.Getter,
-                                Name = field.Name,
-                                Setter = field.GetterAndSetter.Setter
-                            }).ToList()
+                            Fields = pane.Fields.ToList(field => {
+                                
+                                return new Field
+                                {
+                                    DataType = field.Type,
+                                    Description = field.Description,
+                                    Name = field.Name,
+                                    NodeProperty = field.NodeProperty,
+                                    ValueMapper = field.ValueMapper ?? new DefaultEditorValueMapper(),
+                                    ValueMapperType = field.ValueMapperType  
+                                };
+                            })
                         };
-                    }).ToList()
+                    })
                 };
             }
 

@@ -83,7 +83,22 @@ namespace RapidCMS.Common.Models.Config
     public class ListViewConfig<TEntity>
         where TEntity : IEntity
     {
+        public List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
         public List<ListViewPaneConfig<TEntity>> ListViewPanes { get; set; } = new List<ListViewPaneConfig<TEntity>>();
+
+        public ListViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null)
+        {
+            var button = new DefaultButtonConfig
+            {
+                ButtonType = type,
+                Icon = icon ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Icon,
+                Label = label ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
 
         public ListViewConfig<TEntity> AddListPane(Action<ListViewPaneConfig<TEntity>> configure)
         {
@@ -106,9 +121,9 @@ namespace RapidCMS.Common.Models.Config
         {
             var config = new PropertyConfig<TEntity>
             {
-                GetterAndSetter = PropertyMetadataHelper.Create(propertyExpression)
+                NodeProperty = PropertyMetadataHelper.Create(propertyExpression)
             };
-            config.Name = config.GetterAndSetter.PropertyName;
+            config.Name = config.NodeProperty.PropertyName;
 
             configure?.Invoke(config);
 
@@ -124,8 +139,10 @@ namespace RapidCMS.Common.Models.Config
         internal string Name { get; set; }
         internal string Description { get; set; }
 
-        internal PropertyMetadata GetterAndSetter { get; set; }
-        internal Func<object, string> Formatter { get; set; } = (o) => $"{o}";
+        internal PropertyMetadata NodeProperty { get; set; }
+
+        internal IValueMapper ValueMapper { get; set; }
+        internal Type ValueMapperType { get; set; }
 
         public PropertyConfig<TEntity> SetName(string name)
         {
@@ -137,12 +154,44 @@ namespace RapidCMS.Common.Models.Config
             Description = description;
             return this;
         }
+
+        // TODO: check for mapper compatibility with value type in NodeProperty
+        public PropertyConfig<TEntity> SetValueMapper<TValue>(ValueMapper<TValue> valueMapper)
+        {
+            ValueMapper = valueMapper;
+
+            return this;
+        }
+
+        // TODO: check for mapper compatibility with value type in NodeProperty
+        public PropertyConfig<TEntity> SetValueMapper<TValueMapper>()
+            where TValueMapper : IValueMapper
+        {
+            ValueMapperType = typeof(IValueMapper);
+
+            return this;
+        }
     }
 
     public class NodeEditorConfig<TEntity>
         where TEntity : IEntity
     {
+        public List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
         public List<EditorPaneConfig<TEntity>> EditorPanes { get; set; } = new List<EditorPaneConfig<TEntity>>();
+
+        public NodeEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null)
+        {
+            var button = new DefaultButtonConfig
+            {
+                ButtonType = type,
+                Icon = icon ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Icon,
+                Label = label ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
 
         public NodeEditorConfig<TEntity> AddEditorPane(Action<EditorPaneConfig<TEntity>> configure)
         {
@@ -165,14 +214,14 @@ namespace RapidCMS.Common.Models.Config
         {
             var config = new FieldConfig<TEntity>()
             {
-                GetterAndSetter = PropertyMetadataHelper.Create(propertyExpression)
+                NodeProperty = PropertyMetadataHelper.Create(propertyExpression)
             };
-            config.Name = config.GetterAndSetter.PropertyName;
+            config.Name = config.NodeProperty.PropertyName;
             
             // try to find the default editor for this type
             foreach (var type in EnumHelper.GetValues<EditorType>())
             {
-                if (type.GetCustomAttribute<DefaultTypeAttribute>()?.Types.Contains(config.GetterAndSetter.PropertyType) ?? false)
+                if (type.GetCustomAttribute<DefaultTypeAttribute>()?.Types.Contains(config.NodeProperty.PropertyType) ?? false)
                 {
                     config.Type = type;
 
@@ -185,7 +234,7 @@ namespace RapidCMS.Common.Models.Config
             Fields.Add(config);
 
             return config;
-        }
+        }   
     }
 
     public class FieldConfig<TEntity>
@@ -194,7 +243,9 @@ namespace RapidCMS.Common.Models.Config
         internal string Name { get; set; }
         internal string Description { get; set; }
 
-        internal PropertyMetadata GetterAndSetter { get; set; }
+        internal PropertyMetadata NodeProperty { get; set; }
+        internal IValueMapper ValueMapper { get; set; }
+        internal Type ValueMapperType { get; set; }
         internal EditorType Type { get; set; }
 
         public FieldConfig<TEntity> SetName(string name)
@@ -213,5 +264,32 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
+        // TODO: check for mapper compatibility with value type in NodeProperty
+        public FieldConfig<TEntity> SetValueMapper<TValue>(ValueMapper<TValue> valueMapper)
+        {
+            ValueMapper = valueMapper;
+
+            return this;
+        }
+
+        // TODO: check for mapper compatibility with value type in NodeProperty
+        public FieldConfig<TEntity> SetValueMapper<TValueMapper>()
+            where TValueMapper : IValueMapper
+        {
+            ValueMapperType = typeof(IValueMapper);
+
+            return this;
+        }
+    }
+
+    public class ButtonConfig
+    {
+        internal string Label { get; set; }
+        internal string Icon { get; set; }
+    }
+
+    public class DefaultButtonConfig : ButtonConfig
+    { 
+        internal DefaultButtonType ButtonType { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace RapidCMS.Common.Models
 {
-    internal class PropertyMetadata
+    public class PropertyMetadata
     {
         internal Type ObjectType { get; set; }
         internal string PropertyName { get; set; }

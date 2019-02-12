@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
+using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using TestLibrary;
@@ -47,9 +48,11 @@ namespace TestClient.Server
             void nodeEditor(NodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
+                    .AddDefaultButton(DefaultButtonType.SaveNewAndExisting)
                     .AddEditorPane(pane =>
                     {
-                        pane.AddField(x => x.Id);
+                        pane.AddField(x => x.Id)
+                            .SetValueMapper(new IntValueMapper());
 
                         pane.AddField(x => x.Name)
                             .SetDescription("This is a name");

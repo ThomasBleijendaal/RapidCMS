@@ -10,12 +10,22 @@
 
 @if (ListView == null)
 {
-    <p>Loading..</p>
+    <div class="content px-4">
+        <div class="top-row px-4">
+
+        </div>
+        <div class="content px-4">
+            <p>Loading..</p>
+        </div>
+    </div>
 }
 else
 {
     <div class="top-row px-4">
-
+        @foreach (var button in ListView.Buttons)
+        {
+            <DefaultButton Label="@button.Label" Icon="@button.Icon" Id="@button.Id" CallbackAsync="@ButtonCallbackAsync" />
+        }
     </div>
 
     @foreach (var pane in ListView.ViewPanes)
@@ -48,7 +58,13 @@ else
     }
 }
 
+<div style="visibility: hidden">
+    <NavLink bind-href="@Goto" ref="navlink"></NavLink>
+</div>
+
 @functions {
+    ElementRef navlink;
+
     [Parameter]
     private string Alias { get; set; }
 
@@ -57,8 +73,16 @@ else
 
     CollectionListViewDTO ListView;
 
+    private string Goto { get; set; }
+    
     protected override async Task OnParametersSetAsync()
     {
         ListView = await CollectionService.GetCollectionListViewAsync(Alias, ParentId);
+    }
+
+    async Task ButtonCallbackAsync(string actionId)
+    {
+        await CollectionService.ProcessListViewActionAsync(Alias, ParentId, actionId);
+        
     }
 }

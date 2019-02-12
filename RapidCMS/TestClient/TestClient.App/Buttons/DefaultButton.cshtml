@@ -1,0 +1,28 @@
+﻿@using RapidCMS.Common
+@using RapidCMS.Common.Enums
+
+<button type="button" class="btn" onclick="@ButtonClickAsync">
+    <span class="glyphicon glyphicon-@Icon"></span> @Label
+</button>
+
+@functions {
+    [Parameter]
+    private string Alias { get; set; }
+
+    [Parameter]
+    private string Icon { get; set; }
+
+    [Parameter]
+    private string Label { get; set; }
+
+    [Parameter]
+    private string Id { get; set; }
+
+    [Parameter]
+    private Func<string, Task> CallbackAsync { get; set; }
+
+    async Task ButtonClickAsync()
+    {
+        await CallbackAsync.Invoke(Id);
+    }
+}

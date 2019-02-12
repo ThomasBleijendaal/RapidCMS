@@ -1,21 +1,35 @@
-﻿@page "/node/{Alias}/{Id:int}"
-@page "/node/{Alias}/{ParentId:int}/{Id:int}"
+﻿@page "/node/{Action}/{Alias}"
+@page "/node/{Action}/{Alias}/{Id:int}"
+@page "/node/{Action}/{Alias}/{ParentId:int}/{Id:int}"
 
 @using RapidCMS.Common.Models.DTOs
 @using RapidCMS.Common.Services
 @using RapidCMS.Common.Extensions
 @inject ICollectionService CollectionService
+@*
+    TODO: remove weird callback for binding
+*@
 
 <h1>Node editor of @Alias :: @ParentId :: @Id</h1>
 
 @if (Editor == null)
 {
-    <p>Loading..</p>
+    <div class="content px-4">
+        <div class="top-row px-4">
+
+        </div>
+        <div class="content px-4">
+            <p>Loading..</p>
+        </div>
+    </div>
 }
 else
 {
     <div class="top-row px-4">
-
+        @foreach (var button in Editor.Buttons)
+        {
+            <DefaultButton Label="@button.Label" Icon="@button.Icon" Id="@button.Id" CallbackAsync="@ButtonCallbackAsync" />
+        }
     </div>
 
     @foreach (var pane in Editor.EditorPanes)
@@ -34,7 +48,9 @@ else
                         <tr>
                             <td>@field.label.Name<br /><small>@field.label.Description</small></td>
                             <td>
-                                <DefaultEditor Alias="@Alias" Type="@field.editor.Type" Value="@field.editor.Value" />
+                                <DefaultEditor Type="@field.editor.Type"
+                                               Value="@field.editor.Value"
+                                               Callback="@((string value) => field.editor.Value = value)" />
                             </td>
                         </tr>
                     }
@@ -49,6 +65,9 @@ else
     private string Alias { get; set; }
 
     [Parameter]
+    private string Action { get; set; }
+
+    [Parameter]
     private int ParentId { get; set; }
 
     [Parameter]
@@ -59,5 +78,10 @@ else
     protected override async Task OnParametersSetAsync()
     {
         Editor = await CollectionService.GetNodeEditorAsync(Alias, ParentId, Id);
+    }
+
+    async Task ButtonCallbackAsync(string actionId)
+    {
+        await CollectionService.ProcessNodeEditorActionAsync(Alias, ParentId, Id, Editor, actionId);
     }
 }

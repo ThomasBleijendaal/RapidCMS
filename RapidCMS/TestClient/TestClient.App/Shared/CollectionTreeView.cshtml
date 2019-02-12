@@ -1,4 +1,5 @@
 ﻿@using TestClient.App.Models
+@using RapidCMS.Common
 @using RapidCMS.Common.Models.DTOs
 
 @if (Collection == null)
@@ -14,7 +15,7 @@ else
             @foreach (var node in Collection.Nodes)
             {
                 <li>
-                    <NavLink href=@($"node/{Collection.Alias}/{(ParentId.HasValue ? $"{ParentId.Value}/" : "")}{node.Id}")>@node.Name</NavLink>
+                    <NavLink href=@($"node/{Constants.Edit}/{Collection.Alias}/{(ParentId.HasValue ? $"{ParentId.Value}/" : "")}{node.Id}")>@node.Name</NavLink>
 
                     <ul>
                         @foreach (var subCollection in node.Collections)

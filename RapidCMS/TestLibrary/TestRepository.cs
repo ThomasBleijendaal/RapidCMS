@@ -43,6 +43,16 @@ namespace TestLibrary
             var data = await GetAllAsync(parentId);
             return data.FirstOrDefault(x => x.Id == id);
         }
+
+        public override async Task UpdateAsync(int id, int? parentId, TestEntity entity)
+        {
+            await Task.Delay(1);
+
+            var element = _data.First(x => x.Id == id);
+
+            element.Description = entity.Description;
+            element.Name = entity.Name;
+        }
     }
 
     public class RepositoryA : TestRepository

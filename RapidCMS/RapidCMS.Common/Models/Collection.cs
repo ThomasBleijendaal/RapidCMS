@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.Interfaces;
 
 namespace RapidCMS.Common.Models
 {
@@ -89,7 +90,7 @@ namespace RapidCMS.Common.Models
     public class ListView : View
     {
         public List<ViewPane<ListViewProperty>> ViewPanes { get; set; }
-        public List<Button> ButtonBar { get; set; }
+        public List<Button> Buttons { get; set; }
     }
 
     public class Editor
@@ -100,19 +101,19 @@ namespace RapidCMS.Common.Models
     public class ListEditor : Editor
     {
         public List<EditorPane<Field>> EditorPanes { get; set; }
-        public List<Button> ButtonBar { get; set; }
+        public List<Button> Buttons { get; set; }
     }
 
     public class NodeView : View
     {
         public List<ViewPane<NodeViewProperty>> ViewPanes { get; set; }
-        public List<Button> ButtonBar { get; set; }
+        public List<Button> Buttons { get; set; }
     }
 
     public class NodeEditor : Editor
     {
         public List<EditorPane<Field>> EditorPanes { get; set; }
-        public List<Button> ButtonBar { get; set; }
+        public List<Button> Buttons { get; set; }
     }
 
     public class ViewPane<T>
@@ -128,7 +129,6 @@ namespace RapidCMS.Common.Models
         where T : Field
     {
         public List<T> Fields { get; set; }
-        public List<Button> Buttons { get; set; }
     }
 
     public class Property
@@ -136,10 +136,9 @@ namespace RapidCMS.Common.Models
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public Func<object, object> Getter { get; set; }
-
-        // TODO: value mapper?
-        public Func<object, string> Formatter { get; set; }
+        public PropertyMetadata NodeProperty { get; set; }
+        public IValueMapper ValueMapper { get; set; }
+        public Type ValueMapperType { get; set; }
     }
 
     // TODO: required?
@@ -160,10 +159,15 @@ namespace RapidCMS.Common.Models
 
     public class Button
     {
-        public string Name { get; set; }
+        public string Id { get; set; }
+
+        public string Label { get; set; }
         public string Icon { get; set; }
+    }
 
-
+    public class DefaultButton : Button
+    {
+        public DefaultButtonType DefaultButtonType { get; set; }
     }
 
     public class Field
@@ -172,13 +176,9 @@ namespace RapidCMS.Common.Models
         public string Description { get; set; }
 
         public EditorType DataType { get; set; }
-
-        public Func<object, object> Getter { get; set; }
-        public Action<object, object> Setter { get; set; }
-
-        // TODO: value mapper?
-        public Func<object, string> Formatter { get; set; }
-
-
+        
+        public PropertyMetadata NodeProperty { get; set; }
+        public IValueMapper ValueMapper { get; set; }
+        public Type ValueMapperType { get; set; }
     }
 }

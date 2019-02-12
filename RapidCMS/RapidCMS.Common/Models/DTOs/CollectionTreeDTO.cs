@@ -23,6 +23,7 @@ namespace RapidCMS.Common.Models.DTOs
 
     public class CollectionListViewDTO
     {
+        public List<ButtonDTO> Buttons { get; set; }
         public List<CollectionListViewPaneDTO> ViewPanes { get; set; }
     }
 
@@ -42,6 +43,7 @@ namespace RapidCMS.Common.Models.DTOs
         public int Id { get; set; }
         public string Alias { get; set; }
 
+        public List<ButtonDTO> Buttons { get; set; }
         public List<NodeEditorPaneDTO> EditorPanes { get; set; }
     }
 
@@ -59,6 +61,19 @@ namespace RapidCMS.Common.Models.DTOs
     public class EditorDTO
     {
         public EditorType Type { get; set; }
-        public object Value { get; set; }
+        public string Value { get; set; }
+    }
+
+    public class ButtonDTO
+    {
+        public string Id { get; set; }
+        public string Label { get; set; }
+        public string Icon { get; set; }
+    }
+
+    public class ActionResult
+    {
+        public string Action { get; set; }
+        public string Data { get; set; }
     }
 }

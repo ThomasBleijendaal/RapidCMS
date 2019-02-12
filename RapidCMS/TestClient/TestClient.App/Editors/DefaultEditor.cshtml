@@ -3,7 +3,7 @@
     // TODO: this limits extensibility from outside
     // perhaps try https://docs.microsoft.com/en-us/aspnet/core/razor-components/components?view=aspnetcore-3.0#child-content
 
-    // TODO: weird binding issue which results in not updating any editor
+    // TODO: remove binding callback 
 *@
 @using RapidCMS.Common.Enums
 
@@ -13,20 +13,20 @@
     {
         case EditorType.Numeric:
 
-            <NumericEditor Alias="Alias" Value="Value" />
+            <NumericEditor Value="@LocalValue" Callback="ChildEditorCallback" />
 
             break;
 
         case EditorType.TextArea:
 
-            <TextAreaEditor Alias="Alias" Value="Value" />
+            <TextAreaEditor Value="@LocalValue" Callback="ChildEditorCallback" />
 
             break;
 
         case EditorType.TextBox:
         default:
 
-            <TextBoxEditor Alias="Alias" Value="Value" />
+            <TextBoxEditor Value="@LocalValue" Callback="ChildEditorCallback" />
 
             break;
     }
@@ -34,11 +34,30 @@
 
 @functions {
     [Parameter]
-    private object Value { get; set; }
+    private string Value { get; set; }
+
+    public string LocalValue
+    {
+        get
+        {
+            return Value;
+        }
+        set
+        {
+            Value = value;
+        }
+    }
 
     [Parameter]
     private EditorType? Type { get; set; } = null;
-
+    
     [Parameter]
-    private string Alias { get; set; }
+    private Action<string> Callback { get; set; }
+
+    private void ChildEditorCallback(string value)
+    {
+        LocalValue = value;
+
+        Callback.Invoke(value);
+    }
 }

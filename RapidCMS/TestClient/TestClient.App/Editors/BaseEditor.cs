@@ -8,9 +8,23 @@ namespace TestClient.App.Editors
     public class BaseEditor : ComponentBase
     {
         [Parameter]
-        protected string Alias { get; set; }
+        private string Value { get; set; }
+
+        protected string LocalValue
+        {
+            get
+            {
+                return Value;
+            }
+            set
+            {
+                Value = value;
+
+                Callback.Invoke(Value);
+            }
+        }
 
         [Parameter]
-        protected object Value { get; set; }
+        private Action<string> Callback { get; set; }
     }
 }

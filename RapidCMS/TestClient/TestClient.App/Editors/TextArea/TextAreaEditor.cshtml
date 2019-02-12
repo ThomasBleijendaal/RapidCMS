@@ -1,3 +1,3 @@
-﻿@inherits TextAreaEditorBase
+﻿@inherits BaseEditor
 
-<textarea @((UIChangeEventArgs __e) => Text = __e.Value)>@Text</textarea>
+<textarea onchange=@((UIChangeEventArgs __e) => LocalValue = __e.Value.ToString())>@LocalValue</textarea>
