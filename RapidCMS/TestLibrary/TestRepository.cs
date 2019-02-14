@@ -73,6 +73,13 @@ namespace TestLibrary
 
             });
         }
+
+        public override async Task DeleteAsync(int id, int? parentId)
+        {
+            await Task.Delay(1);
+
+            Data.RemoveAll(x => x.Id == id);
+        }
     }
 
     public class RepositoryA : TestRepository

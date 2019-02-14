@@ -43,39 +43,21 @@ namespace RapidCMS.Common.Interfaces
         }
     }
 
-    public class DefaultEditorValueMapper : ValueMapper<string>
-    {
-        public override string MapFromEditor(ValueMappingContext context, string value)
-        {
-            return value;
-        }
-
-        public override string MapToEditor(ValueMappingContext context, string value)
-        {
-            return value;
-        }
-
-        public override string MapToView(ValueMappingContext context, string value)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class DefaultViewValueMapper : ValueMapper<object>
+    public class DefaultValueMapper : ValueMapper<object>
     {
         public override object MapFromEditor(ValueMappingContext context, string value)
         {
-            throw new NotImplementedException();
+            return value;
         }
 
         public override string MapToEditor(ValueMappingContext context, object value)
         {
-            throw new NotImplementedException();
+            return value?.ToString() ?? string.Empty;
         }
 
         public override string MapToView(ValueMappingContext context, object value)
         {
-            return value.ToString();
+            return value?.ToString() ?? string.Empty;
         }
     }
 

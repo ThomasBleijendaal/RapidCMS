@@ -13,6 +13,8 @@ using RapidCMS.Common.Services;
 
 namespace RapidCMS.Common.Extensions
 {
+    // TODO: make code more DRY
+
     public static class RapidCMSMiddleware
     {
         public static IServiceCollection AddRapidCMS(this IServiceCollection services, Action<Root> configure)
@@ -64,7 +66,7 @@ namespace RapidCMS.Common.Extensions
                     {
                         DefaultButtonConfig defaultButton => new DefaultButton
                         {
-                            Id = Guid.NewGuid().ToString(),
+                            ButtonId = Guid.NewGuid().ToString(),
                             DefaultButtonType = defaultButton.ButtonType,
                             Icon = defaultButton.Icon,
                             Label = defaultButton.Label
@@ -75,16 +77,73 @@ namespace RapidCMS.Common.Extensions
                     {
                         return new ViewPane<ListViewProperty>
                         {
+                            Buttons = pane.Buttons.ToList(button => button switch
+                            {
+                                DefaultButtonConfig defaultButton => new DefaultButton
+                                {
+                                    ButtonId = Guid.NewGuid().ToString(),
+                                    DefaultButtonType = defaultButton.ButtonType,
+                                    Icon = defaultButton.Icon,
+                                    Label = defaultButton.Label
+                                },
+                                _ => default(Button)
+                            }),
                             Properties = pane.Properties.ToList(property => new ListViewProperty
                             {
                                 Description = property.Description,
                                 Name = property.Name,
                                 NodeProperty = property.NodeProperty,
-                                ValueMapper = property.ValueMapper ?? new DefaultViewValueMapper(),
+                                ValueMapper = property.ValueMapper ?? new DefaultValueMapper(),
                                 ValueMapperType = property.ValueMapperType
                             })
                         };
                     })
+                };
+            }
+
+            if (configReceiver.ListEditor != null)
+            {
+                var editor = configReceiver.ListEditor.ListEditor;
+
+                collection.ListEditor = new ListEditor
+                {
+                    Buttons = configReceiver.ListEditor.Buttons.ToList(button => button switch
+                    {
+                        DefaultButtonConfig defaultButton => new DefaultButton
+                        {
+                            ButtonId = Guid.NewGuid().ToString(),
+                            DefaultButtonType = defaultButton.ButtonType,
+                            Icon = defaultButton.Icon,
+                            Label = defaultButton.Label
+                        },
+                        _ => default(Button)
+                    }),
+                    EditorPane = new EditorPane<Field>
+                    {
+                        Buttons = editor.Buttons.ToList(button => button switch
+                        {
+                            DefaultButtonConfig defaultButton => new DefaultButton
+                            {
+                                ButtonId = Guid.NewGuid().ToString(),
+                                DefaultButtonType = defaultButton.ButtonType,
+                                Icon = defaultButton.Icon,
+                                Label = defaultButton.Label
+                            },
+                            _ => default(Button)
+                        }),
+                        Fields = editor.Fields.ToList(field =>
+                        {
+                            return new Field
+                            {
+                                DataType = field.Type,
+                                Description = field.Description,
+                                Name = field.Name,
+                                NodeProperty = field.NodeProperty,
+                                ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
+                                ValueMapperType = field.ValueMapperType
+                            };
+                        })
+                    }
                 };
             }
 
@@ -96,7 +155,7 @@ namespace RapidCMS.Common.Extensions
                     {
                         DefaultButtonConfig defaultButton => new DefaultButton
                         {
-                            Id = Guid.NewGuid().ToString(),
+                            ButtonId = Guid.NewGuid().ToString(),
                             DefaultButtonType = defaultButton.ButtonType,
                             Icon = defaultButton.Icon,
                             Label = defaultButton.Label
@@ -108,16 +167,16 @@ namespace RapidCMS.Common.Extensions
                     {
                         return new EditorPane<Field>
                         {
-                            Fields = pane.Fields.ToList(field => {
-                                
+                            Fields = pane.Fields.ToList(field =>
+                            {
                                 return new Field
                                 {
                                     DataType = field.Type,
                                     Description = field.Description,
                                     Name = field.Name,
                                     NodeProperty = field.NodeProperty,
-                                    ValueMapper = field.ValueMapper ?? new DefaultEditorValueMapper(),
-                                    ValueMapperType = field.ValueMapperType  
+                                    ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
+                                    ValueMapperType = field.ValueMapperType
                                 };
                             })
                         };
@@ -126,7 +185,7 @@ namespace RapidCMS.Common.Extensions
             }
 
             collection.Collections = configReceiver.Collections;
-            
+
             root.Collections.Add(collection);
 
             return root;

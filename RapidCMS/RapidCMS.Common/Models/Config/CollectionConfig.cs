@@ -13,7 +13,7 @@ using RapidCMS.Common.Interfaces;
 namespace RapidCMS.Common.Models.Config
 {
     // TODO: validate incoming parameters
-    // TODO: work out what polymorphistic optimizations can be used
+    // TODO: work out what polymorphistic optimizations can be used / extension properties
     // TODO: this will contain a lot of logic (move to extensions?)
 
     public class CollectionConfig<TEntity> : ICollectionRoot
@@ -34,7 +34,9 @@ namespace RapidCMS.Common.Models.Config
         public TreeViewConfig<TEntity> TreeView { get; set; }
 
         public ListViewConfig<TEntity> ListView { get; set; }
-        
+        public ListEditorConfig<TEntity> ListEditor { get; set; }
+
+        // TODO: rename to Node
         public NodeEditorConfig<TEntity> NodeEditor { get; set; }
 
         public CollectionConfig<TEntity> SetTreeView(string name, ViewType viewType, Expression<Func<TEntity, string>> nameExpression)
@@ -56,6 +58,17 @@ namespace RapidCMS.Common.Models.Config
             configure.Invoke(config);
 
             ListView = config;
+
+            return this;
+        }
+
+        public CollectionConfig<TEntity> SetListEditor(Action<ListEditorConfig<TEntity>> configure)
+        {
+            var config = new ListEditorConfig<TEntity>();
+
+            configure.Invoke(config);
+
+            ListEditor = config;
 
             return this;
         }
@@ -115,8 +128,23 @@ namespace RapidCMS.Common.Models.Config
     public class ListViewPaneConfig<TEntity>
         where TEntity : IEntity
     {
+        public List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
         public List<PropertyConfig<TEntity>> Properties { get; set; } = new List<PropertyConfig<TEntity>>();
-        
+
+        public ListViewPaneConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null)
+        {
+            var button = new DefaultButtonConfig
+            {
+                ButtonType = type,
+                Icon = icon ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Icon,
+                Label = label ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
+
         public PropertyConfig<TEntity> AddProperty<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<PropertyConfig<TEntity>> configure = null)
         {
             var config = new PropertyConfig<TEntity>
@@ -173,11 +201,90 @@ namespace RapidCMS.Common.Models.Config
         }
     }
 
+    public class ListEditorConfig<TEntity>
+        where TEntity : IEntity
+    {
+        public List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
+        public ListEditorPaneConfig<TEntity> ListEditor { get; set; }
+
+        public ListEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null)
+        {
+            var button = new DefaultButtonConfig
+            {
+                ButtonType = type,
+                Icon = icon ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Icon,
+                Label = label ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
+
+        public ListEditorConfig<TEntity> SetEditor(Action<ListEditorPaneConfig<TEntity>> configure)
+        {
+            var config = new ListEditorPaneConfig<TEntity>();
+
+            configure.Invoke(config);
+
+            ListEditor = config;
+
+            return this;
+        }
+    }
+
+    public class ListEditorPaneConfig<TEntity>
+        where TEntity : IEntity
+    {
+        public List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
+        public List<FieldConfig<TEntity>> Fields { get; set; } = new List<FieldConfig<TEntity>>();
+
+        public ListEditorPaneConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null)
+        {
+            var button = new DefaultButtonConfig
+            {
+                ButtonType = type,
+                Icon = icon ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Icon,
+                Label = label ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
+
+        public FieldConfig<TEntity> AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<FieldConfig<TEntity>> configure = null)
+        {
+            var config = new FieldConfig<TEntity>()
+            {
+                NodeProperty = PropertyMetadataHelper.Create(propertyExpression)
+            };
+            config.Name = config.NodeProperty.PropertyName;
+
+            // try to find the default editor for this type
+            foreach (var type in EnumHelper.GetValues<EditorType>())
+            {
+                if (type.GetCustomAttribute<DefaultTypeAttribute>()?.Types.Contains(config.NodeProperty.PropertyType) ?? false)
+                {
+                    config.Type = type;
+
+                    break;
+                }
+            }
+
+            configure?.Invoke(config);
+
+            Fields.Add(config);
+
+            return config;
+        }
+    }
+
     public class NodeEditorConfig<TEntity>
         where TEntity : IEntity
     {
         public List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
-        public List<EditorPaneConfig<TEntity>> EditorPanes { get; set; } = new List<EditorPaneConfig<TEntity>>();
+        public List<NodeEditorPaneConfig<TEntity>> EditorPanes { get; set; } = new List<NodeEditorPaneConfig<TEntity>>();
 
         public NodeEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null)
         {
@@ -193,9 +300,9 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeEditorConfig<TEntity> AddEditorPane(Action<EditorPaneConfig<TEntity>> configure)
+        public NodeEditorConfig<TEntity> AddEditorPane(Action<NodeEditorPaneConfig<TEntity>> configure)
         {
-            var config = new EditorPaneConfig<TEntity>();
+            var config = new NodeEditorPaneConfig<TEntity>();
 
             configure.Invoke(config);
 
@@ -205,7 +312,7 @@ namespace RapidCMS.Common.Models.Config
         }
     }
 
-    public class EditorPaneConfig<TEntity>
+    public class NodeEditorPaneConfig<TEntity>
         where TEntity : IEntity
     {
         public List<FieldConfig<TEntity>> Fields { get; set; } = new List<FieldConfig<TEntity>>();

@@ -27,6 +27,7 @@ namespace RapidCMS.Common.Data
         new Task<TEntity> NewAsync(int? parentId);
         Task<TEntity> InsertAsync(int id, int? parentId, TEntity entity);
         Task UpdateAsync(int id, int? parentId, TEntity entity);
+        new Task DeleteAsync(int id, int? parentId);
     }
 
     // TODO: find solution for int and TKey
@@ -40,6 +41,7 @@ namespace RapidCMS.Common.Data
         public abstract Task<TEntity> NewAsync(int? parentId);
         public abstract Task<TEntity> InsertAsync(int id, int? parentId, TEntity entity);
         public abstract Task UpdateAsync(int id, int? parentId, TEntity entity);
+        public abstract Task DeleteAsync(int id, int? parentId);
 
         async Task<IEntity> IRepository.GetByIdAsync(int id, int? parentId)
         {
@@ -66,5 +68,9 @@ namespace RapidCMS.Common.Data
             await UpdateAsync(id, parentId, (TEntity)entity);
         }
 
+        async Task IRepository.DeleteAsync(int id, int? parentId)
+        {
+            await DeleteAsync(id, parentId);
+        }
     }
 }

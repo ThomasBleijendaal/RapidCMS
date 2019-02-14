@@ -13,4 +13,9 @@ namespace RapidCMS.Common.Models.DTOs
     {
         public string Uri { get; set; }
     }
+
+    public class ReloadCommand : ViewCommand
+    {
+
+    }
 }

@@ -9,7 +9,10 @@
 else
 {
     <li>
-        <strong><NavLink href=@Collection.Path class=@(Collection.Path == CurrentUrl ? "current-page" : "")>@Collection.Name</NavLink></strong>
+        <strong>
+            <NavLink href=@Collection.Path class=@(Collection.Path == CurrentUrl ? "current-page" : "")>@Collection.Name</NavLink> 
+            (<NavLink href=@Collection.Path.Replace("list", "edit")>list editor</NavLink>)
+        </strong>
 
         <ul>
             @foreach (var node in Collection.Nodes)

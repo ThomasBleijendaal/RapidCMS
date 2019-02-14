@@ -44,10 +44,6 @@ app {
         top: -2px;
     }
 
-    a.current-page {
-        background: #ddd;
-    }
-
 .nav-item {
     font-size: 0.9rem;
     padding-bottom: 0.5rem;
@@ -124,4 +120,12 @@ app {
         /* Never collapse the sidebar for wide screens */
         display: block;
     }
+}
+
+/** CUSTOM */
+a.current-page {
+    background: #ddd;
+}
+.btn {
+    margin-right: 20px;
 }

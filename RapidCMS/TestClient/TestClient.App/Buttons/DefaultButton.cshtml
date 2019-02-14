@@ -1,8 +1,7 @@
-﻿@using RapidCMS.Common
-@using RapidCMS.Common.Enums
+﻿@typeparam TContext
 
 <button type="button" class="btn" onclick="@ButtonClickAsync">
-    <span class="glyphicon glyphicon-@Icon"></span> @Label
+    <i class="oi oi-@Icon"></i> @Label
 </button>
 
 @functions {
@@ -16,13 +15,16 @@
     private string Label { get; set; }
 
     [Parameter]
-    private string Id { get; set; }
+    private string ButtonId { get; set; }
 
     [Parameter]
-    private Func<string, Task> CallbackAsync { get; set; }
+    private Func<string, TContext, Task> CallbackAsync { get; set; }
+
+    [Parameter]
+    private TContext Context { get; set; }
 
     async Task ButtonClickAsync()
     {
-        await CallbackAsync.Invoke(Id);
+        await CallbackAsync.Invoke(ButtonId, Context);
     }
 }

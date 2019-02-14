@@ -38,6 +38,9 @@ namespace TestClient.Server
                     {
                         pane.AddProperty(x => x.Id);
                         pane.AddProperty(x => x.Name).SetDescription("This is a name");
+                        pane.AddDefaultButton(DefaultButtonType.View, string.Empty);
+                        pane.AddDefaultButton(DefaultButtonType.Edit, string.Empty);
+
                     })
                     .AddListPane(pane =>
                     {
@@ -51,6 +54,7 @@ namespace TestClient.Server
                 nodeEditorConfig
                     .AddDefaultButton(DefaultButtonType.SaveNew)
                     .AddDefaultButton(DefaultButtonType.SaveExisting)
+                    .AddDefaultButton(DefaultButtonType.Delete)
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x.Id)
@@ -106,6 +110,26 @@ namespace TestClient.Server
                         .SetRepository<RepositoryE>()
                         .SetTreeView("Tree 2", ViewType.List, entity => entity.Name)
                         .SetListView(listView)
+                        .SetListEditor(list =>
+                        {
+                            list.AddDefaultButton(DefaultButtonType.New);
+                            list.SetEditor(editor =>
+                            {
+                                editor.AddDefaultButton(DefaultButtonType.View);
+                                editor.AddDefaultButton(DefaultButtonType.Edit);
+                                editor.AddDefaultButton(DefaultButtonType.Delete);
+
+                                editor.AddField(x => x.Id)
+                                    .SetDescription("This should be readonly");
+
+                                editor.AddField(x => x.Name)
+                                    .SetDescription("This is a name");
+
+                                editor.AddField(x => x.Description)
+                                    .SetDescription("This is a description")
+                                    .SetType(EditorType.TextArea);
+                            });
+                        })
                         .SetNodeEditor(nodeEditor);
                 });
             });

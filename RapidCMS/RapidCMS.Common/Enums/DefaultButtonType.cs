@@ -2,26 +2,36 @@
 
 namespace RapidCMS.Common.Enums
 {
+    // TODO: change actions to something configurable when actions become enums
+
     public enum DefaultButtonType
     {
         [DefaultIconLabel(Icon = "plus", Label = "New")]
         [Actions(Constants.List)]
         New = 1,
 
-        [DefaultIconLabel(Icon = "save", Label = "Save new")]
+        [DefaultIconLabel(Icon = "hard-drive", Label = "Save new")]
         [Actions(Constants.New)]
-        SaveNew = 2,
+        SaveNew,
 
-        [DefaultIconLabel(Icon = "save", Label = "Update")]
+        [DefaultIconLabel(Icon = "hard-drive", Label = "Update")]
         [Actions(Constants.Edit)]
-        SaveExisting = 3,
+        SaveExisting,
 
-        [DefaultIconLabel(Icon = "save", Label = "Save")]
+        [DefaultIconLabel(Icon = "hard-drive", Label = "Save")]
         [Actions(Constants.New, Constants.Edit)]
-        SaveNewAndExisting = 4,
+        SaveNewAndExisting ,
 
         [DefaultIconLabel(Icon = "trash", Label = "Delete")]
         [Actions(Constants.Edit)]
-        Delete = 5
+        Delete,
+
+        [DefaultIconLabel(Icon = "pencil", Label = "Edit")]
+        [Actions(Constants.List)]
+        Edit,
+
+        [DefaultIconLabel(Icon = "magnifying-glass", Label = "View")]
+        [Actions(Constants.List)]
+        View
     }
 }

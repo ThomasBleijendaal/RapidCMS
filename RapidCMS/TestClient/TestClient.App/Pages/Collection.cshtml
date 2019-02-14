@@ -1,0 +1,192 @@
+﻿@inherits BasePage
+
+@page "/collection/{Action}/{Alias}"
+@page "/collection/{Action}/{Alias}/{ParentId:int}"
+
+@using RapidCMS.Common
+@using RapidCMS.Common.Models.DTOs
+@using RapidCMS.Common.Services
+
+@inject ICollectionService CollectionService
+
+@* TODO: merge both views into single one *@
+
+<h1>Collection view of @Alias</h1>
+
+@if (ListView == null && EditorView == null)
+{
+    <div class="content px-4">
+        <div class="top-row px-4">
+
+        </div>
+        <div class="content px-4">
+            <p>Loading..</p>
+        </div>
+    </div>
+}
+else if (ListView != null)
+{
+    <div class="top-row px-4">
+        @foreach (var button in ListView.Buttons)
+        {
+            <DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@ViewButtonCallbackAsync" Context="@this" />
+        }
+    </div>
+
+    @foreach (var pane in ListView.ViewPanes)
+    {
+        var hasButtons = pane.Buttons?.Any() ?? false;
+
+        <div class="content px-4">
+            <table class="table">
+                <thead>
+                    <tr>
+                        @foreach (var header in pane.Properties)
+                        {
+                            <td>@header.Name<br /><small>@header.Description</small></td>
+                        }
+                        @if (hasButtons)
+                        {
+                            <td></td>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var node in pane.Nodes)
+                    {
+                        <tr>
+                            @foreach (var col in node.Values)
+                            {
+                                <td>@col.DisplayValue</td>
+                            }
+                            @if (hasButtons)
+                            {
+                                <td>
+                                    @foreach (var button in pane.Buttons)
+                                    {
+                                        <DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@NodeViewButtonCallbackAsync" Context="@node" />
+
+                                    }
+                                </td>
+                            }
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+else if (EditorView != null)
+{
+    <div class="top-row px-4">
+        @foreach (var button in EditorView.Buttons)
+        {
+            <DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@EditorButtonCallbackAsync" Context="@this" />
+        }
+    </div>
+
+    var pane = EditorView.Editor;
+    var hasButtons = pane.Buttons?.Any() ?? false;
+
+    <div class="content px-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    @foreach (var header in pane.Properties)
+                    {
+                        <td>@header.Name<br /><small>@header.Description</small></td>
+                    }
+                    @if (hasButtons)
+                    {
+                        <td></td>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var node in pane.Nodes)
+                {
+                    <tr>
+                        @foreach (var value in node.Values)
+                        {
+                            <td><DefaultEditor Type="@value.Type"
+                                               Value="@value.Value"
+                                               Callback="@((string newValue) => value.Value = newValue)" /></td>
+                        }
+                        @if (hasButtons)
+                        {
+                            <td>
+                                @foreach (var button in pane.Buttons)
+                                {
+                                    <DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@NodeEditorButtonCallbackAsync" Context="@node" />
+                                }
+                            </td>
+                        }
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@functions {
+    [Parameter]
+    private string Action { get; set; }
+
+    [Parameter]
+    private string Alias { get; set; }
+
+    [Parameter]
+    private int? ParentId { get; set; } = null;
+
+    CollectionListViewDTO ListView;
+    CollectionListEditorDTO EditorView;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    protected override async Task LoadDataAsync()
+    {
+        if (Action == Constants.List)
+        {
+            ListView = await CollectionService.GetCollectionListViewAsync(Alias, ParentId);
+        }
+        else
+        {
+            EditorView = await CollectionService.GetCollectionListEditorAsync(Action, Alias, ParentId);
+        }
+
+        StateHasChanged();
+    }
+
+    async Task ViewButtonCallbackAsync(string actionId, BasePage view)
+    {
+        var command = await CollectionService.ProcessListViewActionAsync(Alias, ParentId, actionId);
+
+        await HandleViewCommandAsync(command);
+    }
+
+    async Task EditorButtonCallbackAsync(string actionId, BasePage view)
+    {
+        var command = await CollectionService.ProcessListEditorActionAsync(Alias, ParentId, actionId);
+
+        await HandleViewCommandAsync(command);
+    }
+
+    async Task NodeViewButtonCallbackAsync(string actionId, NodeDTO node)
+    {
+        var command = await CollectionService.ProcessListViewActionAsync(Alias, node.Id, node.ParentId, actionId);
+
+        await HandleViewCommandAsync(command);
+    }
+
+    async Task NodeEditorButtonCallbackAsync(string actionId, NodeDTO node)
+    {
+        var command = await CollectionService.ProcessListEditorActionAsync(Alias, node.Id, node.ParentId, actionId);
+
+        await HandleViewCommandAsync(command);
+    }
+}

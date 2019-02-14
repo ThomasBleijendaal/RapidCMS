@@ -103,7 +103,7 @@ namespace RapidCMS.Common.Models
 
     public class ListEditor : Editor
     {
-        public List<EditorPane<Field>> EditorPanes { get; set; }
+        public EditorPane<Field> EditorPane { get; set; }
         public List<Button> Buttons { get; set; }
     }
 
@@ -131,6 +131,7 @@ namespace RapidCMS.Common.Models
     public class EditorPane<T>
         where T : Field
     {
+        public List<Button> Buttons { get; set; }
         public List<T> Fields { get; set; }
     }
 
@@ -162,7 +163,7 @@ namespace RapidCMS.Common.Models
 
     public abstract class Button
     {
-        public string Id { get; set; }
+        public string ButtonId { get; set; }
 
         public string Label { get; set; }
         public string Icon { get; set; }
