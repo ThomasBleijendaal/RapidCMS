@@ -40,15 +40,27 @@ namespace TestLibrary
 
         public override async Task<TestEntity> GetByIdAsync(int id, int? parentId)
         {
-            var data = await GetAllAsync(parentId);
-            return data.FirstOrDefault(x => x.Id == id);
+            await Task.Delay(1);
+
+            return Data.FirstOrDefault(x => x.Id == id);
+        }
+
+        public override async Task<TestEntity> InsertAsync(int id, int? parentId, TestEntity entity)
+        {
+            await Task.Delay(1);
+
+            entity.Id = Data.Max(x => x.Id) + 1;
+
+            Data.Add(entity);
+
+            return entity;
         }
 
         public override async Task UpdateAsync(int id, int? parentId, TestEntity entity)
         {
             await Task.Delay(1);
 
-            var element = _data.First(x => x.Id == id);
+            var element = Data.First(x => x.Id == id);
 
             element.Description = entity.Description;
             element.Name = entity.Name;

@@ -9,18 +9,18 @@
 else
 {
     <li>
-        <strong><NavLink href=@($"collection/{Collection.Alias}/{ParentId}")>@Collection.Name</NavLink></strong>
+        <strong><NavLink href=@Collection.Path class=@(Collection.Path == CurrentUrl ? "current-page" : "")>@Collection.Name</NavLink></strong>
 
         <ul>
             @foreach (var node in Collection.Nodes)
             {
                 <li>
-                    <NavLink href=@($"node/{Constants.Edit}/{Collection.Alias}/{(ParentId.HasValue ? $"{ParentId.Value}/" : "")}{node.Id}")>@node.Name</NavLink>
+                    <NavLink href=@node.Path class=@(node.Path == CurrentUrl ? "current-page" : "")>@node.Name</NavLink>
 
                     <ul>
                         @foreach (var subCollection in node.Collections)
                         {
-                            <CollectionTreeView Collection="@subCollection" ParentId="node.Id" />
+                            <CollectionTreeView Collection="@subCollection" ParentId="@node.Id" CurrentUrl="@CurrentUrl" />
                         }
                     </ul>
                 </li>
@@ -29,6 +29,12 @@ else
     </li>
 }
 @functions {
-    [Parameter] CollectionTreeCollectionDTO Collection { get; set; }
-    [Parameter] int? ParentId { get; set; } = null;
+    [Parameter]
+    private CollectionTreeCollectionDTO Collection { get; set; }
+
+    [Parameter]
+    private int? ParentId { get; set; } = null;
+
+    [Parameter]
+    private string CurrentUrl { get; set; }
 }

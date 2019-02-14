@@ -44,6 +44,10 @@ app {
         top: -2px;
     }
 
+    a.current-page {
+        background: #ddd;
+    }
+
 .nav-item {
     font-size: 0.9rem;
     padding-bottom: 0.5rem;

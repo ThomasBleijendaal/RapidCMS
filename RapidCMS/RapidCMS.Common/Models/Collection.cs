@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Interfaces;
 
 namespace RapidCMS.Common.Models
@@ -157,17 +160,24 @@ namespace RapidCMS.Common.Models
 
     }
 
-    public class Button
+    public abstract class Button
     {
         public string Id { get; set; }
 
         public string Label { get; set; }
         public string Icon { get; set; }
+
+        public abstract bool IsCompatibleWithView(ViewContext viewContext);
     }
 
     public class DefaultButton : Button
     {
         public DefaultButtonType DefaultButtonType { get; set; }
+
+        public override bool IsCompatibleWithView(ViewContext viewContext)
+        {
+            return DefaultButtonType.GetCustomAttribute<ActionsAttribute>().Actions?.Contains(viewContext.Action) ?? false;
+        }
     }
 
     public class Field

@@ -7,6 +7,7 @@ namespace RapidCMS.Common.Models.DTOs
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Path { get; set; }
         public List<CollectionTreeCollectionDTO> Collections { get; set; }
     }
     public class CollectionTreeRootDTO : CollectionTreeNodeDTO
@@ -18,6 +19,7 @@ namespace RapidCMS.Common.Models.DTOs
     {
         public string Alias { get; set; }
         public string Name { get; set; }
+        public string Path { get; set; }
         public List<CollectionTreeNodeDTO> Nodes { get; set; }
     }
 

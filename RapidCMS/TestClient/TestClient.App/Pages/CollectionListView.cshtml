@@ -1,9 +1,12 @@
-﻿@page "/collection/{Alias}"
-@page "/collection/{Alias}/{ParentId:int}"
+﻿@inherits BasePage
+
+@page "/collection/{Action}/{Alias}"
+@page "/collection/{Action}/{Alias}/{ParentId:int}"
 
 @using RapidCMS.Common.Models.DTOs
 @using RapidCMS.Common.Services
 @using RapidCMS.Common.Extensions
+
 @inject ICollectionService CollectionService
 
 <h1>Collection view of @Alias</h1>
@@ -60,13 +63,16 @@ else
 
 @functions {
     [Parameter]
+    private string Action { get; set; }
+
+    [Parameter]
     private string Alias { get; set; }
 
     [Parameter]
     private int? ParentId { get; set; } = null;
 
     CollectionListViewDTO ListView;
-    
+
     protected override async Task OnParametersSetAsync()
     {
         ListView = await CollectionService.GetCollectionListViewAsync(Alias, ParentId);
@@ -74,7 +80,8 @@ else
 
     async Task ButtonCallbackAsync(string actionId)
     {
-        await CollectionService.ProcessListViewActionAsync(Alias, ParentId, actionId);
-        
+        var command = await CollectionService.ProcessListViewActionAsync(Alias, ParentId, actionId);
+
+        HandleViewCommand(command);
     }
 }

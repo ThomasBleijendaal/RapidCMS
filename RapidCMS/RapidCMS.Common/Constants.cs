@@ -4,5 +4,6 @@
     {
         public const string Edit = "edit";
         public const string New = "new";
+        public const string List = "list";
     }
 }

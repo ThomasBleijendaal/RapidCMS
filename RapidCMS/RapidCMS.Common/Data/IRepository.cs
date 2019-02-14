@@ -13,7 +13,9 @@ namespace RapidCMS.Common.Data
         Task<IEnumerable<IEntity>> GetAllAsObjectsAsync(int? parentId);
 
         Task<IEntity> NewAsync(int? parentId);
+        Task<IEntity> InsertAsync(int id, int? parentId, IEntity entity);
         Task UpdateAsync(int id, int? parentId, IEntity entity);
+        Task DeleteAsync(int id, int? parentId);
     }
     
     public interface IRepository<TKey, TEntity> : IRepository
@@ -23,6 +25,7 @@ namespace RapidCMS.Common.Data
         Task<IEnumerable<TEntity>> GetAllAsync(int? parentId);
 
         new Task<TEntity> NewAsync(int? parentId);
+        Task<TEntity> InsertAsync(int id, int? parentId, TEntity entity);
         Task UpdateAsync(int id, int? parentId, TEntity entity);
     }
 
@@ -35,6 +38,7 @@ namespace RapidCMS.Common.Data
         public abstract Task<TEntity> GetByIdAsync(int id, int? parentId);
         public abstract Task<IEnumerable<TEntity>> GetAllAsync(int? parentId);
         public abstract Task<TEntity> NewAsync(int? parentId);
+        public abstract Task<TEntity> InsertAsync(int id, int? parentId, TEntity entity);
         public abstract Task UpdateAsync(int id, int? parentId, TEntity entity);
 
         async Task<IEntity> IRepository.GetByIdAsync(int id, int? parentId)
@@ -50,6 +54,11 @@ namespace RapidCMS.Common.Data
         async Task<IEntity> IRepository.NewAsync(int? parentId)
         {
             return (await NewAsync(parentId)) as IEntity;
+        }
+
+        async Task<IEntity> IRepository.InsertAsync(int id, int? parentId, IEntity entity)
+        {
+            return (await InsertAsync(id, parentId, (TEntity)entity)) as IEntity;
         }
 
         async Task IRepository.UpdateAsync(int id, int? parentId, IEntity entity)

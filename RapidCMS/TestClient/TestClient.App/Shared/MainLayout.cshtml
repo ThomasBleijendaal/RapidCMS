@@ -1,7 +1,11 @@
 ﻿@inherits LayoutComponentBase
+
 @using RapidCMS.Common.Models.DTOs
 @using RapidCMS.Common.Services
+@using Microsoft.AspNetCore.Components.Services
+
 @inject ICollectionService CollectionService
+@inject IUriHelper UriHelper
 
 <div class="sidebar">
     <NavMenu />
@@ -18,7 +22,7 @@
             {
                 @foreach (var collection in RootEntity.Collections)
                 {
-                    <CollectionTreeView Collection="@collection" />
+                    <CollectionTreeView Collection="@collection" CurrentUrl="@currentUrl" />
                 }
             }
         </ul>
@@ -37,9 +41,51 @@
 
 @functions {
     CollectionTreeRootDTO RootEntity;
+    string currentUrl;
 
     protected override async Task OnInitAsync()
     {
+        UriHelper.OnLocationChanged += LocationChanged;
+
+        await GetCollectionsAsync();
+    }
+
+    private async Task GetCollectionsAsync()
+    {
         RootEntity = await CollectionService.GetCollectionsAsync();
+    }
+
+    private async void LocationChanged(object sender, string e)
+    {
+        var uri = new Uri(e);
+
+        currentUrl = uri.AbsolutePath?.Substring(1);
+
+        if (!FindUrl(RootEntity.Collections, currentUrl))
+        {
+            await GetCollectionsAsync();
+        }
+
+        StateHasChanged();
+    }
+
+    private bool FindUrl(IEnumerable<CollectionTreeCollectionDTO> collections, string url)
+    {
+        if (collections?.Any() ?? false == false)
+        {
+            return false;
+        }
+        else if (collections.Any(x => x.Path == url))
+        {
+            return true;
+        }
+        else if (collections.SelectMany(x => x.Nodes).Any(x => x.Path == url))
+        {
+            return true;
+        }
+        else
+        {
+            return FindUrl(collections.SelectMany(x => x.Nodes.SelectMany(y => y.Collections)), url);
+        }
     }
 }

@@ -1,11 +1,15 @@
-﻿@page "/node/{Action}/{Alias}"
+﻿@inherits BasePage
+
+@page "/node/{Action}/{Alias}"
 @page "/node/{Action}/{Alias}/{Id:int}"
 @page "/node/{Action}/{Alias}/{ParentId:int}/{Id:int}"
 
 @using RapidCMS.Common.Models.DTOs
 @using RapidCMS.Common.Services
 @using RapidCMS.Common.Extensions
+
 @inject ICollectionService CollectionService
+
 @*
     TODO: remove weird callback for binding
 *@
@@ -68,7 +72,7 @@ else
     private string Action { get; set; }
 
     [Parameter]
-    private int ParentId { get; set; }
+    private int? ParentId { get; set; } = null;
 
     [Parameter]
     private int Id { get; set; }
@@ -82,6 +86,8 @@ else
 
     async Task ButtonCallbackAsync(string actionId)
     {
-        await CollectionService.ProcessNodeEditorActionAsync(Alias, ParentId, Id, Editor, actionId);
+        var command = await CollectionService.ProcessNodeEditorActionAsync(Action, Alias, ParentId, Id, Editor, actionId);
+
+        HandleViewCommand(command);
     }
 }

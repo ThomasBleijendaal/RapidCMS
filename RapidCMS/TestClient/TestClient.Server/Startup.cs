@@ -49,7 +49,8 @@ namespace TestClient.Server
             void nodeEditor(NodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
-                    .AddDefaultButton(DefaultButtonType.SaveNewAndExisting)
+                    .AddDefaultButton(DefaultButtonType.SaveNew)
+                    .AddDefaultButton(DefaultButtonType.SaveExisting)
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x.Id)
