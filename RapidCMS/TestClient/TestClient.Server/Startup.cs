@@ -115,6 +115,7 @@ namespace TestClient.Server
                             list.AddDefaultButton(DefaultButtonType.New);
                             list.SetEditor(editor =>
                             {
+                                editor.AddDefaultButton(DefaultButtonType.SaveNew);
                                 editor.AddDefaultButton(DefaultButtonType.View);
                                 editor.AddDefaultButton(DefaultButtonType.Edit);
                                 editor.AddDefaultButton(DefaultButtonType.Delete);

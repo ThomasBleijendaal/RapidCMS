@@ -23,7 +23,7 @@ namespace RapidCMS.Common.Services
     {
         Task<CollectionTreeRootDTO> GetCollectionsAsync();
 
-        Task<CollectionListViewDTO> GetCollectionListViewAsync(string alias, int? parentId);
+        Task<CollectionListViewDTO> GetCollectionListViewAsync(string action, string alias, int? parentId);
 
         Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string alias, int? parentId);
 
@@ -94,7 +94,7 @@ namespace RapidCMS.Common.Services
             return result;
         }
 
-        public async Task<CollectionListViewDTO> GetCollectionListViewAsync(string alias, int? parentId)
+        public async Task<CollectionListViewDTO> GetCollectionListViewAsync(string action, string alias, int? parentId)
         {
             var collection = _root.GetCollection(alias);
 

@@ -152,7 +152,7 @@ else if (EditorView != null)
     {
         if (Action == Constants.List)
         {
-            ListView = await CollectionService.GetCollectionListViewAsync(Alias, ParentId);
+            ListView = await CollectionService.GetCollectionListViewAsync(Action, Alias, ParentId);
         }
         else
         {
