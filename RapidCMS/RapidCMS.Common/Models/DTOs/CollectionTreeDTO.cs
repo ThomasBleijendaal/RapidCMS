@@ -54,6 +54,7 @@ namespace RapidCMS.Common.Models.DTOs
         public int Id { get; set; }
         public int? ParentId { get; set; }
 
+        public List<ButtonDTO> Buttons { get; set; }
         public List<ValueDTO> Values { get; set; }
     }
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Services;
@@ -17,7 +17,6 @@ namespace RapidCMS.Common.Services
     // TODO: split class into Collection and UI service
     // TODO: make UI service intent-aware (new, save existing etc)
     // TODO: make button handling more seperate
-    // TODO: add actions everywhere
 
     public interface ICollectionService
     {
@@ -29,10 +28,11 @@ namespace RapidCMS.Common.Services
 
         Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, int? parentId, int id);
 
-        Task<ViewCommand> ProcessListViewActionAsync(string alias, int? parentId, string actionId);
-        Task<ViewCommand> ProcessListEditorActionAsync(string alias, int? parentId, string actionId);
-        Task<ViewCommand> ProcessListViewActionAsync(string alias, int id, int? parentId, string actionId);
-        Task<ViewCommand> ProcessListEditorActionAsync(string alias, int id, int? parentId, string actionId);
+        Task<ViewCommand> ProcessListViewActionAsync(string action, string alias, int? parentId, string actionId);
+        Task<ViewCommand> ProcessListEditorActionAsync(string action, string alias, int? parentId, string actionId);
+
+        Task<ViewCommand> ProcessListViewActionAsync(string action, string alias, int id, int? parentId, string actionId);
+        Task<ViewCommand> ProcessListEditorActionAsync(string action, string alias, int id, int? parentId, CollectionListEditorDTO editor, string actionId);
 
         Task<ViewCommand> ProcessNodeEditorActionAsync(string action, string alias, int? parentId, int id, NodeEditorDTO editor, string actionId);
     }
@@ -44,6 +44,17 @@ namespace RapidCMS.Common.Services
         public CollectionService(Root root)
         {
             _root = root;
+        }
+
+        private UsageType MapActionToUsageType(string action)
+        {
+            return action switch
+            {
+                Constants.Edit => UsageType.Edit,
+                Constants.New => UsageType.New,
+                Constants.View => UsageType.View,
+                _ => (UsageType)0
+            };
         }
 
         // TODO: make tree configuration aware for editors and viewers
@@ -96,6 +107,11 @@ namespace RapidCMS.Common.Services
 
         public async Task<CollectionListViewDTO> GetCollectionListViewAsync(string action, string alias, int? parentId)
         {
+            var viewContext = new ViewContext
+            {
+                Usage = UsageType.List | MapActionToUsageType(action)
+            };
+
             var collection = _root.GetCollection(alias);
 
             var entities = await collection.Repository.GetAllAsObjectsAsync(parentId);
@@ -104,20 +120,9 @@ namespace RapidCMS.Common.Services
 
             return new CollectionListViewDTO()
             {
-                Buttons = listView.Buttons.ToList(button =>
-                {
-                    return new ButtonDTO
-                    {
-                        Icon = button.Icon,
-                        ButtonId = button.ButtonId,
-                        Label = button.Label
-                    };
-                }),
-                ViewPanes = listView.ViewPanes.ToList(pane =>
-                {
-                return new CollectionListViewPaneDTO
-                {
-                    Buttons = pane.Buttons.ToList(button =>
+                Buttons = listView.Buttons
+                    .Where(button => button.IsCompatibleWithView(viewContext))
+                    .ToList(button =>
                     {
                         return new ButtonDTO
                         {
@@ -126,22 +131,35 @@ namespace RapidCMS.Common.Services
                             Label = button.Label
                         };
                     }),
-                    Properties = pane.Properties.ToList(prop =>
-                        new PropertyDTO
+                ViewPanes = listView.ViewPanes.ToList(pane =>
+                {
+                    return new CollectionListViewPaneDTO
+                    {
+                        Buttons = pane.Buttons.ToList(button =>
                         {
-                            Name = prop.Name,
-                            Description = prop.Description
-                        }),
-                    Nodes = entities.ToList(entity =>
-                        new NodeDTO
-                        {
-                            Id = entity.Id,
-                            ParentId = parentId,
-                            Values = pane.Properties.ToList(prop => new ValueDTO
+                            return new ButtonDTO
                             {
-                                DisplayValue = prop.ValueMapper.MapToView(null, prop.NodeProperty.Getter.Invoke(entity))
+                                Icon = button.Icon,
+                                ButtonId = button.ButtonId,
+                                Label = button.Label
+                            };
+                        }),
+                        Properties = pane.Properties.ToList(prop =>
+                            new PropertyDTO
+                            {
+                                Name = prop.Name,
+                                Description = prop.Description
+                            }),
+                        Nodes = entities.ToList(entity =>
+                            new NodeDTO
+                            {
+                                Id = entity.Id,
+                                ParentId = parentId,
+                                Values = pane.Properties.ToList(prop => new ValueDTO
+                                {
+                                    DisplayValue = prop.ValueMapper.MapToView(null, prop.NodeProperty.Getter.Invoke(entity))
+                                })
                             })
-                        })
                     };
                 })
             };
@@ -149,34 +167,21 @@ namespace RapidCMS.Common.Services
 
         public async Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string alias, int? parentId)
         {
-            var collection = _root.GetCollection(alias);
-
-            var entities = action switch
-            { 
-                Constants.Edit => await collection.Repository.GetAllAsObjectsAsync(parentId),
-                Constants.New => Enumerable.Concat(
-                    new[] { await collection.Repository.NewAsync(parentId) }, 
-                    await collection.Repository.GetAllAsObjectsAsync(parentId)),
-                _ => Enumerable.Empty<IEntity>()
+            var listViewContext = new ViewContext
+            {
+                Usage = UsageType.List | MapActionToUsageType(action)
             };
+
+            var collection = _root.GetCollection(alias);
 
             var listEditor = collection.ListEditor;
             var editor = listEditor.EditorPane;
 
-            return new CollectionListEditorDTO()
+            return new CollectionListEditorDTO
             {
-                Buttons = listEditor.Buttons.ToList(button =>
-                {
-                    return new ButtonDTO
-                    {
-                        Icon = button.Icon,
-                        ButtonId = button.ButtonId,
-                        Label = button.Label
-                    };
-                }),
-                Editor = new CollectionListEditorPaneDTO
-                {
-                    Buttons = editor.Buttons.ToList(button =>
+                Buttons = listEditor.Buttons
+                    .Where(button => button.IsCompatibleWithView(listViewContext))
+                    .ToList(button =>
                     {
                         return new ButtonDTO
                         {
@@ -185,33 +190,80 @@ namespace RapidCMS.Common.Services
                             Label = button.Label
                         };
                     }),
+                Editor = new CollectionListEditorPaneDTO
+                {
                     Properties = editor.Fields.ToList(field =>
                         new PropertyDTO
                         {
                             Name = field.Name,
                             Description = field.Description
                         }),
-                    Nodes = entities.ToList(entity =>
-                        new NodeDTO
-                        {
-                            Id = entity.Id,
-                            ParentId = parentId,
-                            Values = editor.Fields.ToList(field => new ValueDTO
-                            {
-                                DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter.Invoke(entity)),
-                                Type = field.DataType,
-                                Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter.Invoke(entity)),
-                            })
-                        })
+                    Nodes = await GetNodesAsync().ToListAsync()
                 }
             };
+
+            async IAsyncEnumerable<NodeDTO> GetNodesAsync()
+            {
+                if (action == Constants.New)
+                {
+                    var editorViewContext = new ViewContext
+                    {
+                        Usage = UsageType.Node | MapActionToUsageType(Constants.New)
+                    };
+
+                    var newEntity = await collection.Repository.NewAsync(parentId);
+
+                    yield return CreateNode(newEntity, editorViewContext);
+                }
+
+                if (action.In(Constants.New, Constants.Edit))
+                {
+                    var editorViewContext = new ViewContext
+                    {
+                        Usage = UsageType.Node | MapActionToUsageType(Constants.Edit)
+                    };
+
+                    var entities = await collection.Repository.GetAllAsObjectsAsync(parentId);
+
+                    foreach (var entity in entities)
+                    {
+                        yield return CreateNode(entity, editorViewContext);
+                    }
+                }
+            }
+
+            NodeDTO CreateNode(IEntity entity, ViewContext viewContext)
+            {
+                return new NodeDTO
+                {
+                    Id = entity.Id,
+                    ParentId = parentId,
+                    Buttons = editor.Buttons
+                        .Where(button => button.IsCompatibleWithView(viewContext))
+                        .ToList(button =>
+                        {
+                            return new ButtonDTO
+                            {
+                                Icon = button.Icon,
+                                ButtonId = button.ButtonId,
+                                Label = button.Label
+                            };
+                        }),
+                    Values = editor.Fields.ToList(field => new ValueDTO
+                    {
+                        DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter.Invoke(entity)),
+                        Type = field.DataType,
+                        Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter.Invoke(entity)),
+                    })
+                };
+            }
         }
 
         public async Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, int? parentId, int id)
         {
             var viewContext = new ViewContext
             {
-                Action = action
+                Usage = UsageType.Node | MapActionToUsageType(action)
             };
 
             var collection = _root.GetCollection(alias);
@@ -311,7 +363,7 @@ namespace RapidCMS.Common.Services
 
                         await collection.Repository.UpdateAsync(id, parentId, entity);
 
-                        break;
+                        return new ReloadCommand();
 
                     case DefaultButtonType.Delete:
 
@@ -319,7 +371,6 @@ namespace RapidCMS.Common.Services
 
                         return new NavigateCommand { Uri = $"/collection/{Constants.List}/{alias}{(parentId.HasValue ? $"/{parentId.Value}" : "")}" };
 
-                    case DefaultButtonType.New:
                     default:
                         break;
                 }
@@ -332,7 +383,7 @@ namespace RapidCMS.Common.Services
             return null;
         }
 
-        public async Task<ViewCommand> ProcessListViewActionAsync(string alias, int? parentId, string actionId)
+        public async Task<ViewCommand> ProcessListViewActionAsync(string action, string alias, int? parentId, string actionId)
         {
             var collection = _root.GetCollection(alias);
 
@@ -356,7 +407,7 @@ namespace RapidCMS.Common.Services
             return null;
         }
 
-        public async Task<ViewCommand> ProcessListEditorActionAsync(string alias, int? parentId, string actionId)
+        public async Task<ViewCommand> ProcessListEditorActionAsync(string action, string alias, int? parentId, string actionId)
         {
             var collection = _root.GetCollection(alias);
 
@@ -380,7 +431,7 @@ namespace RapidCMS.Common.Services
             return null;
         }
 
-        public async Task<ViewCommand> ProcessListViewActionAsync(string alias, int id, int? parentId, string actionId)
+        public async Task<ViewCommand> ProcessListViewActionAsync(string action, string alias, int id, int? parentId, string actionId)
         {
             var collection = _root.GetCollection(alias);
 
@@ -408,11 +459,29 @@ namespace RapidCMS.Common.Services
             return null;
         }
 
-        public async Task<ViewCommand> ProcessListEditorActionAsync(string alias, int id, int? parentId, string actionId)
+        public async Task<ViewCommand> ProcessListEditorActionAsync(string action, string alias, int id, int? parentId, CollectionListEditorDTO editor, string actionId)
         {
             var collection = _root.GetCollection(alias);
 
+            var entity = action switch
+            {
+                Constants.Edit => await collection.Repository.GetByIdAsync(id, parentId),
+                Constants.New => await collection.Repository.NewAsync(parentId),
+                _ => null
+            };
+
             var listEditor = collection.ListEditor;
+
+            // TODO: process view to entity automagically
+            var nameValue = editor.Editor.Nodes.First(x => x.Id == id).Values.ElementAt(1).Value;
+            var descValue = editor.Editor.Nodes.First(x => x.Id == id).Values.Last().Value;
+
+            var element1 = listEditor.EditorPane.Fields.ElementAt(1);
+            var element2 = listEditor.EditorPane.Fields.Last();
+
+            element1.NodeProperty.Setter.Invoke(entity, element1.ValueMapper.MapFromEditor(null, nameValue));
+            element2.NodeProperty.Setter.Invoke(entity, element2.ValueMapper.MapFromEditor(null, descValue));
+
 
             var button = listEditor.EditorPane.Buttons.First(x => x.ButtonId == actionId);
 
@@ -420,6 +489,27 @@ namespace RapidCMS.Common.Services
             {
                 switch (defaultButton.DefaultButtonType)
                 {
+                    case DefaultButtonType.View:
+
+                        return new NavigateCommand { Uri = $"/node/{Constants.View}/{alias}/{(parentId.HasValue ? $"{parentId.Value}/" : "")}{id}" };
+
+                    case DefaultButtonType.Edit:
+
+                        return new NavigateCommand { Uri = $"/node/{Constants.Edit}/{alias}/{(parentId.HasValue ? $"{parentId.Value}/" : "")}{id}" };
+
+                    case DefaultButtonType.SaveNew:
+
+                        entity = await collection.Repository.InsertAsync(id, parentId, entity);
+
+                        return new ReloadCommand();
+
+                    case DefaultButtonType.SaveExisting:
+                    case DefaultButtonType.SaveNewAndExisting:
+
+                        await collection.Repository.UpdateAsync(id, parentId, entity);
+
+                        return new ReloadCommand();
+
                     case DefaultButtonType.Delete:
 
                         await collection.Repository.DeleteAsync(id, parentId);

@@ -7,14 +7,4 @@ namespace RapidCMS.Common.Attributes
         public string Icon { get; set; }
         public string Label { get; set; }
     }
-
-    internal class ActionsAttribute : Attribute
-    {
-        public ActionsAttribute(params string[] actions)
-        {
-            Actions = actions;
-        }
-
-        public string[] Actions { get; private set; }
-    }
 }

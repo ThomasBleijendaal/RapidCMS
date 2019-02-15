@@ -177,7 +177,7 @@ namespace RapidCMS.Common.Models
 
         public override bool IsCompatibleWithView(ViewContext viewContext)
         {
-            return DefaultButtonType.GetCustomAttribute<ActionsAttribute>().Actions?.Contains(viewContext.Action) ?? false;
+            return DefaultButtonType.GetCustomAttribute<ActionsAttribute>().Usages?.Any(x => viewContext.Usage.HasFlag(x)) ?? false;
         }
     }
 

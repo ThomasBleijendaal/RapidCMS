@@ -2,36 +2,34 @@
 
 namespace RapidCMS.Common.Enums
 {
-    // TODO: change actions to something configurable when actions become enums
-
     public enum DefaultButtonType
     {
         [DefaultIconLabel(Icon = "plus", Label = "New")]
-        [Actions(Constants.List)]
+        [Actions(UsageType.List)]
         New = 1,
 
-        [DefaultIconLabel(Icon = "hard-drive", Label = "Save new")]
-        [Actions(Constants.New)]
+        [DefaultIconLabel(Icon = "hard-drive", Label = "Insert")]
+        [Actions(UsageType.New)]
         SaveNew,
 
         [DefaultIconLabel(Icon = "hard-drive", Label = "Update")]
-        [Actions(Constants.Edit)]
+        [Actions(UsageType.Edit | UsageType.Node)]
         SaveExisting,
 
         [DefaultIconLabel(Icon = "hard-drive", Label = "Save")]
-        [Actions(Constants.New, Constants.Edit)]
-        SaveNewAndExisting ,
+        [Actions(UsageType.New | UsageType.Node, UsageType.Edit | UsageType.Node)]
+        SaveNewAndExisting,
 
         [DefaultIconLabel(Icon = "trash", Label = "Delete")]
-        [Actions(Constants.Edit)]
+        [Actions(UsageType.Edit | UsageType.Node, UsageType.View | UsageType.Node)]
         Delete,
 
         [DefaultIconLabel(Icon = "pencil", Label = "Edit")]
-        [Actions(Constants.List)]
+        [Actions(UsageType.List, UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.View)]
         Edit,
 
         [DefaultIconLabel(Icon = "magnifying-glass", Label = "View")]
-        [Actions(Constants.List)]
+        [Actions(UsageType.List, UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.View)]
         View
     }
 }

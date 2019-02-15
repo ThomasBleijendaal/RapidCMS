@@ -1,4 +1,4 @@
-﻿@inherits BasePage
+@inherits BasePage
 
 @page "/collection/{Action}/{Alias}"
 @page "/collection/{Action}/{Alias}/{ParentId:int}"
@@ -87,7 +87,6 @@ else if (EditorView != null)
     </div>
 
     var pane = EditorView.Editor;
-    var hasButtons = pane.Buttons?.Any() ?? false;
 
     <div class="content px-4">
         <table class="table">
@@ -97,10 +96,7 @@ else if (EditorView != null)
                     {
                         <td>@header.Name<br /><small>@header.Description</small></td>
                     }
-                    @if (hasButtons)
-                    {
-                        <td></td>
-                    }
+                    <td></td>
                 </tr>
             </thead>
             <tbody>
@@ -113,16 +109,12 @@ else if (EditorView != null)
                                                Value="@value.Value"
                                                Callback="@((string newValue) => value.Value = newValue)" /></td>
                         }
-                        @if (hasButtons)
-                        {
-                            <td>
-                                @foreach (var button in pane.Buttons)
-                                {
-                                    <DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@NodeEditorButtonCallbackAsync" Context="@node" />
-                                }
-                            </td>
-                        }
-
+                        <td>
+                            @foreach (var button in node.Buttons)
+                            {
+                                <DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@NodeEditorButtonCallbackAsync" Context="@node" />
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -164,28 +156,28 @@ else if (EditorView != null)
 
     async Task ViewButtonCallbackAsync(string actionId, BasePage view)
     {
-        var command = await CollectionService.ProcessListViewActionAsync(Alias, ParentId, actionId);
+        var command = await CollectionService.ProcessListViewActionAsync(Action, Alias, ParentId, actionId);
 
         await HandleViewCommandAsync(command);
     }
 
     async Task EditorButtonCallbackAsync(string actionId, BasePage view)
     {
-        var command = await CollectionService.ProcessListEditorActionAsync(Alias, ParentId, actionId);
+        var command = await CollectionService.ProcessListEditorActionAsync(Action, Alias, ParentId, actionId);
 
         await HandleViewCommandAsync(command);
     }
 
     async Task NodeViewButtonCallbackAsync(string actionId, NodeDTO node)
     {
-        var command = await CollectionService.ProcessListViewActionAsync(Alias, node.Id, node.ParentId, actionId);
+        var command = await CollectionService.ProcessListViewActionAsync(Action, Alias, node.Id, node.ParentId, actionId);
 
         await HandleViewCommandAsync(command);
     }
 
     async Task NodeEditorButtonCallbackAsync(string actionId, NodeDTO node)
     {
-        var command = await CollectionService.ProcessListEditorActionAsync(Alias, node.Id, node.ParentId, actionId);
+        var command = await CollectionService.ProcessListEditorActionAsync(Action, Alias, node.Id, node.ParentId, EditorView, actionId);
 
         await HandleViewCommandAsync(command);
     }
