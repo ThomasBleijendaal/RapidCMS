@@ -49,7 +49,7 @@ namespace TestLibrary
         {
             await Task.Delay(1);
 
-            entity.Id = Data.Max(x => x.Id) + 1;
+            entity.Id = Data.Any() ? Data.Max(x => x.Id) + 1 : 1;
 
             Data.Add(entity);
 

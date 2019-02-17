@@ -28,6 +28,18 @@ namespace RapidCMS.Common.Extensions
         {
             return list?.Contains(source) ?? false;
         }
+
+        public static async Task<List<TResult>> ToListAsync<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, Task<TResult>> asyncSelector)
+        {
+            var result = new List<TResult>();
+
+            foreach (var element in source.Select(asyncSelector))
+            {
+                result.Add(await element);
+            }
+
+            return result;
+        }
     }
 
     public static class AsyncEnumerableExtensions

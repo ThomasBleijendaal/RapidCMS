@@ -133,12 +133,22 @@ else if (EditorView != null)
     [Parameter]
     private int? ParentId { get; set; } = null;
 
+    [Parameter]
+    private CollectionListEditorDTO ExternalEditor { get; set; } = null;
+
     CollectionListViewDTO ListView;
     CollectionListEditorDTO EditorView;
 
     protected override async Task OnParametersSetAsync()
     {
-        await LoadDataAsync();
+        if (ExternalEditor != null)
+        {
+            EditorView = ExternalEditor;
+        }
+        else
+        {
+            await LoadDataAsync();
+        }
     }
 
     protected override async Task LoadDataAsync()

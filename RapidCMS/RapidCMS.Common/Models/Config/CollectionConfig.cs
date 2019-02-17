@@ -233,6 +233,12 @@ namespace RapidCMS.Common.Models.Config
         }
     }
 
+    public class SubCollectionListEditorConfig<TEntity> : ListEditorConfig<TEntity>
+        where TEntity : IEntity
+    {
+        public string CollectionAlias { get; set; }
+    }
+
     public class ListEditorPaneConfig<TEntity>
         where TEntity : IEntity
     {
@@ -315,8 +321,10 @@ namespace RapidCMS.Common.Models.Config
     public class NodeEditorPaneConfig<TEntity>
         where TEntity : IEntity
     {
+        // TODO: merge both lists to support better ordering
         public List<FieldConfig<TEntity>> Fields { get; set; } = new List<FieldConfig<TEntity>>();
-        
+        public ICollection<SubCollectionListEditorConfig<TEntity>> SubCollectionListEditors { get; set; } = new List<SubCollectionListEditorConfig<TEntity>>();
+
         public FieldConfig<TEntity> AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<FieldConfig<TEntity>> configure = null)
         {
             var config = new FieldConfig<TEntity>()
@@ -341,7 +349,22 @@ namespace RapidCMS.Common.Models.Config
             Fields.Add(config);
 
             return config;
-        }   
+        }
+
+        // TODO: introduce TSubEntity
+        public SubCollectionListEditorConfig<TEntity> AddSubCollectionListEditor(string collectionAlias, Action<SubCollectionListEditorConfig<TEntity>> configure)
+        {
+            var config = new SubCollectionListEditorConfig<TEntity>
+            {
+                CollectionAlias = collectionAlias
+            };
+
+            configure?.Invoke(config);
+
+            SubCollectionListEditors.Add(config);
+
+            return config;
+        }
     }
 
     public class FieldConfig<TEntity>

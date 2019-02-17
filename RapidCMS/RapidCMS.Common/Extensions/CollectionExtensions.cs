@@ -180,6 +180,55 @@ namespace RapidCMS.Common.Extensions
                                     ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
                                     ValueMapperType = field.ValueMapperType
                                 };
+                            }),
+
+                            SubCollectionListEditors = pane.SubCollectionListEditors.ToList(listEditor =>
+                            {
+                                // TODO: this is not good, the embedded view should get its own data
+                                // but then now it is a sub collection editor
+                                return new SubCollectionListEditor
+                                {
+                                    CollectionAlias = listEditor.CollectionAlias,
+
+                                    Buttons = listEditor.Buttons.ToList(button => button switch
+                                    {
+                                        DefaultButtonConfig defaultButton => new DefaultButton
+                                        {
+                                            ButtonId = Guid.NewGuid().ToString(),
+                                            DefaultButtonType = defaultButton.ButtonType,
+                                            Icon = defaultButton.Icon,
+                                            Label = defaultButton.Label
+                                        },
+                                        _ => default(Button)
+                                    }),
+                                    EditorPane = new EditorPane<Field>
+                                    {
+                                        Buttons = listEditor.ListEditor.Buttons.ToList(button => button switch
+                                        {
+                                            DefaultButtonConfig defaultButton => new DefaultButton
+                                            {
+                                                ButtonId = Guid.NewGuid().ToString(),
+                                                DefaultButtonType = defaultButton.ButtonType,
+                                                Icon = defaultButton.Icon,
+                                                Label = defaultButton.Label
+                                            },
+                                            _ => default(Button)
+                                        }),
+                                        Fields = listEditor.ListEditor.Fields.ToList(field =>
+                                        {
+                                            return new Field
+                                            {
+                                                DataType = field.Type,
+                                                Description = field.Description,
+                                                Name = field.Name,
+                                                NodeProperty = field.NodeProperty,
+                                                Readonly = field.Readonly,
+                                                ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
+                                                ValueMapperType = field.ValueMapperType
+                                            };
+                                        })
+                                    }
+                                };
                             })
                         };
                     })

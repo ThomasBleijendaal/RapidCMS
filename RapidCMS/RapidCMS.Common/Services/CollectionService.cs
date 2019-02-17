@@ -198,66 +198,66 @@ namespace RapidCMS.Common.Services
                             Name = field.Name,
                             Description = field.Description
                         }),
-                    Nodes = await GetNodesAsync().ToListAsync()
+                    Nodes = await GetCollectionListEditorNodesAsync(action, parentId, collection, editor).ToListAsync()
                 }
             };
+        }
 
-            async IAsyncEnumerable<NodeDTO> GetNodesAsync()
+        private async IAsyncEnumerable<NodeDTO> GetCollectionListEditorNodesAsync(string action, int? parentId, Collection collection, EditorPane<Field> editor)
+        {
+            if (action == Constants.New)
             {
-                if (action == Constants.New)
+                var editorViewContext = new ViewContext
                 {
-                    var editorViewContext = new ViewContext
-                    {
-                        Usage = UsageType.Node | MapActionToUsageType(Constants.New)
-                    };
-
-                    var newEntity = await collection.Repository.NewAsync(parentId);
-
-                    yield return CreateNode(newEntity, editorViewContext);
-                }
-
-                if (action.In(Constants.New, Constants.Edit))
-                {
-                    var editorViewContext = new ViewContext
-                    {
-                        Usage = UsageType.Node | MapActionToUsageType(Constants.Edit)
-                    };
-
-                    var entities = await collection.Repository.GetAllAsObjectsAsync(parentId);
-
-                    foreach (var entity in entities)
-                    {
-                        yield return CreateNode(entity, editorViewContext);
-                    }
-                }
-            }
-
-            NodeDTO CreateNode(IEntity entity, ViewContext viewContext)
-            {
-                return new NodeDTO
-                {
-                    Id = entity.Id,
-                    ParentId = parentId,
-                    Buttons = editor.Buttons
-                        .Where(button => button.IsCompatibleWithView(viewContext))
-                        .ToList(button =>
-                        {
-                            return new ButtonDTO
-                            {
-                                Icon = button.Icon,
-                                ButtonId = button.ButtonId,
-                                Label = button.Label
-                            };
-                        }),
-                    Values = editor.Fields.ToList(field => new ValueDTO
-                    {
-                        DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter.Invoke(entity)),
-                        IsReadonly = field.Readonly,
-                        Type = field.DataType,
-                        Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter.Invoke(entity)),
-                    })
+                    Usage = UsageType.Node | MapActionToUsageType(Constants.New)
                 };
+
+                var newEntity = await collection.Repository.NewAsync(parentId);
+
+                yield return CreateCollectionListEditorNode(newEntity, editorViewContext, parentId, editor);
             }
+
+            if (action.In(Constants.New, Constants.Edit))
+            {
+                var editorViewContext = new ViewContext
+                {
+                    Usage = UsageType.Node | MapActionToUsageType(Constants.Edit)
+                };
+
+                var entities = await collection.Repository.GetAllAsObjectsAsync(parentId);
+
+                foreach (var entity in entities)
+                {
+                    yield return CreateCollectionListEditorNode(entity, editorViewContext, parentId, editor);
+                }
+            }
+        }
+
+        private static NodeDTO CreateCollectionListEditorNode(IEntity entity, ViewContext viewContext, int? parentId, EditorPane<Field> editor)
+        {
+            return new NodeDTO
+            {
+                Id = entity.Id,
+                ParentId = parentId,
+                Buttons = editor.Buttons
+                    .Where(button => button.IsCompatibleWithView(viewContext))
+                    .ToList(button =>
+                    {
+                        return new ButtonDTO
+                        {
+                            Icon = button.Icon,
+                            ButtonId = button.ButtonId,
+                            Label = button.Label
+                        };
+                    }),
+                Values = editor.Fields.ToList(field => new ValueDTO
+                {
+                    DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter.Invoke(entity)),
+                    IsReadonly = field.Readonly,
+                    Type = field.DataType,
+                    Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter.Invoke(entity)),
+                })
+            };
         }
 
         public async Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, int? parentId, int id)
@@ -297,7 +297,7 @@ namespace RapidCMS.Common.Services
                             Label = button.Label
                         };
                     }),
-                EditorPanes = nodeEditor.EditorPanes.ToList(pane =>
+                EditorPanes = await nodeEditor.EditorPanes.ToListAsync(async pane =>
                 {
                     return new NodeEditorPaneDTO
                     {
@@ -318,6 +318,58 @@ namespace RapidCMS.Common.Services
                                 });
 
                             return editor;
+                        }),
+                        SubCollectionListEditors = await pane.SubCollectionListEditors.ToListAsync(async listEditor =>
+                        {
+                            // HACK: TODO: always new and edit?
+                            var listViewContext = new ViewContext
+                            {
+                                Usage = UsageType.List | UsageType.New | UsageType.Edit
+                            };
+
+                            var collection = _root.GetCollection(listEditor.CollectionAlias);
+
+                            var editor = listEditor.EditorPane;
+
+                            return new SubCollectionListEditorDTO
+                            {
+                                CollectionAlias = listEditor.CollectionAlias,
+                                Buttons = listEditor.Buttons
+                                    .Where(button => button.IsCompatibleWithView(listViewContext))
+                                    .ToList(button =>
+                                    {
+                                        return new ButtonDTO
+                                        {
+                                            Icon = button.Icon,
+                                            ButtonId = button.ButtonId,
+                                            Label = button.Label
+                                        };
+                                    }),
+                                Editor = new CollectionListEditorPaneDTO
+                                {
+                                    Properties = editor.Fields.ToList(field =>
+                                        new PropertyDTO
+                                        {
+                                            Name = field.Name,
+                                            Description = field.Description
+                                        }),
+                                    // HACK: TODO: always new?
+                                    Nodes = await GetCollectionListEditorNodesAsync(Constants.New, id, collection, editor).ToListAsync()
+                                }
+                            };
+
+
+
+
+                            //var subCollectionEditor = await GetCollectionListEditorAsync(Constants.New, editor.CollectionAlias, entity.Id);
+
+                            //// TODO: bit ugly
+                            //return new SubCollectionListEditorDTO
+                            //{
+                            //    Buttons = subCollectionEditor.Buttons,
+                            //    CollectionAlias = editor.CollectionAlias,
+                            //    Editor = subCollectionEditor.Editor
+                            //};
                         })
                     };
                 })
@@ -509,7 +561,7 @@ namespace RapidCMS.Common.Services
             return null;
         }
 
-
+        // TODO: these functions contain a huge flaw which requires the form to ALWAYS have EVERY property
         // TODO: create the reciprocal function to load the form with entity data
         private static void UpdateEntityWithFormData(NodeDTO formValues, IEntity entity, ListEditor listEditor)
         {

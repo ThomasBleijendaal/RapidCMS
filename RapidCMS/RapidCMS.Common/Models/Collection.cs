@@ -107,6 +107,11 @@ namespace RapidCMS.Common.Models
         public List<Button> Buttons { get; set; }
     }
 
+    public class SubCollectionListEditor : ListEditor
+    {
+        public string CollectionAlias { get; set; }
+    }
+
     public class NodeView : View
     {
         public List<ViewPane<NodeViewProperty>> ViewPanes { get; set; }
@@ -133,6 +138,7 @@ namespace RapidCMS.Common.Models
     {
         public List<Button> Buttons { get; set; }
         public List<T> Fields { get; set; }
+        public List<SubCollectionListEditor> SubCollectionListEditors { get; set; }
     }
 
     // TODO: merge with field

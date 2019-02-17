@@ -69,7 +69,17 @@ else
                 </tbody>
             </table>
         </div>
+
+        @foreach (var subCollectionListEditor in pane.SubCollectionListEditors)
+        {
+            <Collection Action="@Constants.New"
+                        Alias="@subCollectionListEditor.CollectionAlias"
+                        ParentId="@Id"
+                        ExternalEditor="@subCollectionListEditor"
+                        />
+        }
     }
+
 }
 
 @functions {
