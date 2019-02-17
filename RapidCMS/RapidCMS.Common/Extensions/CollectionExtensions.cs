@@ -139,6 +139,7 @@ namespace RapidCMS.Common.Extensions
                                 Description = field.Description,
                                 Name = field.Name,
                                 NodeProperty = field.NodeProperty,
+                                Readonly = field.Readonly,
                                 ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
                                 ValueMapperType = field.ValueMapperType
                             };
@@ -175,6 +176,7 @@ namespace RapidCMS.Common.Extensions
                                     Description = field.Description,
                                     Name = field.Name,
                                     NodeProperty = field.NodeProperty,
+                                    Readonly = field.Readonly,
                                     ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
                                     ValueMapperType = field.ValueMapperType
                                 };

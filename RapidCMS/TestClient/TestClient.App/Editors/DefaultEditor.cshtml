@@ -4,31 +4,41 @@
     // perhaps try https://docs.microsoft.com/en-us/aspnet/core/razor-components/components?view=aspnetcore-3.0#child-content
 
     // TODO: remove binding callback 
+
+    // TODO: change editor to accept complete Field / Property, instead of seperate parts 
+    // this wil make it a lot more dynamic
 *@
 @using RapidCMS.Common.Enums
 
 @if (Type.HasValue)
 {
-    switch (Type)
+    if (IsReadonly)
     {
-        case EditorType.Numeric:
+        @Value
+    }
+    else
+    {
+        switch (Type)
+        {
+            case EditorType.Numeric:
 
             <NumericEditor Value="@LocalValue" Callback="ChildEditorCallback" />
 
-            break;
+                break;
 
-        case EditorType.TextArea:
+            case EditorType.TextArea:
 
             <TextAreaEditor Value="@LocalValue" Callback="ChildEditorCallback" />
 
-            break;
+                break;
 
-        case EditorType.TextBox:
-        default:
+            case EditorType.TextBox:
+            default:
 
             <TextBoxEditor Value="@LocalValue" Callback="ChildEditorCallback" />
 
-            break;
+                break;
+        }
     }
 }
 
@@ -50,7 +60,10 @@
 
     [Parameter]
     private EditorType? Type { get; set; } = null;
-    
+
+    [Parameter]
+    private bool IsReadonly { get; set; }
+
     [Parameter]
     private Action<string> Callback { get; set; }
 

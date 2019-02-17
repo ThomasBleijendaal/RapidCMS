@@ -84,11 +84,13 @@ namespace RapidCMS.Common.Models.DTOs
         public string Description { get; set; }
     }
 
+    // TODO: change to complete field / property DTO
     public class ValueDTO
     {
         public EditorType Type { get; set; }
         public string Value { get; set; }
         public string DisplayValue { get; set; }
+        public bool IsReadonly { get; set; }
     }
 
     public class ButtonDTO

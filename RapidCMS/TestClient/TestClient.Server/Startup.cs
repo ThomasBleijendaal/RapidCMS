@@ -39,6 +39,7 @@ namespace TestClient.Server
                     .AddListPane(pane =>
                     {
                         pane.AddProperty(x => x.Id);
+                        pane.AddProperty(x => x.Number).SetValueMapper<IntValueMapper>();
                         pane.AddProperty(x => x.Description).SetDescription("This is a description");
                     });
             }
@@ -60,6 +61,10 @@ namespace TestClient.Server
                         pane.AddField(x => x.Description)
                             .SetDescription("This is a description")
                             .SetType(EditorType.TextArea);
+
+                        pane.AddField(x => x.Number)
+                            .SetDescription("This is a number")
+                            .SetType(EditorType.Numeric);
                     });
             }
 
@@ -115,7 +120,8 @@ namespace TestClient.Server
                                 editor.AddDefaultButton(DefaultButtonType.Delete);
 
                                 editor.AddField(x => x.Id)
-                                    .SetDescription("This should be readonly");
+                                    .SetDescription("This should be readonly")
+                                    .SetReadonly();
 
                                 editor.AddField(x => x.Name)
                                     .SetDescription("This is a name");
@@ -123,6 +129,11 @@ namespace TestClient.Server
                                 editor.AddField(x => x.Description)
                                     .SetDescription("This is a description")
                                     .SetType(EditorType.TextArea);
+
+                                editor.AddField(x => x.Number)
+                                    .SetDescription("This is a number")
+                                    .SetValueMapper(new IntValueMapper())
+                                    .SetType(EditorType.Numeric);
                             });
                         })
                         .SetNodeEditor(nodeEditor);

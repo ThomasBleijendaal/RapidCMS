@@ -135,6 +135,7 @@ namespace RapidCMS.Common.Models
         public List<T> Fields { get; set; }
     }
 
+    // TODO: merge with field
     public class Property
     {
         public string Name { get; set; }
@@ -181,10 +182,14 @@ namespace RapidCMS.Common.Models
         }
     }
 
+
+    // TODO: merge with property
     public class Field
     {
         public string Name { get; set; }
         public string Description { get; set; }
+
+        public bool Readonly { get; set; }
 
         public EditorType DataType { get; set; }
         

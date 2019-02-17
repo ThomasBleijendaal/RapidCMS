@@ -60,7 +60,8 @@ else
                                 {
                                     <DefaultEditor Type="@field.value.Type"
                                                    Value="@field.value.Value"
-                                                   Callback="@((string value) => field.value.Value = value)" />
+                                                   Callback="@((string value) => field.value.Value = value)"
+                                                   IsReadonly="@field.value.IsReadonly" />
                                 }
                             </td>
                         </tr>

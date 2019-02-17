@@ -107,7 +107,8 @@ else if (EditorView != null)
                         {
                             <td><DefaultEditor Type="@value.Type"
                                                Value="@value.Value"
-                                               Callback="@((string newValue) => value.Value = newValue)" /></td>
+                                               Callback="@((string newValue) => value.Value = newValue)"
+                                               IsReadonly="@value.IsReadonly" /></td>
                         }
                         <td>
                             @foreach (var button in node.Buttons)

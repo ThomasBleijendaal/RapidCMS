@@ -20,8 +20,8 @@ namespace TestLibrary
                 {
                     _data = new[]
                     {
-                        new TestEntity { Id = 1, Name = Guid.NewGuid().ToString(), Description = "Entity 1 Description" },
-                        new TestEntity { Id = 2, Name = Guid.NewGuid().ToString(), Description = "Entity 2 Description" }
+                        new TestEntity { Id = 1, Name = Guid.NewGuid().ToString(), Description = "Entity 1 Description", Number = 10 },
+                        new TestEntity { Id = 2, Name = Guid.NewGuid().ToString(), Description = "Entity 2 Description", Number = 20 }
                     }.ToList();
                 }
 
@@ -108,5 +108,6 @@ namespace TestLibrary
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public int Number { get; set; }
     }
 }

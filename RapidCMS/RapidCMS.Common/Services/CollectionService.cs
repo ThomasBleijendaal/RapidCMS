@@ -32,9 +32,9 @@ namespace RapidCMS.Common.Services
         Task<ViewCommand> ProcessListEditorActionAsync(string action, string alias, int? parentId, string actionId);
 
         Task<ViewCommand> ProcessListViewActionAsync(string action, string alias, int id, int? parentId, string actionId);
-        Task<ViewCommand> ProcessListEditorActionAsync(string action, string alias, int id, int? parentId, CollectionListEditorDTO editor, string actionId);
+        Task<ViewCommand> ProcessListEditorActionAsync(string action, string alias, int id, int? parentId, CollectionListEditorDTO formValues, string actionId);
 
-        Task<ViewCommand> ProcessNodeEditorActionAsync(string action, string alias, int? parentId, int id, NodeEditorDTO editor, string actionId);
+        Task<ViewCommand> ProcessNodeEditorActionAsync(string action, string alias, int? parentId, int id, NodeEditorDTO formValues, string actionId);
     }
 
     public class CollectionService : ICollectionService
@@ -252,6 +252,7 @@ namespace RapidCMS.Common.Services
                     Values = editor.Fields.ToList(field => new ValueDTO
                     {
                         DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter.Invoke(entity)),
+                        IsReadonly = field.Readonly,
                         Type = field.DataType,
                         Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter.Invoke(entity)),
                     })
@@ -311,6 +312,7 @@ namespace RapidCMS.Common.Services
                                 new ValueDTO
                                 {
                                     DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter(entity)),
+                                    IsReadonly = field.Readonly,
                                     Type = field.DataType,
                                     Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter(entity))
                                 });
@@ -322,7 +324,7 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string action, string alias, int? parentId, int id, NodeEditorDTO editor, string actionId)
+        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string action, string alias, int? parentId, int id, NodeEditorDTO formValues, string actionId)
         {
             var collection = _root.GetCollection(alias);
 
@@ -335,16 +337,7 @@ namespace RapidCMS.Common.Services
 
             var nodeEditor = collection.NodeEditor;
 
-            // TODO: process view to entity automagically
-            var nameValue = editor.EditorPanes.First().Fields.ElementAt(1).value.Value;
-            var descValue = editor.EditorPanes.First().Fields.Last().value.Value;
-
-            var element1 = nodeEditor.EditorPanes.First().Fields.ElementAt(1);
-            var element2 = nodeEditor.EditorPanes.First().Fields.Last();
-
-            element1.NodeProperty.Setter.Invoke(entity, element1.ValueMapper.MapFromEditor(null, nameValue));
-            element2.NodeProperty.Setter.Invoke(entity, element2.ValueMapper.MapFromEditor(null, descValue));
-
+            UpdateEntityWithFormData(formValues, entity, nodeEditor);
 
             var button = nodeEditor.Buttons.First(x => x.ButtonId == actionId);
 
@@ -459,7 +452,7 @@ namespace RapidCMS.Common.Services
             return null;
         }
 
-        public async Task<ViewCommand> ProcessListEditorActionAsync(string action, string alias, int id, int? parentId, CollectionListEditorDTO editor, string actionId)
+        public async Task<ViewCommand> ProcessListEditorActionAsync(string action, string alias, int id, int? parentId, CollectionListEditorDTO formValues, string actionId)
         {
             var collection = _root.GetCollection(alias);
 
@@ -471,17 +464,9 @@ namespace RapidCMS.Common.Services
             };
 
             var listEditor = collection.ListEditor;
+            var nodeFormValues = formValues.Editor.Nodes.First(x => x.Id == id);
 
-            // TODO: process view to entity automagically
-            var nameValue = editor.Editor.Nodes.First(x => x.Id == id).Values.ElementAt(1).Value;
-            var descValue = editor.Editor.Nodes.First(x => x.Id == id).Values.Last().Value;
-
-            var element1 = listEditor.EditorPane.Fields.ElementAt(1);
-            var element2 = listEditor.EditorPane.Fields.Last();
-
-            element1.NodeProperty.Setter.Invoke(entity, element1.ValueMapper.MapFromEditor(null, nameValue));
-            element2.NodeProperty.Setter.Invoke(entity, element2.ValueMapper.MapFromEditor(null, descValue));
-
+            UpdateEntityWithFormData(nodeFormValues, entity, listEditor);
 
             var button = listEditor.EditorPane.Buttons.First(x => x.ButtonId == actionId);
 
@@ -522,6 +507,44 @@ namespace RapidCMS.Common.Services
             }
 
             return null;
+        }
+
+
+        // TODO: create the reciprocal function to load the form with entity data
+        private static void UpdateEntityWithFormData(NodeDTO formValues, IEntity entity, ListEditor listEditor)
+        {
+            var formValueForNode = formValues.Values.Select((x, fieldIndex) => (fieldIndex, x.Value));
+            var setters = listEditor.EditorPane.Fields
+                .Select((x, fieldIndex) => x.Readonly ? (fieldIndex, null, null) : (fieldIndex, x.NodeProperty.Setter, x.ValueMapper))
+                .ToDictionary(x => x.fieldIndex, x => (x.Setter, x.ValueMapper));
+
+            foreach (var (fieldIndex, value) in formValueForNode)
+            {
+                var (setter, valueMapper) = setters[fieldIndex];
+
+                setter?.Invoke(entity, valueMapper?.MapFromEditor(null, value));
+            }
+        }
+
+        // TODO: create the reciprocal function to load the form with entity data
+        private static void UpdateEntityWithFormData(NodeEditorDTO formValues, IEntity entity, NodeEditor nodeEditor)
+        {
+            var enteredFormValues = formValues.EditorPanes
+                .SelectMany((x, paneIndex) => x.Fields.Select((y, fieldIndex) => (paneIndex, fieldIndex, y.value.Value)));
+            var setters = nodeEditor.EditorPanes
+                .Select((x, paneIndex) => (paneIndex, fields: x.Fields.Select((y, fieldIndex) => y.Readonly ? (fieldIndex, null, null) : (fieldIndex, y.ValueMapper, y.NodeProperty.Setter))))
+                .ToDictionary(
+                    x => x.paneIndex,
+                    x => x.fields.ToDictionary(
+                        y => y.fieldIndex,
+                        y => (y.Setter, y.ValueMapper)));
+
+            foreach (var (paneIndex, fieldIndex, value) in enteredFormValues)
+            {
+                var (setter, valueMapper) = setters[paneIndex][fieldIndex];
+
+                setter?.Invoke(entity, valueMapper?.MapFromEditor(null, value));
+            }
         }
     }
 }

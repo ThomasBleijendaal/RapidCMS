@@ -350,6 +350,8 @@ namespace RapidCMS.Common.Models.Config
         internal string Name { get; set; }
         internal string Description { get; set; }
 
+        internal bool Readonly { get; set; }
+
         internal PropertyMetadata NodeProperty { get; set; }
         internal IValueMapper ValueMapper { get; set; }
         internal Type ValueMapperType { get; set; }
@@ -384,6 +386,13 @@ namespace RapidCMS.Common.Models.Config
             where TValueMapper : IValueMapper
         {
             ValueMapperType = typeof(IValueMapper);
+
+            return this;
+        }
+
+        public FieldConfig<TEntity> SetReadonly(bool @readonly = true)
+        {
+            Readonly = @readonly;
 
             return this;
         }
