@@ -1,0 +1,23 @@
+﻿@using RapidCMS.UI.Buttons
+
+    <CascadingValue Value="@CustomButtons" Name="CustomButtons">
+        <Router AppAssembly="typeof(Startup).Assembly" />
+    </CascadingValue>
+
+@functions {
+    private Dictionary<string, RenderFragment> CustomButtons { get; set; } = new Dictionary<string, RenderFragment>();
+
+    // TODO: find solution for poor-man's array
+    [Parameter]
+    private string CustomButton1Alias { get; set; }
+    [Parameter]
+    private RenderFragment CustomButton1 { get; set; }
+
+    protected override Task OnParametersSetAsync()
+    {
+        CustomButtons.Add(CustomButton1Alias, CustomButton1);
+
+
+        return base.OnParametersSetAsync();
+    }
+}

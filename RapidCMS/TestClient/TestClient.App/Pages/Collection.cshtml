@@ -28,7 +28,7 @@ else if (ListView != null)
     <div class="top-row px-4">
         @foreach (var button in ListView.Buttons)
         {
-            <DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@ViewButtonCallbackAsync" Context="@this" />
+            @*<DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@ViewButtonCallbackAsync" Context="@this" />*@
         }
     </div>
 
@@ -63,7 +63,7 @@ else if (ListView != null)
                                 <td>
                                     @foreach (var button in pane.Buttons)
                                     {
-                                        <DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@NodeViewButtonCallbackAsync" Context="@node" />
+                                        @*<DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@NodeViewButtonCallbackAsync" Context="@node" />*@
 
                                     }
                                 </td>
@@ -81,7 +81,7 @@ else if (EditorView != null)
     <div class="top-row px-4">
         @foreach (var button in EditorView.Buttons)
         {
-            <DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@EditorButtonCallbackAsync" Context="@this" />
+            @*<DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@EditorButtonCallbackAsync" Context="@this" />*@
         }
     </div>
 
@@ -114,7 +114,7 @@ else if (EditorView != null)
                         <td>
                             @foreach (var button in node.Buttons)
                             {
-                                <DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@NodeEditorButtonCallbackAsync" Context="@node" />
+                                @*<DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@NodeEditorButtonCallbackAsync" Context="@node" />*@
                             }
                         </td>
                     </tr>

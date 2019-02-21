@@ -1,30 +1,27 @@
 ﻿@typeparam TContext
 
+@inherits  BaseButton<TContext>
+
 <button type="button" class="btn" onclick="@ButtonClickAsync">
-    <i class="oi oi-@Icon"></i> @Label
+    <i class="oi oi-@Context.Icon"></i> @Context.Label
 </button>
 
 @functions {
-    [Parameter]
-    private string Alias { get; set; }
+    //[Parameter]
+    //private string Alias { get; set; }
 
-    [Parameter]
-    private string Icon { get; set; }
+    //[Parameter]
+    //private string Icon { get; set; }
 
-    [Parameter]
-    private string Label { get; set; }
+    //[Parameter]
+    //private string Label { get; set; }
 
-    [Parameter]
-    private string ButtonId { get; set; }
+    //[Parameter]
+    //private string ButtonId { get; set; }
 
-    [Parameter]
-    private Func<string, TContext, Task> CallbackAsync { get; set; }
+    //[Parameter]
+    //private Func<string, TContext, Task> CallbackAsync { get; set; }
 
-    [Parameter]
-    private TContext Context { get; set; }
-
-    async Task ButtonClickAsync()
-    {
-        await CallbackAsync.Invoke(ButtonId, Context);
-    }
+    //[Parameter]
+    //private TContext Context { get; set; }
 }

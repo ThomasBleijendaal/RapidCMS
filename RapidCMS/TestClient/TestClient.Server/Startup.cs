@@ -50,6 +50,7 @@ namespace TestClient.Server
                     .AddDefaultButton(DefaultButtonType.SaveNew)
                     .AddDefaultButton(DefaultButtonType.SaveExisting)
                     .AddDefaultButton(DefaultButtonType.Delete)
+                    .AddCustomButton("create-button", () => { }, "Create!")
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x.Id)

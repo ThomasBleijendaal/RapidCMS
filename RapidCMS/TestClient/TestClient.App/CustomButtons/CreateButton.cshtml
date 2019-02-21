@@ -1,0 +1,16 @@
+﻿@typeparam TContext
+
+@using RapidCMS.UI.Buttons
+
+@inherits BaseButton<TContext>
+
+<button type="button" class="btn" onclick="@ButtonClickAsync">
+    <i class="oi oi-@(Context.Icon ?? "puzzle-piece")"></i> @Context.Label
+</button>
+
+@functions { 
+    protected override Task OnParametersSetAsync()
+    {
+        return base.OnParametersSetAsync();
+    }
+}

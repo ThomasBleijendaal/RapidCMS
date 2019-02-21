@@ -306,6 +306,21 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
+        public NodeEditorConfig<TEntity> AddCustomButton(string alias, Action action, string label = null, string icon = null)
+        {
+            var button = new CustomButtonConfig
+            {
+                Action = action,
+                Alias = alias,
+                Icon = icon,
+                Label = label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
+
         public NodeEditorConfig<TEntity> AddEditorPane(Action<NodeEditorPaneConfig<TEntity>> configure)
         {
             var config = new NodeEditorPaneConfig<TEntity>();
@@ -430,5 +445,11 @@ namespace RapidCMS.Common.Models.Config
     public class DefaultButtonConfig : ButtonConfig
     { 
         internal DefaultButtonType ButtonType { get; set; }
+    }
+
+    public class CustomButtonConfig : ButtonConfig
+    {
+        internal string Alias { get; set; }
+        internal Action Action { get; set; }
     }
 }

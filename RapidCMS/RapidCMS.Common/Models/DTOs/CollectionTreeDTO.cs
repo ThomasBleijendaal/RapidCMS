@@ -105,6 +105,8 @@ namespace RapidCMS.Common.Models.DTOs
         public string ButtonId { get; set; }
         public string Label { get; set; }
         public string Icon { get; set; }
+
+        public string Alias { get; set; }
     }
 
     public class ActionResult

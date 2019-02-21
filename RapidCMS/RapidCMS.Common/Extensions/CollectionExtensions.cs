@@ -116,6 +116,14 @@ namespace RapidCMS.Common.Extensions
                             Icon = defaultButton.Icon,
                             Label = defaultButton.Label
                         },
+                        CustomButtonConfig customButton => new CustomButton
+                        {
+                            ButtonId = Guid.NewGuid().ToString(),
+                            Action = customButton.Action,
+                            Alias = customButton.Alias,
+                            Icon = customButton.Icon,
+                            Label = customButton.Label
+                        },
                         _ => default(Button)
                     }),
                     EditorPane = new EditorPane<Field>
@@ -160,6 +168,14 @@ namespace RapidCMS.Common.Extensions
                             DefaultButtonType = defaultButton.ButtonType,
                             Icon = defaultButton.Icon,
                             Label = defaultButton.Label
+                        },
+                        CustomButtonConfig customButton => new CustomButton
+                        {
+                            ButtonId = Guid.NewGuid().ToString(),
+                            Action = customButton.Action,
+                            Alias = customButton.Alias,
+                            Icon = customButton.Icon,
+                            Label = customButton.Label
                         },
                         _ => default(Button)
                     }),

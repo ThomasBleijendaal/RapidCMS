@@ -5,14 +5,14 @@
 @page "/node/{Action}/{Alias}/{ParentId:int}/{Id:int}"
 
 @using RapidCMS.Common
+@using RapidCMS.UI.Buttons
 @using RapidCMS.Common.Models.DTOs
 @using RapidCMS.Common.Services
 @using RapidCMS.Common.Extensions
 
 @inject ICollectionService CollectionService
-
-@* 
-    TODO: remove weird callback for binding 
+@*
+    TODO: remove weird callback for binding
 *@
 
 <h1>@Action node @Alias @(ParentId.HasValue ? $":: {ParentId.Value}" : "") :: @Id</h1>
@@ -31,9 +31,31 @@
 else
 {
     <div class="top-row px-4">
-        @foreach (var button in Editor.Buttons)
-        {
-            <DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@ButtonCallbackAsync" Context="@this" />
+        @{
+
+
+            @foreach (var button in Editor.Buttons)
+            {
+                var context = new ButtonContext<BasePage>
+                {
+                    ButtonId = button.ButtonId,
+                    CallbackAsync = ButtonCallbackAsync,
+                    Context = this,
+                    Icon = button.Icon,
+                    Label = button.Label
+                };
+
+                <CascadingValue Value="context">
+                    @if (!string.IsNullOrEmpty(button.Alias))
+                    {
+                        @CustomButtons[button.Alias]
+                    }
+                    else
+                    {
+                        <DefaultButton TContext="BasePage" />
+                    }
+                </CascadingValue>
+            }
         }
     </div>
 
@@ -96,6 +118,9 @@ else
 
     [Parameter]
     private int Id { get; set; }
+
+    [CascadingParameter(Name = "CustomButtons")]
+    private Dictionary<string, RenderFragment> CustomButtons { get; set; }
 
     NodeEditorDTO Editor;
 

@@ -175,7 +175,7 @@ namespace RapidCMS.Common.Models
         public string Label { get; set; }
         public string Icon { get; set; }
 
-        public abstract bool IsCompatibleWithView(ViewContext viewContext);
+        public virtual bool IsCompatibleWithView(ViewContext viewContext) { return true; }
     }
 
     public class DefaultButton : Button
@@ -186,6 +186,12 @@ namespace RapidCMS.Common.Models
         {
             return DefaultButtonType.GetCustomAttribute<ActionsAttribute>().Usages?.Any(x => viewContext.Usage.HasFlag(x)) ?? false;
         }
+    }
+
+    public class CustomButton : Button
+    {
+        public string Alias { get; set; }
+        public Action Action { get; set; }
     }
 
 

@@ -294,7 +294,8 @@ namespace RapidCMS.Common.Services
                         {
                             Icon = button.Icon,
                             ButtonId = button.ButtonId,
-                            Label = button.Label
+                            Label = button.Label,
+                            Alias = (button is CustomButton customButton) ? customButton.Alias : null
                         };
                     }),
                 EditorPanes = nodeEditor.EditorPanes.ToList(pane =>
@@ -377,6 +378,10 @@ namespace RapidCMS.Common.Services
                     default:
                         break;
                 }
+            }
+            else if (button is CustomButton customButton)
+            {
+                customButton.Action.Invoke();
             }
             else
             {
