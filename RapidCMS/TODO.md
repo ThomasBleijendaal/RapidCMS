@@ -8,4 +8,5 @@ DONE: 1. basic editors
 DONE: 2. sub collection list editor
 DONE-ISH: 3. custom buttons support
 4. support for type differentation within collection
-5. custom editor support
+5. move all cms UI to RapidCMS.UI
+6. custom editor support

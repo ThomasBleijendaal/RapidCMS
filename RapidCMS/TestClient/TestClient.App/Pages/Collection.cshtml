@@ -4,6 +4,7 @@
 @page "/collection/{Action}/{Alias}/{ParentId:int}"
 
 @using RapidCMS.Common
+@using RapidCMS.UI.Buttons
 @using RapidCMS.Common.Models.DTOs
 @using RapidCMS.Common.Services
 
@@ -28,7 +29,25 @@ else if (ListView != null)
     <div class="top-row px-4">
         @foreach (var button in ListView.Buttons)
         {
-            @*<DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@ViewButtonCallbackAsync" Context="@this" />*@
+            var context = new ButtonContext<BasePage>
+            {
+                ButtonId = button.ButtonId,
+                CallbackAsync = ViewButtonCallbackAsync,
+                Context = this,
+                Icon = button.Icon,
+                Label = button.Label
+            };
+
+            <CascadingValue Value="context">
+                @if (!string.IsNullOrEmpty(button.Alias))
+                {
+                    @CustomButtons[button.Alias]
+                }
+                else
+                {
+                    <DefaultButton TContext="BasePage" />
+                }
+            </CascadingValue>
         }
     </div>
 
@@ -63,8 +82,25 @@ else if (ListView != null)
                                 <td>
                                     @foreach (var button in pane.Buttons)
                                     {
-                                        @*<DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@NodeViewButtonCallbackAsync" Context="@node" />*@
+                                        var context = new ButtonContext<NodeDTO>
+                                        {
+                                            ButtonId = button.ButtonId,
+                                            CallbackAsync = NodeViewButtonCallbackAsync,
+                                            Context = node,
+                                            Icon = button.Icon,
+                                            Label = button.Label
+                                        };
 
+                                        <CascadingValue Value="context">
+                                            @if (!string.IsNullOrEmpty(button.Alias))
+                                            {
+                                                @CustomButtons[button.Alias]
+                                            }
+                                            else
+                                            {
+                                                <DefaultButton TContext="NodeDTO" />
+                                            }
+                                        </CascadingValue>
                                     }
                                 </td>
                             }
@@ -81,7 +117,25 @@ else if (EditorView != null)
     <div class="top-row px-4">
         @foreach (var button in EditorView.Buttons)
         {
-            @*<DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@EditorButtonCallbackAsync" Context="@this" />*@
+            var context = new ButtonContext<BasePage>
+            {
+                ButtonId = button.ButtonId,
+                CallbackAsync = EditorButtonCallbackAsync,
+                Context = this,
+                Icon = button.Icon,
+                Label = button.Label
+            };
+
+            <CascadingValue Value="context">
+                @if (!string.IsNullOrEmpty(button.Alias))
+                {
+                    @CustomButtons[button.Alias]
+                }
+                else
+                {
+                    <DefaultButton TContext="BasePage" />
+                }
+            </CascadingValue>
         }
     </div>
 
@@ -114,7 +168,25 @@ else if (EditorView != null)
                         <td>
                             @foreach (var button in node.Buttons)
                             {
-                                @*<DefaultButton Label="@button.Label" Icon="@button.Icon" ButtonId="@button.ButtonId" CallbackAsync="@NodeEditorButtonCallbackAsync" Context="@node" />*@
+                                var context = new ButtonContext<NodeDTO>
+                                {
+                                    ButtonId = button.ButtonId,
+                                    CallbackAsync = NodeEditorButtonCallbackAsync,
+                                    Context = node,
+                                    Icon = button.Icon,
+                                    Label = button.Label
+                                };
+
+                                <CascadingValue Value="context">
+                                    @if (!string.IsNullOrEmpty(button.Alias))
+                                    {
+                                        @CustomButtons[button.Alias]
+                                    }
+                                    else
+                                    {
+                                        <DefaultButton TContext="NodeDTO" />
+                                    }
+                                </CascadingValue>
                             }
                         </td>
                     </tr>

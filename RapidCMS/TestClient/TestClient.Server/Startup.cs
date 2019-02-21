@@ -100,7 +100,7 @@ namespace TestClient.Server
                 });
             }
 
-            void nodeEditorWithSubcollection(NodeEditorConfig<TestEntity> nodeEditorConfig)
+            void nodeEditorWithSubCollection(NodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
                     .AddDefaultButton(DefaultButtonType.SaveNew)
@@ -126,6 +126,38 @@ namespace TestClient.Server
                             .SetType(EditorType.Numeric);
                     })
                     
+                    .AddEditorPane(pane =>
+                    {
+                        pane.AddSubCollectionListEditor("sub-collection-1", subCollectionListNodeEditor);
+                    });
+            }
+
+            void nodeEditorWithPolymorphicSubCollection(NodeEditorConfig<TestEntity> nodeEditorConfig)
+            {
+                nodeEditorConfig
+                    .AddDefaultButton(DefaultButtonType.SaveNew)
+                    .AddDefaultButton(DefaultButtonType.SaveExisting)
+                    .AddDefaultButton(DefaultButtonType.Delete)
+
+                    .AddEditorPane(pane =>
+                    {
+                        pane.AddField(x => x.Id)
+                            .SetValueMapper(new IntValueMapper())
+                            .SetReadonly(true);
+
+                        pane.AddField(x => x.Name)
+                            .SetDescription("This is a name");
+
+                        pane.AddField(x => x.Description)
+                            .SetDescription("This is a description")
+                            .SetType(EditorType.TextArea);
+
+                        pane.AddField(x => x.Number)
+                            .SetDescription("This is a number")
+                            .SetValueMapper(new IntValueMapper())
+                            .SetType(EditorType.Numeric);
+                    })
+
                     .AddEditorPane(pane =>
                     {
                         pane.AddSubCollectionListEditor("sub-collection-1", subCollectionListNodeEditor);
@@ -164,7 +196,7 @@ namespace TestClient.Server
                         .SetRepository<RepositoryA>()
                         .SetTreeView("Tree 1", ViewType.List, entity => entity.Name)
                         .SetListView(listView)
-                        .SetNodeEditor(nodeEditorWithSubcollection)
+                        .SetNodeEditor(nodeEditorWithSubCollection)
                         .AddCollection<TestEntity>("sub-collection-1", "Sub Collection 1", subCollection =>
                         {
                             subCollection
@@ -184,6 +216,24 @@ namespace TestClient.Server
                         .SetListView(listView)
                         .SetListEditor(listNodeEditor)
                         .SetNodeEditor(nodeEditor);
+                });
+
+                root.AddCollection<TestEntity>("collection-3", "Collection 3", collection =>
+                {
+                    collection
+                        .SetRepository<RepositoryA>()
+                        .SetTreeView("Tree 3", ViewType.List, entity => entity.Name)
+                        .SetListView(listView)
+                        .SetNodeEditor(nodeEditorWithPolymorphicSubCollection)
+                        .AddCollection<TestEntity>("sub-collection-2", "Sub Collection 2", subCollection =>
+                        {
+                            subCollection
+                                .SetRepository<RepositoryB>()
+                                .SetTreeView("SubTree1", ViewType.List, entity => entity.Name)
+                                .SetListView(listView)
+                                .SetListEditor(listNodeEditor)
+                                .SetNodeEditor(nodeEditor);
+                        });
                 });
             });
 

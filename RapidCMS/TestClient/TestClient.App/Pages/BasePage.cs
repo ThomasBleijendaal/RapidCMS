@@ -11,6 +11,9 @@ namespace TestClient.App.Pages
         [Inject]
         private IUriHelper UriHelper { get; set; }
 
+        [CascadingParameter(Name = "CustomButtons")]
+        protected Dictionary<string, RenderFragment> CustomButtons { get; set; }
+
         protected async Task HandleViewCommandAsync(ViewCommand command)
         {
             if (command == null)
@@ -46,6 +49,7 @@ namespace TestClient.App.Pages
 
                     var update = ParameterCollection.FromDictionary(data);
 
+                    // TODO: this sets invalid parameters..
                     await SetParametersAsync(update);
 
                     break;

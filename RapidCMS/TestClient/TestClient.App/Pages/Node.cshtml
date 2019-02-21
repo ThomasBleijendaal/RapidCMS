@@ -32,8 +32,6 @@ else
 {
     <div class="top-row px-4">
         @{
-
-
             @foreach (var button in Editor.Buttons)
             {
                 var context = new ButtonContext<BasePage>
@@ -118,9 +116,6 @@ else
 
     [Parameter]
     private int Id { get; set; }
-
-    [CascadingParameter(Name = "CustomButtons")]
-    private Dictionary<string, RenderFragment> CustomButtons { get; set; }
 
     NodeEditorDTO Editor;
 
