@@ -13,6 +13,7 @@ namespace RapidCMS.Common.Data
         Task<IEnumerable<IEntity>> GetAllAsObjectsAsync(int? parentId);
 
         Task<IEntity> NewAsync(int? parentId);
+        // TODO: remove int id
         Task<IEntity> InsertAsync(int id, int? parentId, IEntity entity);
         Task UpdateAsync(int id, int? parentId, IEntity entity);
         Task DeleteAsync(int id, int? parentId);

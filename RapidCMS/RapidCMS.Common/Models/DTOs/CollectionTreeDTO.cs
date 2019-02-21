@@ -42,9 +42,10 @@ namespace RapidCMS.Common.Models.DTOs
         public CollectionListEditorPaneDTO Editor { get; set; }
     }
 
-    public class SubCollectionListEditorDTO : CollectionListEditorDTO
+    public class SubCollectionListEditorDTO
     {
         public string CollectionAlias { get; set; }
+        public string Action { get; set; }
     }
 
     public class CollectionListEditorPaneDTO

@@ -10,23 +10,20 @@ namespace TestLibrary
 {
     public abstract class TestRepository : BaseRepository<int, TestEntity>
     {
-        private List<TestEntity> _data = null;
+        private readonly Dictionary<int, List<TestEntity>> _data = new Dictionary<int, List<TestEntity>>();
 
-        private List<TestEntity> Data
+        private List<TestEntity> GetData(int? parentId)
         {
-            get
+            if (!_data.ContainsKey(parentId ?? 0))
             {
-                if (_data == null)
+                _data[parentId ?? 0] = new[]
                 {
-                    _data = new[]
-                    {
-                        new TestEntity { Id = 1, Name = Guid.NewGuid().ToString(), Description = "Entity 1 Description", Number = 10 },
-                        new TestEntity { Id = 2, Name = Guid.NewGuid().ToString(), Description = "Entity 2 Description", Number = 20 }
-                    }.ToList();
-                }
-
-                return _data;
+                    new TestEntity { Id = 1, Name = Guid.NewGuid().ToString(), Description = "Entity 1 Description", Number = 10 },
+                    new TestEntity { Id = 2, Name = Guid.NewGuid().ToString(), Description = "Entity 2 Description", Number = 20 }
+                }.ToList();
             }
+
+            return _data[parentId ?? 0];
         }
 
         protected abstract string Name { get; }
@@ -35,23 +32,23 @@ namespace TestLibrary
         {
             await Task.Delay(1);
 
-            return Data;
+            return GetData(parentId);
         }
 
         public override async Task<TestEntity> GetByIdAsync(int id, int? parentId)
         {
             await Task.Delay(1);
 
-            return Data.FirstOrDefault(x => x.Id == id);
+            return GetData(parentId).FirstOrDefault(x => x.Id == id);
         }
 
         public override async Task<TestEntity> InsertAsync(int id, int? parentId, TestEntity entity)
         {
             await Task.Delay(1);
 
-            entity.Id = Data.Any() ? Data.Max(x => x.Id) + 1 : 1;
+            entity.Id = GetData(parentId).Any() ? GetData(parentId).Max(x => x.Id) + 1 : 1;
 
-            Data.Add(entity);
+            GetData(parentId).Add(entity);
 
             return entity;
         }
@@ -60,7 +57,7 @@ namespace TestLibrary
         {
             await Task.Delay(1);
 
-            var element = Data.First(x => x.Id == id);
+            var element = GetData(parentId).First(x => x.Id == id);
 
             element.Description = entity.Description;
             element.Name = entity.Name;
@@ -78,7 +75,7 @@ namespace TestLibrary
         {
             await Task.Delay(1);
 
-            Data.RemoveAll(x => x.Id == id);
+            GetData(parentId).RemoveAll(x => x.Id == id);
         }
     }
 

@@ -8,7 +8,6 @@
 @using RapidCMS.Common.Services
 
 @inject ICollectionService CollectionService
-
 @* TODO: merge both views into single one *@
 
 <h1>Collection view of @Alias</h1>
@@ -105,10 +104,12 @@ else if (EditorView != null)
                     <tr>
                         @foreach (var value in node.Values)
                         {
-                            <td><DefaultEditor Type="@value.Type"
+                            <td>
+                                <DefaultEditor Type="@value.Type"
                                                Value="@value.Value"
                                                Callback="@((string newValue) => value.Value = newValue)"
-                                               IsReadonly="@value.IsReadonly" /></td>
+                                               IsReadonly="@value.IsReadonly" />
+                            </td>
                         }
                         <td>
                             @foreach (var button in node.Buttons)
@@ -133,22 +134,12 @@ else if (EditorView != null)
     [Parameter]
     private int? ParentId { get; set; } = null;
 
-    [Parameter]
-    private CollectionListEditorDTO ExternalEditor { get; set; } = null;
-
     CollectionListViewDTO ListView;
     CollectionListEditorDTO EditorView;
 
     protected override async Task OnParametersSetAsync()
     {
-        if (ExternalEditor != null)
-        {
-            EditorView = ExternalEditor;
-        }
-        else
-        {
-            await LoadDataAsync();
-        }
+        await LoadDataAsync();
     }
 
     protected override async Task LoadDataAsync()

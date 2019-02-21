@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Services;
 using RapidCMS.Common.Models.DTOs;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace TestClient.App.Pages
@@ -22,6 +23,30 @@ namespace TestClient.App.Pages
                 case NavigateCommand navigateCommand:
 
                     UriHelper.NavigateTo(navigateCommand.Uri);
+
+                    break;
+
+                case UpdateParameterCommand parameterCommand:
+
+                    var data = new Dictionary<string, object>()
+                    {
+                            { "Action", parameterCommand.Action },
+                            { "Alias", parameterCommand.Alias }
+                    };
+
+                    if (parameterCommand.Id.HasValue)
+                    {
+                        data.Add("Id", parameterCommand.Id);
+                    }
+
+                    if (parameterCommand.ParentId.HasValue)
+                    {
+                        data.Add("ParentId", parameterCommand.ParentId);
+                    }
+
+                    var update = ParameterCollection.FromDictionary(data);
+
+                    await SetParametersAsync(update);
 
                     break;
 

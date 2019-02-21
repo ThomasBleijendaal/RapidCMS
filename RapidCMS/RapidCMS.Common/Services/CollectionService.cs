@@ -297,7 +297,7 @@ namespace RapidCMS.Common.Services
                             Label = button.Label
                         };
                     }),
-                EditorPanes = await nodeEditor.EditorPanes.ToListAsync(async pane =>
+                EditorPanes = nodeEditor.EditorPanes.ToList(pane =>
                 {
                     return new NodeEditorPaneDTO
                     {
@@ -319,58 +319,16 @@ namespace RapidCMS.Common.Services
 
                             return editor;
                         }),
-                        SubCollectionListEditors = await pane.SubCollectionListEditors.ToListAsync(async listEditor =>
-                        {
-                            // HACK: TODO: always new and edit?
-                            var listViewContext = new ViewContext
-                            {
-                                Usage = UsageType.List | UsageType.New | UsageType.Edit
-                            };
-
-                            var collection = _root.GetCollection(listEditor.CollectionAlias);
-
-                            var editor = listEditor.EditorPane;
-
-                            return new SubCollectionListEditorDTO
-                            {
-                                CollectionAlias = listEditor.CollectionAlias,
-                                Buttons = listEditor.Buttons
-                                    .Where(button => button.IsCompatibleWithView(listViewContext))
-                                    .ToList(button =>
-                                    {
-                                        return new ButtonDTO
-                                        {
-                                            Icon = button.Icon,
-                                            ButtonId = button.ButtonId,
-                                            Label = button.Label
-                                        };
-                                    }),
-                                Editor = new CollectionListEditorPaneDTO
+                        SubCollectionListEditors = action == Constants.New 
+                            ? new List<SubCollectionListEditorDTO>()
+                            : pane.SubCollectionListEditors.ToList(listEditor =>
                                 {
-                                    Properties = editor.Fields.ToList(field =>
-                                        new PropertyDTO
-                                        {
-                                            Name = field.Name,
-                                            Description = field.Description
-                                        }),
-                                    // HACK: TODO: always new?
-                                    Nodes = await GetCollectionListEditorNodesAsync(Constants.New, id, collection, editor).ToListAsync()
-                                }
-                            };
-
-
-
-
-                            //var subCollectionEditor = await GetCollectionListEditorAsync(Constants.New, editor.CollectionAlias, entity.Id);
-
-                            //// TODO: bit ugly
-                            //return new SubCollectionListEditorDTO
-                            //{
-                            //    Buttons = subCollectionEditor.Buttons,
-                            //    CollectionAlias = editor.CollectionAlias,
-                            //    Editor = subCollectionEditor.Editor
-                            //};
-                        })
+                                    return new SubCollectionListEditorDTO
+                                    {
+                                        CollectionAlias = listEditor.CollectionAlias,
+                                        Action = Constants.Edit
+                                    };
+                                })
                     };
                 })
             };
@@ -466,7 +424,15 @@ namespace RapidCMS.Common.Services
                 {
                     case DefaultButtonType.New:
 
-                        return new NavigateCommand { Uri = $"/collection/{Constants.New}/{alias}/{(parentId.HasValue ? $"{parentId.Value}" : "")}" };
+                        return new UpdateParameterCommand
+                        {
+                            Action = Constants.New,
+                            Alias = alias,
+                            ParentId = parentId,
+                            Id = null
+                        };
+
+                        // return new NavigateCommand { Uri = $"/collection/{Constants.New}/{alias}/{(parentId.HasValue ? $"{parentId.Value}" : "")}" };
 
                     default:
                         break;
@@ -538,7 +504,13 @@ namespace RapidCMS.Common.Services
 
                         entity = await collection.Repository.InsertAsync(id, parentId, entity);
 
-                        return new ReloadCommand();
+                        return new UpdateParameterCommand
+                        {
+                            Action = Constants.New,
+                            Alias = alias,
+                            ParentId = parentId,
+                            Id = entity.Id
+                        };
 
                     case DefaultButtonType.SaveExisting:
                     case DefaultButtonType.SaveNewAndExisting:

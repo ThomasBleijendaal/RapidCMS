@@ -10,8 +10,9 @@
 @using RapidCMS.Common.Extensions
 
 @inject ICollectionService CollectionService
-@*
-    TODO: remove weird callback for binding
+
+@* 
+    TODO: remove weird callback for binding 
 *@
 
 <h1>@Action node @Alias @(ParentId.HasValue ? $":: {ParentId.Value}" : "") :: @Id</h1>
@@ -38,45 +39,46 @@ else
 
     @foreach (var pane in Editor.EditorPanes)
     {
-        <div class="content px-4">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <td>Field</td>
-                        <td>Editor</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var field in pane.Fields)
-                    {
+        @if (pane.Fields.Any())
+        {
+            <div class="content px-4">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>@field.label.Name<br /><small>@field.label.Description</small></td>
-                            <td>
-                                @if (Action == Constants.View)
-                                {
-                                    @field.value.DisplayValue
-                                }
-                                else
-                                {
-                                    <DefaultEditor Type="@field.value.Type"
-                                                   Value="@field.value.Value"
-                                                   Callback="@((string value) => field.value.Value = value)"
-                                                   IsReadonly="@field.value.IsReadonly" />
-                                }
-                            </td>
+                            <td>Field</td>
+                            <td>Editor</td>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        @foreach (var field in pane.Fields)
+                        {
+                            <tr>
+                                <td>@field.label.Name<br /><small>@field.label.Description</small></td>
+                                <td>
+                                    @if (Action == Constants.View)
+                                    {
+                                        @field.value.DisplayValue
+                                    }
+                                    else
+                                    {
+                                        <DefaultEditor Type="@field.value.Type"
+                                                       Value="@field.value.Value"
+                                                       Callback="@((string value) => field.value.Value = value)"
+                                                       IsReadonly="@field.value.IsReadonly" />
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
 
         @foreach (var subCollectionListEditor in pane.SubCollectionListEditors)
         {
-            <Collection Action="@Constants.New"
+            <Collection Action="@subCollectionListEditor.Action"
                         Alias="@subCollectionListEditor.CollectionAlias"
-                        ParentId="@Id"
-                        ExternalEditor="@subCollectionListEditor"
-                        />
+                        ParentId="@Id" />
         }
     }
 

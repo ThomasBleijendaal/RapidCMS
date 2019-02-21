@@ -6,13 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Buttons\DefaultButton.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Browser" Version="3.0.0-preview-19075-0444" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Build" Version="3.0.0-preview-19075-0444" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\RapidCMS.Common\RapidCMS.Common.csproj" />
-    <ProjectReference Include="..\..\RapidCMS.UI\RapidCMS.UI.csproj" />
+    <ProjectReference Include="..\RapidCMS.Common\RapidCMS.Common.csproj" />
   </ItemGroup>
 
 </Project>

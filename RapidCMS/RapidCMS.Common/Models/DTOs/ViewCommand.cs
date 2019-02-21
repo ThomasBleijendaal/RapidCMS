@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace RapidCMS.Common.Models.DTOs
+﻿namespace RapidCMS.Common.Models.DTOs
 {
     public abstract class ViewCommand
     {
@@ -17,5 +13,13 @@ namespace RapidCMS.Common.Models.DTOs
     public class ReloadCommand : ViewCommand
     {
 
+    }
+
+    public class UpdateParameterCommand : ViewCommand
+    {
+        public string Action { get; set; }
+        public string Alias { get; set; }
+        public int? ParentId { get; set; }
+        public int? Id { get; set; }
     }
 }

@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TODO.md = TODO.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidCMS.UI", "RapidCMS.UI\RapidCMS.UI.csproj", "{B0F8E3F3-BC29-4379-8D33-9C8CD717D15F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{8B06F4B4-7EC0-4B11-9D7A-8F49210E5808}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B06F4B4-7EC0-4B11-9D7A-8F49210E5808}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B06F4B4-7EC0-4B11-9D7A-8F49210E5808}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0F8E3F3-BC29-4379-8D33-9C8CD717D15F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0F8E3F3-BC29-4379-8D33-9C8CD717D15F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0F8E3F3-BC29-4379-8D33-9C8CD717D15F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0F8E3F3-BC29-4379-8D33-9C8CD717D15F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
