@@ -18,11 +18,18 @@ namespace RapidCMS.Common
         //public void Configure(IApplicationBuilder app)
         public void Configure(IComponentsApplicationBuilder app)
         {
-            var root = app.Services.GetService<Root>();
+            try
+            {
+                var root = app.Services.GetService<Root>();
 
-            root.MaterializeRepositories(app.Services);
+                root.MaterializeRepositories(app.Services);
 
-            // TODO: populate value mappers
+                // TODO: populate value mappers
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
     }
 }

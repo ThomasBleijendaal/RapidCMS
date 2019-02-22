@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Enums;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
@@ -57,6 +58,23 @@ namespace RapidCMS.Common.Extensions
                     NameGetter = prop.Getter
                 };
             }
+
+            collection.EntityVariants = configReceiver.EntityVariants.Any()
+                ? configReceiver.EntityVariants.ToList(variant => new EntityVariant
+                {
+                    Icon = variant.Icon,
+                    Name = variant.Name,
+                    Type = variant.Type
+                })
+                : new List<EntityVariant>
+                {
+                    new EntityVariant
+                    {
+                        Icon = null,
+                        Name = typeof(TEntity).Name,
+                        Type = typeof(TEntity)
+                    }
+                };
 
             if (configReceiver.ListView != null)
             {
@@ -180,10 +198,14 @@ namespace RapidCMS.Common.Extensions
                         _ => default(Button)
                     }),
 
+                    BaseType = configReceiver.NodeEditor.BaseType,
+
                     EditorPanes = configReceiver.NodeEditor.EditorPanes.ToList(pane =>
                     {
                         return new EditorPane<Field>
                         {
+                            VariantType = pane.VariantType,
+
                             Fields = pane.Fields.ToList(field =>
                             {
                                 return new Field
@@ -198,54 +220,58 @@ namespace RapidCMS.Common.Extensions
                                 };
                             }),
 
-                            SubCollectionListEditors = pane.SubCollectionListEditors.ToList(listEditor =>
-                            {
-                                // TODO: this is not good, the embedded view should get its own data
-                                // but then now it is a sub collection editor
-                                return new SubCollectionListEditor
-                                {
-                                    CollectionAlias = listEditor.CollectionAlias,
+                            // TODO: bring back to working order
 
-                                    Buttons = listEditor.Buttons.ToList(button => button switch
-                                    {
-                                        DefaultButtonConfig defaultButton => new DefaultButton
-                                        {
-                                            ButtonId = Guid.NewGuid().ToString(),
-                                            DefaultButtonType = defaultButton.ButtonType,
-                                            Icon = defaultButton.Icon,
-                                            Label = defaultButton.Label
-                                        },
-                                        _ => default(Button)
-                                    }),
-                                    EditorPane = new EditorPane<Field>
-                                    {
-                                        Buttons = listEditor.ListEditor.Buttons.ToList(button => button switch
-                                        {
-                                            DefaultButtonConfig defaultButton => new DefaultButton
-                                            {
-                                                ButtonId = Guid.NewGuid().ToString(),
-                                                DefaultButtonType = defaultButton.ButtonType,
-                                                Icon = defaultButton.Icon,
-                                                Label = defaultButton.Label
-                                            },
-                                            _ => default(Button)
-                                        }),
-                                        Fields = listEditor.ListEditor.Fields.ToList(field =>
-                                        {
-                                            return new Field
-                                            {
-                                                DataType = field.Type,
-                                                Description = field.Description,
-                                                Name = field.Name,
-                                                NodeProperty = field.NodeProperty,
-                                                Readonly = field.Readonly,
-                                                ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
-                                                ValueMapperType = field.ValueMapperType
-                                            };
-                                        })
-                                    }
-                                };
-                            })
+                            SubCollectionListEditors = new List<SubCollectionListEditor>()
+
+                            //SubCollectionListEditors = pane.SubCollectionListEditors.ToList(listEditor =>
+                            //{
+                            //    // TODO: this is not good, the embedded view should get its own data
+                            //    // but then now it is a sub collection editor
+                            //    return new SubCollectionListEditor
+                            //    {
+                            //        CollectionAlias = listEditor.CollectionAlias,
+
+                            //        Buttons = listEditor.Buttons.ToList(button => button switch
+                            //        {
+                            //            DefaultButtonConfig defaultButton => new DefaultButton
+                            //            {
+                            //                ButtonId = Guid.NewGuid().ToString(),
+                            //                DefaultButtonType = defaultButton.ButtonType,
+                            //                Icon = defaultButton.Icon,
+                            //                Label = defaultButton.Label
+                            //            },
+                            //            _ => default(Button)
+                            //        }),
+                            //        EditorPane = new EditorPane<Field>
+                            //        {
+                            //            Buttons = listEditor.ListEditor.Buttons.ToList(button => button switch
+                            //            {
+                            //                DefaultButtonConfig defaultButton => new DefaultButton
+                            //                {
+                            //                    ButtonId = Guid.NewGuid().ToString(),
+                            //                    DefaultButtonType = defaultButton.ButtonType,
+                            //                    Icon = defaultButton.Icon,
+                            //                    Label = defaultButton.Label
+                            //                },
+                            //                _ => default(Button)
+                            //            }),
+                            //            Fields = listEditor.ListEditor.Fields.ToList(field =>
+                            //            {
+                            //                return new Field
+                            //                {
+                            //                    DataType = field.Type,
+                            //                    Description = field.Description,
+                            //                    Name = field.Name,
+                            //                    NodeProperty = field.NodeProperty,
+                            //                    Readonly = field.Readonly,
+                            //                    ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
+                            //                    ValueMapperType = field.ValueMapperType
+                            //                };
+                            //            })
+                            //        }
+                            //    };
+                            //})
                         };
                     })
                 };

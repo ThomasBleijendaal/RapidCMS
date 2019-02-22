@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RapidCMS.Common.Data;
-using RapidCMS.Common.Interfaces;
 
 namespace TestLibrary
 {
@@ -101,12 +100,43 @@ namespace TestLibrary
     {
         protected override string Name => nameof(RepositoryE);
     }
-
-    public class TestEntity : IEntity
+    public class VariantRepository : BaseRepository<int, TestEntity>
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public int Number { get; set; }
+        private readonly List<TestEntity> _data = new List<TestEntity>
+        {
+            new TestEntityVariantA { Id = 1, Description = "Variant A", Name = "A", Number = 1, Title = "This is the title" },
+            new TestEntityVariantB { Id = 2, Description = "Variant B", Name = "B", Number = 2, Image = "This is the image" },
+            new TestEntityVariantC { Id = 3, Description = "Variant C", Name = "C", Number = 3, Quote = "This is the quote" },
+        };
+
+        public override Task DeleteAsync(int id, int? parentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<IEnumerable<TestEntity>> GetAllAsync(int? parentId)
+        {
+            return Task.FromResult(_data.AsEnumerable());
+        }
+
+        public override Task<TestEntity> GetByIdAsync(int id, int? parentId)
+        {
+            return Task.FromResult(_data.FirstOrDefault(x => x.Id == id));
+        }
+
+        public override Task<TestEntity> InsertAsync(int id, int? parentId, TestEntity entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<TestEntity> NewAsync(int? parentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task UpdateAsync(int id, int? parentId, TestEntity entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -283,6 +283,12 @@ namespace RapidCMS.Common.Services
             }
 
             var nodeEditor = collection.NodeEditor;
+            var nodeType = typeof(IEntity);
+
+            if (collection.EntityVariants.Count > 1)
+            {
+                nodeType = entity.GetType();
+            }
 
             return new NodeEditorDTO
             {
@@ -298,40 +304,43 @@ namespace RapidCMS.Common.Services
                             Alias = (button is CustomButton customButton) ? customButton.Alias : null
                         };
                     }),
-                EditorPanes = nodeEditor.EditorPanes.ToList(pane =>
-                {
-                    return new NodeEditorPaneDTO
+                EditorPanes = nodeEditor.EditorPanes
+                    // allow for the specialized type, or the base type
+                    .Where(pane => pane.VariantType == nodeType || pane.VariantType == nodeEditor.BaseType)
+                    .ToList(pane =>
                     {
-                        Fields = pane.Fields.ToList(field =>
+                        return new NodeEditorPaneDTO
                         {
-                            var editor = (
-                                new LabelDTO
-                                {
-                                    Name = field.Name,
-                                    Description = field.Description
-                                },
-                                new ValueDTO
-                                {
-                                    DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter(entity)),
-                                    IsReadonly = field.Readonly,
-                                    Type = field.DataType,
-                                    Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter(entity))
-                                });
-
-                            return editor;
-                        }),
-                        SubCollectionListEditors = action == Constants.New 
-                            ? new List<SubCollectionListEditorDTO>()
-                            : pane.SubCollectionListEditors.ToList(listEditor =>
-                                {
-                                    return new SubCollectionListEditorDTO
+                            Fields = pane.Fields.ToList(field =>
+                            {
+                                var editor = (
+                                    new LabelDTO
                                     {
-                                        CollectionAlias = listEditor.CollectionAlias,
-                                        Action = Constants.Edit
-                                    };
-                                })
-                    };
-                })
+                                        Name = field.Name,
+                                        Description = field.Description
+                                    },
+                                    new ValueDTO
+                                    {
+                                        DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter(entity)),
+                                        IsReadonly = field.Readonly,
+                                        Type = field.DataType,
+                                        Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter(entity))
+                                    });
+
+                                return editor;
+                            }),
+                            SubCollectionListEditors = action == Constants.New 
+                                ? new List<SubCollectionListEditorDTO>()
+                                : pane.SubCollectionListEditors.ToList(listEditor =>
+                                    {
+                                        return new SubCollectionListEditorDTO
+                                        {
+                                            CollectionAlias = listEditor.CollectionAlias,
+                                            Action = Constants.Edit
+                                        };
+                                    })
+                        };
+                    })
             };
         }
 
@@ -405,7 +414,14 @@ namespace RapidCMS.Common.Services
                 {
                     case DefaultButtonType.New:
 
-                        return new NavigateCommand { Uri = $"/node/{Constants.New}/{alias}/{(parentId.HasValue ? $"{parentId.Value}" : "")}" };
+                        if (collection.EntityVariants.Count == 1)
+                        {
+                            return new NavigateCommand { Uri = $"/node/{Constants.New}/{alias}/{(parentId.HasValue ? $"{parentId.Value}" : "")}" };
+                        }
+                        else
+                        {
+
+                        }
 
                     default:
                         break;

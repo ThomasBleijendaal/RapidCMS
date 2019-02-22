@@ -7,6 +7,7 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace RapidCMS.Common.Models
 {
@@ -15,7 +16,7 @@ namespace RapidCMS.Common.Models
         private Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
 
         public List<Collection> Collections { get; set; } = new List<Collection>();
-        
+
         public void MaterializeRepositories(IServiceProvider serviceProvider)
         {
             FindRepositoryForCollections(serviceProvider, Collections);
@@ -33,7 +34,7 @@ namespace RapidCMS.Common.Models
                 // register each collection in flat dictionary
                 _collectionMap.Add(collection.Alias, collection);
 
-                var repo = serviceProvider.GetService(collection.RepositoryType);
+                var repo = serviceProvider.GetRequiredService(collection.RepositoryType);
 
                 collection.Repository = (IRepository)repo;
 
@@ -48,6 +49,7 @@ namespace RapidCMS.Common.Models
         public string Alias { get; set; }
 
         public List<Collection> Collections { get; set; } = new List<Collection>();
+        public List<EntityVariant> EntityVariants { get; set; }
 
         public Type RepositoryType { get; set; }
         public IRepository Repository { get; set; }
@@ -120,8 +122,16 @@ namespace RapidCMS.Common.Models
 
     public class NodeEditor : Editor
     {
+        public Type BaseType { get; set; }
         public List<EditorPane<Field>> EditorPanes { get; set; }
         public List<Button> Buttons { get; set; }
+    }
+
+    public class EntityVariant
+    {
+        public string Name { get; set; }
+        public string Icon { get; set; }
+        public Type Type { get; set; }
     }
 
     public class ViewPane<T>
@@ -136,6 +146,7 @@ namespace RapidCMS.Common.Models
     public class EditorPane<T>
         where T : Field
     {
+        public Type VariantType { get; set; }
         public List<Button> Buttons { get; set; }
         public List<T> Fields { get; set; }
         public List<SubCollectionListEditor> SubCollectionListEditors { get; set; }
@@ -204,7 +215,7 @@ namespace RapidCMS.Common.Models
         public bool Readonly { get; set; }
 
         public EditorType DataType { get; set; }
-        
+
         public PropertyMetadata NodeProperty { get; set; }
         public IValueMapper ValueMapper { get; set; }
         public Type ValueMapperType { get; set; }

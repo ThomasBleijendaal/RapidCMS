@@ -23,6 +23,7 @@ namespace TestClient.Server
             services.AddSingleton<RepositoryC>();
             services.AddSingleton<RepositoryD>();
             services.AddSingleton<RepositoryE>();
+            services.AddSingleton<VariantRepository>();
 
             void listView(ListViewConfig<TestEntity> listViewConfig)
             {
@@ -132,14 +133,14 @@ namespace TestClient.Server
                     });
             }
 
-            void nodeEditorWithPolymorphicSubCollection(NodeEditorConfig<TestEntity> nodeEditorConfig)
+            void nodeEditorWithPolymorphism(NodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
                     .AddDefaultButton(DefaultButtonType.SaveNew)
                     .AddDefaultButton(DefaultButtonType.SaveExisting)
                     .AddDefaultButton(DefaultButtonType.Delete)
 
-                    .AddEditorPane(pane =>
+                    .AddEditorPane<TestEntityVariantA>(pane =>
                     {
                         pane.AddField(x => x.Id)
                             .SetValueMapper(new IntValueMapper())
@@ -156,12 +157,54 @@ namespace TestClient.Server
                             .SetDescription("This is a number")
                             .SetValueMapper(new IntValueMapper())
                             .SetType(EditorType.Numeric);
+
+                        pane.AddField(x => x.Title)
+                            .SetDescription("This is a title");
                     })
 
-                    .AddEditorPane(pane =>
+                    .AddEditorPane<TestEntityVariantB>(pane =>
                     {
-                        pane.AddSubCollectionListEditor("sub-collection-1", subCollectionListNodeEditor);
-                    });
+                        pane.AddField(x => x.Id)
+                            .SetValueMapper(new IntValueMapper())
+                            .SetReadonly(true);
+
+                        pane.AddField(x => x.Name)
+                            .SetDescription("This is a name");
+
+                        pane.AddField(x => x.Description)
+                            .SetDescription("This is a description")
+                            .SetType(EditorType.TextArea);
+
+                        pane.AddField(x => x.Number)
+                            .SetDescription("This is a number")
+                            .SetValueMapper(new IntValueMapper())
+                            .SetType(EditorType.Numeric);
+
+                        pane.AddField(x => x.Image)
+                            .SetDescription("This is an image");
+                    })
+                
+                    .AddEditorPane<TestEntityVariantC>(pane =>
+                     {
+                         pane.AddField(x => x.Id)
+                             .SetValueMapper(new IntValueMapper())
+                             .SetReadonly(true);
+
+                         pane.AddField(x => x.Name)
+                             .SetDescription("This is a name");
+
+                         pane.AddField(x => x.Description)
+                             .SetDescription("This is a description")
+                             .SetType(EditorType.TextArea);
+
+                         pane.AddField(x => x.Number)
+                             .SetDescription("This is a number")
+                             .SetValueMapper(new IntValueMapper())
+                             .SetType(EditorType.Numeric);
+
+                         pane.AddField(x => x.Quote)
+                             .SetDescription("This is a quote");
+                     });
             }
 
             void subCollectionListNodeEditor(ListEditorConfig<TestEntity> listEditorConfig)
@@ -221,19 +264,13 @@ namespace TestClient.Server
                 root.AddCollection<TestEntity>("collection-3", "Collection 3", collection =>
                 {
                     collection
-                        .SetRepository<RepositoryA>()
+                        .SetRepository<VariantRepository>()
+                        .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
+                        .AddEntityVariant<TestEntityVariantA>("Variant B", "align-center")
+                        .AddEntityVariant<TestEntityVariantA>("Variant C", "align-right")
                         .SetTreeView("Tree 3", ViewType.List, entity => entity.Name)
                         .SetListView(listView)
-                        .SetNodeEditor(nodeEditorWithPolymorphicSubCollection)
-                        .AddCollection<TestEntity>("sub-collection-2", "Sub Collection 2", subCollection =>
-                        {
-                            subCollection
-                                .SetRepository<RepositoryB>()
-                                .SetTreeView("SubTree1", ViewType.List, entity => entity.Name)
-                                .SetListView(listView)
-                                .SetListEditor(listNodeEditor)
-                                .SetNodeEditor(nodeEditor);
-                        });
+                        .SetNodeEditor(nodeEditorWithPolymorphism);
                 });
             });
 
