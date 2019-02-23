@@ -82,13 +82,8 @@ namespace RapidCMS.Common.Extensions
                 {
                     Buttons = configReceiver.ListView.Buttons.ToList(button => button switch
                     {
-                        DefaultButtonConfig defaultButton => new DefaultButton
-                        {
-                            ButtonId = Guid.NewGuid().ToString(),
-                            DefaultButtonType = defaultButton.ButtonType,
-                            Icon = defaultButton.Icon,
-                            Label = defaultButton.Label
-                        },
+                        DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
+                        CustomButtonConfig customButton => customButton.ToCustomButton(),
                         _ => default(Button)
                     }),
                     ViewPanes = configReceiver.ListView.ListViewPanes.ToList(pane =>
@@ -97,13 +92,8 @@ namespace RapidCMS.Common.Extensions
                         {
                             Buttons = pane.Buttons.ToList(button => button switch
                             {
-                                DefaultButtonConfig defaultButton => new DefaultButton
-                                {
-                                    ButtonId = Guid.NewGuid().ToString(),
-                                    DefaultButtonType = defaultButton.ButtonType,
-                                    Icon = defaultButton.Icon,
-                                    Label = defaultButton.Label
-                                },
+                                DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
+                                CustomButtonConfig customButton => customButton.ToCustomButton(),
                                 _ => default(Button)
                             }),
                             Properties = pane.Properties.ToList(property => new ListViewProperty
@@ -127,34 +117,16 @@ namespace RapidCMS.Common.Extensions
                 {
                     Buttons = configReceiver.ListEditor.Buttons.ToList(button => button switch
                     {
-                        DefaultButtonConfig defaultButton => new DefaultButton
-                        {
-                            ButtonId = Guid.NewGuid().ToString(),
-                            DefaultButtonType = defaultButton.ButtonType,
-                            Icon = defaultButton.Icon,
-                            Label = defaultButton.Label
-                        },
-                        CustomButtonConfig customButton => new CustomButton
-                        {
-                            ButtonId = Guid.NewGuid().ToString(),
-                            Action = customButton.Action,
-                            Alias = customButton.Alias,
-                            Icon = customButton.Icon,
-                            Label = customButton.Label
-                        },
+                        DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
+                        CustomButtonConfig customButton => customButton.ToCustomButton(),
                         _ => default(Button)
                     }),
                     EditorPane = new EditorPane<Field>
                     {
                         Buttons = editor.Buttons.ToList(button => button switch
                         {
-                            DefaultButtonConfig defaultButton => new DefaultButton
-                            {
-                                ButtonId = Guid.NewGuid().ToString(),
-                                DefaultButtonType = defaultButton.ButtonType,
-                                Icon = defaultButton.Icon,
-                                Label = defaultButton.Label
-                            },
+                            DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
+                            CustomButtonConfig customButton => customButton.ToCustomButton(),
                             _ => default(Button)
                         }),
                         Fields = editor.Fields.ToList(field =>
@@ -180,21 +152,8 @@ namespace RapidCMS.Common.Extensions
                 {
                     Buttons = configReceiver.NodeEditor.Buttons.ToList(button => button switch
                     {
-                        DefaultButtonConfig defaultButton => new DefaultButton
-                        {
-                            ButtonId = Guid.NewGuid().ToString(),
-                            DefaultButtonType = defaultButton.ButtonType,
-                            Icon = defaultButton.Icon,
-                            Label = defaultButton.Label
-                        },
-                        CustomButtonConfig customButton => new CustomButton
-                        {
-                            ButtonId = Guid.NewGuid().ToString(),
-                            Action = customButton.Action,
-                            Alias = customButton.Alias,
-                            Icon = customButton.Icon,
-                            Label = customButton.Label
-                        },
+                        DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
+                        CustomButtonConfig customButton => customButton.ToCustomButton(),
                         _ => default(Button)
                     }),
 
@@ -205,6 +164,8 @@ namespace RapidCMS.Common.Extensions
                         return new EditorPane<Field>
                         {
                             VariantType = pane.VariantType,
+
+                            Buttons = new List<Button>(),
 
                             Fields = pane.Fields.ToList(field =>
                             {
@@ -234,6 +195,7 @@ namespace RapidCMS.Common.Extensions
 
                             //        Buttons = listEditor.Buttons.ToList(button => button switch
                             //        {
+                            // custom button
                             //            DefaultButtonConfig defaultButton => new DefaultButton
                             //            {
                             //                ButtonId = Guid.NewGuid().ToString(),
@@ -282,6 +244,15 @@ namespace RapidCMS.Common.Extensions
             root.Collections.Add(collection);
 
             return root;
+        }
+    }
+
+    public static class ButtonExtensions
+    {
+        public static IEnumerable<Button> GetAllButtons(this IEnumerable<Button> buttons)
+        {
+            // HACK: bit of a hack
+            return buttons.SelectMany(x => x.Buttons.Any() ? x.Buttons.AsEnumerable() : new [] { x }).ToList();
         }
     }
 }

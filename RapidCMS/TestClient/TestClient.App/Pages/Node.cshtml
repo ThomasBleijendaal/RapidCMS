@@ -3,12 +3,15 @@
 @page "/node/{Action}/{Alias}"
 @page "/node/{Action}/{Alias}/{Id:int}"
 @page "/node/{Action}/{Alias}/{ParentId:int}/{Id:int}"
+@page "/node/new/{Alias}"
+@page "/node/new/{Alias}/{ParentId:int}"
+@page "/node/new/{TypeGuidString}/{Alias}"
+@page "/node/new/{TypeGuidString}/{Alias}/{ParentId:int}"
 
 @using RapidCMS.Common
 @using RapidCMS.UI.Buttons
 @using RapidCMS.Common.Models.DTOs
 @using RapidCMS.Common.Services
-@using RapidCMS.Common.Extensions
 
 @inject ICollectionService CollectionService
 @*
@@ -111,11 +114,17 @@ else
     [Parameter]
     private string Action { get; set; }
 
+    // TODO: should this Guid only be filled when there are multiple variants?
+    [Parameter]
+    private string TypeGuidString { get; set; }
+
+    private Guid? TypeGuid => string.IsNullOrEmpty(TypeGuidString) ? default(Guid?) : Guid.TryParse(TypeGuidString, out var guid) ? guid : default(Guid?);
+
     [Parameter]
     private int? ParentId { get; set; } = null;
 
     [Parameter]
-    private int Id { get; set; }
+    private int? Id { get; set; } = null;
 
     NodeEditorDTO Editor;
 
@@ -126,7 +135,12 @@ else
 
     protected override async Task LoadDataAsync()
     {
-        Editor = await CollectionService.GetNodeEditorAsync(Action, Alias, ParentId, Id);
+        if (Action == null && TypeGuid.HasValue)
+        {
+            Action = Constants.New;
+        }
+
+        Editor = await CollectionService.GetNodeEditorAsync(Action, Alias, TypeGuid, ParentId, Id);
     }
 
     async Task ButtonCallbackAsync(string actionId, BasePage view)

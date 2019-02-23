@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,15 +27,15 @@ namespace RapidCMS.Common.Services
 
         Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string alias, int? parentId);
 
-        Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, int? parentId, int id);
+        Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, Guid? typeGuid, int? parentId, int? id);
 
         Task<ViewCommand> ProcessListViewActionAsync(string action, string alias, int? parentId, string actionId);
         Task<ViewCommand> ProcessListEditorActionAsync(string action, string alias, int? parentId, string actionId);
 
         Task<ViewCommand> ProcessListViewActionAsync(string action, string alias, int id, int? parentId, string actionId);
-        Task<ViewCommand> ProcessListEditorActionAsync(string action, string alias, int id, int? parentId, CollectionListEditorDTO formValues, string actionId);
 
-        Task<ViewCommand> ProcessNodeEditorActionAsync(string action, string alias, int? parentId, int id, NodeEditorDTO formValues, string actionId);
+        Task<ViewCommand> ProcessListEditorActionAsync(string action, string alias, int id, int? parentId, CollectionListEditorDTO formValues, string actionId);
+        Task<ViewCommand> ProcessNodeEditorActionAsync(string action, string alias, int? parentId, int? id, NodeEditorDTO formValues, string actionId);
     }
 
     public class CollectionService : ICollectionService
@@ -121,6 +122,7 @@ namespace RapidCMS.Common.Services
             return new CollectionListViewDTO()
             {
                 Buttons = listView.Buttons
+                    .GetAllButtons()
                     .Where(button => button.IsCompatibleWithView(viewContext))
                     .ToList(button =>
                     {
@@ -135,15 +137,17 @@ namespace RapidCMS.Common.Services
                 {
                     return new CollectionListViewPaneDTO
                     {
-                        Buttons = pane.Buttons.ToList(button =>
-                        {
-                            return new ButtonDTO
+                        Buttons = pane.Buttons
+                            .GetAllButtons()
+                            .ToList(button =>
                             {
-                                Icon = button.Icon,
-                                ButtonId = button.ButtonId,
-                                Label = button.Label
-                            };
-                        }),
+                                return new ButtonDTO
+                                {
+                                    Icon = button.Icon,
+                                    ButtonId = button.ButtonId,
+                                    Label = button.Label
+                                };
+                            }),
                         Properties = pane.Properties.ToList(prop =>
                             new PropertyDTO
                             {
@@ -180,6 +184,7 @@ namespace RapidCMS.Common.Services
             return new CollectionListEditorDTO
             {
                 Buttons = listEditor.Buttons
+                    .GetAllButtons()
                     .Where(button => button.IsCompatibleWithView(listViewContext))
                     .ToList(button =>
                     {
@@ -212,7 +217,8 @@ namespace RapidCMS.Common.Services
                     Usage = UsageType.Node | MapActionToUsageType(Constants.New)
                 };
 
-                var newEntity = await collection.Repository.NewAsync(parentId);
+                // TODO: remove null
+                var newEntity = await collection.Repository.NewAsync(parentId, null);
 
                 yield return CreateCollectionListEditorNode(newEntity, editorViewContext, parentId, editor);
             }
@@ -240,6 +246,7 @@ namespace RapidCMS.Common.Services
                 Id = entity.Id,
                 ParentId = parentId,
                 Buttons = editor.Buttons
+                    .GetAllButtons()
                     .Where(button => button.IsCompatibleWithView(viewContext))
                     .ToList(button =>
                     {
@@ -260,7 +267,7 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public async Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, int? parentId, int id)
+        public async Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, Guid? typeGuid, int? parentId, int? id)
         {
             var viewContext = new ViewContext
             {
@@ -269,11 +276,18 @@ namespace RapidCMS.Common.Services
 
             var collection = _root.GetCollection(alias);
 
+            var nodeType = typeof(IEntity);
+
+            if (typeGuid.HasValue)
+            {
+                nodeType = collection.EntityVariants.First(variant => variant.Type.GUID == typeGuid).Type;
+            }
+
             var entity = action switch
             {
-                Constants.View => await collection.Repository.GetByIdAsync(id, parentId),
-                Constants.Edit => await collection.Repository.GetByIdAsync(id, parentId),
-                Constants.New => await collection.Repository.NewAsync(parentId),
+                Constants.View => await collection.Repository.GetByIdAsync(id.Value, parentId),
+                Constants.Edit => await collection.Repository.GetByIdAsync(id.Value, parentId),
+                Constants.New => await collection.Repository.NewAsync(parentId, nodeType),
                 _ => null
             };
 
@@ -283,9 +297,8 @@ namespace RapidCMS.Common.Services
             }
 
             var nodeEditor = collection.NodeEditor;
-            var nodeType = typeof(IEntity);
-
-            if (collection.EntityVariants.Count > 1)
+            
+            if (collection.EntityVariants.Count > 1 && action != Constants.New)
             {
                 nodeType = entity.GetType();
             }
@@ -293,6 +306,7 @@ namespace RapidCMS.Common.Services
             return new NodeEditorDTO
             {
                 Buttons = nodeEditor.Buttons
+                    .GetAllButtons()
                     .Where(button => button.IsCompatibleWithView(viewContext))
                     .ToList(button =>
                     {
@@ -344,14 +358,15 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string action, string alias, int? parentId, int id, NodeEditorDTO formValues, string actionId)
+        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string action, string alias, int? parentId, int? id, NodeEditorDTO formValues, string actionId)
         {
             var collection = _root.GetCollection(alias);
 
             var entity = action switch
             {
-                Constants.Edit => await collection.Repository.GetByIdAsync(id, parentId),
-                Constants.New => await collection.Repository.NewAsync(parentId),
+                Constants.Edit => await collection.Repository.GetByIdAsync(id.Value, parentId),
+                // TODO: remove null
+                Constants.New => await collection.Repository.NewAsync(parentId, null),
                 _ => null
             };
 
@@ -359,7 +374,7 @@ namespace RapidCMS.Common.Services
 
             UpdateEntityWithFormData(formValues, entity, nodeEditor);
 
-            var button = nodeEditor.Buttons.First(x => x.ButtonId == actionId);
+            var button = nodeEditor.Buttons.GetAllButtons().First(x => x.ButtonId == actionId);
 
             if (button is DefaultButton defaultButton)
             {
@@ -367,20 +382,20 @@ namespace RapidCMS.Common.Services
                 {
                     case DefaultButtonType.SaveNew:
 
-                        entity = await collection.Repository.InsertAsync(id, parentId, entity);
+                        entity = await collection.Repository.InsertAsync(id.Value, parentId, entity);
 
                         return new NavigateCommand { Uri = $"/node/{Constants.Edit}/{alias}{(parentId.HasValue ? $"/{parentId.Value}" : "")}/{entity.Id}" };
 
                     case DefaultButtonType.SaveExisting:
                     case DefaultButtonType.SaveNewAndExisting:
 
-                        await collection.Repository.UpdateAsync(id, parentId, entity);
+                        await collection.Repository.UpdateAsync(id.Value, parentId, entity);
 
                         return new ReloadCommand();
 
                     case DefaultButtonType.Delete:
 
-                        await collection.Repository.DeleteAsync(id, parentId);
+                        await collection.Repository.DeleteAsync(id.Value, parentId);
 
                         return new NavigateCommand { Uri = $"/collection/{Constants.List}/{alias}{(parentId.HasValue ? $"/{parentId.Value}" : "")}" };
 
@@ -406,7 +421,7 @@ namespace RapidCMS.Common.Services
 
             var listView = collection.ListView;
 
-            var button = listView.Buttons.First(x => x.ButtonId == actionId);
+            var button = listView.Buttons.GetAllButtons().First(x => x.ButtonId == actionId);
 
             if (button is DefaultButton defaultButton)
             {
@@ -420,7 +435,10 @@ namespace RapidCMS.Common.Services
                         }
                         else
                         {
+                            // TODO: GUID does not work
+                            var type = button.Metadata as Type;
 
+                            return new NavigateCommand { Uri = $"/node/{Constants.New}/{type.GUID}/{alias}/{(parentId.HasValue ? $"{parentId.Value}" : "")}" };
                         }
 
                     default:
@@ -437,7 +455,7 @@ namespace RapidCMS.Common.Services
 
             var listEditor = collection.ListEditor;
 
-            var button = listEditor.Buttons.First(x => x.ButtonId == actionId);
+            var button = listEditor.Buttons.GetAllButtons().First(x => x.ButtonId == actionId);
 
             if (button is DefaultButton defaultButton)
             {
@@ -469,7 +487,7 @@ namespace RapidCMS.Common.Services
 
             var listView = collection.ListView;
 
-            var button = listView.ViewPanes.SelectMany(x => x.Buttons).First(x => x.ButtonId == actionId);
+            var button = listView.ViewPanes.SelectMany(x => x.Buttons).GetAllButtons().First(x => x.ButtonId == actionId);
 
             if (button is DefaultButton defaultButton)
             {
@@ -498,7 +516,8 @@ namespace RapidCMS.Common.Services
             var entity = action switch
             {
                 Constants.Edit => await collection.Repository.GetByIdAsync(id, parentId),
-                Constants.New => await collection.Repository.NewAsync(parentId),
+                // TODO: null
+                Constants.New => await collection.Repository.NewAsync(parentId, null),
                 _ => null
             };
 
@@ -507,7 +526,7 @@ namespace RapidCMS.Common.Services
 
             UpdateEntityWithFormData(nodeFormValues, entity, listEditor);
 
-            var button = listEditor.EditorPane.Buttons.First(x => x.ButtonId == actionId);
+            var button = listEditor.EditorPane.Buttons.GetAllButtons().First(x => x.ButtonId == actionId);
 
             if (button is DefaultButton defaultButton)
             {

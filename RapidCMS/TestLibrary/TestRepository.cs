@@ -64,7 +64,7 @@ namespace TestLibrary
             element.Name = entity.Name;
         }
 
-        public override Task<TestEntity> NewAsync(int? parentId)
+        public override Task<TestEntity> NewAsync(int? parentId, Type variantType)
         {
             return Task.FromResult(new TestEntity
             {
@@ -129,9 +129,24 @@ namespace TestLibrary
             throw new NotImplementedException();
         }
 
-        public override Task<TestEntity> NewAsync(int? parentId)
+        public override Task<TestEntity> NewAsync(int? parentId, Type variantType)
         {
-            throw new NotImplementedException();
+            if (variantType == typeof(TestEntityVariantA))
+            {
+                return Task.FromResult(new TestEntityVariantA() as TestEntity);
+            }
+            else if (variantType == typeof(TestEntityVariantB))
+            {
+                return Task.FromResult(new TestEntityVariantB() as TestEntity);
+            }
+            else if (variantType == typeof(TestEntityVariantC))
+            {
+                return Task.FromResult(new TestEntityVariantC() as TestEntity);
+            }
+            else
+            {
+                return Task.FromResult(default(TestEntity));
+            }
         }
 
         public override Task UpdateAsync(int id, int? parentId, TestEntity entity)

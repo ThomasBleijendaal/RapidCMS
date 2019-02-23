@@ -186,6 +186,10 @@ namespace RapidCMS.Common.Models
         public string Label { get; set; }
         public string Icon { get; set; }
 
+        public List<Button> Buttons { get; set; }
+
+        public object Metadata { get; set; }
+
         public virtual bool IsCompatibleWithView(ViewContext viewContext) { return true; }
     }
 

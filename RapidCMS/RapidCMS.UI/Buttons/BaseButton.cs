@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
+using RapidCMS.Common.Models.DTOs;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace RapidCMS.UI.Buttons
