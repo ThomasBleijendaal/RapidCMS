@@ -266,8 +266,8 @@ namespace TestClient.Server
                     collection
                         .SetRepository<VariantRepository>()
                         .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
-                        .AddEntityVariant<TestEntityVariantA>("Variant B", "align-center")
-                        .AddEntityVariant<TestEntityVariantA>("Variant C", "align-right")
+                        .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
+                        .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
                         .SetTreeView("Tree 3", ViewType.List, entity => entity.Name)
                         .SetListView(listView)
                         .SetNodeEditor(nodeEditorWithPolymorphism);

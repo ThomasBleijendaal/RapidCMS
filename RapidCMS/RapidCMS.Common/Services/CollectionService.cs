@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.Services;
-using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
@@ -27,7 +24,7 @@ namespace RapidCMS.Common.Services
 
         Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string alias, int? parentId);
 
-        Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, Guid? typeGuid, int? parentId, int? id);
+        Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, string variantAlias, int? parentId, int? id);
 
         Task<ViewCommand> ProcessListViewActionAsync(string action, string alias, int? parentId, string actionId);
         Task<ViewCommand> ProcessListEditorActionAsync(string action, string alias, int? parentId, string actionId);
@@ -267,7 +264,7 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public async Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, Guid? typeGuid, int? parentId, int? id)
+        public async Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, string variantAlias, int? parentId, int? id)
         {
             var viewContext = new ViewContext
             {
@@ -278,9 +275,9 @@ namespace RapidCMS.Common.Services
 
             var nodeType = typeof(IEntity);
 
-            if (typeGuid.HasValue)
+            if (!string.IsNullOrEmpty(variantAlias))
             {
-                nodeType = collection.EntityVariants.First(variant => variant.Type.GUID == typeGuid).Type;
+                nodeType = collection.EntityVariants.First(variant => variant.Alias == variantAlias).Type;
             }
 
             var entity = action switch
@@ -435,10 +432,9 @@ namespace RapidCMS.Common.Services
                         }
                         else
                         {
-                            // TODO: GUID does not work
-                            var type = button.Metadata as Type;
+                            var type = button.Metadata as EntityVariant;
 
-                            return new NavigateCommand { Uri = $"/node/{Constants.New}/{type.GUID}/{alias}/{(parentId.HasValue ? $"{parentId.Value}" : "")}" };
+                            return new NavigateCommand { Uri = $"/node/{Constants.New}/{type.Alias}/{alias}/{(parentId.HasValue ? $"{parentId.Value}" : "")}" };
                         }
 
                     default:

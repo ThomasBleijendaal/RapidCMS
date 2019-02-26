@@ -19,7 +19,7 @@ namespace RapidCMS.Common.Models.Config
     public class CollectionConfig<TEntity> : ICollectionRoot
         where TEntity : IEntity
     {
-        internal Type RepositoryType { get; set; }   
+        internal Type RepositoryType { get; set; }
 
         public List<Collection> Collections { get; set; } = new List<Collection>();
         public List<EntityVariantConfig> EntityVariants { get; set; } = new List<EntityVariantConfig>();
@@ -35,7 +35,13 @@ namespace RapidCMS.Common.Models.Config
         public CollectionConfig<TEntity> AddEntityVariant<TDerivedEntity>(string name, string icon)
             where TDerivedEntity : TEntity
         {
-            EntityVariants.Add(new EntityVariantConfig { Name = name, Icon = icon, Type = typeof(TDerivedEntity) });
+            EntityVariants.Add(new EntityVariantConfig
+            {
+                Name = name,
+                Icon = icon,
+                Type = typeof(TDerivedEntity),
+                Alias = typeof(TDerivedEntity).Name.ToUrlFriendlyString()
+            });
 
             return this;
         }
@@ -355,6 +361,9 @@ namespace RapidCMS.Common.Models.Config
     {
         public Type VariantType { get; set; }
         public List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
+
+        // TODO: bring to working order
+        //public List<SubCollectionListEditorConfig<TEntity>> SubCollectionListEditors { get; set; } = new List<SubCollectionListEditorConfig<TEntity>>();
     }
 
     public class NodeEditorPaneConfig<TEntity> : NodeEditorPaneConfig
@@ -366,7 +375,8 @@ namespace RapidCMS.Common.Models.Config
         //public List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
 
         // TODO: bring back to working order
-        //public ICollection<SubCollectionListEditorConfig<TEntity>> SubCollectionListEditors { get; set; } = new List<SubCollectionListEditorConfig<TEntity>>();
+
+        public ICollection<SubCollectionListEditorConfig<TEntity>> SubCollectionListEditors { get; set; } = new List<SubCollectionListEditorConfig<TEntity>>();
 
         public FieldConfig<TEntity> AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<FieldConfig<TEntity>> configure = null)
         {
@@ -375,7 +385,7 @@ namespace RapidCMS.Common.Models.Config
                 NodeProperty = PropertyMetadataHelper.Create(propertyExpression)
             };
             config.Name = config.NodeProperty.PropertyName;
-            
+
             // try to find the default editor for this type
             foreach (var type in EnumHelper.GetValues<EditorType>())
             {
@@ -386,7 +396,7 @@ namespace RapidCMS.Common.Models.Config
                     break;
                 }
             }
-            
+
             configure?.Invoke(config);
 
             Fields.Add(config);
@@ -473,7 +483,7 @@ namespace RapidCMS.Common.Models.Config
     }
 
     public class DefaultButtonConfig : ButtonConfig
-    { 
+    {
         internal DefaultButtonType ButtonType { get; set; }
     }
 
@@ -488,5 +498,6 @@ namespace RapidCMS.Common.Models.Config
         public string Name { get; set; }
         public string Icon { get; set; }
         public Type Type { get; set; }
+        public string Alias { get; set; }
     }
 }

@@ -21,7 +21,8 @@ namespace TestLibrary
                 {
                     new TestEntity { Id = 1, Name = Guid.NewGuid().ToString(), Description = "Entity 1 Description", Number = 10 },
                     new TestEntity { Id = 2, Name = Guid.NewGuid().ToString(), Description = "Entity 2 Description", Number = 20 }
-                }.ToList();
+                }
+                .ToList();
             }
 
             return _data[parentId ?? 0];

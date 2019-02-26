@@ -132,6 +132,7 @@ namespace RapidCMS.Common.Models
         public string Name { get; set; }
         public string Icon { get; set; }
         public Type Type { get; set; }
+        public string Alias { get; set; }
     }
 
     public class ViewPane<T>

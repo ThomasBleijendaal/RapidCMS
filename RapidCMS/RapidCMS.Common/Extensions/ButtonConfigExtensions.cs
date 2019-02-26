@@ -1,10 +1,9 @@
-﻿using RapidCMS.Common.Enums;
-using RapidCMS.Common.Models;
-using RapidCMS.Common.Models.Config;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using RapidCMS.Common.Enums;
+using RapidCMS.Common.Models;
+using RapidCMS.Common.Models.Config;
 
 namespace RapidCMS.Common.Extensions
 {
@@ -25,7 +24,7 @@ namespace RapidCMS.Common.Extensions
                     DefaultButtonType = DefaultButtonType.New,
                     Icon = variant.Icon,
                     Label = variant.Name,
-                    Metadata = variant.Type
+                    Metadata = variant
                 } as Button)
                 : new List<Button>()
             };
@@ -39,7 +38,8 @@ namespace RapidCMS.Common.Extensions
                 Action = button.Action,
                 Alias = button.Alias,
                 Icon = button.Icon,
-                Label = button.Label
+                Label = button.Label,
+                Buttons = new List<Button>()
             };
         }
     }
