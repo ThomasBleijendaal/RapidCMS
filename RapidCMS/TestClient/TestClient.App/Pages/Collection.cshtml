@@ -246,6 +246,7 @@ else if (EditorView != null)
         await HandleViewCommandAsync(command);
     }
 
+    // TODO: add support for updating the editor view coming from command
     async Task EditorButtonCallbackAsync(string actionId, BasePage view)
     {
         var command = await CollectionService.ProcessListEditorActionAsync(Action, CollectionAlias, ParentId, actionId);

@@ -244,7 +244,7 @@ namespace RapidCMS.Common.Services
                 yield return CreateCollectionListEditorNode(newEntity, editorViewContext, parentId, editor);
             }
 
-            if (action.In(Constants.New, Constants.Edit))
+            if (action.In(Constants.List, Constants.Edit))
             {
                 var editorViewContext = new ViewContext
                 {
