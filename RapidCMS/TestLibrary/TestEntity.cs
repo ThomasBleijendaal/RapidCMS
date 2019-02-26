@@ -4,6 +4,7 @@ namespace TestLibrary
 {
     public class TestEntity : IEntity
     {
+        public int? ParentId { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

@@ -105,7 +105,7 @@ namespace RapidCMS.Common.Models
 
     public class ListEditor : Editor
     {
-        public EditorPane<Field> EditorPane { get; set; }
+        public List<EditorPane<Field>> EditorPanes { get; set; }
         public List<Button> Buttons { get; set; }
     }
 

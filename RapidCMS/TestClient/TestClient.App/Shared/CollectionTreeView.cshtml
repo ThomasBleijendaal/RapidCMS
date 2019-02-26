@@ -10,25 +10,42 @@ else
 {
     <li>
         <strong>
-            <NavLink href=@Collection.Path class=@(Collection.Path == CurrentUrl ? "current-page" : "")>@Collection.Name</NavLink> 
-            (<NavLink href=@Collection.Path.Replace("list", "edit")>list editor</NavLink>)
+            @if (Collection.Path.Count == 1)
+            {
+                var path = Collection.Path.First().Path;
+                var icon = Collection.Path.First().Icon;
+
+                <NavLink href=@path class=@(path == CurrentUrl ? "current-page" : "")><i class="oi oi-@icon"></i> @Collection.Name</NavLink>
+            }
+            else
+            {
+                @Collection.Name
+
+                @foreach (var path in Collection.Path)
+                {
+                    <NavLink href=@path.Path class=@(path.Path == CurrentUrl ? "current-page" : "")><i class="oi oi-@path.Icon"></i></NavLink>
+                }
+            }
         </strong>
 
-        <ul>
-            @foreach (var node in Collection.Nodes)
-            {
-                <li>
-                    <NavLink href=@node.Path class=@(node.Path == CurrentUrl ? "current-page" : "")>@node.Name</NavLink>
+        @if (Collection.Nodes != null)
+        {
+            <ul>
+                @foreach (var node in Collection.Nodes)
+                {
+                    <li>
+                        <NavLink href=@node.Path class=@(node.Path == $"/{CurrentUrl}" ? "current-page" : "")>@node.Name</NavLink>
 
-                    <ul>
-                        @foreach (var subCollection in node.Collections)
-                        {
-                            <CollectionTreeView Collection="@subCollection" ParentId="@node.Id" CurrentUrl="@CurrentUrl" />
-                        }
-                    </ul>
-                </li>
-            }
-        </ul>
+                        <ul>
+                            @foreach (var subCollection in node.Collections)
+                            {
+                                <CollectionTreeView Collection="@subCollection" ParentId="@node.Id" CurrentUrl="@CurrentUrl" />
+                            }
+                        </ul>
+                    </li>
+                }
+            </ul>
+        }
     </li>
 }
 @functions {

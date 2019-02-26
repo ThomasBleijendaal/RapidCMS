@@ -11,13 +11,15 @@ namespace RapidCMS.Common.Extensions
     {
         public static DefaultButton ToDefaultButton(this DefaultButtonConfig button, IEnumerable<EntityVariant> entityVariants)
         {
+            var variants = entityVariants.Count();
+
             return new DefaultButton
             {
                 ButtonId = Guid.NewGuid().ToString(),
                 DefaultButtonType = button.ButtonType,
                 Icon = button.Icon,
                 Label = button.Label,
-                Buttons = button.ButtonType == DefaultButtonType.New && entityVariants.Count() > 1
+                Buttons = button.ButtonType == DefaultButtonType.New && variants > 1
                 ? entityVariants.ToList(variant => new DefaultButton
                 {
                     ButtonId = Guid.NewGuid().ToString(),
@@ -26,7 +28,8 @@ namespace RapidCMS.Common.Extensions
                     Label = variant.Name,
                     Metadata = variant
                 } as Button)
-                : new List<Button>()
+                : new List<Button>(),
+                Metadata = variants == 1 ? entityVariants.First() : null
             };
         }
 

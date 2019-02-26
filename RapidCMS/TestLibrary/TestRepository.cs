@@ -44,7 +44,7 @@ namespace TestLibrary
             return GetData(parentId).FirstOrDefault(x => x.Id == id);
         }
 
-        public override async Task<TestEntity> InsertAsync(int id, int? parentId, TestEntity entity)
+        public override async Task<TestEntity> InsertAsync(int? parentId, TestEntity entity)
         {
             await Task.Delay(1);
 
@@ -101,13 +101,17 @@ namespace TestLibrary
     {
         protected override string Name => nameof(RepositoryE);
     }
+    public class RepositoryF : TestRepository
+    {
+        protected override string Name => nameof(RepositoryF);
+    }
     public class VariantRepository : BaseRepository<int, TestEntity>
     {
         private readonly List<TestEntity> _data = new List<TestEntity>
         {
-            new TestEntityVariantA { Id = 1, Description = "Variant A", Name = "A", Number = 1, Title = "This is the title" },
-            new TestEntityVariantB { Id = 2, Description = "Variant B", Name = "B", Number = 2, Image = "This is the image" },
-            new TestEntityVariantC { Id = 3, Description = "Variant C", Name = "C", Number = 3, Quote = "This is the quote" },
+            new TestEntityVariantA { Id = 1, ParentId = null, Description = "Variant A", Name = "A", Number = 1, Title = "This is the title" },
+            new TestEntityVariantB { Id = 2, ParentId = null, Description = "Variant B", Name = "B", Number = 2, Image = "This is the image" },
+            new TestEntityVariantC { Id = 3, ParentId = null, Description = "Variant C", Name = "C", Number = 3, Quote = "This is the quote" },
         };
 
         public override Task DeleteAsync(int id, int? parentId)
@@ -117,17 +121,24 @@ namespace TestLibrary
 
         public override Task<IEnumerable<TestEntity>> GetAllAsync(int? parentId)
         {
-            return Task.FromResult(_data.AsEnumerable());
+            return Task.FromResult(_data.Where(x => x.ParentId == parentId));
         }
 
         public override Task<TestEntity> GetByIdAsync(int id, int? parentId)
         {
-            return Task.FromResult(_data.FirstOrDefault(x => x.Id == id));
+            return Task.FromResult(_data.FirstOrDefault(x => x.Id == id && x.ParentId == parentId));
         }
 
-        public override Task<TestEntity> InsertAsync(int id, int? parentId, TestEntity entity)
+        public override async Task<TestEntity> InsertAsync(int? parentId, TestEntity entity)
         {
-            throw new NotImplementedException();
+            await Task.Delay(1);
+
+            entity.Id = _data.Any() ? _data.Max(x => x.Id) + 1 : 1;
+            entity.ParentId = parentId;
+
+            _data.Add(entity);
+
+            return entity;
         }
 
         public override Task<TestEntity> NewAsync(int? parentId, Type variantType)
@@ -150,9 +161,29 @@ namespace TestLibrary
             }
         }
 
-        public override Task UpdateAsync(int id, int? parentId, TestEntity entity)
+        public override async Task UpdateAsync(int id, int? parentId, TestEntity entity)
         {
-            throw new NotImplementedException();
+            await Task.Delay(1);
+
+            var element = _data.First(x => x.Id == id);
+
+            element.ParentId = entity.ParentId;
+            element.Description = entity.Description;
+            element.Name = entity.Name;
+            element.Number = entity.Number;
+
+            switch (entity)
+            {
+                case TestEntityVariantA a:
+                    (element as TestEntityVariantA).Title = a.Title;
+                    break;
+                case TestEntityVariantB b:
+                    (element as TestEntityVariantB).Image = b.Image;
+                    break;
+                case TestEntityVariantC c:
+                    (element as TestEntityVariantC).Quote = c.Quote;
+                    break;
+            }
         }
     }
 }

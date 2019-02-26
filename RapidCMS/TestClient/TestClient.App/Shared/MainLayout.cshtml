@@ -75,7 +75,7 @@
         {
             return false;
         }
-        else if (collections.Any(x => x.Path == url))
+        else if (collections.Any(x => x.Path.Any(x => x.Path == url)))
         {
             return true;
         }

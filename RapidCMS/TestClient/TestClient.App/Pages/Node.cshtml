@@ -1,12 +1,9 @@
 ﻿@inherits BasePage
 
-@page "/node/{Action}/{Alias}"
-@page "/node/{Action}/{Alias}/{Id:int}"
-@page "/node/{Action}/{Alias}/{ParentId:int}/{Id:int}"
-@page "/node/new/{Alias}"
-@page "/node/new/{Alias}/{ParentId:int}"
-@page "/node/new/{VariantAlias}/{Alias}"
-@page "/node/new/{VariantAlias}/{Alias}/{ParentId:int}"
+@page "/node/{Action}/{CollectionAlias}/{VariantAlias}"
+@page "/node/{Action}/{CollectionAlias}/{VariantAlias}/{Id:int}"
+@page "/node/{Action}/{ParentId:int}/{CollectionAlias}/{VariantAlias}"
+@page "/node/{Action}/{ParentId:int}/{CollectionAlias}/{VariantAlias}/{Id:int}"
 
 @using RapidCMS.Common
 @using RapidCMS.UI.Buttons
@@ -18,7 +15,7 @@
     TODO: remove weird callback for binding
 *@
 
-<h1>@Action node @Alias @(ParentId.HasValue ? $":: {ParentId.Value}" : "") :: @Id</h1>
+<h1>@Action node @CollectionAlias @(ParentId.HasValue ? $":: {ParentId.Value}" : "") :: @Id</h1>
 
 @if (Editor == null)
 {
@@ -100,7 +97,7 @@ else
         @foreach (var subCollectionListEditor in pane.SubCollectionListEditors)
         {
             <Collection Action="@subCollectionListEditor.Action"
-                        Alias="@subCollectionListEditor.CollectionAlias"
+                        CollectionAlias="@subCollectionListEditor.CollectionAlias"
                         ParentId="@Id" />
         }
     }
@@ -109,17 +106,16 @@ else
 
 @functions {
     [Parameter]
-    private string Alias { get; set; }
-
-    [Parameter]
     private string Action { get; set; }
-
-    // TODO: should this alias only be filled when there are multiple variants?
-    [Parameter]
-    private string VariantAlias { get; set; }
-
+    
     [Parameter]
     private int? ParentId { get; set; } = null;
+
+    [Parameter]
+    private string CollectionAlias { get; set; }
+
+    [Parameter]
+    private string VariantAlias { get; set; }
 
     [Parameter]
     private int? Id { get; set; } = null;
@@ -133,18 +129,12 @@ else
 
     protected override async Task LoadDataAsync()
     {
-        // TODO: this logic
-        if (Action == null && !string.IsNullOrEmpty(VariantAlias))
-        {
-            Action = Constants.New;
-        }
-
-        Editor = await CollectionService.GetNodeEditorAsync(Action, Alias, VariantAlias, ParentId, Id);
+        Editor = await CollectionService.GetNodeEditorAsync(Action, CollectionAlias, VariantAlias, ParentId, Id);
     }
 
     async Task ButtonCallbackAsync(string actionId, BasePage view)
     {
-        var command = await CollectionService.ProcessNodeEditorActionAsync(Action, Alias, ParentId, Id, Editor, actionId);
+        var command = await CollectionService.ProcessNodeEditorActionAsync(Action, CollectionAlias, VariantAlias, ParentId, Id, Editor, actionId);
 
         await HandleViewCommandAsync(command);
     }

@@ -34,7 +34,7 @@ namespace TestClient.App.Pages
                     var data = new Dictionary<string, object>()
                     {
                             { "Action", parameterCommand.Action },
-                            { "Alias", parameterCommand.Alias }
+                            { "CollectionAlias", parameterCommand.CollectionAlias }
                     };
 
                     if (parameterCommand.Id.HasValue)

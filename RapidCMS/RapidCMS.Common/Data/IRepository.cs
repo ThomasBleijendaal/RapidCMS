@@ -12,10 +12,8 @@ namespace RapidCMS.Common.Data
         Task<IEntity> GetByIdAsync(int id, int? parentId);
         Task<IEnumerable<IEntity>> GetAllAsObjectsAsync(int? parentId);
 
-        // TODO: add nullable
         Task<IEntity> NewAsync(int? parentId, Type variantType);
-        // TODO: remove int id
-        Task<IEntity> InsertAsync(int id, int? parentId, IEntity entity);
+        Task<IEntity> InsertAsync(int? parentId, IEntity entity);
         Task UpdateAsync(int id, int? parentId, IEntity entity);
         Task DeleteAsync(int id, int? parentId);
     }
@@ -27,7 +25,7 @@ namespace RapidCMS.Common.Data
         Task<IEnumerable<TEntity>> GetAllAsync(int? parentId);
 
         new Task<TEntity> NewAsync(int? parentId, Type variantType);
-        Task<TEntity> InsertAsync(int id, int? parentId, TEntity entity);
+        Task<TEntity> InsertAsync(int? parentId, TEntity entity);
         Task UpdateAsync(int id, int? parentId, TEntity entity);
         new Task DeleteAsync(int id, int? parentId);
     }
@@ -41,7 +39,7 @@ namespace RapidCMS.Common.Data
         public abstract Task<TEntity> GetByIdAsync(int id, int? parentId);
         public abstract Task<IEnumerable<TEntity>> GetAllAsync(int? parentId);
         public abstract Task<TEntity> NewAsync(int? parentId, Type variantType = null);
-        public abstract Task<TEntity> InsertAsync(int id, int? parentId, TEntity entity);
+        public abstract Task<TEntity> InsertAsync(int? parentId, TEntity entity);
         public abstract Task UpdateAsync(int id, int? parentId, TEntity entity);
         public abstract Task DeleteAsync(int id, int? parentId);
 
@@ -60,9 +58,9 @@ namespace RapidCMS.Common.Data
             return (await NewAsync(parentId, variantType)) as IEntity;
         }
 
-        async Task<IEntity> IRepository.InsertAsync(int id, int? parentId, IEntity entity)
+        async Task<IEntity> IRepository.InsertAsync(int? parentId, IEntity entity)
         {
-            return (await InsertAsync(id, parentId, (TEntity)entity)) as IEntity;
+            return (await InsertAsync(parentId, (TEntity)entity)) as IEntity;
         }
 
         async Task IRepository.UpdateAsync(int id, int? parentId, IEntity entity)

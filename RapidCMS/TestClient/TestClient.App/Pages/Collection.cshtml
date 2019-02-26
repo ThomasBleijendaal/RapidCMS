@@ -1,7 +1,7 @@
 @inherits BasePage
 
-@page "/collection/{Action}/{Alias}"
-@page "/collection/{Action}/{Alias}/{ParentId:int}"
+@page "/collection/{Action}/{CollectionAlias}"
+@page "/collection/{Action}/{CollectionAlias}/{ParentId:int}"
 
 @using RapidCMS.Common
 @using RapidCMS.UI.Buttons
@@ -11,7 +11,7 @@
 @inject ICollectionService CollectionService
 @* TODO: merge both views into single one *@
 
-<h1>Collection view of @Alias</h1>
+<h1>Collection view of @CollectionAlias</h1>
 
 @if (ListView == null && EditorView == null)
 {
@@ -201,10 +201,19 @@ else if (EditorView != null)
     private string Action { get; set; }
 
     [Parameter]
-    private string Alias { get; set; }
+    private int? ParentId { get; set; } = null;
 
     [Parameter]
-    private int? ParentId { get; set; } = null;
+    private string CollectionAlias { get; set; }
+
+    // TODO: these two parameters are a decoy for UpdateCommand...
+    [Obsolete]
+    [Parameter]
+    private string VariantAlias { get; set; }
+
+    [Obsolete]
+    [Parameter]
+    private int? Id { get; set; } = null;
 
     CollectionListViewDTO ListView;
     CollectionListEditorDTO EditorView;
@@ -218,11 +227,13 @@ else if (EditorView != null)
     {
         if (Action == Constants.List)
         {
-            ListView = await CollectionService.GetCollectionListViewAsync(Action, Alias, ParentId);
+            ListView = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, ParentId);
+            EditorView = null;
         }
         else
         {
-            EditorView = await CollectionService.GetCollectionListEditorAsync(Action, Alias, ParentId);
+            ListView = null;
+            EditorView = await CollectionService.GetCollectionListEditorAsync(Action, CollectionAlias, ParentId);
         }
 
         StateHasChanged();
@@ -230,28 +241,28 @@ else if (EditorView != null)
 
     async Task ViewButtonCallbackAsync(string actionId, BasePage view)
     {
-        var command = await CollectionService.ProcessListViewActionAsync(Action, Alias, ParentId, actionId);
+        var command = await CollectionService.ProcessListViewActionAsync(Action, CollectionAlias, ParentId, actionId);
 
         await HandleViewCommandAsync(command);
     }
 
     async Task EditorButtonCallbackAsync(string actionId, BasePage view)
     {
-        var command = await CollectionService.ProcessListEditorActionAsync(Action, Alias, ParentId, actionId);
+        var command = await CollectionService.ProcessListEditorActionAsync(Action, CollectionAlias, ParentId, actionId);
 
         await HandleViewCommandAsync(command);
     }
 
     async Task NodeViewButtonCallbackAsync(string actionId, NodeDTO node)
     {
-        var command = await CollectionService.ProcessListViewActionAsync(Action, Alias, node.Id, node.ParentId, actionId);
+        var command = await CollectionService.ProcessListViewActionAsync(Action, CollectionAlias, node.Id, node.ParentId, actionId);
 
         await HandleViewCommandAsync(command);
     }
 
     async Task NodeEditorButtonCallbackAsync(string actionId, NodeDTO node)
     {
-        var command = await CollectionService.ProcessListEditorActionAsync(Action, Alias, node.Id, node.ParentId, EditorView, actionId);
+        var command = await CollectionService.ProcessListEditorActionAsync(Action, CollectionAlias, node.Id, node.ParentId, EditorView, actionId);
 
         await HandleViewCommandAsync(command);
     }

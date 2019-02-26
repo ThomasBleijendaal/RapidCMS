@@ -19,8 +19,14 @@ namespace RapidCMS.Common.Models.DTOs
     {
         public string Alias { get; set; }
         public string Name { get; set; }
-        public string Path { get; set; }
+        public List<CollectionTreePathDTO> Path { get; set; }
         public List<CollectionTreeNodeDTO> Nodes { get; set; }
+    }
+
+    public class CollectionTreePathDTO
+    {
+        public string Icon { get; set; }
+        public string Path { get; set; }
     }
 
     public class CollectionListViewDTO

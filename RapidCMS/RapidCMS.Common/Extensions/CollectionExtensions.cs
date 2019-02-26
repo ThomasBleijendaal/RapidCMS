@@ -49,13 +49,11 @@ namespace RapidCMS.Common.Extensions
 
             if (configReceiver.TreeView != null)
             {
-                var prop = PropertyMetadataHelper.Create(configReceiver.TreeView.NameGetter);
-
                 collection.TreeView = new TreeView
                 {
                     Name = configReceiver.TreeView.Name,
                     EntityViewType = configReceiver.TreeView.ViewType,
-                    NameGetter = prop.Getter
+                    NameGetter = configReceiver.TreeView.PropertyMetadata.Getter
                 };
             }
 
@@ -65,12 +63,15 @@ namespace RapidCMS.Common.Extensions
                     Icon = variant.Icon,
                     Name = variant.Name,
                     Type = variant.Type,
-                    Alias = variant.Alias
+                    // TODO: GUID?
+                    Alias = variant.Type.Name.ToUrlFriendlyString()
                 })
                 : new List<EntityVariant>
                 {
                     new EntityVariant
                     {
+                        // TODO: GUID?
+                        Alias = typeof(TEntity).Name.ToUrlFriendlyString(),
                         Icon = null,
                         Name = typeof(TEntity).Name,
                         Type = typeof(TEntity)
@@ -112,7 +113,7 @@ namespace RapidCMS.Common.Extensions
 
             if (configReceiver.ListEditor != null)
             {
-                var editor = configReceiver.ListEditor.ListEditor;
+                var editors = configReceiver.ListEditor.ListEditors;
 
                 collection.ListEditor = new ListEditor
                 {
@@ -122,28 +123,32 @@ namespace RapidCMS.Common.Extensions
                         CustomButtonConfig customButton => customButton.ToCustomButton(),
                         _ => default(Button)
                     }),
-                    EditorPane = new EditorPane<Field>
+                    EditorPanes = editors.ToList(editor =>
                     {
-                        Buttons = editor.Buttons.ToList(button => button switch
+                        return new EditorPane<Field>
                         {
-                            DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
-                            CustomButtonConfig customButton => customButton.ToCustomButton(),
-                            _ => default(Button)
-                        }),
-                        Fields = editor.Fields.ToList(field =>
-                        {
-                            return new Field
+                            VariantType = editor.VariantType,
+                            Buttons = editor.Buttons.ToList(button => button switch
                             {
-                                DataType = field.Type,
-                                Description = field.Description,
-                                Name = field.Name,
-                                NodeProperty = field.NodeProperty,
-                                Readonly = field.Readonly,
-                                ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
-                                ValueMapperType = field.ValueMapperType
-                            };
-                        })
-                    }
+                                DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
+                                CustomButtonConfig customButton => customButton.ToCustomButton(),
+                                _ => default(Button)
+                            }),
+                            Fields = editor.Fields.ToList(field =>
+                            {
+                                return new Field
+                                {
+                                    DataType = field.Type,
+                                    Description = field.Description,
+                                    Name = field.Name,
+                                    NodeProperty = field.NodeProperty,
+                                    Readonly = field.Readonly,
+                                    ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
+                                    ValueMapperType = field.ValueMapperType
+                                };
+                            })
+                        };
+                    })
                 };
             }
 
@@ -182,51 +187,49 @@ namespace RapidCMS.Common.Extensions
                                 };
                             }),
 
-                            // TODO: bring back to working order
-
-                            SubCollectionListEditors = (pane as NodeEditorPaneConfig<TEntity>)?.SubCollectionListEditors.ToList(listEditor =>
+                            SubCollectionListEditors = pane.SubCollectionListEditors.ToList(listEditor =>
                             {
-                                // TODO: this is not good, the embedded view should get its own data
-                                // but then now it is a sub collection editor
                                 return new SubCollectionListEditor
                                 {
                                     CollectionAlias = listEditor.CollectionAlias,
 
-                                    Buttons = listEditor.Buttons.ToList(button => button switch
-                                    {
-                                        DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
-                                        CustomButtonConfig customButton => customButton.ToCustomButton(),
-                                        _ => default(Button)
-                                    }),
-                                    EditorPane = new EditorPane<Field>
-                                    {
-                                        Buttons = listEditor.ListEditor.Buttons.ToList(button => button switch
-                                        {
-                                            DefaultButtonConfig defaultButton => new DefaultButton
-                                            {
-                                                ButtonId = Guid.NewGuid().ToString(),
-                                                DefaultButtonType = defaultButton.ButtonType,
-                                                Icon = defaultButton.Icon,
-                                                Label = defaultButton.Label
-                                            },
-                                            _ => default(Button)
-                                        }),
-                                        Fields = listEditor.ListEditor.Fields.ToList(field =>
-                                        {
-                                            return new Field
-                                            {
-                                                DataType = field.Type,
-                                                Description = field.Description,
-                                                Name = field.Name,
-                                                NodeProperty = field.NodeProperty,
-                                                Readonly = field.Readonly,
-                                                ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
-                                                ValueMapperType = field.ValueMapperType
-                                            };
-                                        })
-                                    }
+                                    // TODO: this is not good, the embedded view should get its own data
+                                    // but then now it is a sub collection editor
+                                    //Buttons = listEditor.Buttons.ToList(button => button switch
+                                    //{
+                                    //    DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
+                                    //    CustomButtonConfig customButton => customButton.ToCustomButton(),
+                                    //    _ => default(Button)
+                                    //}),
+                                    //EditorPane = new EditorPane<Field>
+                                    //{
+                                    //    Buttons = listEditor.ListEditor.Buttons.ToList(button => button switch
+                                    //    {
+                                    //        DefaultButtonConfig defaultButton => new DefaultButton
+                                    //        {
+                                    //            ButtonId = Guid.NewGuid().ToString(),
+                                    //            DefaultButtonType = defaultButton.ButtonType,
+                                    //            Icon = defaultButton.Icon,
+                                    //            Label = defaultButton.Label
+                                    //        },
+                                    //        _ => default(Button)
+                                    //    }),
+                                    //    Fields = listEditor.ListEditor.Fields.ToList(field =>
+                                    //    {
+                                    //        return new Field
+                                    //        {
+                                    //            DataType = field.Type,
+                                    //            Description = field.Description,
+                                    //            Name = field.Name,
+                                    //            NodeProperty = field.NodeProperty,
+                                    //            Readonly = field.Readonly,
+                                    //            ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
+                                    //            ValueMapperType = field.ValueMapperType
+                                    //        };
+                                    //    })
+                                    //}
                                 };
-                            }) ?? new List<SubCollectionListEditor>()
+                            })
                         };
                     })
                 };
@@ -245,7 +248,7 @@ namespace RapidCMS.Common.Extensions
         public static IEnumerable<Button> GetAllButtons(this IEnumerable<Button> buttons)
         {
             // HACK: bit of a hack
-            return buttons.SelectMany(x => x.Buttons.Any() ? x.Buttons.AsEnumerable() : new [] { x }).ToList();
+            return buttons.SelectMany(x => x.Buttons.Any() ? x.Buttons.AsEnumerable() : new[] { x }).ToList();
         }
     }
 }
