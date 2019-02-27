@@ -241,7 +241,7 @@ else if (EditorView != null)
 
     async Task ViewButtonCallbackAsync(string actionId, BasePage view)
     {
-        var command = await CollectionService.ProcessListViewActionAsync(Action, CollectionAlias, ParentId, actionId);
+        var command = await CollectionService.ProcessListViewActionAsync(CollectionAlias, ParentId, actionId);
 
         await HandleViewCommandAsync(command);
     }
@@ -249,21 +249,21 @@ else if (EditorView != null)
     // TODO: add support for updating the editor view coming from command
     async Task EditorButtonCallbackAsync(string actionId, BasePage view)
     {
-        var command = await CollectionService.ProcessListEditorActionAsync(Action, CollectionAlias, ParentId, actionId);
+        var command = await CollectionService.ProcessListEditorActionAsync(CollectionAlias, ParentId, actionId);
 
         await HandleViewCommandAsync(command);
     }
 
     async Task NodeViewButtonCallbackAsync(string actionId, NodeDTO node)
     {
-        var command = await CollectionService.ProcessListViewActionAsync(Action, CollectionAlias, node.Id, node.ParentId, actionId);
+        var command = await CollectionService.ProcessListViewActionAsync(CollectionAlias, node.ParentId, node.Id.Value, actionId);
 
         await HandleViewCommandAsync(command);
     }
 
     async Task NodeEditorButtonCallbackAsync(string actionId, NodeDTO node)
     {
-        var command = await CollectionService.ProcessListEditorActionAsync(Action, CollectionAlias, node.Id, node.ParentId, EditorView, actionId);
+        var command = await CollectionService.ProcessListEditorActionAsync(CollectionAlias, node.VariantAlias, node.ParentId, node.Id, EditorView, actionId);
 
         await HandleViewCommandAsync(command);
     }

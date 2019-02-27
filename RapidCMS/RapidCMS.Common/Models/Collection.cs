@@ -189,6 +189,7 @@ namespace RapidCMS.Common.Models
 
         public List<Button> Buttons { get; set; }
 
+        // TODO: how does this behave in custom buttons?
         public object Metadata { get; set; }
 
         public abstract CrudType GetCrudType();
@@ -209,13 +210,12 @@ namespace RapidCMS.Common.Models
                     return CrudType.Insert;
                 case DefaultButtonType.SaveExisting:
                     return CrudType.Update;
-                case DefaultButtonType.SaveNewAndExisting:
-                    return CrudType.Insert | CrudType.Update;
                 case DefaultButtonType.Delete:
                     return CrudType.Delete;
                 case DefaultButtonType.Edit:
-                case DefaultButtonType.View:
                     return CrudType.Read;
+                case DefaultButtonType.View:
+                    return CrudType.View;
                 default:
                     return 0;
             }

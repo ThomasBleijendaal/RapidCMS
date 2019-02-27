@@ -1,14 +1,15 @@
-﻿using System;
-
-namespace RapidCMS.Common.Enums
+﻿namespace RapidCMS.Common.Enums
 {
-    [Flags]
     public enum CrudType
     {
-        Create = 1,
-        Read = 2,
+        // viewers
+        View = 1,
+        Create = 2,
+        Read = 3,
+
+        // modifyers
         Insert = 4,
-        Update = 8,
-        Delete = 16
+        Update = 5,
+        Delete = 6
     }
 }

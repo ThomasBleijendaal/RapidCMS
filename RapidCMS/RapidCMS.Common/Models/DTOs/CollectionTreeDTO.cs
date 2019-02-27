@@ -63,7 +63,8 @@ namespace RapidCMS.Common.Models.DTOs
 
     public class NodeDTO
     {
-        public int Id { get; set; }
+        public string VariantAlias { get; set; }
+        public int? Id { get; set; }
         public int? ParentId { get; set; }
 
         public List<ButtonDTO> Buttons { get; set; }
