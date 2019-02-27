@@ -191,6 +191,7 @@ namespace RapidCMS.Common.Models
 
         public object Metadata { get; set; }
 
+        public abstract CrudType GetCrudType();
         public virtual bool IsCompatibleWithView(ViewContext viewContext) { return true; }
     }
 
@@ -198,6 +199,27 @@ namespace RapidCMS.Common.Models
     {
         public DefaultButtonType DefaultButtonType { get; set; }
 
+        public override CrudType GetCrudType()
+        {
+            switch (DefaultButtonType)
+            {
+                case DefaultButtonType.New:
+                    return CrudType.Create;
+                case DefaultButtonType.SaveNew:
+                    return CrudType.Insert;
+                case DefaultButtonType.SaveExisting:
+                    return CrudType.Update;
+                case DefaultButtonType.SaveNewAndExisting:
+                    return CrudType.Insert | CrudType.Update;
+                case DefaultButtonType.Delete:
+                    return CrudType.Delete;
+                case DefaultButtonType.Edit:
+                case DefaultButtonType.View:
+                    return CrudType.Read;
+                default:
+                    return 0;
+            }
+        }
         public override bool IsCompatibleWithView(ViewContext viewContext)
         {
             return DefaultButtonType.GetCustomAttribute<ActionsAttribute>().Usages?.Any(x => viewContext.Usage.HasFlag(x)) ?? false;
@@ -208,6 +230,11 @@ namespace RapidCMS.Common.Models
     {
         public string Alias { get; set; }
         public Action Action { get; set; }
+
+        public override CrudType GetCrudType()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 

@@ -134,7 +134,7 @@ else
 
     async Task ButtonCallbackAsync(string actionId, BasePage view)
     {
-        var command = await CollectionService.ProcessNodeEditorActionAsync(Action, CollectionAlias, VariantAlias, ParentId, Id, Editor, actionId);
+        var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, Editor, actionId);
 
         await HandleViewCommandAsync(command);
     }

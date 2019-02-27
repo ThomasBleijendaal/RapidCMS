@@ -32,7 +32,7 @@ namespace RapidCMS.Common.Services
         Task<ViewCommand> ProcessListEditorActionAsync(string action, string collectionAlias, int id, int? parentId, CollectionListEditorDTO formValues, string actionId);
 
         Task<NodeEditorDTO> GetNodeEditorAsync(string action, string collectionAlias, string variantAlias, int? parentId, int? id);
-        Task<ViewCommand> ProcessNodeEditorActionAsync(string action, string collectionAlias, string variantAlias, int? parentId, int? id, NodeEditorDTO formValues, string actionId);
+        Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, int? parentId, int? id, NodeEditorDTO formValues, string actionId);
     }
 
     public class CollectionService : ICollectionService
@@ -319,7 +319,7 @@ namespace RapidCMS.Common.Services
             }
 
             var nodeEditor = collection.NodeEditor;
-            
+
             if (collection.EntityVariants.Count > 1 && action != Constants.New)
             {
                 nodeType = entity.GetType();
@@ -365,7 +365,7 @@ namespace RapidCMS.Common.Services
 
                                 return editor;
                             }),
-                            SubCollectionListEditors = action == Constants.New 
+                            SubCollectionListEditors = action == Constants.New
                                 ? new List<SubCollectionListEditorDTO>()
                                 : pane.SubCollectionListEditors.ToList(listEditor =>
                                     {
@@ -382,7 +382,7 @@ namespace RapidCMS.Common.Services
             return editor;
         }
 
-        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string action, string alias, string variantAlias, int? parentId, int? id, NodeEditorDTO formValues, string actionId)
+        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string alias, string variantAlias, int? parentId, int? id, NodeEditorDTO formValues, string actionId)
         {
             var collection = _root.GetCollection(alias);
 
@@ -390,53 +390,42 @@ namespace RapidCMS.Common.Services
                 ? collection.EntityVariants.First(variant => variant.Alias == variantAlias)
                 : collection.EntityVariants.First();
 
-            var entity = action switch
-            {
-                Constants.Edit => await collection.Repository.GetByIdAsync(id.Value, parentId),
-                Constants.New => await collection.Repository.NewAsync(parentId, entityVariant.Type),
-                _ => null
-            };
-
             var nodeEditor = collection.NodeEditor;
+            var button = nodeEditor.Buttons.GetAllButtons().First(x => x.ButtonId == actionId);
+            var buttonCrudType = button.GetCrudType();
+
+            var entity = buttonCrudType switch
+            {
+                CrudType.Insert => await collection.Repository.NewAsync(parentId, entityVariant.Type),
+                _ => await collection.Repository.GetByIdAsync(id.Value, parentId)
+            };
 
             UpdateEntityWithFormData(formValues, entity, nodeEditor, entityVariant.Type);
 
-            var button = nodeEditor.Buttons.GetAllButtons().First(x => x.ButtonId == actionId);
-
-            if (button is DefaultButton defaultButton)
-            {
-                switch (defaultButton.DefaultButtonType)
-                {
-                    case DefaultButtonType.SaveNew:
-
-                        entity = await collection.Repository.InsertAsync(parentId, entity);
-
-                        return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, alias, entityVariant, parentId, entity.Id) };
-
-                    case DefaultButtonType.SaveExisting:
-                    case DefaultButtonType.SaveNewAndExisting:
-
-                        await collection.Repository.UpdateAsync(id.Value, parentId, entity);
-
-                        return new ReloadCommand();
-
-                    case DefaultButtonType.Delete:
-
-                        await collection.Repository.DeleteAsync(id.Value, parentId);
-
-                        return new NavigateCommand { Uri = UriHelper.Collection(Constants.List, alias, parentId) };
-
-                    default:
-                        break;
-                }
-            }
-            else if (button is CustomButton customButton)
+            // TODO: what to do with this action
+            if (button is CustomButton customButton)
             {
                 customButton.Action.Invoke();
             }
-            else
-            {
 
+            switch (button.GetCrudType())
+            {
+                case CrudType.Update:
+                    await collection.Repository.UpdateAsync(id.Value, parentId, entity);
+                    return new ReloadCommand();
+
+                case CrudType.Insert:
+                    entity = await collection.Repository.InsertAsync(parentId, entity);
+                    return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, alias, entityVariant, parentId, entity.Id) };
+
+                case CrudType.Delete:
+                    await collection.Repository.DeleteAsync(id.Value, parentId);
+                    return new NavigateCommand { Uri = UriHelper.Collection(Constants.List, alias, parentId) };
+
+                case CrudType.Create:
+                case CrudType.Read:
+                default:
+                    break;
             }
 
             return null;
@@ -519,7 +508,7 @@ namespace RapidCMS.Common.Services
                     case DefaultButtonType.View:
 
                         return new NavigateCommand { Uri = UriHelper.Node(Constants.View, alias, entityVariant, parentId, id) };
-                        
+
                     case DefaultButtonType.Edit:
 
                         return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, alias, entityVariant, parentId, id) };
@@ -538,8 +527,8 @@ namespace RapidCMS.Common.Services
 
             // TODO: 
             var entityVariant = //!string.IsNullOrEmpty(variantAlias)
-                //? collection.EntityVariants.First(variant => variant.Alias == variantAlias)
-                //: 
+                                //? collection.EntityVariants.First(variant => variant.Alias == variantAlias)
+                                //: 
                 collection.EntityVariants.First();
 
             var entity = action switch

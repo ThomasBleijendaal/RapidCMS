@@ -1,4 +1,5 @@
-﻿using RapidCMS.Common.Attributes;
+﻿using System;
+using RapidCMS.Common.Attributes;
 
 namespace RapidCMS.Common.Enums
 {
@@ -16,6 +17,7 @@ namespace RapidCMS.Common.Enums
         [Actions(UsageType.Edit | UsageType.Node)]
         SaveExisting,
 
+        [Obsolete("This is weird")]
         [DefaultIconLabel(Icon = "hard-drive", Label = "Save")]
         [Actions(UsageType.New | UsageType.Node, UsageType.Edit | UsageType.Node)]
         SaveNewAndExisting,
