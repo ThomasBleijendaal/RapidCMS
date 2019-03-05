@@ -51,7 +51,6 @@ namespace RapidCMS.Common.Extensions
             {
                 collection.TreeView = new TreeView
                 {
-                    Name = configReceiver.TreeView.Name,
                     EntityViewType = configReceiver.TreeView.ViewType,
                     NameGetter = configReceiver.TreeView.PropertyMetadata.Getter
                 };
@@ -117,6 +116,7 @@ namespace RapidCMS.Common.Extensions
 
                 collection.ListEditor = new ListEditor
                 {
+                    ListEditorType = configReceiver.ListEditor.ListEditorType,
                     Buttons = configReceiver.ListEditor.Buttons.ToList(button => button switch
                     {
                         DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),

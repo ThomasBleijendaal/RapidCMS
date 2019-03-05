@@ -46,6 +46,7 @@ namespace RapidCMS.Common.Models.DTOs
     {
         public List<ButtonDTO> Buttons { get; set; }
         public CollectionListEditorPaneDTO Editor { get; set; }
+        public ListEditorType ListEditorType { get; set; }
     }
 
     public class SubCollectionListEditorDTO
@@ -73,6 +74,7 @@ namespace RapidCMS.Common.Models.DTOs
 
     public class PropertyDTO
     {
+        // TODO: make really unique
         public string Alias { get; set; }
 
         public string Name { get; set; }
@@ -103,6 +105,7 @@ namespace RapidCMS.Common.Models.DTOs
     // TODO: change to complete field / property DTO
     public class ValueDTO
     {
+        // TODO: make really unique
         public string Alias { get; set; }
 
         public EditorType Type { get; set; }

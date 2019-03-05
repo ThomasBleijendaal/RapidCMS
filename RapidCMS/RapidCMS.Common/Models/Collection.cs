@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace RapidCMS.Common.Models
 {
+    // TODO: check polymorphisms
+
     public class Root : ICollectionRoot
     {
         private Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
@@ -71,7 +73,6 @@ namespace RapidCMS.Common.Models
 
     public class View
     {
-        public string Name { get; set; }
     }
 
     public enum ViewType
@@ -83,7 +84,6 @@ namespace RapidCMS.Common.Models
     public class TreeView : View
     {
         public ViewType EntityViewType { get; set; }
-        public ViewType SubEntityViewType { get; set; }
 
         public Func<object, object> NameGetter { get; set; }
 
@@ -105,6 +105,7 @@ namespace RapidCMS.Common.Models
 
     public class ListEditor : Editor
     {
+        public ListEditorType ListEditorType { get; set; }
         public List<EditorPane<Field>> EditorPanes { get; set; }
         public List<Button> Buttons { get; set; }
     }

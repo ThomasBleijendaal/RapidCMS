@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Interfaces;
@@ -47,11 +48,10 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionConfig<TEntity> SetTreeView(string name, ViewType viewType, Expression<Func<TEntity, string>> nameExpression)
+        public CollectionConfig<TEntity> SetTreeView(ViewType viewType, Expression<Func<TEntity, string>> nameExpression)
         {
             TreeView = new TreeViewConfig
             {
-                Name = name,
                 ViewType = viewType,
                 PropertyMetadata = PropertyMetadataHelper.Create(nameExpression)
             };
@@ -70,11 +70,13 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionConfig<TEntity> SetListEditor(Action<ListEditorConfig<TEntity>> configure)
+        public CollectionConfig<TEntity> SetListEditor(ListEditorType listEditorType, Action<ListEditorConfig<TEntity>> configure)
         {
             var config = new ListEditorConfig<TEntity>();
 
             configure.Invoke(config);
+
+            config.ListEditorType = listEditorType;
 
             ListEditor = config;
 

@@ -55,7 +55,7 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        // TODO: make tree configuration aware for editors and viewers
+        // TODO: make tree configuration aware of editors and viewers
         public async Task<CollectionTreeRootDTO> GetCollectionsAsync()
         {
             var result = new CollectionTreeRootDTO
@@ -210,6 +210,7 @@ namespace RapidCMS.Common.Services
 
             return new CollectionListEditorDTO
             {
+                ListEditorType = listEditor.ListEditorType,
                 Buttons = listEditor.Buttons
                     .GetAllButtons()
                     .Where(button => button.IsCompatibleWithView(listViewContext))

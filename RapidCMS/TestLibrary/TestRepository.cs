@@ -116,7 +116,9 @@ namespace TestLibrary
 
         public override Task DeleteAsync(int id, int? parentId)
         {
-            throw new NotImplementedException();
+            _data.RemoveAll(x => x.Id == id && x.ParentId == parentId);
+
+            return Task.CompletedTask;
         }
 
         public override Task<IEnumerable<TestEntity>> GetAllAsync(int? parentId)

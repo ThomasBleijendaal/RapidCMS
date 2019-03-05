@@ -4,6 +4,7 @@
 @page "/collection/{Action}/{CollectionAlias}/{ParentId:int}"
 
 @using RapidCMS.Common
+@using RapidCMS.Common.Enums
 @using RapidCMS.UI.Buttons
 @using RapidCMS.Common.Models.DTOs
 @using RapidCMS.Common.Services
@@ -50,6 +51,8 @@ else if (ListView != null)
             </CascadingValue>
         }
     </div>
+
+    // TODO: Add support for polymorphism and gaps in rows..
 
     @foreach (var pane in ListView.ViewPanes)
     {
@@ -141,75 +144,138 @@ else if (EditorView != null)
 
     var pane = EditorView.Editor;
 
-    var aliasToIndex = pane.Properties.Select((property, index) => (property.Alias, index)).ToDictionary(x => x.Alias, x => x.index);
+    if (EditorView.ListEditorType == ListEditorType.Table)
+    {
+        var aliasToIndex = pane.Properties.Select((property, index) => (property.Alias, index)).ToDictionary(x => x.Alias, x => x.index);
 
-    <div class="content px-4">
-        <table class="table">
-            <thead>
-                <tr>
-                    @foreach (var header in pane.Properties)
-                    {
-                        <td>@header.Name<br /><small>@header.Description</small></td>
-                    }
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var node in pane.Nodes)
-                {
-                    var currentIndex = -1;
-
+        <div class="content px-4">
+            <table class="table">
+                <thead>
                     <tr>
-                        @foreach (var value in node.Values)
+                        @foreach (var header in pane.Properties)
                         {
-                            var thisIndex = aliasToIndex[value.Alias];
+                            <td>@header.Name<br /><small>@header.Description</small></td>
+                        }
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var node in pane.Nodes)
+                    {
+                        var currentIndex = -1;
 
-                            while (++currentIndex < thisIndex)
+                        <tr>
+                            @foreach (var value in node.Values)
+                            {
+                                var thisIndex = aliasToIndex[value.Alias];
+
+                                while (++currentIndex < thisIndex)
+                                {
+                                    <td>&nbsp;</td>
+                                }
+
+                                <td>
+                                    <DefaultEditor Type="@value.Type"
+                                                   Value="@value.Value"
+                                                   Callback="@((string newValue) => value.Value = newValue)"
+                                                   IsReadonly="@value.IsReadonly" />
+                                </td>
+                            }
+
+                            @while (++currentIndex < aliasToIndex.Count)
                             {
                                 <td>&nbsp;</td>
                             }
-
                             <td>
-                                <DefaultEditor Type="@value.Type"
-                                               Value="@value.Value"
-                                               Callback="@((string newValue) => value.Value = newValue)"
-                                               IsReadonly="@value.IsReadonly" />
-                            </td>
-                        }
-
-                        @while (++currentIndex < aliasToIndex.Count)
-                        {
-                            <td>&nbsp;</td>
-                        }
-                        <td>
-                            @foreach (var button in node.Buttons)
-                            {
-                                var context = new ButtonContext<NodeDTO>
+                                @foreach (var button in node.Buttons)
                                 {
-                                    ButtonId = button.ButtonId,
-                                    CallbackAsync = NodeEditorButtonCallbackAsync,
-                                    Context = node,
-                                    Icon = button.Icon,
-                                    Label = button.Label
-                                };
+                                    var context = new ButtonContext<NodeDTO>
+                                    {
+                                        ButtonId = button.ButtonId,
+                                        CallbackAsync = NodeEditorButtonCallbackAsync,
+                                        Context = node,
+                                        Icon = button.Icon,
+                                        Label = button.Label
+                                    };
 
-                                <CascadingValue Value="context">
-                                    @if (!string.IsNullOrEmpty(button.Alias))
-                                    {
-                                        @CustomButtons[button.Alias]
-                                    }
-                                    else
-                                    {
-                                        <DefaultButton TContext="NodeDTO" />
-                                    }
-                                </CascadingValue>
+                                    <CascadingValue Value="context">
+                                        @if (!string.IsNullOrEmpty(button.Alias))
+                                        {
+                                            @CustomButtons[button.Alias]
+                                        }
+                                        else
+                                        {
+                                            <DefaultButton TContext="NodeDTO" />
+                                        }
+                                    </CascadingValue>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else if (EditorView.ListEditorType == ListEditorType.Block)
+    {
+        @foreach (var node in pane.Nodes)
+        {
+            <div class="content px-4">
+                <div class="top-row px-4">
+                    @foreach (var button in node.Buttons)
+                    {
+                        var context = new ButtonContext<NodeDTO>
+                        {
+                            ButtonId = button.ButtonId,
+                            CallbackAsync = NodeEditorButtonCallbackAsync,
+                            Context = node,
+                            Icon = button.Icon,
+                            Label = button.Label
+                        };
+
+                        <CascadingValue Value="context">
+                            @if (!string.IsNullOrEmpty(button.Alias))
+                            {
+                                @CustomButtons[button.Alias]
                             }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                            else
+                            {
+                                <DefaultButton TContext="NodeDTO" />
+                            }
+                        </CascadingValue>
+                    }
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td>Field</td>
+                            <td>Editor</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var value in node.Values)
+                        {
+                            var property = pane.Properties.First(x => x.Alias == value.Alias);
+
+                            <tr>
+                                <td>
+                                    @property.Name<br /><small>@property.Description</small>
+                                </td>
+                                <td>
+                                    <DefaultEditor Type="@value.Type"
+                                                   Value="@value.Value"
+                                                   Callback="@((string newValue) => value.Value = newValue)"
+                                                   IsReadonly="@value.IsReadonly" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        }
+    }
 }
 
 @functions {

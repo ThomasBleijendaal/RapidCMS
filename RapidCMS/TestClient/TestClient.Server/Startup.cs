@@ -378,7 +378,7 @@ namespace TestClient.Server
                 {
                     collection
                         .SetRepository<RepositoryE>()
-                        .SetTreeView("Tree 2", ViewType.Tree, entity => entity.Name)
+                        .SetTreeView(ViewType.Tree, entity => entity.Name)
                         .SetListView(listView)
                         .SetNodeEditor(nodeEditor);
                 });
@@ -387,8 +387,8 @@ namespace TestClient.Server
                 {
                     collection
                         .SetRepository<RepositoryD>()
-                        .SetTreeView("Tree 2", ViewType.List, entity => entity.Name)
-                        .SetListEditor(listNodeEditor)
+                        .SetTreeView(ViewType.List, entity => entity.Name)
+                        .SetListEditor(ListEditorType.Table, listNodeEditor)
                         .SetNodeEditor(nodeEditor);
                 });
 
@@ -396,7 +396,7 @@ namespace TestClient.Server
                 {
                     collection
                         .SetRepository<VariantRepository>()
-                        .SetTreeView("Tree 3", ViewType.Tree, entity => entity.Name)
+                        .SetTreeView(ViewType.Tree, entity => entity.Name)
                         .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
                         .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
                         .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
@@ -408,26 +408,26 @@ namespace TestClient.Server
                 {
                     collection
                         .SetRepository<RepositoryA>()
-                        .SetTreeView("Tree 1", ViewType.Tree, entity => entity.Name)
+                        .SetTreeView(ViewType.Tree, entity => entity.Name)
                         .SetListView(listView)
                         .SetNodeEditor(nodeEditorWithSubCollection)
                         .AddCollection<TestEntity>("sub-collection-1", "Sub Collection 1", subCollection =>
                         {
                             subCollection
                                 .SetRepository<RepositoryB>()
-                                .SetTreeView("SubTree1", ViewType.List, entity => entity.Name)
+                                .SetTreeView(ViewType.List, entity => entity.Name)
                                 .SetListView(listView)
 
                                 // TODO: this sub collection must have a list node editor since its parent uses the editor. but how to hide it?
-                                .SetListEditor(subListNodeEditor)
+                                .SetListEditor(ListEditorType.Table, subListNodeEditor)
                                 .SetNodeEditor(nodeEditor);
                         })
                         .AddCollection<TestEntity>("sub-collection-2", "Sub Collection 2", subCollection =>
                         {
                             subCollection
                                 .SetRepository<RepositoryC>()
-                                .SetTreeView("SubTree2", ViewType.Tree, entity => entity.Name)
-                                .SetListEditor(subListNodeEditor)
+                                .SetTreeView(ViewType.Tree, entity => entity.Name)
+                                .SetListEditor(ListEditorType.Block, subListNodeEditor)
                                 .SetNodeEditor(nodeEditor);
                         });
                 });
@@ -436,21 +436,33 @@ namespace TestClient.Server
                 {
                     collection
                         .SetRepository<RepositoryF>()
-                        .SetTreeView("Tree 1", ViewType.Tree, entity => entity.Name)
+                        .SetTreeView(ViewType.Tree, entity => entity.Name)
                         .SetListView(listView)
                         .SetNodeEditor(nodeEditorWithPolymorphicSubCollection)
                         .AddCollection<TestEntity>("sub-collection-3", "Sub Collection 3", subCollection =>
                         {
                             subCollection
                                 .SetRepository<VariantRepository>()
-                                .SetTreeView("SubTree1", ViewType.Tree, entity => entity.Name)
+                                .SetTreeView(ViewType.Tree, entity => entity.Name)
                                 .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
                                 .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
                                 .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
                                 .SetListView(listViewWithPolymorphism)
-                                .SetListEditor(listNodeEditorWithPolymorphism)
+                                .SetListEditor(ListEditorType.Table, listNodeEditorWithPolymorphism)
                                 .SetNodeEditor(nodeEditorWithPolymorphism);
                         });
+                });
+
+                root.AddCollection<TestEntity>("collection-6", "Variant collection as blocks", collection =>
+                {
+                    collection
+                        .SetRepository<VariantRepository>()
+                        .SetTreeView(ViewType.List, entity => entity.Name)
+                        .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
+                        .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
+                        .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
+                        .SetListEditor(ListEditorType.Block, listNodeEditorWithPolymorphism)
+                        .SetNodeEditor(nodeEditorWithPolymorphism);
                 });
             });
 
