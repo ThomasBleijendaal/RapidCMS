@@ -73,6 +73,8 @@ namespace RapidCMS.Common.Models.DTOs
 
     public class PropertyDTO
     {
+        public string Alias { get; set; }
+
         public string Name { get; set; }
         public string Description { get; set; }
     }
@@ -101,6 +103,8 @@ namespace RapidCMS.Common.Models.DTOs
     // TODO: change to complete field / property DTO
     public class ValueDTO
     {
+        public string Alias { get; set; }
+
         public EditorType Type { get; set; }
         public string Value { get; set; }
         public string DisplayValue { get; set; }

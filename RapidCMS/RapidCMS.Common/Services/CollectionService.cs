@@ -23,11 +23,11 @@ namespace RapidCMS.Common.Services
     {
         Task<CollectionTreeRootDTO> GetCollectionsAsync();
 
-        Task<CollectionListViewDTO> GetCollectionListViewAsync(string action, string collectionAlias, int? parentId);
+        Task<CollectionListViewDTO> GetCollectionListViewAsync(string action, string collectionAlias, string variantAlias, int? parentId);
         Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, int? parentId, string actionId);
         Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, int? parentId, int id, string actionId);
 
-        Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string collectionAlias, int? parentId);
+        Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string collectionAlias, string variantAlias, int? parentId);
         Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, int? parentId, string actionId);
         Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string variantAlias, int? parentId, int? id, CollectionListEditorDTO formValues, string actionId);
 
@@ -126,15 +126,17 @@ namespace RapidCMS.Common.Services
             return result;
         }
 
-        public async Task<CollectionListViewDTO> GetCollectionListViewAsync(string action, string alias, int? parentId)
+        public async Task<CollectionListViewDTO> GetCollectionListViewAsync(string action, string alias, string variantAlias, int? parentId)
         {
             var collection = _root.GetCollection(alias);
             var listView = collection.ListView;
 
+            var entityVariant = collection.EntityVariants.FirstOrDefault(x => x.Alias == variantAlias);
+
             var viewContext = new ViewContext
             {
                 Usage = UsageType.List | MapActionToUsageType(action),
-                EntityVariant = null
+                EntityVariant = entityVariant
             };
 
             var entities = await collection.Repository.GetAllAsObjectsAsync(parentId);
@@ -171,6 +173,7 @@ namespace RapidCMS.Common.Services
                         Properties = pane.Properties.ToList(prop =>
                             new PropertyDTO
                             {
+                                Alias = prop.Name.ToUrlFriendlyString(),
                                 Name = prop.Name,
                                 Description = prop.Description
                             }),
@@ -181,6 +184,7 @@ namespace RapidCMS.Common.Services
                                 ParentId = parentId,
                                 Values = pane.Properties.ToList(prop => new ValueDTO
                                 {
+                                    Alias = prop.Name.ToUrlFriendlyString(),
                                     DisplayValue = prop.ValueMapper.MapToView(null, prop.NodeProperty.Getter.Invoke(entity))
                                 })
                             })
@@ -189,17 +193,19 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public async Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string alias, int? parentId)
+        public async Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string alias, string variantAlias, int? parentId)
         {
             var collection = _root.GetCollection(alias);
 
             var listEditor = collection.ListEditor;
             var editors = listEditor.EditorPanes;
 
+            var entityVariant = collection.EntityVariants.FirstOrDefault(x => x.Alias == variantAlias);
+
             var listViewContext = new ViewContext
             {
                 Usage = UsageType.List | MapActionToUsageType(action),
-                EntityVariant = null
+                EntityVariant = entityVariant
             };
 
             return new CollectionListEditorDTO
@@ -218,35 +224,41 @@ namespace RapidCMS.Common.Services
                     }),
                 Editor = new CollectionListEditorPaneDTO
                 {
-                    Properties = editors.SelectMany(x => x.Fields.ToList(field =>
-                        new PropertyDTO
-                        {
-                            Name = field.Name,
-                            Description = field.Description
-                        })).Distinct().ToList(),
-                    Nodes = await GetCollectionListEditorNodesAsync(action, parentId, collection, editors).ToListAsync()
+                    Properties = editors
+                        .SelectMany(x => x.Fields.ToList(field =>
+                            new PropertyDTO
+                            {
+                                Alias = field.Name.ToUrlFriendlyString(),
+                                Name = field.Name,
+                                Description = field.Description
+                            }))
+                        .GroupBy(x => x.Alias)
+                        .Select(x => x.First())
+                        .ToList(),
+                    Nodes = await GetCollectionListEditorNodesAsync(action, parentId, collection, entityVariant, editors).ToListAsync()
                 }
             };
         }
 
-        private async IAsyncEnumerable<NodeDTO> GetCollectionListEditorNodesAsync(string action, int? parentId, Collection collection, List<EditorPane<Field>> editors)
+        private async IAsyncEnumerable<NodeDTO> GetCollectionListEditorNodesAsync(string action, int? parentId, Collection collection, EntityVariant entityVariant, List<EditorPane<Field>> editors)
         {
             if (action == Constants.New)
             {
-                // TODO: remove null
-                var newEntity = await collection.Repository.NewAsync(parentId, null);
+                var variant = entityVariant ?? collection.EntityVariants.First();
+
+                var newEntity = await collection.Repository.NewAsync(parentId, variant.Type);
                 var editor = editors.First(x => x.VariantType == newEntity.GetType());
 
                 var editorViewContext = new ViewContext
                 {
                     Usage = UsageType.Node | MapActionToUsageType(Constants.New),
-                    EntityVariant = null // TODO: remove null
+                    EntityVariant = variant
                 };
 
                 yield return CreateCollectionListEditorNode(newEntity, editorViewContext, parentId, editor);
             }
 
-            if (action.In(Constants.List, Constants.Edit))
+            if (action.In(Constants.New, Constants.Edit))
             {
                 var entities = await collection.Repository.GetAllAsObjectsAsync(parentId);
 
@@ -287,6 +299,7 @@ namespace RapidCMS.Common.Services
                     }),
                 Values = editor.Fields.ToList(field => new ValueDTO
                 {
+                    Alias = field.Name.ToUrlFriendlyString(),
                     DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter.Invoke(entity)),
                     IsReadonly = field.Readonly,
                     Type = field.DataType,
@@ -417,6 +430,12 @@ namespace RapidCMS.Common.Services
 
             switch (buttonCrudType)
             {
+                case CrudType.View:
+                    return new NavigateCommand { Uri = UriHelper.Node(Constants.View, collectionAlias, entityVariant, parentId, id) };
+
+                case CrudType.Read:
+                    return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
+
                 case CrudType.Update:
                     await collection.Repository.UpdateAsync(id.Value, parentId, entity);
                     return new ReloadCommand();
@@ -509,12 +528,32 @@ namespace RapidCMS.Common.Services
 
             switch (buttonCrudType)
             {
+                case CrudType.View:
+                    return Task.FromResult(new UpdateParameterCommand
+                    {
+                        Action = Constants.View,
+                        CollectionAlias = collectionAlias,
+                        VariantAlias = entityVariant.Alias,
+                        ParentId = parentId,
+                        Id = null
+                    } as ViewCommand);
+
+                case CrudType.Read:
+                    return Task.FromResult(new UpdateParameterCommand
+                    {
+                        Action = Constants.Edit,
+                        CollectionAlias = collectionAlias,
+                        VariantAlias = entityVariant.Alias,
+                        ParentId = parentId,
+                        Id = null
+                    } as ViewCommand);
+
                 case CrudType.Create:
-                    // TODO: add entityVariant
                     return Task.FromResult(new UpdateParameterCommand
                     {
                         Action = Constants.New,
                         CollectionAlias = collectionAlias,
+                        VariantAlias = entityVariant.Alias,
                         ParentId = parentId,
                         Id = null
                     } as ViewCommand);
@@ -571,6 +610,7 @@ namespace RapidCMS.Common.Services
                     {
                         Action = Constants.New,
                         CollectionAlias = collectionAlias,
+                        VariantAlias = entityVariant.Alias,
                         ParentId = parentId,
                         Id = entity.Id
                     };

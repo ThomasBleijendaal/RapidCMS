@@ -3,6 +3,7 @@ using RapidCMS.Common.Attributes;
 
 namespace RapidCMS.Common.Enums
 {
+    // TODO: update Actions attributes
     public enum DefaultButtonType
     {
         [DefaultIconLabel(Icon = "plus", Label = "New")]

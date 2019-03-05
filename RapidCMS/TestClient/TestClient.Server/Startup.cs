@@ -41,9 +41,26 @@ namespace TestClient.Server
                     });
             }
 
+            void listViewWithPolymorphism(ListViewConfig<TestEntity> listViewConfig)
+            {
+                listViewConfig
+                    .AddDefaultButton(DefaultButtonType.New, "New")
+                    .AddListPane(pane =>
+                    {
+                        pane.AddProperty(x => x.Id);
+                        pane.AddProperty(x => x.Name).SetDescription("This is a name");
+                        pane.AddProperty(x => x.Description).SetDescription("This is a description");
+                        pane.AddDefaultButton(DefaultButtonType.View, string.Empty);
+                        pane.AddDefaultButton(DefaultButtonType.Edit, string.Empty);
+
+                    });
+            }
+
             void nodeEditor(NodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
+                    .AddDefaultButton(DefaultButtonType.View, "Cancel", "ban")
+                    .AddDefaultButton(DefaultButtonType.Edit)
                     .AddDefaultButton(DefaultButtonType.SaveNew)
                     .AddDefaultButton(DefaultButtonType.SaveExisting)
                     .AddDefaultButton(DefaultButtonType.Delete)
@@ -97,6 +114,36 @@ namespace TestClient.Server
                 });
             }
 
+            void subListNodeEditor(ListEditorConfig<TestEntity> listEditorConfig)
+            {
+                listEditorConfig.AddDefaultButton(DefaultButtonType.New);
+                listEditorConfig.AddDefaultButton(DefaultButtonType.Edit, "Cancel", "ban");
+                listEditorConfig.AddEditor(editor =>
+                {
+                    editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                    editor.AddDefaultButton(DefaultButtonType.View);
+                    editor.AddDefaultButton(DefaultButtonType.Edit);
+                    editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                    editor.AddDefaultButton(DefaultButtonType.Delete);
+
+                    editor.AddField(x => x.Id)
+                        .SetDescription("This should be readonly")
+                        .SetReadonly();
+
+                    editor.AddField(x => x.Name)
+                        .SetDescription("This is a name");
+
+                    editor.AddField(x => x.Description)
+                        .SetDescription("This is a description")
+                        .SetType(EditorType.TextArea);
+
+                    editor.AddField(x => x.Number)
+                        .SetDescription("This is a number")
+                        .SetValueMapper(new IntValueMapper())
+                        .SetType(EditorType.Numeric);
+                });
+            }
+
             void nodeEditorWithSubCollection(NodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
@@ -122,10 +169,15 @@ namespace TestClient.Server
                             .SetValueMapper(new IntValueMapper())
                             .SetType(EditorType.Numeric);
                     })
-                    
+
                     .AddEditorPane(pane =>
                     {
-                        pane.AddSubCollectionListEditor("sub-collection-1", subCollectionListNodeEditor);
+                        pane.AddSubCollectionListEditor("sub-collection-1");
+                    })
+
+                    .AddEditorPane(pane =>
+                    {
+                        pane.AddSubCollectionListEditor("sub-collection-2");
                     });
             }
 
@@ -157,7 +209,7 @@ namespace TestClient.Server
 
                     .AddEditorPane(pane =>
                     {
-                        pane.AddSubCollectionListEditor("sub-collection-3", subCollectionListNodeEditor);
+                        pane.AddSubCollectionListEditor("sub-collection-3");
                     });
             }
 
@@ -168,7 +220,7 @@ namespace TestClient.Server
                     .AddDefaultButton(DefaultButtonType.SaveExisting)
                     .AddDefaultButton(DefaultButtonType.Delete)
 
-                    .AddEditorPane<TestEntityVariantA>(pane =>
+                    .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x.Id)
                             .SetValueMapper(new IntValueMapper())
@@ -185,51 +237,22 @@ namespace TestClient.Server
                             .SetDescription("This is a number")
                             .SetValueMapper(new IntValueMapper())
                             .SetType(EditorType.Numeric);
+                    })
 
+                    .AddEditorPane<TestEntityVariantA>(pane =>
+                    {
                         pane.AddField(x => x.Title)
                             .SetDescription("This is a title");
                     })
 
                     .AddEditorPane<TestEntityVariantB>(pane =>
                     {
-                        pane.AddField(x => x.Id)
-                            .SetValueMapper(new IntValueMapper())
-                            .SetReadonly(true);
-
-                        pane.AddField(x => x.Name)
-                            .SetDescription("This is a name");
-
-                        pane.AddField(x => x.Description)
-                            .SetDescription("This is a description")
-                            .SetType(EditorType.TextArea);
-
-                        pane.AddField(x => x.Number)
-                            .SetDescription("This is a number")
-                            .SetValueMapper(new IntValueMapper())
-                            .SetType(EditorType.Numeric);
-
                         pane.AddField(x => x.Image)
                             .SetDescription("This is an image");
                     })
                 
                     .AddEditorPane<TestEntityVariantC>(pane =>
                      {
-                         pane.AddField(x => x.Id)
-                             .SetValueMapper(new IntValueMapper())
-                             .SetReadonly(true);
-
-                         pane.AddField(x => x.Name)
-                             .SetDescription("This is a name");
-
-                         pane.AddField(x => x.Description)
-                             .SetDescription("This is a description")
-                             .SetType(EditorType.TextArea);
-
-                         pane.AddField(x => x.Number)
-                             .SetDescription("This is a number")
-                             .SetValueMapper(new IntValueMapper())
-                             .SetType(EditorType.Numeric);
-
                          pane.AddField(x => x.Quote)
                              .SetDescription("This is a quote");
                      });
@@ -323,31 +346,31 @@ namespace TestClient.Server
                 });
             }
 
-            void subCollectionListNodeEditor(SubCollectionListEditorConfig<TestEntity> listEditorConfig)
-            {
-                // TODO: how to treat sub collection editors? configure here or in the sub collection?
+            //void subCollectionListNodeEditor(SubCollectionListEditorConfig<TestEntity> listEditorConfig)
+            //{
+            //    // TODO: how to treat sub collection editors? configure here or in the sub collection?
 
-                //listEditorConfig.AddDefaultButton(DefaultButtonType.New);
-                //listEditorConfig.SetEditor(editor =>
-                //{
-                //    editor.AddDefaultButton(DefaultButtonType.View);
-                //    editor.AddDefaultButton(DefaultButtonType.SaveNew);
-                //    editor.AddDefaultButton(DefaultButtonType.SaveExisting);
-                //    editor.AddDefaultButton(DefaultButtonType.Delete);
+            //    //listEditorConfig.AddDefaultButton(DefaultButtonType.New);
+            //    //listEditorConfig.SetEditor(editor =>
+            //    //{
+            //    //    editor.AddDefaultButton(DefaultButtonType.View);
+            //    //    editor.AddDefaultButton(DefaultButtonType.SaveNew);
+            //    //    editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+            //    //    editor.AddDefaultButton(DefaultButtonType.Delete);
 
-                //    editor.AddField(x => x.Id)
-                //        .SetReadonly();
+            //    //    editor.AddField(x => x.Id)
+            //    //        .SetReadonly();
 
-                //    editor.AddField(x => x.Name);
+            //    //    editor.AddField(x => x.Name);
 
-                //    editor.AddField(x => x.Description)
-                //        .SetType(EditorType.TextArea);
+            //    //    editor.AddField(x => x.Description)
+            //    //        .SetType(EditorType.TextArea);
 
-                //    editor.AddField(x => x.Number)
-                //        .SetValueMapper(new IntValueMapper())
-                //        .SetType(EditorType.Numeric);
-                //});
-            }
+            //    //    editor.AddField(x => x.Number)
+            //    //        .SetValueMapper(new IntValueMapper())
+            //    //        .SetType(EditorType.Numeric);
+            //    //});
+            //}
 
             services.AddRapidCMS(root =>
             {
@@ -396,7 +419,7 @@ namespace TestClient.Server
                                 .SetListView(listView)
 
                                 // TODO: this sub collection must have a list node editor since its parent uses the editor. but how to hide it?
-                                .SetListEditor(listNodeEditor)
+                                .SetListEditor(subListNodeEditor)
                                 .SetNodeEditor(nodeEditor);
                         })
                         .AddCollection<TestEntity>("sub-collection-2", "Sub Collection 2", subCollection =>
@@ -404,7 +427,7 @@ namespace TestClient.Server
                             subCollection
                                 .SetRepository<RepositoryC>()
                                 .SetTreeView("SubTree2", ViewType.Tree, entity => entity.Name)
-                                .SetListEditor(listNodeEditor)
+                                .SetListEditor(subListNodeEditor)
                                 .SetNodeEditor(nodeEditor);
                         });
                 });
@@ -424,7 +447,7 @@ namespace TestClient.Server
                                 .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
                                 .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
                                 .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
-                                .SetListView(listView)
+                                .SetListView(listViewWithPolymorphism)
                                 .SetListEditor(listNodeEditorWithPolymorphism)
                                 .SetNodeEditor(nodeEditorWithPolymorphism);
                         });

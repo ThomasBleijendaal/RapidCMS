@@ -47,7 +47,7 @@ namespace RapidCMS.Common.Models.Config
         }
 
         // TODO: check if sub collection is part of collection
-        public NodeEditorPaneConfig<TEntity> AddSubCollectionListEditor(string collectionAlias, Action<SubCollectionListEditorConfig<TEntity>> configure)
+        public NodeEditorPaneConfig<TEntity> AddSubCollectionListEditor(string collectionAlias, Action<SubCollectionListEditorConfig<TEntity>> configure = null)
         {
             var config = new SubCollectionListEditorConfig<TEntity>
             {

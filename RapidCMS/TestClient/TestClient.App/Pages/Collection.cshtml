@@ -141,6 +141,8 @@ else if (EditorView != null)
 
     var pane = EditorView.Editor;
 
+    var aliasToIndex = pane.Properties.Select((property, index) => (property.Alias, index)).ToDictionary(x => x.Alias, x => x.index);
+
     <div class="content px-4">
         <table class="table">
             <thead>
@@ -155,15 +157,29 @@ else if (EditorView != null)
             <tbody>
                 @foreach (var node in pane.Nodes)
                 {
+                    var currentIndex = -1;
+
                     <tr>
                         @foreach (var value in node.Values)
                         {
+                            var thisIndex = aliasToIndex[value.Alias];
+
+                            while (++currentIndex < thisIndex)
+                            {
+                                <td>&nbsp;</td>
+                            }
+
                             <td>
                                 <DefaultEditor Type="@value.Type"
                                                Value="@value.Value"
                                                Callback="@((string newValue) => value.Value = newValue)"
                                                IsReadonly="@value.IsReadonly" />
                             </td>
+                        }
+
+                        @while (++currentIndex < aliasToIndex.Count)
+                        {
+                            <td>&nbsp;</td>
                         }
                         <td>
                             @foreach (var button in node.Buttons)
@@ -206,8 +222,6 @@ else if (EditorView != null)
     [Parameter]
     private string CollectionAlias { get; set; }
 
-    // TODO: these two parameters are a decoy for UpdateCommand...
-    [Obsolete]
     [Parameter]
     private string VariantAlias { get; set; }
 
@@ -227,13 +241,13 @@ else if (EditorView != null)
     {
         if (Action == Constants.List)
         {
-            ListView = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, ParentId);
+            ListView = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, VariantAlias, ParentId);
             EditorView = null;
         }
         else
         {
             ListView = null;
-            EditorView = await CollectionService.GetCollectionListEditorAsync(Action, CollectionAlias, ParentId);
+            EditorView = await CollectionService.GetCollectionListEditorAsync(Action, CollectionAlias, VariantAlias, ParentId);
         }
 
         StateHasChanged();
@@ -246,7 +260,6 @@ else if (EditorView != null)
         await HandleViewCommandAsync(command);
     }
 
-    // TODO: add support for updating the editor view coming from command
     async Task EditorButtonCallbackAsync(string actionId, BasePage view)
     {
         var command = await CollectionService.ProcessListEditorActionAsync(CollectionAlias, ParentId, actionId);

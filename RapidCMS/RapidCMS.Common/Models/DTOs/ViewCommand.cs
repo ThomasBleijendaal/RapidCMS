@@ -15,11 +15,11 @@
 
     }
 
-    // TODO: add variant alias
     public class UpdateParameterCommand : ViewCommand
     {
         public string Action { get; set; }
         public string CollectionAlias { get; set; }
+        public string VariantAlias { get; set; }
         public int? ParentId { get; set; }
         public int? Id { get; set; }
     }

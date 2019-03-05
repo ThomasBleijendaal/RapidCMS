@@ -30,6 +30,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
+        // TODO: add polymorphism
         public ListViewConfig<TEntity> AddListPane(Action<ListViewPaneConfig<TEntity>> configure)
         {
             var config = new ListViewPaneConfig<TEntity>();
