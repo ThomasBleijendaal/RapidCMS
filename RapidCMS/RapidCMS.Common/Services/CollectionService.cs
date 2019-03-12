@@ -14,8 +14,6 @@ using RapidCMS.Common.Models.DTOs;
 
 namespace RapidCMS.Common.Services
 {
-    // TODO: int id?
-
     // TODO: split class into Collection and UI service
     // TODO: make UI service intent-aware (new, save existing etc)
     // TODO: make button handling more seperate

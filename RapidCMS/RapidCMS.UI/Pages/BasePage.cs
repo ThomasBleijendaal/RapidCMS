@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Services;
 using RapidCMS.Common.Models.DTOs;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace TestClient.App.Pages
+namespace RapidCMS.UI.Pages
 {
     public class BasePage : ComponentBase
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
 
-namespace TestClient.App.Editors
+namespace RapidCMS.UI.Editors
 {
     public class BaseEditor : ComponentBase
     {
