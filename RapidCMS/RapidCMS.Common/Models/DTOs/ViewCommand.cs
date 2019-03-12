@@ -20,7 +20,7 @@
         public string Action { get; set; }
         public string CollectionAlias { get; set; }
         public string VariantAlias { get; set; }
-        public int? ParentId { get; set; }
-        public int? Id { get; set; }
+        public string? ParentId { get; set; }
+        public string? Id { get; set; }
     }
 }

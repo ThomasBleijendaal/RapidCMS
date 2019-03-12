@@ -49,11 +49,13 @@ else
     </li>
 }
 @functions {
+#nullable enable
+
     [Parameter]
     private CollectionTreeCollectionDTO Collection { get; set; }
 
     [Parameter]
-    private int? ParentId { get; set; } = null;
+    private string? ParentId { get; set; } = null;
 
     [Parameter]
     private string CurrentUrl { get; set; }

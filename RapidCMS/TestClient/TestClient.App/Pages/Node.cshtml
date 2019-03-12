@@ -1,9 +1,9 @@
 ﻿@inherits BasePage
 
-@page "/node/{Action}/{CollectionAlias}/{VariantAlias}"
-@page "/node/{Action}/{CollectionAlias}/{VariantAlias}/{Id:int}"
-@page "/node/{Action}/{ParentId:int}/{CollectionAlias}/{VariantAlias}"
-@page "/node/{Action}/{ParentId:int}/{CollectionAlias}/{VariantAlias}/{Id:int}"
+@page "/node/{Action}/{CollectionAlias}/entity/{VariantAlias}"
+@page "/node/{Action}/{CollectionAlias}/entity/{VariantAlias}/{Id}"
+@page "/node/{Action}/{ParentId}/{CollectionAlias}/entity/{VariantAlias}"
+@page "/node/{Action}/{ParentId}/{CollectionAlias}/entity/{VariantAlias}/{Id}"
 
 @using RapidCMS.Common
 @using RapidCMS.UI.Buttons
@@ -15,7 +15,7 @@
     TODO: remove weird callback for binding
 *@
 
-<h1>@Action node @CollectionAlias @(ParentId.HasValue ? $":: {ParentId.Value}" : "") :: @Id</h1>
+<h1>@Action node @CollectionAlias @(ParentId != null ? $":: {ParentId}" : "") :: @Id</h1>
 
 @if (Editor == null)
 {
@@ -105,11 +105,13 @@ else
 }
 
 @functions {
+#nullable enable
+
     [Parameter]
     private string Action { get; set; }
-    
+
     [Parameter]
-    private int? ParentId { get; set; } = null;
+    private string? ParentId { get; set; } = null;
 
     [Parameter]
     private string CollectionAlias { get; set; }
@@ -118,7 +120,7 @@ else
     private string VariantAlias { get; set; }
 
     [Parameter]
-    private int? Id { get; set; } = null;
+    private string? Id { get; set; } = null;
 
     NodeEditorDTO Editor;
 

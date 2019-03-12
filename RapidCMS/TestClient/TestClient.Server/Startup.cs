@@ -32,7 +32,7 @@ namespace TestClient.Server
                     .AddDefaultButton(DefaultButtonType.New, "New")
                     .AddListPane(pane =>
                     {
-                        pane.AddProperty(x => x.Id);
+                        pane.AddProperty(x => x._Id);
                         pane.AddProperty(x => x.Name).SetDescription("This is a name");
                         pane.AddProperty(x => x.Description).SetDescription("This is a description");
                         pane.AddDefaultButton(DefaultButtonType.View, string.Empty);
@@ -47,7 +47,7 @@ namespace TestClient.Server
                     .AddDefaultButton(DefaultButtonType.New, "New")
                     .AddListPane(pane =>
                     {
-                        pane.AddProperty(x => x.Id);
+                        pane.AddProperty(x => x._Id);
                         pane.AddProperty(x => x.Name).SetDescription("This is a name");
                         pane.AddProperty(x => x.Description).SetDescription("This is a description");
                         pane.AddDefaultButton(DefaultButtonType.View, string.Empty);
@@ -67,7 +67,7 @@ namespace TestClient.Server
                     .AddCustomButton("create-button", () => { }, "Custom create!")
                     .AddEditorPane(pane =>
                     {
-                        pane.AddField(x => x.Id)
+                        pane.AddField(x => x._Id)
                             .SetValueMapper(new IntValueMapper())
                             .SetReadonly(true);
 
@@ -96,7 +96,7 @@ namespace TestClient.Server
                     editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                     editor.AddDefaultButton(DefaultButtonType.Delete);
 
-                    editor.AddField(x => x.Id)
+                    editor.AddField(x => x._Id)
                         .SetDescription("This should be readonly")
                         .SetReadonly();
 
@@ -126,7 +126,7 @@ namespace TestClient.Server
                     editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                     editor.AddDefaultButton(DefaultButtonType.Delete);
 
-                    editor.AddField(x => x.Id)
+                    editor.AddField(x => x._Id)
                         .SetDescription("This should be readonly")
                         .SetReadonly();
 
@@ -153,7 +153,7 @@ namespace TestClient.Server
 
                     .AddEditorPane(pane =>
                     {
-                        pane.AddField(x => x.Id)
+                        pane.AddField(x => x._Id)
                             .SetValueMapper(new IntValueMapper())
                             .SetReadonly(true);
 
@@ -190,7 +190,7 @@ namespace TestClient.Server
 
                     .AddEditorPane(pane =>
                     {
-                        pane.AddField(x => x.Id)
+                        pane.AddField(x => x._Id)
                             .SetValueMapper(new IntValueMapper())
                             .SetReadonly(true);
 
@@ -222,7 +222,7 @@ namespace TestClient.Server
 
                     .AddEditorPane(pane =>
                     {
-                        pane.AddField(x => x.Id)
+                        pane.AddField(x => x._Id)
                             .SetValueMapper(new IntValueMapper())
                             .SetReadonly(true);
 
@@ -269,7 +269,7 @@ namespace TestClient.Server
                     editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                     editor.AddDefaultButton(DefaultButtonType.Delete);
 
-                    editor.AddField(x => x.Id)
+                    editor.AddField(x => x._Id)
                         .SetDescription("This should be readonly")
                         .SetReadonly();
 
@@ -297,7 +297,7 @@ namespace TestClient.Server
                     editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                     editor.AddDefaultButton(DefaultButtonType.Delete);
 
-                    editor.AddField(x => x.Id)
+                    editor.AddField(x => x._Id)
                         .SetDescription("This should be readonly")
                         .SetReadonly();
 
@@ -325,7 +325,7 @@ namespace TestClient.Server
                     editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                     editor.AddDefaultButton(DefaultButtonType.Delete);
 
-                    editor.AddField(x => x.Id)
+                    editor.AddField(x => x._Id)
                         .SetDescription("This should be readonly")
                         .SetReadonly();
 

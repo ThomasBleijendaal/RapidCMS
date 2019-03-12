@@ -28,7 +28,7 @@ namespace RapidCMS.Common.Models.Config
         where TEntity : IEntity
     {
         public CollectionConfig<TEntity> SetRepository<TRepository>()
-           where TRepository : IRepository<int, TEntity>
+           where TRepository : IRepository
         {
             RepositoryType = typeof(TRepository);
 

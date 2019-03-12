@@ -38,12 +38,12 @@ namespace TestClient.App.Pages
                         { "VariantAlias", parameterCommand.VariantAlias }
                     };
 
-                    if (parameterCommand.Id.HasValue)
+                    if (parameterCommand.Id != null)
                     {
                         data.Add("Id", parameterCommand.Id);
                     }
 
-                    if (parameterCommand.ParentId.HasValue)
+                    if (parameterCommand.ParentId != null)
                     {
                         data.Add("ParentId", parameterCommand.ParentId);
                     }

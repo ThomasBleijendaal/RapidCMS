@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using RapidCMS.Common.Enums;
 
+#nullable enable
+
 namespace RapidCMS.Common.Models.DTOs
 {
     public class CollectionTreeNodeDTO
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Path { get; set; }
         public List<CollectionTreeCollectionDTO> Collections { get; set; }
@@ -65,8 +67,8 @@ namespace RapidCMS.Common.Models.DTOs
     public class NodeDTO
     {
         public string VariantAlias { get; set; }
-        public int? Id { get; set; }
-        public int? ParentId { get; set; }
+        public string? Id { get; set; }
+        public string? ParentId { get; set; }
 
         public List<ButtonDTO> Buttons { get; set; }
         public List<ValueDTO> Values { get; set; }
@@ -83,7 +85,7 @@ namespace RapidCMS.Common.Models.DTOs
 
     public class NodeEditorDTO
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Alias { get; set; }
 
         public List<ButtonDTO> Buttons { get; set; }

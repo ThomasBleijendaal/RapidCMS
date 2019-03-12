@@ -10,6 +10,8 @@ using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.DTOs;
 
+#nullable enable
+
 namespace RapidCMS.Common.Services
 {
     // TODO: int id?
@@ -23,16 +25,16 @@ namespace RapidCMS.Common.Services
     {
         Task<CollectionTreeRootDTO> GetCollectionsAsync();
 
-        Task<CollectionListViewDTO> GetCollectionListViewAsync(string action, string collectionAlias, string variantAlias, int? parentId);
-        Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, int? parentId, string actionId);
-        Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, int? parentId, int id, string actionId);
+        Task<CollectionListViewDTO> GetCollectionListViewAsync(string action, string collectionAlias, string variantAlias, string? parentId);
+        Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, string? parentId, string actionId);
+        Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, string? parentId, string id, string actionId);
 
-        Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string collectionAlias, string variantAlias, int? parentId);
-        Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, int? parentId, string actionId);
-        Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string variantAlias, int? parentId, int? id, CollectionListEditorDTO formValues, string actionId);
+        Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string collectionAlias, string variantAlias, string? parentId);
+        Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string? parentId, string actionId);
+        Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, CollectionListEditorDTO formValues, string actionId);
 
-        Task<NodeEditorDTO> GetNodeEditorAsync(string action, string collectionAlias, string variantAlias, int? parentId, int? id);
-        Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, int? parentId, int? id, NodeEditorDTO formValues, string actionId);
+        Task<NodeEditorDTO> GetNodeEditorAsync(string action, string collectionAlias, string variantAlias, string? parentId, string? id);
+        Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, NodeEditorDTO formValues, string actionId);
     }
 
     public class CollectionService : ICollectionService
@@ -66,7 +68,7 @@ namespace RapidCMS.Common.Services
             return result;
         }
 
-        private static async Task<List<CollectionTreeCollectionDTO>> GetTreeViewForCollectionAsync(IEnumerable<Collection> collections, int? parentId)
+        private static async Task<List<CollectionTreeCollectionDTO>> GetTreeViewForCollectionAsync(IEnumerable<Collection> collections, string? parentId)
         {
             var result = new List<CollectionTreeCollectionDTO>();
 
@@ -80,7 +82,7 @@ namespace RapidCMS.Common.Services
 
                 if (collection.TreeView.EntityViewType == ViewType.Tree)
                 {
-                    var entities = await collection.Repository.GetAllAsObjectsAsync(parentId);
+                    var entities = await collection.Repository._GetAllAsObjectsAsync(parentId);
 
                     dto.Nodes = await entities.ToListAsync(async entity =>
                     {
@@ -126,7 +128,7 @@ namespace RapidCMS.Common.Services
             return result;
         }
 
-        public async Task<CollectionListViewDTO> GetCollectionListViewAsync(string action, string alias, string variantAlias, int? parentId)
+        public async Task<CollectionListViewDTO> GetCollectionListViewAsync(string action, string alias, string variantAlias, string? parentId)
         {
             var collection = _root.GetCollection(alias);
             var listView = collection.ListView;
@@ -139,7 +141,7 @@ namespace RapidCMS.Common.Services
                 EntityVariant = entityVariant
             };
 
-            var entities = await collection.Repository.GetAllAsObjectsAsync(parentId);
+            var entities = await collection.Repository._GetAllAsObjectsAsync(parentId);
 
             return new CollectionListViewDTO()
             {
@@ -193,7 +195,7 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public async Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string alias, string variantAlias, int? parentId)
+        public async Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string alias, string variantAlias, string? parentId)
         {
             var collection = _root.GetCollection(alias);
 
@@ -241,13 +243,13 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        private async IAsyncEnumerable<NodeDTO> GetCollectionListEditorNodesAsync(string action, int? parentId, Collection collection, EntityVariant entityVariant, List<EditorPane<Field>> editors)
+        private async IAsyncEnumerable<NodeDTO> GetCollectionListEditorNodesAsync(string action, string? parentId, Collection collection, EntityVariant entityVariant, List<EditorPane<Field>> editors)
         {
             if (action == Constants.New)
             {
                 var variant = entityVariant ?? collection.EntityVariants.First();
 
-                var newEntity = await collection.Repository.NewAsync(parentId, variant.Type);
+                var newEntity = await collection.Repository._NewAsync(parentId, variant.Type);
                 var editor = editors.First(x => x.VariantType == newEntity.GetType());
 
                 var editorViewContext = new ViewContext
@@ -261,7 +263,7 @@ namespace RapidCMS.Common.Services
 
             if (action.In(Constants.New, Constants.Edit))
             {
-                var entities = await collection.Repository.GetAllAsObjectsAsync(parentId);
+                var entities = await collection.Repository._GetAllAsObjectsAsync(parentId);
 
                 foreach (var entity in entities)
                 {
@@ -279,7 +281,7 @@ namespace RapidCMS.Common.Services
             }
         }
 
-        private static NodeDTO CreateCollectionListEditorNode(IEntity entity, ViewContext viewContext, int? parentId, EditorPane<Field> editor)
+        private static NodeDTO CreateCollectionListEditorNode(IEntity entity, ViewContext viewContext, string? parentId, EditorPane<Field> editor)
         {
             return new NodeDTO
             {
@@ -309,7 +311,7 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public async Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, string variantAlias, int? parentId, int? id)
+        public async Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, string variantAlias, string? parentId, string? id)
         {
             var collection = _root.GetCollection(alias);
 
@@ -322,9 +324,9 @@ namespace RapidCMS.Common.Services
 
             var entity = action switch
             {
-                Constants.View => await collection.Repository.GetByIdAsync(id.Value, parentId),
-                Constants.Edit => await collection.Repository.GetByIdAsync(id.Value, parentId),
-                Constants.New => await collection.Repository.NewAsync(parentId, nodeType),
+                Constants.View => await collection.Repository._GetByIdAsync(id, parentId),
+                Constants.Edit => await collection.Repository._GetByIdAsync(id, parentId),
+                Constants.New => await collection.Repository._NewAsync(parentId, nodeType),
                 _ => null
             };
 
@@ -403,7 +405,7 @@ namespace RapidCMS.Common.Services
             return editor;
         }
 
-        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, int? parentId, int? id, NodeEditorDTO formValues, string actionId)
+        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, NodeEditorDTO formValues, string actionId)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -417,8 +419,8 @@ namespace RapidCMS.Common.Services
 
             var entity = buttonCrudType switch
             {
-                CrudType.Insert => await collection.Repository.NewAsync(parentId, entityVariant.Type),
-                _ => await collection.Repository.GetByIdAsync(id.Value, parentId)
+                CrudType.Insert => await collection.Repository._NewAsync(parentId, entityVariant.Type),
+                _ => await collection.Repository._GetByIdAsync(id, parentId)
             };
 
             UpdateEntityWithFormData(formValues, entity, nodeEditor, entityVariant.Type);
@@ -438,15 +440,15 @@ namespace RapidCMS.Common.Services
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
 
                 case CrudType.Update:
-                    await collection.Repository.UpdateAsync(id.Value, parentId, entity);
+                    await collection.Repository._UpdateAsync(id, parentId, entity);
                     return new ReloadCommand();
 
                 case CrudType.Insert:
-                    entity = await collection.Repository.InsertAsync(parentId, entity);
+                    entity = await collection.Repository._InsertAsync(parentId, entity);
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, entity.Id) };
 
                 case CrudType.Delete:
-                    await collection.Repository.DeleteAsync(id.Value, parentId);
+                    await collection.Repository._DeleteAsync(id, parentId);
                     return new NavigateCommand { Uri = UriHelper.Collection(Constants.List, collectionAlias, parentId) };
 
                 default:
@@ -454,7 +456,7 @@ namespace RapidCMS.Common.Services
             }
         }
 
-        public Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, int? parentId, string actionId)
+        public Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, string? parentId, string actionId)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -480,7 +482,7 @@ namespace RapidCMS.Common.Services
 
         }
 
-        public async Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, int? parentId, int id, string actionId)
+        public async Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, string? parentId, string id, string actionId)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -489,7 +491,7 @@ namespace RapidCMS.Common.Services
             var buttonCrudType = button.GetCrudType();
 
             // since the id is known, get the entity variant from the entity
-            var entity = await collection.Repository.GetByIdAsync(id, parentId);
+            var entity = await collection.Repository._GetByIdAsync(id, parentId);
             var entityType = entity.GetType();
             var entityVariant = collection.EntityVariants.First(variant => variant.Type == entityType);
 
@@ -512,7 +514,7 @@ namespace RapidCMS.Common.Services
             }
         }
 
-        public Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, int? parentId, string actionId)
+        public Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string? parentId, string actionId)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -564,7 +566,7 @@ namespace RapidCMS.Common.Services
             }
         }
 
-        public async Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string variantAlias, int? parentId, int? id, CollectionListEditorDTO formValues, string actionId)
+        public async Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, CollectionListEditorDTO formValues, string actionId)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -578,8 +580,8 @@ namespace RapidCMS.Common.Services
 
             var entity = buttonCrudType switch
             {
-                CrudType.Insert => await collection.Repository.NewAsync(parentId, entityVariant.Type),
-                _ => await collection.Repository.GetByIdAsync(id.Value, parentId)
+                CrudType.Insert => await collection.Repository._NewAsync(parentId, entityVariant.Type),
+                _ => await collection.Repository._GetByIdAsync(id, parentId)
             };
 
             // TODO: what is id when inserting??
@@ -602,11 +604,11 @@ namespace RapidCMS.Common.Services
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
 
                 case CrudType.Update:
-                    await collection.Repository.UpdateAsync(id.Value, parentId, entity);
+                    await collection.Repository._UpdateAsync(id, parentId, entity);
                     return new ReloadCommand();
 
                 case CrudType.Insert:
-                    entity = await collection.Repository.InsertAsync(parentId, entity);
+                    entity = await collection.Repository._InsertAsync(parentId, entity);
                     return new UpdateParameterCommand
                     {
                         Action = Constants.New,
@@ -617,7 +619,7 @@ namespace RapidCMS.Common.Services
                     };
 
                 case CrudType.Delete:
-                    await collection.Repository.DeleteAsync(id.Value, parentId);
+                    await collection.Repository._DeleteAsync(id, parentId);
                     return new ReloadCommand();
 
                 default:

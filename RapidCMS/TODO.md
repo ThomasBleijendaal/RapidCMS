@@ -20,3 +20,4 @@ DONE-ISH: add support for list block editor (same as list editor, but then every
 14. sort AddListPane out (what's the use of multipe list panes of the same entity? + add polymorphism)
 15. support reordering
 16. check after deletion where to redirect to (list view / list editor) (combine with pagination: support going back to previous page (via cancel button or delete button))
+17. add and remove items (one to many + many to many relations)

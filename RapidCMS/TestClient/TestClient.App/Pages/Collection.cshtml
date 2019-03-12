@@ -1,7 +1,7 @@
 @inherits BasePage
 
 @page "/collection/{Action}/{CollectionAlias}"
-@page "/collection/{Action}/{CollectionAlias}/{ParentId:int}"
+@page "/collection/{Action}/{CollectionAlias}/{ParentId}"
 
 @using RapidCMS.Common
 @using RapidCMS.Common.Enums
@@ -279,11 +279,13 @@ else if (EditorView != null)
 }
 
 @functions {
+#nullable enable
+
     [Parameter]
     private string Action { get; set; }
 
     [Parameter]
-    private int? ParentId { get; set; } = null;
+    private string? ParentId { get; set; } = null;
 
     [Parameter]
     private string CollectionAlias { get; set; }
@@ -293,7 +295,7 @@ else if (EditorView != null)
 
     [Obsolete]
     [Parameter]
-    private int? Id { get; set; } = null;
+    private string? Id { get; set; } = null;
 
     CollectionListViewDTO ListView;
     CollectionListEditorDTO EditorView;
@@ -335,7 +337,7 @@ else if (EditorView != null)
 
     async Task NodeViewButtonCallbackAsync(string actionId, NodeDTO node)
     {
-        var command = await CollectionService.ProcessListViewActionAsync(CollectionAlias, node.ParentId, node.Id.Value, actionId);
+        var command = await CollectionService.ProcessListViewActionAsync(CollectionAlias, node.ParentId, node.Id, actionId);
 
         await HandleViewCommandAsync(command);
     }
