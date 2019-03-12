@@ -7,6 +7,7 @@ using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
+using TestClient.App.ActionHandlers;
 using TestLibrary;
 using TestLibrary.Entities;
 using TestLibrary.Repositories;
@@ -70,7 +71,7 @@ namespace TestClient.Server
                     .AddDefaultButton(DefaultButtonType.SaveNew)
                     .AddDefaultButton(DefaultButtonType.SaveExisting)
                     .AddDefaultButton(DefaultButtonType.Delete)
-                    .AddCustomButton("create-button", () => { }, "Custom create!")
+                    .AddCustomButton<CreateButtonActionHandler>("create-button", "Custom create!")
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x._Id)
@@ -351,32 +352,6 @@ namespace TestClient.Server
                         .SetDescription("This is a quote");
                 });
             }
-
-            //void subCollectionListNodeEditor(SubCollectionListEditorConfig<TestEntity> listEditorConfig)
-            //{
-            //    // TODO: how to treat sub collection editors? configure here or in the sub collection?
-
-            //    //listEditorConfig.AddDefaultButton(DefaultButtonType.New);
-            //    //listEditorConfig.SetEditor(editor =>
-            //    //{
-            //    //    editor.AddDefaultButton(DefaultButtonType.View);
-            //    //    editor.AddDefaultButton(DefaultButtonType.SaveNew);
-            //    //    editor.AddDefaultButton(DefaultButtonType.SaveExisting);
-            //    //    editor.AddDefaultButton(DefaultButtonType.Delete);
-
-            //    //    editor.AddField(x => x.Id)
-            //    //        .SetReadonly();
-
-            //    //    editor.AddField(x => x.Name);
-
-            //    //    editor.AddField(x => x.Description)
-            //    //        .SetType(EditorType.TextArea);
-
-            //    //    editor.AddField(x => x.Number)
-            //    //        .SetValueMapper(new IntValueMapper())
-            //    //        .SetType(EditorType.Numeric);
-            //    //});
-            //}
 
             services.AddRapidCMS(root =>
             {

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Common.Models;
@@ -13,6 +11,7 @@ namespace RapidCMS.Common
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ICollectionService, CollectionService>();
+            
         }
 
         //public void Configure(IApplicationBuilder app)
@@ -26,7 +25,7 @@ namespace RapidCMS.Common
 
                 // TODO: populate value mappers
             }
-            catch (Exception ex)
+            catch
             {
 
             }

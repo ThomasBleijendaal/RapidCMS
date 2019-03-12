@@ -4,13 +4,15 @@
 
 
 Main features
+
 DONE: 1. basic editors
 DONE: 2. sub collection list editor
 DONE-ISH: 3. custom buttons support (TODO: add support in every form)
 DONE-ISH: remove / reduce use of action in CollectionService and start using actionId of button. include custom buttons in this mechanism
 DONE: 5. support for type differentation within collection 
-DONE-ISH: add support for list block editor (same as list editor, but then every line is a node editor) (TODO: delete from node editor redirects incorrect)
-7. move all cms UI to RapidCMS.UI
+DONE-ISH: 6. add support for list block editor (same as list editor, but then every line is a node editor) (TODO: delete from node editor redirects incorrect)
+DONE: 7. move all cms UI to RapidCMS.UI
+
 8. custom editor support
 9. seperate view + edit node (now combined)
 10. implement all default button types in all button call backs
