@@ -9,7 +9,7 @@ using RapidCMS.Common.Data;
 
 namespace TestLibrary
 {
-    public abstract class TestRepository : BaseRepository<int, int, TestEntity>
+    public abstract class TestRepository : BaseStructRepository<int, int, TestEntity>
     {
         private readonly Dictionary<int, List<TestEntity>> _data = new Dictionary<int, List<TestEntity>>();
 
@@ -67,7 +67,7 @@ namespace TestLibrary
             element.Name = entity.Name;
         }
 
-        public override Task<TestEntity> NewAsync(int? parentId, Type variantType)
+        public override Task<TestEntity> NewAsync(int? parentId, Type? variantType)
         {
             return Task.FromResult(new TestEntity
             {
@@ -119,7 +119,7 @@ namespace TestLibrary
     {
         protected override string Name => nameof(RepositoryF);
     }
-    public class VariantRepository : BaseRepository<int, int, TestEntity>
+    public class VariantRepository : BaseStructRepository<int, int, TestEntity>
     {
         private readonly List<TestEntity> _data = new List<TestEntity>
         {
@@ -157,9 +157,13 @@ namespace TestLibrary
             return entity;
         }
 
-        public override Task<TestEntity> NewAsync(int? parentId, Type variantType)
+        public override Task<TestEntity> NewAsync(int? parentId, Type? variantType)
         {
-            if (variantType == typeof(TestEntityVariantA))
+            if (variantType == null)
+            {
+                return Task.FromResult(default(TestEntity));
+            }
+            else if (variantType == typeof(TestEntityVariantA))
             {
                 return Task.FromResult(new TestEntityVariantA() as TestEntity);
             }

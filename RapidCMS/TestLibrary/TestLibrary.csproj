@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RapidCMS.Common\RapidCMS.Common.csproj" />
   </ItemGroup>
 

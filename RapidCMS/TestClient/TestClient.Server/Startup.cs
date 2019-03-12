@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.WindowsAzure.Storage;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using TestLibrary;
+using TestLibrary.Entities;
+using TestLibrary.Repositories;
 
 namespace TestClient.Server
 {
@@ -25,6 +28,9 @@ namespace TestClient.Server
             services.AddSingleton<RepositoryE>();
             services.AddSingleton<RepositoryF>();
             services.AddSingleton<VariantRepository>();
+
+            services.AddSingleton(CloudStorageAccount.DevelopmentStorageAccount);
+            services.AddSingleton<AzureTableStorageRepository>();
 
             void listView(ListViewConfig<TestEntity> listViewConfig)
             {
@@ -250,7 +256,7 @@ namespace TestClient.Server
                         pane.AddField(x => x.Image)
                             .SetDescription("This is an image");
                     })
-                
+
                     .AddEditorPane<TestEntityVariantC>(pane =>
                      {
                          pane.AddField(x => x.Quote)
@@ -464,6 +470,55 @@ namespace TestClient.Server
                         .SetListEditor(ListEditorType.Block, listNodeEditorWithPolymorphism)
                         .SetNodeEditor(nodeEditorWithPolymorphism);
                 });
+
+                void AzureTableStorageListView(ListViewConfig<AzureTableStorageEntity> config)
+                {
+                    config.AddDefaultButton(DefaultButtonType.New);
+
+                    config.AddListPane(listPaneConfig =>
+                    {
+                        listPaneConfig.AddProperty(x => x.Id);
+                        listPaneConfig.AddProperty(x => x.Title);
+                        listPaneConfig.AddProperty(x => x.Description);
+
+                        listPaneConfig.AddDefaultButton(DefaultButtonType.Edit);
+                        listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
+                    });
+                }
+
+                void AzureTableStorageEditor(NodeEditorConfig<AzureTableStorageEntity> config)
+                {
+                    config.AddDefaultButton(DefaultButtonType.SaveExisting);
+                    config.AddDefaultButton(DefaultButtonType.SaveNew);
+                    config.AddDefaultButton(DefaultButtonType.Delete);
+
+                    config.AddEditorPane(editorPaneConfig =>
+                    {
+                        editorPaneConfig.AddField(x => x.Title);
+                        editorPaneConfig.AddField(x => x.Description);
+
+
+                    });
+                }
+
+                root.AddCollection<AzureTableStorageEntity>("collection-10", "Azure Table Storage Collection", collection =>
+                {
+                    collection
+                        .SetRepository<AzureTableStorageRepository>()
+                        .SetTreeView(ViewType.Tree, entity => entity.Title)
+                        .SetListView(AzureTableStorageListView)
+                        .SetNodeEditor(AzureTableStorageEditor)
+
+                        .AddCollection<AzureTableStorageEntity>("collection-10-a", "Sub collection", subCollection =>
+                        {
+                            subCollection
+                                .SetRepository<AzureTableStorageRepository>()
+                                .SetTreeView(ViewType.Tree, entity => entity.Title)
+                                .SetListView(AzureTableStorageListView)
+                                .SetNodeEditor(AzureTableStorageEditor);
+                        });
+                });
+
             });
 
             services.AddRazorComponents<App.Startup>();

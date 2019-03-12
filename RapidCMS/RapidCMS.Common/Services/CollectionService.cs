@@ -509,6 +509,11 @@ namespace RapidCMS.Common.Services
                 case CrudType.Read:
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
 
+                case CrudType.Delete:
+
+                    await collection.Repository._DeleteAsync(id, parentId);
+                    return new ReloadCommand();
+
                 default:
                     return null;
             }

@@ -22,7 +22,9 @@ namespace RapidCMS.Common.Data
 #pragma warning restore IDE1006 // Naming Styles
     }
 
-    public interface IRepository<TKey, TParentKey, TEntity> : IRepository
+    // TODO: merge Struct and Class Repos
+
+    public interface IStructRepository<TKey, TParentKey, TEntity> : IRepository
         where TEntity : IEntity
         where TParentKey : struct
     {
@@ -38,9 +40,70 @@ namespace RapidCMS.Common.Data
         TParentKey? ParseParentKey(string? parentId);
     }
 
-    public abstract class BaseRepository<TKey, TParentKey, TEntity> : IRepository, IRepository<TKey, TParentKey, TEntity>
+    public abstract class BaseStructRepository<TKey, TParentKey, TEntity> : IRepository, IStructRepository<TKey, TParentKey, TEntity>
         where TEntity : IEntity
         where TParentKey : struct
+    {
+        public abstract Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
+        public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
+        public abstract Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType = null);
+        public abstract Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity);
+        public abstract Task UpdateAsync(TKey id, TParentKey? parentId, TEntity entity);
+        public abstract Task DeleteAsync(TKey id, TParentKey? parentId);
+
+        public abstract TKey ParseKey(string id);
+        public abstract TParentKey? ParseParentKey(string? parentId);
+
+        async Task<IEntity> IRepository._GetByIdAsync(string id, string parentId)
+        {
+            return (await GetByIdAsync(ParseKey(id), ParseParentKey(parentId))) as IEntity;
+        }
+
+        async Task<IEnumerable<IEntity>> IRepository._GetAllAsObjectsAsync(string parentId)
+        {
+            return (await GetAllAsync(ParseParentKey(parentId))).Cast<IEntity>();
+        }
+
+        async Task<IEntity> IRepository._NewAsync(string parentId, Type? variantType)
+        {
+            return (await NewAsync(ParseParentKey(parentId), variantType)) as IEntity;
+        }
+
+        async Task<IEntity> IRepository._InsertAsync(string parentId, IEntity entity)
+        {
+            return (await InsertAsync(ParseParentKey(parentId), (TEntity)entity)) as IEntity;
+        }
+
+        async Task IRepository._UpdateAsync(string id, string parentId, IEntity entity)
+        {
+            await UpdateAsync(ParseKey(id), ParseParentKey(parentId), (TEntity)entity);
+        }
+
+        async Task IRepository._DeleteAsync(string id, string parentId)
+        {
+            await DeleteAsync(ParseKey(id), ParseParentKey(parentId));
+        }
+    }
+
+    public interface IClassRepository<TKey, TParentKey, TEntity> : IRepository
+        where TEntity : IEntity
+        where TParentKey : class
+    {
+        Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
+        Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
+
+        Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType);
+        Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity);
+        Task UpdateAsync(TKey id, TParentKey? parentId, TEntity entity);
+        Task DeleteAsync(TKey id, TParentKey? parentId);
+
+        TKey ParseKey(string id);
+        TParentKey? ParseParentKey(string? parentId);
+    }
+
+    public abstract class BaseClassRepository<TKey, TParentKey, TEntity> : IRepository, IClassRepository<TKey, TParentKey, TEntity>
+        where TEntity : IEntity
+        where TParentKey : class
     {
         public abstract Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
         public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);

@@ -21,3 +21,4 @@ DONE-ISH: add support for list block editor (same as list editor, but then every
 15. support reordering
 16. check after deletion where to redirect to (list view / list editor) (combine with pagination: support going back to previous page (via cancel button or delete button))
 17. add and remove items (one to many + many to many relations)
+18. add collection recursion
