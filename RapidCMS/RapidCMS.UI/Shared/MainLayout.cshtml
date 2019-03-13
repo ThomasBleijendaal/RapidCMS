@@ -1,91 +1,10 @@
 ﻿@inherits LayoutComponentBase
 
-@using RapidCMS.Common.Models.DTOs
-@using RapidCMS.Common.Services
-@using Microsoft.AspNetCore.Components.Services
-
-@inject ICollectionService CollectionService
-@inject IUriHelper UriHelper
-
 <div class="sidebar">
     <NavMenu />
 </div>
 
 <div class="main">
-    <div class="top-row px-4">
-
-    </div>
-
-    <div class="content px-4">
-        <ul>
-            @if (RootEntity != null)
-            {
-                @foreach (var collection in RootEntity.Collections)
-                {
-                    <CollectionTreeView Collection="@collection" CurrentUrl="@currentUrl" />
-                }
-            }
-        </ul>
-    </div>
+    @Body
 </div>
 
-<div class="main">
-    <div class="top-row px-4">
-        <a href="https://docs.microsoft.com/en-us/aspnet/" target="_blank" class="ml-md-auto">About</a>
-    </div>
-
-    <div class="content px-4">
-        @Body
-    </div>
-</div>
-
-@functions {
-    CollectionTreeRootDTO RootEntity;
-    string currentUrl;
-
-    protected override async Task OnInitAsync()
-    {
-        UriHelper.OnLocationChanged += LocationChanged;
-
-        await GetCollectionsAsync();
-    }
-
-    private async Task GetCollectionsAsync()
-    {
-        RootEntity = await CollectionService.GetCollectionsAsync();
-    }
-
-    private async void LocationChanged(object sender, string e)
-    {
-        var uri = new Uri(e);
-
-        currentUrl = uri.AbsolutePath?.Substring(1);
-
-        if (!FindUrl(RootEntity.Collections, currentUrl))
-        {
-            await GetCollectionsAsync();
-        }
-
-        StateHasChanged();
-    }
-
-    private bool FindUrl(IEnumerable<CollectionTreeCollectionDTO> collections, string url)
-    {
-        if (collections?.Any() ?? false == false)
-        {
-            return false;
-        }
-        else if (collections.Any(x => x.Path.Any(x => x.Path == url)))
-        {
-            return true;
-        }
-        else if (collections.SelectMany(x => x.Nodes).Any(x => x.Path == url))
-        {
-            return true;
-        }
-        else
-        {
-            return FindUrl(collections.SelectMany(x => x.Nodes.SelectMany(y => y.Collections)), url);
-        }
-    }
-}

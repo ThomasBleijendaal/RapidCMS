@@ -1,4 +1,11 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@using RapidCMS.Common.Models.DTOs
+@using RapidCMS.Common.Services
+@using Microsoft.AspNetCore.Components.Services
+
+@inject ICollectionService CollectionService
+@inject IUriHelper UriHelper
+
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">TestClient</a>
     <button class="navbar-toggler" onclick="@ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -7,12 +14,23 @@
 
 <div class="@NavMenuCssClass" onclick="@ToggleNavMenu">
     <ul class="nav flex-column">
+        @if (RootEntity != null)
+        {
+            @foreach (var collection in RootEntity.Collections)
+            {
+                <CollectionTreeView Collection="@collection" CurrentUrl="@currentUrl" />
+            }
+        }
+    </ul>
+
+    <ul class="nav flex-column">
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </li>
     </ul>
+
 </div>
 
 @functions {
@@ -23,5 +41,54 @@
     void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    CollectionTreeRootDTO RootEntity;
+    string currentUrl;
+
+    protected override async Task OnInitAsync()
+    {
+        UriHelper.OnLocationChanged += LocationChanged;
+
+        await GetCollectionsAsync();
+    }
+
+    private async Task GetCollectionsAsync()
+    {
+        RootEntity = await CollectionService.GetCollectionsAsync();
+    }
+
+    private async void LocationChanged(object sender, string e)
+    {
+        var uri = new Uri(e);
+
+        currentUrl = uri.AbsolutePath?.Substring(1);
+
+        if (!FindUrl(RootEntity.Collections, currentUrl))
+        {
+            await GetCollectionsAsync();
+        }
+
+        StateHasChanged();
+    }
+
+    private bool FindUrl(IEnumerable<CollectionTreeCollectionDTO> collections, string url)
+    {
+        if (collections?.Any() ?? false == false)
+        {
+            return false;
+        }
+        else if (collections.Any(x => x.Path.Any(x => x.Path == url)))
+        {
+            return true;
+        }
+        else if (collections.SelectMany(x => x.Nodes).Any(x => x.Path == url))
+        {
+            return true;
+        }
+        else
+        {
+            return FindUrl(collections.SelectMany(x => x.Nodes.SelectMany(y => y.Collections)), url);
+        }
     }
 }

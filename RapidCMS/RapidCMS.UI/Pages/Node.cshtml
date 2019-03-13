@@ -57,51 +57,45 @@ else
         }
     </div>
 
-    @foreach (var pane in Editor.EditorPanes)
-    {
-        @if (pane.Fields.Any())
+    <div class="content px-4">
+        @foreach (var pane in Editor.EditorPanes)
         {
-            <div class="content px-4">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <td>Field</td>
-                            <td>Editor</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var field in pane.Fields)
-                        {
-                            <tr>
-                                <td>@field.label.Name<br /><small>@field.label.Description</small></td>
-                                <td>
-                                    @if (Action == Constants.View)
-                                    {
-                                        @field.value.DisplayValue
-                                    }
-                                    else
-                                    {
-                                        <DefaultEditor Type="@field.value.Type"
-                                                       Value="@field.value.Value"
-                                                       Callback="@((string value) => field.value.Value = value)"
-                                                       IsReadonly="@field.value.IsReadonly" />
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
+            @if (pane.Fields.Any())
+            {
+                @foreach (var field in pane.Fields)
+                {
+                    <div class="row">
+                        <div class="col-4">
+                            <p>@field.label.Name</p>
+                            <p><small>@field.label.Description</small></p>
+                        </div>
+                        <div class="col-8">
+                            @if (Action == Constants.View)
+                            {
+                                @field.value.DisplayValue
+                            }
+                            else
+                            {
+                                <DefaultEditor Type="@field.value.Type"
+                                               Value="@field.value.Value"
+                                               Callback="@((string value) => field.value.Value = value)"
+                                               IsReadonly="@field.value.IsReadonly" />
+                            }
+                        </div>
+                    </div>
+                }
+            }
 
-        @foreach (var subCollectionListEditor in pane.SubCollectionListEditors)
-        {
-            <Collection Action="@subCollectionListEditor.Action"
-                        CollectionAlias="@subCollectionListEditor.CollectionAlias"
-                        ParentId="@Id" />
-        }
-    }
+            @foreach (var subCollectionListEditor in pane.SubCollectionListEditors)
+            {
+                <Collection Action="@subCollectionListEditor.Action"
+                            CollectionAlias="@subCollectionListEditor.CollectionAlias"
+                            ParentId="@Id" />
+            }
 
+
+        }
+    </div>
 }
 
 @functions {

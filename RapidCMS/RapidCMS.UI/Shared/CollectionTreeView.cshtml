@@ -6,35 +6,33 @@
 }
 else
 {
-    <li>
-        <strong>
-            @if (Collection.Path.Count == 1)
-            {
-                var path = Collection.Path.First().Path;
-                var icon = Collection.Path.First().Icon;
+    <li class="nav-item px-3">
+        @if (Collection.Path.Count == 1)
+        {
+            var path = Collection.Path.First().Path;
+            var icon = Collection.Path.First().Icon;
 
-                <NavLink href=@path class=@(path == CurrentUrl ? "current-page" : "")><i class="oi oi-@icon"></i> @Collection.Name</NavLink>
-            }
-            else
-            {
-                @Collection.Name
+            <NavLink href=@path class=@(path == CurrentUrl ? "current-page" : "")><i class="oi oi-@icon"></i> @Collection.Name</NavLink>
+        }
+        else
+        {
+            @Collection.Name
 
-                @foreach (var path in Collection.Path)
-                {
-                    <NavLink href=@path.Path class=@(path.Path == CurrentUrl ? "current-page" : "")><i class="oi oi-@path.Icon"></i></NavLink>
-                }
+            @foreach (var path in Collection.Path)
+            {
+                <NavLink href=@path.Path class=@(path.Path == CurrentUrl ? "current-page" : "")><i class="oi oi-@path.Icon"></i></NavLink>
             }
-        </strong>
+        }
 
         @if (Collection.Nodes != null)
         {
-            <ul>
+            <ul class="nav flex-column">
                 @foreach (var node in Collection.Nodes)
                 {
-                    <li>
+                    <li class="nav-item px-3">
                         <NavLink href=@node.Path class=@(node.Path == $"/{CurrentUrl}" ? "current-page" : "")>@node.Name</NavLink>
 
-                        <ul>
+                        <ul class="nav flex-column">
                             @foreach (var subCollection in node.Collections)
                             {
                                 <CollectionTreeView Collection="@subCollection" ParentId="@node.Id" CurrentUrl="@CurrentUrl" />
