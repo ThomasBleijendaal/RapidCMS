@@ -36,11 +36,12 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeEditorConfig<TEntity> AddCustomButton(string alias, Action action, string label = null, string icon = null)
+        public NodeEditorConfig<TEntity> AddCustomButton(string alias, CrudType crudType, Action action, string label = null, string icon = null)
         {
             var button = new CustomButtonConfig(alias)
             {
                 Action = action,
+                CrudType = crudType,
                 Icon = icon,
                 Label = label
             };

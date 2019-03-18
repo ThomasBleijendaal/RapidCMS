@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RapidCMS.Common.Enums;
+using System;
 
 #nullable enable
 
@@ -12,6 +13,7 @@ namespace RapidCMS.Common.Models.Config
         }
 
         internal string Alias { get; set; }
+        internal CrudType CrudType { get; set; }
         internal Action? Action { get; set; } = null;
         internal Type? ActionHandler { get; set; } = null;
     }

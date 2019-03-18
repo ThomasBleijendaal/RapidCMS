@@ -2,6 +2,9 @@
 {
     public enum CrudType
     {
+        // none
+        None = 0,
+
         // viewers
         View = 1,
         Create = 2,

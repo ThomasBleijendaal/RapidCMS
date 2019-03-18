@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <_RazorComponentInclude>Components\**\*.cshtml</_RazorComponentInclude>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Server" Version="3.0.0-preview3-19153-02" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0-preview3-19153-02" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RapidCMS.Common\RapidCMS.Common.csproj" />
+    <ProjectReference Include="..\RapidCMS.UI\RapidCMS.UI.csproj" />
+    <ProjectReference Include="..\TestLibrary\TestLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\css\site.css">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

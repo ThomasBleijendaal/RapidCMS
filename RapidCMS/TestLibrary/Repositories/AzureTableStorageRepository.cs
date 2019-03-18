@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage;
+﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using RapidCMS.Common.Data;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using TestLibrary.Entities;
 
 #nullable enable
@@ -13,9 +12,10 @@ namespace TestLibrary.Repositories
 {
     public class AzureTableStorageRepository : BaseClassRepository<string, string, AzureTableStorageEntity>
     {
+        public const string DefaultParentId = "root";
+
         private Task _initTask;
         private CloudTable? _table = null;
-        private string _defaultParentId = "root";
 
         public AzureTableStorageRepository(CloudStorageAccount cloudStorageAccount)
         {
@@ -47,7 +47,7 @@ namespace TestLibrary.Repositories
             await _initTask;
 
             var q = new TableQuery<AzureTableStorageEntity>().Where(
-                TableQuery.GenerateFilterCondition(nameof(AzureTableStorageEntity.PartitionKey), QueryComparisons.Equal, parentId ?? _defaultParentId));
+                TableQuery.GenerateFilterCondition(nameof(AzureTableStorageEntity.PartitionKey), QueryComparisons.Equal, parentId ?? DefaultParentId));
             var data = await _table!.ExecuteQuerySegmentedAsync(q, null);
 
             return data.Results;
@@ -57,7 +57,7 @@ namespace TestLibrary.Repositories
         {
             await _initTask;
 
-            var q = TableOperation.Retrieve<AzureTableStorageEntity>(parentId ?? _defaultParentId, id);
+            var q = TableOperation.Retrieve<AzureTableStorageEntity>(parentId ?? DefaultParentId, id);
             var data = await _table!.ExecuteAsync(q);
 
             if (data.Result is AzureTableStorageEntity entity)
@@ -75,7 +75,7 @@ namespace TestLibrary.Repositories
             await _initTask;
 
             entity.Id = Guid.NewGuid().ToString();
-            entity.PartitionKey = parentId ?? _defaultParentId;
+            entity.PartitionKey = parentId ?? DefaultParentId;
 
             var op = TableOperation.Insert(entity);
             var data = await _table!.ExecuteAsync(op);
@@ -94,7 +94,7 @@ namespace TestLibrary.Repositories
         {
             await _initTask;
 
-            return new AzureTableStorageEntity { PartitionKey = parentId ?? _defaultParentId };
+            return new AzureTableStorageEntity { PartitionKey = parentId ?? DefaultParentId };
         }
 
         public override async Task UpdateAsync(string id, string? parentId, AzureTableStorageEntity entity)
@@ -102,7 +102,7 @@ namespace TestLibrary.Repositories
             await _initTask;
 
             entity.Id = id;
-            entity.PartitionKey = parentId ?? _defaultParentId;
+            entity.PartitionKey = parentId ?? DefaultParentId;
 
             var op = TableOperation.InsertOrReplace(entity);
             await _table!.ExecuteAsync(op);

@@ -6,12 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Buttons\DefaultButton.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Browser" Version="3.0.0-preview-19075-0444" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Build" Version="3.0.0-preview-19075-0444" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.0.0-preview3-19153-02" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Build" Version="3.0.0-preview3-19153-02" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Server" Version="3.0.0-preview3-19153-02" />
+    <PackageReference Include="runtime.win-x64.Microsoft.NETCore.DotNetAppHost" Version="3.0.0-preview3-27503-5" />
   </ItemGroup>
 
   <ItemGroup>

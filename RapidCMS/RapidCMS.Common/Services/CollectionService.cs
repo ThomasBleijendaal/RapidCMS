@@ -426,7 +426,7 @@ namespace RapidCMS.Common.Services
             // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
-                customButton.Action.Invoke();
+                await customButton.HandleActionAsync();
             }
 
             switch (buttonCrudType)
@@ -450,11 +450,11 @@ namespace RapidCMS.Common.Services
                     return new NavigateCommand { Uri = UriHelper.Collection(Constants.List, collectionAlias, parentId) };
 
                 default:
-                    return null;
+                    throw new InvalidOperationException();
             }
         }
 
-        public Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, string? parentId, string actionId)
+        public async Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, string? parentId, string actionId)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -466,16 +466,16 @@ namespace RapidCMS.Common.Services
             // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
-                customButton.Action.Invoke();
+                await customButton.HandleActionAsync();
             }
 
             switch (buttonCrudType)
             {
                 case CrudType.Create:
-                    return Task.FromResult(new NavigateCommand { Uri = UriHelper.Node(Constants.New, collectionAlias, entityVariant, parentId, null) } as ViewCommand);
+                    return new NavigateCommand { Uri = UriHelper.Node(Constants.New, collectionAlias, entityVariant, parentId, null) };
 
                 default:
-                    return Task.FromResult(default(ViewCommand));
+                    return default(ViewCommand);
             }
 
         }
@@ -496,7 +496,7 @@ namespace RapidCMS.Common.Services
             // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
-                customButton.Action.Invoke();
+                await customButton.HandleActionAsync();
             }
 
             switch (buttonCrudType)
@@ -517,7 +517,7 @@ namespace RapidCMS.Common.Services
             }
         }
 
-        public Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string? parentId, string actionId)
+        public async Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string? parentId, string actionId)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -529,43 +529,43 @@ namespace RapidCMS.Common.Services
             // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
-                customButton.Action.Invoke();
+                await customButton.HandleActionAsync();
             }
 
             switch (buttonCrudType)
             {
                 case CrudType.View:
-                    return Task.FromResult(new UpdateParameterCommand
+                    return new UpdateParameterCommand
                     {
                         Action = Constants.View,
                         CollectionAlias = collectionAlias,
                         VariantAlias = entityVariant.Alias,
                         ParentId = parentId,
                         Id = null
-                    } as ViewCommand);
+                    };
 
                 case CrudType.Read:
-                    return Task.FromResult(new UpdateParameterCommand
+                    return new UpdateParameterCommand
                     {
                         Action = Constants.Edit,
                         CollectionAlias = collectionAlias,
                         VariantAlias = entityVariant.Alias,
                         ParentId = parentId,
                         Id = null
-                    } as ViewCommand);
+                    };
 
                 case CrudType.Create:
-                    return Task.FromResult(new UpdateParameterCommand
+                    return new UpdateParameterCommand
                     {
                         Action = Constants.New,
                         CollectionAlias = collectionAlias,
                         VariantAlias = entityVariant.Alias,
                         ParentId = parentId,
                         Id = null
-                    } as ViewCommand);
+                    };
 
                 default:
-                    return Task.FromResult(default(ViewCommand));
+                    return default(ViewCommand);
             }
         }
 
@@ -595,7 +595,7 @@ namespace RapidCMS.Common.Services
             // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
-                customButton.Action.Invoke();
+                await customButton.HandleActionAsync();
             }
 
             switch (buttonCrudType)

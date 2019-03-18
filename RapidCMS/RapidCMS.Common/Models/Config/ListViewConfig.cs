@@ -30,6 +30,35 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
+        public ListViewConfig<TEntity> AddCustomButton(string alias, CrudType crudType, Action action, string label = null, string icon = null)
+        {
+            var button = new CustomButtonConfig(alias)
+            {
+                Action = action,
+                CrudType = crudType,
+                Icon = icon,
+                Label = label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
+
+        public ListViewConfig<TEntity> AddCustomButton<TActionHandler>(string alias, string label = null, string icon = null)
+        {
+            var button = new CustomButtonConfig(alias)
+            {
+                ActionHandler = typeof(TActionHandler),
+                Icon = icon,
+                Label = label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
+
         // TODO: add polymorphism
         public ListViewConfig<TEntity> AddListPane(Action<ListViewPaneConfig<TEntity>> configure)
         {

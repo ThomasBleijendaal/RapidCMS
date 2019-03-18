@@ -1,0 +1,7 @@
+﻿@typeparam TContext
+
+@inherits  BaseButton<TContext>
+
+<button type="button" class="btn" onclick="@ButtonClickAsync">
+    <i class="oi oi-@Context.Icon"></i> @Context.Label
+</button>

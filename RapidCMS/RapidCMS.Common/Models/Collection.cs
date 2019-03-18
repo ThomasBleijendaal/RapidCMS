@@ -8,6 +8,9 @@ using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
+
+#nullable enable
 
 namespace RapidCMS.Common.Models
 {
@@ -230,11 +233,20 @@ namespace RapidCMS.Common.Models
     public class CustomButton : Button
     {
         public string Alias { get; set; }
-        public Action Action { get; set; }
+
+        public IButtonActionHandler ActionHandler { get; set; }
 
         public override CrudType GetCrudType()
         {
-            throw new NotImplementedException();
+            return ActionHandler.GetCrudType();
+        }
+        public override bool IsCompatibleWithView(ViewContext viewContext)
+        {
+            return ActionHandler.IsCompatibleWithView(viewContext);
+        }
+        public Task HandleActionAsync()
+        {
+            return ActionHandler.InvokeAsync();
         }
     }
 

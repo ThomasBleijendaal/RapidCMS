@@ -1,0 +1,137 @@
+﻿@inherits BasePage
+
+@page "/node/{Action}/{CollectionAlias}/entity/{VariantAlias}"
+@page "/node/{Action}/{CollectionAlias}/entity/{VariantAlias}/{Id}"
+@page "/node/{Action}/{ParentId}/{CollectionAlias}/entity/{VariantAlias}"
+@page "/node/{Action}/{ParentId}/{CollectionAlias}/entity/{VariantAlias}/{Id}"
+
+@using RapidCMS.Common
+@using RapidCMS.UI.Components.Buttons
+@using RapidCMS.Common.Models.DTOs
+@using RapidCMS.Common.Services
+
+@inject ICollectionService CollectionService
+@*
+    TODO: remove weird callback for binding
+*@
+
+<h1>@Action node @CollectionAlias @(ParentId != null ? $":: {ParentId}" : "") :: @Id</h1>
+
+@if (Editor == null)
+{
+    <div class="content px-4">
+        <div class="top-row px-4">
+
+        </div>
+        <div class="content px-4">
+            <p>Loading..</p>
+        </div>
+    </div>
+}
+else
+{
+    <div class="top-row px-4">
+        @{
+            @foreach (var button in Editor.Buttons)
+            {
+                var context = new ButtonContext<BasePage>
+                {
+                    ButtonId = button.ButtonId,
+                    CallbackAsync = ButtonCallbackAsync,
+                    Context = this,
+                    Icon = button.Icon,
+                    Label = button.Label
+                };
+
+                <CascadingValue Value="context">
+                    @if (!string.IsNullOrEmpty(button.Alias))
+                    {
+                        @CustomButtons[button.Alias]
+                    }
+                    else
+                    {
+                        <DefaultButton TContext="BasePage" />
+                    }
+                </CascadingValue>
+            }
+        }
+    </div>
+
+    <div class="content px-4">
+        @foreach (var pane in Editor.EditorPanes)
+        {
+            @if (pane.Fields.Any())
+            {
+                @foreach (var field in pane.Fields)
+                {
+                    <div class="row">
+                        <div class="col-4">
+                            <p>@field.label.Name</p>
+                            <p><small>@field.label.Description</small></p>
+                        </div>
+                        <div class="col-8">
+                            @if (Action == Constants.View)
+                            {
+                                @field.value.DisplayValue
+                            }
+                            else
+                            {
+                                <DefaultEditor Type="@field.value.Type"
+                                               Value="@field.value.Value"
+                                               Callback="@((string value) => field.value.Value = value)"
+                                               IsReadonly="@field.value.IsReadonly" />
+                            }
+                        </div>
+                    </div>
+                }
+            }
+
+            @foreach (var subCollectionListEditor in pane.SubCollectionListEditors)
+            {
+                <Collection Action="@subCollectionListEditor.Action"
+                            CollectionAlias="@subCollectionListEditor.CollectionAlias"
+                            ParentId="@Id" />
+            }
+
+
+        }
+    </div>
+}
+
+@functions {
+#nullable enable
+
+    [Parameter]
+    private string Action { get; set; }
+
+    [Parameter]
+    private string? ParentId { get; set; } = null;
+
+    [Parameter]
+    private string CollectionAlias { get; set; }
+
+    [Parameter]
+    private string VariantAlias { get; set; }
+
+    [Parameter]
+    private string? Id { get; set; } = null;
+
+    NodeEditorDTO Editor;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    protected override async Task LoadDataAsync()
+    {
+        Editor = await CollectionService.GetNodeEditorAsync(Action, CollectionAlias, VariantAlias, ParentId, Id);
+    }
+
+    async Task ButtonCallbackAsync(string actionId, BasePage view)
+    {
+        var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, Editor, actionId);
+
+        await HandleViewCommandAsync(command);
+    }
+}

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 
@@ -35,10 +36,14 @@ namespace RapidCMS.Common.Extensions
 
         public static CustomButton ToCustomButton(this CustomButtonConfig button)
         {
-            return new CustomButton
+            var handler = (button.ActionHandler != null)
+                ? (IButtonActionHandler)Activator.CreateInstance(button.ActionHandler)
+                : new DefaultButtonActionHandler(button.CrudType, button.Action);
+
+            return new CustomButton()
             {
+                ActionHandler = handler,
                 ButtonId = Guid.NewGuid().ToString(),
-                Action = button.Action,
                 Alias = button.Alias,
                 Icon = button.Icon,
                 Label = button.Label,
