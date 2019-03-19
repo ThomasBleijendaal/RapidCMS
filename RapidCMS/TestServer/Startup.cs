@@ -426,7 +426,13 @@ namespace TestServer
                 config.AddEditorPane(editorPaneConfig =>
                 {
                     editorPaneConfig.AddField(x => x.Name);
-                    editorPaneConfig.AddField(x => x.AzureTableStorageEntityId);
+                    editorPaneConfig.AddField(x => x.AzureTableStorageEntityId)
+                        .SetOneToManyRelation<AzureTableStorageEntity>("collection-10", relation =>
+                        {
+                            relation
+                                .SetIdProperty(x => x.Id)
+                                .SetDisplayProperty(x => x.Description);
+                        });
                 });
             }
 
@@ -448,7 +454,6 @@ namespace TestServer
                         .SetTreeView(ViewType.Tree, entity => entity.Title)
                         .SetListView(AzureTableStorageListView)
                         .SetNodeEditor(AzureTableStorageEditor)
-
 
                         .AddCollection<AzureTableStorageEntity>("collection-10-a", "Sub collection", subCollection =>
                         {

@@ -265,5 +265,14 @@ namespace RapidCMS.Common.Models
         public PropertyMetadata NodeProperty { get; set; }
         public IValueMapper ValueMapper { get; set; }
         public Type ValueMapperType { get; set; }
+
+        public OneToManyRelation OneToManyRelation { get; set; }
+    }
+
+    public class OneToManyRelation
+    {
+        internal string CollectionAlias { get; set; }
+        internal PropertyMetadata IdProperty { get; set; }
+        internal PropertyMetadata DisplayProperty { get; set; }
     }
 }

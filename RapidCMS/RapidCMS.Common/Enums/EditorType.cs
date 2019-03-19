@@ -10,6 +10,8 @@ namespace RapidCMS.Common.Enums
         Readonly,
 
         [DefaultType(typeof(int), typeof(long), typeof(uint), typeof(ulong))]
-        Numeric
+        Numeric,
+
+        Select
     }
 }

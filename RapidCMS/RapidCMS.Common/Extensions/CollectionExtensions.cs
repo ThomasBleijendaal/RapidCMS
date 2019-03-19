@@ -156,19 +156,7 @@ namespace RapidCMS.Common.Extensions
                                 CustomButtonConfig customButton => customButton.ToCustomButton(),
                                 _ => default(Button)
                             }),
-                            Fields = editor.Fields.ToList(field =>
-                            {
-                                return new Field
-                                {
-                                    DataType = field.Type,
-                                    Description = field.Description,
-                                    Name = field.Name,
-                                    NodeProperty = field.NodeProperty,
-                                    Readonly = field.Readonly,
-                                    ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
-                                    ValueMapperType = field.ValueMapperType
-                                };
-                            })
+                            Fields = editor.Fields.ToList(field => field.ToField())
                         };
                     })
                 };
@@ -195,66 +183,20 @@ namespace RapidCMS.Common.Extensions
 
                             Buttons = new List<Button>(),
 
-                            Fields = pane.Fields.ToList(field =>
-                            {
-                                return new Field
-                                {
-                                    DataType = field.Type,
-                                    Description = field.Description,
-                                    Name = field.Name,
-                                    NodeProperty = field.NodeProperty,
-                                    Readonly = field.Readonly,
-                                    ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
-                                    ValueMapperType = field.ValueMapperType
-                                };
-                            }),
+                            Fields = pane.Fields.ToList(field => field.ToField()),
 
                             SubCollectionListEditors = pane.SubCollectionListEditors.ToList(listEditor =>
                             {
                                 return new SubCollectionListEditor
                                 {
-                                    CollectionAlias = listEditor.CollectionAlias,
-
-                                    // TODO: this is not good, the embedded view should get its own data
-                                    // but then now it is a sub collection editor
-                                    //Buttons = listEditor.Buttons.ToList(button => button switch
-                                    //{
-                                    //    DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
-                                    //    CustomButtonConfig customButton => customButton.ToCustomButton(),
-                                    //    _ => default(Button)
-                                    //}),
-                                    //EditorPane = new EditorPane<Field>
-                                    //{
-                                    //    Buttons = listEditor.ListEditor.Buttons.ToList(button => button switch
-                                    //    {
-                                    //        DefaultButtonConfig defaultButton => new DefaultButton
-                                    //        {
-                                    //            ButtonId = Guid.NewGuid().ToString(),
-                                    //            DefaultButtonType = defaultButton.ButtonType,
-                                    //            Icon = defaultButton.Icon,
-                                    //            Label = defaultButton.Label
-                                    //        },
-                                    //        _ => default(Button)
-                                    //    }),
-                                    //    Fields = listEditor.ListEditor.Fields.ToList(field =>
-                                    //    {
-                                    //        return new Field
-                                    //        {
-                                    //            DataType = field.Type,
-                                    //            Description = field.Description,
-                                    //            Name = field.Name,
-                                    //            NodeProperty = field.NodeProperty,
-                                    //            Readonly = field.Readonly,
-                                    //            ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
-                                    //            ValueMapperType = field.ValueMapperType
-                                    //        };
-                                    //    })
-                                    //}
+                                    CollectionAlias = listEditor.CollectionAlias
                                 };
                             })
                         };
                     })
                 };
+
+
             }
 
             collection.Collections = configReceiver.Collections;
