@@ -5,6 +5,7 @@ using RapidCMS.Common.Enums;
 using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
+using RapidCMS.Common.Services;
 
 namespace RapidCMS.Common.Extensions
 {
@@ -30,14 +31,15 @@ namespace RapidCMS.Common.Extensions
                     Metadata = variant
                 } as Button)
                 : new List<Button>(),
-                Metadata = variants == 1 ? entityVariants.First() : null
+                Metadata = variants == 1 ? entityVariants.First() : null,
+                ShouldConfirm = button.ButtonType == DefaultButtonType.Delete
             };
         }
 
         public static CustomButton ToCustomButton(this CustomButtonConfig button)
         {
             var handler = (button.ActionHandler != null)
-                ? (IButtonActionHandler)Activator.CreateInstance(button.ActionHandler)
+                ? ServiceLocator.Instance.GetService<IButtonActionHandler>(button.ActionHandler)
                 : new DefaultButtonActionHandler(button.CrudType, button.Action);
 
             return new CustomButton()
@@ -47,7 +49,8 @@ namespace RapidCMS.Common.Extensions
                 Alias = button.Alias,
                 Icon = button.Icon,
                 Label = button.Label,
-                Buttons = new List<Button>()
+                Buttons = new List<Button>(),
+                ShouldConfirm = handler.ShouldConfirm()
             };
         }
     }

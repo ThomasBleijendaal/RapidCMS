@@ -36,7 +36,8 @@ else if (ListView != null)
                 CallbackAsync = ViewButtonCallbackAsync,
                 Context = this,
                 Icon = button.Icon,
-                Label = button.Label
+                Label = button.Label,
+                ShouldConfirm = button.ShouldConfirm
             };
 
             <CascadingValue Value="context">
@@ -91,7 +92,8 @@ else if (ListView != null)
                                             CallbackAsync = NodeViewButtonCallbackAsync,
                                             Context = node,
                                             Icon = button.Icon,
-                                            Label = button.Label
+                                            Label = button.Label,
+                                            ShouldConfirm = button.ShouldConfirm
                                         };
 
                                         <CascadingValue Value="context">
@@ -126,7 +128,8 @@ else if (EditorView != null)
                 CallbackAsync = EditorButtonCallbackAsync,
                 Context = this,
                 Icon = button.Icon,
-                Label = button.Label
+                Label = button.Label,
+                ShouldConfirm = button.ShouldConfirm
             };
 
             <CascadingValue Value="context">
@@ -195,7 +198,8 @@ else if (EditorView != null)
                                         CallbackAsync = NodeEditorButtonCallbackAsync,
                                         Context = node,
                                         Icon = button.Icon,
-                                        Label = button.Label
+                                        Label = button.Label,
+                                        ShouldConfirm = button.ShouldConfirm
                                     };
 
                                     <CascadingValue Value="context">
@@ -230,7 +234,8 @@ else if (EditorView != null)
                             CallbackAsync = NodeEditorButtonCallbackAsync,
                             Context = node,
                             Icon = button.Icon,
-                            Label = button.Label
+                            Label = button.Label,
+                            ShouldConfirm = button.ShouldConfirm
                         };
 
                         <CascadingValue Value="context">

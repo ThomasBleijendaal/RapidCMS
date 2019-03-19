@@ -7,6 +7,8 @@ namespace RapidCMS.Common.Enums
         TextBox = 0,
         TextArea,
 
+        Readonly,
+
         [DefaultType(typeof(int), typeof(long), typeof(uint), typeof(ulong))]
         Numeric
     }

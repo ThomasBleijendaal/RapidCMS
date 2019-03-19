@@ -18,7 +18,7 @@ namespace TestServer.ActionHandlers
 
         public CrudType GetCrudType()
         {
-            return CrudType.None;
+            return CrudType.Refresh;
         }
 
         public async Task InvokeAsync()
@@ -30,15 +30,20 @@ namespace TestServer.ActionHandlers
                 await _repository.InsertAsync(null, new AzureTableStorageEntity()
                 {
                     Description = $"New New New {i}",
-                    Title = "Item {i}"
+                    Title = $"Item {i}"
                 });
             }
-            while (++i < 10);
+            while (++i < 2);
         }
 
         public bool IsCompatibleWithView(ViewContext viewContext)
         {
             return viewContext.Usage.HasFlag(UsageType.List);
+        }
+
+        public bool ShouldConfirm()
+        {
+            return true;
         }
     }
 }

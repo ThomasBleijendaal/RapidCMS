@@ -190,6 +190,7 @@ namespace RapidCMS.Common.Models
 
         public string Label { get; set; }
         public string Icon { get; set; }
+        public bool ShouldConfirm { get; set; }
 
         public List<Button> Buttons { get; set; }
 

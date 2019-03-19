@@ -75,6 +75,7 @@ app {
     background: #f8f8f8;
     margin-bottom: 3rem;
 }
+
     .content .content {
         border: 2px solid #f0f0f0;
     }
@@ -120,13 +121,16 @@ app {
 a.current-page {
     background: #ddd;
 }
-.btn {
-    margin-right: 20px;
+
+.btn:hover {
+    background: #ccc;
 }
 
-input {
-    width: 100%;
+.form-row {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
 }
-textarea {
-    width: 100%;
-}
+    .form-row:last-of-type {
+        border-bottom: 0;
+    }

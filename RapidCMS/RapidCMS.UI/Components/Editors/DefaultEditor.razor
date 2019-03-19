@@ -3,9 +3,9 @@
     // TODO: this limits extensibility from outside
     // perhaps try https://docs.microsoft.com/en-us/aspnet/core/razor-components/components?view=aspnetcore-3.0#child-content
 
-    // TODO: remove binding callback 
+    // TODO: remove binding callback
 
-    // TODO: change editor to accept complete Field / Property, instead of seperate parts 
+    // TODO: change editor to accept complete Field / Property, instead of seperate parts
     // this wil make it a lot more dynamic
 *@
 @using RapidCMS.Common.Enums
@@ -14,28 +14,34 @@
 {
     if (IsReadonly)
     {
-        @Value
+        <Readonly Value="@LocalValue" />
     }
     else
     {
         switch (Type)
         {
+            case EditorType.Readonly:
+
+                <Readonly Value="@LocalValue" />
+
+                break;
+
             case EditorType.Numeric:
 
-            <NumericEditor Value="@LocalValue" Callback="ChildEditorCallback" />
+                <NumericEditor Value="@LocalValue" Callback="ChildEditorCallback" />
 
                 break;
 
             case EditorType.TextArea:
 
-            <TextAreaEditor Value="@LocalValue" Callback="ChildEditorCallback" />
+                <TextAreaEditor Value="@LocalValue" Callback="ChildEditorCallback" />
 
                 break;
 
             case EditorType.TextBox:
             default:
 
-            <TextBoxEditor Value="@LocalValue" Callback="ChildEditorCallback" />
+                <TextBoxEditor Value="@LocalValue" Callback="ChildEditorCallback" />
 
                 break;
         }
@@ -43,6 +49,7 @@
 }
 
 @functions {
+
     [Parameter]
     private string Value { get; set; }
 

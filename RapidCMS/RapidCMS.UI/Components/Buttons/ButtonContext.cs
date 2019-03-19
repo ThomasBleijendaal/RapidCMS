@@ -10,5 +10,6 @@ namespace RapidCMS.UI.Components.Buttons
         public string ButtonId { get; set; }
         public Func<string, TContext, Task> CallbackAsync { get; set; }
         public TContext Context { get; set; }
+        public bool ShouldConfirm { get; set; }
     }
 }

@@ -13,6 +13,9 @@
         // modifyers
         Insert = 4,
         Update = 5,
-        Delete = 6
+        Delete = 6,
+
+        // specials
+        Refresh = 1001
     }
 }

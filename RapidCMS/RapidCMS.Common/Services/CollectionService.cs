@@ -18,6 +18,7 @@ namespace RapidCMS.Common.Services
     // TODO: make UI service intent-aware (new, save existing etc)
     // TODO: make button handling more seperate
     // TODO: rename alias to collectionAlias
+    // TODO: check applicability of every crud type (instead of inserting invalid operation exceptions everywhere)
 
     public interface ICollectionService
     {
@@ -152,7 +153,8 @@ namespace RapidCMS.Common.Services
                         {
                             Icon = button.Icon,
                             ButtonId = button.ButtonId,
-                            Label = button.Label
+                            Label = button.Label,
+                            ShouldConfirm = button.ShouldConfirm
                         };
                     }),
                 ViewPanes = listView.ViewPanes.ToList(pane =>
@@ -167,7 +169,8 @@ namespace RapidCMS.Common.Services
                                 {
                                     Icon = button.Icon,
                                     ButtonId = button.ButtonId,
-                                    Label = button.Label
+                                    Label = button.Label,
+                                    ShouldConfirm = button.ShouldConfirm
                                 };
                             }),
                         Properties = pane.Properties.ToList(prop =>
@@ -220,7 +223,8 @@ namespace RapidCMS.Common.Services
                         {
                             Icon = button.Icon,
                             ButtonId = button.ButtonId,
-                            Label = button.Label
+                            Label = button.Label,
+                            ShouldConfirm = button.ShouldConfirm
                         };
                     }),
                 Editor = new CollectionListEditorPaneDTO
@@ -295,7 +299,8 @@ namespace RapidCMS.Common.Services
                         {
                             Icon = button.Icon,
                             ButtonId = button.ButtonId,
-                            Label = button.Label
+                            Label = button.Label,
+                            ShouldConfirm = button.ShouldConfirm
                         };
                     }),
                 Values = editor.Fields.ToList(field => new ValueDTO
@@ -358,6 +363,7 @@ namespace RapidCMS.Common.Services
                             Icon = button.Icon,
                             ButtonId = button.ButtonId,
                             Label = button.Label,
+                            ShouldConfirm = button.ShouldConfirm,
                             Alias = (button is CustomButton customButton) ? customButton.Alias : null
                         };
                     }),
@@ -449,6 +455,13 @@ namespace RapidCMS.Common.Services
                     await collection.Repository._DeleteAsync(id, parentId);
                     return new NavigateCommand { Uri = UriHelper.Collection(Constants.List, collectionAlias, parentId) };
 
+                case CrudType.None:
+                    return new NullOperationCommand();
+
+                case CrudType.Refresh:
+                    return new ReloadCommand();
+
+                case CrudType.Create:
                 default:
                     throw new InvalidOperationException();
             }
@@ -474,8 +487,19 @@ namespace RapidCMS.Common.Services
                 case CrudType.Create:
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.New, collectionAlias, entityVariant, parentId, null) };
 
+                case CrudType.None:
+                    return new NullOperationCommand();
+
+                case CrudType.Refresh:
+                    return new ReloadCommand();
+
+                case CrudType.View:
+                case CrudType.Read:
+                case CrudType.Insert:
+                case CrudType.Update:
+                case CrudType.Delete:
                 default:
-                    return default(ViewCommand);
+                    throw new InvalidOperationException();
             }
 
         }
@@ -512,8 +536,17 @@ namespace RapidCMS.Common.Services
                     await collection.Repository._DeleteAsync(id, parentId);
                     return new ReloadCommand();
 
+                case CrudType.None:
+                    return new NullOperationCommand();
+
+                case CrudType.Refresh:
+                    return new ReloadCommand();
+
+                case CrudType.Create:
+                case CrudType.Insert:
+                case CrudType.Update:
                 default:
-                    return null;
+                    throw new InvalidOperationException();
             }
         }
 
@@ -564,8 +597,17 @@ namespace RapidCMS.Common.Services
                         Id = null
                     };
 
+                case CrudType.None:
+                    return new NullOperationCommand();
+
+                case CrudType.Refresh:
+                    return new ReloadCommand();
+
+                case CrudType.Insert:
+                case CrudType.Update:
+                case CrudType.Delete:
                 default:
-                    return default(ViewCommand);
+                    throw new InvalidOperationException();
             }
         }
 
@@ -625,8 +667,15 @@ namespace RapidCMS.Common.Services
                     await collection.Repository._DeleteAsync(id, parentId);
                     return new ReloadCommand();
 
+                case CrudType.None:
+                    return new NullOperationCommand();
+
+                case CrudType.Refresh:
+                    return new ReloadCommand();
+
+                case CrudType.Create:
                 default:
-                    return null;
+                    throw new InvalidOperationException();
             }
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
@@ -18,15 +19,36 @@ namespace RapidCMS.Common.Extensions
 
     public static class RapidCMSMiddleware
     {
-        public static IServiceCollection AddRapidCMS(this IServiceCollection services, Action<Root> configure)
+        public static IServiceCollection AddRapidCMS(this IServiceCollection services)
         {
             var root = new Root();
 
-            configure.Invoke(root);
-
             services.AddSingleton(root);
+            services.AddSingleton<ICollectionService, CollectionService>();
 
             return services;
+        }
+
+        public static IApplicationBuilder UseRapidCMS(this IApplicationBuilder app, Action<Root> configure)
+        {
+            ServiceLocator.CreateInstance(app.ApplicationServices);
+
+            var root = app.ApplicationServices.GetRequiredService<Root>();
+
+            configure.Invoke(root);
+
+            try
+            {
+                root.MaterializeRepositories(app.ApplicationServices);
+
+                // TODO: populate value mappers
+            }
+            catch
+            {
+
+            }
+
+            return app;
         }
     }
 

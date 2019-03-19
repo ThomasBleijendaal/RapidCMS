@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using RapidCMS.Common.Interfaces;
 
-namespace RapidCMS.Common.Data
-{
 #nullable enable
 
+namespace RapidCMS.Common.Data
+{
     public interface IRepository
     {
 #pragma warning disable IDE1006 // Naming Styles

@@ -5,6 +5,11 @@
 
     }
 
+    public class NullOperationCommand : ViewCommand
+    {
+
+    }
+
     public class NavigateCommand : ViewCommand
     {
         public string Uri { get; set; }

@@ -60,6 +60,7 @@ namespace RapidCMS.UI.Components.Pages
 
                     break;
 
+                case NullOperationCommand _:
                 default:
                     break;
             }

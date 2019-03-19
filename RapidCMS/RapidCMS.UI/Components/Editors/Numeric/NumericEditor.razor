@@ -1,3 +1,8 @@
 ﻿@inherits BaseEditor
 
-<input bind="@LocalValue" type="number" />
+<div class="input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1">#</span>
+    </div>
+    <input bind="@LocalValue" type="number" class="form-control" />
+</div>

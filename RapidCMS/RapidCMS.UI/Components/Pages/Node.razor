@@ -40,7 +40,8 @@ else
                     CallbackAsync = ButtonCallbackAsync,
                     Context = this,
                     Icon = button.Icon,
-                    Label = button.Label
+                    Label = button.Label,
+                    ShouldConfirm = button.ShouldConfirm
                 };
 
                 <CascadingValue Value="context">
@@ -64,12 +65,12 @@ else
             {
                 @foreach (var field in pane.Fields)
                 {
-                    <div class="row">
-                        <div class="col-4">
-                            <p>@field.label.Name</p>
-                            <p><small>@field.label.Description</small></p>
+                    <div class="form-row">
+                        <div class="col-3">
+                            <label>@field.label.Name</label>
+                            <small class="form-text text-muted">@field.label.Description</small>
                         </div>
-                        <div class="col-8">
+                        <div class="col-9">
                             @if (Action == Constants.View)
                             {
                                 @field.value.DisplayValue

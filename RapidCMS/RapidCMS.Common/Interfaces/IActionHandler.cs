@@ -1,9 +1,7 @@
-﻿using RapidCMS.Common.Data;
-using RapidCMS.Common.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using RapidCMS.Common.Data;
+using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Interfaces
 {
@@ -11,6 +9,7 @@ namespace RapidCMS.Common.Interfaces
     {
         CrudType GetCrudType();
         bool IsCompatibleWithView(ViewContext viewContext);
+        bool ShouldConfirm();
         Task InvokeAsync();
     }
 
@@ -39,6 +38,11 @@ namespace RapidCMS.Common.Interfaces
         public bool IsCompatibleWithView(ViewContext viewContext)
         {
             return true;
+        }
+
+        public bool ShouldConfirm()
+        {
+            return false;
         }
     }
 }

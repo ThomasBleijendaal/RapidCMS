@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,11 +21,6 @@ namespace TestServer
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            // TODO:
-            var hacky = new RapidCMS.Common.Startup();
-            hacky.ConfigureServices(services);
-            //services.AddRazorComponents<RapidCMS.Common.Startup>();
-
             services.AddSingleton<RepositoryA>();
             services.AddSingleton<RepositoryB>();
             services.AddSingleton<RepositoryC>();
@@ -37,6 +32,19 @@ namespace TestServer
             services.AddSingleton(CloudStorageAccount.DevelopmentStorageAccount);
             services.AddSingleton<AzureTableStorageRepository>();
 
+            services.AddTransient<CreateButtonActionHandler, CreateButtonActionHandler>();
+
+            services.AddRapidCMS();
+
+            services.AddMvc()
+                .AddNewtonsoftJson();
+
+            services.AddRazorComponents();
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
             void listView(ListViewConfig<TestEntity> listViewConfig)
             {
                 listViewConfig
@@ -356,7 +364,7 @@ namespace TestServer
                 });
             }
 
-            services.AddRapidCMS(root =>
+            app.UseRapidCMS(root =>
             {
                 root.AddCollection<TestEntity>("collection-1", "Simple collection", collection =>
                 {
@@ -502,15 +510,6 @@ namespace TestServer
 
             });
 
-            services.AddMvc()
-                .AddNewtonsoftJson();
-
-            services.AddRazorComponents();
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -520,10 +519,6 @@ namespace TestServer
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            // TODO: 
-            var root = app.ApplicationServices.GetService<Root>();
-            root.MaterializeRepositories(app.ApplicationServices);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
