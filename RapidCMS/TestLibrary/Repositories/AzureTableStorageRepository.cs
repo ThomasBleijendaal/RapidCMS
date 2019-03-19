@@ -14,6 +14,8 @@ namespace TestLibrary.Repositories
     {
         public const string DefaultParentId = "root";
 
+        protected virtual string TableName => "rapidcmstable";
+
         private Task _initTask;
         private CloudTable? _table = null;
 
@@ -22,12 +24,12 @@ namespace TestLibrary.Repositories
             _initTask = Task.Run(async () =>
             {
                 var client = cloudStorageAccount.CreateCloudTableClient();
-                var table = client.GetTableReference("rapidcmstable");
+                var table = client.GetTableReference(TableName);
 
                 await table.CreateIfNotExistsAsync();
 
                 var queuePermissions = new TablePermissions();
-                queuePermissions.SharedAccessPolicies.Add("rapidcmstable", new SharedAccessTablePolicy { Permissions = SharedAccessTablePermissions.Query | SharedAccessTablePermissions.Add | SharedAccessTablePermissions.Update });
+                queuePermissions.SharedAccessPolicies.Add(TableName, new SharedAccessTablePolicy { Permissions = SharedAccessTablePermissions.Query | SharedAccessTablePermissions.Add | SharedAccessTablePermissions.Update });
                 await table.SetPermissionsAsync(queuePermissions);
 
                 _table = table;
@@ -117,6 +119,5 @@ namespace TestLibrary.Repositories
         {
             return parentId;
         }
-
     }
 }

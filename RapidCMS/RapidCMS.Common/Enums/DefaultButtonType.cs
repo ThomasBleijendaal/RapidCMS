@@ -33,6 +33,10 @@ namespace RapidCMS.Common.Enums
 
         [DefaultIconLabel(Icon = "magnifying-glass", Label = "View")]
         [Actions(UsageType.List, UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.View)]
-        View
+        View,
+
+        [DefaultIconLabel(Icon = "plus", Label = "Add")]
+        [Actions(UsageType.List)]
+        Add
     }
 }

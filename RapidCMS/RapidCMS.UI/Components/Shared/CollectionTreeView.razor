@@ -16,12 +16,12 @@ else
         }
         else
         {
-            @Collection.Name
-
-            @foreach (var path in Collection.Path)
-            {
-                <NavLink href=@path.Path class=@(path.Path == CurrentUrl ? "current-page" : "")><i class="oi oi-@path.Icon"></i></NavLink>
-            }
+            <div>
+                @foreach (var path in Collection.Path)
+                {
+                    <NavLink href=@path.Path class=@(path.Path == CurrentUrl ? "current-page" : "")><i class="oi oi-@path.Icon"></i> @Collection.Name</NavLink>
+                }
+            </div>
         }
 
         @if (Collection.Nodes != null)

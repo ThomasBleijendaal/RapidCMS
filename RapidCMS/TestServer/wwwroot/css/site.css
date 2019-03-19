@@ -134,3 +134,9 @@ a.current-page {
     .form-row:last-of-type {
         border-bottom: 0;
     }
+
+.nav-item div a {
+    width: 50%;
+    float: left;
+    text-overflow: ellipsis;
+}

@@ -29,6 +29,8 @@ namespace TestServer
             services.AddSingleton<RepositoryF>();
             services.AddSingleton<VariantRepository>();
 
+            services.AddSingleton<RelationRepository>();
+
             services.AddSingleton(CloudStorageAccount.DevelopmentStorageAccount);
             services.AddSingleton<AzureTableStorageRepository>();
 
@@ -45,6 +47,8 @@ namespace TestServer
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            #region done
+
             void listView(ListViewConfig<TestEntity> listViewConfig)
             {
                 listViewConfig
@@ -364,36 +368,129 @@ namespace TestServer
                 });
             }
 
+            #endregion
+
+            void AzureTableStorageListView(ListViewConfig<AzureTableStorageEntity> config)
+            {
+                config
+                    .AddDefaultButton(DefaultButtonType.New)
+                    .AddCustomButton<CreateButtonActionHandler>("create-button", "Custom create!");
+
+                config.AddListPane(listPaneConfig =>
+                {
+                    listPaneConfig.AddProperty(x => x.Id);
+                    listPaneConfig.AddProperty(x => x.Title);
+                    listPaneConfig.AddProperty(x => x.Description);
+
+                    listPaneConfig.AddDefaultButton(DefaultButtonType.Edit);
+                    listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
+                });
+            }
+
+            void AzureTableStorageEditor(NodeEditorConfig<AzureTableStorageEntity> config)
+            {
+                config.AddDefaultButton(DefaultButtonType.SaveExisting);
+                config.AddDefaultButton(DefaultButtonType.SaveNew);
+                config.AddDefaultButton(DefaultButtonType.Delete);
+
+                config.AddEditorPane(editorPaneConfig =>
+                {
+                    editorPaneConfig.AddField(x => x.Title);
+                    editorPaneConfig.AddField(x => x.Description);
+
+
+                });
+            }
+
+            void RelationListView(ListViewConfig<RelationEntity> config)
+            {
+                config
+                    .AddDefaultButton(DefaultButtonType.New);
+
+                config.AddListPane(listPaneConfig =>
+                {
+                    listPaneConfig.AddProperty(x => x.Id);
+                    listPaneConfig.AddProperty(x => x.Name);
+
+                    listPaneConfig.AddDefaultButton(DefaultButtonType.Edit);
+                    listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
+                });
+            }
+
+            void RelationEditor(NodeEditorConfig<RelationEntity> config)
+            {
+                config.AddDefaultButton(DefaultButtonType.SaveExisting);
+                config.AddDefaultButton(DefaultButtonType.SaveNew);
+                config.AddDefaultButton(DefaultButtonType.Delete);
+
+                config.AddEditorPane(editorPaneConfig =>
+                {
+                    editorPaneConfig.AddField(x => x.Name);
+                    editorPaneConfig.AddField(x => x.AzureTableStorageEntityId);
+                });
+            }
+
             app.UseRapidCMS(root =>
             {
-                root.AddCollection<TestEntity>("collection-1", "Simple collection", collection =>
+                root.AddCollection<RelationEntity>("collection-11", "Azure Table Storage Collecation with relations", collection =>
                 {
                     collection
-                        .SetRepository<RepositoryE>()
+                        .SetRepository<RelationRepository>()
                         .SetTreeView(ViewType.Tree, entity => entity.Name)
-                        .SetListView(listView)
-                        .SetNodeEditor(nodeEditor);
+                        .SetListView(RelationListView)
+                        .SetNodeEditor(RelationEditor);
                 });
 
-                root.AddCollection<TestEntity>("collection-2", "List editor collection", collection =>
+                root.AddCollection<AzureTableStorageEntity>("collection-10", "Azure Table Storage Collection", collection =>
                 {
                     collection
-                        .SetRepository<RepositoryD>()
-                        .SetTreeView(ViewType.List, entity => entity.Name)
-                        .SetListEditor(ListEditorType.Table, listNodeEditor)
-                        .SetNodeEditor(nodeEditor);
+                        .SetRepository<AzureTableStorageRepository>()
+                        .SetTreeView(ViewType.Tree, entity => entity.Title)
+                        .SetListView(AzureTableStorageListView)
+                        .SetNodeEditor(AzureTableStorageEditor)
+
+
+                        .AddCollection<AzureTableStorageEntity>("collection-10-a", "Sub collection", subCollection =>
+                        {
+                            subCollection
+                                .SetRepository<AzureTableStorageRepository>()
+                                .SetTreeView(ViewType.Tree, entity => entity.Title)
+                                .SetListView(AzureTableStorageListView)
+                                .SetNodeEditor(AzureTableStorageEditor);
+                        });
                 });
 
-                root.AddCollection<TestEntity>("collection-3", "Variant collection", collection =>
+                root.AddCollection<TestEntity>("collection-6", "Variant collection as blocks", collection =>
                 {
                     collection
                         .SetRepository<VariantRepository>()
-                        .SetTreeView(ViewType.Tree, entity => entity.Name)
+                        .SetTreeView(ViewType.List, entity => entity.Name)
                         .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
                         .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
                         .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
-                        .SetListView(listView)
+                        .SetListEditor(ListEditorType.Block, listNodeEditorWithPolymorphism)
                         .SetNodeEditor(nodeEditorWithPolymorphism);
+                });
+
+                root.AddCollection<TestEntity>("collection-5", "Collections with variant sub collection", collection =>
+                {
+                    collection
+                        .SetRepository<RepositoryF>()
+                        .SetTreeView(ViewType.Tree, entity => entity.Name)
+                        .SetListView(listView)
+                        .SetNodeEditor(nodeEditorWithPolymorphicSubCollection)
+                        .AddCollection<TestEntity>("sub-collection-3", "Sub Collection 3", subCollection =>
+                        {
+                            subCollection
+                                .SetRepository<VariantRepository>()
+                                .SetTreeView(ViewType.Tree, entity => entity.Name)
+                                .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
+                                .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
+                                .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
+                                .SetListView(listViewWithPolymorphism)
+                                .SetListEditor(ListEditorType.Table, listNodeEditorWithPolymorphism)
+                                .SetNodeEditor(nodeEditorWithPolymorphism);
+                        });
                 });
 
                 root.AddCollection<TestEntity>("collection-4", "Collection with sub collections", collection =>
@@ -424,90 +521,35 @@ namespace TestServer
                         });
                 });
 
-                root.AddCollection<TestEntity>("collection-5", "Collections with variant sub collection", collection =>
-                {
-                    collection
-                        .SetRepository<RepositoryF>()
-                        .SetTreeView(ViewType.Tree, entity => entity.Name)
-                        .SetListView(listView)
-                        .SetNodeEditor(nodeEditorWithPolymorphicSubCollection)
-                        .AddCollection<TestEntity>("sub-collection-3", "Sub Collection 3", subCollection =>
-                        {
-                            subCollection
-                                .SetRepository<VariantRepository>()
-                                .SetTreeView(ViewType.Tree, entity => entity.Name)
-                                .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
-                                .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
-                                .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
-                                .SetListView(listViewWithPolymorphism)
-                                .SetListEditor(ListEditorType.Table, listNodeEditorWithPolymorphism)
-                                .SetNodeEditor(nodeEditorWithPolymorphism);
-                        });
-                });
-
-                root.AddCollection<TestEntity>("collection-6", "Variant collection as blocks", collection =>
+                root.AddCollection<TestEntity>("collection-3", "Variant collection", collection =>
                 {
                     collection
                         .SetRepository<VariantRepository>()
-                        .SetTreeView(ViewType.List, entity => entity.Name)
+                        .SetTreeView(ViewType.Tree, entity => entity.Name)
                         .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
                         .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
                         .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
-                        .SetListEditor(ListEditorType.Block, listNodeEditorWithPolymorphism)
+                        .SetListView(listView)
                         .SetNodeEditor(nodeEditorWithPolymorphism);
                 });
 
-                void AzureTableStorageListView(ListViewConfig<AzureTableStorageEntity> config)
-                {
-                    config
-                        .AddDefaultButton(DefaultButtonType.New)
-                        .AddCustomButton<CreateButtonActionHandler>("create-button", "Custom create!");
-
-                    config.AddListPane(listPaneConfig =>
-                    {
-                        listPaneConfig.AddProperty(x => x.Id);
-                        listPaneConfig.AddProperty(x => x.Title);
-                        listPaneConfig.AddProperty(x => x.Description);
-
-                        listPaneConfig.AddDefaultButton(DefaultButtonType.Edit);
-                        listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
-                    });
-                }
-
-                void AzureTableStorageEditor(NodeEditorConfig<AzureTableStorageEntity> config)
-                {
-                    config.AddDefaultButton(DefaultButtonType.SaveExisting);
-                    config.AddDefaultButton(DefaultButtonType.SaveNew);
-                    config.AddDefaultButton(DefaultButtonType.Delete);
-
-                    config.AddEditorPane(editorPaneConfig =>
-                    {
-                        editorPaneConfig.AddField(x => x.Title);
-                        editorPaneConfig.AddField(x => x.Description);
-
-
-                    });
-                }
-
-                root.AddCollection<AzureTableStorageEntity>("collection-10", "Azure Table Storage Collection", collection =>
+                root.AddCollection<TestEntity>("collection-2", "List editor collection", collection =>
                 {
                     collection
-                        .SetRepository<AzureTableStorageRepository>()
-                        .SetTreeView(ViewType.Tree, entity => entity.Title)
-                        .SetListView(AzureTableStorageListView)
-                        .SetNodeEditor(AzureTableStorageEditor)
-
-
-                        .AddCollection<AzureTableStorageEntity>("collection-10-a", "Sub collection", subCollection =>
-                        {
-                            subCollection
-                                .SetRepository<AzureTableStorageRepository>()
-                                .SetTreeView(ViewType.Tree, entity => entity.Title)
-                                .SetListView(AzureTableStorageListView)
-                                .SetNodeEditor(AzureTableStorageEditor);
-                        });
+                        .SetRepository<RepositoryD>()
+                        .SetTreeView(ViewType.List, entity => entity.Name)
+                        .SetListEditor(ListEditorType.Table, listNodeEditor)
+                        .SetNodeEditor(nodeEditor);
                 });
 
+                root.AddCollection<TestEntity>("collection-1", "Simple collection", collection =>
+                {
+                    collection
+                        .SetRepository<RepositoryE>()
+                        .SetTreeView(ViewType.Tree, entity => entity.Name)
+                        .SetListView(listView)
+                        .SetNodeEditor(nodeEditor);
+                });
             });
 
             if (env.IsDevelopment())
