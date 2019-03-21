@@ -77,10 +77,13 @@ else
                             }
                             else
                             {
+                                // TODO: context object instead of everything a seperate parameter?
+
                                 <DefaultEditor Type="@field.value.Type"
                                                Value="@field.value.Value"
                                                Callback="@((string value) => field.value.Value = value)"
-                                               IsReadonly="@field.value.IsReadonly" />
+                                               IsReadonly="@field.value.IsReadonly"
+                                               DataProvider="@field.value.DataProvider" />
                             }
                         </div>
                     </div>

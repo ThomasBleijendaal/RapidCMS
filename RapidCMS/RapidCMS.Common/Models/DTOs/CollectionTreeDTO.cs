@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.Interfaces;
 
 #nullable enable
 
@@ -114,6 +115,14 @@ namespace RapidCMS.Common.Models.DTOs
         public string Value { get; set; }
         public string DisplayValue { get; set; }
         public bool IsReadonly { get; set; }
+
+        public IDataProvider? DataProvider { get; set; }
+    }
+
+    public class OptionDTO : IOption
+    {
+        public string Id { get; set; }
+        public string Label { get; set; }
     }
 
     public class ButtonDTO

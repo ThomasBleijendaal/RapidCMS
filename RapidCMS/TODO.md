@@ -24,3 +24,4 @@ DONE: 7. move all cms UI to RapidCMS.UI
 17. add and remove items (one to many + many to many relations)
 18. add collection recursion
 19. custom / default button action composition (update + return to list view)
+20. paginate views + relations

@@ -15,10 +15,11 @@ using System.Threading.Tasks;
 namespace RapidCMS.Common.Models
 {
     // TODO: check polymorphisms
+    // TODO: static root stuff is horrible
 
     public class Root : ICollectionRoot
     {
-        private Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
+        private static Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
 
         public List<Collection> Collections { get; set; } = new List<Collection>();
 
@@ -45,6 +46,11 @@ namespace RapidCMS.Common.Models
 
                 FindRepositoryForCollections(serviceProvider, collection.Collections);
             }
+        }
+
+        public static IRepository? GetRepository(string collectionAlias)
+        {
+            return _collectionMap.TryGetValue(collectionAlias, out var collection) ? collection.Repository : default;
         }
     }
 
@@ -266,7 +272,7 @@ namespace RapidCMS.Common.Models
         public IValueMapper ValueMapper { get; set; }
         public Type ValueMapperType { get; set; }
 
-        public OneToManyRelation OneToManyRelation { get; set; }
+        public OneToManyRelation? OneToManyRelation { get; set; }
     }
 
     public class OneToManyRelation

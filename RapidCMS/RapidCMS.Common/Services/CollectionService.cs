@@ -303,13 +303,18 @@ namespace RapidCMS.Common.Services
                             ShouldConfirm = button.ShouldConfirm
                         };
                     }),
-                Values = editor.Fields.ToList(field => new ValueDTO
+                Values = editor.Fields.ToList(field =>
                 {
-                    Alias = field.Name.ToUrlFriendlyString(),
-                    DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter.Invoke(entity)),
-                    IsReadonly = field.Readonly,
-                    Type = field.DataType,
-                    Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter.Invoke(entity)),
+                    var dto =  new ValueDTO
+                    {
+                        Alias = field.Name.ToUrlFriendlyString(),
+                        DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter.Invoke(entity)),
+                        IsReadonly = field.Readonly,
+                        Type = field.DataType,
+                        Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter.Invoke(entity))
+                    };
+
+                    return dto;
                 })
             };
         }
@@ -377,18 +382,26 @@ namespace RapidCMS.Common.Services
                             Fields = pane.Fields.ToList(field =>
                             {
                                 var editor = (
-                                    new LabelDTO
+                                    label: new LabelDTO
                                     {
                                         Name = field.Name,
                                         Description = field.Description
                                     },
-                                    new ValueDTO
+                                    value: new ValueDTO
                                     {
                                         DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter(entity)),
                                         IsReadonly = field.Readonly,
                                         Type = field.DataType,
                                         Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter(entity))
                                     });
+
+                                if (field.OneToManyRelation != null)
+                                {
+                                    var repo = Root.GetRepository(field.OneToManyRelation.CollectionAlias);
+
+                                    var dataProvider = new CollectionDataProvider(repo, field.OneToManyRelation.IdProperty, field.OneToManyRelation.DisplayProperty);
+                                    editor.value.DataProvider = dataProvider;
+                                }
 
                                 return editor;
                             }),
@@ -427,6 +440,8 @@ namespace RapidCMS.Common.Services
                 _ => await collection.Repository._GetByIdAsync(id, parentId)
             };
 
+            // TODO: relations must not be simply set but must be added using seperate IRepository call after update to allow for better support
+            // TODO: must track which releation(s) have been broken and which have been made to allow for absolute control
             UpdateEntityWithFormData(formValues, entity, nodeEditor, entityVariant.Type);
 
             // TODO: what to do with this action

@@ -1,4 +1,5 @@
-﻿using RapidCMS.Common.Interfaces;
+﻿using System.Collections.Generic;
+using RapidCMS.Common.Interfaces;
 
 namespace TestLibrary.Entities
 {
@@ -8,5 +9,6 @@ namespace TestLibrary.Entities
         public int RealId { get; set; }
         public string Name { get; set; }
         public string AzureTableStorageEntityId { get; set; }
+        public ICollection<string> AzureTableStorageEntityIds { get; set; }
     }
 }

@@ -9,6 +9,7 @@
     // this wil make it a lot more dynamic
 *@
 @using RapidCMS.Common.Enums
+@using RapidCMS.Common.Interfaces
 
 @if (Type.HasValue)
 {
@@ -40,7 +41,7 @@
 
             case EditorType.Select:
 
-                <SelectEditor Value="@LocalValue" Callback="ChildEditorCallback" />
+                <SelectEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="DataProvider" />
 
                 break;
 
@@ -55,6 +56,8 @@
 }
 
 @functions {
+
+#nullable enable
 
     [Parameter]
     private string Value { get; set; }
@@ -79,6 +82,9 @@
 
     [Parameter]
     private Action<string> Callback { get; set; }
+
+    [Parameter]
+    private IDataProvider? DataProvider { get; set; }
 
     private void ChildEditorCallback(string value)
     {

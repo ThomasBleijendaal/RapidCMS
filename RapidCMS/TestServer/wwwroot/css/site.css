@@ -140,3 +140,8 @@ a.current-page {
     float: left;
     text-overflow: ellipsis;
 }
+
+.form-control-select-list {
+    height: 150px;
+    overflow: auto;
+}

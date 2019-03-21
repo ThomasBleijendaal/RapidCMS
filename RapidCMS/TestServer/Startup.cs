@@ -411,6 +411,7 @@ namespace TestServer
                 {
                     listPaneConfig.AddProperty(x => x.Id);
                     listPaneConfig.AddProperty(x => x.Name);
+                    listPaneConfig.AddProperty(x => x.AzureTableStorageEntityId);
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);

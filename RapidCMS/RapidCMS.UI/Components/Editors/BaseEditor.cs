@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
+using RapidCMS.Common.Interfaces;
 using System;
+
+#nullable enable
 
 namespace RapidCMS.UI.Components.Editors
 {
@@ -24,5 +27,8 @@ namespace RapidCMS.UI.Components.Editors
 
         [Parameter]
         private Action<string> Callback { get; set; }
+
+        [Parameter]
+        protected IDataProvider? DataProvider { get; set; }
     }
 }
