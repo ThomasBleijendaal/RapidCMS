@@ -9,6 +9,7 @@ using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using TestLibrary;
+using TestLibrary.DataProvider;
 using TestLibrary.Entities;
 using TestLibrary.Repositories;
 using TestServer.ActionHandlers;
@@ -34,7 +35,9 @@ namespace TestServer
             services.AddSingleton(CloudStorageAccount.DevelopmentStorageAccount);
             services.AddSingleton<AzureTableStorageRepository>();
 
-            services.AddTransient<CreateButtonActionHandler, CreateButtonActionHandler>();
+            services.AddTransient<CreateButtonActionHandler>();
+
+            services.AddTransient<DummyDataProvider>();
 
             services.AddRapidCMS();
 
@@ -427,7 +430,13 @@ namespace TestServer
                 config.AddEditorPane(editorPaneConfig =>
                 {
                     editorPaneConfig.AddField(x => x.Name);
+
+                    editorPaneConfig.AddField(x => x.Location)
+                        .SetType(EditorType.Dropdown)
+                        .SetOneToManyRelation<DummyDataProvider>();
+
                     editorPaneConfig.AddField(x => x.AzureTableStorageEntityId)
+                        .SetType(EditorType.Select)
                         .SetOneToManyRelation<AzureTableStorageEntity>("collection-10", relation =>
                         {
                             relation

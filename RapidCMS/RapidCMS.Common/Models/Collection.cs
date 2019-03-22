@@ -275,10 +275,20 @@ namespace RapidCMS.Common.Models
         public OneToManyRelation? OneToManyRelation { get; set; }
     }
 
+    // TODO: horrible names
     public class OneToManyRelation
+    {
+    }
+
+    public class OneToManyCollectionRelation : OneToManyRelation
     {
         internal string CollectionAlias { get; set; }
         internal PropertyMetadata IdProperty { get; set; }
         internal PropertyMetadata DisplayProperty { get; set; }
+    }
+
+    public class OneToManyDataProviderRelation : OneToManyRelation
+    {
+        internal Type DataProviderType { get; set; }
     }
 }

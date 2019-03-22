@@ -68,15 +68,29 @@ namespace RapidCMS.Common.Models.Config
 
         // TODO: move all config into this function? (no SetId + SetDisplay?)
         // TODO: rename to select source or something
-        public FieldConfig<TEntity> SetOneToManyRelation<TRelatedEntity>(string collectionAlias, Action<OneToManyRelationConfig<TEntity, TRelatedEntity>> configure)
+        public FieldConfig<TEntity> SetOneToManyRelation<TDataProvider>()
+            where TDataProvider : IDataProvider
         {
-            var config = new OneToManyRelationConfig<TEntity, TRelatedEntity>();
+            var config = new OneToManyRelationDataProviderConfig
+            {
+                DataProviderType = typeof(TDataProvider)
+            };
+
+            OneToManyRelation = config;
+
+            return this;
+        }
+
+        public FieldConfig<TEntity> SetOneToManyRelation<TRelatedEntity>(string collectionAlias, Action<OneToManyRelationCollectionConfig<TEntity, TRelatedEntity>> configure)
+        {
+            var config = new OneToManyRelationCollectionConfig<TEntity, TRelatedEntity>();
+
+            Type = EditorType.Select;
 
             configure.Invoke(config);
 
             config.CollectionAlias = collectionAlias;
 
-            Type = EditorType.Select;
             OneToManyRelation = config;
 
             return this;
@@ -85,20 +99,29 @@ namespace RapidCMS.Common.Models.Config
 
     public class OneToManyRelationConfig
     {
+    }
+
+    public class OneToManyRelationDataProviderConfig : OneToManyRelationConfig
+    {
+        internal Type DataProviderType { get; set; }
+    }
+
+    public class OneToManyRelationCollectionConfig : OneToManyRelationConfig
+    {
         internal string CollectionAlias { get; set; }
         internal PropertyMetadata IdProperty { get; set; }
         internal PropertyMetadata DisplayProperty { get; set; }
     }
 
-    public class OneToManyRelationConfig<TEntity, TRelatedEntity> : OneToManyRelationConfig
+    public class OneToManyRelationCollectionConfig<TEntity, TRelatedEntity> : OneToManyRelationCollectionConfig
     {
-        public OneToManyRelationConfig<TEntity, TRelatedEntity> SetIdProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression)
+        public OneToManyRelationCollectionConfig<TEntity, TRelatedEntity> SetIdProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression)
         {
             IdProperty = PropertyMetadataHelper.Create(propertyExpression);
 
             return this;
         }
-        public OneToManyRelationConfig<TEntity, TRelatedEntity> SetDisplayProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression)
+        public OneToManyRelationCollectionConfig<TEntity, TRelatedEntity> SetDisplayProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression)
         {
             DisplayProperty = PropertyMetadataHelper.Create(propertyExpression);
 

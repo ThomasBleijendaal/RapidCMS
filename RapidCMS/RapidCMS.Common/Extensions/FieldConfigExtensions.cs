@@ -27,11 +27,19 @@ namespace RapidCMS.Common.Extensions
     {
         public static OneToManyRelation ToOneToManyRelation(this OneToManyRelationConfig config)
         {
-            return new OneToManyRelation
+            return config switch
             {
-                CollectionAlias = config.CollectionAlias,
-                DisplayProperty = config.DisplayProperty,
-                IdProperty = config.IdProperty
+                OneToManyRelationCollectionConfig collectionConfig => new OneToManyCollectionRelation
+                {
+                    CollectionAlias = collectionConfig.CollectionAlias,
+                    DisplayProperty = collectionConfig.DisplayProperty,
+                    IdProperty = collectionConfig.IdProperty
+                },
+                OneToManyRelationDataProviderConfig dataProviderConfig => new OneToManyDataProviderRelation
+                {
+                    DataProviderType = dataProviderConfig.DataProviderType
+                },
+                _ => default(OneToManyRelation)
             };
         }
     }

@@ -12,7 +12,8 @@ DONE-ISH: remove / reduce use of action in CollectionService and start using act
 DONE: 5. support for type differentation within collection 
 DONE-ISH: 6. add support for list block editor (same as list editor, but then every line is a node editor) (TODO: delete from node editor redirects incorrect)
 DONE: 7. move all cms UI to RapidCMS.UI
-8. custom editor support
+8a. remove dto's and move to uimodels/viewmodels and better ui/collectionservice separation
+8b. custom editor support
 9. seperate view + edit node (now combined)
 10. implement all default button types in all button call backs
 11. check if (default) button is applicable EVERYWHERE

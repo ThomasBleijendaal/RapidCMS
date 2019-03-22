@@ -12,6 +12,7 @@ namespace RapidCMS.Common.Enums
         [DefaultType(typeof(int), typeof(long), typeof(uint), typeof(ulong))]
         Numeric,
 
+        Dropdown,
         Select
     }
 }

@@ -1,0 +1,30 @@
+﻿@inherits BaseEditor
+
+@using RapidCMS.Common.Interfaces
+
+@if (Options != null)
+{
+    var index = 0;
+    var group = Guid.NewGuid().ToString();
+
+    <select class="form-control" bind=@LocalValue>
+        <option value=""></option>
+        @foreach (var option in Options)
+        {
+            <option value="@option.Id">@option.Label</option>
+        }
+    </select>
+}
+@functions {
+#nullable enable
+
+    private IEnumerable<IOption>? Options;
+
+    protected override async Task OnInitAsync()
+    {
+        if (DataProvider != null)
+        {
+            Options = await DataProvider.GetAllOptionsAsync();
+        }
+    }
+}

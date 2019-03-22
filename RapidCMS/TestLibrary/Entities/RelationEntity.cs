@@ -9,6 +9,7 @@ namespace TestLibrary.Entities
         public int RealId { get; set; }
         public string Name { get; set; }
         public string AzureTableStorageEntityId { get; set; }
-        public ICollection<string> AzureTableStorageEntityIds { get; set; }
+        public string Location { get; set; }
+        // public ICollection<string> AzureTableStorageEntityIds { get; set; }
     }
 }

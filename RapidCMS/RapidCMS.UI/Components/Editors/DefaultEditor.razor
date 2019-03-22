@@ -39,16 +39,24 @@
 
                 break;
 
+            case EditorType.TextBox:
+            default:
+
+                <TextBoxEditor Value="@LocalValue" Callback="ChildEditorCallback" />
+
+                break;
+
+
+
             case EditorType.Select:
 
                 <SelectEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="DataProvider" />
 
                 break;
 
-            case EditorType.TextBox:
-            default:
+            case EditorType.Dropdown:
 
-                <TextBoxEditor Value="@LocalValue" Callback="ChildEditorCallback" />
+                <DropdownEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="DataProvider" />
 
                 break;
         }

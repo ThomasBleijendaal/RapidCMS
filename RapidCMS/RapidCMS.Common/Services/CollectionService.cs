@@ -379,6 +379,7 @@ namespace RapidCMS.Common.Services
                     {
                         return new NodeEditorPaneDTO
                         {
+                            // TODO: put this is method for reuse
                             Fields = pane.Fields.ToList(field =>
                             {
                                 var editor = (
@@ -397,10 +398,19 @@ namespace RapidCMS.Common.Services
 
                                 if (field.OneToManyRelation != null)
                                 {
-                                    var repo = Root.GetRepository(field.OneToManyRelation.CollectionAlias);
+                                    switch (field.OneToManyRelation)
+                                    {
+                                        case OneToManyCollectionRelation collectionRelation:
 
-                                    var dataProvider = new CollectionDataProvider(repo, field.OneToManyRelation.IdProperty, field.OneToManyRelation.DisplayProperty);
-                                    editor.value.DataProvider = dataProvider;
+                                            var repo = Root.GetRepository(collectionRelation.CollectionAlias);
+                                            editor.value.DataProvider = new CollectionDataProvider(repo, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
+                                            break;
+
+                                        case OneToManyDataProviderRelation dataProviderRelation:
+
+                                            editor.value.DataProvider = ServiceLocator.Instance.GetService<IDataProvider>(dataProviderRelation.DataProviderType);
+                                            break;
+                                    }   
                                 }
 
                                 return editor;

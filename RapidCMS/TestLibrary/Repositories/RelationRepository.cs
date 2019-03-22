@@ -56,6 +56,7 @@ namespace TestLibrary.Repositories
 
             element.Name = entity.Name;
             element.AzureTableStorageEntityId = entity.AzureTableStorageEntityId;
+            element.Location = entity.Location;
         }
 
         public override Task<RelationEntity> NewAsync(int? parentId, Type? variantType)
