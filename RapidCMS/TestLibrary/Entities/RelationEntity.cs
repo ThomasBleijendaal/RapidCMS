@@ -10,6 +10,6 @@ namespace TestLibrary.Entities
         public string Name { get; set; }
         public string AzureTableStorageEntityId { get; set; }
         public string Location { get; set; }
-        // public ICollection<string> AzureTableStorageEntityIds { get; set; }
+        public ICollection<string> AzureTableStorageEntityIds { get; set; }
     }
 }

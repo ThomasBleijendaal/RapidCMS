@@ -54,6 +54,12 @@
 
                 break;
 
+            case EditorType.MultiSelect:
+
+                <MultiSelectEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="DataProvider" />
+
+                break;
+
             case EditorType.Dropdown:
 
                 <DropdownEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="DataProvider" />

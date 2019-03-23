@@ -85,8 +85,6 @@ namespace RapidCMS.Common.Models.Config
         {
             var config = new OneToManyRelationCollectionConfig<TEntity, TRelatedEntity>();
 
-            Type = EditorType.Select;
-
             configure.Invoke(config);
 
             config.CollectionAlias = collectionAlias;

@@ -415,6 +415,8 @@ namespace TestServer
                     listPaneConfig.AddProperty(x => x.Id);
                     listPaneConfig.AddProperty(x => x.Name);
                     listPaneConfig.AddProperty(x => x.AzureTableStorageEntityId);
+                    listPaneConfig.AddProperty(x => x.AzureTableStorageEntityIds)
+                        .SetValueMapper<ICollectionValueMapper<string>>();
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
@@ -443,6 +445,17 @@ namespace TestServer
                                 .SetIdProperty(x => x.Id)
                                 .SetDisplayProperty(x => x.Description);
                         });
+
+                    editorPaneConfig.AddField(x => x.AzureTableStorageEntityIds)
+                        .SetType(EditorType.MultiSelect)
+                        .SetOneToManyRelation<AzureTableStorageEntity>("collection-10", relation =>
+                        {
+                            relation
+                                .SetIdProperty(x => x.Id)
+                                .SetDisplayProperty(x => x.Description);
+                        });
+
+
                 });
             }
 

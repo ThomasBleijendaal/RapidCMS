@@ -1,0 +1,41 @@
+﻿@inherits BaseEditor
+
+@using RapidCMS.Common.Interfaces
+
+@if (Options != null)
+{
+    var index = 0;
+    var group = Guid.NewGuid().ToString();
+
+    <div class="form-control form-control-select-list">
+        
+        @foreach (var option in Options)
+        {
+            <div class="form-check">
+                <input class="form-check-input" 
+                       type="checkbox" 
+                       value="@option.Id" 
+                       id="option@(++index)" 
+                       name=@group 
+                       @*checked=@(option.Id == LocalValue)*@ 
+                       @*onchange=@((UIChangeEventArgs __e) => LocalValue = __e.Value.ToString())*@  />
+                <label class="form-check-label" for="option@(index)">
+                    @option.Label
+                </label>
+            </div>
+        }
+    </div>
+}
+@functions {
+#nullable enable
+
+    private IEnumerable<IOption>? Options;
+
+    protected override async Task OnInitAsync()
+    {
+        if (DataProvider != null)
+        {
+            Options = await DataProvider.GetAllOptionsAsync();
+        }
+    }
+}

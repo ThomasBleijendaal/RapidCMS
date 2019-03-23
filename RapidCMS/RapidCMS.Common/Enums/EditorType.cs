@@ -13,6 +13,7 @@ namespace RapidCMS.Common.Enums
         Numeric,
 
         Dropdown,
-        Select
+        Select,
+        MultiSelect
     }
 }

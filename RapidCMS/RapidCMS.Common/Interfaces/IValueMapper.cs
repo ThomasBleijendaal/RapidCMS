@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using RapidCMS.Common.Data;
 
@@ -76,6 +77,25 @@ namespace RapidCMS.Common.Interfaces
         public override string MapToView(ValueMappingContext context, int value)
         {
             return value.ToString();
+        }
+    }
+
+    // TODO: this should not be needed after UI update
+    public class ICollectionValueMapper<TValue> : ValueMapper<ICollection<TValue>>
+    {
+        public override ICollection<TValue> MapFromEditor(ValueMappingContext context, string value)
+        {
+            return value.Split(",").Cast<TValue>().ToList();
+        }
+
+        public override string MapToEditor(ValueMappingContext context, ICollection<TValue> value)
+        {
+            return string.Join(",", value.Select(x => x.ToString()));
+        }
+
+        public override string MapToView(ValueMappingContext context, ICollection<TValue> value)
+        {
+            return string.Join(", ", value.Select(x => x.ToString()));
         }
     }
 }
