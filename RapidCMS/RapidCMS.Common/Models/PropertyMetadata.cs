@@ -2,6 +2,7 @@
 
 namespace RapidCMS.Common.Models
 {
+    // TODO: add interface
     public class PropertyMetadata
     {
         internal Type ObjectType { get; set; }

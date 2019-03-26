@@ -25,6 +25,7 @@ namespace RapidCMS.Common.Extensions
 
             services.AddSingleton(root);
             services.AddSingleton<ICollectionService, CollectionService>();
+            services.AddSingleton<IUIService, UIService>();
 
             return services;
         }
@@ -189,6 +190,8 @@ namespace RapidCMS.Common.Extensions
                             {
                                 return new SubCollectionListEditor
                                 {
+                                    Index = listEditor.Index,
+
                                     CollectionAlias = listEditor.CollectionAlias
                                 };
                             })

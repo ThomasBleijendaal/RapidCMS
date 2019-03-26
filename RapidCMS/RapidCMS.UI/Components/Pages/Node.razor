@@ -7,15 +7,13 @@
 
 @using RapidCMS.Common
 @using RapidCMS.UI.Components.Buttons
-@using RapidCMS.Common.Models.DTOs
+@using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Services
 
 @inject ICollectionService CollectionService
 @*
     TODO: remove weird callback for binding
 *@
-
-<h1>@Action node @CollectionAlias @(ParentId != null ? $":: {ParentId}" : "") :: @Id</h1>
 
 @if (Editor == null)
 {
@@ -58,48 +56,44 @@ else
         }
     </div>
 
-    <div class="content px-4">
-        @foreach (var pane in Editor.EditorPanes)
-        {
-            @if (pane.Fields.Any())
+    @foreach (var pane in Editor.Sections)
+    {
+        <div class="content px-4">
+            @if (pane.Elements.Any())
             {
-                @foreach (var field in pane.Fields)
+                @foreach (var element in pane.Elements)
                 {
-                    <div class="form-row">
-                        <div class="col-3">
-                            <label>@field.label.Name</label>
-                            <small class="form-text text-muted">@field.label.Description</small>
-                        </div>
-                        <div class="col-9">
-                            @if (Action == Constants.View)
-                            {
-                                @field.value.DisplayValue
-                            }
-                            else
-                            {
-                                // TODO: context object instead of everything a seperate parameter?
+                    if (element is FieldWithLabelUI field)
+                    {
+                        <div class="form-row">
+                            <div class="col-2">
+                                <label>@field.Name</label>
+                                <small class="form-text text-muted">@field.Description</small>
+                            </div>
+                            <div class="col-10">
+                                @if (Action == Constants.View)
+                                {
+                                    @field.ReadonlyValue
+                                }
+                                else
+                                {
+                                    // TODO: context object instead of everything a seperate parameter?
 
-                                <DefaultEditor Type="@field.value.Type"
-                                               Value="@field.value.Value"
-                                               Callback="@((string value) => field.value.Value = value)"
-                                               IsReadonly="@field.value.IsReadonly"
-                                               DataProvider="@field.value.DataProvider" />
-                            }
+                                    <DefaultEditor Field="field" Callback="@((string value) => field.Value = value)" />
+                                }
+                            </div>
                         </div>
-                    </div>
+                    }
+                    else if (element is SubCollectionUI subCollection)
+                    {
+                        <Collection Action="@Constants.Edit"
+                                    CollectionAlias="@subCollection.CollectionAlias"
+                                    ParentId="@Id" />
+                    }
                 }
             }
-
-            @foreach (var subCollectionListEditor in pane.SubCollectionListEditors)
-            {
-                <Collection Action="@subCollectionListEditor.Action"
-                            CollectionAlias="@subCollectionListEditor.CollectionAlias"
-                            ParentId="@Id" />
-            }
-
-
-        }
-    </div>
+        </div>
+    }
 }
 
 @functions {
@@ -120,7 +114,7 @@ else
     [Parameter]
     private string? Id { get; set; } = null;
 
-    NodeEditorDTO Editor;
+    EditorUI Editor;
 
     protected override async Task OnParametersSetAsync()
     {

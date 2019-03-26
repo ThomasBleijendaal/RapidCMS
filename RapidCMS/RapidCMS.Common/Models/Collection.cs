@@ -17,6 +17,7 @@ namespace RapidCMS.Common.Models
     // TODO: check polymorphisms
     // TODO: static root stuff is horrible
 
+        // TODO: not really a model
     public class Root : ICollectionRoot
     {
         private static Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
@@ -121,6 +122,8 @@ namespace RapidCMS.Common.Models
 
     public class SubCollectionListEditor : ListEditor
     {
+        public int Index { get; set; }
+
         public string CollectionAlias { get; set; }
     }
 
@@ -261,6 +264,8 @@ namespace RapidCMS.Common.Models
     // TODO: merge with property
     public class Field
     {
+        public int Index { get; set; }
+
         public string Name { get; set; }
         public string Description { get; set; }
 

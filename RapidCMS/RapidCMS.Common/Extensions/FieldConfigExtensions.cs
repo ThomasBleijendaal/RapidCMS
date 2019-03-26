@@ -10,6 +10,8 @@ namespace RapidCMS.Common.Extensions
         {
             return new Field
             {
+                Index = field.Index,
+
                 DataType = field.Type,
                 Description = field.Description,
                 Name = field.Name,

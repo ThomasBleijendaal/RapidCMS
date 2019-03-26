@@ -6,6 +6,7 @@ using RapidCMS.Common.Data;
 
 namespace RapidCMS.Common.Interfaces
 {
+    // TODO: remove context
     public interface IValueMapper
     {
         string MapToEditor(ValueMappingContext context, object value);

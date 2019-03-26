@@ -9,63 +9,57 @@
     // this wil make it a lot more dynamic
 *@
 @using RapidCMS.Common.Enums
+@using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Interfaces
 
-@if (Type.HasValue)
-{
-    if (IsReadonly)
+@if (Field != null)
+{   
+    switch (Field.Type)
     {
-        <Readonly Value="@LocalValue" />
-    }
-    else
-    {
-        switch (Type)
-        {
-            case EditorType.Readonly:
+        case EditorType.Readonly:
 
-                <Readonly Value="@LocalValue" />
+            <Readonly Value="@Field.ReadonlyValue" />
 
-                break;
+            break;
 
-            case EditorType.Numeric:
+        case EditorType.Numeric:
 
-                <NumericEditor Value="@LocalValue" Callback="ChildEditorCallback" />
+            <NumericEditor Value="@LocalValue" Callback="ChildEditorCallback" />
 
-                break;
+            break;
 
-            case EditorType.TextArea:
+        case EditorType.TextArea:
 
-                <TextAreaEditor Value="@LocalValue" Callback="ChildEditorCallback" />
+            <TextAreaEditor Value="@LocalValue" Callback="ChildEditorCallback" />
 
-                break;
+            break;
 
-            case EditorType.TextBox:
-            default:
+        case EditorType.TextBox:
+        default:
 
-                <TextBoxEditor Value="@LocalValue" Callback="ChildEditorCallback" />
+            <TextBoxEditor Value="@LocalValue" Callback="ChildEditorCallback" />
 
-                break;
+            break;
 
 
 
-            case EditorType.Select:
+        case EditorType.Select:
 
-                <SelectEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="DataProvider" />
+            <SelectEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="Field.DataProvider" />
 
-                break;
+            break;
 
-            case EditorType.MultiSelect:
+        case EditorType.MultiSelect:
 
-                <MultiSelectEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="DataProvider" />
+            <MultiSelectEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="Field.DataProvider" />
 
-                break;
+            break;
 
-            case EditorType.Dropdown:
+        case EditorType.Dropdown:
 
-                <DropdownEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="DataProvider" />
+            <DropdownEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="Field.DataProvider" />
 
-                break;
-        }
+            break;
     }
 }
 
@@ -74,29 +68,35 @@
 #nullable enable
 
     [Parameter]
+    private FieldUI? Field { get; set; }
+
+    [Obsolete]
+    [Parameter]
     private string Value { get; set; }
 
     public string LocalValue
     {
         get
         {
-            return Value;
+            return Field?.Value ?? "";
         }
         set
         {
-            Value = value;
+            if (Field != null)
+            {
+                Field.Value = value;
+            }
         }
     }
 
+    [Obsolete]
     [Parameter]
     private EditorType? Type { get; set; } = null;
 
     [Parameter]
-    private bool IsReadonly { get; set; }
-
-    [Parameter]
     private Action<string> Callback { get; set; }
 
+    [Obsolete]
     [Parameter]
     private IDataProvider? DataProvider { get; set; }
 

@@ -8,6 +8,7 @@ using RapidCMS.Common.Models;
 
 namespace RapidCMS.Common.Helpers
 {
+    // TODO: only return interface instead of PropertyMetadata
     internal static class PropertyMetadataHelper
     {
         /// <summary>

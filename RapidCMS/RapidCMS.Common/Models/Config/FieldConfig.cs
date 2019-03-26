@@ -10,6 +10,8 @@ namespace RapidCMS.Common.Models.Config
 {
     public class FieldConfig
     {
+        internal int Index { get; set; }
+
         internal string Name { get; set; }
         internal string Description { get; set; }
 

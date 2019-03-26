@@ -9,6 +9,7 @@ using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.DTOs;
+using RapidCMS.Common.Models.UI;
 
 #nullable enable
 
@@ -32,17 +33,19 @@ namespace RapidCMS.Common.Services
         Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string? parentId, string actionId);
         Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, CollectionListEditorDTO formValues, string actionId);
 
-        Task<NodeEditorDTO> GetNodeEditorAsync(string action, string collectionAlias, string variantAlias, string? parentId, string? id);
-        Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, NodeEditorDTO formValues, string actionId);
+        Task<EditorUI> GetNodeEditorAsync(string action, string collectionAlias, string variantAlias, string? parentId, string? id);
+        Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, EditorUI editor, string actionId);
     }
 
     public class CollectionService : ICollectionService
     {
         private readonly Root _root;
+        private readonly IUIService _uiService;
 
-        public CollectionService(Root root)
+        public CollectionService(Root root, IUIService uiService)
         {
             _root = root;
+            _uiService = uiService;
         }
 
         private UsageType MapActionToUsageType(string action)
@@ -134,11 +137,7 @@ namespace RapidCMS.Common.Services
 
             var entityVariant = collection.EntityVariants.FirstOrDefault(x => x.Alias == variantAlias);
 
-            var viewContext = new ViewContext
-            {
-                Usage = UsageType.List | MapActionToUsageType(action),
-                EntityVariant = entityVariant
-            };
+            var viewContext = new ViewContext(UsageType.List | MapActionToUsageType(action), entityVariant);
 
             var entities = await collection.Repository._GetAllAsObjectsAsync(parentId);
 
@@ -205,11 +204,7 @@ namespace RapidCMS.Common.Services
 
             var entityVariant = collection.EntityVariants.FirstOrDefault(x => x.Alias == variantAlias);
 
-            var listViewContext = new ViewContext
-            {
-                Usage = UsageType.List | MapActionToUsageType(action),
-                EntityVariant = entityVariant
-            };
+            var listViewContext = new ViewContext(UsageType.List | MapActionToUsageType(action), entityVariant);
 
             return new CollectionListEditorDTO
             {
@@ -254,11 +249,7 @@ namespace RapidCMS.Common.Services
                 var newEntity = await collection.Repository._NewAsync(parentId, variant.Type);
                 var editor = editors.First(x => x.VariantType == newEntity.GetType());
 
-                var editorViewContext = new ViewContext
-                {
-                    Usage = UsageType.Node | MapActionToUsageType(Constants.New),
-                    EntityVariant = variant
-                };
+                var editorViewContext = new ViewContext(UsageType.Node | MapActionToUsageType(Constants.New), variant);
 
                 yield return CreateCollectionListEditorNode(newEntity, editorViewContext, parentId, editor);
             }
@@ -272,11 +263,7 @@ namespace RapidCMS.Common.Services
                     var entityType = entity.GetType();
 
                     var editor = editors.First(x => x.VariantType == entityType);
-                    var editorViewContext = new ViewContext
-                    {
-                        Usage = UsageType.Node | MapActionToUsageType(Constants.Edit),
-                        EntityVariant = collection.EntityVariants.First(x => x.Type == entityType)
-                    };
+                    var editorViewContext = new ViewContext(UsageType.Node | MapActionToUsageType(Constants.Edit), collection.EntityVariants.First(x => x.Type == entityType));
 
                     yield return CreateCollectionListEditorNode(entity, editorViewContext, parentId, editor);
                 }
@@ -319,22 +306,19 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public async Task<NodeEditorDTO> GetNodeEditorAsync(string action, string alias, string variantAlias, string? parentId, string? id)
+        public async Task<EditorUI> GetNodeEditorAsync(string action, string alias, string variantAlias, string? parentId, string? id)
         {
             var collection = _root.GetCollection(alias);
 
-            var nodeType = typeof(IEntity);
-
-            if (!string.IsNullOrEmpty(variantAlias))
-            {
-                nodeType = collection.EntityVariants.First(variant => variant.Alias == variantAlias).Type;
-            }
+            var nodeVariant = (!string.IsNullOrEmpty(variantAlias))
+                ? collection.EntityVariants.First(variant => variant.Alias == variantAlias)
+                : default;
 
             var entity = action switch
             {
                 Constants.View => await collection.Repository._GetByIdAsync(id, parentId),
                 Constants.Edit => await collection.Repository._GetByIdAsync(id, parentId),
-                Constants.New => await collection.Repository._NewAsync(parentId, nodeType),
+                Constants.New => await collection.Repository._NewAsync(parentId, nodeVariant.Type),
                 _ => null
             };
 
@@ -343,96 +327,22 @@ namespace RapidCMS.Common.Services
                 return null;
             }
 
-            var nodeEditor = collection.NodeEditor;
-
-            if (collection.EntityVariants.Count > 1 && action != Constants.New)
+            if (action != Constants.New)
             {
-                nodeType = entity.GetType();
+                nodeVariant = collection.EntityVariants.First(variant => variant.Type == entity.GetType());
             }
 
-            var viewContext = new ViewContext
-            {
-                Usage = UsageType.Node | MapActionToUsageType(action),
-                EntityVariant = null // TODO: null
-            };
+            var viewContext = new ViewContext(UsageType.Node | MapActionToUsageType(action), nodeVariant);
+            var nodeEditor = collection.NodeEditor;
 
-            var editor = new NodeEditorDTO
-            {
-                Buttons = nodeEditor.Buttons
-                    .GetAllButtons()
-                    .Where(button => button.IsCompatibleWithView(viewContext))
-                    .ToList(button =>
-                    {
-                        return new ButtonDTO
-                        {
-                            Icon = button.Icon,
-                            ButtonId = button.ButtonId,
-                            Label = button.Label,
-                            ShouldConfirm = button.ShouldConfirm,
-                            Alias = (button is CustomButton customButton) ? customButton.Alias : null
-                        };
-                    }),
-                EditorPanes = nodeEditor.EditorPanes
-                    // allow for the specialized type, or the base type
-                    .Where(pane => pane.VariantType == nodeType || pane.VariantType == nodeEditor.BaseType)
-                    .ToList(pane =>
-                    {
-                        return new NodeEditorPaneDTO
-                        {
-                            // TODO: put this is method for reuse
-                            Fields = pane.Fields.ToList(field =>
-                            {
-                                var editor = (
-                                    label: new LabelDTO
-                                    {
-                                        Name = field.Name,
-                                        Description = field.Description
-                                    },
-                                    value: new ValueDTO
-                                    {
-                                        DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter(entity)),
-                                        IsReadonly = field.Readonly,
-                                        Type = field.DataType,
-                                        Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter(entity))
-                                    });
+            var editor = _uiService.GenerateNodeUI(viewContext, nodeEditor);
 
-                                if (field.OneToManyRelation != null)
-                                {
-                                    switch (field.OneToManyRelation)
-                                    {
-                                        case OneToManyCollectionRelation collectionRelation:
-
-                                            var repo = Root.GetRepository(collectionRelation.CollectionAlias);
-                                            editor.value.DataProvider = new CollectionDataProvider(repo, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
-                                            break;
-
-                                        case OneToManyDataProviderRelation dataProviderRelation:
-
-                                            editor.value.DataProvider = ServiceLocator.Instance.GetService<IDataProvider>(dataProviderRelation.DataProviderType);
-                                            break;
-                                    }   
-                                }
-
-                                return editor;
-                            }),
-                            SubCollectionListEditors = action == Constants.New
-                                ? new List<SubCollectionListEditorDTO>()
-                                : pane.SubCollectionListEditors.ToList(listEditor =>
-                                    {
-                                        return new SubCollectionListEditorDTO
-                                        {
-                                            CollectionAlias = listEditor.CollectionAlias,
-                                            Action = Constants.Edit
-                                        };
-                                    })
-                        };
-                    })
-            };
+            editor.SetEntity(entity);
 
             return editor;
         }
 
-        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, NodeEditorDTO formValues, string actionId)
+        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, EditorUI editor, string actionId)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -444,16 +354,10 @@ namespace RapidCMS.Common.Services
             var button = nodeEditor.Buttons.GetAllButtons().First(x => x.ButtonId == actionId);
             var buttonCrudType = button.GetCrudType();
 
-            var entity = buttonCrudType switch
-            {
-                CrudType.Insert => await collection.Repository._NewAsync(parentId, entityVariant.Type),
-                _ => await collection.Repository._GetByIdAsync(id, parentId)
-            };
-
             // TODO: relations must not be simply set but must be added using seperate IRepository call after update to allow for better support
             // TODO: must track which releation(s) have been broken and which have been made to allow for absolute control
-            UpdateEntityWithFormData(formValues, entity, nodeEditor, entityVariant.Type);
-
+            var updatedEntity = editor.GetEntity();
+            
             // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
@@ -469,11 +373,11 @@ namespace RapidCMS.Common.Services
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
 
                 case CrudType.Update:
-                    await collection.Repository._UpdateAsync(id, parentId, entity);
+                    await collection.Repository._UpdateAsync(id, parentId, updatedEntity);
                     return new ReloadCommand();
 
                 case CrudType.Insert:
-                    entity = await collection.Repository._InsertAsync(parentId, entity);
+                    var entity = await collection.Repository._InsertAsync(parentId, updatedEntity);
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, entity.Id) };
 
                 case CrudType.Delete:

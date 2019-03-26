@@ -12,6 +12,8 @@ namespace RapidCMS.Common.Models.Config
 {
     public class NodeEditorPaneConfig
     {
+        public int FieldIndex { get; set; }
+
         public Type VariantType { get; set; }
         public List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
         public List<SubCollectionListEditorConfig> SubCollectionListEditors { get; set; } = new List<SubCollectionListEditorConfig>();
@@ -41,6 +43,8 @@ namespace RapidCMS.Common.Models.Config
 
             configure?.Invoke(config);
 
+            config.Index = FieldIndex++;
+
             Fields.Add(config);
 
             return config;
@@ -55,6 +59,8 @@ namespace RapidCMS.Common.Models.Config
             };
 
             configure?.Invoke(config);
+
+            config.Index = FieldIndex++;
 
             SubCollectionListEditors.Add(config);
 
