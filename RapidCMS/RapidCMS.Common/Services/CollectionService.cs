@@ -298,7 +298,9 @@ namespace RapidCMS.Common.Services
                         DisplayValue = field.ValueMapper.MapToView(null, field.NodeProperty.Getter.Invoke(entity)),
                         IsReadonly = field.Readonly,
                         Type = field.DataType,
-                        Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter.Invoke(entity))
+
+                        // TODO: fix when refactor
+                        Value = field.ValueMapper.MapToEditor(null, field.NodeProperty.Getter.Invoke(entity)).ToString()
                     };
 
                     return dto;
@@ -357,6 +359,8 @@ namespace RapidCMS.Common.Services
             // TODO: relations must not be simply set but must be added using seperate IRepository call after update to allow for better support
             // TODO: must track which releation(s) have been broken and which have been made to allow for absolute control
             var updatedEntity = editor.GetEntity();
+
+
             
             // TODO: what to do with this action
             if (button is CustomButton customButton)

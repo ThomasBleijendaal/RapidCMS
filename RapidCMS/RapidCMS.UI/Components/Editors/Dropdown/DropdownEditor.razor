@@ -1,4 +1,4 @@
-﻿@inherits BaseEditor
+﻿@inherits BaseEditor<string>
 
 @using RapidCMS.Common.Interfaces
 
@@ -6,7 +6,7 @@
 {
     var group = Guid.NewGuid().ToString();
 
-    <select class="form-control" bind=@LocalValue>
+    <select class="form-control" bind=@Value>
         <option value=""></option>
         @foreach (var option in Options)
         {

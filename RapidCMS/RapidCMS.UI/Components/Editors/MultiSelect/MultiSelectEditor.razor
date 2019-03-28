@@ -1,4 +1,4 @@
-﻿@inherits BaseEditor
+﻿@inherits BaseEditor<ICollection<string>>
 
 @using RapidCMS.Common.Interfaces
 
@@ -15,11 +15,11 @@
                 <input class="form-check-input" 
                        type="checkbox" 
                        value="@option.Id" 
-                       id="option@(++index)" 
+                       id="@group-option@(++index)" 
                        name=@group 
-                       @*checked=@(option.Id == LocalValue)*@ 
-                       @*onchange=@((UIChangeEventArgs __e) => LocalValue = __e.Value.ToString())*@  />
-                <label class="form-check-label" for="option@(index)">
+                       checked=@(Value?.Contains(option.Id)) 
+                       onchange=@((UIChangeEventArgs __e) => OnChange(__e, option.Id)) />
+                <label class="form-check-label" for="@group-option@(index)">
                     @option.Label
                 </label>
             </div>
@@ -36,6 +36,23 @@
         if (DataProvider != null)
         {
             Options = await DataProvider.GetAllOptionsAsync();
+        }
+    }
+
+    private void OnChange(UIChangeEventArgs e, string value)
+    {
+        if (Value == null)
+        {
+            Value = new List<string>();
+        }
+
+        if ((bool)e.Value == true)
+        {
+            Value.Add(value);
+        }
+        else
+        {
+            Value.Remove(value);
         }
     }
 }

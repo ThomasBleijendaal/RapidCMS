@@ -6,27 +6,29 @@ using System;
 
 namespace RapidCMS.UI.Components.Editors
 {
-    public class BaseEditor : ComponentBase
+    public class BaseEditor<TValue> : ComponentBase
     {
-        [Parameter]
-        private string Value { get; set; }
+        // TODO: move to two methods: one for getting and one for setting the value of this editor
 
-        protected string LocalValue
+        [Parameter]
+        private TValue EditorValue { get; set; }
+
+        protected TValue Value
         {
             get
             {
-                return Value;
+                return EditorValue;
             }
             set
             {
-                Value = value;
+                EditorValue = value;
 
-                Callback.Invoke(Value);
+                Callback?.Invoke(EditorValue);
             }
         }
 
         [Parameter]
-        private Action<string> Callback { get; set; }
+        private Action<TValue>? Callback { get; set; }
 
         [Parameter]
         protected IDataProvider? DataProvider { get; set; }

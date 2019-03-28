@@ -1,4 +1,4 @@
-﻿@inherits BaseEditor
+﻿@inherits BaseEditor<string>
 
 @using RapidCMS.Common.Interfaces
 
@@ -15,11 +15,11 @@
                 <input class="form-check-input" 
                        type="radio" 
                        value="@option.Id" 
-                       id="option@(++index)" 
+                       id="@group-option@(++index)" 
                        name=@group 
-                       checked=@(option.Id == LocalValue) 
-                       onchange=@((UIChangeEventArgs __e) => LocalValue = __e.Value.ToString())  />
-                <label class="form-check-label" for="option@(index)">
+                       checked=@(option.Id == Value) 
+                       onchange=@((UIChangeEventArgs __e) => Value = __e.Value.ToString())  />
+                <label class="form-check-label" for="@group-option@(index)">
                     @option.Label
                 </label>
             </div>

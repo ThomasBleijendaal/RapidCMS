@@ -67,7 +67,7 @@ namespace RapidCMS.Common.Models.UI
         public IDataProvider DataProvider { get; set; }
 
         // TODO: change to object
-        public string Value
+        public object Value
         {
             get
             {

@@ -56,6 +56,8 @@ namespace RapidCMS.Common.Models.Config
         public FieldConfig<TEntity> SetValueMapper<TValueMapper>()
             where TValueMapper : IValueMapper
         {
+            throw new NotImplementedException("Generic value mappers are not initialized. Use SetValueMapper(instance) for now.");
+
             ValueMapperType = typeof(IValueMapper);
 
             return this;

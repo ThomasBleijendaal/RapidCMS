@@ -18,46 +18,44 @@
     {
         case EditorType.Readonly:
 
-            <Readonly Value="@Field.ReadonlyValue" />
+            <Readonly EditorValue="@Field.ReadonlyValue" />
 
             break;
 
         case EditorType.Numeric:
 
-            <NumericEditor Value="@LocalValue" Callback="ChildEditorCallback" />
+            <NumericEditor EditorValue="@((long)LocalValue)" Callback="ChildEditorCallback" />
 
             break;
 
         case EditorType.TextArea:
 
-            <TextAreaEditor Value="@LocalValue" Callback="ChildEditorCallback" />
+            <TextAreaEditor EditorValue="@((string)LocalValue)" Callback="ChildEditorCallback" />
 
             break;
 
         case EditorType.TextBox:
         default:
 
-            <TextBoxEditor Value="@LocalValue" Callback="ChildEditorCallback" />
+            <TextBoxEditor EditorValue="@((string)LocalValue)" Callback="ChildEditorCallback" />
 
             break;
 
-
-
         case EditorType.Select:
 
-            <SelectEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="Field.DataProvider" />
+            <SelectEditor EditorValue="@((string)LocalValue)" Callback="ChildEditorCallback" DataProvider="Field.DataProvider" />
 
             break;
 
         case EditorType.MultiSelect:
 
-            <MultiSelectEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="Field.DataProvider" />
+            <MultiSelectEditor EditorValue="@((ICollection<string>)LocalValue)" Callback="ChildEditorCallback" DataProvider="Field.DataProvider" />
 
             break;
 
         case EditorType.Dropdown:
 
-            <DropdownEditor Value="@LocalValue" Callback="ChildEditorCallback" DataProvider="Field.DataProvider" />
+            <DropdownEditor EditorValue="@((string)LocalValue)" Callback="ChildEditorCallback" DataProvider="Field.DataProvider" />
 
             break;
     }
@@ -74,11 +72,11 @@
     [Parameter]
     private string Value { get; set; }
 
-    public string LocalValue
+    public object? LocalValue
     {
         get
         {
-            return Field?.Value ?? "";
+            return Field?.Value;
         }
         set
         {
@@ -94,16 +92,17 @@
     private EditorType? Type { get; set; } = null;
 
     [Parameter]
-    private Action<string> Callback { get; set; }
+    private Action<object>? Callback { get; set; }
 
     [Obsolete]
     [Parameter]
     private IDataProvider? DataProvider { get; set; }
 
-    private void ChildEditorCallback(string value)
+    // TODO: this function is bullshit
+    private void ChildEditorCallback<T>(T value)
     {
-        LocalValue = value;
+        LocalValue = (object?)value;
 
-        Callback.Invoke(value);
+        Callback?.Invoke((object)value);
     }
 }
