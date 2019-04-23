@@ -1,27 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.Services;
 
+#nullable enable
+
 namespace RapidCMS.Common.Extensions
 {
     public static class ButtonConfigExtensions
     {
-        public static DefaultButton ToDefaultButton(this DefaultButtonConfig button, IEnumerable<EntityVariant> entityVariants)
+        public static DefaultButton ToDefaultButton(this DefaultButtonConfig button, IEnumerable<EntityVariant>? entityVariants, EntityVariant baseEntityVariant)
         {
-            var variants = entityVariants.Count();
-
             return new DefaultButton
             {
                 ButtonId = Guid.NewGuid().ToString(),
                 DefaultButtonType = button.ButtonType,
                 Icon = button.Icon,
                 Label = button.Label,
-                Buttons = button.ButtonType == DefaultButtonType.New && variants > 1
+                Buttons = button.ButtonType == DefaultButtonType.New && entityVariants != null
                 ? entityVariants.ToList(variant => new DefaultButton
                 {
                     ButtonId = Guid.NewGuid().ToString(),
@@ -31,7 +30,7 @@ namespace RapidCMS.Common.Extensions
                     Metadata = variant
                 } as Button)
                 : new List<Button>(),
-                Metadata = variants == 1 ? entityVariants.First() : null,
+                Metadata = baseEntityVariant,
                 ShouldConfirm = button.ButtonType == DefaultButtonType.Delete
             };
         }

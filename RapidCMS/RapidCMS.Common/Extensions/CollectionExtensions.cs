@@ -79,26 +79,24 @@ namespace RapidCMS.Common.Extensions
                 };
             }
 
-            collection.EntityVariants = configReceiver.EntityVariants.Any()
-                ? configReceiver.EntityVariants.ToList(variant => new EntityVariant
+            if (configReceiver.EntityVariants.Any())
+            {
+                collection.SubEntityVariants = configReceiver.EntityVariants.ToList(variant => new EntityVariant
                 {
+                    Alias = variant.Type.Name.ToUrlFriendlyString(),
                     Icon = variant.Icon,
                     Name = variant.Name,
-                    Type = variant.Type,
-                    // TODO: GUID?
-                    Alias = variant.Type.Name.ToUrlFriendlyString()
-                })
-                : new List<EntityVariant>
-                {
-                    new EntityVariant
-                    {
-                        // TODO: GUID?
-                        Alias = typeof(TEntity).Name.ToUrlFriendlyString(),
-                        Icon = null,
-                        Name = typeof(TEntity).Name,
-                        Type = typeof(TEntity)
-                    }
-                };
+                    Type = variant.Type
+                });
+            }
+
+            collection.EntityVariant = new EntityVariant
+            {
+                Alias = typeof(TEntity).Name.ToUrlFriendlyString(),
+                Icon = null,
+                Name = typeof(TEntity).Name,
+                Type = typeof(TEntity)
+            };
 
             if (configReceiver.ListView != null)
             {
@@ -106,30 +104,29 @@ namespace RapidCMS.Common.Extensions
                 {
                     Buttons = configReceiver.ListView.Buttons.ToList(button => button switch
                     {
-                        DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
+                        DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
                         CustomButtonConfig customButton => customButton.ToCustomButton(),
                         _ => default(Button)
                     }),
-                    ViewPanes = configReceiver.ListView.ListViewPanes.ToList(pane =>
-                    {
-                        return new ViewPane<ListViewProperty>
+                    ViewPane = configReceiver.ListView.ListViewPane == null ? null :
+                        new ViewPane
                         {
-                            Buttons = pane.Buttons.ToList(button => button switch
+                            Buttons = configReceiver.ListView.ListViewPane.Buttons.ToList(button => button switch
                             {
-                                DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
+                                DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
                                 CustomButtonConfig customButton => customButton.ToCustomButton(),
                                 _ => default(Button)
                             }),
-                            Properties = pane.Properties.ToList(property => new ListViewProperty
+                            Fields = configReceiver.ListView.ListViewPane.Properties.ToList(property => new Field
                             {
                                 Description = property.Description,
                                 Name = property.Name,
+                                Readonly = true,
                                 NodeProperty = property.NodeProperty,
                                 ValueMapper = property.ValueMapper ?? new DefaultValueMapper(),
                                 ValueMapperType = property.ValueMapperType
                             })
-                        };
-                    })
+                        }
                 };
             }
 
@@ -142,7 +139,7 @@ namespace RapidCMS.Common.Extensions
                     ListEditorType = configReceiver.ListEditor.ListEditorType,
                     Buttons = configReceiver.ListEditor.Buttons.ToList(button => button switch
                     {
-                        DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
+                        DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
                         CustomButtonConfig customButton => customButton.ToCustomButton(),
                         _ => default(Button)
                     }),
@@ -153,7 +150,7 @@ namespace RapidCMS.Common.Extensions
                             VariantType = editor.VariantType,
                             Buttons = editor.Buttons.ToList(button => button switch
                             {
-                                DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
+                                DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
                                 CustomButtonConfig customButton => customButton.ToCustomButton(),
                                 _ => default(Button)
                             }),
@@ -169,7 +166,7 @@ namespace RapidCMS.Common.Extensions
                 {
                     Buttons = configReceiver.NodeEditor.Buttons.ToList(button => button switch
                     {
-                        DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.EntityVariants),
+                        DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
                         CustomButtonConfig customButton => customButton.ToCustomButton(),
                         _ => default(Button)
                     }),

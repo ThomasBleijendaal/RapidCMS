@@ -61,7 +61,26 @@ namespace RapidCMS.Common.Models
         public string Alias { get; set; }
 
         public List<Collection> Collections { get; set; } = new List<Collection>();
-        public List<EntityVariant> EntityVariants { get; set; }
+
+        public List<EntityVariant>? SubEntityVariants { get; set; }
+        public EntityVariant EntityVariant { get; set; }
+
+        public EntityVariant GetEntityVariant(string? alias)
+        {
+            if (string.IsNullOrWhiteSpace(alias) || SubEntityVariants == null)
+            {
+                return EntityVariant;
+            }
+            else
+            {
+                return SubEntityVariants.First(x => x.Alias == alias);
+            }
+        }
+        public EntityVariant GetEntityVariant(IEntity entity)
+        {
+            return SubEntityVariants?.FirstOrDefault(x => x.Type == entity.GetType())
+                ?? EntityVariant;
+        }
 
         public Type RepositoryType { get; set; }
         public IRepository Repository { get; set; }
@@ -71,7 +90,6 @@ namespace RapidCMS.Common.Models
         public ListView ListView { get; set; }
         public ListEditor ListEditor { get; set; }
 
-        public NodeView NodeView { get; set; }
         public NodeEditor NodeEditor { get; set; }
 
     }
@@ -104,7 +122,7 @@ namespace RapidCMS.Common.Models
 
     public class ListView : View
     {
-        public List<ViewPane<ListViewProperty>> ViewPanes { get; set; }
+        public ViewPane ViewPane { get; set; }
         public List<Button> Buttons { get; set; }
     }
 
@@ -127,12 +145,6 @@ namespace RapidCMS.Common.Models
         public string CollectionAlias { get; set; }
     }
 
-    public class NodeView : View
-    {
-        public List<ViewPane<NodeViewProperty>> ViewPanes { get; set; }
-        public List<Button> Buttons { get; set; }
-    }
-
     public class NodeEditor : Editor
     {
         public Type BaseType { get; set; }
@@ -148,12 +160,11 @@ namespace RapidCMS.Common.Models
         public string Alias { get; set; }
     }
 
-    public class ViewPane<T>
-        where T : Property
+    public class ViewPane
     {
         public string Name { get; set; }
 
-        public List<T> Properties { get; set; }
+        public List<Field> Fields { get; set; }
         public List<Button> Buttons { get; set; }
     }
 
@@ -164,33 +175,6 @@ namespace RapidCMS.Common.Models
         public List<Button> Buttons { get; set; }
         public List<T> Fields { get; set; }
         public List<SubCollectionListEditor> SubCollectionListEditors { get; set; }
-    }
-
-    // TODO: merge with field
-    public class Property
-    {
-        public string Name { get; set; }
-        public string Description { get; set; }
-
-        public PropertyMetadata NodeProperty { get; set; }
-        public IValueMapper ValueMapper { get; set; }
-        public Type ValueMapperType { get; set; }
-    }
-
-    // TODO: required?
-    public class ListViewProperty : Property
-    {
-
-    }
-
-    public class NodeViewProperty : Property
-    {
-
-    }
-
-    public class EntityListViewProperty : Property
-    {
-
     }
 
     public abstract class Button
@@ -254,14 +238,13 @@ namespace RapidCMS.Common.Models
         {
             return ActionHandler.IsCompatibleWithView(viewContext);
         }
-        public Task HandleActionAsync()
+        public Task HandleActionAsync(string? parentId, string? id)
         {
-            return ActionHandler.InvokeAsync();
+            return ActionHandler.InvokeAsync(parentId, id);
         }
     }
 
 
-    // TODO: merge with property
     public class Field
     {
         public int Index { get; set; }
@@ -269,9 +252,9 @@ namespace RapidCMS.Common.Models
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public bool Readonly { get; set; }
+        public bool Readonly { get; set; } = true;
 
-        public EditorType DataType { get; set; }
+        public EditorType DataType { get; set; } = EditorType.Readonly;
 
         public PropertyMetadata NodeProperty { get; set; }
         public IValueMapper ValueMapper { get; set; }

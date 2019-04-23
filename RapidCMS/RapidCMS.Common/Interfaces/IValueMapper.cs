@@ -63,19 +63,19 @@ namespace RapidCMS.Common.Interfaces
         }
     }
 
-    public class IntValueMapper : ValueMapper<int>
+    public class LongValueMapper : ValueMapper<long>
     {
-        public override int MapFromEditor(ValueMappingContext context, object value)
+        public override long MapFromEditor(ValueMappingContext context, object value)
         {
-            return (int)value;
+            return (long)value;
         }
 
-        public override object MapToEditor(ValueMappingContext context, int value)
+        public override object MapToEditor(ValueMappingContext context, long value)
         {
             return value;
         }
 
-        public override string MapToView(ValueMappingContext context, int value)
+        public override string MapToView(ValueMappingContext context, long value)
         {
             return value.ToString();
         }
@@ -96,7 +96,7 @@ namespace RapidCMS.Common.Interfaces
 
         public override string MapToView(ValueMappingContext context, ICollection<TValue> value)
         {
-            return string.Join(", ", value.Select(x => x.ToString()));
+            return value == null ? "" : string.Join(", ", value?.Select(x => x.ToString()));
         }
     }
 }

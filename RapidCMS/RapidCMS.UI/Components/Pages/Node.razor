@@ -73,13 +73,11 @@ else
                             <div class="col-10">
                                 @if (Action == Constants.View)
                                 {
-                                    @field.ReadonlyValue
+                                    @field.GetReadonlyValue(Editor.Entity)
                                 }
                                 else
                                 {
-                                    // TODO: context object instead of everything a seperate parameter?
-
-                                    <DefaultEditor Field="field" Callback="@((object value) => field.Value = value)" />
+                                    <DefaultEditor Field="field" Entity="@Editor.Entity" />
                                 }
                             </div>
                         </div>

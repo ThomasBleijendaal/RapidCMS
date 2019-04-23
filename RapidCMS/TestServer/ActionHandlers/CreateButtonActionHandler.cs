@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using TestLibrary.Entities;
 using TestLibrary.Repositories;
 
+#nullable enable
+
 namespace TestServer.ActionHandlers
 {
     public class CreateButtonActionHandler : IButtonActionHandler
@@ -21,13 +23,13 @@ namespace TestServer.ActionHandlers
             return CrudType.Refresh;
         }
 
-        public async Task InvokeAsync()
+        public async Task InvokeAsync(string? parentId, string? id)
         {
             var i = 0;
 
             do
             {
-                await _repository.InsertAsync(null, new AzureTableStorageEntity()
+                await _repository.InsertAsync(parentId, new AzureTableStorageEntity()
                 {
                     Description = $"New New New {i}",
                     Title = $"Item {i}"

@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 
+#nullable enable
+
 namespace RapidCMS.Common.Interfaces
 {
     public interface IButtonActionHandler
@@ -10,7 +12,7 @@ namespace RapidCMS.Common.Interfaces
         CrudType GetCrudType();
         bool IsCompatibleWithView(ViewContext viewContext);
         bool ShouldConfirm();
-        Task InvokeAsync();
+        Task InvokeAsync(string? parentId, string? id);
     }
 
     public class DefaultButtonActionHandler : IButtonActionHandler
@@ -29,7 +31,7 @@ namespace RapidCMS.Common.Interfaces
             return _crudType;
         }
 
-        public Task InvokeAsync()
+        public Task InvokeAsync(string? parentId, string? id)
         {
             _action.Invoke();
             return Task.CompletedTask;

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
 
@@ -15,6 +11,7 @@ namespace RapidCMS.Common.Services
     public interface IUIService
     {
         EditorUI GenerateNodeUI(ViewContext viewContext, NodeEditor nodeEditor);
+        ListUI GenerateListUI(ViewContext viewContext, ListView listView);
     }
 
     public class UIService : IUIService
@@ -57,6 +54,34 @@ namespace RapidCMS.Common.Services
                                 .ToList(x => x.element)
                         };
                     })
+            };
+        }
+
+
+        public ListUI GenerateListUI(ViewContext viewContext, ListView listView)
+        {
+            return new ListUI
+            {
+                Buttons = listView.Buttons
+                    .GetAllButtons()
+                    .Where(button => button.IsCompatibleWithView(viewContext))
+                    .ToList(button => button.ToUI()),
+
+                Section = listView.ViewPane == null ? null :
+                    new SectionUI
+                    {
+                        Buttons = listView.ViewPane.Buttons
+                            .GetAllButtons()
+                            .Where(button => button.IsCompatibleWithView(viewContext))
+                            .ToList(button => button.ToUI()),
+
+                        Elements = listView.ViewPane.Fields
+                            .ToList(field =>
+                            {
+                                return (Element)field.ToFieldWithLabelUI();
+
+                            })
+                    }
             };
         }
     }

@@ -56,7 +56,7 @@ namespace TestServer
             {
                 listViewConfig
                     .AddDefaultButton(DefaultButtonType.New, "New")
-                    .AddListPane(pane =>
+                    .SetListPane(pane =>
                     {
                         pane.AddProperty(x => x._Id);
                         pane.AddProperty(x => x.Name).SetDescription("This is a name");
@@ -71,7 +71,7 @@ namespace TestServer
             {
                 listViewConfig
                     .AddDefaultButton(DefaultButtonType.New, "New")
-                    .AddListPane(pane =>
+                    .SetListPane(pane =>
                     {
                         pane.AddProperty(x => x._Id);
                         pane.AddProperty(x => x.Name).SetDescription("This is a name");
@@ -93,7 +93,7 @@ namespace TestServer
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x._Id)
-                            .SetValueMapper(new IntValueMapper())
+                            .SetValueMapper(new LongValueMapper())
                             .SetReadonly(true);
 
                         pane.AddField(x => x.Name)
@@ -105,7 +105,7 @@ namespace TestServer
 
                         pane.AddField(x => x.Number)
                             .SetDescription("This is a number")
-                            .SetValueMapper(new IntValueMapper())
+                            .SetValueMapper(new LongValueMapper())
                             .SetType(EditorType.Numeric);
                     });
             }
@@ -134,7 +134,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper(new IntValueMapper())
+                        .SetValueMapper(new LongValueMapper())
                         .SetType(EditorType.Numeric);
                 });
             }
@@ -164,7 +164,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper(new IntValueMapper())
+                        .SetValueMapper(new LongValueMapper())
                         .SetType(EditorType.Numeric);
                 });
             }
@@ -179,7 +179,7 @@ namespace TestServer
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x._Id)
-                            .SetValueMapper(new IntValueMapper())
+                            .SetValueMapper(new LongValueMapper())
                             .SetReadonly(true);
 
                         pane.AddField(x => x.Name)
@@ -191,7 +191,7 @@ namespace TestServer
 
                         pane.AddField(x => x.Number)
                             .SetDescription("This is a number")
-                            .SetValueMapper(new IntValueMapper())
+                            .SetValueMapper(new LongValueMapper())
                             .SetType(EditorType.Numeric);
                     })
 
@@ -216,7 +216,7 @@ namespace TestServer
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x._Id)
-                            .SetValueMapper(new IntValueMapper())
+                            .SetValueMapper(new LongValueMapper())
                             .SetReadonly(true);
 
                         pane.AddField(x => x.Name)
@@ -228,7 +228,7 @@ namespace TestServer
 
                         pane.AddField(x => x.Number)
                             .SetDescription("This is a number")
-                            .SetValueMapper(new IntValueMapper())
+                            .SetValueMapper(new LongValueMapper())
                             .SetType(EditorType.Numeric);
                     })
 
@@ -248,7 +248,7 @@ namespace TestServer
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x._Id)
-                            .SetValueMapper(new IntValueMapper())
+                            .SetValueMapper(new LongValueMapper())
                             .SetReadonly(true);
 
                         pane.AddField(x => x.Name)
@@ -260,7 +260,7 @@ namespace TestServer
 
                         pane.AddField(x => x.Number)
                             .SetDescription("This is a number")
-                            .SetValueMapper(new IntValueMapper())
+                            .SetValueMapper(new LongValueMapper())
                             .SetType(EditorType.Numeric);
                     })
 
@@ -307,7 +307,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper(new IntValueMapper())
+                        .SetValueMapper(new LongValueMapper())
                         .SetType(EditorType.Numeric);
 
                     editor.AddField(x => x.Title)
@@ -335,7 +335,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper(new IntValueMapper())
+                        .SetValueMapper(new LongValueMapper())
                         .SetType(EditorType.Numeric);
 
                     editor.AddField(x => x.Image)
@@ -363,7 +363,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper(new IntValueMapper())
+                        .SetValueMapper(new LongValueMapper())
                         .SetType(EditorType.Numeric);
 
                     editor.AddField(x => x.Quote)
@@ -379,7 +379,7 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.New)
                     .AddCustomButton<CreateButtonActionHandler>("create-button", "Custom create!");
 
-                config.AddListPane(listPaneConfig =>
+                config.SetListPane(listPaneConfig =>
                 {
                     listPaneConfig.AddProperty(x => x.Id);
                     listPaneConfig.AddProperty(x => x.Title);
@@ -410,13 +410,13 @@ namespace TestServer
                 config
                     .AddDefaultButton(DefaultButtonType.New);
 
-                config.AddListPane(listPaneConfig =>
+                config.SetListPane(listPaneConfig =>
                 {
                     listPaneConfig.AddProperty(x => x.Id);
                     listPaneConfig.AddProperty(x => x.Name);
                     listPaneConfig.AddProperty(x => x.AzureTableStorageEntityId);
                     listPaneConfig.AddProperty(x => x.AzureTableStorageEntityIds)
-                        .SetValueMapper<CollectionValueMapper<string>>();
+                        .SetValueMapper(new CollectionValueMapper<string>());
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);

@@ -12,13 +12,13 @@
 @using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Interfaces
 
-@if (Field != null)
+@if (Field != null && Entity != null)
 {   
     switch (Field.Type)
     {
         case EditorType.Readonly:
 
-            <Readonly EditorValue="@Field.ReadonlyValue" />
+            <Readonly EditorValue="@Field.GetReadonlyValue(Entity)" />
 
             break;
 
@@ -68,41 +68,26 @@
     [Parameter]
     private FieldUI? Field { get; set; }
 
-    [Obsolete]
     [Parameter]
-    private string Value { get; set; }
+    private IEntity? Entity { get; set; }
 
     public object? LocalValue
     {
         get
         {
-            return Field?.Value;
+            return Entity == null ? null : Field?.GetValue(Entity);
         }
         set
         {
-            if (Field != null)
+            if (Field != null && Entity != null)
             {
-                Field.Value = value;
+                Field.SetValue(Entity, value);
             }
         }
     }
 
-    [Obsolete]
-    [Parameter]
-    private EditorType? Type { get; set; } = null;
-
-    [Parameter]
-    private Action<object>? Callback { get; set; }
-
-    [Obsolete]
-    [Parameter]
-    private IDataProvider? DataProvider { get; set; }
-
-    // TODO: this function is bullshit
     private void ChildEditorCallback<T>(T value)
     {
         LocalValue = (object?)value;
-
-        Callback?.Invoke((object)value);
     }
 }

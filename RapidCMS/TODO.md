@@ -2,6 +2,8 @@
 2. Public or internal?
 
 
+Context objects should contain service provider interface
+
 
 Main features
 

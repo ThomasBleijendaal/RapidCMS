@@ -1,34 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Interfaces;
 
 namespace RapidCMS.Common.Models.UI
 {
+    public class ListUI
+    {
+        public IEnumerable<IEntity> Entities { get; set; }
 
+        public List<ButtonUI> Buttons { get; set; }
+        public SectionUI Section { get; set; }
+    }
 
     public class EditorUI
     {
-        private IEntity _entity;
-
-        public void SetEntity(IEntity entity)
-        {
-            _entity = entity;
-
-            Sections.ForEach(section => section.Elements.ForEach(element =>
-            {
-                if (element is FieldUI field)
-                {
-                    field.Entity = _entity;
-                }
-            }));
-        }
-
-        public IEntity GetEntity()
-        {
-            return _entity;
-        }
+        public IEntity Entity { get; set; }
 
         public List<ButtonUI> Buttons { get; set; }
         public List<SectionUI> Sections { get; set; }
@@ -36,6 +22,7 @@ namespace RapidCMS.Common.Models.UI
 
     public class SectionUI
     {
+        public List<ButtonUI> Buttons { get; set; }
         public List<Element> Elements { get; set; }
     }
 
@@ -56,8 +43,6 @@ namespace RapidCMS.Common.Models.UI
 
     public class FieldUI : Element
     {
-        internal IEntity Entity { get; set; }
-
         public string Alias { get; set; }
 
         public EditorType Type { get; set; }
@@ -66,25 +51,21 @@ namespace RapidCMS.Common.Models.UI
         public PropertyMetadata Property { get; set; }
         public IDataProvider DataProvider { get; set; }
 
-        // TODO: change to object
-        public object Value
+        public object GetValue(IEntity entity)
         {
-            get
-            {
-                return ValueMapper.MapToEditor(null, Property.Getter(Entity));
-            }
-            set
-            {
-                Property.Setter(Entity, ValueMapper.MapFromEditor(null, value));
-            }
+
+            return ValueMapper.MapToEditor(null, Property.Getter(entity));
         }
 
-        public string ReadonlyValue
+        public void SetValue(IEntity entity, object value)
         {
-            get
-            {
-                return ValueMapper.MapToView(null, Property.Getter(Entity));
-            }
+
+            Property.Setter(entity, ValueMapper.MapFromEditor(null, value));
+        }
+
+        public string GetReadonlyValue(IEntity entity)
+        {
+            return ValueMapper.MapToView(null, Property.Getter(entity));
         }
     }
 
