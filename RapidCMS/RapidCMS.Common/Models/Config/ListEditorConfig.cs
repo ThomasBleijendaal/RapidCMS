@@ -18,13 +18,14 @@ namespace RapidCMS.Common.Models.Config
     public class ListEditorConfig<TEntity> : ListEditorConfig
         where TEntity : IEntity
     {
-        public ListEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null)
+        public ListEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig
             {
                 ButtonType = type,
                 Icon = icon ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Icon,
-                Label = label ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Label
+                Label = label ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Label,
+                IsPrimary = isPrimary
             };
 
             Buttons.Add(button);
@@ -36,6 +37,8 @@ namespace RapidCMS.Common.Models.Config
         {
             return AddEditor<TEntity>(configure);
         }
+
+        // TODO: do not allow for more than one editor of the same EntityType
 
         public ListEditorConfig<TEntity> AddEditor<TDerivedEntity>(Action<ListEditorPaneConfig<TDerivedEntity>> configure)
             where TDerivedEntity : TEntity

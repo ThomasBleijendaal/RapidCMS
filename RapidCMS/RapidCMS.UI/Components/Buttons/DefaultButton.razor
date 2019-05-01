@@ -2,6 +2,6 @@
 
 @inherits  BaseButton<TContext>
 
-<button type="button" class="btn" onclick="@ButtonClickAsync">
+<button type="button" class="btn @(Context.IsPrimary ? "btn-primary" : "btn-light")" onclick="@ButtonClickAsync">
     <i class="oi oi-@Context.Icon"></i> @Context.Label
 </button>

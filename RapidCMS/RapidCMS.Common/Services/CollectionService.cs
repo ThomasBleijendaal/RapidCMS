@@ -26,11 +26,11 @@ namespace RapidCMS.Common.Services
         Task<CollectionTreeRootDTO> GetCollectionsAsync();
 
         Task<ListUI> GetCollectionListViewAsync(string action, string collectionAlias, string? variantAlias, string? parentId);
-        Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, string? parentId, string actionId);
-        Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, string? parentId, string id, string actionId);
+        Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string actionId);
+        Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string id, string actionId, IEntity entity);
 
         Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string collectionAlias, string variantAlias, string? parentId);
-        Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string? parentId, string actionId);
+        [Obsolete]
         Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, CollectionListEditorDTO formValues, string actionId);
 
         Task<EditorUI> GetNodeEditorAsync(string action, string collectionAlias, string variantAlias, string? parentId, string? id);
@@ -130,22 +130,38 @@ namespace RapidCMS.Common.Services
             return result;
         }
 
-        public async Task<ListUI> GetCollectionListViewAsync(string action, string alias, string variantAlias, string? parentId)
+        public async Task<ListUI> GetCollectionListViewAsync(string action, string alias, string? variantAlias, string? parentId)
         {
             var collection = _root.GetCollection(alias);
 
             var entityVariant = collection.GetEntityVariant(variantAlias);
-
-            var viewContext = new ViewContext(UsageType.List | MapActionToUsageType(action), entityVariant);
-            var listView = collection.ListView;
-
             var entities = await collection.Repository._GetAllAsObjectsAsync(parentId);
+            var viewContext = new ViewContext(UsageType.List | MapActionToUsageType(action), entityVariant);
 
-            var editor = _uiService.GenerateListUI(viewContext, listView);
+            if (action == Constants.List)
+            {
+                var editor = _uiService.GenerateListUI(viewContext, collection.ListView);
 
-            editor.Entities = entities;
+                editor.Entities = entities;
+                editor.ListType = ListType.TableView;
 
-            return editor;
+                return editor;
+            }
+            else if (action == Constants.Edit)
+            {
+                var editor = _uiService.GenerateListUI(viewContext, collection.ListEditor);
+
+                editor.Entities = entities;
+                editor.ListType = collection.ListEditor.ListEditorType == ListEditorType.Table
+                    ? ListType.TableEditor
+                    : ListType.BlockEditor;
+
+                return editor;
+            }
+            else
+            {
+                throw new NotImplementedException($"Cannot do {action} on GetCollectionListViewAsync");
+            }
         }
 
         public async Task<CollectionListEditorDTO> GetCollectionListEditorAsync(string action, string alias, string variantAlias, string? parentId)
@@ -350,12 +366,12 @@ namespace RapidCMS.Common.Services
             }
         }
 
-        public async Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, string? parentId, string actionId)
+        public async Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string actionId)
         {
             var collection = _root.GetCollection(collectionAlias);
 
-            var listView = collection.ListView;
-            var button = listView.Buttons.GetAllButtons().First(x => x.ButtonId == actionId);
+            var buttons = action == Constants.List ? collection.ListView.Buttons : collection.ListEditor.Buttons;
+            var button = buttons.GetAllButtons().First(x => x.ButtonId == actionId);
             var buttonCrudType = button.GetCrudType();
             var entityVariant = button.Metadata as EntityVariant;
 
@@ -384,20 +400,25 @@ namespace RapidCMS.Common.Services
                 default:
                     throw new InvalidOperationException();
             }
-
         }
 
-        public async Task<ViewCommand> ProcessListViewActionAsync(string collectionAlias, string? parentId, string id, string actionId)
+        public async Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string id, string actionId, IEntity updatedEntity)
         {
             var collection = _root.GetCollection(collectionAlias);
 
-            var listView = collection.ListView;
-            var button = listView.ViewPane.Buttons.GetAllButtons().First(x => x.ButtonId == actionId);
+            var buttons = action == Constants.List 
+                ? collection.ListView.ViewPane.Buttons 
+                : collection.ListEditor.EditorPanes.SelectMany(pane => pane.Buttons);
+            var button = buttons.GetAllButtons().First(x => x.ButtonId == actionId);
             var buttonCrudType = button.GetCrudType();
 
-            // since the id is known, get the entity variant from the entity
-            var entity = await collection.Repository._GetByIdAsync(id, parentId);
-            var entityVariant = collection.GetEntityVariant(entity);
+            //// since the id is known, get the entity variant from the entity
+            //var entity = await collection.Repository._GetByIdAsync(id, parentId);
+
+            // TODO: relations must not be simply set but must be added using seperate IRepository call after update to allow for better support
+            // TODO: must track which releation(s) have been broken and which have been made to allow for absolute control
+            var entityVariant = collection.GetEntityVariant(updatedEntity);
+
 
             // TODO: what to do with this action
             if (button is CustomButton customButton)
@@ -413,6 +434,21 @@ namespace RapidCMS.Common.Services
                 case CrudType.Read:
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
 
+                case CrudType.Update:
+                    await collection.Repository._UpdateAsync(id, parentId, updatedEntity);
+                    return new ReloadCommand();
+
+                case CrudType.Insert:
+                    updatedEntity = await collection.Repository._InsertAsync(parentId, updatedEntity);
+                    return new UpdateParameterCommand
+                    {
+                        Action = Constants.New,
+                        CollectionAlias = collectionAlias,
+                        VariantAlias = entityVariant.Alias,
+                        ParentId = parentId,
+                        Id = updatedEntity.Id
+                    };
+
                 case CrudType.Delete:
 
                     await collection.Repository._DeleteAsync(id, parentId);
@@ -425,74 +461,12 @@ namespace RapidCMS.Common.Services
                     return new ReloadCommand();
 
                 case CrudType.Create:
-                case CrudType.Insert:
-                case CrudType.Update:
                 default:
                     throw new InvalidOperationException();
             }
         }
 
-        public async Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string? parentId, string actionId)
-        {
-            var collection = _root.GetCollection(collectionAlias);
-
-            var listEditor = collection.ListEditor;
-            var button = listEditor.Buttons.GetAllButtons().First(x => x.ButtonId == actionId);
-            var buttonCrudType = button.GetCrudType();
-            var entityVariant = button.Metadata as EntityVariant;
-
-            // TODO: what to do with this action
-            if (button is CustomButton customButton)
-            {
-                await customButton.HandleActionAsync(parentId, null);
-            }
-
-            switch (buttonCrudType)
-            {
-                case CrudType.View:
-                    return new UpdateParameterCommand
-                    {
-                        Action = Constants.View,
-                        CollectionAlias = collectionAlias,
-                        VariantAlias = entityVariant.Alias,
-                        ParentId = parentId,
-                        Id = null
-                    };
-
-                case CrudType.Read:
-                    return new UpdateParameterCommand
-                    {
-                        Action = Constants.Edit,
-                        CollectionAlias = collectionAlias,
-                        VariantAlias = entityVariant.Alias,
-                        ParentId = parentId,
-                        Id = null
-                    };
-
-                case CrudType.Create:
-                    return new UpdateParameterCommand
-                    {
-                        Action = Constants.New,
-                        CollectionAlias = collectionAlias,
-                        VariantAlias = entityVariant.Alias,
-                        ParentId = parentId,
-                        Id = null
-                    };
-
-                case CrudType.None:
-                    return new NullOperationCommand();
-
-                case CrudType.Refresh:
-                    return new ReloadCommand();
-
-                case CrudType.Insert:
-                case CrudType.Update:
-                case CrudType.Delete:
-                default:
-                    throw new InvalidOperationException();
-            }
-        }
-
+        [Obsolete]
         public async Task<ViewCommand> ProcessListEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, CollectionListEditorDTO formValues, string actionId)
         {
             var collection = _root.GetCollection(collectionAlias);

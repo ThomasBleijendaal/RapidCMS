@@ -16,6 +16,7 @@ namespace RapidCMS.Common.Extensions
                 ButtonId = button.ButtonId,
                 Label = button.Label,
                 ShouldConfirm = button.ShouldConfirm,
+                IsPrimary = button.IsPrimary,
                 Alias = (button is CustomButton customButton) ? customButton.Alias : null
             };
         }

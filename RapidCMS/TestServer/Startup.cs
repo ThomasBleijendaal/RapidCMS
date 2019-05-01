@@ -55,7 +55,7 @@ namespace TestServer
             void listView(ListViewConfig<TestEntity> listViewConfig)
             {
                 listViewConfig
-                    .AddDefaultButton(DefaultButtonType.New, "New")
+                    .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
                     .SetListPane(pane =>
                     {
                         pane.AddProperty(x => x._Id);
@@ -70,7 +70,7 @@ namespace TestServer
             void listViewWithPolymorphism(ListViewConfig<TestEntity> listViewConfig)
             {
                 listViewConfig
-                    .AddDefaultButton(DefaultButtonType.New, "New")
+                    .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
                     .SetListPane(pane =>
                     {
                         pane.AddProperty(x => x._Id);
@@ -87,8 +87,8 @@ namespace TestServer
                 nodeEditorConfig
                     .AddDefaultButton(DefaultButtonType.View, "Cancel", "ban")
                     .AddDefaultButton(DefaultButtonType.Edit)
-                    .AddDefaultButton(DefaultButtonType.SaveNew)
-                    .AddDefaultButton(DefaultButtonType.SaveExisting)
+                    .AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true)
+                    .AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true)
                     .AddDefaultButton(DefaultButtonType.Delete)
                     .AddEditorPane(pane =>
                     {
@@ -115,10 +115,10 @@ namespace TestServer
                 listEditorConfig.AddDefaultButton(DefaultButtonType.New);
                 listEditorConfig.AddEditor(editor =>
                 {
-                    editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                    editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.View);
                     editor.AddDefaultButton(DefaultButtonType.Edit);
-                    editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                    editor.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.Delete);
 
                     editor.AddField(x => x._Id)
@@ -142,13 +142,13 @@ namespace TestServer
             void subListNodeEditor(ListEditorConfig<TestEntity> listEditorConfig)
             {
                 listEditorConfig.AddDefaultButton(DefaultButtonType.New);
-                listEditorConfig.AddDefaultButton(DefaultButtonType.Edit, "Cancel", "ban");
+                listEditorConfig.AddDefaultButton(DefaultButtonType.Edit, "Cancel", "ban", isPrimary: true);
                 listEditorConfig.AddEditor(editor =>
                 {
-                    editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                    editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.View);
                     editor.AddDefaultButton(DefaultButtonType.Edit);
-                    editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                    editor.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.Delete);
 
                     editor.AddField(x => x._Id)
@@ -172,8 +172,8 @@ namespace TestServer
             void nodeEditorWithSubCollection(NodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
-                    .AddDefaultButton(DefaultButtonType.SaveNew)
-                    .AddDefaultButton(DefaultButtonType.SaveExisting)
+                    .AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true)
+                    .AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true)
                     .AddDefaultButton(DefaultButtonType.Delete)
 
                     .AddEditorPane(pane =>
@@ -209,8 +209,8 @@ namespace TestServer
             void nodeEditorWithPolymorphicSubCollection(NodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
-                    .AddDefaultButton(DefaultButtonType.SaveNew)
-                    .AddDefaultButton(DefaultButtonType.SaveExisting)
+                    .AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true)
+                    .AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true)
                     .AddDefaultButton(DefaultButtonType.Delete)
 
                     .AddEditorPane(pane =>
@@ -241,8 +241,8 @@ namespace TestServer
             void nodeEditorWithPolymorphism(NodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
-                    .AddDefaultButton(DefaultButtonType.SaveNew)
-                    .AddDefaultButton(DefaultButtonType.SaveExisting)
+                    .AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true)
+                    .AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true)
                     .AddDefaultButton(DefaultButtonType.Delete)
 
                     .AddEditorPane(pane =>
@@ -285,13 +285,13 @@ namespace TestServer
 
             void listNodeEditorWithPolymorphism(ListEditorConfig<TestEntity> listEditorConfig)
             {
-                listEditorConfig.AddDefaultButton(DefaultButtonType.New);
+                listEditorConfig.AddDefaultButton(DefaultButtonType.New, isPrimary: true);
                 listEditorConfig.AddEditor<TestEntityVariantA>(editor =>
                 {
-                    editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                    editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.View);
                     editor.AddDefaultButton(DefaultButtonType.Edit);
-                    editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                    editor.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.Delete);
 
                     editor.AddField(x => x._Id)
@@ -316,10 +316,10 @@ namespace TestServer
 
                 listEditorConfig.AddEditor<TestEntityVariantB>(editor =>
                 {
-                    editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                    editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.View);
                     editor.AddDefaultButton(DefaultButtonType.Edit);
-                    editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                    editor.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.Delete);
 
                     editor.AddField(x => x._Id)
@@ -344,10 +344,10 @@ namespace TestServer
 
                 listEditorConfig.AddEditor<TestEntityVariantC>(editor =>
                 {
-                    editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                    editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.View);
                     editor.AddDefaultButton(DefaultButtonType.Edit);
-                    editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                    editor.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.Delete);
 
                     editor.AddField(x => x._Id)
@@ -376,7 +376,7 @@ namespace TestServer
             void AzureTableStorageListView(ListViewConfig<AzureTableStorageEntity> config)
             {
                 config
-                    .AddDefaultButton(DefaultButtonType.New)
+                    .AddDefaultButton(DefaultButtonType.New, isPrimary: true)
                     .AddCustomButton<CreateButtonActionHandler>("create-button", "Custom create!");
 
                 config.SetListPane(listPaneConfig =>
@@ -385,15 +385,15 @@ namespace TestServer
                     listPaneConfig.AddProperty(x => x.Title);
                     listPaneConfig.AddProperty(x => x.Description);
 
-                    listPaneConfig.AddDefaultButton(DefaultButtonType.Edit);
+                    listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
                 });
             }
 
             void AzureTableStorageEditor(NodeEditorConfig<AzureTableStorageEntity> config)
             {
-                config.AddDefaultButton(DefaultButtonType.SaveExisting);
-                config.AddDefaultButton(DefaultButtonType.SaveNew);
+                config.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+                config.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                 config.AddDefaultButton(DefaultButtonType.Delete);
 
                 config.AddEditorPane(editorPaneConfig =>
@@ -418,15 +418,15 @@ namespace TestServer
                     listPaneConfig.AddProperty(x => x.AzureTableStorageEntityIds)
                         .SetValueMapper(new CollectionValueMapper<string>());
 
-                    listPaneConfig.AddDefaultButton(DefaultButtonType.Edit);
+                    listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
                 });
             }
 
             void RelationEditor(NodeEditorConfig<RelationEntity> config)
             {
-                config.AddDefaultButton(DefaultButtonType.SaveExisting);
-                config.AddDefaultButton(DefaultButtonType.SaveNew);
+                config.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+                config.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                 config.AddDefaultButton(DefaultButtonType.Delete);
 
                 config.AddEditorPane(editorPaneConfig =>

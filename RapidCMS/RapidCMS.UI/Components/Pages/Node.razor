@@ -11,11 +11,8 @@
 @using RapidCMS.Common.Services
 
 @inject ICollectionService CollectionService
-@*
-    TODO: remove weird callback for binding
-*@
 
-@if (Editor == null)
+@if (UI == null)
 {
     <div class="content px-4">
         <div class="top-row px-4">
@@ -30,8 +27,10 @@ else
 {
     <div class="top-row px-4">
         @{
-            @foreach (var button in Editor.Buttons)
+            @foreach (var button in UI.Buttons)
             {
+
+                // TODO: put this in helper function
                 var context = new ButtonContext<BasePage>
                 {
                     ButtonId = button.ButtonId,
@@ -39,7 +38,8 @@ else
                     Context = this,
                     Icon = button.Icon,
                     Label = button.Label,
-                    ShouldConfirm = button.ShouldConfirm
+                    ShouldConfirm = button.ShouldConfirm,
+                    IsPrimary = button.IsPrimary
                 };
 
                 <CascadingValue Value="context">
@@ -56,7 +56,7 @@ else
         }
     </div>
 
-    @foreach (var pane in Editor.Sections)
+    @foreach (var pane in UI.Sections)
     {
         <div class="content px-4">
             @if (pane.Elements.Any())
@@ -71,13 +71,14 @@ else
                                 <small class="form-text text-muted">@field.Description</small>
                             </div>
                             <div class="col-10">
+                                @* // TODO: change to some enum on the EditorUI *@
                                 @if (Action == Constants.View)
                                 {
-                                    @field.GetReadonlyValue(Editor.Entity)
+                                    @field.GetReadonlyValue(UI.Entity)
                                 }
                                 else
                                 {
-                                    <DefaultEditor Field="field" Entity="@Editor.Entity" />
+                                    <DefaultEditor Field="field" Entity="@UI.Entity" />
                                 }
                             </div>
                         </div>
@@ -112,7 +113,7 @@ else
     [Parameter]
     private string? Id { get; set; } = null;
 
-    EditorUI Editor;
+    EditorUI? UI;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -121,12 +122,12 @@ else
 
     protected override async Task LoadDataAsync()
     {
-        Editor = await CollectionService.GetNodeEditorAsync(Action, CollectionAlias, VariantAlias, ParentId, Id);
+        UI = await CollectionService.GetNodeEditorAsync(Action, CollectionAlias, VariantAlias, ParentId, Id);
     }
 
     async Task ButtonCallbackAsync(string actionId, BasePage view)
     {
-        var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, Editor, actionId);
+        var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, UI, actionId);
 
         await HandleViewCommandAsync(command);
     }

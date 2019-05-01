@@ -19,7 +19,7 @@ namespace TestLibrary
         public int? ParentId { get; set; }
 
 #pragma warning disable IDE1006 // Naming Styles
-        public int _Id { get; set; }
+        public long _Id { get; set; }
 #pragma warning restore IDE1006 // Naming Styles
 
         public string Name { get; set; }

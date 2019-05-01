@@ -31,7 +31,8 @@ namespace RapidCMS.Common.Extensions
                 } as Button)
                 : new List<Button>(),
                 Metadata = baseEntityVariant,
-                ShouldConfirm = button.ButtonType == DefaultButtonType.Delete
+                ShouldConfirm = button.ButtonType == DefaultButtonType.Delete,
+                IsPrimary = button.IsPrimary
             };
         }
 
@@ -49,7 +50,8 @@ namespace RapidCMS.Common.Extensions
                 Icon = button.Icon,
                 Label = button.Label,
                 Buttons = new List<Button>(),
-                ShouldConfirm = handler.ShouldConfirm()
+                ShouldConfirm = handler.ShouldConfirm(),
+                IsPrimary = button.IsPrimary
             };
         }
     }

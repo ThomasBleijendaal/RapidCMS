@@ -8,10 +8,13 @@ namespace RapidCMS.Common.Models.UI
     {
         public IEnumerable<IEntity> Entities { get; set; }
 
+        public ListType ListType { get; set; }
+
         public List<ButtonUI> Buttons { get; set; }
         public SectionUI Section { get; set; }
     }
 
+    // TODO: rename to NodeUI
     public class EditorUI
     {
         public IEntity Entity { get; set; }
@@ -32,6 +35,7 @@ namespace RapidCMS.Common.Models.UI
         public string Label { get; set; }
         public string Icon { get; set; }
         public bool ShouldConfirm { get; set; }
+        public bool IsPrimary { get; set; }
 
         public string Alias { get; set; }
     }

@@ -16,13 +16,14 @@ namespace RapidCMS.Common.Models.Config
     public class ListViewConfig<TEntity> : ListViewConfig
         where TEntity : IEntity
     {
-        public ListViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null)
+        public ListViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig
             {
                 ButtonType = type,
                 Icon = icon ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Icon,
-                Label = label ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Label
+                Label = label ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Label,
+                IsPrimary = isPrimary
             };
 
             Buttons.Add(button);

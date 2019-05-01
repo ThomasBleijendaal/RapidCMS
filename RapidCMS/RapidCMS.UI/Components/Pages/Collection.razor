@@ -7,13 +7,14 @@
 @using RapidCMS.Common.Enums
 @using RapidCMS.UI.Components.Buttons
 @using RapidCMS.Common.Models.DTOs
+@using RapidCMS.Common.Extensions
 @using RapidCMS.Common.Interfaces
 @using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Services
 
 @inject ICollectionService CollectionService
 
-@if (ListView == null && EditorView == null)
+@if (UI == null)
 {
     <div class="content px-4">
         <div class="top-row px-4">
@@ -24,102 +25,118 @@
         </div>
     </div>
 }
-else if (ListView != null)
+else
 {
-    <div class="top-row px-4">
-        @foreach (var button in ListView.Buttons)
-        {
-            var context = new ButtonContext<BasePage>
+    if (UI.ListType.In(ListType.TableView, ListType.TableEditor))
+    {
+        <div class="top-row px-4">
+            @foreach (var button in UI.Buttons)
             {
-                ButtonId = button.ButtonId,
-                CallbackAsync = ViewButtonCallbackAsync,
-                Context = this,
-                Icon = button.Icon,
-                Label = button.Label,
-                ShouldConfirm = button.ShouldConfirm
-            };
 
-            <CascadingValue Value="context">
-                @if (!string.IsNullOrEmpty(button.Alias))
+                // TODO: put in helper function
+                var context = new ButtonContext<BasePage>
                 {
-                    @CustomButtons[button.Alias]
-                }
-                else
-                {
-                    <DefaultButton TContext="BasePage" />
-                }
-            </CascadingValue>
-        }
-    </div>
+                    ButtonId = button.ButtonId,
+                    CallbackAsync = ButtonCallbackAsync,
+                    Context = this,
+                    Icon = button.Icon,
+                    Label = button.Label,
+                    ShouldConfirm = button.ShouldConfirm,
+                    IsPrimary = button.IsPrimary
+                };
 
-    // TODO: Add support for polymorphism and gaps in rows..
-
-    var pane = ListView.Section;
-
-    var hasButtons = pane.Buttons?.Any() ?? false;
-
-    <div class="content px-4">
-        <table class="table">
-            <thead>
-                <tr>
-                    @foreach (var element in pane.Elements)
+                <CascadingValue Value="context">
+                    @if (!string.IsNullOrEmpty(button.Alias))
                     {
-                        if (element is FieldWithLabelUI field)
-                        {
-                            <td>@field.Name<br /><small>@field.Description</small></td>
-                        }
+                        @CustomButtons[button.Alias]
                     }
-                    @if (hasButtons)
+                    else
                     {
-                        <td></td>
+                        <DefaultButton TContext="BasePage" />
                     }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var entity in ListView.Entities)
-                {
+                </CascadingValue>
+            }
+        </div>
+
+        var pane = UI.Section;
+
+        var hasButtons = pane.Buttons?.Any() ?? false;
+
+        <div class="content px-4">
+            <table class="table">
+                <thead>
                     <tr>
                         @foreach (var element in pane.Elements)
                         {
                             if (element is FieldWithLabelUI field)
                             {
-                                <td>@field.GetReadonlyValue(entity)</td>
+                                <td>@field.Name<br /><small>@field.Description</small></td>
                             }
                         }
                         @if (hasButtons)
                         {
-                            <td>
-                                @foreach (var button in pane.Buttons)
-                                {
-                                    var context = new ButtonContext<IEntity>
-                                    {
-                                        ButtonId = button.ButtonId,
-                                        CallbackAsync = NodeViewButtonCallbackAsync,
-                                        Context = entity,
-                                        Icon = button.Icon,
-                                        Label = button.Label,
-                                        ShouldConfirm = button.ShouldConfirm
-                                    };
-
-                                    <CascadingValue Value="context">
-                                        @if (!string.IsNullOrEmpty(button.Alias))
-                                        {
-                                            @CustomButtons[button.Alias]
-                                        }
-                                        else
-                                        {
-                                            <DefaultButton TContext="IEntity" />
-                                        }
-                                    </CascadingValue>
-                                }
-                            </td>
+                            <td></td>
                         }
-
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var entity in UI.Entities)
+                    {
+                        <tr>
+                            @foreach (var element in pane.Elements)
+                            {
+                                if (element is FieldWithLabelUI field)
+                                {
+                                    if (UI.ListType == ListType.TableView)
+                                    {
+                                        <td>@field.GetReadonlyValue(entity)</td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <DefaultEditor Field="field" Entity="@entity" />
+                                        </td>
+                                    }
+                                }
+                            }
+                            @if (hasButtons)
+                            {
+                                <td>
+                                    @foreach (var button in pane.Buttons)
+                                    {
+
+                                        // TODO: put in helper function
+                                        var context = new ButtonContext<IEntity>
+                                        {
+                                            ButtonId = button.ButtonId,
+                                            CallbackAsync = NodeButtonCallbackAsync,
+                                            Context = entity,
+                                            Icon = button.Icon,
+                                            Label = button.Label,
+                                            ShouldConfirm = button.ShouldConfirm,
+                                            IsPrimary = button.IsPrimary
+                                        };
+
+                                        <CascadingValue Value="context">
+                                            @if (!string.IsNullOrEmpty(button.Alias))
+                                            {
+                                                @CustomButtons[button.Alias]
+                                            }
+                                            else
+                                            {
+                                                <DefaultButton TContext="IEntity" />
+                                            }
+                                        </CascadingValue>
+                                    }
+                                </td>
+                            }
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 }
 @*else if (EditorView != null)
     {
@@ -182,10 +199,10 @@ else if (ListView != null)
                                     }
 
                                     <td>
-                                        <DefaultEditor Type="@value.Type"
+                                        @*<DefaultEditor Type="@value.Type"
                                                        Value="@value.Value"
                                                        Callback="@((string newValue) => value.Value = newValue)"
-                                                       IsReadonly="@value.IsReadonly" />
+                                                       IsReadonly="@value.IsReadonly" />* @
                                     </td>
                                 }
 
@@ -224,7 +241,7 @@ else if (ListView != null)
                 </table>
             </div>
         }
-        else if (EditorView.ListEditorType == ListEditorType.Block)
+        @*else if (EditorView.ListEditorType == ListEditorType.Block)
         {
             @foreach (var node in pane.Nodes)
             {
@@ -284,7 +301,7 @@ else if (ListView != null)
                 </div>
 
             }
-        }
+        }* @
     }*@
 
 @functions {
@@ -306,8 +323,7 @@ else if (ListView != null)
     [Parameter]
     private string? Id { get; set; } = null;
 
-    ListUI? ListView;
-    CollectionListEditorDTO? EditorView;
+    ListUI? UI;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -316,44 +332,29 @@ else if (ListView != null)
 
     protected override async Task LoadDataAsync()
     {
-        if (Action == Constants.List)
-        {
-            ListView = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, VariantAlias, ParentId);
-            EditorView = null;
-        }
-        else
-        {
-            ListView = null;
-            EditorView = await CollectionService.GetCollectionListEditorAsync(Action, CollectionAlias, VariantAlias, ParentId);
-        }
+        UI = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, VariantAlias, ParentId);
 
         StateHasChanged();
     }
 
-    async Task ViewButtonCallbackAsync(string actionId, BasePage view)
+    async Task ButtonCallbackAsync(string actionId, BasePage view)
     {
-        var command = await CollectionService.ProcessListViewActionAsync(CollectionAlias, ParentId, actionId);
+        var command = await CollectionService.ProcessListActionAsync(Action, CollectionAlias, ParentId, actionId);
 
         await HandleViewCommandAsync(command);
     }
 
-    async Task EditorButtonCallbackAsync(string actionId, BasePage view)
+    async Task NodeButtonCallbackAsync(string actionId, IEntity entity)
     {
-        var command = await CollectionService.ProcessListEditorActionAsync(CollectionAlias, ParentId, actionId);
-
-        await HandleViewCommandAsync(command);
-    }
-
-    async Task NodeViewButtonCallbackAsync(string actionId, IEntity entity)
-    {
-        var command = await CollectionService.ProcessListViewActionAsync(CollectionAlias, ParentId, entity.Id, actionId);
+        var command = await CollectionService.ProcessListActionAsync(Action, CollectionAlias, ParentId, entity.Id, actionId, entity);
 
         await HandleViewCommandAsync(command);
     }
 
     async Task NodeEditorButtonCallbackAsync(string actionId, NodeDTO node)
     {
-        var command = await CollectionService.ProcessListEditorActionAsync(CollectionAlias, node.VariantAlias, node.ParentId, node.Id, EditorView, actionId);
+        // TODO: fix null
+        var command = await CollectionService.ProcessListEditorActionAsync(CollectionAlias, node.VariantAlias, node.ParentId, node.Id, null, actionId);
 
         await HandleViewCommandAsync(command);
     }
