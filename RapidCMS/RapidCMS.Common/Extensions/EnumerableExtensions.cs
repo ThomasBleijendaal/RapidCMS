@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,6 +40,53 @@ namespace RapidCMS.Common.Extensions
             }
 
             return result;
+        }
+
+        public static IEnumerable<IGrouping<TKey, TElement>> ChunckedGroupBy<TElement, TKey>(this IEnumerable<TElement> source, Func<TElement, TKey> selector)
+        {
+            if (!source?.Any() ?? false)
+            {
+                yield return default(Group<TKey, TElement>);
+                yield break;
+            }
+
+            var key = selector(source.First());
+            var chunk = new List<TElement>();
+
+            foreach (var element in source)
+            {
+                if (!selector(element).Equals(key))
+                {
+                    yield return new Group<TKey, TElement>(key, chunk);
+                    chunk = new List<TElement>();
+                }
+
+                chunk.Add(element);
+            }
+
+            yield return new Group<TKey, TElement>(key, chunk);
+        }
+
+        public class Group<TKey, TElement> : IGrouping<TKey, TElement>
+        {
+            public Group(TKey key, List<TElement> elements)
+            {
+                Key = key;
+                Elements = elements ?? throw new ArgumentNullException(nameof(elements));
+            }
+
+            public TKey Key { get; private set; }
+            public List<TElement> Elements { get; set; }
+
+            public IEnumerator<TElement> GetEnumerator()
+            {
+                return Elements.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return Elements.GetEnumerator();
+            }
         }
     }
 

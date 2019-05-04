@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
+using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
 
@@ -11,8 +13,8 @@ namespace RapidCMS.Common.Services
     public interface IUIService
     {
         EditorUI GenerateNodeUI(ViewContext viewContext, NodeEditor nodeEditor);
-        ListUI GenerateListUI(ViewContext viewContext, ListView listView);
-        ListUI GenerateListUI(ViewContext viewContext, ListEditor listEditor);
+        ListUI GenerateListUI(ViewContext listViewContext, Func<EntityIntent, ViewContext> entityViewContext, ListView listView);
+        ListUI GenerateListUI(ViewContext listViewContext, Func<EntityIntent, ViewContext> entityViewContext, ListEditor listEditor);
     }
 
     public class UIService : IUIService
@@ -57,23 +59,21 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        // TODO: fix flaw in viewContext: should be 2 contexts -> one for the list + one for each row in the list
-
-        public ListUI GenerateListUI(ViewContext viewContext, ListView listView)
+        public ListUI GenerateListUI(ViewContext listViewContext, Func<EntityIntent, ViewContext> entityViewContext, ListView listView)
         {
             return new ListUI
             {
                 Buttons = listView.Buttons
                     .GetAllButtons()
-                    .Where(button => button.IsCompatibleWithView(viewContext))
+                    .Where(button => button.IsCompatibleWithView(listViewContext))
                     .ToList(button => button.ToUI()),
 
-                Section = listView.ViewPane == null ? null :
+                SectionForEntity = (entity) => listView.ViewPane == null ? null :
                     new SectionUI
                     {
                         Buttons = listView.ViewPane.Buttons
                             .GetAllButtons()
-                            .Where(button => button.IsCompatibleWithView(viewContext))
+                            .Where(button => button.IsCompatibleWithView(entityViewContext(entity)))
                             .ToList(button => button.ToUI()),
 
                         Elements = listView.ViewPane.Fields.ToList(field => (Element)field.ToFieldWithLabelUI())
@@ -81,23 +81,23 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public ListUI GenerateListUI(ViewContext viewContext, ListEditor listEditor)
+        public ListUI GenerateListUI(ViewContext listViewContext, Func<EntityIntent, ViewContext> entityViewContext, ListEditor listEditor)
         {
-            var pane = listEditor.EditorPanes.FirstOrDefault(pane => pane.VariantType.IsSameTypeOrDerivedFrom(viewContext.EntityVariant.Type));
+            var pane = listEditor.EditorPanes.FirstOrDefault(pane => pane.VariantType.IsSameTypeOrDerivedFrom(listViewContext.EntityVariant.Type));
 
             return new ListUI
             {
                 Buttons = listEditor.Buttons
                     .GetAllButtons()
-                    .Where(button => button.IsCompatibleWithView(viewContext))
+                    .Where(button => button.IsCompatibleWithView(listViewContext))
                     .ToList(button => button.ToUI()),
 
-                Section = pane == null ? null :
+                SectionForEntity = (entity) => pane == null ? null :
                     new SectionUI
                     {
                         Buttons = pane.Buttons
                             .GetAllButtons()
-                            .Where(button => button.IsCompatibleWithView(viewContext))
+                            .Where(button => button.IsCompatibleWithView(entityViewContext(entity)))
                             .ToList(button => button.ToUI()),
 
                         Elements = pane.Fields.ToList(field => (Element)field.ToFieldWithLabelUI())

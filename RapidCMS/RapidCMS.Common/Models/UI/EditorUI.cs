@@ -1,17 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Interfaces;
 
 namespace RapidCMS.Common.Models.UI
 {
+    // TODO: Entities should be removed from these models and on only on the view merged
+
+        // TODO: horrible name
+    public class EntityIntent
+    {
+        public UsageType UsageType { get; set; }
+        public IEntity Entity { get; set; }
+    }
+
     public class ListUI
     {
-        public IEnumerable<IEntity> Entities { get; set; }
+        public IEnumerable<EntityIntent> Entities { get; set; }
 
         public ListType ListType { get; set; }
 
         public List<ButtonUI> Buttons { get; set; }
-        public SectionUI Section { get; set; }
+        public Func<EntityIntent, SectionUI> SectionForEntity { get; set; }
     }
 
     // TODO: rename to NodeUI

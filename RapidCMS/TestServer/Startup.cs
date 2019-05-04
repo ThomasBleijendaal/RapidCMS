@@ -85,7 +85,6 @@ namespace TestServer
             void nodeEditor(NodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
-                    .AddDefaultButton(DefaultButtonType.View, "Cancel", "ban")
                     .AddDefaultButton(DefaultButtonType.Edit)
                     .AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true)
                     .AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true)
@@ -142,7 +141,6 @@ namespace TestServer
             void subListNodeEditor(ListEditorConfig<TestEntity> listEditorConfig)
             {
                 listEditorConfig.AddDefaultButton(DefaultButtonType.New);
-                listEditorConfig.AddDefaultButton(DefaultButtonType.Edit, "Cancel", "ban", isPrimary: true);
                 listEditorConfig.AddEditor(editor =>
                 {
                     editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
@@ -464,7 +462,7 @@ namespace TestServer
                 {
                     collection
                         .SetRepository<RelationRepository>()
-                        .SetTreeView(ViewType.Tree, entity => entity.Name)
+                        .SetTreeView(EntityVisibilty.Visible, entity => entity.Name)
                         .SetListView(RelationListView)
                         .SetNodeEditor(RelationEditor);
                 });
@@ -473,7 +471,7 @@ namespace TestServer
                 {
                     collection
                         .SetRepository<AzureTableStorageRepository>()
-                        .SetTreeView(ViewType.Tree, entity => entity.Title)
+                        .SetTreeView(EntityVisibilty.Visible, entity => entity.Title)
                         .SetListView(AzureTableStorageListView)
                         .SetNodeEditor(AzureTableStorageEditor)
 
@@ -481,7 +479,7 @@ namespace TestServer
                         {
                             subCollection
                                 .SetRepository<AzureTableStorageRepository>()
-                                .SetTreeView(ViewType.Tree, entity => entity.Title)
+                                .SetTreeView(EntityVisibilty.Visible, entity => entity.Title)
                                 .SetListView(AzureTableStorageListView)
                                 .SetNodeEditor(AzureTableStorageEditor);
                         });
@@ -491,7 +489,7 @@ namespace TestServer
                 {
                     collection
                         .SetRepository<VariantRepository>()
-                        .SetTreeView(ViewType.List, entity => entity.Name)
+                        .SetTreeView(EntityVisibilty.Hidden, entity => entity.Name)
                         .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
                         .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
                         .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
@@ -503,14 +501,14 @@ namespace TestServer
                 {
                     collection
                         .SetRepository<RepositoryF>()
-                        .SetTreeView(ViewType.Tree, entity => entity.Name)
+                        .SetTreeView(EntityVisibilty.Visible, entity => entity.Name)
                         .SetListView(listView)
                         .SetNodeEditor(nodeEditorWithPolymorphicSubCollection)
                         .AddCollection<TestEntity>("sub-collection-3", "Sub Collection 3", subCollection =>
                         {
                             subCollection
                                 .SetRepository<VariantRepository>()
-                                .SetTreeView(ViewType.Tree, entity => entity.Name)
+                                .SetTreeView(EntityVisibilty.Visible, CollectionRootVisibility.Hidden, entity => entity.Name)
                                 .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
                                 .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
                                 .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
@@ -524,17 +522,15 @@ namespace TestServer
                 {
                     collection
                         .SetRepository<RepositoryA>()
-                        .SetTreeView(ViewType.Tree, entity => entity.Name)
+                        .SetTreeView(entity => entity.Name)
                         .SetListView(listView)
                         .SetNodeEditor(nodeEditorWithSubCollection)
                         .AddCollection<TestEntity>("sub-collection-1", "Sub Collection 1", subCollection =>
                         {
                             subCollection
                                 .SetRepository<RepositoryB>()
-                                .SetTreeView(ViewType.List, entity => entity.Name)
+                                //.SetTreeView(EntityVisibilty.Hidden, CollectionRootVisibility.Hidden, entity => entity.Name)
                                 .SetListView(listView)
-
-                                // TODO: this sub collection must have a list node editor since its parent uses the editor. but how to hide it?
                                 .SetListEditor(ListEditorType.Table, subListNodeEditor)
                                 .SetNodeEditor(nodeEditor);
                         })
@@ -542,7 +538,7 @@ namespace TestServer
                         {
                             subCollection
                                 .SetRepository<RepositoryC>()
-                                .SetTreeView(ViewType.Tree, entity => entity.Name)
+                                //.SetTreeView(EntityVisibilty.Hidden, CollectionRootVisibility.Hidden, entity => entity.Name)
                                 .SetListEditor(ListEditorType.Block, subListNodeEditor)
                                 .SetNodeEditor(nodeEditor);
                         });
@@ -552,7 +548,7 @@ namespace TestServer
                 {
                     collection
                         .SetRepository<VariantRepository>()
-                        .SetTreeView(ViewType.Tree, entity => entity.Name)
+                        .SetTreeView(EntityVisibilty.Visible, entity => entity.Name)
                         .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
                         .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
                         .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
@@ -564,7 +560,7 @@ namespace TestServer
                 {
                     collection
                         .SetRepository<RepositoryD>()
-                        .SetTreeView(ViewType.List, entity => entity.Name)
+                        .SetTreeView(EntityVisibilty.Hidden, entity => entity.Name)
                         .SetListEditor(ListEditorType.Table, listNodeEditor)
                         .SetNodeEditor(nodeEditor);
                 });
@@ -573,7 +569,7 @@ namespace TestServer
                 {
                     collection
                         .SetRepository<RepositoryE>()
-                        .SetTreeView(ViewType.Tree, entity => entity.Name)
+                        .SetTreeView(EntityVisibilty.Visible, entity => entity.Name)
                         .SetListView(listView)
                         .SetNodeEditor(nodeEditor);
                 });

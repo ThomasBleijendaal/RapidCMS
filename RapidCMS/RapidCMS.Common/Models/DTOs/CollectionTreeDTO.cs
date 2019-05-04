@@ -22,6 +22,7 @@ namespace RapidCMS.Common.Models.DTOs
     {
         public string Alias { get; set; }
         public string Name { get; set; }
+        public bool RootVisible { get; set; }
         public List<CollectionTreePathDTO> Path { get; set; }
         public List<CollectionTreeNodeDTO> Nodes { get; set; }
     }

@@ -1,0 +1,27 @@
+﻿@using RapidCMS.Common.Models.DTOs
+
+<ul class="nav flex-column">
+    @foreach (var node in Nodes)
+    {
+        <li class="nav-item px-3">
+            <NavLink href=@node.Path class=@(node.Path == $"/{CurrentUrl}" ? "current-page" : "")>@node.Name</NavLink>
+
+            <ul class="nav flex-column">
+                @foreach (var subCollection in node.Collections)
+                {
+                    <CollectionTreeView Collection="@subCollection" ParentId="@node.Id" CurrentUrl="@CurrentUrl" />
+                }
+            </ul>
+        </li>
+    }
+</ul>
+
+@functions {
+#nullable enable
+
+    [Parameter]
+    private List<CollectionTreeNodeDTO> Nodes { get; set; }
+    
+    [Parameter]
+    private string CurrentUrl { get; set; }
+}

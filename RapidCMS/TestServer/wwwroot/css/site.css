@@ -18,6 +18,9 @@ app {
     background: #fff;
     box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
 }
+    .content .top-row {
+        background: rgba(0, 0, 0, 0.05);
+    }
 
 .main {
     flex: 1;
@@ -78,9 +81,8 @@ app {
     margin-bottom: 3rem;
     box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
 }
-
     .content .content {
-        border: 2px solid #f0f0f0;
+        background: rgba(0, 0, 0, 0.05);
     }
 
 .navbar-toggler {

@@ -2,7 +2,8 @@
 {
     public class TreeViewConfig
     {
-        public ViewType ViewType { get; set; }
+        public EntityVisibilty EntityVisibilty { get; set; }
+        public CollectionRootVisibility RootVisibility { get; set; }
         public PropertyMetadata PropertyMetadata { get; set; }
     }
 }

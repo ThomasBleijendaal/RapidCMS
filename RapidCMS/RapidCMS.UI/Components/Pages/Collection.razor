@@ -27,61 +27,61 @@
 }
 else
 {
-    if (UI.ListType.In(ListType.TableView, ListType.TableEditor))
-    {
-        <div class="top-row px-4">
-            @foreach (var button in UI.Buttons)
+    <div class="top-row px-4">
+        @foreach (var button in UI.Buttons)
+        {
+
+            // TODO: put in helper function
+            var context = new ButtonContext<BasePage>
             {
+                ButtonId = button.ButtonId,
+                CallbackAsync = ButtonCallbackAsync,
+                Context = this,
+                Icon = button.Icon,
+                Label = button.Label,
+                ShouldConfirm = button.ShouldConfirm,
+                IsPrimary = button.IsPrimary
+            };
 
-                // TODO: put in helper function
-                var context = new ButtonContext<BasePage>
+            <CascadingValue Value="context">
+                @if (!string.IsNullOrEmpty(button.Alias))
                 {
-                    ButtonId = button.ButtonId,
-                    CallbackAsync = ButtonCallbackAsync,
-                    Context = this,
-                    Icon = button.Icon,
-                    Label = button.Label,
-                    ShouldConfirm = button.ShouldConfirm,
-                    IsPrimary = button.IsPrimary
-                };
+                    @CustomButtons[button.Alias]
+                }
+                else
+                {
+                    <DefaultButton TContext="BasePage" />
+                }
+            </CascadingValue>
+        }
+    </div>
 
-                <CascadingValue Value="context">
-                    @if (!string.IsNullOrEmpty(button.Alias))
-                    {
-                        @CustomButtons[button.Alias]
-                    }
-                    else
-                    {
-                        <DefaultButton TContext="BasePage" />
-                    }
-                </CascadingValue>
-            }
-        </div>
-
-        var pane = UI.Section;
-
-        var hasButtons = pane.Buttons?.Any() ?? false;
-
-        <div class="content px-4">
+    <div class="content px-4">
+        @if (UI.ListType.In(ListType.TableView, ListType.TableEditor))
+        {
             <table class="table">
-                <thead>
-                    <tr>
-                        @foreach (var element in pane.Elements)
-                        {
-                            if (element is FieldWithLabelUI field)
+                @*// TODO: get headers back
+
+                        <thead>
+                        <tr>
+                            @foreach (var element in pane.Elements)
                             {
-                                <td>@field.Name<br /><small>@field.Description</small></td>
+                                if (element is FieldWithLabelUI field)
+                                {
+                                    <td>@field.Name<br /><small>@field.Description</small></td>
+                                }
                             }
-                        }
-                        @if (hasButtons)
-                        {
-                            <td></td>
-                        }
-                    </tr>
-                </thead>
+                            @if (hasButtons)
+                            {
+                                <td></td>
+                            }
+                        </tr>
+                    </thead>*@
                 <tbody>
-                    @foreach (var entity in UI.Entities)
+                    @foreach (var intent in UI.Entities)
                     {
+                        var pane = UI.SectionForEntity(intent);
+
                         <tr>
                             @foreach (var element in pane.Elements)
                             {
@@ -89,17 +89,17 @@ else
                                 {
                                     if (UI.ListType == ListType.TableView)
                                     {
-                                        <td>@field.GetReadonlyValue(entity)</td>
+                                        <td>@field.GetReadonlyValue(intent.Entity)</td>
                                     }
                                     else
                                     {
                                         <td>
-                                            <DefaultEditor Field="field" Entity="@entity" />
+                                            <DefaultEditor Field="field" Entity="@intent.Entity" />
                                         </td>
                                     }
                                 }
                             }
-                            @if (hasButtons)
+                            @if (pane.Buttons?.Any() ?? false)
                             {
                                 <td>
                                     @foreach (var button in pane.Buttons)
@@ -110,7 +110,7 @@ else
                                         {
                                             ButtonId = button.ButtonId,
                                             CallbackAsync = NodeButtonCallbackAsync,
-                                            Context = entity,
+                                            Context = intent.Entity,
                                             Icon = button.Icon,
                                             Label = button.Label,
                                             ShouldConfirm = button.ShouldConfirm,
@@ -135,143 +135,41 @@ else
                     }
                 </tbody>
             </table>
-        </div>
-    }
-}
-@*else if (EditorView != null)
-    {
-        <div class="top-row px-4">
-            @foreach (var button in EditorView.Buttons)
-            {
-                var context = new ButtonContext<BasePage>
-                {
-                    ButtonId = button.ButtonId,
-                    CallbackAsync = EditorButtonCallbackAsync,
-                    Context = this,
-                    Icon = button.Icon,
-                    Label = button.Label,
-                    ShouldConfirm = button.ShouldConfirm
-                };
-
-                <CascadingValue Value="context">
-                    @if (!string.IsNullOrEmpty(button.Alias))
-                    {
-                        @CustomButtons[button.Alias]
-                    }
-                    else
-                    {
-                        <DefaultButton TContext="BasePage" />
-                    }
-                </CascadingValue>
-            }
-        </div>
-
-        var pane = EditorView.Editor;
-
-        if (EditorView.ListEditorType == ListEditorType.Table)
-        {
-            var aliasToIndex = pane.Properties.Select((property, index) => (property.Alias, index)).ToDictionary(x => x.Alias, x => x.index);
-
-            <div class="content px-4">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            @foreach (var header in pane.Properties)
-                            {
-                                <td>@header.Name<br /><small>@header.Description</small></td>
-                            }
-                            <td></td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var node in pane.Nodes)
-                        {
-                            var currentIndex = -1;
-
-                            <tr>
-                                @foreach (var value in node.Values)
-                                {
-                                    var thisIndex = aliasToIndex[value.Alias];
-
-                                    while (++currentIndex < thisIndex)
-                                    {
-                                        <td>&nbsp;</td>
-                                    }
-
-                                    <td>
-                                        @*<DefaultEditor Type="@value.Type"
-                                                       Value="@value.Value"
-                                                       Callback="@((string newValue) => value.Value = newValue)"
-                                                       IsReadonly="@value.IsReadonly" />* @
-                                    </td>
-                                }
-
-                                @while (++currentIndex < aliasToIndex.Count)
-                                {
-                                    <td>&nbsp;</td>
-                                }
-                                <td>
-                                    @foreach (var button in node.Buttons)
-                                    {
-                                        var context = new ButtonContext<NodeDTO>
-                                        {
-                                            ButtonId = button.ButtonId,
-                                            CallbackAsync = NodeEditorButtonCallbackAsync,
-                                            Context = node,
-                                            Icon = button.Icon,
-                                            Label = button.Label,
-                                            ShouldConfirm = button.ShouldConfirm
-                                        };
-
-                                        <CascadingValue Value="context">
-                                            @if (!string.IsNullOrEmpty(button.Alias))
-                                            {
-                                                @CustomButtons[button.Alias]
-                                            }
-                                            else
-                                            {
-                                                <DefaultButton TContext="NodeDTO" />
-                                            }
-                                        </CascadingValue>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
         }
-        @*else if (EditorView.ListEditorType == ListEditorType.Block)
+        else if (UI.ListType.In(ListType.BlockEditor))
         {
-            @foreach (var node in pane.Nodes)
+            @foreach (var intent in UI.Entities)
             {
-                <div class="content px-4">
-                    <div class="top-row px-4">
-                        @foreach (var button in node.Buttons)
+                var pane = UI.SectionForEntity(intent);
+
+                <div class="top-row px-4">
+                    @foreach (var button in pane.Buttons)
+                    {
+                        // TODO: put in helper function
+                        var context = new ButtonContext<IEntity>
                         {
-                            var context = new ButtonContext<NodeDTO>
+                            ButtonId = button.ButtonId,
+                            CallbackAsync = NodeButtonCallbackAsync,
+                            Context = intent.Entity,
+                            Icon = button.Icon,
+                            Label = button.Label,
+                            ShouldConfirm = button.ShouldConfirm
+                        };
+
+                        <CascadingValue Value="context">
+                            @if (!string.IsNullOrEmpty(button.Alias))
                             {
-                                ButtonId = button.ButtonId,
-                                CallbackAsync = NodeEditorButtonCallbackAsync,
-                                Context = node,
-                                Icon = button.Icon,
-                                Label = button.Label,
-                                ShouldConfirm = button.ShouldConfirm
-                            };
+                                @CustomButtons[button.Alias]
+                            }
+                            else
+                            {
+                                <DefaultButton TContext="IEntity" />
+                            }
+                        </CascadingValue>
+                    }
+                </div>
 
-                            <CascadingValue Value="context">
-                                @if (!string.IsNullOrEmpty(button.Alias))
-                                {
-                                    @CustomButtons[button.Alias]
-                                }
-                                else
-                                {
-                                    <DefaultButton TContext="NodeDTO" />
-                                }
-                            </CascadingValue>
-                        }
-                    </div>
-
+                <div class="content px-4">
                     <table class="table">
                         <thead>
                             <tr>
@@ -280,30 +178,27 @@ else
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var value in node.Values)
+                            @foreach (var element in pane.Elements)
                             {
-                                var property = pane.Properties.First(x => x.Alias == value.Alias);
-
-                                <tr>
-                                    <td>
-                                        @property.Name<br /><small>@property.Description</small>
-                                    </td>
-                                    <td>
-                                        <DefaultEditor Type="@value.Type"
-                                                       Value="@value.Value"
-                                                       Callback="@((string newValue) => value.Value = newValue)"
-                                                       IsReadonly="@value.IsReadonly" />
-                                    </td>
-                                </tr>
+                                if (element is FieldWithLabelUI field)
+                                {
+                                    <tr>
+                                        <td>
+                                            @field.Name<br /><small>@field.Description</small>
+                                        </td>
+                                        <td>
+                                            <DefaultEditor Field="field" Entity="@intent.Entity" />
+                                        </td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
                 </div>
-
             }
-        }* @
-    }*@
-
+        }
+    </div>
+}
 @functions {
 #nullable enable
 
@@ -347,14 +242,6 @@ else
     async Task NodeButtonCallbackAsync(string actionId, IEntity entity)
     {
         var command = await CollectionService.ProcessListActionAsync(Action, CollectionAlias, ParentId, entity.Id, actionId, entity);
-
-        await HandleViewCommandAsync(command);
-    }
-
-    async Task NodeEditorButtonCallbackAsync(string actionId, NodeDTO node)
-    {
-        // TODO: fix null
-        var command = await CollectionService.ProcessListEditorActionAsync(CollectionAlias, node.VariantAlias, node.ParentId, node.Id, null, actionId);
 
         await HandleViewCommandAsync(command);
     }

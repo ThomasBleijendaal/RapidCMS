@@ -79,10 +79,11 @@ namespace RapidCMS.Common.Services
                 var dto = new CollectionTreeCollectionDTO
                 {
                     Alias = collection.Alias,
-                    Name = collection.Name
+                    Name = collection.Name,
+                    RootVisible = collection.TreeView?.RootVisibility == CollectionRootVisibility.Visible
                 };
 
-                if (collection.TreeView.EntityViewType == ViewType.Tree)
+                if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
                 {
                     var entities = await collection.Repository._GetAllAsObjectsAsync(parentId);
 
@@ -135,21 +136,56 @@ namespace RapidCMS.Common.Services
             var collection = _root.GetCollection(alias);
 
             var entityVariant = collection.GetEntityVariant(variantAlias);
-            var entities = await collection.Repository._GetAllAsObjectsAsync(parentId);
-            var viewContext = new ViewContext(UsageType.List | MapActionToUsageType(action), entityVariant);
+            var existingEntities = await collection.Repository._GetAllAsObjectsAsync(parentId);
+            IEnumerable<EntityIntent> entities;
+
+            if (action == Constants.New)
+            {
+                var newEntity = await collection.Repository._NewAsync(parentId, entityVariant.Type);
+
+                entities = new[] {
+                    new EntityIntent {
+                        Entity = newEntity,
+                        UsageType = MapActionToUsageType(Constants.New)
+                    }
+                }.Concat(existingEntities.Select(ent => new EntityIntent
+                {
+                    Entity = ent,
+                    UsageType = MapActionToUsageType(Constants.Edit)
+                }));
+            }
+            else
+            {
+                entities = existingEntities.Select(ent => new EntityIntent
+                {
+                    Entity = ent,
+                    UsageType = MapActionToUsageType(Constants.Edit)
+                });
+            }
+
+            var listViewContext = new ViewContext(UsageType.List | MapActionToUsageType(action), entityVariant);
 
             if (action == Constants.List)
             {
-                var editor = _uiService.GenerateListUI(viewContext, collection.ListView);
+                var editor = _uiService.GenerateListUI(
+                    listViewContext,
+                    (intent) => new ViewContext(UsageType.View, collection.GetEntityVariant(intent.Entity)),
+                    collection.ListView);
 
                 editor.Entities = entities;
                 editor.ListType = ListType.TableView;
 
                 return editor;
             }
-            else if (action == Constants.Edit)
+            else if (action.In(Constants.Edit, Constants.New))
             {
-                var editor = _uiService.GenerateListUI(viewContext, collection.ListEditor);
+                var editor = _uiService.GenerateListUI(
+                    listViewContext,
+                    (intent) =>
+                    {
+                        return new ViewContext(UsageType.Node | intent.UsageType, collection.GetEntityVariant(intent.Entity));
+                    },
+                    collection.ListEditor);
 
                 editor.Entities = entities;
                 editor.ListType = collection.ListEditor.ListEditorType == ListEditorType.Table
@@ -373,7 +409,6 @@ namespace RapidCMS.Common.Services
             var buttons = action == Constants.List ? collection.ListView.Buttons : collection.ListEditor.Buttons;
             var button = buttons.GetAllButtons().First(x => x.ButtonId == actionId);
             var buttonCrudType = button.GetCrudType();
-            var entityVariant = button.Metadata as EntityVariant;
 
             // TODO: what to do with this action
             if (button is CustomButton customButton)
@@ -384,7 +419,26 @@ namespace RapidCMS.Common.Services
             switch (buttonCrudType)
             {
                 case CrudType.Create:
-                    return new NavigateCommand { Uri = UriHelper.Node(Constants.New, collectionAlias, entityVariant, parentId, null) };
+                    if (!(button.Metadata is EntityVariant entityVariant))
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    if (action == Constants.List)
+                    {
+                        return new NavigateCommand { Uri = UriHelper.Node(Constants.New, collectionAlias, entityVariant, parentId, null) };
+                    }
+                    else
+                    {
+                        return new UpdateParameterCommand
+                        {
+                            Action = Constants.New,
+                            CollectionAlias = collectionAlias,
+                            VariantAlias = entityVariant.Alias,
+                            ParentId = parentId,
+                            Id = null
+                        };
+                    }
 
                 case CrudType.None:
                     return new NullOperationCommand();
@@ -406,8 +460,8 @@ namespace RapidCMS.Common.Services
         {
             var collection = _root.GetCollection(collectionAlias);
 
-            var buttons = action == Constants.List 
-                ? collection.ListView.ViewPane.Buttons 
+            var buttons = action == Constants.List
+                ? collection.ListView.ViewPane.Buttons
                 : collection.ListEditor.EditorPanes.SelectMany(pane => pane.Buttons);
             var button = buttons.GetAllButtons().First(x => x.ButtonId == actionId);
             var buttonCrudType = button.GetCrudType();

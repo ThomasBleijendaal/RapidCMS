@@ -9,6 +9,7 @@
 @using RapidCMS.UI.Components.Buttons
 @using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Services
+@using RapidCMS.Common.Extensions
 
 @inject ICollectionService CollectionService
 
@@ -58,32 +59,38 @@ else
 
     @foreach (var pane in UI.Sections)
     {
-        <div class="content px-4">
-            @if (pane.Elements.Any())
+        @if (pane.Elements.Any())
+        {
+            @foreach (var elementGroup in pane.Elements.ChunckedGroupBy(x => x.GetType()))
             {
-                @foreach (var element in pane.Elements)
+                if (elementGroup.Key == typeof(FieldWithLabelUI))
                 {
-                    if (element is FieldWithLabelUI field)
-                    {
-                        <div class="form-row">
-                            <div class="col-2">
-                                <label>@field.Name</label>
-                                <small class="form-text text-muted">@field.Description</small>
+                    <div class="content px-4">
+                        @foreach (var field in elementGroup.Cast<FieldWithLabelUI>())
+                        {
+                            <div class="form-row">
+                                <div class="col-2">
+                                    <label>@field.Name</label>
+                                    <small class="form-text text-muted">@field.Description</small>
+                                </div>
+                                <div class="col-10">
+                                    @* // TODO: change to some enum on the EditorUI *@
+                                    @if (Action == Constants.View)
+                                    {
+                                        @field.GetReadonlyValue(UI.Entity)
+                                    }
+                                    else
+                                    {
+                                        <DefaultEditor Field="field" Entity="@UI.Entity" />
+                                    }
+                                </div>
                             </div>
-                            <div class="col-10">
-                                @* // TODO: change to some enum on the EditorUI *@
-                                @if (Action == Constants.View)
-                                {
-                                    @field.GetReadonlyValue(UI.Entity)
-                                }
-                                else
-                                {
-                                    <DefaultEditor Field="field" Entity="@UI.Entity" />
-                                }
-                            </div>
-                        </div>
-                    }
-                    else if (element is SubCollectionUI subCollection)
+                        }
+                    </div>
+                }
+                else if (elementGroup.Key == typeof(SubCollectionUI))
+                {
+                    @foreach (var subCollection in elementGroup.Cast<SubCollectionUI>())
                     {
                         <Collection Action="@Constants.Edit"
                                     CollectionAlias="@subCollection.CollectionAlias"
@@ -91,7 +98,7 @@ else
                     }
                 }
             }
-        </div>
+        }
     }
 }
 

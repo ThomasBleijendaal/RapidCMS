@@ -48,11 +48,22 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionConfig<TEntity> SetTreeView(ViewType viewType, Expression<Func<TEntity, string>> nameExpression)
+        public CollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string>> nameExpression)
+        {
+            return SetTreeView(default, default, nameExpression);
+        }
+
+        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, Expression<Func<TEntity, string>> nameExpression)
+        {
+            return SetTreeView(entityVisibility, default, nameExpression);
+        }
+
+        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string>> nameExpression)
         {
             TreeView = new TreeViewConfig
             {
-                ViewType = viewType,
+                EntityVisibilty = entityVisibility,
+                RootVisibility = rootVisibility,
                 PropertyMetadata = PropertyMetadataHelper.Create(nameExpression)
             };
 

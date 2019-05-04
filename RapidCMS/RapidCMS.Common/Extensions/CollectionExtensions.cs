@@ -74,7 +74,8 @@ namespace RapidCMS.Common.Extensions
             {
                 collection.TreeView = new TreeView
                 {
-                    EntityViewType = configReceiver.TreeView.ViewType,
+                    EntityVisibility = configReceiver.TreeView.EntityVisibilty,
+                    RootVisibility = configReceiver.TreeView.RootVisibility,
                     NameGetter = configReceiver.TreeView.PropertyMetadata.Getter
                 };
             }

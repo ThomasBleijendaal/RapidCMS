@@ -85,7 +85,7 @@ namespace RapidCMS.Common.Models
         public Type RepositoryType { get; set; }
         public IRepository Repository { get; set; }
 
-        public TreeView TreeView { get; set; }
+        public TreeView? TreeView { get; set; }
 
         public ListView ListView { get; set; }
         public ListEditor ListEditor { get; set; }
@@ -103,15 +103,22 @@ namespace RapidCMS.Common.Models
     {
     }
 
-    public enum ViewType
+    public enum EntityVisibilty
     {
-        List,
-        Tree
+        Visible,
+        Hidden
+    }
+
+    public enum CollectionRootVisibility
+    {
+        Visible,
+        Hidden
     }
 
     public class TreeView : View
     {
-        public ViewType EntityViewType { get; set; }
+        public EntityVisibilty EntityVisibility { get; set; }
+        public CollectionRootVisibility RootVisibility { get; set; }
 
         public Func<object, object> NameGetter { get; set; }
 

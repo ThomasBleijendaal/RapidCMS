@@ -4,7 +4,7 @@
 {
     <li>Loading tree..</li>
 }
-else
+else if (Collection.RootVisible)
 {
     <li class="nav-item px-3">
         @if (Collection.Path.Count == 1)
@@ -26,29 +26,23 @@ else
 
         @if (Collection.Nodes != null)
         {
-            <ul class="nav flex-column">
-                @foreach (var node in Collection.Nodes)
-                {
-                    <li class="nav-item px-3">
-                        <NavLink href=@node.Path class=@(node.Path == $"/{CurrentUrl}" ? "current-page" : "")>@node.Name</NavLink>
-
-                        <ul class="nav flex-column">
-                            @foreach (var subCollection in node.Collections)
-                            {
-                                <CollectionTreeView Collection="@subCollection" ParentId="@node.Id" CurrentUrl="@CurrentUrl" />
-                            }
-                        </ul>
-                    </li>
-                }
-            </ul>
+            <CollectionTreeList Nodes="@Collection.Nodes" CurrentUrl="@CurrentUrl" />
         }
     </li>
 }
+else
+{
+    @if (Collection.Nodes != null)
+    {
+        <CollectionTreeList Nodes="@Collection.Nodes" CurrentUrl="@CurrentUrl" />
+    }
+}
+
 @functions {
 #nullable enable
 
     [Parameter]
-    private CollectionTreeCollectionDTO Collection { get; set; }
+    private CollectionTreeCollectionDTO? Collection { get; set; }
 
     [Parameter]
     private string? ParentId { get; set; } = null;
