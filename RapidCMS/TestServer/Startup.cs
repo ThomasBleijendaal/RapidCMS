@@ -94,7 +94,7 @@ namespace TestServer
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x._Id)
-                            .SetValueMapper(new LongValueMapper())
+                            .SetValueMapper<LongValueMapper>()
                             .SetReadonly(true);
 
                         pane.AddField(x => x.Name)
@@ -106,7 +106,7 @@ namespace TestServer
 
                         pane.AddField(x => x.Number)
                             .SetDescription("This is a number")
-                            .SetValueMapper(new LongValueMapper())
+                            .SetValueMapper<LongValueMapper>()
                             .SetType(EditorType.Numeric);
                     });
             }
@@ -135,7 +135,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper(new LongValueMapper())
+                        .SetValueMapper<LongValueMapper>()
                         .SetType(EditorType.Numeric);
                 });
             }
@@ -164,7 +164,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper(new LongValueMapper())
+                        .SetValueMapper<LongValueMapper>()
                         .SetType(EditorType.Numeric);
                 });
             }
@@ -179,7 +179,7 @@ namespace TestServer
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x._Id)
-                            .SetValueMapper(new LongValueMapper())
+                            .SetValueMapper<LongValueMapper>()
                             .SetReadonly(true);
 
                         pane.AddField(x => x.Name)
@@ -191,7 +191,7 @@ namespace TestServer
 
                         pane.AddField(x => x.Number)
                             .SetDescription("This is a number")
-                            .SetValueMapper(new LongValueMapper())
+                            .SetValueMapper<LongValueMapper>()
                             .SetType(EditorType.Numeric);
                     })
 
@@ -216,7 +216,7 @@ namespace TestServer
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x._Id)
-                            .SetValueMapper(new LongValueMapper())
+                            .SetValueMapper<LongValueMapper>()
                             .SetReadonly(true);
 
                         pane.AddField(x => x.Name)
@@ -228,7 +228,7 @@ namespace TestServer
 
                         pane.AddField(x => x.Number)
                             .SetDescription("This is a number")
-                            .SetValueMapper(new LongValueMapper())
+                            .SetValueMapper<LongValueMapper>()
                             .SetType(EditorType.Numeric);
                     })
 
@@ -248,7 +248,7 @@ namespace TestServer
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x._Id)
-                            .SetValueMapper(new LongValueMapper())
+                            .SetValueMapper<LongValueMapper>()
                             .SetReadonly(true);
 
                         pane.AddField(x => x.Name)
@@ -260,7 +260,7 @@ namespace TestServer
 
                         pane.AddField(x => x.Number)
                             .SetDescription("This is a number")
-                            .SetValueMapper(new LongValueMapper())
+                            .SetValueMapper<LongValueMapper>()
                             .SetType(EditorType.Numeric);
                     })
 
@@ -307,7 +307,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper(new LongValueMapper())
+                        .SetValueMapper<LongValueMapper>()
                         .SetType(EditorType.Numeric);
 
                     editor.AddField(x => x.Title)
@@ -335,7 +335,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper(new LongValueMapper())
+                        .SetValueMapper<LongValueMapper>()
                         .SetType(EditorType.Numeric);
 
                     editor.AddField(x => x.Image)
@@ -363,7 +363,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper(new LongValueMapper())
+                        .SetValueMapper<LongValueMapper>()
                         .SetType(EditorType.Numeric);
 
                     editor.AddField(x => x.Quote)
@@ -416,7 +416,7 @@ namespace TestServer
                     listPaneConfig.AddProperty(x => x.Name);
                     listPaneConfig.AddProperty(x => x.AzureTableStorageEntityId);
                     listPaneConfig.AddProperty(x => x.AzureTableStorageEntityIds)
-                        .SetValueMapper(new CollectionValueMapper<string>());
+                        .SetValueMapper<CollectionValueMapper<string>>();
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
@@ -448,7 +448,7 @@ namespace TestServer
 
                     editorPaneConfig.AddField(x => x.AzureTableStorageEntityIds)
                         .SetType(EditorType.MultiSelect)
-                        .SetValueMapper(new CollectionValueMapper<string>())
+                        .SetValueMapper<CollectionValueMapper<string>>()
                         .SetOneToManyRelation<AzureTableStorageEntity>("collection-10", relation =>
                         {
                             relation

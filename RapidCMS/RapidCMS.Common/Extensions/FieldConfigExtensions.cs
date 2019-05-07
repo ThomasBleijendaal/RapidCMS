@@ -17,8 +17,7 @@ namespace RapidCMS.Common.Extensions
                 Name = field.Name,
                 NodeProperty = field.NodeProperty,
                 Readonly = field.Readonly,
-                ValueMapper = field.ValueMapper ?? new DefaultValueMapper(),
-                ValueMapperType = field.ValueMapperType,
+                ValueMapperType = field.ValueMapperType ?? typeof(DefaultValueMapper),
 
                 OneToManyRelation = field.OneToManyRelation?.ToOneToManyRelation()
             };

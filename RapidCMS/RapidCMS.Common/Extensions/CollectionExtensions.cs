@@ -23,6 +23,10 @@ namespace RapidCMS.Common.Extensions
             services.AddSingleton<ICollectionService, CollectionService>();
             services.AddSingleton<IUIService, UIService>();
 
+            services.AddSingleton<DefaultValueMapper>();
+            services.AddSingleton<LongValueMapper>();
+            services.AddSingleton(typeof(CollectionValueMapper<>), typeof(CollectionValueMapper<>));
+
             return services;
         }
 
@@ -120,8 +124,7 @@ namespace RapidCMS.Common.Extensions
                                 Name = property.Name,
                                 Readonly = true,
                                 NodeProperty = property.NodeProperty,
-                                ValueMapper = property.ValueMapper ?? new DefaultValueMapper(),
-                                ValueMapperType = property.ValueMapperType
+                                ValueMapperType = property.ValueMapperType ?? typeof(DefaultValueMapper)
                             })
                         }
                 };

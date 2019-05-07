@@ -265,7 +265,6 @@ namespace RapidCMS.Common.Models
         public EditorType DataType { get; set; } = EditorType.Readonly;
 
         public PropertyMetadata NodeProperty { get; set; }
-        public IValueMapper ValueMapper { get; set; }
         public Type ValueMapperType { get; set; }
 
         public OneToManyRelation? OneToManyRelation { get; set; }

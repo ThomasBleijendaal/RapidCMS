@@ -3,6 +3,7 @@ using RapidCMS.Common.Enums;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
 using RapidCMS.Common.Services;
+using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.Common.Extensions
 {
@@ -31,7 +32,7 @@ namespace RapidCMS.Common.Extensions
         {
             ui.Alias = field.NodeProperty.PropertyName;
             ui.Property = field.NodeProperty;
-            ui.ValueMapper = field.ValueMapper;
+            ui.ValueMapper = ServiceLocator.Instance.GetService<IValueMapper>(field.ValueMapperType);
             ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;
 
             if (field.OneToManyRelation != null)

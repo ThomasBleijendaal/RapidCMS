@@ -19,7 +19,6 @@ namespace RapidCMS.Common.Models.Config
         internal bool Readonly { get; set; }
 
         internal PropertyMetadata NodeProperty { get; set; }
-        internal IValueMapper ValueMapper { get; set; }
         internal Type ValueMapperType { get; set; }
         internal OneToManyRelationConfig? OneToManyRelation { get; set; }
 
@@ -46,18 +45,10 @@ namespace RapidCMS.Common.Models.Config
         }
 
         // TODO: check for mapper compatibility with value type in NodeProperty
-        public FieldConfig<TEntity> SetValueMapper<TValue>(ValueMapper<TValue> valueMapper)
-        {
-            ValueMapper = valueMapper;
-
-            return this;
-        }
-
-        // TODO: check for mapper compatibility with value type in NodeProperty
         public FieldConfig<TEntity> SetValueMapper<TValueMapper>()
             where TValueMapper : IValueMapper
         {
-            ValueMapperType = typeof(IValueMapper);
+            ValueMapperType = typeof(TValueMapper);
 
             return this;
         }
