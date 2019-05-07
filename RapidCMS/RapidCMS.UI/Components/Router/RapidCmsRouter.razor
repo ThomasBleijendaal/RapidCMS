@@ -1,22 +1,21 @@
-﻿@using RapidCMS.UI.Components.Buttons
+﻿@using RapidCMS.UI.Models
 
-<CascadingValue Value="@CustomButtons" Name="CustomButtons">
+<CascadingValue Value="@CustomButtonContainer" Name="CustomButtons">
     <Router AppAssembly="typeof(RapidCMS.UI.Startup).Assembly" />
 </CascadingValue>
 
-@functions {
-    private Dictionary<string, RenderFragment> CustomButtons { get; set; } = new Dictionary<string, RenderFragment>();
 
-    // TODO: find solution for poor-man's array
+@functions {
+#nullable enable
+
+    private CustomButtonContainer CustomButtonContainer { get; set; } = new CustomButtonContainer(null);
+
     [Parameter]
-    private string CustomButton1Alias { get; set; }
-    [Parameter]
-    private RenderFragment CustomButton1 { get; set; }
+    private List<CustomButtonRegistration>? CustomButtons { get; set; }
 
     protected override Task OnParametersSetAsync()
     {
-        CustomButtons.Add(CustomButton1Alias, CustomButton1);
-
+        CustomButtonContainer = new CustomButtonContainer(CustomButtons);
 
         return base.OnParametersSetAsync();
     }

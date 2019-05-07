@@ -3,10 +3,18 @@
     directive matching the current URI.
 *@
 
-@using RapidCMS.UI.Components.Pages
+@using RapidCMS.UI.Models
+@using TestServer.Components.CustomButtons
 
-<RapidCmsRouter CustomButton1Alias="create-button">
-    <CustomButton1>
-        <CreateButton TContext="BasePage" />
-    </CustomButton1>
-</RapidCmsRouter>
+@{ 
+    var customButtons = new List<CustomButtonRegistration>
+    {
+        new CustomButtonRegistration
+        {
+            ButtonAlias = "create-button",
+            ButtonType = typeof(CreateButton<>)
+        }
+    };
+}
+
+<RapidCmsRouter CustomButtons="@customButtons" />

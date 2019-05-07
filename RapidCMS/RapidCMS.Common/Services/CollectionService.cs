@@ -148,7 +148,7 @@ namespace RapidCMS.Common.Services
             {
                 var editor = _uiService.GenerateListUI(
                     listViewContext,
-                    (subject) => new ViewContext(UsageType.View, collection.GetEntityVariant(subject.Entity)),
+                    (subject) => new ViewContext(UsageType.View | UsageType.Node, collection.GetEntityVariant(subject.Entity)),
                     collection.ListView);
 
                 editor.Entities = entities;

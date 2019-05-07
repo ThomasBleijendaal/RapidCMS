@@ -46,7 +46,7 @@ else
             <CascadingValue Value="context">
                 @if (!string.IsNullOrEmpty(button.Alias))
                 {
-                    @CustomButtons[button.Alias]
+                    @CustomButtons.GetCustomButton(button.Alias, typeof(BasePage))
                 }
                 else
                 {
@@ -149,7 +149,7 @@ else
                                             <CascadingValue Value="context">
                                                 @if (!string.IsNullOrEmpty(button.Alias))
                                                 {
-                                                    @CustomButtons[button.Alias]
+                                                    @CustomButtons.GetCustomButton(button.Alias, typeof(IEntity))
                                                 }
                                                 else
                                                 {
@@ -189,7 +189,7 @@ else
                         <CascadingValue Value="context">
                             @if (!string.IsNullOrEmpty(button.Alias))
                             {
-                                @CustomButtons[button.Alias]
+                                @CustomButtons.GetCustomButton(button.Alias, typeof(BasePage))
                             }
                             else
                             {

@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Services;
 using RapidCMS.Common.Models.DTOs;
+using RapidCMS.UI.Models;
+
+#nullable enable
 
 namespace RapidCMS.UI.Components.Pages
 {
@@ -12,7 +15,7 @@ namespace RapidCMS.UI.Components.Pages
         private IUriHelper UriHelper { get; set; }
 
         [CascadingParameter(Name = "CustomButtons")]
-        protected Dictionary<string, RenderFragment> CustomButtons { get; set; }
+        protected CustomButtonContainer CustomButtons { get; set; }
 
         protected async Task HandleViewCommandAsync(ViewCommand command)
         {

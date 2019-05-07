@@ -7,14 +7,12 @@ using RapidCMS.Common.Models.UI;
 
 namespace RapidCMS.Common.Services
 {
-    // TODO: split class into Collection and UI service
     // TODO: make UI service subject-aware (new, save existing etc)
     // TODO: make button handling more seperate
-    // TODO: rename alias to collectionAlias
-    // TODO: check applicability of every crud type (instead of inserting invalid operation exceptions everywhere)
 
     public interface ICollectionService
     {
+        // TODO: refactor this to UI
         Task<CollectionTreeRootDTO> GetCollectionsAsync();
 
         Task<ListUI> GetCollectionListViewAsync(string action, string collectionAlias, string? variantAlias, string? parentId);

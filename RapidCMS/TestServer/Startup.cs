@@ -387,6 +387,7 @@ namespace TestServer
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
+                    listPaneConfig.AddCustomButton<CreateButtonActionHandler>("create-button", "Custom create!");
                 });
             }
 
