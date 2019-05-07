@@ -65,7 +65,7 @@
 
     private bool FindUrl(IEnumerable<CollectionTreeCollectionDTO> collections, string url)
     {
-        if (collections?.Any() ?? false == false)
+        if (!(collections?.Any() ?? false))
         {
             return false;
         }
@@ -73,13 +73,13 @@
         {
             return true;
         }
-        else if (collections.SelectMany(x => x.Nodes).Any(x => x.Path == url))
+        else if (collections.Where(x => x.Nodes != null).SelectMany(x => x.Nodes).Any(x => x.Path == url))
         {
             return true;
         }
         else
         {
-            return FindUrl(collections.SelectMany(x => x.Nodes.SelectMany(y => y.Collections)), url);
+            return FindUrl(collections.Where(x => x.Nodes != null).SelectMany(x => x.Nodes.SelectMany(y => y.Collections)), url);
         }
     }
 }

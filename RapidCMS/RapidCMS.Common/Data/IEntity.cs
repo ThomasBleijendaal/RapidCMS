@@ -1,4 +1,4 @@
-﻿namespace RapidCMS.Common.Interfaces
+﻿namespace RapidCMS.Common.Data
 {
     public interface IEntity
     {

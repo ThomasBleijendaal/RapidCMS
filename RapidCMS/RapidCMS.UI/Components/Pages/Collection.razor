@@ -8,7 +8,7 @@
 @using RapidCMS.UI.Components.Buttons
 @using RapidCMS.Common.Models.DTOs
 @using RapidCMS.Common.Extensions
-@using RapidCMS.Common.Interfaces
+@using RapidCMS.Common.Data
 @using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Services
 
@@ -262,16 +262,16 @@ else
         StateHasChanged();
     }
 
-    async Task ButtonCallbackAsync(string actionId, BasePage view)
+    async Task ButtonCallbackAsync(string actionId, BasePage view, object? customData)
     {
-        var command = await CollectionService.ProcessListActionAsync(Action, CollectionAlias, ParentId, actionId);
+        var command = await CollectionService.ProcessListActionAsync(Action, CollectionAlias, ParentId, actionId, customData);
 
         await HandleViewCommandAsync(command);
     }
 
-    async Task NodeButtonCallbackAsync(string actionId, IEntity entity)
+    async Task NodeButtonCallbackAsync(string actionId, IEntity entity, object? customData)
     {
-        var command = await CollectionService.ProcessListActionAsync(Action, CollectionAlias, ParentId, entity.Id, actionId, entity);
+        var command = await CollectionService.ProcessListActionAsync(Action, CollectionAlias, ParentId, entity.Id, actionId, entity, customData);
 
         await HandleViewCommandAsync(command);
     }

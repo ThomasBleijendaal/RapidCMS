@@ -1,5 +1,5 @@
 ﻿using Microsoft.WindowsAzure.Storage.Table;
-using RapidCMS.Common.Interfaces;
+using RapidCMS.Common.Data;
 
 namespace TestLibrary.Entities
 {

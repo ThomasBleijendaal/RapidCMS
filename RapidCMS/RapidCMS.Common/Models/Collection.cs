@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using RapidCMS.Common.ActionHandlers;
 using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Tasks;
+using RapidCMS.Common.ValueMappers;
 
 #nullable enable
 
@@ -17,7 +17,7 @@ namespace RapidCMS.Common.Models
     // TODO: check polymorphisms
     // TODO: static root stuff is horrible
 
-        // TODO: not really a model
+    // TODO: not really a model
     public class Root : ICollectionRoot
     {
         private static Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
@@ -246,9 +246,9 @@ namespace RapidCMS.Common.Models
         {
             return ActionHandler.IsCompatibleWithView(viewContext);
         }
-        public Task HandleActionAsync(string? parentId, string? id)
+        public Task HandleActionAsync(string? parentId, string? id, object? customData)
         {
-            return ActionHandler.InvokeAsync(parentId, id);
+            return ActionHandler.InvokeAsync(parentId, id, customData);
         }
     }
 

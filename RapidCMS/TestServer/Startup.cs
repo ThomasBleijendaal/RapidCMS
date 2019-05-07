@@ -5,9 +5,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.WindowsAzure.Storage;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
+using RapidCMS.Common.ValueMappers;
 using TestLibrary;
 using TestLibrary.DataProvider;
 using TestLibrary.Entities;
@@ -45,6 +45,8 @@ namespace TestServer
                 .AddNewtonsoftJson();
 
             services.AddRazorComponents();
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -584,6 +586,8 @@ namespace TestServer
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            
+            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

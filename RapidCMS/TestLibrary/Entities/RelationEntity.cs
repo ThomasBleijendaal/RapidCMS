@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using RapidCMS.Common.Interfaces;
+using RapidCMS.Common.Data;
 
 namespace TestLibrary.Entities
 {

@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.UI", "RapidCMS.UI\RapidCMS.UI.csproj", "{B0F8E3F3-BC29-4379-8D33-9C8CD717D15F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestServer", "TestServer\TestServer.csproj", "{7C6BE196-175A-442B-928C-2966D1A43325}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestServer", "TestServer\TestServer.csproj", "{7C6BE196-175A-442B-928C-2966D1A43325}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

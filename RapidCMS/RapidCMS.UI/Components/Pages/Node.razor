@@ -132,9 +132,9 @@ else
         UI = await CollectionService.GetNodeEditorAsync(Action, CollectionAlias, VariantAlias, ParentId, Id);
     }
 
-    async Task ButtonCallbackAsync(string actionId, BasePage view)
+    async Task ButtonCallbackAsync(string actionId, BasePage view, object? customData)
     {
-        var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, UI, actionId);
+        var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, UI, actionId, customData);
 
         await HandleViewCommandAsync(command);
     }

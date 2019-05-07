@@ -1,7 +1,8 @@
-﻿using RapidCMS.Common.Data;
-using RapidCMS.Common.Enums;
-using RapidCMS.Common.Interfaces;
+﻿using System;
 using System.Threading.Tasks;
+using RapidCMS.Common.ActionHandlers;
+using RapidCMS.Common.Data;
+using RapidCMS.Common.Enums;
 using TestLibrary.Entities;
 using TestLibrary.Repositories;
 
@@ -23,9 +24,10 @@ namespace TestServer.ActionHandlers
             return CrudType.Refresh;
         }
 
-        public async Task InvokeAsync(string? parentId, string? id)
+        public async Task InvokeAsync(string? parentId, string? id, object? customData)
         {
             var i = 0;
+            var max = Convert.ToInt64(customData);
 
             do
             {
@@ -35,7 +37,7 @@ namespace TestServer.ActionHandlers
                     Title = $"Item {i}"
                 });
             }
-            while (++i < 2);
+            while (++i < max);
         }
 
         public bool IsCompatibleWithView(ViewContext viewContext)

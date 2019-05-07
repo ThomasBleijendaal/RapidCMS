@@ -1,5 +1,6 @@
 ﻿using System;
-using RapidCMS.Common.Interfaces;
+using RapidCMS.Common.Data;
+using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.Common.Models.Config
 {

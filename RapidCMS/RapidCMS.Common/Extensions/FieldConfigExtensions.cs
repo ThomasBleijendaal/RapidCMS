@@ -1,6 +1,6 @@
-﻿using RapidCMS.Common.Interfaces;
-using RapidCMS.Common.Models;
+﻿using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
+using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.Common.Extensions
 {

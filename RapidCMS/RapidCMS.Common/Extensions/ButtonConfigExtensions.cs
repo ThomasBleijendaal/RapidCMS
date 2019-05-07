@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using RapidCMS.Common.ActionHandlers;
 using RapidCMS.Common.Enums;
-using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.Services;

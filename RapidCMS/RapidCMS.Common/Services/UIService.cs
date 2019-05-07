@@ -2,7 +2,6 @@
 using System.Linq;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Interfaces;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
 
@@ -10,12 +9,6 @@ using RapidCMS.Common.Models.UI;
 
 namespace RapidCMS.Common.Services
 {
-    public interface IUIService
-    {
-        EditorUI GenerateNodeUI(ViewContext viewContext, NodeEditor nodeEditor);
-        ListUI GenerateListUI(ViewContext listViewContext, Func<UISubject, ViewContext> entityViewContext, ListView listView);
-        ListUI GenerateListUI(ViewContext listViewContext, Func<UISubject, ViewContext> entityViewContext, ListEditor listEditor);
-    }
 
     public class UIService : IUIService
     {

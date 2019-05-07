@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Interfaces;
-using System;
+﻿using System;
+using Microsoft.AspNetCore.Components;
+using RapidCMS.Common.Data;
 
 #nullable enable
 

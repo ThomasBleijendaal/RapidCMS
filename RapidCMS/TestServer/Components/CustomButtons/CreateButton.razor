@@ -3,20 +3,28 @@
 @using RapidCMS.UI.Components.Buttons
 
 @inherits BaseButton<TContext>
-
 @*
 
-// TODO: this TContext is a bit weird for CustomButtons.     
+    // TODO: this TContext is a bit weird for CustomButtons.
 
 *@
 
-<button type="button" class="btn btn-light" onclick="@ButtonClickAsync">
-    <i class="oi oi-@(Context.Icon ?? "puzzle-piece")"></i> @Context.Label
-</button>
+<div class="input-group col-3">
+    <input bind="@NumberOfItems" type="text" class="form-control" />
+    <div class="input-group-append">
+        <button type="button" class="btn btn-outline-primary" onclick="@CreateAsync">
+            <i class="oi oi-@(Context.Icon ?? "puzzle-piece")"></i> @Context.Label
+        </button>
+    </div>
+</div>
 
-@functions { 
-    protected override Task OnParametersSetAsync()
+@functions {
+    private int NumberOfItems { get; set; } = 1;
+
+    private async void CreateAsync()
     {
-        return base.OnParametersSetAsync();
+        await ButtonClickAsync(NumberOfItems);
+
+        NumberOfItems = 1;
     }
 }
