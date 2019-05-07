@@ -59,76 +59,106 @@ else
     <div class="content px-4">
         @if (UI.ListType.In(ListType.TableView, ListType.TableEditor))
         {
-            <table class="table">
-                @*// TODO: get headers back
+            var elementsProcessed = new List<string>();
 
-                        <thead>
-                        <tr>
-                            @foreach (var element in pane.Elements)
+            <table class="table">
+                <thead>
+                    <tr>
+                        @{
+                            var hasButtons = false;
+
+                            foreach (var subject in UI.Entities)
                             {
-                                if (element is FieldWithLabelUI field)
+                                var pane = UI.SectionForEntity(subject);
+                                hasButtons = hasButtons || (pane.Buttons?.Any() ?? false);
+
+                                foreach (var element in pane.Elements)
                                 {
-                                    <td>@field.Name<br /><small>@field.Description</small></td>
+                                    if (element is FieldWithLabelUI field)
+                                    {
+                                        if (!elementsProcessed.Contains(field.Alias))
+                                        {
+                                            elementsProcessed.Add(field.Alias);
+
+                                            <td>@field.Name<br /><small>@field.Description</small></td>
+                                        }
+                                    }
                                 }
                             }
-                            @if (hasButtons)
+
+                            if (hasButtons)
                             {
                                 <td></td>
                             }
-                        </tr>
-                    </thead>*@
+                        }
+                    </tr>
+                </thead>
                 <tbody>
-                    @foreach (var intent in UI.Entities)
+                    @foreach (var subject in UI.Entities)
                     {
-                        var pane = UI.SectionForEntity(intent);
+                        var pane = UI.SectionForEntity(subject);
+                        var index = 0;
 
                         <tr>
-                            @foreach (var element in pane.Elements)
-                            {
-                                if (element is FieldWithLabelUI field)
+                            @{
+                                foreach (var element in pane.Elements)
                                 {
-                                    if (UI.ListType == ListType.TableView)
+                                    if (element is FieldWithLabelUI field)
                                     {
-                                        <td>@field.GetReadonlyValue(intent.Entity)</td>
-                                    }
-                                    else
-                                    {
-                                        <td>
-                                            <DefaultEditor Field="field" Entity="@intent.Entity" />
-                                        </td>
+                                        // fill in the gaps (when dealing with multiple entity variants)
+                                        while (elementsProcessed.IndexOf(field.Alias) > index++)
+                                        {
+                                            <td>&nbsp;</td>
+                                        }
+
+                                        if (UI.ListType == ListType.TableView)
+                                        {
+                                            <td>@field.GetReadonlyValue(subject.Entity)</td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <DefaultEditor Field="field" Entity="@subject.Entity" />
+                                            </td>
+                                        }
                                     }
                                 }
-                            }
-                            @if (pane.Buttons?.Any() ?? false)
-                            {
-                                <td>
-                                    @foreach (var button in pane.Buttons)
-                                    {
-
-                                        // TODO: put in helper function
-                                        var context = new ButtonContext<IEntity>
+                                // fill in the gaps (when dealing with multiple entity variants)
+                                while (elementsProcessed.Count > index++)
+                                {
+                                    <td>&nbsp;</td>
+                                }
+                                if (pane.Buttons?.Any() ?? false)
+                                {
+                                    <td>
+                                        @foreach (var button in pane.Buttons)
                                         {
-                                            ButtonId = button.ButtonId,
-                                            CallbackAsync = NodeButtonCallbackAsync,
-                                            Context = intent.Entity,
-                                            Icon = button.Icon,
-                                            Label = button.Label,
-                                            ShouldConfirm = button.ShouldConfirm,
-                                            IsPrimary = button.IsPrimary
-                                        };
 
-                                        <CascadingValue Value="context">
-                                            @if (!string.IsNullOrEmpty(button.Alias))
+                                            // TODO: put in helper function
+                                            var context = new ButtonContext<IEntity>
                                             {
-                                                @CustomButtons[button.Alias]
-                                            }
-                                            else
-                                            {
-                                                <DefaultButton TContext="IEntity" />
-                                            }
-                                        </CascadingValue>
-                                    }
-                                </td>
+                                                ButtonId = button.ButtonId,
+                                                CallbackAsync = NodeButtonCallbackAsync,
+                                                Context = subject.Entity,
+                                                Icon = button.Icon,
+                                                Label = button.Label,
+                                                ShouldConfirm = button.ShouldConfirm,
+                                                IsPrimary = button.IsPrimary
+                                            };
+
+                                            <CascadingValue Value="context">
+                                                @if (!string.IsNullOrEmpty(button.Alias))
+                                                {
+                                                    @CustomButtons[button.Alias]
+                                                }
+                                                else
+                                                {
+                                                    <DefaultButton TContext="IEntity" />
+                                                }
+                                            </CascadingValue>
+                                        }
+                                    </td>
+                                }
                             }
 
                         </tr>
@@ -138,9 +168,9 @@ else
         }
         else if (UI.ListType.In(ListType.BlockEditor))
         {
-            @foreach (var intent in UI.Entities)
+            @foreach (var subject in UI.Entities)
             {
-                var pane = UI.SectionForEntity(intent);
+                var pane = UI.SectionForEntity(subject);
 
                 <div class="top-row px-4">
                     @foreach (var button in pane.Buttons)
@@ -150,7 +180,7 @@ else
                         {
                             ButtonId = button.ButtonId,
                             CallbackAsync = NodeButtonCallbackAsync,
-                            Context = intent.Entity,
+                            Context = subject.Entity,
                             Icon = button.Icon,
                             Label = button.Label,
                             ShouldConfirm = button.ShouldConfirm
@@ -187,7 +217,7 @@ else
                                             @field.Name<br /><small>@field.Description</small>
                                         </td>
                                         <td>
-                                            <DefaultEditor Field="field" Entity="@intent.Entity" />
+                                            <DefaultEditor Field="field" Entity="@subject.Entity" />
                                         </td>
                                     </tr>
                                 }

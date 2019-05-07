@@ -16,7 +16,7 @@ using RapidCMS.Common.Models.UI;
 namespace RapidCMS.Common.Services
 {
     // TODO: split class into Collection and UI service
-    // TODO: make UI service intent-aware (new, save existing etc)
+    // TODO: make UI service subject-aware (new, save existing etc)
     // TODO: make button handling more seperate
     // TODO: rename alias to collectionAlias
     // TODO: check applicability of every crud type (instead of inserting invalid operation exceptions everywhere)
@@ -135,20 +135,20 @@ namespace RapidCMS.Common.Services
         {
             var collection = _root.GetCollection(alias);
 
-            var entityVariant = collection.GetEntityVariant(variantAlias);
+            var subEntityVariant = collection.GetEntityVariant(variantAlias);
             var existingEntities = await collection.Repository._GetAllAsObjectsAsync(parentId);
-            IEnumerable<EntityIntent> entities;
+            IEnumerable<UISubject> entities;
 
             if (action == Constants.New)
             {
-                var newEntity = await collection.Repository._NewAsync(parentId, entityVariant.Type);
+                var newEntity = await collection.Repository._NewAsync(parentId, subEntityVariant.Type);
 
                 entities = new[] {
-                    new EntityIntent {
+                    new UISubject {
                         Entity = newEntity,
                         UsageType = MapActionToUsageType(Constants.New)
                     }
-                }.Concat(existingEntities.Select(ent => new EntityIntent
+                }.Concat(existingEntities.Select(ent => new UISubject
                 {
                     Entity = ent,
                     UsageType = MapActionToUsageType(Constants.Edit)
@@ -156,20 +156,20 @@ namespace RapidCMS.Common.Services
             }
             else
             {
-                entities = existingEntities.Select(ent => new EntityIntent
+                entities = existingEntities.Select(ent => new UISubject
                 {
                     Entity = ent,
                     UsageType = MapActionToUsageType(Constants.Edit)
                 });
             }
 
-            var listViewContext = new ViewContext(UsageType.List | MapActionToUsageType(action), entityVariant);
+            var listViewContext = new ViewContext(UsageType.List | MapActionToUsageType(action), collection.EntityVariant);
 
             if (action == Constants.List)
             {
                 var editor = _uiService.GenerateListUI(
                     listViewContext,
-                    (intent) => new ViewContext(UsageType.View, collection.GetEntityVariant(intent.Entity)),
+                    (subject) => new ViewContext(UsageType.View, collection.GetEntityVariant(subject.Entity)),
                     collection.ListView);
 
                 editor.Entities = entities;
@@ -181,9 +181,9 @@ namespace RapidCMS.Common.Services
             {
                 var editor = _uiService.GenerateListUI(
                     listViewContext,
-                    (intent) =>
+                    (subject) =>
                     {
-                        return new ViewContext(UsageType.Node | intent.UsageType, collection.GetEntityVariant(intent.Entity));
+                        return new ViewContext(UsageType.Node | subject.UsageType, collection.GetEntityVariant(subject.Entity));
                     },
                     collection.ListEditor);
 

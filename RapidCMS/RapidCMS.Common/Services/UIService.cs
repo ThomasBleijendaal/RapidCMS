@@ -13,8 +13,8 @@ namespace RapidCMS.Common.Services
     public interface IUIService
     {
         EditorUI GenerateNodeUI(ViewContext viewContext, NodeEditor nodeEditor);
-        ListUI GenerateListUI(ViewContext listViewContext, Func<EntityIntent, ViewContext> entityViewContext, ListView listView);
-        ListUI GenerateListUI(ViewContext listViewContext, Func<EntityIntent, ViewContext> entityViewContext, ListEditor listEditor);
+        ListUI GenerateListUI(ViewContext listViewContext, Func<UISubject, ViewContext> entityViewContext, ListView listView);
+        ListUI GenerateListUI(ViewContext listViewContext, Func<UISubject, ViewContext> entityViewContext, ListEditor listEditor);
     }
 
     public class UIService : IUIService
@@ -59,7 +59,7 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public ListUI GenerateListUI(ViewContext listViewContext, Func<EntityIntent, ViewContext> entityViewContext, ListView listView)
+        public ListUI GenerateListUI(ViewContext listViewContext, Func<UISubject, ViewContext> entityViewContext, ListView listView)
         {
             return new ListUI
             {
@@ -81,10 +81,8 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public ListUI GenerateListUI(ViewContext listViewContext, Func<EntityIntent, ViewContext> entityViewContext, ListEditor listEditor)
+        public ListUI GenerateListUI(ViewContext listViewContext, Func<UISubject, ViewContext> entityViewContext, ListEditor listEditor)
         {
-            var pane = listEditor.EditorPanes.FirstOrDefault(pane => pane.VariantType.IsSameTypeOrDerivedFrom(listViewContext.EntityVariant.Type));
-
             return new ListUI
             {
                 Buttons = listEditor.Buttons
@@ -92,17 +90,26 @@ namespace RapidCMS.Common.Services
                     .Where(button => button.IsCompatibleWithView(listViewContext))
                     .ToList(button => button.ToUI()),
 
-                SectionForEntity = (entity) => pane == null ? null :
-                    new SectionUI
+                SectionForEntity = (subject) =>
+                {
+                    var pane = listEditor.EditorPanes.FirstOrDefault(pane => pane.VariantType.IsSameTypeOrDerivedFrom(subject.Entity.GetType()));
+
+                    if (pane == null)
+                    {
+                        return null;
+                    }
+
+                    return new SectionUI
                     {
                         Buttons = pane.Buttons
                             .GetAllButtons()
-                            .Where(button => button.IsCompatibleWithView(entityViewContext(entity)))
+                            .Where(button => button.IsCompatibleWithView(entityViewContext(subject)))
                             .ToList(button => button.ToUI()),
 
                         Elements = pane.Fields.ToList(field => (Element)field.ToFieldWithLabelUI())
-                    }
+                    };
+                }
             };
+        }
     }
-}
 }

@@ -29,6 +29,7 @@ namespace RapidCMS.Common.Extensions
         private static T PopulateProperties<T>(T ui, Field field)
             where T : FieldUI
         {
+            ui.Alias = field.NodeProperty.PropertyName;
             ui.Property = field.NodeProperty;
             ui.ValueMapper = field.ValueMapper;
             ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;

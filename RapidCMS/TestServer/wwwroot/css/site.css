@@ -18,9 +18,6 @@ app {
     background: #fff;
     box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
 }
-    .content .top-row {
-        background: rgba(0, 0, 0, 0.05);
-    }
 
 .main {
     flex: 1;
@@ -76,13 +73,16 @@ app {
         }
 
 .content {
-    padding-top: 1.1rem;
     background: #fff;
+    padding-top: 1.1rem;
+    padding-bottom: 1rem;
     margin-bottom: 3rem;
     box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
 }
-    .content .content {
-        background: rgba(0, 0, 0, 0.05);
+
+    .content .content,
+    .content .top-row {
+        background: #fafafa;
     }
 
 .navbar-toggler {
@@ -135,6 +135,7 @@ a.current-page {
     padding-bottom: 1rem;
     margin-bottom: 1rem;
 }
+
     .form-row:last-of-type {
         border-bottom: 0;
     }
