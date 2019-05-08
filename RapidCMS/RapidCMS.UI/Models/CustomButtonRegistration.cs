@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
+using RapidCMS.Common.Models;
 
 #nullable enable
 
 namespace RapidCMS.UI.Models
 {
-    public class CustomButtonRegistration
-    {
-        public Type ButtonType { get; set; }
-        public string ButtonAlias { get; set; }
-    }
-
     // TODO: make generic for all typs of containers
     public class CustomButtonContainer
     {

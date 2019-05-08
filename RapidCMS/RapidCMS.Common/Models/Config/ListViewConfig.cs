@@ -31,9 +31,9 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ListViewConfig<TEntity> AddCustomButton(string alias, CrudType crudType, Action action, string label = null, string icon = null)
+        public ListViewConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string label = null, string icon = null)
         {
-            var button = new CustomButtonConfig(alias)
+            var button = new CustomButtonConfig(buttonType.FullName)
             {
                 Action = action,
                 CrudType = crudType,
@@ -46,9 +46,9 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ListViewConfig<TEntity> AddCustomButton<TActionHandler>(string alias, string label = null, string icon = null)
+        public ListViewConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string label = null, string icon = null)
         {
-            var button = new CustomButtonConfig(alias)
+            var button = new CustomButtonConfig(buttonType.FullName)
             {
                 ActionHandler = typeof(TActionHandler),
                 Icon = icon,

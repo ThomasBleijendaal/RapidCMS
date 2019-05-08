@@ -30,29 +30,9 @@ else
         @{
             @foreach (var button in UI.Buttons)
             {
+                var context = CreateButtonContext<BasePage>(this, button, ButtonCallbackAsync);
 
-                // TODO: put this in helper function
-                var context = new ButtonContext<BasePage>
-                {
-                    ButtonId = button.ButtonId,
-                    CallbackAsync = ButtonCallbackAsync,
-                    Context = this,
-                    Icon = button.Icon,
-                    Label = button.Label,
-                    ShouldConfirm = button.ShouldConfirm,
-                    IsPrimary = button.IsPrimary
-                };
-
-                <CascadingValue Value="context">
-                    @if (!string.IsNullOrEmpty(button.Alias))
-                    {
-                        @CustomButtons.GetCustomButton(button.Alias, typeof(BasePage))
-                    }
-                    else
-                    {
-                        <DefaultButton TContext="BasePage" />
-                    }
-                </CascadingValue>
+                <UIButton Button="button" Context="context" />
             }
         }
     </div>

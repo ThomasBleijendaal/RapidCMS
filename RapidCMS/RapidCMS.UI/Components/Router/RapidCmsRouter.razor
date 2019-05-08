@@ -1,4 +1,5 @@
 ﻿@using RapidCMS.UI.Models
+@using RapidCMS.Common.Models
 
 <CascadingValue Value="@CustomButtonContainer" Name="CustomButtons">
     <Router AppAssembly="typeof(RapidCMS.UI.Startup).Assembly" />
@@ -10,12 +11,12 @@
 
     private CustomButtonContainer CustomButtonContainer { get; set; } = new CustomButtonContainer(null);
 
-    [Parameter]
-    private List<CustomButtonRegistration>? CustomButtons { get; set; }
+    [Inject]
+    private Root Root { get; set; }
 
     protected override Task OnParametersSetAsync()
     {
-        CustomButtonContainer = new CustomButtonContainer(CustomButtons);
+        CustomButtonContainer = new CustomButtonContainer(Root.CustomButtonRegistrations);
 
         return base.OnParametersSetAsync();
     }

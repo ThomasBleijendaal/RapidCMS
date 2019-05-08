@@ -13,6 +13,7 @@ using TestLibrary.DataProvider;
 using TestLibrary.Entities;
 using TestLibrary.Repositories;
 using TestServer.ActionHandlers;
+using TestServer.Components.CustomButtons;
 
 namespace TestServer
 {
@@ -39,7 +40,10 @@ namespace TestServer
 
             services.AddTransient<DummyDataProvider>();
 
-            services.AddRapidCMS();
+            services.AddRapidCMS(config =>
+            {
+                config.AddCustomButton(typeof(CreateButton<>));
+            });
 
             services.AddMvc()
                 .AddNewtonsoftJson();
@@ -377,7 +381,7 @@ namespace TestServer
             {
                 config
                     .AddDefaultButton(DefaultButtonType.New, isPrimary: true)
-                    .AddCustomButton<CreateButtonActionHandler>("create-button", "Custom create!");
+                    .AddCustomButton<CreateButtonActionHandler>(typeof(CreateButton<>), "Custom create!");
 
                 config.SetListPane(listPaneConfig =>
                 {
@@ -387,7 +391,7 @@ namespace TestServer
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
-                    listPaneConfig.AddCustomButton<CreateButtonActionHandler>("create-button", "Custom create!");
+                    listPaneConfig.AddCustomButton<CreateButtonActionHandler>(typeof(CreateButton<>), "Custom create!");
                 });
             }
 

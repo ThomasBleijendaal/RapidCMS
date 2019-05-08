@@ -9,6 +9,22 @@ namespace RapidCMS.Common.Models.Config
 {
     // TODO: validate incoming parameters
 
+    public class RootConfig
+    {
+        internal List<CustomButtonRegistration> CustomButtonRegistrations { get; set; } = new List<CustomButtonRegistration>();
+
+        public RootConfig AddCustomButton(Type buttonType)
+        {
+            CustomButtonRegistrations.Add(new CustomButtonRegistration
+            {
+                ButtonAlias = buttonType.FullName,
+                ButtonType = buttonType
+            });
+
+            return this;
+        }
+    }
+
     public class CollectionConfig : ICollectionRoot
     {
         internal Type RepositoryType { get; set; }

@@ -8,6 +8,7 @@ using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
+using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.ValueMappers;
 
 #nullable enable
@@ -20,7 +21,14 @@ namespace RapidCMS.Common.Models
     // TODO: not really a model
     public class Root : ICollectionRoot
     {
+        public Root(List<CustomButtonRegistration> customButtonRegistrations)
+        {
+            CustomButtonRegistrations = customButtonRegistrations;
+        }
+
         private static Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
+
+        public List<CustomButtonRegistration> CustomButtonRegistrations { get; set; }
 
         public List<Collection> Collections { get; set; } = new List<Collection>();
 
@@ -53,6 +61,12 @@ namespace RapidCMS.Common.Models
         {
             return _collectionMap.TryGetValue(collectionAlias, out var collection) ? collection.Repository : default;
         }
+    }
+
+    public class CustomButtonRegistration
+    {
+        public Type ButtonType { get; set; }
+        public string ButtonAlias { get; set; }
     }
 
     public class Collection

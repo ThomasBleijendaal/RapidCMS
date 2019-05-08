@@ -9,15 +9,20 @@ using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.Services;
 using RapidCMS.Common.ValueMappers;
 
+#nullable enable
+
 namespace RapidCMS.Common.Extensions
 {
     // TODO: make code more DRY
 
     public static class RapidCMSMiddleware
     {
-        public static IServiceCollection AddRapidCMS(this IServiceCollection services)
+        public static IServiceCollection AddRapidCMS(this IServiceCollection services, Action<RootConfig>? config = null)
         {
-            var root = new Root();
+            var rootConfig = new RootConfig();
+            config?.Invoke(rootConfig);
+
+            var root = new Root(rootConfig.CustomButtonRegistrations);
 
             services.AddSingleton(root);
             services.AddSingleton<ICollectionService, CollectionService>();

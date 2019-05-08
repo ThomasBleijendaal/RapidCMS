@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Services;
 using RapidCMS.Common.Models.DTOs;
+using RapidCMS.Common.Models.UI;
+using RapidCMS.UI.Components.Buttons;
 using RapidCMS.UI.Models;
 
 #nullable enable
@@ -72,6 +75,20 @@ namespace RapidCMS.UI.Components.Pages
         protected virtual Task LoadDataAsync()
         {
             return Task.CompletedTask;
+        }
+
+        protected ButtonContext<TContext> CreateButtonContext<TContext>(TContext context, ButtonUI button, Func<string, TContext, object?, Task> callback)
+        {
+            return new ButtonContext<TContext>
+            {
+                ButtonId = button.ButtonId,
+                CallbackAsync = callback,
+                Context = context,
+                Icon = button.Icon,
+                Label = button.Label,
+                ShouldConfirm = button.ShouldConfirm,
+                IsPrimary = button.IsPrimary
+            };
         }
     }
 }

@@ -30,20 +30,9 @@ else
     <div class="top-row px-4">
         @foreach (var button in UI.Buttons)
         {
+            var context = CreateButtonContext<BasePage>(this, button, ButtonCallbackAsync);
 
-            // TODO: put in helper function
-            var context = new ButtonContext<BasePage>
-            {
-                ButtonId = button.ButtonId,
-                CallbackAsync = ButtonCallbackAsync,
-                Context = this,
-                Icon = button.Icon,
-                Label = button.Label,
-                ShouldConfirm = button.ShouldConfirm,
-                IsPrimary = button.IsPrimary
-            };
-
-            <CascadingValue Value="context">
+            <CascadingValue Value="@context">
                 @if (!string.IsNullOrEmpty(button.Alias))
                 {
                     @CustomButtons.GetCustomButton(button.Alias, typeof(BasePage))
@@ -133,18 +122,7 @@ else
                                     <td>
                                         @foreach (var button in pane.Buttons)
                                         {
-
-                                            // TODO: put in helper function
-                                            var context = new ButtonContext<IEntity>
-                                            {
-                                                ButtonId = button.ButtonId,
-                                                CallbackAsync = NodeButtonCallbackAsync,
-                                                Context = subject.Entity,
-                                                Icon = button.Icon,
-                                                Label = button.Label,
-                                                ShouldConfirm = button.ShouldConfirm,
-                                                IsPrimary = button.IsPrimary
-                                            };
+                                            var context = CreateButtonContext(subject.Entity, button, NodeButtonCallbackAsync);
 
                                             <CascadingValue Value="context">
                                                 @if (!string.IsNullOrEmpty(button.Alias))
@@ -175,21 +153,12 @@ else
                 <div class="top-row px-4">
                     @foreach (var button in pane.Buttons)
                     {
-                        // TODO: put in helper function
-                        var context = new ButtonContext<IEntity>
-                        {
-                            ButtonId = button.ButtonId,
-                            CallbackAsync = NodeButtonCallbackAsync,
-                            Context = subject.Entity,
-                            Icon = button.Icon,
-                            Label = button.Label,
-                            ShouldConfirm = button.ShouldConfirm
-                        };
+                        var context = CreateButtonContext(subject.Entity, button, NodeButtonCallbackAsync);
 
                         <CascadingValue Value="context">
                             @if (!string.IsNullOrEmpty(button.Alias))
                             {
-                                @CustomButtons.GetCustomButton(button.Alias, typeof(BasePage))
+                                @CustomButtons.GetCustomButton(button.Alias, typeof(IEntity))
                             }
                             else
                             {
