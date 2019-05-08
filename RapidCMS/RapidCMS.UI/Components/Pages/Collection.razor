@@ -32,6 +32,9 @@ else
         {
             var context = CreateButtonContext<BasePage>(this, button, ButtonCallbackAsync);
 
+
+            <UIButton Button="button" Context="context" />
+
             <CascadingValue Value="@context">
                 @if (!string.IsNullOrEmpty(button.Alias))
                 {
