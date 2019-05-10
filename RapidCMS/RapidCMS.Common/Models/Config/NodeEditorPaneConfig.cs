@@ -8,13 +8,18 @@ using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
 
+#nullable enable
+
 namespace RapidCMS.Common.Models.Config
 {
     public class NodeEditorPaneConfig
     {
-        public int FieldIndex { get; set; }
+        public string? CustomAlias { get; set; }
 
         public Type VariantType { get; set; }
+
+        public int FieldIndex { get; set; }
+
         public List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
         public List<SubCollectionListEditorConfig> SubCollectionListEditors { get; set; } = new List<SubCollectionListEditorConfig>();
     }
@@ -22,6 +27,15 @@ namespace RapidCMS.Common.Models.Config
     public class NodeEditorPaneConfig<TEntity> : NodeEditorPaneConfig
         where TEntity : IEntity
     {
+        public NodeEditorPaneConfig()
+        {
+        }
+
+        public NodeEditorPaneConfig(Type customSectionType)
+        {
+            CustomAlias = customSectionType.FullName;
+        }
+
         public FieldConfig<TEntity> AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<FieldConfig<TEntity>> configure = null)
         {
             var config = new FieldConfig<TEntity>()

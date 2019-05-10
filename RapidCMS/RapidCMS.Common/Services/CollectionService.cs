@@ -179,7 +179,7 @@ namespace RapidCMS.Common.Services
             }
         }
 
-        public async Task<EditorUI> GetNodeEditorAsync(string action, string alias, string variantAlias, string? parentId, string? id)
+        public async Task<NodeUI> GetNodeEditorAsync(string action, string alias, string variantAlias, string? parentId, string? id)
         {
             var collection = _root.GetCollection(alias);
 
@@ -206,14 +206,18 @@ namespace RapidCMS.Common.Services
             var viewContext = new ViewContext(UsageType.Node | MapActionToUsageType(action), entityVariant);
             var nodeEditor = collection.NodeEditor;
 
-            var editor = _uiService.GenerateNodeUI(viewContext, nodeEditor);
+            var node = _uiService.GenerateNodeUI(viewContext, nodeEditor);
 
-            editor.Entity = entity;
+            node.Subject = new UISubject
+            {
+                Entity = entity,
+                UsageType = MapActionToUsageType(action)
+            };
 
-            return editor;
+            return node;
         }
 
-        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, EditorUI editor, string actionId, object? customData)
+        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, NodeUI node, string actionId, object? customData)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -225,7 +229,7 @@ namespace RapidCMS.Common.Services
 
             // TODO: relations must not be simply set but must be added using seperate IRepository call after update to allow for better support
             // TODO: must track which releation(s) have been broken and which have been made to allow for absolute control
-            var updatedEntity = editor.Entity;
+            var updatedEntity = node.Subject.Entity;
 
 
 

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Models;
+using RapidCMS.Common.Models.UI;
+using RapidCMS.UI.Components.Editors;
+using RapidCMS.UI.Components.Sections;
 
 #nullable enable
 
@@ -14,6 +17,7 @@ namespace RapidCMS.UI.Models
 
         public CustomButtonContainer(IEnumerable<CustomButtonRegistration>? registrations)
         {
+            // TODO: make similair to CustomEditorContainer
             if (registrations != null)
             {
                 foreach (var registration in registrations)
@@ -61,8 +65,39 @@ namespace RapidCMS.UI.Models
 
                     builder.OpenComponent(0, editorType);
 
-                    builder.AddAttribute(1, "EditorValue", value);
-                    builder.AddAttribute(2, "Callback", callback);
+                    builder.AddAttribute(1, nameof(BaseEditor<TValue>.EditorValue), value);
+                    builder.AddAttribute(2, nameof(BaseEditor<TValue>.Callback), callback);
+
+                    builder.CloseComponent();
+                };
+            }
+
+            return null;
+        }
+    }
+
+    public class CustomSectionContainer
+    {
+        private Dictionary<string, CustomSectionRegistration>? _customButtons;
+
+        public CustomSectionContainer(IEnumerable<CustomSectionRegistration>? registrations)
+        {
+            if (registrations != null)
+            {
+                _customButtons = registrations.ToDictionary(x => x.SectionAlias);
+            }
+        }
+
+        public RenderFragment? GetCustomSection(string sectionAlias, SectionUI section, UISubject subject)
+        {
+            if (_customButtons != null && _customButtons.TryGetValue(sectionAlias, out var registration))
+            {
+                return builder =>
+                {
+                    builder.OpenComponent(0, registration.SectionType);
+
+                    builder.AddAttribute(1, nameof(BaseSection.Section), section);
+                    builder.AddAttribute(2, nameof(BaseSection.Subject), subject);
 
                     builder.CloseComponent();
                 };

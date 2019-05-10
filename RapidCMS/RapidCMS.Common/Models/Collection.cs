@@ -8,8 +8,6 @@ using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Models.Config;
-using RapidCMS.Common.ValueMappers;
 
 #nullable enable
 
@@ -23,16 +21,19 @@ namespace RapidCMS.Common.Models
     {
         public Root(
             IEnumerable<CustomButtonRegistration> customButtonRegistrations,
-            IEnumerable<CustomEditorRegistration> customEditorRegistrations)
+            IEnumerable<CustomEditorRegistration> customEditorRegistrations,
+            IEnumerable<CustomSectionRegistration> customSectionRegistrations)
         {
             CustomButtonRegistrations = customButtonRegistrations.ToList();
             CustomEditorRegistrations = customEditorRegistrations.ToList();
+            CustomSectionRegistrations = customSectionRegistrations.ToList();
         }
 
         private static Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
 
         public List<CustomButtonRegistration> CustomButtonRegistrations { get; set; }
         public List<CustomEditorRegistration> CustomEditorRegistrations { get; set; }
+        public List<CustomSectionRegistration> CustomSectionRegistrations { get; set; }
 
         public List<Collection> Collections { get; set; } = new List<Collection>();
 
@@ -67,6 +68,7 @@ namespace RapidCMS.Common.Models
         }
     }
 
+    // TODO: check if these Registration classes can be merged
     public class CustomButtonRegistration
     {
         public CustomButtonRegistration(Type buttonType)
@@ -89,6 +91,18 @@ namespace RapidCMS.Common.Models
 
         public Type EditorType { get; set; }
         public string EditorAlias { get; set; }
+    }
+
+    public class CustomSectionRegistration
+    {
+        public CustomSectionRegistration(Type sectionType)
+        {
+            SectionType = sectionType ?? throw new ArgumentNullException(nameof(sectionType));
+            SectionAlias = sectionType.FullName;
+        }
+
+        public Type SectionType { get; set; }
+        public string SectionAlias { get; set; }
     }
 
     public class Collection
@@ -165,8 +179,8 @@ namespace RapidCMS.Common.Models
 
     public class ListView : View
     {
-        public ViewPane ViewPane { get; set; }
-        public List<Button> Buttons { get; set; }
+        public ViewPane? ViewPane { get; set; }
+        public List<Button>? Buttons { get; set; }
     }
 
     public class Editor
@@ -177,7 +191,7 @@ namespace RapidCMS.Common.Models
     public class ListEditor : Editor
     {
         public ListEditorType ListEditorType { get; set; }
-        public List<EditorPane<Field>> EditorPanes { get; set; }
+        public List<EditorPane> EditorPanes { get; set; }
         public List<Button> Buttons { get; set; }
     }
 
@@ -191,7 +205,7 @@ namespace RapidCMS.Common.Models
     public class NodeEditor : Editor
     {
         public Type BaseType { get; set; }
-        public List<EditorPane<Field>> EditorPanes { get; set; }
+        public List<EditorPane> EditorPanes { get; set; }
         public List<Button> Buttons { get; set; }
     }
 
@@ -211,12 +225,12 @@ namespace RapidCMS.Common.Models
         public List<Button> Buttons { get; set; }
     }
 
-    public class EditorPane<T>
-        where T : Field
+    public class EditorPane
     {
+        public string? CustomAlias { get; set; }
         public Type VariantType { get; set; }
         public List<Button> Buttons { get; set; }
-        public List<T> Fields { get; set; }
+        public List<Field> Fields { get; set; }
         public List<SubCollectionListEditor> SubCollectionListEditors { get; set; }
     }
 

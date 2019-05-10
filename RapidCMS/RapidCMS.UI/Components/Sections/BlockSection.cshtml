@@ -1,0 +1,47 @@
+﻿@inherits BaseSection
+
+@using RapidCMS.Common.Models.UI
+@using RapidCMS.Common
+@using RapidCMS.Common.Enums
+@using RapidCMS.Common.Extensions
+
+@if (Section.Elements.Any())
+{
+    @foreach (var elementGroup in Section.Elements.ChunckedGroupBy(x => x.GetType()))
+    {
+        if (elementGroup.Key == typeof(FieldWithLabelUI))
+        {
+            <div class="content px-4">
+                @foreach (var field in elementGroup.Cast<FieldWithLabelUI>())
+                {
+                    <div class="form-row">
+                        <div class="col-2">
+                            <label>@field.Name</label>
+                            <small class="form-text text-muted">@field.Description</small>
+                        </div>
+                        <div class="col-10">
+                            @* // TODO: change to some enum on the EditorUI *@
+                            @if (Subject.UsageType == UsageType.View)
+                            {
+                                @field.GetReadonlyValue(Subject.Entity)
+                            }
+                            else
+                            {
+                                <UIEditor Field="field" Entity="@Subject.Entity" />
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else if (elementGroup.Key == typeof(SubCollectionUI))
+        {
+            @foreach (var subCollection in elementGroup.Cast<SubCollectionUI>())
+            {
+                <Collection Action="@Constants.Edit"
+                            CollectionAlias="@subCollection.CollectionAlias"
+                            ParentId="@Subject.Entity.Id" />
+            }
+        }
+    }
+}

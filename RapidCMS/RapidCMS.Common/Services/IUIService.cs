@@ -9,7 +9,7 @@ namespace RapidCMS.Common.Services
 {
     public interface IUIService
     {
-        EditorUI GenerateNodeUI(ViewContext viewContext, NodeEditor nodeEditor);
+        NodeUI GenerateNodeUI(ViewContext viewContext, NodeEditor nodeEditor);
         ListUI GenerateListUI(ViewContext listViewContext, Func<UISubject, ViewContext> entityViewContext, ListView listView);
         ListUI GenerateListUI(ViewContext listViewContext, Func<UISubject, ViewContext> entityViewContext, ListEditor listEditor);
     }

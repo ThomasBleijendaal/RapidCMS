@@ -12,7 +12,7 @@ namespace RapidCMS.Common.Extensions
 {
     public static class ButtonConfigExtensions
     {
-        public static DefaultButton ToDefaultButton(this DefaultButtonConfig button, IEnumerable<EntityVariant>? entityVariants, EntityVariant baseEntityVariant)
+        public static Button ToDefaultButton(this DefaultButtonConfig button, IEnumerable<EntityVariant>? entityVariants, EntityVariant baseEntityVariant)
         {
             return new DefaultButton
             {
@@ -36,7 +36,7 @@ namespace RapidCMS.Common.Extensions
             };
         }
 
-        public static CustomButton ToCustomButton(this CustomButtonConfig button)
+        public static Button ToCustomButton(this CustomButtonConfig button)
         {
             var handler = (button.ActionHandler != null)
                 ? ServiceLocator.Instance.GetService<IButtonActionHandler>(button.ActionHandler)

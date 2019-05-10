@@ -11,7 +11,7 @@ namespace RapidCMS.UI.Components.Editors
         // TODO: move to two methods: one for getting and one for setting the value of this editor
 
         [Parameter]
-        private TValue EditorValue { get; set; }
+        public TValue EditorValue { get; private set; }
 
         protected TValue Value
         {
@@ -28,7 +28,7 @@ namespace RapidCMS.UI.Components.Editors
         }
 
         [Parameter]
-        private Action<TValue>? Callback { get; set; }
+        public Action<TValue>? Callback { get; private set; }
 
         [Parameter]
         protected IDataProvider? DataProvider { get; set; }

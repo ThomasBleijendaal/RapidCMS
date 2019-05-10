@@ -5,6 +5,8 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 
+#nullable enable
+
 namespace RapidCMS.Common.Models.Config
 {
     public class NodeEditorConfig
@@ -72,12 +74,25 @@ namespace RapidCMS.Common.Models.Config
             return AddEditorPane<TEntity>(configure);
         }
 
+        public NodeEditorConfig<TEntity> AddEditorPane(Type customSectionType, Action<NodeEditorPaneConfig<TEntity>>? configure = null)
+        {
+            return AddEditorPane<TEntity>(customSectionType, configure);
+        }
+
         public NodeEditorConfig<TEntity> AddEditorPane<TDerivedEntity>(Action<NodeEditorPaneConfig<TDerivedEntity>> configure)
             where TDerivedEntity : TEntity
         {
-            var config = new NodeEditorPaneConfig<TDerivedEntity>();
+            return AddEditorPane(null, configure);
+        }
 
-            configure.Invoke(config);
+        public NodeEditorConfig<TEntity> AddEditorPane<TDerivedEntity>(Type? customSectionType, Action<NodeEditorPaneConfig<TDerivedEntity>>? configure)
+            where TDerivedEntity : TEntity
+        {
+            var config = customSectionType == null 
+                ? new NodeEditorPaneConfig<TDerivedEntity>() 
+                : new NodeEditorPaneConfig<TDerivedEntity>(customSectionType);
+
+            configure?.Invoke(config);
 
             config.VariantType = typeof(TDerivedEntity);
 

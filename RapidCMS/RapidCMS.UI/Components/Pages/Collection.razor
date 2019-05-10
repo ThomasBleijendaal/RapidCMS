@@ -3,10 +3,7 @@
 @page "/collection/{Action}/{CollectionAlias}"
 @page "/collection/{Action}/{CollectionAlias}/{ParentId}"
 
-@using RapidCMS.Common
 @using RapidCMS.Common.Enums
-@using RapidCMS.UI.Components.Buttons
-@using RapidCMS.Common.Models.DTOs
 @using RapidCMS.Common.Extensions
 @using RapidCMS.Common.Data
 @using RapidCMS.Common.Models.UI
@@ -131,10 +128,10 @@ else
         {
             @foreach (var subject in UI.Entities)
             {
-                var pane = UI.SectionForEntity(subject);
+                var section = UI.SectionForEntity(subject);
 
                 <div class="top-row px-4">
-                    @foreach (var button in pane.Buttons)
+                    @foreach (var button in section.Buttons)
                     {
                         var context = CreateButtonContext(subject.Entity, button, NodeButtonCallbackAsync);
 
@@ -142,32 +139,7 @@ else
                     }
                 </div>
 
-                <div class="content px-4">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <td>Field</td>
-                                <td>Editor</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var element in pane.Elements)
-                            {
-                                if (element is FieldWithLabelUI field)
-                                {
-                                    <tr>
-                                        <td>
-                                            @field.Name<br /><small>@field.Description</small>
-                                        </td>
-                                        <td>
-                                            <UIEditor Field="field" Entity="@subject.Entity" />
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                <BlockSection Section="section" Subject="subject" />
             }
         }
     </div>

@@ -19,9 +19,9 @@ namespace RapidCMS.Common.Services
             _root = root;
         }
 
-        public EditorUI GenerateNodeUI(ViewContext viewContext, NodeEditor nodeEditor)
+        public NodeUI GenerateNodeUI(ViewContext viewContext, NodeEditor nodeEditor)
         {
-            return new EditorUI
+            return new NodeUI
             {
                 Buttons = nodeEditor.Buttons
                     .GetAllButtons()
@@ -44,6 +44,8 @@ namespace RapidCMS.Common.Services
 
                         return new SectionUI
                         {
+                            CustomAlias = pane.CustomAlias,
+
                             Elements = fields.Union(subCollections)
                                 .OrderBy(x => x.Index)
                                 .ToList(x => x.element)
@@ -64,6 +66,9 @@ namespace RapidCMS.Common.Services
                 SectionForEntity = (entity) => listView.ViewPane == null ? null :
                     new SectionUI
                     {
+                        // TODO: custom?
+                        // CustomAlias = (listView.ViewPane is CustomEditorPane customEditorPane) ? customEditorPane.Alias : null,
+
                         Buttons = listView.ViewPane.Buttons
                             .GetAllButtons()
                             .Where(button => button.IsCompatibleWithView(entityViewContext(entity)))
@@ -94,6 +99,8 @@ namespace RapidCMS.Common.Services
 
                     return new SectionUI
                     {
+                        CustomAlias = pane.CustomAlias,
+
                         Buttons = pane.Buttons
                             .GetAllButtons()
                             .Where(button => button.IsCompatibleWithView(entityViewContext(subject)))

@@ -17,8 +17,8 @@ namespace RapidCMS.UI.Components.Pages
         [Inject]
         private IUriHelper UriHelper { get; set; }
 
-        [CascadingParameter(Name = "CustomButtons")]
-        protected CustomButtonContainer CustomButtons { get; set; }
+        [CascadingParameter(Name = "CustomSections")]
+        protected CustomSectionContainer CustomSections { get; set; }
 
         protected async Task HandleViewCommandAsync(ViewCommand command)
         {

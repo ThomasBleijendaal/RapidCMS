@@ -11,6 +11,8 @@ namespace RapidCMS.Common.Models.UI
         public ListType ListType { get; set; }
 
         public List<ButtonUI> Buttons { get; set; }
+
+        // TODO: this could return multiple items
         public Func<UISubject, SectionUI> SectionForEntity { get; set; }
     }
 }

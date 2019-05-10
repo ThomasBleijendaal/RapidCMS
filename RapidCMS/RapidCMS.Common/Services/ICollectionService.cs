@@ -19,7 +19,7 @@ namespace RapidCMS.Common.Services
         Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string actionId, object? customData);
         Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string id, string actionId, IEntity entity, object? customData);
         
-        Task<EditorUI> GetNodeEditorAsync(string action, string collectionAlias, string variantAlias, string? parentId, string? id);
-        Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, EditorUI editor, string actionId, object? customData);
+        Task<NodeUI> GetNodeEditorAsync(string action, string collectionAlias, string variantAlias, string? parentId, string? id);
+        Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, NodeUI node, string actionId, object? customData);
     }
 }

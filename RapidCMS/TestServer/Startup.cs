@@ -15,6 +15,7 @@ using TestLibrary.Repositories;
 using TestServer.ActionHandlers;
 using TestServer.Components.CustomButtons;
 using TestServer.Components.CustomEditors;
+using TestServer.Components.CustomSections;
 
 namespace TestServer
 {
@@ -45,6 +46,7 @@ namespace TestServer
             {
                 config.AddCustomButton(typeof(CreateButton<>));
                 config.AddCustomEditor(typeof(PasswordEditor));
+                config.AddCustomSection(typeof(DashboardSection));
             });
 
             services.AddMvc()
@@ -394,7 +396,6 @@ namespace TestServer
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
-                    listPaneConfig.AddCustomButton<CreateButtonActionHandler>(typeof(CreateButton<>), "Custom create!");
                 });
             }
 
@@ -411,6 +412,8 @@ namespace TestServer
                     editorPaneConfig.AddField(x => x.Password)
                         .SetType(typeof(PasswordEditor));
                 });
+
+                config.AddEditorPane(typeof(DashboardSection));
             }
 
             void RelationListView(ListViewConfig<RelationEntity> config)

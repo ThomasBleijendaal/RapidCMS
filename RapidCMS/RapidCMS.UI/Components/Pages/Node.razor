@@ -5,11 +5,8 @@
 @page "/node/{Action}/{ParentId}/{CollectionAlias}/entity/{VariantAlias}"
 @page "/node/{Action}/{ParentId}/{CollectionAlias}/entity/{VariantAlias}/{Id}"
 
-@using RapidCMS.Common
-@using RapidCMS.UI.Components.Buttons
 @using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Services
-@using RapidCMS.Common.Extensions
 
 @inject ICollectionService CollectionService
 
@@ -37,50 +34,18 @@ else
         }
     </div>
 
-    @foreach (var pane in UI.Sections)
+    @foreach (var section in UI.Sections)
     {
-        @if (pane.Elements.Any())
+        if (!string.IsNullOrEmpty(section.CustomAlias))
         {
-            @foreach (var elementGroup in pane.Elements.ChunckedGroupBy(x => x.GetType()))
-            {
-                if (elementGroup.Key == typeof(FieldWithLabelUI))
-                {
-                    <div class="content px-4">
-                        @foreach (var field in elementGroup.Cast<FieldWithLabelUI>())
-                        {
-                            <div class="form-row">
-                                <div class="col-2">
-                                    <label>@field.Name</label>
-                                    <small class="form-text text-muted">@field.Description</small>
-                                </div>
-                                <div class="col-10">
-                                    @* // TODO: change to some enum on the EditorUI *@
-                                    @if (Action == Constants.View)
-                                    {
-                                        @field.GetReadonlyValue(UI.Entity)
-                                    }
-                                    else
-                                    {
-                                        <UIEditor Field="field" Entity="@UI.Entity" />
-                                    }
-                                </div>
-                            </div>
-                        }
-                    </div>
-                }
-                else if (elementGroup.Key == typeof(SubCollectionUI))
-                {
-                    @foreach (var subCollection in elementGroup.Cast<SubCollectionUI>())
-                    {
-                        <Collection Action="@Constants.Edit"
-                                    CollectionAlias="@subCollection.CollectionAlias"
-                                    ParentId="@Id" />
-                    }
-                }
+            @CustomSections.GetCustomSection(section.CustomAlias, section, UI.Subject);
+        }
+        else
+        {
+        <BlockSection Section="section" Subject="UI.Subject" />
             }
         }
     }
-}
 
 @functions {
 #nullable enable
@@ -100,7 +65,7 @@ else
     [Parameter]
     private string? Id { get; set; } = null;
 
-    EditorUI? UI;
+    NodeUI? UI;
 
     protected override async Task OnParametersSetAsync()
     {

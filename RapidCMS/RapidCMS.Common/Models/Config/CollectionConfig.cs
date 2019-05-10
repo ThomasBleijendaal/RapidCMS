@@ -13,6 +13,7 @@ namespace RapidCMS.Common.Models.Config
     {
         internal List<CustomButtonRegistration> CustomButtonRegistrations { get; set; } = new List<CustomButtonRegistration>();
         internal List<CustomEditorRegistration> CustomEditorRegistrations { get; set; } = new List<CustomEditorRegistration>();
+        internal List<CustomSectionRegistration> CustomSectionRegistrations { get; set; } = new List<CustomSectionRegistration>();
 
         public RootConfig AddCustomButton(Type buttonType)
         {
@@ -24,6 +25,13 @@ namespace RapidCMS.Common.Models.Config
         public RootConfig AddCustomEditor(Type editorType)
         {
             CustomEditorRegistrations.Add(new CustomEditorRegistration(editorType));
+
+            return this;
+        }
+
+        public RootConfig AddCustomSection(Type sectionType)
+        {
+            CustomSectionRegistrations.Add(new CustomSectionRegistration(sectionType));
 
             return this;
         }
