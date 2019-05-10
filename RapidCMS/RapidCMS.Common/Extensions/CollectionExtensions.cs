@@ -22,7 +22,7 @@ namespace RapidCMS.Common.Extensions
             var rootConfig = new RootConfig();
             config?.Invoke(rootConfig);
 
-            var root = new Root(rootConfig.CustomButtonRegistrations);
+            var root = new Root(rootConfig.CustomButtonRegistrations, rootConfig.CustomEditorRegistrations);
 
             services.AddSingleton(root);
             services.AddSingleton<ICollectionService, CollectionService>();
@@ -46,8 +46,6 @@ namespace RapidCMS.Common.Extensions
             try
             {
                 root.MaterializeRepositories(app.ApplicationServices);
-
-                // TODO: populate value mappers
             }
             catch
             {

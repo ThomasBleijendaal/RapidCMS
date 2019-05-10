@@ -2,7 +2,9 @@
 @using RapidCMS.Common.Models
 
 <CascadingValue Value="@CustomButtonContainer" Name="CustomButtons">
-    <Router AppAssembly="typeof(RapidCMS.UI.Startup).Assembly" />
+    <CascadingValue Value="@CustomEditorContainer" Name="CustomEditors">
+        <Router AppAssembly="typeof(RapidCMS.UI.Startup).Assembly" />
+    </CascadingValue>
 </CascadingValue>
 
 
@@ -10,6 +12,7 @@
 #nullable enable
 
     private CustomButtonContainer CustomButtonContainer { get; set; } = new CustomButtonContainer(null);
+    private CustomEditorContainer CustomEditorContainer { get; set; } = new CustomEditorContainer(null);
 
     [Inject]
     private Root Root { get; set; }
@@ -17,6 +20,7 @@
     protected override Task OnParametersSetAsync()
     {
         CustomButtonContainer = new CustomButtonContainer(Root.CustomButtonRegistrations);
+        CustomEditorContainer = new CustomEditorContainer(Root.CustomEditorRegistrations);
 
         return base.OnParametersSetAsync();
     }

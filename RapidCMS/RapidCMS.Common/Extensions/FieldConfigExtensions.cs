@@ -1,4 +1,5 @@
-﻿using RapidCMS.Common.Models;
+﻿using RapidCMS.Common.Enums;
+using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.ValueMappers;
 
@@ -8,19 +9,38 @@ namespace RapidCMS.Common.Extensions
     {
         public static Field ToField(this FieldConfig field)
         {
-            return new Field
+            if (field.Type == EditorType.Custom)
             {
-                Index = field.Index,
+                return new CustomField(field.CustomType)
+                {
+                    Index = field.Index,
 
-                DataType = field.Type,
-                Description = field.Description,
-                Name = field.Name,
-                NodeProperty = field.NodeProperty,
-                Readonly = field.Readonly,
-                ValueMapperType = field.ValueMapperType ?? typeof(DefaultValueMapper),
+                    DataType = field.Type,
+                    Description = field.Description,
+                    Name = field.Name,
+                    NodeProperty = field.NodeProperty,
+                    Readonly = field.Readonly,
+                    ValueMapperType = field.ValueMapperType ?? typeof(DefaultValueMapper),
 
-                OneToManyRelation = field.OneToManyRelation?.ToOneToManyRelation()
-            };
+                    OneToManyRelation = field.OneToManyRelation?.ToOneToManyRelation()
+                };
+            }
+            else
+            {
+                return new Field
+                {
+                    Index = field.Index,
+
+                    DataType = field.Type,
+                    Description = field.Description,
+                    Name = field.Name,
+                    NodeProperty = field.NodeProperty,
+                    Readonly = field.Readonly,
+                    ValueMapperType = field.ValueMapperType ?? typeof(DefaultValueMapper),
+
+                    OneToManyRelation = field.OneToManyRelation?.ToOneToManyRelation()
+                };
+            }
         }
     }
 

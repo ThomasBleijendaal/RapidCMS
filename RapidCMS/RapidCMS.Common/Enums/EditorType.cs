@@ -4,6 +4,8 @@ namespace RapidCMS.Common.Enums
 {
     public enum EditorType
     {
+        Custom = -1,
+
         TextBox = 0,
         TextArea,
 

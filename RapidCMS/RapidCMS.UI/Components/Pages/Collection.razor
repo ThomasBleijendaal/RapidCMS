@@ -32,19 +32,7 @@ else
         {
             var context = CreateButtonContext<BasePage>(this, button, ButtonCallbackAsync);
 
-
-            <UIButton Button="button" Context="context" />
-
-            <CascadingValue Value="@context">
-                @if (!string.IsNullOrEmpty(button.Alias))
-                {
-                    @CustomButtons.GetCustomButton(button.Alias, typeof(BasePage))
-                }
-                else
-                {
-                    <DefaultButton TContext="BasePage" />
-                }
-            </CascadingValue>
+            <UIButton TContext="BasePage" Button="button" Context="context" />
         }
     </div>
 
@@ -68,9 +56,9 @@ else
                                 {
                                     if (element is FieldWithLabelUI field)
                                     {
-                                        if (!elementsProcessed.Contains(field.Alias))
+                                        if (!elementsProcessed.Contains(field.Property.PropertyName))
                                         {
-                                            elementsProcessed.Add(field.Alias);
+                                            elementsProcessed.Add(field.Property.PropertyName);
 
                                             <td>@field.Name<br /><small>@field.Description</small></td>
                                         }
@@ -98,7 +86,8 @@ else
                                     if (element is FieldWithLabelUI field)
                                     {
                                         // fill in the gaps (when dealing with multiple entity variants)
-                                        while (elementsProcessed.IndexOf(field.Alias) > index++)
+                                        // TODO: only do this when fill the gaps setting is active
+                                        while (elementsProcessed.IndexOf(field.Property.PropertyName) > index++)
                                         {
                                             <td>&nbsp;</td>
                                         }
@@ -110,7 +99,7 @@ else
                                         else
                                         {
                                             <td>
-                                                <DefaultEditor Field="field" Entity="@subject.Entity" />
+                                                <UIEditor Field="field" Entity="@subject.Entity" />
                                             </td>
                                         }
                                     }
@@ -127,16 +116,7 @@ else
                                         {
                                             var context = CreateButtonContext(subject.Entity, button, NodeButtonCallbackAsync);
 
-                                            <CascadingValue Value="context">
-                                                @if (!string.IsNullOrEmpty(button.Alias))
-                                                {
-                                                    @CustomButtons.GetCustomButton(button.Alias, typeof(IEntity))
-                                                }
-                                                else
-                                                {
-                                                    <DefaultButton TContext="IEntity" />
-                                                }
-                                            </CascadingValue>
+                                            <UIButton TContext="IEntity" Button="button" Context="context" />
                                         }
                                     </td>
                                 }
@@ -158,16 +138,7 @@ else
                     {
                         var context = CreateButtonContext(subject.Entity, button, NodeButtonCallbackAsync);
 
-                        <CascadingValue Value="context">
-                            @if (!string.IsNullOrEmpty(button.Alias))
-                            {
-                                @CustomButtons.GetCustomButton(button.Alias, typeof(IEntity))
-                            }
-                            else
-                            {
-                                <DefaultButton TContext="IEntity" />
-                            }
-                        </CascadingValue>
+                        <UIButton TContext="IEntity" Button="button" Context="context" />
                     }
                 </div>
 
@@ -189,7 +160,7 @@ else
                                             @field.Name<br /><small>@field.Description</small>
                                         </td>
                                         <td>
-                                            <DefaultEditor Field="field" Entity="@subject.Entity" />
+                                            <UIEditor Field="field" Entity="@subject.Entity" />
                                         </td>
                                     </tr>
                                 }

@@ -18,7 +18,7 @@ namespace RapidCMS.Common.Extensions
                 Label = button.Label,
                 ShouldConfirm = button.ShouldConfirm,
                 IsPrimary = button.IsPrimary,
-                Alias = (button is CustomButton customButton) ? customButton.Alias : null
+                CustomAlias = (button is CustomButton customButton) ? customButton.Alias : null
             };
         }
 
@@ -30,7 +30,7 @@ namespace RapidCMS.Common.Extensions
         private static T PopulateProperties<T>(T ui, Field field)
             where T : FieldUI
         {
-            ui.Alias = field.NodeProperty.PropertyName;
+            ui.CustomAlias = (field is CustomField customField) ? customField.Alias : null;
             ui.Property = field.NodeProperty;
             ui.ValueMapper = ServiceLocator.Instance.GetService<IValueMapper>(field.ValueMapperType);
             ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;

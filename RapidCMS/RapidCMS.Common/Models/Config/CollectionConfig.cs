@@ -12,14 +12,18 @@ namespace RapidCMS.Common.Models.Config
     public class RootConfig
     {
         internal List<CustomButtonRegistration> CustomButtonRegistrations { get; set; } = new List<CustomButtonRegistration>();
+        internal List<CustomEditorRegistration> CustomEditorRegistrations { get; set; } = new List<CustomEditorRegistration>();
 
         public RootConfig AddCustomButton(Type buttonType)
         {
-            CustomButtonRegistrations.Add(new CustomButtonRegistration
-            {
-                ButtonAlias = buttonType.FullName,
-                ButtonType = buttonType
-            });
+            CustomButtonRegistrations.Add(new CustomButtonRegistration(buttonType));
+
+            return this;
+        }
+
+        public RootConfig AddCustomEditor(Type editorType)
+        {
+            CustomEditorRegistrations.Add(new CustomEditorRegistration(editorType));
 
             return this;
         }

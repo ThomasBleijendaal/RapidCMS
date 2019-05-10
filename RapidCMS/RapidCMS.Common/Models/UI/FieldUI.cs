@@ -6,7 +6,7 @@ namespace RapidCMS.Common.Models.UI
 {
     public class FieldUI : Element
     {
-        public string Alias { get; set; }
+        public string CustomAlias { get; set; }
 
         public EditorType Type { get; set; }
 

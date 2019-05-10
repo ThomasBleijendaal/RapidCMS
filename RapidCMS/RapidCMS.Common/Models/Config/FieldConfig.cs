@@ -23,6 +23,7 @@ namespace RapidCMS.Common.Models.Config
         internal OneToManyRelationConfig? OneToManyRelation { get; set; }
 
         internal EditorType Type { get; set; }
+        internal Type CustomType { get; set; }
     }
 
     public class FieldConfig<TEntity> : FieldConfig
@@ -41,6 +42,12 @@ namespace RapidCMS.Common.Models.Config
         public FieldConfig<TEntity> SetType(EditorType type)
         {
             Type = type;
+            return this;
+        }
+        public FieldConfig<TEntity> SetType(Type type)
+        {
+            Type = EditorType.Custom;
+            CustomType = type;
             return this;
         }
 

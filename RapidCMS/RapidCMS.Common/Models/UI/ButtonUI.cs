@@ -8,6 +8,6 @@
         public bool ShouldConfirm { get; set; }
         public bool IsPrimary { get; set; }
 
-        public string Alias { get; set; }
+        public string CustomAlias { get; set; }
     }
 }

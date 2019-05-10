@@ -28,9 +28,9 @@ namespace TestLibrary.Repositories
 
                 await table.CreateIfNotExistsAsync();
 
-                var queuePermissions = new TablePermissions();
-                queuePermissions.SharedAccessPolicies.Add(TableName, new SharedAccessTablePolicy { Permissions = SharedAccessTablePermissions.Query | SharedAccessTablePermissions.Add | SharedAccessTablePermissions.Update });
-                await table.SetPermissionsAsync(queuePermissions);
+                var tablePermissions = new TablePermissions();
+                tablePermissions.SharedAccessPolicies.Add(TableName, new SharedAccessTablePolicy { Permissions = SharedAccessTablePermissions.Query | SharedAccessTablePermissions.Add | SharedAccessTablePermissions.Update });
+                await table.SetPermissionsAsync(tablePermissions);
 
                 _table = table;
             });

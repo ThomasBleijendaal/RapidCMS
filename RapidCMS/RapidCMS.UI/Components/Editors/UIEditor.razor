@@ -11,11 +11,18 @@
 @using RapidCMS.Common.Enums
 @using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Data
+@using RapidCMS.UI.Models
 
 @if (Field != null && Entity != null)
-{   
+{
     switch (Field.Type)
     {
+        case EditorType.Custom:
+
+            @CustomEditors.GetCustomEditor(Field.CustomAlias, LocalValue, ChildEditorCallback)
+
+            break;
+
         case EditorType.Readonly:
 
             <Readonly EditorValue="@Field.GetReadonlyValue(Entity)" />
@@ -64,6 +71,9 @@
 @functions {
 
 #nullable enable
+
+    [CascadingParameter(Name = "CustomEditors")]
+    protected CustomEditorContainer CustomEditors { get; set; }
 
     [Parameter]
     private FieldUI? Field { get; set; }

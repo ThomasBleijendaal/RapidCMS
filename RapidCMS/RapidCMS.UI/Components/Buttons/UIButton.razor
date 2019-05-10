@@ -4,9 +4,9 @@
 @using RapidCMS.UI.Models
 
 <CascadingValue Value="Context">
-    @if (!string.IsNullOrEmpty(Button.Alias))
+    @if (!string.IsNullOrEmpty(Button.CustomAlias))
     {
-        @CustomButtons.GetCustomButton(Button.Alias, typeof(TContext))
+        @CustomButtons.GetCustomButton(Button.CustomAlias, typeof(TContext))
     }
     else
     {

@@ -32,7 +32,7 @@ else
             {
                 var context = CreateButtonContext<BasePage>(this, button, ButtonCallbackAsync);
 
-                <UIButton Button="button" Context="context" />
+                <UIButton TContext="BasePage" Button="button" Context="context" />
             }
         }
     </div>
@@ -61,7 +61,7 @@ else
                                     }
                                     else
                                     {
-                                        <DefaultEditor Field="field" Entity="@UI.Entity" />
+                                        <UIEditor Field="field" Entity="@UI.Entity" />
                                     }
                                 </div>
                             </div>

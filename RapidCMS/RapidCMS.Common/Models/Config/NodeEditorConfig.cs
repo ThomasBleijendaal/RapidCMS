@@ -39,7 +39,7 @@ namespace RapidCMS.Common.Models.Config
 
         public NodeEditorConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string label = null, string icon = null)
         {
-            var button = new CustomButtonConfig(buttonType.FullName)
+            var button = new CustomButtonConfig(buttonType)
             {
                 Action = action,
                 CrudType = crudType,
@@ -54,7 +54,7 @@ namespace RapidCMS.Common.Models.Config
 
         public NodeEditorConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string label = null, string icon = null)
         {
-            var button = new CustomButtonConfig(buttonType.FullName)
+            var button = new CustomButtonConfig(buttonType)
             {
                 ActionHandler = typeof(TActionHandler),
                 Icon = icon,

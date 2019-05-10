@@ -21,14 +21,18 @@ namespace RapidCMS.Common.Models
     // TODO: not really a model
     public class Root : ICollectionRoot
     {
-        public Root(List<CustomButtonRegistration> customButtonRegistrations)
+        public Root(
+            IEnumerable<CustomButtonRegistration> customButtonRegistrations,
+            IEnumerable<CustomEditorRegistration> customEditorRegistrations)
         {
-            CustomButtonRegistrations = customButtonRegistrations;
+            CustomButtonRegistrations = customButtonRegistrations.ToList();
+            CustomEditorRegistrations = customEditorRegistrations.ToList();
         }
 
         private static Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
 
         public List<CustomButtonRegistration> CustomButtonRegistrations { get; set; }
+        public List<CustomEditorRegistration> CustomEditorRegistrations { get; set; }
 
         public List<Collection> Collections { get; set; } = new List<Collection>();
 
@@ -65,8 +69,26 @@ namespace RapidCMS.Common.Models
 
     public class CustomButtonRegistration
     {
+        public CustomButtonRegistration(Type buttonType)
+        {
+            ButtonType = buttonType ?? throw new ArgumentNullException(nameof(buttonType));
+            ButtonAlias = buttonType.FullName;
+        }
+
         public Type ButtonType { get; set; }
         public string ButtonAlias { get; set; }
+    }
+
+    public class CustomEditorRegistration
+    {
+        public CustomEditorRegistration(Type editorType)
+        {
+            EditorType = editorType ?? throw new ArgumentNullException(nameof(editorType));
+            EditorAlias = editorType.FullName;
+        }
+
+        public Type EditorType { get; set; }
+        public string EditorAlias { get; set; }
     }
 
     public class Collection
@@ -282,6 +304,16 @@ namespace RapidCMS.Common.Models
         public Type ValueMapperType { get; set; }
 
         public OneToManyRelation? OneToManyRelation { get; set; }
+    }
+
+    public class CustomField : Field
+    {
+        public CustomField(Type customFieldType)
+        {
+            Alias = customFieldType?.FullName ?? throw new ArgumentNullException(nameof(customFieldType));
+        }
+
+        public string Alias { get; set; }
     }
 
     // TODO: horrible names

@@ -7,9 +7,9 @@ namespace RapidCMS.Common.Models.Config
 {
     public class CustomButtonConfig : ButtonConfig
     {
-        public CustomButtonConfig(string alias)
+        public CustomButtonConfig(Type customButtonType)
         {
-            Alias = alias ?? throw new ArgumentNullException(nameof(alias));
+            Alias = customButtonType?.FullName ?? throw new ArgumentNullException(nameof(customButtonType));
         }
 
         internal string Alias { get; set; }

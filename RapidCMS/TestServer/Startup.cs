@@ -14,6 +14,7 @@ using TestLibrary.Entities;
 using TestLibrary.Repositories;
 using TestServer.ActionHandlers;
 using TestServer.Components.CustomButtons;
+using TestServer.Components.CustomEditors;
 
 namespace TestServer
 {
@@ -43,6 +44,7 @@ namespace TestServer
             services.AddRapidCMS(config =>
             {
                 config.AddCustomButton(typeof(CreateButton<>));
+                config.AddCustomEditor(typeof(PasswordEditor));
             });
 
             services.AddMvc()
@@ -388,6 +390,7 @@ namespace TestServer
                     listPaneConfig.AddProperty(x => x.Id);
                     listPaneConfig.AddProperty(x => x.Title);
                     listPaneConfig.AddProperty(x => x.Description);
+                    listPaneConfig.AddProperty(x => x.Password);
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
@@ -405,8 +408,8 @@ namespace TestServer
                 {
                     editorPaneConfig.AddField(x => x.Title);
                     editorPaneConfig.AddField(x => x.Description);
-
-
+                    editorPaneConfig.AddField(x => x.Password)
+                        .SetType(typeof(PasswordEditor));
                 });
             }
 
