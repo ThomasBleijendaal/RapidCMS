@@ -405,6 +405,8 @@ namespace TestServer
                 config.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                 config.AddDefaultButton(DefaultButtonType.Delete);
 
+                config.AddEditorPane(typeof(DashboardSection));
+
                 config.AddEditorPane(editorPaneConfig =>
                 {
                     editorPaneConfig.AddField(x => x.Title);
@@ -412,8 +414,6 @@ namespace TestServer
                     editorPaneConfig.AddField(x => x.Password)
                         .SetType(typeof(PasswordEditor));
                 });
-
-                config.AddEditorPane(typeof(DashboardSection));
             }
 
             void RelationListView(ListViewConfig<RelationEntity> config)

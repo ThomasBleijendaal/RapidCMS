@@ -17,6 +17,7 @@ app {
     align-items: center;
     background: #fff;
     box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
+    margin-bottom: 3rem;
 }
 
 .main {

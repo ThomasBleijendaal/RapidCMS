@@ -3,7 +3,9 @@
 
 <CascadingValue Value="@CustomButtonContainer" Name="CustomButtons">
     <CascadingValue Value="@CustomEditorContainer" Name="CustomEditors">
-        <Router AppAssembly="typeof(RapidCMS.UI.Startup).Assembly" />
+        <CascadingValue Value="@CustomSectionContainer" Name="CustomSections">
+            <Router AppAssembly="typeof(RapidCMS.UI.Startup).Assembly" />
+        </CascadingValue>
     </CascadingValue>
 </CascadingValue>
 
@@ -13,6 +15,7 @@
 
     private CustomButtonContainer CustomButtonContainer { get; set; } = new CustomButtonContainer(null);
     private CustomEditorContainer CustomEditorContainer { get; set; } = new CustomEditorContainer(null);
+    private CustomSectionContainer CustomSectionContainer { get; set; } = new CustomSectionContainer(null);
 
     [Inject]
     private Root Root { get; set; }
@@ -21,6 +24,7 @@
     {
         CustomButtonContainer = new CustomButtonContainer(Root.CustomButtonRegistrations);
         CustomEditorContainer = new CustomEditorContainer(Root.CustomEditorRegistrations);
+        CustomSectionContainer = new CustomSectionContainer(Root.CustomSectionRegistrations);
 
         return base.OnParametersSetAsync();
     }
