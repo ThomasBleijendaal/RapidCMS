@@ -42,10 +42,10 @@ else
         }
         else
         {
-        <BlockSection Section="section" Subject="UI.Subject" />
-            }
+            <BlockSection Section="section" Subject="UI.Subject" />
         }
     }
+}
 
 @functions {
 #nullable enable
@@ -74,7 +74,14 @@ else
 
     protected override async Task LoadDataAsync()
     {
-        UI = await CollectionService.GetNodeEditorAsync(Action, CollectionAlias, VariantAlias, ParentId, Id);
+        try
+        {
+            UI = await CollectionService.GetNodeEditorAsync(Action, CollectionAlias, VariantAlias, ParentId, Id);
+        }
+        catch
+        {
+            UI = null;
+        }
     }
 
     async Task ButtonCallbackAsync(string actionId, BasePage view, object? customData)

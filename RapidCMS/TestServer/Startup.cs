@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.WindowsAzure.Storage;
+using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models;
@@ -52,7 +53,8 @@ namespace TestServer
             services.AddMvc()
                 .AddNewtonsoftJson();
 
-            services.AddRazorComponents();
+            services.AddRazorPages();
+            services.AddServerSideBlazor();
 
             services.AddCors();
         }
@@ -95,7 +97,6 @@ namespace TestServer
             void nodeEditor(NodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
-                    .AddDefaultButton(DefaultButtonType.Edit)
                     .AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true)
                     .AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true)
                     .AddDefaultButton(DefaultButtonType.Delete)
@@ -603,10 +604,12 @@ namespace TestServer
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseRouting(routes =>
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRazorPages();
-                routes.MapComponentHub<Components.App>("app");
+                endpoints.MapBlazorHub();
+                endpoints.MapFallbackToPage("/_Host");
             });
         }
     }
