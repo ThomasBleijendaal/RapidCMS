@@ -7,7 +7,10 @@
 @if (Section.Elements.Any())
 {
     <div class="content">
-        <h2 class="block-header">@Section.Label</h2>
+        @if (!string.IsNullOrWhiteSpace(Section.Label))
+        {
+            <h2 class="block-header">@Section.Label</h2>
+        }
 
         @foreach (var element in Section.Elements)
         {
