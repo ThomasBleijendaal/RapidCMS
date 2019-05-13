@@ -33,6 +33,7 @@ namespace RapidCMS.Common.Extensions
 
             services.AddSingleton<DefaultValueMapper>();
             services.AddSingleton<LongValueMapper>();
+            services.AddSingleton<BoolValueMapper>();
             services.AddSingleton(typeof(CollectionValueMapper<>), typeof(CollectionValueMapper<>));
 
             return services;
@@ -184,6 +185,7 @@ namespace RapidCMS.Common.Extensions
                         var pane = new EditorPane
                         {
                             CustomAlias = config.CustomAlias,
+                            Label = config.Label,
                             VariantType = config.VariantType,
                             Buttons = new List<Button>(),
                             Fields = config.Fields.ToList(field => field.ToField()),

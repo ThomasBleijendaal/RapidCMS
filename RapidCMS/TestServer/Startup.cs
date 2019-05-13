@@ -102,6 +102,8 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.Delete)
                     .AddEditorPane(pane =>
                     {
+                        pane.SetLabel("General");
+
                         pane.AddField(x => x._Id)
                             .SetValueMapper<LongValueMapper>()
                             .SetReadonly(true);
@@ -394,6 +396,8 @@ namespace TestServer
                     listPaneConfig.AddProperty(x => x.Title);
                     listPaneConfig.AddProperty(x => x.Description);
                     listPaneConfig.AddProperty(x => x.Password);
+                    listPaneConfig.AddProperty(x => x.Destroy)
+                        .SetValueMapper<BoolValueMapper>();
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
@@ -414,6 +418,8 @@ namespace TestServer
                     editorPaneConfig.AddField(x => x.Description);
                     editorPaneConfig.AddField(x => x.Password)
                         .SetType(typeof(PasswordEditor));
+                    editorPaneConfig.AddField(x => x.Destroy)
+                        .SetValueMapper<BoolValueMapper>();
                 });
             }
 
@@ -472,6 +478,8 @@ namespace TestServer
 
             app.UseRapidCMS(root =>
             {
+                root.SiteName = "Test Client";
+
                 root.AddCollection<RelationEntity>("collection-11", "Azure Table Storage Collecation with relations", collection =>
                 {
                     collection

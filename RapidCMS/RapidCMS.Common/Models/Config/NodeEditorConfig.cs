@@ -11,9 +11,9 @@ namespace RapidCMS.Common.Models.Config
 {
     public class NodeEditorConfig
     {
-        public Type BaseType { get; set; }
-        public List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
-        public List<NodeEditorPaneConfig> EditorPanes { get; set; } = new List<NodeEditorPaneConfig>();
+        internal Type BaseType { get; set; }
+        internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
+        internal List<NodeEditorPaneConfig> EditorPanes { get; set; } = new List<NodeEditorPaneConfig>();
     }
 
     public class NodeEditorConfig<TEntity> : NodeEditorConfig
@@ -68,7 +68,6 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-
         public NodeEditorConfig<TEntity> AddEditorPane(Action<NodeEditorPaneConfig<TEntity>> configure)
         {
             return AddEditorPane<TEntity>(configure);
@@ -85,7 +84,7 @@ namespace RapidCMS.Common.Models.Config
             return AddEditorPane(null, configure);
         }
 
-        public NodeEditorConfig<TEntity> AddEditorPane<TDerivedEntity>(Type? customSectionType, Action<NodeEditorPaneConfig<TDerivedEntity>>? configure)
+        private NodeEditorConfig<TEntity> AddEditorPane<TDerivedEntity>(Type? customSectionType, Action<NodeEditorPaneConfig<TDerivedEntity>>? configure)
             where TDerivedEntity : TEntity
         {
             var config = customSectionType == null 

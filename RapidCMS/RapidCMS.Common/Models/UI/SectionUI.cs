@@ -9,5 +9,6 @@ namespace RapidCMS.Common.Models.UI
         public List<ButtonUI> Buttons { get; set; }
         public List<Element> Elements { get; set; }
         public string? CustomAlias { get; set; }
+        public string? Label { get; set; }
     }
 }

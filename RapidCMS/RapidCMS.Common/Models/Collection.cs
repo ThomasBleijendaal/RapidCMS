@@ -17,6 +17,8 @@ namespace RapidCMS.Common.Models
     // TODO: static root stuff is horrible
 
     // TODO: not really a model
+
+        // TODO: everything should be internal
     public class Root : ICollectionRoot
     {
         public Root(
@@ -31,18 +33,20 @@ namespace RapidCMS.Common.Models
 
         private static Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
 
-        public List<CustomButtonRegistration> CustomButtonRegistrations { get; set; }
-        public List<CustomEditorRegistration> CustomEditorRegistrations { get; set; }
-        public List<CustomSectionRegistration> CustomSectionRegistrations { get; set; }
+        public List<CustomButtonRegistration> CustomButtonRegistrations { get; internal set; }
+        public List<CustomEditorRegistration> CustomEditorRegistrations { get; internal set; }
+        public List<CustomSectionRegistration> CustomSectionRegistrations { get; internal set; }
 
         public List<Collection> Collections { get; set; } = new List<Collection>();
 
-        public void MaterializeRepositories(IServiceProvider serviceProvider)
+        public string SiteName { get; set; } = "RapidCMS";
+
+        internal void MaterializeRepositories(IServiceProvider serviceProvider)
         {
             FindRepositoryForCollections(serviceProvider, Collections);
         }
 
-        public Collection GetCollection(string alias)
+        internal Collection GetCollection(string alias)
         {
             return _collectionMap[alias];
         }
@@ -228,6 +232,7 @@ namespace RapidCMS.Common.Models
     public class EditorPane
     {
         public string? CustomAlias { get; set; }
+        public string? Label { get; set; }
         public Type VariantType { get; set; }
         public List<Button> Buttons { get; set; }
         public List<Field> Fields { get; set; }

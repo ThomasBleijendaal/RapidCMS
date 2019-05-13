@@ -13,18 +13,18 @@
 
 @if (UI == null)
 {
-    <div class="content px-4">
-        <div class="top-row px-4">
+    <div class="content">
+        <div class="top-row">
 
         </div>
-        <div class="content px-4">
+        <div class="content">
             <p>Loading..</p>
         </div>
     </div>
 }
 else
 {
-    <div class="top-row px-4">
+    <div class="top-row first">
         @foreach (var button in UI.Buttons)
         {
             var context = CreateButtonContext<BasePage>(this, button, ButtonCallbackAsync);
@@ -33,116 +33,119 @@ else
         }
     </div>
 
-    <div class="content px-4">
-        @if (UI.ListType.In(ListType.TableView, ListType.TableEditor))
-        {
-            var elementsProcessed = new List<string>();
+    if (UI.Entities.Any())
+    {
+        <div class="content">
+            @if (UI.ListType.In(ListType.TableView, ListType.TableEditor))
+            {
+                var elementsProcessed = new List<string>();
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        @{
-                            var hasButtons = false;
-
-                            foreach (var subject in UI.Entities)
-                            {
-                                var pane = UI.SectionForEntity(subject);
-                                hasButtons = hasButtons || (pane.Buttons?.Any() ?? false);
-
-                                foreach (var element in pane.Elements)
-                                {
-                                    if (element is FieldWithLabelUI field)
-                                    {
-                                        if (!elementsProcessed.Contains(field.Property.PropertyName))
-                                        {
-                                            elementsProcessed.Add(field.Property.PropertyName);
-
-                                            <td>@field.Name<br /><small>@field.Description</small></td>
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (hasButtons)
-                            {
-                                <td></td>
-                            }
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var subject in UI.Entities)
-                    {
-                        var pane = UI.SectionForEntity(subject);
-                        var index = 0;
-
+                <table class="table">
+                    <thead>
                         <tr>
                             @{
-                                foreach (var element in pane.Elements)
-                                {
-                                    if (element is FieldWithLabelUI field)
-                                    {
-                                        // fill in the gaps (when dealing with multiple entity variants)
-                                        // TODO: only do this when fill the gaps setting is active
-                                        while (elementsProcessed.IndexOf(field.Property.PropertyName) > index++)
-                                        {
-                                            <td>&nbsp;</td>
-                                        }
+                                var hasButtons = false;
 
-                                        if (UI.ListType == ListType.TableView)
+                                foreach (var subject in UI.Entities)
+                                {
+                                    var pane = UI.SectionForEntity(subject);
+                                    hasButtons = hasButtons || (pane.Buttons?.Any() ?? false);
+
+                                    foreach (var element in pane.Elements)
+                                    {
+                                        if (element is FieldWithLabelUI field)
                                         {
-                                            <td>@field.GetReadonlyValue(subject.Entity)</td>
-                                        }
-                                        else
-                                        {
-                                            <td>
-                                                <UIEditor Field="field" Entity="@subject.Entity" />
-                                            </td>
+                                            if (!elementsProcessed.Contains(field.Property.PropertyName))
+                                            {
+                                                elementsProcessed.Add(field.Property.PropertyName);
+
+                                                <td>@field.Name<br /><small>@field.Description</small></td>
+                                            }
                                         }
                                     }
                                 }
-                                // fill in the gaps (when dealing with multiple entity variants)
-                                while (elementsProcessed.Count > index++)
-                                {
-                                    <td>&nbsp;</td>
-                                }
-                                if (pane.Buttons?.Any() ?? false)
-                                {
-                                    <td>
-                                        @foreach (var button in pane.Buttons)
-                                        {
-                                            var context = CreateButtonContext(subject.Entity, button, NodeButtonCallbackAsync);
 
-                                            <UIButton TContext="IEntity" Button="button" Context="context" />
-                                        }
-                                    </td>
+                                if (hasButtons)
+                                {
+                                    <td class="button-cell"></td>
                                 }
                             }
-
                         </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        else if (UI.ListType.In(ListType.BlockEditor))
-        {
-            @foreach (var subject in UI.Entities)
-            {
-                var section = UI.SectionForEntity(subject);
+                    </thead>
+                    <tbody>
+                        @foreach (var subject in UI.Entities)
+                        {
+                            var pane = UI.SectionForEntity(subject);
+                            var index = 0;
 
-                <div class="top-row px-4">
-                    @foreach (var button in section.Buttons)
-                    {
-                        var context = CreateButtonContext(subject.Entity, button, NodeButtonCallbackAsync);
+                            <tr>
+                                @{
+                                    foreach (var element in pane.Elements)
+                                    {
+                                        if (element is FieldWithLabelUI field)
+                                        {
+                                            // fill in the gaps (when dealing with multiple entity variants)
+                                            // TODO: only do this when fill the gaps setting is active
+                                            while (elementsProcessed.IndexOf(field.Property.PropertyName) > index++)
+                                            {
+                                                <td>&nbsp;</td>
+                                            }
 
-                        <UIButton TContext="IEntity" Button="button" Context="context" />
-                    }
-                </div>
+                                            if (UI.ListType == ListType.TableView)
+                                            {
+                                                <td>@field.GetReadonlyValue(subject.Entity)</td>
+                                            }
+                                            else
+                                            {
+                                                <td>
+                                                    <UIEditor Field="field" Entity="@subject.Entity" />
+                                                </td>
+                                            }
+                                        }
+                                    }
+                                    // fill in the gaps (when dealing with multiple entity variants)
+                                    while (elementsProcessed.Count > index++)
+                                    {
+                                        <td>&nbsp;</td>
+                                    }
+                                    if (pane.Buttons?.Any() ?? false)
+                                    {
+                                        <td class="button-cell">
+                                            @foreach (var button in pane.Buttons)
+                                            {
+                                                var context = CreateButtonContext(subject.Entity, button, NodeButtonCallbackAsync);
 
-                <BlockSection Section="section" Subject="subject" />
+                                                <UIButton TContext="IEntity" Button="button" Context="context" />
+                                            }
+                                        </td>
+                                    }
+                                }
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             }
-        }
-    </div>
+            else if (UI.ListType.In(ListType.BlockEditor))
+            {
+                @foreach (var subject in UI.Entities)
+                {
+                    var section = UI.SectionForEntity(subject);
+
+                    <div class="top-row">
+                        @foreach (var button in section.Buttons)
+                        {
+                            var context = CreateButtonContext(subject.Entity, button, NodeButtonCallbackAsync);
+
+                            <UIButton TContext="IEntity" Button="button" Context="context" />
+                        }
+                    </div>
+
+                    <BlockSection Section="section" Subject="subject" />
+                }
+            }
+        </div>
+    }
 }
 @functions {
 #nullable enable

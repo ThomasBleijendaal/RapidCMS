@@ -1,12 +1,7 @@
 ﻿@*
     // TODO: this should be made more nicer
-    // TODO: this limits extensibility from outside
-    // perhaps try https://docs.microsoft.com/en-us/aspnet/core/razor-components/components?view=aspnetcore-3.0#child-content
 
     // TODO: remove binding callback
-
-    // TODO: change editor to accept complete Field / Property, instead of seperate parts
-    // this wil make it a lot more dynamic
 *@
 @using RapidCMS.Common.Enums
 @using RapidCMS.Common.Models.UI
@@ -32,6 +27,12 @@
         case EditorType.Numeric:
 
             <NumericEditor EditorValue="@((long)LocalValue)" Callback="ChildEditorCallback" />
+
+            break;
+
+        case EditorType.Checkbox:
+
+            <CheckboxEditor EditorValue="@((bool?)LocalValue)" Callback="ChildEditorCallback" />
 
             break;
 

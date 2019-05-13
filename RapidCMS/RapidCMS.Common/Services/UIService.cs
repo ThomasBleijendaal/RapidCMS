@@ -45,6 +45,7 @@ namespace RapidCMS.Common.Services
                         return new SectionUI
                         {
                             CustomAlias = pane.CustomAlias,
+                            Label = pane.Label,
 
                             Elements = fields.Union(subCollections)
                                 .OrderBy(x => x.Index)

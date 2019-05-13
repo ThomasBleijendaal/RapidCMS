@@ -35,6 +35,35 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
+        public ListEditorPaneConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string label = null, string icon = null)
+        {
+            var button = new CustomButtonConfig(buttonType)
+            {
+                Action = action,
+                CrudType = crudType,
+                Icon = icon,
+                Label = label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
+
+        public ListEditorPaneConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string label = null, string icon = null)
+        {
+            var button = new CustomButtonConfig(buttonType)
+            {
+                ActionHandler = typeof(TActionHandler),
+                Icon = icon,
+                Label = label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
+
         public FieldConfig<TEntity> AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<FieldConfig<TEntity>> configure = null)
         {
             var config = new FieldConfig<TEntity>()
@@ -42,17 +71,7 @@ namespace RapidCMS.Common.Models.Config
                 NodeProperty = PropertyMetadataHelper.Create(propertyExpression)
             };
             config.Name = config.NodeProperty.PropertyName;
-
-            // try to find the default editor for this type
-            foreach (var type in EnumHelper.GetValues<EditorType>())
-            {
-                if (type.GetCustomAttribute<DefaultTypeAttribute>()?.Types.Contains(config.NodeProperty.PropertyType) ?? false)
-                {
-                    config.Type = type;
-
-                    break;
-                }
-            }
+            config.Type = EditorTypeHelper.TryFindDefaultEditorType(config.NodeProperty.PropertyType);
 
             configure?.Invoke(config);
 

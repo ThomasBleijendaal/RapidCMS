@@ -14,6 +14,9 @@ namespace RapidCMS.Common.Enums
         [DefaultType(typeof(int), typeof(long), typeof(uint), typeof(ulong))]
         Numeric,
 
+        [DefaultType(typeof(bool), typeof(bool?))]
+        Checkbox,
+
         [Relation(RelationType.One)]
         Dropdown,
 

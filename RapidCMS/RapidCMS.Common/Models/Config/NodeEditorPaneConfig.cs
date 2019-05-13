@@ -14,14 +14,15 @@ namespace RapidCMS.Common.Models.Config
 {
     public class NodeEditorPaneConfig
     {
-        public string? CustomAlias { get; set; }
+        internal string? CustomAlias { get; set; }
+        internal string? Label { get; set; }
 
-        public Type VariantType { get; set; }
+        internal Type VariantType { get; set; }
 
-        public int FieldIndex { get; set; }
+        internal int FieldIndex { get; set; }
 
-        public List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
-        public List<SubCollectionListEditorConfig> SubCollectionListEditors { get; set; } = new List<SubCollectionListEditorConfig>();
+        internal List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
+        internal List<SubCollectionListEditorConfig> SubCollectionListEditors { get; set; } = new List<SubCollectionListEditorConfig>();
     }
 
     public class NodeEditorPaneConfig<TEntity> : NodeEditorPaneConfig
@@ -36,24 +37,21 @@ namespace RapidCMS.Common.Models.Config
             CustomAlias = customSectionType.FullName;
         }
 
+        public NodeEditorPaneConfig<TEntity> SetLabel(string label)
+        {
+            Label = label;
+
+            return this;
+        }
+
         public FieldConfig<TEntity> AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<FieldConfig<TEntity>> configure = null)
         {
             var config = new FieldConfig<TEntity>()
             {
-                NodeProperty = PropertyMetadataHelper.Create(propertyExpression)
+                NodeProperty = PropertyMetadataHelper.Create(propertyExpression),
             };
             config.Name = config.NodeProperty.PropertyName;
-
-            // try to find the default editor for this type
-            foreach (var type in EnumHelper.GetValues<EditorType>())
-            {
-                if (type.GetCustomAttribute<DefaultTypeAttribute>()?.Types.Contains(config.NodeProperty.PropertyType) ?? false)
-                {
-                    config.Type = type;
-
-                    break;
-                }
-            }
+            config.Type = EditorTypeHelper.TryFindDefaultEditorType(config.NodeProperty.PropertyType);
 
             configure?.Invoke(config);
 
@@ -64,6 +62,7 @@ namespace RapidCMS.Common.Models.Config
             return config;
         }
 
+        
         // TODO: check if sub collection is part of collection
         public NodeEditorPaneConfig<TEntity> AddSubCollectionListEditor(string collectionAlias, Action<SubCollectionListEditorConfig<TEntity>> configure = null)
         {

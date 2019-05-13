@@ -17,12 +17,18 @@ app {
     align-items: center;
     background: #fff;
     box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
+    padding: 2rem 1rem;
 }
+
+    .top-row.first {
+        position: sticky;
+        top: 0;
+        z-index: 10000000000;
+    }
 
 .main {
     flex: 1;
-    margin: 3rem;
 }
 
     .main .top-row {
@@ -35,6 +41,8 @@ app {
 }
 
     .sidebar .top-row {
+        margin: 0;
+        padding: 0 1rem;
         background-color: rgba(0,0,0,0.4);
     }
 
@@ -75,10 +83,9 @@ app {
 
 .content {
     background: #fff;
-    padding-top: 1.1rem;
-    padding-bottom: 1rem;
-    margin-bottom: 3rem;
+    padding: 1.1rem 1rem 1rem 1rem;
     box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
+    margin: 1rem;
 }
 
     .content .content,
@@ -90,38 +97,32 @@ app {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-@media (max-width: 767.98px) {
-    .main .top-row {
-        display: none;
-    }
+h2.block-header {
+    font-size: 1.6rem;
+    margin: -1rem -1rem 2rem -1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
 }
 
-@media (min-width: 768px) {
-    app {
-        flex-direction: row;
-    }
+app {
+    flex-direction: row;
+}
 
-    .sidebar {
-        width: 450px;
-        height: 100vh;
-        overflow: scroll;
-        position: sticky;
-        top: 0;
-    }
+.sidebar {
+    width: 450px;
+    height: 100vh;
+    overflow-y: scroll;
+    position: sticky;
+    top: 0;
+}
 
-    .main > div {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
-    }
+.navbar-toggler {
+    display: none;
+}
 
-    .navbar-toggler {
-        display: none;
-    }
-
-    .sidebar .collapse {
-        /* Never collapse the sidebar for wide screens */
-        display: block;
-    }
+.sidebar .collapse {
+    /* Never collapse the sidebar for wide screens */
+    display: block;
 }
 
 a.current-page {
@@ -150,4 +151,18 @@ a.current-page {
 .form-control-select-list {
     height: 150px;
     overflow: auto;
+}
+
+small {
+    color: #888;
+}
+
+table thead td, table thead td {
+    border-top: 0 !important;
+    border-bottom: 3px solid #dee2e6;
+}
+
+table td.button-cell {
+    white-space: nowrap;
+    text-align: right;
 }
