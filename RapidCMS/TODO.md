@@ -5,7 +5,9 @@
 
 TODO:
 
-[] Relation support (one-many + many-many via discrete call on Repository)
+[] PropertyMetadata safe propagation
+[] Recursive collection + check for recursion
+[] Relation support (one-many + many-many via discrete call on Repository) + recursive delete
 [] Pagination (consistent during session)
 [] Form validation
 [] Reordering
