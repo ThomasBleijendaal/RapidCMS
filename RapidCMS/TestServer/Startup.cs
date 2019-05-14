@@ -17,6 +17,8 @@ using TestServer.ActionHandlers;
 using TestServer.Components.CustomButtons;
 using TestServer.Components.CustomEditors;
 using TestServer.Components.CustomSections;
+using Microsoft.EntityFrameworkCore;
+using TestLibrary.Data;
 
 namespace TestServer
 {
@@ -26,6 +28,11 @@ namespace TestServer
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<TestDbContext>(options =>
+            {
+                options.UseSqlServer("SqlConnectionString");
+            });
+
             services.AddSingleton<RepositoryA>();
             services.AddSingleton<RepositoryB>();
             services.AddSingleton<RepositoryC>();
