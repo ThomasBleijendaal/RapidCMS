@@ -9,7 +9,6 @@ using RapidCMS.Common.Models;
 [assembly: InternalsVisibleTo("RapidCMS.Common.Tests")]
 namespace RapidCMS.Common.Helpers
 {
-    // TODO: only return interface instead of PropertyMetadata
     internal static class PropertyMetadataHelper
     {
         /// <summary>
@@ -18,6 +17,8 @@ namespace RapidCMS.Common.Helpers
         /// (Person x) => x.Company.Owner.Name becomes:
         /// getter: (object x) => (object)(((Person) x).get_Company().get_Owner().get_Name())
         /// setter: (object x, object y) => ((Person) x).get_Company().get_Owner().set_Name((string)y)
+        /// objectType: Person
+        /// propertyType: string
         /// name: CompanyOwnerName
         /// </summary>
         /// <exception cref="ArgumentException">Thrown when given LamdaExpression cannot be converted to a getter and setter.</exception>
@@ -29,6 +30,18 @@ namespace RapidCMS.Common.Helpers
                 ?? throw new ArgumentException($"Given expression {lambdaExpression.ToString()} cannot be converted to Getter and Setter.");
         }
 
+        /// <summary>
+        /// Converts a given LambdaExpression containing expression to get value from an object.
+        /// 
+        /// (Person x) => $"{x.FirstName} - {x.LastName}"  becomes:
+        /// getter: (object x) => (object)
+        /// objectType: Person
+        /// propertyType: string
+        /// 
+        /// When possible (LambdaExpression is a MemberExpression), it will return IPropertyMetadata similair to GetPropertyMetadata.
+        /// </summary>
+        /// <param name="lambdaExpression">The LambdaExpression to be converted</param>
+        /// <returns>GetterAndSetter object when successful, null when not.</returns>
         public static IExpressionMetadata GetExpressionMetadata(LambdaExpression lambdaExpression)
         {
             try
