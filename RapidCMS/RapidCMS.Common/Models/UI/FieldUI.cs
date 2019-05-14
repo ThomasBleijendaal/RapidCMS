@@ -1,4 +1,5 @@
-﻿using RapidCMS.Common.Data;
+﻿using System;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.ValueMappers;
 
@@ -11,7 +12,7 @@ namespace RapidCMS.Common.Models.UI
         public EditorType Type { get; set; }
 
         public IValueMapper ValueMapper { get; set; }
-        public PropertyMetadata Property { get; set; }
+        public IPropertyMetadata Property { get; set; }
         public IDataProvider DataProvider { get; set; }
 
         public object GetValue(IEntity entity)
@@ -26,6 +27,7 @@ namespace RapidCMS.Common.Models.UI
             Property.Setter(entity, ValueMapper.MapFromEditor(null, value));
         }
 
+        [Obsolete("This should depend on an IPropertyMetadata but on an IExpressionMetadata")]
         public string GetReadonlyValue(IEntity entity)
         {
             return ValueMapper.MapToView(null, Property.Getter(entity));

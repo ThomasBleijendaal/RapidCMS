@@ -9,10 +9,10 @@ namespace RapidCMS.Common.Data
     public class CollectionDataProvider : IDataProvider
     {
         private readonly IRepository _repository;
-        private readonly PropertyMetadata _idProperty;
-        private readonly PropertyMetadata _labelProperty;
+        private readonly IPropertyMetadata _idProperty;
+        private readonly IExpressionMetadata _labelProperty;
 
-        public CollectionDataProvider(IRepository repository, PropertyMetadata idProperty, PropertyMetadata labelProperty)
+        public CollectionDataProvider(IRepository repository, IPropertyMetadata idProperty, IExpressionMetadata labelProperty)
         {
             _repository = repository;
             _idProperty = idProperty;

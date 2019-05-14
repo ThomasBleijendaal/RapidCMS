@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using RapidCMS.Common.Models;
 
+[assembly: InternalsVisibleTo("RapidCMS.Common.Tests")]
 namespace RapidCMS.Common.Helpers
 {
     // TODO: only return interface instead of PropertyMetadata
@@ -18,9 +20,16 @@ namespace RapidCMS.Common.Helpers
         /// setter: (object x, object y) => ((Person) x).get_Company().get_Owner().set_Name((string)y)
         /// name: CompanyOwnerName
         /// </summary>
+        /// <exception cref="ArgumentException">Thrown when given LamdaExpression cannot be converted to a getter and setter.</exception>
         /// <param name="lambdaExpression">The LambdaExpression to be converted</param>
         /// <returns>GetterAndSetter object when successful, null when not.</returns>
-        internal static PropertyMetadata Create(LambdaExpression lambdaExpression)
+        public static IPropertyMetadata GetPropertyMetadata(LambdaExpression lambdaExpression)
+        {
+            return GetExpressionMetadata(lambdaExpression) as IPropertyMetadata 
+                ?? throw new ArgumentException($"Given expression {lambdaExpression.ToString()} cannot be converted to Getter and Setter.");
+        }
+
+        public static IExpressionMetadata GetExpressionMetadata(LambdaExpression lambdaExpression)
         {
             try
             {

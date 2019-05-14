@@ -16,6 +16,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.UI", "RapidCMS.UI\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestServer", "TestServer\TestServer.csproj", "{7C6BE196-175A-442B-928C-2966D1A43325}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidCMS.Common.Tests", "RapidCMS.Common.Tests\RapidCMS.Common.Tests.csproj", "{EF0489AD-35BE-42E9-AECE-62FEAD593F52}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{7C6BE196-175A-442B-928C-2966D1A43325}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C6BE196-175A-442B-928C-2966D1A43325}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C6BE196-175A-442B-928C-2966D1A43325}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF0489AD-35BE-42E9-AECE-62FEAD593F52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF0489AD-35BE-42E9-AECE-62FEAD593F52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF0489AD-35BE-42E9-AECE-62FEAD593F52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF0489AD-35BE-42E9-AECE-62FEAD593F52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

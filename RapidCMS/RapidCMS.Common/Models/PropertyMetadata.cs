@@ -2,13 +2,30 @@
 
 namespace RapidCMS.Common.Models
 {
-    // TODO: add interface
-    public class PropertyMetadata
+    internal class PropertyMetadata : ExpressionMetadata, IPropertyMetadata
     {
-        internal Type ObjectType { get; set; }
+        public Action<object, object> Setter { get; set; }
+    }
+
+    internal class ExpressionMetadata : IExpressionMetadata
+    {
+        public Type ObjectType { get; set; }
         public string PropertyName { get; set; }
         public Type PropertyType { get; set; }
-        internal Func<object, object> Getter { get; set; }
-        internal Action<object, object> Setter { get; set; }
+        public Func<object, object> Getter { get; set; }
     }
+
+    public interface IExpressionMetadata
+    {
+        Type ObjectType { get; }
+        string PropertyName { get; }
+        Type PropertyType { get; }
+        Func<object, object> Getter { get; }
+    }
+
+    public interface IPropertyMetadata : IExpressionMetadata
+    {
+        Action<object, object> Setter { get; set; }
+    }
+
 }

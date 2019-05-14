@@ -48,7 +48,7 @@ namespace RapidCMS.Common.Models.Config
         {
             var config = new FieldConfig<TEntity>()
             {
-                NodeProperty = PropertyMetadataHelper.Create(propertyExpression),
+                NodeProperty = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression),
             };
             config.Name = config.NodeProperty.PropertyName;
             config.Type = EditorTypeHelper.TryFindDefaultEditorType(config.NodeProperty.PropertyType);
