@@ -63,7 +63,6 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
             Assert.IsNotNull(data);
             Assert.AreEqual("Test Value", data.Getter(instance));
             Assert.AreEqual(typeof(string), data.PropertyType);
-            Assert.AreEqual(typeof(ParentClass), data.ObjectType);
 
             Assert.Throws(typeof(ArgumentException), () => PropertyMetadataHelper.GetPropertyMetadata(func));
         }

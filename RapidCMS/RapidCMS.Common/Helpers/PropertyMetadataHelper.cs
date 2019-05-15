@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using RapidCMS.Common.Models;
 
+#nullable enable
+
 [assembly: InternalsVisibleTo("RapidCMS.Common.Tests")]
 namespace RapidCMS.Common.Helpers
 {
@@ -48,13 +50,15 @@ namespace RapidCMS.Common.Helpers
             {
                 var isAtTail = true;
 
-                var parameterT = Expression.Parameter(typeof(object), "x");
-                Type parameterTType = null;
-                var parameterTProperty = Expression.Parameter(typeof(object), "y");
-                Type parameterTPropertyType = null;
+                Type? parameterTType = null;
+                Type? parameterTPropertyType = null;
 
-                MethodInfo setValueMethod = null;
-                MethodInfo getValueMethod = null;
+                var parameterT = Expression.Parameter(typeof(object), "x");
+                var parameterTProperty = Expression.Parameter(typeof(object), "y");
+                Expression? parameterTAsType = null;
+
+                MethodInfo? setValueMethod = null;
+                MethodInfo? getValueMethod = null;
                 var names = new List<string>();
                 var getNestedObjectMethods = new List<MethodInfo>();
 
@@ -92,6 +96,22 @@ namespace RapidCMS.Common.Helpers
                         // done, arrived at root
                         break;
                     }
+                    else if (x is MethodCallExpression methodCallExpression && isAtTail)
+                    {
+                        getValueMethod = methodCallExpression.Method;
+                        //parameterTType = getValueMethod.;
+
+                        if (parameterTType != null)
+                        {
+                            //parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
+
+                            return new ExpressionMetadata
+                            {
+                                PropertyType = methodCallExpression.Type,
+                                Getter = ConvertToGetter(parameterT, getValueMethod, parameterT)
+                            };
+                        }
+                    }
                     else
                     {
                         throw new Exception("Failed to interpret given LambdaExpression");
@@ -99,7 +119,12 @@ namespace RapidCMS.Common.Helpers
                 }
                 while (true);
 
-                var parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
+                if (getValueMethod == null || setValueMethod == null)
+                {
+                    throw new Exception("Failed to process given LambdaExpression");
+                }
+
+                parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
                 var valueToType = Expression.Convert(parameterTProperty, parameterTPropertyType) as Expression;
                 var valueToObject = Expression.Convert(Expression.Parameter(parameterTPropertyType, "z"), typeof(object));
 
@@ -109,23 +134,9 @@ namespace RapidCMS.Common.Helpers
                         parameterTAsType,
                         (parameter, method) => Expression.Call(parameter, method));
 
-
-                var setExpression =
-                    Expression.Lambda<Action<object, object>>(
-                        Expression.Call(instanceExpression, setValueMethod, valueToType),
-                        parameterT,
-                        parameterTProperty
-                    );
-
-                var getExpression =
-                    Expression.Lambda<Func<object, object>>(
-                        Expression.Convert(Expression.Call(instanceExpression, getValueMethod), typeof(object)),
-                        parameterT
-                    );
-
+                var setter = ConvertToSetter(parameterT, parameterTProperty, setValueMethod, valueToType, instanceExpression);
+                var getter = ConvertToGetter(parameterT, getValueMethod, instanceExpression);
                 var name = string.Join("", names);
-                var setter = setExpression.Compile();
-                var getter = getExpression.Compile();
 
                 return new PropertyMetadata
                 {
@@ -140,6 +151,27 @@ namespace RapidCMS.Common.Helpers
             {
                 return null;
             }
+        }
+
+        private static Func<object, object> ConvertToGetter(ParameterExpression parameterT, MethodInfo getValueMethod, Expression instanceExpression)
+        {
+            var getExpression = Expression.Lambda<Func<object, object>>(
+                Expression.Convert(Expression.Call(instanceExpression, getValueMethod), typeof(object)),
+                parameterT
+            );
+
+            return getExpression.Compile();
+        }
+
+        private static Action<object, object> ConvertToSetter(ParameterExpression parameterT, ParameterExpression parameterTProperty, MethodInfo setValueMethod, Expression valueToType, Expression instanceExpression)
+        {
+            var setExpression = Expression.Lambda<Action<object, object>>(
+                Expression.Call(instanceExpression, setValueMethod, valueToType),
+                parameterT,
+                parameterTProperty
+            );
+
+            return setExpression.Compile();
         }
     }
 }
