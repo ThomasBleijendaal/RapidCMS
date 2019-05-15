@@ -98,11 +98,14 @@ namespace RapidCMS.Common.Helpers
                     }
                     else if (x is MethodCallExpression methodCallExpression && isAtTail)
                     {
+                        var del = lambdaExpression.Compile();
+                        
+
                         getValueMethod = methodCallExpression.Method;
                         //parameterTType = getValueMethod.;
 
-                        if (parameterTType != null)
-                        {
+                        //if (parameterTType != null)
+                        //{
                             //parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
 
                             return new ExpressionMetadata
@@ -110,7 +113,7 @@ namespace RapidCMS.Common.Helpers
                                 PropertyType = methodCallExpression.Type,
                                 Getter = ConvertToGetter(parameterT, getValueMethod, parameterT)
                             };
-                        }
+                        //}
                     }
                     else
                     {
