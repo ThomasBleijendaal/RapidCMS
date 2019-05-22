@@ -1,4 +1,8 @@
-﻿namespace RapidCMS.Common
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("RapidCMS.Common.Tests")]
+
+namespace RapidCMS.Common
 {
     // TODO: change to ENUM
     public static class Constants

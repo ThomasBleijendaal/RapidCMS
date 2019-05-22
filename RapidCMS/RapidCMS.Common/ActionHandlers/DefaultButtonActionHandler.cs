@@ -7,7 +7,7 @@ using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.ActionHandlers
 {
-    public class DefaultButtonActionHandler : IButtonActionHandler
+    internal class DefaultButtonActionHandler : IButtonActionHandler
     {
         private readonly CrudType _crudType;
         private readonly Action _action;

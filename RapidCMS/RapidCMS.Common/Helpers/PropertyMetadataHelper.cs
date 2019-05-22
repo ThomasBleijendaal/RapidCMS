@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using RapidCMS.Common.Models;
 
 #nullable enable
 
-[assembly: InternalsVisibleTo("RapidCMS.Common.Tests")]
 namespace RapidCMS.Common.Helpers
 {
     internal static class PropertyMetadataHelper
@@ -42,6 +40,7 @@ namespace RapidCMS.Common.Helpers
         /// 
         /// When possible (LambdaExpression is a MemberExpression), it will return IPropertyMetadata similair to GetPropertyMetadata.
         /// </summary>
+        /// <exception cref="ArgumentException">Thrown when given LambdaExpression cannot be converted to a getter.</exception>
         /// <param name="lambdaExpression">The LambdaExpression to be converted</param>
         /// <returns>GetterAndSetter object when successful, null when not.</returns>
         public static IExpressionMetadata GetExpressionMetadata(LambdaExpression lambdaExpression)
@@ -150,10 +149,9 @@ namespace RapidCMS.Common.Helpers
                     };
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
-                return null;
+                throw new ArgumentException($"Given expression {lambdaExpression.ToString()} cannot be converted to Getter.", ex);
             }
         }
 

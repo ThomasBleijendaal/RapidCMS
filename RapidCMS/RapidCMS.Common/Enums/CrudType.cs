@@ -15,6 +15,10 @@
         Update = 5,
         Delete = 6,
 
+        // list action
+        Add = 100,
+        Remove = 101,
+
         // specials
         Refresh = 1001
     }

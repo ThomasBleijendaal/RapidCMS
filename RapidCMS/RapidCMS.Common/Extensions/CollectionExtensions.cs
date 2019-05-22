@@ -1,65 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
-using RapidCMS.Common.Services;
 using RapidCMS.Common.ValueMappers;
 
 #nullable enable
 
 namespace RapidCMS.Common.Extensions
 {
-    // TODO: make code more DRY
-
-    public static class RapidCMSMiddleware
-    {
-        public static IServiceCollection AddRapidCMS(this IServiceCollection services, Action<RootConfig>? config = null)
-        {
-            var rootConfig = new RootConfig();
-            config?.Invoke(rootConfig);
-
-            var root = new Root(
-                rootConfig.CustomButtonRegistrations,
-                rootConfig.CustomEditorRegistrations,
-                rootConfig.CustomSectionRegistrations);
-
-            services.AddSingleton(root);
-            services.AddSingleton<ICollectionService, CollectionService>();
-            services.AddSingleton<IUIService, UIService>();
-
-            services.AddSingleton<DefaultValueMapper>();
-            services.AddSingleton<LongValueMapper>();
-            services.AddSingleton<BoolValueMapper>();
-            services.AddSingleton(typeof(CollectionValueMapper<>), typeof(CollectionValueMapper<>));
-
-            return services;
-        }
-
-        public static IApplicationBuilder UseRapidCMS(this IApplicationBuilder app, Action<Root> configure)
-        {
-            ServiceLocator.CreateInstance(app.ApplicationServices);
-
-            var root = app.ApplicationServices.GetRequiredService<Root>();
-
-            configure.Invoke(root);
-
-            try
-            {
-                root.MaterializeRepositories(app.ApplicationServices);
-            }
-            catch
-            {
-
-            }
-
-            return app;
-        }
-    }
-
     public static class ICollectionRootExtensions
     {
         public static ICollectionRoot AddCollection<TEntity>(this ICollectionRoot root, string alias, string name, Action<CollectionConfig<TEntity>> configure)
@@ -212,15 +162,6 @@ namespace RapidCMS.Common.Extensions
             root.Collections.Add(collection);
 
             return root;
-        }
-    }
-
-    public static class ButtonExtensions
-    {
-        public static IEnumerable<Button> GetAllButtons(this IEnumerable<Button> buttons)
-        {
-            // HACK: bit of a hack
-            return buttons.SelectMany(x => x.Buttons.Any() ? x.Buttons.AsEnumerable() : new[] { x }).ToList();
         }
     }
 }

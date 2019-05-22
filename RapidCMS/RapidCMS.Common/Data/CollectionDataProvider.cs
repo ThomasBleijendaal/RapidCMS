@@ -6,7 +6,7 @@ using RapidCMS.Common.Models.DTOs;
 
 namespace RapidCMS.Common.Data
 {
-    public class CollectionDataProvider : IDataProvider
+    internal class CollectionDataProvider : IDataProvider
     {
         private readonly IRepository _repository;
         private readonly IPropertyMetadata _idProperty;

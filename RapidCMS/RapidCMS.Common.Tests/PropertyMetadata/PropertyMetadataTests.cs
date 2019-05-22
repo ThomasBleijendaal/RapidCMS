@@ -11,7 +11,6 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
         [SetUp]
         public void Setup()
         {
-
         }
 
         [Test]
