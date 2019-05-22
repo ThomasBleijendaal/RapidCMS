@@ -4,6 +4,6 @@
     {
         internal EntityVisibilty EntityVisibilty { get; set; }
         internal CollectionRootVisibility RootVisibility { get; set; }
-        internal IPropertyMetadata PropertyMetadata { get; set; }
+        internal IExpressionMetadata Name { get; set; }
     }
 }

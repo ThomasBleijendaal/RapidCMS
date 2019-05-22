@@ -24,12 +24,33 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
             Assert.IsNotNull(data);
             Assert.AreEqual("Test", data.PropertyName);
             Assert.AreEqual("Test Value", data.Getter(instance));
+            Assert.AreEqual("Test Value", data.StringGetter(instance));
             Assert.AreEqual(typeof(string), data.PropertyType);
             Assert.AreEqual(typeof(BasicClass), data.ObjectType);
 
             data.Setter(instance, "New Value");
 
             Assert.AreEqual("New Value", instance.Test);
+        }
+
+        [Test]
+        public void BasicNonStringProperty()
+        {
+            var instance = new BasicClass { Test = "Test Value", Id = 1 };
+            Expression<Func<BasicClass, int>> func = (BasicClass x) => x.Id;
+
+            var data = PropertyMetadataHelper.GetPropertyMetadata(func);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual("Id", data.PropertyName);
+            Assert.AreEqual(1, data.Getter(instance));
+            Assert.AreEqual(null, data.StringGetter);
+            Assert.AreEqual(typeof(int), data.PropertyType);
+            Assert.AreEqual(typeof(BasicClass), data.ObjectType);
+
+            data.Setter(instance, 2);
+
+            Assert.AreEqual(2, instance.Id);
         }
 
         [Test]
@@ -43,12 +64,33 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
             Assert.IsNotNull(data);
             Assert.AreEqual("BasicTest", data.PropertyName);
             Assert.AreEqual("Test Value", data.Getter(instance));
+            Assert.AreEqual("Test Value", data.StringGetter(instance));
             Assert.AreEqual(typeof(string), data.PropertyType);
             Assert.AreEqual(typeof(ParentClass), data.ObjectType);
 
             data.Setter(instance, "New Value");
 
             Assert.AreEqual("New Value", instance.Basic.Test);
+        }
+
+        [Test]
+        public void NestedNonStringProperty()
+        {
+            var instance = new ParentClass { Basic = new BasicClass { Test = "Test Value", Id = 1 } };
+            Expression<Func<ParentClass, int>> func = (ParentClass x) => x.Basic.Id;
+
+            var data = PropertyMetadataHelper.GetPropertyMetadata(func);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual("BasicId", data.PropertyName);
+            Assert.AreEqual(1, data.Getter(instance));
+            Assert.AreEqual(null, data.StringGetter);
+            Assert.AreEqual(typeof(int), data.PropertyType);
+            Assert.AreEqual(typeof(ParentClass), data.ObjectType);
+
+            data.Setter(instance, 2);
+
+            Assert.AreEqual(2, instance.Basic.Id);
         }
 
         [Test]
@@ -60,7 +102,7 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
             var data = PropertyMetadataHelper.GetExpressionMetadata(func) as IExpressionMetadata;
 
             Assert.IsNotNull(data);
-            Assert.AreEqual("Test Value", data.Getter(instance));
+            Assert.AreEqual("Test Value", data.StringGetter(instance));
             Assert.AreEqual(typeof(string), data.PropertyType);
 
             Assert.Throws(typeof(ArgumentException), () => PropertyMetadataHelper.GetPropertyMetadata(func));
@@ -75,7 +117,7 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
             var data = PropertyMetadataHelper.GetExpressionMetadata(func) as IExpressionMetadata;
 
             Assert.IsNotNull(data);
-            Assert.AreEqual("Blaat", data.Getter(instance));
+            Assert.AreEqual("Blaat", data.StringGetter(instance));
             Assert.AreEqual(typeof(string), data.PropertyType);
 
             Assert.Throws(typeof(ArgumentException), () => PropertyMetadataHelper.GetPropertyMetadata(func));
@@ -90,7 +132,7 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
             var data = PropertyMetadataHelper.GetExpressionMetadata(func) as IExpressionMetadata;
 
             Assert.IsNotNull(data);
-            Assert.AreEqual("T e s t   V a l u e", data.Getter(instance));
+            Assert.AreEqual("T e s t   V a l u e", data.StringGetter(instance));
             Assert.AreEqual(typeof(string), data.PropertyType);
 
             Assert.Throws(typeof(ArgumentException), () => PropertyMetadataHelper.GetPropertyMetadata(func));
@@ -105,7 +147,7 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
             var data = PropertyMetadataHelper.GetExpressionMetadata(func) as IExpressionMetadata;
 
             Assert.IsNotNull(data);
-            Assert.AreEqual("RapidCMS.Common.Tests.PropertyMetadata.PropertyMetadataTests+BasicClass Test Value", data.Getter(instance));
+            Assert.AreEqual("RapidCMS.Common.Tests.PropertyMetadata.PropertyMetadataTests+BasicClass Test Value", data.StringGetter(instance));
             Assert.AreEqual(typeof(string), data.PropertyType);
 
             Assert.Throws(typeof(ArgumentException), () => PropertyMetadataHelper.GetPropertyMetadata(func));
@@ -114,6 +156,7 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
         class BasicClass
         {
             public string Test { get; set; }
+            public int Id { get; set; }
         }
 
         class ParentClass

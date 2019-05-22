@@ -63,7 +63,7 @@ namespace RapidCMS.Common.Helpers
                     return new ExpressionMetadata
                     {
                         PropertyType = x.Type,
-                        Getter = ConvertToGetterViaLambda(parameterT, lambdaExpression, parameterTAsType)
+                        StringGetter = ConvertToStringGetterViaLambda(parameterT, lambdaExpression, parameterTAsType)
                     };
                 }
                 else
@@ -137,6 +137,7 @@ namespace RapidCMS.Common.Helpers
 
                     var setter = ConvertToSetter(parameterT, parameterTProperty, setValueMethod, valueToType, instanceExpression);
                     var getter = ConvertToGetterViaMethod(parameterT, getValueMethod, instanceExpression);
+                    var stringGetter = parameterTPropertyType == typeof(string) ? ConvertToStringGetterViaMethod(parameterT, getValueMethod, instanceExpression) : null;
                     var name = string.Join("", names);
 
                     return new PropertyMetadata
@@ -144,6 +145,7 @@ namespace RapidCMS.Common.Helpers
                         ObjectType = parameterTType,
                         Getter = getter,
                         Setter = setter,
+                        StringGetter = stringGetter,
                         PropertyName = name,
                         PropertyType = parameterTPropertyType
                     };
@@ -165,12 +167,19 @@ namespace RapidCMS.Common.Helpers
             return getExpression.Compile();
         }
 
-        private static Func<object, object> ConvertToGetterViaLambda(ParameterExpression parameterT, LambdaExpression lambdaExpression, Expression parameterExpression)
+        private static Func<object, string> ConvertToStringGetterViaMethod(ParameterExpression parameterT, MethodInfo getValueMethod, Expression instanceExpression)
         {
-            var getExpression = Expression.Lambda<Func<object, object>>(
-                Expression.Convert(Expression.Invoke(lambdaExpression, parameterExpression), typeof(object)),
+            var getExpression = Expression.Lambda<Func<object, string>>(
+                Expression.Call(instanceExpression, getValueMethod),
                 parameterT
             );
+
+            return getExpression.Compile();
+        }
+
+        private static Func<object, string> ConvertToStringGetterViaLambda(ParameterExpression parameterT, LambdaExpression lambdaExpression, Expression parameterExpression)
+        {
+            var getExpression = Expression.Lambda<Func<object, string>>(Expression.Invoke(lambdaExpression, parameterExpression), parameterT);
 
             return getExpression.Compile();
         }

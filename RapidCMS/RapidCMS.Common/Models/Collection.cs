@@ -13,12 +13,9 @@ using RapidCMS.Common.Extensions;
 
 namespace RapidCMS.Common.Models
 {
-    // TODO: check polymorphisms
     // TODO: static root stuff is horrible
 
     // TODO: not really a model
-
-        // TODO: everything should be internal
     public class Root : ICollectionRoot
     {
         public Root(
@@ -170,11 +167,7 @@ namespace RapidCMS.Common.Models
         internal EntityVisibilty EntityVisibility { get; set; }
         internal CollectionRootVisibility RootVisibility { get; set; }
 
-        internal Func<object, object> NameGetter { get; set; }
-
-        internal List<Button> Buttons { get; set; }
-        internal Button AddButton { get; set; }
-        internal Button RemoveButton { get; set; }
+        internal IExpressionMetadata Name { get; set; }
     }
 
     internal class ListView

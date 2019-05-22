@@ -33,7 +33,7 @@ namespace RapidCMS.Common.Extensions
                 {
                     EntityVisibility = configReceiver.TreeView.EntityVisibilty,
                     RootVisibility = configReceiver.TreeView.RootVisibility,
-                    NameGetter = configReceiver.TreeView.PropertyMetadata.Getter
+                    Name = configReceiver.TreeView.Name
                 };
             }
 

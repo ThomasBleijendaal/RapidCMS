@@ -77,7 +77,7 @@ namespace RapidCMS.Common.Services
                         return new CollectionTreeNodeDTO
                         {
                             Id = entity.Id,
-                            Name = collection.TreeView.NameGetter.Invoke(entity) as string,
+                            Name = collection.TreeView.Name.StringGetter.Invoke(entity),
                             Path = UriHelper.Node(Constants.Edit, collection.Alias, entityVariant, parentId, entity.Id),
                             Collections = subCollections.ToList()
                         };

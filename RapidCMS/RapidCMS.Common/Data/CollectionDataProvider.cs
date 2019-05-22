@@ -27,7 +27,7 @@ namespace RapidCMS.Common.Data
             return entities.Select(entity => new OptionDTO
             {
                 Id = _idProperty.Getter(entity).ToString(),
-                Label = _labelProperty.Getter(entity).ToString()
+                Label = _labelProperty.StringGetter(entity).ToString()
             });
         }
     }

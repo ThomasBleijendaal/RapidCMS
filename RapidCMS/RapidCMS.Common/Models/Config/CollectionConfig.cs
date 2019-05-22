@@ -90,8 +90,7 @@ namespace RapidCMS.Common.Models.Config
             {
                 EntityVisibilty = entityVisibility,
                 RootVisibility = rootVisibility,
-                // TODO: update
-                PropertyMetadata = PropertyMetadataHelper.GetPropertyMetadata(nameExpression)
+                Name = PropertyMetadataHelper.GetExpressionMetadata(nameExpression)
             };
 
             return this;
