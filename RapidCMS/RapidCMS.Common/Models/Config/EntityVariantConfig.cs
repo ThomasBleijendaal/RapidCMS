@@ -2,10 +2,10 @@
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class EntityVariantConfig
+    internal class EntityVariantConfig
     {
-        public string Name { get; set; }
-        public string Icon { get; set; }
-        public Type Type { get; set; }
+        internal string Name { get; set; }
+        internal string Icon { get; set; }
+        internal Type Type { get; set; }
     }
 }

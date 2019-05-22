@@ -29,6 +29,7 @@ TODO:
 [] AddSubCollectionListEditor should not create new pane (should be configured by user)
 [x] Confirmation on button should make it danger
 [] EnumDataTypeProvider support
+[] Top button bar should be side bar with meta
 
 [] All config checked during startup
 [] Unit tests

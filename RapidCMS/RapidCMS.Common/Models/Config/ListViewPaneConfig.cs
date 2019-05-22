@@ -11,14 +11,13 @@ namespace RapidCMS.Common.Models.Config
 {
     public class ListViewPaneConfig
     {
-        public List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
-        public List<PropertyConfig> Properties { get; set; } = new List<PropertyConfig>();
+        internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
+        internal List<PropertyConfig> Properties { get; set; } = new List<PropertyConfig>();
     }
 
     public class ListViewPaneConfig<TEntity> : ListViewPaneConfig
         where TEntity : IEntity
     {
-
         public ListViewPaneConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig

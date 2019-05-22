@@ -8,7 +8,7 @@ namespace RapidCMS.Common.Helpers
 {
     internal static class EditorTypeHelper
     {
-        internal static EditorType TryFindDefaultEditorType(Type editorType)
+        public static EditorType TryFindDefaultEditorType(Type editorType)
         {
             foreach (var type in EnumHelper.GetValues<EditorType>())
             {

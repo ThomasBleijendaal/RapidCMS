@@ -2,7 +2,7 @@
 {
     public class FieldWithLabelUI : FieldUI
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string Name { get; internal set; }
+        public string Description { get; internal set; }
     }
 }

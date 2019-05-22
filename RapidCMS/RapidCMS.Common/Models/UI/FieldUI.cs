@@ -7,13 +7,13 @@ namespace RapidCMS.Common.Models.UI
 {
     public class FieldUI : Element
     {
-        public string CustomAlias { get; set; }
+        public string CustomAlias { get; internal set; }
 
-        public EditorType Type { get; set; }
+        public EditorType Type { get; internal set; }
 
-        public IValueMapper ValueMapper { get; set; }
-        public IPropertyMetadata Property { get; set; }
-        public IDataProvider DataProvider { get; set; }
+        public IValueMapper ValueMapper { get; internal set; }
+        public IPropertyMetadata Property { get; internal set; }
+        public IDataProvider DataProvider { get; internal set; }
 
         public object GetValue(IEntity entity)
         {

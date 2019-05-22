@@ -6,13 +6,13 @@ namespace RapidCMS.Common.Models.UI
 {
     public class ListUI
     {
-        public IEnumerable<UISubject> Entities { get; set; }
+        public IEnumerable<UISubject> Entities { get; internal set; }
 
-        public ListType ListType { get; set; }
+        public ListType ListType { get; internal set; }
 
-        public List<ButtonUI> Buttons { get; set; }
+        public List<ButtonUI> Buttons { get; internal set; }
 
         // TODO: this could return multiple items
-        public Func<UISubject, SectionUI> SectionForEntity { get; set; }
+        public Func<UISubject, SectionUI> SectionForEntity { get; internal set; }
     }
 }

@@ -9,8 +9,8 @@ namespace RapidCMS.Common.Models.Config
 {
     public class ListViewConfig
     {
-        public List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
-        public ListViewPaneConfig ListViewPane { get; set; }
+        internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
+        internal ListViewPaneConfig ListViewPane { get; set; }
     }
 
     public class ListViewConfig<TEntity> : ListViewConfig

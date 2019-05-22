@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RapidCMS.Common.Helpers
 {
-    public static class EnumHelper
+    internal static class EnumHelper
     {
         public static IEnumerable<TEnum> GetValues<TEnum>()
             where TEnum: Enum

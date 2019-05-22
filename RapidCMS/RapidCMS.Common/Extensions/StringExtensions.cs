@@ -2,7 +2,7 @@
 
 namespace RapidCMS.Common.Extensions
 {
-    public static class StringExtensions
+    internal static class StringExtensions
     {
         // https://stackoverflow.com/questions/25259/how-does-stack-overflow-generate-its-seo-friendly-urls
         public static string ToUrlFriendlyString(this string title)

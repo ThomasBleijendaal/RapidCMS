@@ -6,9 +6,9 @@ namespace RapidCMS.Common.Models.UI
 {
     public class SectionUI
     {
-        public List<ButtonUI> Buttons { get; set; }
-        public List<Element> Elements { get; set; }
-        public string? CustomAlias { get; set; }
-        public string? Label { get; set; }
+        public List<ButtonUI> Buttons { get; internal set; }
+        public List<Element> Elements { get; internal set; }
+        public string? CustomAlias { get; internal set; }
+        public string? Label { get; internal set; }
     }
 }

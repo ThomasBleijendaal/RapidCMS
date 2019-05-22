@@ -12,9 +12,9 @@ namespace RapidCMS.Common.Models.Config
 {
     public class ListEditorPaneConfig
     {
-        public Type VariantType { get; set; }
-        public List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
-        public List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
+        internal Type VariantType { get; set; }
+        internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
+        internal List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
     }
 
     public class ListEditorPaneConfig<TEntity> : ListEditorPaneConfig

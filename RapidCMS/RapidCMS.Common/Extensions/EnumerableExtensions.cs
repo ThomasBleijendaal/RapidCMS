@@ -8,17 +8,17 @@ namespace RapidCMS.Common.Extensions
 {
     public static class EnumerableExtensions
     {
-        // this method cannot handle gaps in any shape or form
-        public static IEnumerable<IEnumerable<TValue>> Pivot<TValue>(this IEnumerable<IEnumerable<TValue>> source)
-        {
-            var data = source
-                .Select(col => col.Select((value, index) => (value, index)))
-                .SelectMany(x => x)
-                .GroupBy(x => x.index)
-                .Select(row => row.Select(x => x.value));
+        //// this method cannot handle gaps in any shape or form
+        //public static IEnumerable<IEnumerable<TValue>> Pivot<TValue>(this IEnumerable<IEnumerable<TValue>> source)
+        //{
+        //    var data = source
+        //        .Select(col => col.Select((value, index) => (value, index)))
+        //        .SelectMany(x => x)
+        //        .GroupBy(x => x.index)
+        //        .Select(row => row.Select(x => x.value));
 
-            return data;
-        }
+        //    return data;
+        //}
 
         public static List<TResult> ToList<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
         {
@@ -42,30 +42,30 @@ namespace RapidCMS.Common.Extensions
             return result;
         }
 
-        public static IEnumerable<IGrouping<TKey, TElement>> ChunckedGroupBy<TElement, TKey>(this IEnumerable<TElement> source, Func<TElement, TKey> selector)
-        {
-            if (!source?.Any() ?? false)
-            {
-                yield return default(Group<TKey, TElement>);
-                yield break;
-            }
+        //public static IEnumerable<IGrouping<TKey, TElement>> ChunckedGroupBy<TElement, TKey>(this IEnumerable<TElement> source, Func<TElement, TKey> selector)
+        //{
+        //    if (!source?.Any() ?? false)
+        //    {
+        //        yield return default(Group<TKey, TElement>);
+        //        yield break;
+        //    }
 
-            var key = selector(source.First());
-            var chunk = new List<TElement>();
+        //    var key = selector(source.First());
+        //    var chunk = new List<TElement>();
 
-            foreach (var element in source)
-            {
-                if (!selector(element).Equals(key))
-                {
-                    yield return new Group<TKey, TElement>(key, chunk);
-                    chunk = new List<TElement>();
-                }
+        //    foreach (var element in source)
+        //    {
+        //        if (!selector(element).Equals(key))
+        //        {
+        //            yield return new Group<TKey, TElement>(key, chunk);
+        //            chunk = new List<TElement>();
+        //        }
 
-                chunk.Add(element);
-            }
+        //        chunk.Add(element);
+        //    }
 
-            yield return new Group<TKey, TElement>(key, chunk);
-        }
+        //    yield return new Group<TKey, TElement>(key, chunk);
+        //}
 
         public class Group<TKey, TElement> : IGrouping<TKey, TElement>
         {

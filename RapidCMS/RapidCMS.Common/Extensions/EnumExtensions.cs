@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace RapidCMS.Common.Extensions
 {
-    public static class EnumExtensions
+    internal static class EnumExtensions
     {
         public static TAttribute GetCustomAttribute<TAttribute>(this Enum e)
             where TAttribute : Attribute

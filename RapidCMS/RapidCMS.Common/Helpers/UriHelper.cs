@@ -4,7 +4,7 @@
 
 namespace RapidCMS.Common.Helpers
 {
-    public static class UriHelper
+    internal static class UriHelper
     {
         // TODO: find better solution than /entity/
         public static string Node(string action, string collectionAlias, EntityVariant entityVariant, string? parentId, string? id)

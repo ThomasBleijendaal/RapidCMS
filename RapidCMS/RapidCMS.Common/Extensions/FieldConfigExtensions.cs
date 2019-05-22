@@ -5,7 +5,7 @@ using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.Common.Extensions
 {
-    public static class FieldConfigExtensions
+    internal static class FieldConfigExtensions
     {
         public static Field ToField(this FieldConfig field)
         {

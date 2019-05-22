@@ -7,7 +7,7 @@ using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.Common.Extensions
 {
-    public static class UIExtensions
+    internal static class UIExtensions
     {
         public static ButtonUI ToUI(this Button button)
         {

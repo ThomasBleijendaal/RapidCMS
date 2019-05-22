@@ -10,7 +10,7 @@ using RapidCMS.Common.Services;
 
 namespace RapidCMS.Common.Extensions
 {
-    public static class ButtonConfigExtensions
+    internal static class ButtonConfigExtensions
     {
         public static Button ToDefaultButton(this DefaultButtonConfig button, IEnumerable<EntityVariant>? entityVariants, EntityVariant baseEntityVariant)
         {

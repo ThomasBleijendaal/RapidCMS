@@ -6,7 +6,7 @@ using RapidCMS.Common.Models;
 
 namespace RapidCMS.Common.Extensions
 {
-    public static class ButtonExtensions
+    internal static class ButtonExtensions
     {
         public static IEnumerable<Button> GetAllButtons(this IEnumerable<Button> buttons)
         {

@@ -1,5 +1,4 @@
-﻿using RapidCMS.Common.Attributes;
-using System;
+﻿using System;
 
 namespace RapidCMS.Common.Enums
 {

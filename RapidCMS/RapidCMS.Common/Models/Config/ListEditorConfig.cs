@@ -9,9 +9,9 @@ namespace RapidCMS.Common.Models.Config
 {
     public class ListEditorConfig
     {
-        public ListEditorType ListEditorType { get; set; }
-        public List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
-        public List<ListEditorPaneConfig> ListEditors { get; set; } = new List<ListEditorPaneConfig>();
+        internal ListEditorType ListEditorType { get; set; }
+        internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
+        internal List<ListEditorPaneConfig> ListEditors { get; set; } = new List<ListEditorPaneConfig>();
 
     }
 

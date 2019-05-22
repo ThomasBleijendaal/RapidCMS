@@ -42,12 +42,12 @@ namespace RapidCMS.Common.Models.Config
         internal Type RepositoryType { get; set; }
 
         public List<Collection> Collections { get; set; } = new List<Collection>();
-        public List<EntityVariantConfig> EntityVariants { get; set; } = new List<EntityVariantConfig>();
+        internal List<EntityVariantConfig> EntityVariants { get; set; } = new List<EntityVariantConfig>();
 
-        public TreeViewConfig TreeView { get; set; }
-        public ListViewConfig ListView { get; set; }
-        public ListEditorConfig ListEditor { get; set; }
-        public NodeEditorConfig NodeEditor { get; set; }
+        internal TreeViewConfig TreeView { get; set; }
+        internal ListViewConfig ListView { get; set; }
+        internal ListEditorConfig ListEditor { get; set; }
+        internal NodeEditorConfig NodeEditor { get; set; }
     }
 
     public class CollectionConfig<TEntity> : CollectionConfig
