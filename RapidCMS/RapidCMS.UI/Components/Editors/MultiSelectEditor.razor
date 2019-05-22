@@ -4,6 +4,8 @@
 
 @if (Options != null)
 {
+    var value = Property.Getter(Entity) as ICollection<object>;
+
     var index = 0;
     var group = Guid.NewGuid().ToString();
 
@@ -17,7 +19,7 @@
                        value="@option.Id" 
                        id="@group-option@(++index)" 
                        name=@group 
-                       checked=@(Value?.Contains(option.Id)) 
+                       checked=@(value?.Contains(option.Id)) 
                        onchange=@((UIChangeEventArgs __e) => OnChange(__e, option.Id)) />
                 <label class="form-check-label" for="@group-option@(index)">
                     @option.Label
@@ -39,20 +41,24 @@
         }
     }
 
-    private void OnChange(UIChangeEventArgs e, string value)
+    private void OnChange(UIChangeEventArgs e, object value)
     {
-        if (Value == null)
+        ICollection<object>? entityValue = Property.Getter(Entity) as ICollection<object>;
+
+        if (entityValue == null)
         {
-            Value = new List<string>();
+            entityValue = new List<object>();
         }
 
         if ((bool)e.Value == true)
         {
-            Value.Add(value);
+            entityValue.Add(value);
         }
         else
         {
-            Value.Remove(value);
+            entityValue.Remove(value);
         }
+
+        Property.Setter(Entity, value);
     }
 }

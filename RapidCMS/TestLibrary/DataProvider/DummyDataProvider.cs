@@ -22,7 +22,7 @@ namespace TestLibrary.DataProvider
                 Label = label;
             }
 
-            public string Id { get; set; }
+            public object Id { get; set; }
 
             public string Label { get; set; }
         }

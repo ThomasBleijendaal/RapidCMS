@@ -18,7 +18,7 @@ namespace RapidCMS.Common.Extensions
                     DataType = field.Type,
                     Description = field.Description,
                     Name = field.Name,
-                    NodeProperty = field.NodeProperty,
+                    Property = field.Property,
                     Readonly = field.Readonly,
                     ValueMapperType = field.ValueMapperType ?? typeof(DefaultValueMapper),
 
@@ -34,7 +34,7 @@ namespace RapidCMS.Common.Extensions
                     DataType = field.Type,
                     Description = field.Description,
                     Name = field.Name,
-                    NodeProperty = field.NodeProperty,
+                    Property = field.Property,
                     Readonly = field.Readonly,
                     ValueMapperType = field.ValueMapperType ?? typeof(DefaultValueMapper),
 

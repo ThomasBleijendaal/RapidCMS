@@ -6,7 +6,18 @@ namespace RapidCMS.Common.ValueMappers
     {
         public override long? MapFromEditor(ValueMappingContext context, object value)
         {
-            return value == null ? default(long?) : (long)value;
+            if (value is string stringValue)
+            {
+                return long.TryParse(stringValue, out var longValue) ? longValue : default(long?);
+            }
+            else if (value is long longValue)
+            {
+                return longValue;
+            }
+            else
+            {
+                return default;
+            }
         }
 
         public override object MapToEditor(ValueMappingContext context, long? value)

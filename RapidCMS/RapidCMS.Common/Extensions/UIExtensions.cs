@@ -31,7 +31,7 @@ namespace RapidCMS.Common.Extensions
             where T : FieldUI
         {
             ui.CustomAlias = (field is CustomField customField) ? customField.Alias : null;
-            ui.Property = field.NodeProperty;
+            ui.Property = field.Property;
             ui.ValueMapper = ServiceLocator.Instance.GetService<IValueMapper>(field.ValueMapperType);
             ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;
 

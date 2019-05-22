@@ -17,6 +17,7 @@ TODO:
 [] SetOneToManyRelation with collection must be able to pass parentId into Repository
 [] Extensible Dropdown (type ahead style insert of new elements + automatic update when used in list views)
 [] ValueMapper is obstrusive (not able to cast int to long should not be an issue)
+[] Explore if ValueMapper can be skipped since editors are using late resolving of value
 [] PropertyMetadata safe propagation
 [] Recursive collection + check for recursion
 [] Relation support (one-many + many-many via discrete call on Repository) + recursive delete + EFCore support (non-transient DbContext)
@@ -31,6 +32,7 @@ TODO:
 [] EnumDataTypeProvider support
 [] Top button bar should be side bar with meta
 [] Bind CustomButton and ActionHandler more together
+[] Allow for IExpressionMetadata is list views
 
 [] All config checked during startup
 [] Unit tests

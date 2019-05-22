@@ -80,7 +80,7 @@ namespace RapidCMS.Common.Extensions
                                 Description = property.Description,
                                 Name = property.Name,
                                 Readonly = true,
-                                NodeProperty = property.NodeProperty,
+                                Property = property.Property,
                                 ValueMapperType = property.ValueMapperType ?? typeof(DefaultValueMapper)
                             })
                         }

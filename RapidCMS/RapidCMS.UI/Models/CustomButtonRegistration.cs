@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
+using RapidCMS.Common.ValueMappers;
 using RapidCMS.UI.Components.Editors;
 using RapidCMS.UI.Components.Sections;
 
@@ -53,20 +55,22 @@ namespace RapidCMS.UI.Models
             }
         }
 
-        public RenderFragment? GetCustomEditor<TValue>(string editorAlias, TValue value, Action<TValue> callback)
+        public RenderFragment? GetCustomEditor(string editorAlias, IEntity entity, IPropertyMetadata property, IValueMapper valueMapper, IDataProvider dataProvider)
         {
             if (_customButtons != null && _customButtons.TryGetValue(editorAlias, out var registration))
             {
                 return builder =>
                 {
                     var editorType = (registration.EditorType.IsGenericTypeDefinition)
-                        ? registration.EditorType.MakeGenericType(typeof(TValue))
+                        ? registration.EditorType.MakeGenericType(typeof(string))
                         : registration.EditorType;
 
                     builder.OpenComponent(0, editorType);
 
-                    builder.AddAttribute(1, nameof(BaseEditor<TValue>.EditorValue), value);
-                    builder.AddAttribute(2, nameof(BaseEditor<TValue>.Callback), callback);
+                    builder.AddAttribute(1, nameof(BaseEditor<string>.Entity), entity);
+                    builder.AddAttribute(2, nameof(BaseEditor<string>.Property), property);
+                    builder.AddAttribute(3, nameof(BaseEditor<string>.ValueMapper), valueMapper);
+                    builder.AddAttribute(4, nameof(BaseEditor<string>.DataProvider), dataProvider);
 
                     builder.CloseComponent();
                 };

@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Models;
+using RapidCMS.Common.ValueMappers;
 
 #nullable enable
 
@@ -8,29 +10,16 @@ namespace RapidCMS.UI.Components.Editors
 {
     public class BaseEditor<TValue> : ComponentBase
     {
-        // TODO: move to two methods: one for getting and one for setting the value of this editor
+        [Parameter]
+        public IEntity Entity { get; private set; }
 
         [Parameter]
-        public TValue EditorValue { get; private set; }
-
-        protected TValue Value
-        {
-            get
-            {
-                return EditorValue;
-            }
-            set
-            {
-                EditorValue = value;
-
-                Callback?.Invoke(EditorValue);
-            }
-        }
+        public IPropertyMetadata Property { get; private set; }
 
         [Parameter]
-        public Action<TValue>? Callback { get; private set; }
+        public IValueMapper ValueMapper { get; private set; }
 
         [Parameter]
-        protected IDataProvider? DataProvider { get; set; }
+        public IDataProvider? DataProvider { get; private set; }
     }
 }

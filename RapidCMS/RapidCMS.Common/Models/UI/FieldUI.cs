@@ -15,22 +15,30 @@ namespace RapidCMS.Common.Models.UI
         public IPropertyMetadata Property { get; internal set; }
         public IDataProvider DataProvider { get; internal set; }
 
+        [Obsolete]
         public object GetValue(IEntity entity)
         {
-
             return ValueMapper.MapToEditor(null, Property.Getter(entity));
         }
 
+        [Obsolete]
         public void SetValue(IEntity entity, object value)
         {
-
             Property.Setter(entity, ValueMapper.MapFromEditor(null, value));
         }
 
-        [Obsolete("This should depend on an IPropertyMetadata but on an IExpressionMetadata")]
+        [Obsolete]
+        // TODO: allow for use of IExpressionMetadata
         public string GetReadonlyValue(IEntity entity)
         {
-            return ValueMapper.MapToView(null, Property.Getter(entity));
+            if (Property.StringGetter != null)
+            {
+                return Property.StringGetter(entity);
+            }
+            else
+            {
+                return ValueMapper.MapToView(null, Property.Getter(entity));
+            }
         }
     }
 }

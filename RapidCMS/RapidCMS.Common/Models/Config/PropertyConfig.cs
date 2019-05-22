@@ -10,7 +10,7 @@ namespace RapidCMS.Common.Models.Config
         internal string Description { get; set; }
 
         // TODO: ExpressionProperty?
-        internal IPropertyMetadata NodeProperty { get; set; }
+        internal IPropertyMetadata Property { get; set; }
 
         internal Type ValueMapperType { get; set; }
     }

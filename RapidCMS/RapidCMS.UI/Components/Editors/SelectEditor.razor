@@ -4,6 +4,8 @@
 
 @if (Options != null)
 {
+    var value = Property.Getter(Entity);
+
     var index = 0;
     var group = Guid.NewGuid().ToString();
 
@@ -17,8 +19,8 @@
                        value="@option.Id" 
                        id="@group-option@(++index)" 
                        name=@group 
-                       checked=@(option.Id == Value) 
-                       onchange=@((UIChangeEventArgs __e) => Value = __e.Value.ToString())  />
+                       checked=@(option.Id.Equals(value)) 
+                       onchange=@(args => Property.Setter(Entity, option.Id)) />
                 <label class="form-check-label" for="@group-option@(index)">
                     @option.Label
                 </label>

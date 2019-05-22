@@ -18,7 +18,7 @@ namespace RapidCMS.Common.Models.Config
 
         internal bool Readonly { get; set; }
 
-        internal IPropertyMetadata NodeProperty { get; set; }
+        internal IPropertyMetadata Property { get; set; }
         internal Type ValueMapperType { get; set; }
         internal OneToManyRelationConfig? OneToManyRelation { get; set; }
 

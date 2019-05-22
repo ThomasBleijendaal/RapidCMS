@@ -4,13 +4,13 @@
 
 @if (Options != null)
 {
-    var group = Guid.NewGuid().ToString();
+    var value = Property.Getter(Entity);
 
-    <select class="form-control" bind=@Value>
+    <select class="form-control">
         <option value=""></option>
         @foreach (var option in Options)
         {
-            <option value="@option.Id">@option.Label</option>
+            <option value="@option.Id" selected=@(option.Id.Equals(value)) onchange=@(args => Property.Setter(Entity, option.Id))>@option.Label</option>
         }
     </select>
 }

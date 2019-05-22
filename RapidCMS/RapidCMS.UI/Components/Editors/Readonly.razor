@@ -1,3 +1,5 @@
 ﻿@inherits BaseEditor<string>
 
-<input value="@Value" class="form-control" readonly />
+<input value=@ValueMapper.MapToEditor(null, Property.Getter(Entity)) 
+       class="form-control" 
+       readonly />

@@ -303,7 +303,7 @@ namespace RapidCMS.Common.Models
 
         internal EditorType DataType { get; set; } = EditorType.Readonly;
 
-        internal IPropertyMetadata NodeProperty { get; set; }
+        internal IPropertyMetadata Property { get; set; }
         internal Type ValueMapperType { get; set; }
 
         internal OneToManyRelation? OneToManyRelation { get; set; }

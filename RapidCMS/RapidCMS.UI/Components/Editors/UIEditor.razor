@@ -14,56 +14,56 @@
     {
         case EditorType.Custom:
 
-            @CustomEditors.GetCustomEditor(Field.CustomAlias, LocalValue, ChildEditorCallback)
+            @CustomEditors.GetCustomEditor(Field.CustomAlias, Entity, Field.Property, Field.ValueMapper, Field.DataProvider)
 
             break;
 
         case EditorType.Readonly:
 
-            <Readonly EditorValue="@Field.GetReadonlyValue(Entity)" />
+            <Readonly Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" />
 
             break;
 
         case EditorType.Numeric:
 
-            <NumericEditor EditorValue="@((long)LocalValue)" Callback="ChildEditorCallback" />
+            <NumericEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" />
 
             break;
 
         case EditorType.Checkbox:
 
-            <CheckboxEditor EditorValue="@((bool?)LocalValue)" Callback="ChildEditorCallback" />
+            <CheckboxEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" />
 
             break;
 
         case EditorType.TextArea:
 
-            <TextAreaEditor EditorValue="@((string)LocalValue)" Callback="ChildEditorCallback" />
+            <TextAreaEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" />
 
             break;
 
         case EditorType.TextBox:
         default:
 
-            <TextBoxEditor EditorValue="@((string)LocalValue)" Callback="ChildEditorCallback" />
+            <TextBoxEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" />
 
             break;
 
         case EditorType.Select:
 
-            <SelectEditor EditorValue="@((string)LocalValue)" Callback="ChildEditorCallback" DataProvider="Field.DataProvider" />
+            <SelectEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" DataProvider="Field.DataProvider" />
 
             break;
 
         case EditorType.MultiSelect:
 
-            <MultiSelectEditor EditorValue="@((ICollection<string>)LocalValue)" Callback="ChildEditorCallback" DataProvider="Field.DataProvider" />
+            <MultiSelectEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" DataProvider="Field.DataProvider" />
 
             break;
 
         case EditorType.Dropdown:
 
-            <DropdownEditor EditorValue="@((string)LocalValue)" Callback="ChildEditorCallback" DataProvider="Field.DataProvider" />
+            <DropdownEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" DataProvider="Field.DataProvider" />
 
             break;
     }
@@ -81,26 +81,6 @@
 
     [Parameter]
     private IEntity? Entity { get; set; }
-
-    public object? LocalValue
-    {
-        get
-        {
-            return Entity == null ? null : Field?.GetValue(Entity);
-        }
-        set
-        {
-            if (Field != null && Entity != null)
-            {
-                Field.SetValue(Entity, value);
-            }
-        }
-    }
-
-    private void ChildEditorCallback<T>(T value)
-    {
-        LocalValue = (object?)value;
-    }
 
     protected override void OnInit()
     {

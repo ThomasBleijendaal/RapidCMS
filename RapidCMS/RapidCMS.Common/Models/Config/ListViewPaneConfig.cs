@@ -66,10 +66,9 @@ namespace RapidCMS.Common.Models.Config
         {
             var config = new PropertyConfig<TEntity>
             {
-                // TODO: update
-                NodeProperty = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression)
+                Property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression)
             };
-            config.Name = config.NodeProperty.PropertyName;
+            config.Name = config.Property.PropertyName;
 
             configure?.Invoke(config);
 

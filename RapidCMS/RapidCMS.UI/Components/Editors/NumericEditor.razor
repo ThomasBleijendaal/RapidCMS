@@ -2,7 +2,10 @@
 
 <div class="input-group">
     <div class="input-group-prepend">
-        <span class="input-group-text" id="basic-addon1">#</span>
+        <span class="input-group-text">#</span>
     </div>
-    <input bind="@Value" type="number" class="form-control" />
+    <input value=@ValueMapper.MapToEditor(null, Property.Getter(Entity))
+           onchange=@(args => Property.Setter(Entity, ValueMapper.MapFromEditor(null, args.Value)))
+           type="number"
+           class="form-control" />
 </div>

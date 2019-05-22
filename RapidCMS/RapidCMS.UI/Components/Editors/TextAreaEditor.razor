@@ -1,3 +1,5 @@
 ﻿@inherits BaseEditor<string>
 
-<textarea onchange=@((UIChangeEventArgs __e) => Value = __e.Value.ToString()) bind=@Value class="form-control"></textarea>
+<textarea value=@ValueMapper.MapToEditor(null, Property.Getter(Entity))
+          onchange=@(args => Property.Setter(Entity, ValueMapper.MapFromEditor(null, args.Value)))
+          class="form-control"></textarea>
