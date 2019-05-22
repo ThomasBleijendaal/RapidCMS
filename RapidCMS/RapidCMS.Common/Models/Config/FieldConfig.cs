@@ -108,19 +108,20 @@ namespace RapidCMS.Common.Models.Config
     public class OneToManyRelationCollectionConfig : OneToManyRelationConfig
     {
         internal string CollectionAlias { get; set; }
-        internal IPropertyMetadata IdProperty { get; set; }
+        internal IExpressionMetadata IdProperty { get; set; }
         internal IExpressionMetadata DisplayProperty { get; set; }
     }
 
     public class OneToManyRelationCollectionConfig<TEntity, TRelatedEntity> : OneToManyRelationCollectionConfig
     {
-        public OneToManyRelationCollectionConfig<TEntity, TRelatedEntity> SetIdProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression)
+        public OneToManyRelationCollectionConfig<TEntity, TRelatedEntity> SetIdProperty(Expression<Func<TRelatedEntity, string>> propertyExpression)
         {
-            IdProperty = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression) as IPropertyMetadata;
+            IdProperty = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression);
 
             return this;
         }
-        public OneToManyRelationCollectionConfig<TEntity, TRelatedEntity> SetDisplayProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression)
+
+        public OneToManyRelationCollectionConfig<TEntity, TRelatedEntity> SetDisplayProperty(Expression<Func<TRelatedEntity, string>> propertyExpression)
         {
             DisplayProperty = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression);
 

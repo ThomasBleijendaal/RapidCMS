@@ -139,6 +139,19 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
         }
 
         [Test]
+        public void BasicNonStringExpression()
+        {
+            var instance = new BasicClass { Test = "Test Value", Id = 3 };
+            Expression<Func<BasicClass, int>> func = (BasicClass x) => x.Id;
+
+            var data = PropertyMetadataHelper.GetExpressionMetadata(func) as IExpressionMetadata;
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual(null, data.StringGetter);
+            Assert.AreEqual(typeof(int), data.PropertyType);
+        }
+
+        [Test]
         public void NestedStringExpression()
         {
             var instance = new ParentClass { Basic = new BasicClass { Test = "Test Value" } };

@@ -9,10 +9,10 @@ namespace RapidCMS.Common.Data
     internal class CollectionDataProvider : IDataProvider
     {
         private readonly IRepository _repository;
-        private readonly IPropertyMetadata _idProperty;
+        private readonly IExpressionMetadata _idProperty;
         private readonly IExpressionMetadata _labelProperty;
 
-        public CollectionDataProvider(IRepository repository, IPropertyMetadata idProperty, IExpressionMetadata labelProperty)
+        public CollectionDataProvider(IRepository repository, IExpressionMetadata idProperty, IExpressionMetadata labelProperty)
         {
             _repository = repository;
             _idProperty = idProperty;
@@ -26,8 +26,8 @@ namespace RapidCMS.Common.Data
 
             return entities.Select(entity => new OptionDTO
             {
-                Id = _idProperty.Getter(entity).ToString(),
-                Label = _labelProperty.StringGetter(entity).ToString()
+                Id = _idProperty.StringGetter(entity),
+                Label = _labelProperty.StringGetter(entity)
             });
         }
     }
