@@ -75,7 +75,7 @@ namespace RapidCMS.Common.Models
     // TODO: check if these Registration classes can be merged
     public class CustomButtonRegistration
     {
-        public CustomButtonRegistration(Type buttonType)
+        internal CustomButtonRegistration(Type buttonType)
         {
             ButtonType = buttonType ?? throw new ArgumentNullException(nameof(buttonType));
             ButtonAlias = buttonType.FullName;
@@ -87,7 +87,7 @@ namespace RapidCMS.Common.Models
 
     public class CustomEditorRegistration
     {
-        public CustomEditorRegistration(Type editorType)
+        internal CustomEditorRegistration(Type editorType)
         {
             EditorType = editorType ?? throw new ArgumentNullException(nameof(editorType));
             EditorAlias = editorType.FullName;
@@ -99,7 +99,7 @@ namespace RapidCMS.Common.Models
 
     public class CustomSectionRegistration
     {
-        public CustomSectionRegistration(Type sectionType)
+        internal CustomSectionRegistration(Type sectionType)
         {
             SectionType = sectionType ?? throw new ArgumentNullException(nameof(sectionType));
             SectionAlias = sectionType.FullName;
@@ -111,15 +111,15 @@ namespace RapidCMS.Common.Models
 
     public class Collection
     {
-        public string Name { get; set; }
-        public string Alias { get; set; }
+        internal string Name { get; set; }
+        internal string Alias { get; set; }
 
         public List<Collection> Collections { get; set; } = new List<Collection>();
 
-        public List<EntityVariant>? SubEntityVariants { get; set; }
-        public EntityVariant EntityVariant { get; set; }
+        internal List<EntityVariant>? SubEntityVariants { get; set; }
+        internal EntityVariant EntityVariant { get; set; }
 
-        public EntityVariant GetEntityVariant(string? alias)
+        internal EntityVariant GetEntityVariant(string? alias)
         {
             if (string.IsNullOrWhiteSpace(alias) || SubEntityVariants == null)
             {
@@ -130,31 +130,27 @@ namespace RapidCMS.Common.Models
                 return SubEntityVariants.First(x => x.Alias == alias);
             }
         }
-        public EntityVariant GetEntityVariant(IEntity entity)
+        internal EntityVariant GetEntityVariant(IEntity entity)
         {
             return SubEntityVariants?.FirstOrDefault(x => x.Type == entity.GetType())
                 ?? EntityVariant;
         }
 
-        public Type RepositoryType { get; set; }
-        public IRepository Repository { get; set; }
+        internal Type RepositoryType { get; set; }
+        internal IRepository Repository { get; set; }
 
-        public TreeView? TreeView { get; set; }
+        internal TreeView? TreeView { get; set; }
 
-        public ListView ListView { get; set; }
-        public ListEditor ListEditor { get; set; }
+        internal ListView ListView { get; set; }
+        internal ListEditor ListEditor { get; set; }
 
-        public NodeEditor NodeEditor { get; set; }
+        internal NodeEditor NodeEditor { get; set; }
 
     }
 
     public interface ICollectionRoot
     {
         List<Collection> Collections { get; set; }
-    }
-
-    public class View
-    {
     }
 
     public enum EntityVisibilty
@@ -169,99 +165,94 @@ namespace RapidCMS.Common.Models
         Hidden
     }
 
-    public class TreeView : View
+    internal class TreeView
     {
-        public EntityVisibilty EntityVisibility { get; set; }
-        public CollectionRootVisibility RootVisibility { get; set; }
+        internal EntityVisibilty EntityVisibility { get; set; }
+        internal CollectionRootVisibility RootVisibility { get; set; }
 
-        public Func<object, object> NameGetter { get; set; }
+        internal Func<object, object> NameGetter { get; set; }
 
-        public List<Button> Buttons { get; set; }
-        public Button AddButton { get; set; }
-        public Button RemoveButton { get; set; }
+        internal List<Button> Buttons { get; set; }
+        internal Button AddButton { get; set; }
+        internal Button RemoveButton { get; set; }
     }
 
-    public class ListView : View
+    internal class ListView
     {
-        public ViewPane? ViewPane { get; set; }
-        public List<Button>? Buttons { get; set; }
+        internal ViewPane? ViewPane { get; set; }
+        internal List<Button>? Buttons { get; set; }
     }
 
-    public class Editor
+    internal class ListEditor
     {
-        public bool IsDefault { get; set; }
+        internal ListEditorType ListEditorType { get; set; }
+        internal List<EditorPane> EditorPanes { get; set; }
+        internal List<Button> Buttons { get; set; }
     }
 
-    public class ListEditor : Editor
+    internal class SubCollectionListEditor : ListEditor
     {
-        public ListEditorType ListEditorType { get; set; }
-        public List<EditorPane> EditorPanes { get; set; }
-        public List<Button> Buttons { get; set; }
+        internal int Index { get; set; }
+
+        internal string CollectionAlias { get; set; }
     }
 
-    public class SubCollectionListEditor : ListEditor
+    internal class NodeEditor
     {
-        public int Index { get; set; }
-
-        public string CollectionAlias { get; set; }
-    }
-
-    public class NodeEditor : Editor
-    {
-        public Type BaseType { get; set; }
-        public List<EditorPane> EditorPanes { get; set; }
-        public List<Button> Buttons { get; set; }
+        internal Type BaseType { get; set; }
+        internal List<EditorPane> EditorPanes { get; set; }
+        internal List<Button> Buttons { get; set; }
     }
 
     public class EntityVariant
     {
-        public string Name { get; set; }
-        public string Icon { get; set; }
-        public Type Type { get; set; }
-        public string Alias { get; set; }
+        public string Name { get; internal set; }
+        public string Icon { get; internal set; }
+        public Type Type { get; internal set; }
+        public string Alias { get; internal set; }
     }
 
-    public class ViewPane
+    internal class ViewPane
     {
-        public string Name { get; set; }
+        internal string Name { get; set; }
 
-        public List<Field> Fields { get; set; }
-        public List<Button> Buttons { get; set; }
+        internal List<Field> Fields { get; set; }
+        internal List<Button> Buttons { get; set; }
     }
 
-    public class EditorPane
+    internal class EditorPane
     {
-        public string? CustomAlias { get; set; }
-        public string? Label { get; set; }
-        public Type VariantType { get; set; }
-        public List<Button> Buttons { get; set; }
-        public List<Field> Fields { get; set; }
-        public List<SubCollectionListEditor> SubCollectionListEditors { get; set; }
+        internal string? CustomAlias { get; set; }
+        internal string? Label { get; set; }
+        internal Type VariantType { get; set; }
+        internal List<Button> Buttons { get; set; }
+        internal List<Field> Fields { get; set; }
+        internal List<SubCollectionListEditor> SubCollectionListEditors { get; set; }
     }
 
-    public abstract class Button
+    internal abstract class Button
     {
-        public string ButtonId { get; set; }
+        internal string ButtonId { get; set; }
 
-        public string Label { get; set; }
-        public string Icon { get; set; }
-        public bool ShouldConfirm { get; set; }
-        public bool IsPrimary { get; set; }
+        internal string Label { get; set; }
+        internal string Icon { get; set; }
+        internal bool ShouldConfirm { get; set; }
+        internal bool IsPrimary { get; set; }
 
-        public List<Button> Buttons { get; set; }
+        internal List<Button> Buttons { get; set; }
 
         // TODO: how does this behave in custom buttons?
-        public object Metadata { get; set; }
+        internal object Metadata { get; set; }
 
-        public abstract CrudType GetCrudType();
-        public virtual bool IsCompatibleWithView(ViewContext viewContext) { return true; }
+        internal abstract CrudType GetCrudType();
+        internal virtual bool IsCompatibleWithView(ViewContext viewContext) { return true; }
     }
 
-    public class DefaultButton : Button
+    internal class DefaultButton : Button
     {
-        public DefaultButtonType DefaultButtonType { get; set; }
+        internal DefaultButtonType DefaultButtonType { get; set; }
 
-        public override CrudType GetCrudType()
+        internal override CrudType GetCrudType()
         {
             switch (DefaultButtonType)
             {
@@ -281,73 +272,73 @@ namespace RapidCMS.Common.Models
                     return 0;
             }
         }
-        public override bool IsCompatibleWithView(ViewContext viewContext)
+        internal override bool IsCompatibleWithView(ViewContext viewContext)
         {
             return DefaultButtonType.GetCustomAttribute<ActionsAttribute>().Usages?.Any(x => viewContext.Usage.HasFlag(x)) ?? false;
         }
     }
 
-    public class CustomButton : Button
+    internal class CustomButton : Button
     {
-        public string Alias { get; set; }
+        internal string Alias { get; set; }
 
-        public IButtonActionHandler ActionHandler { get; set; }
+        internal IButtonActionHandler ActionHandler { get; set; }
 
-        public override CrudType GetCrudType()
+        internal override CrudType GetCrudType()
         {
             return ActionHandler.GetCrudType();
         }
-        public override bool IsCompatibleWithView(ViewContext viewContext)
+        internal override bool IsCompatibleWithView(ViewContext viewContext)
         {
             return ActionHandler.IsCompatibleWithView(viewContext);
         }
-        public Task HandleActionAsync(string? parentId, string? id, object? customData)
+        internal Task HandleActionAsync(string? parentId, string? id, object? customData)
         {
             return ActionHandler.InvokeAsync(parentId, id, customData);
         }
     }
 
 
-    public class Field
+    internal class Field
     {
-        public int Index { get; set; }
+        internal int Index { get; set; }
 
-        public string Name { get; set; }
-        public string Description { get; set; }
+        internal string Name { get; set; }
+        internal string Description { get; set; }
 
-        public bool Readonly { get; set; } = true;
+        internal bool Readonly { get; set; } = true;
 
-        public EditorType DataType { get; set; } = EditorType.Readonly;
+        internal EditorType DataType { get; set; } = EditorType.Readonly;
 
-        public IPropertyMetadata NodeProperty { get; set; }
-        public Type ValueMapperType { get; set; }
+        internal IPropertyMetadata NodeProperty { get; set; }
+        internal Type ValueMapperType { get; set; }
 
-        public OneToManyRelation? OneToManyRelation { get; set; }
+        internal OneToManyRelation? OneToManyRelation { get; set; }
     }
 
-    public class CustomField : Field
+    internal class CustomField : Field
     {
-        public CustomField(Type customFieldType)
+        internal CustomField(Type customFieldType)
         {
             Alias = customFieldType?.FullName ?? throw new ArgumentNullException(nameof(customFieldType));
         }
 
-        public string Alias { get; set; }
+        internal string Alias { get; set; }
     }
 
     // TODO: horrible names
-    public class OneToManyRelation
+    internal class OneToManyRelation
     {
     }
 
-    public class OneToManyCollectionRelation : OneToManyRelation
+    internal class OneToManyCollectionRelation : OneToManyRelation
     {
         internal string CollectionAlias { get; set; }
         internal IPropertyMetadata IdProperty { get; set; }
         internal IExpressionMetadata DisplayProperty { get; set; }
     }
 
-    public class OneToManyDataProviderRelation : OneToManyRelation
+    internal class OneToManyDataProviderRelation : OneToManyRelation
     {
         internal Type DataProviderType { get; set; }
     }

@@ -15,7 +15,7 @@ using RapidCMS.Common.Models.UI;
 namespace RapidCMS.Common.Services
 {
 
-    public class CollectionService : ICollectionService
+    internal class CollectionService : ICollectionService
     {
         private readonly Root _root;
         private readonly IUIService _uiService;

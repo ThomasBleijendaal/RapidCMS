@@ -10,7 +10,7 @@ using RapidCMS.Common.Models.UI;
 namespace RapidCMS.Common.Services
 {
 
-    public class UIService : IUIService
+    internal class UIService : IUIService
     {
         private readonly Root _root;
 

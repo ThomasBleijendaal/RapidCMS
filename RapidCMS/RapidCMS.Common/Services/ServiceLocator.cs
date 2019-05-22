@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace RapidCMS.Common.Services
 {
-    public class ServiceLocator
+    internal class ServiceLocator
     {
         private readonly IServiceProvider _serviceProvider;
 

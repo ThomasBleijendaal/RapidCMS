@@ -7,7 +7,7 @@ using RapidCMS.Common.Models.UI;
 
 namespace RapidCMS.Common.Services
 {
-    public interface IUIService
+    internal interface IUIService
     {
         NodeUI GenerateNodeUI(ViewContext viewContext, NodeEditor nodeEditor);
         ListUI GenerateListUI(ViewContext listViewContext, Func<UISubject, ViewContext> entityViewContext, ListView listView);

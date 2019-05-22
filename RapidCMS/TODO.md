@@ -30,6 +30,7 @@ TODO:
 [x] Confirmation on button should make it danger
 [] EnumDataTypeProvider support
 [] Top button bar should be side bar with meta
+[] Bind CustomButton and ActionHandler more together
 
 [] All config checked during startup
 [] Unit tests
