@@ -1,5 +1,5 @@
 1. Unique collection alias -> yes. TODO: enforce
-2. Public or internal?
+2. Public or internal? -> internal all internals 
 
 
 

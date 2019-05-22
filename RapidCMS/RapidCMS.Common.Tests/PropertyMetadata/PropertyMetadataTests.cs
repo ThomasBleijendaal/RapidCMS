@@ -67,6 +67,51 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
             Assert.Throws(typeof(ArgumentException), () => PropertyMetadataHelper.GetPropertyMetadata(func));
         }
 
+        [Test]
+        public void BasicStringExpression2()
+        {
+            var instance = new BasicClass { Test = "Test Value" };
+            Expression<Func<BasicClass, string>> func = (BasicClass x) => $"Blaat";
+
+            var data = PropertyMetadataHelper.GetExpressionMetadata(func) as IExpressionMetadata;
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual("Blaat", data.Getter(instance));
+            Assert.AreEqual(typeof(string), data.PropertyType);
+
+            Assert.Throws(typeof(ArgumentException), () => PropertyMetadataHelper.GetPropertyMetadata(func));
+        }
+
+        [Test]
+        public void BasicStringExpression3()
+        {
+            var instance = new BasicClass { Test = "Test Value" };
+            Expression<Func<BasicClass, string>> func = (BasicClass x) => string.Join(' ', x.Test.ToCharArray());
+
+            var data = PropertyMetadataHelper.GetExpressionMetadata(func) as IExpressionMetadata;
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual("T e s t   V a l u e", data.Getter(instance));
+            Assert.AreEqual(typeof(string), data.PropertyType);
+
+            Assert.Throws(typeof(ArgumentException), () => PropertyMetadataHelper.GetPropertyMetadata(func));
+        }
+
+        [Test]
+        public void NestedStringExpression()
+        {
+            var instance = new ParentClass { Basic = new BasicClass { Test = "Test Value" } };
+            Expression<Func<ParentClass, string>> func = (ParentClass x) => $"{x.Basic} {x.Basic.Test}";
+
+            var data = PropertyMetadataHelper.GetExpressionMetadata(func) as IExpressionMetadata;
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual("RapidCMS.Common.Tests.PropertyMetadata.PropertyMetadataTests+BasicClass Test Value", data.Getter(instance));
+            Assert.AreEqual(typeof(string), data.PropertyType);
+
+            Assert.Throws(typeof(ArgumentException), () => PropertyMetadataHelper.GetPropertyMetadata(func));
+        }
+
         class BasicClass
         {
             public string Test { get; set; }
