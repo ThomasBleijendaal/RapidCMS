@@ -1,4 +1,4 @@
-﻿@inherits BaseEditor<string>
+﻿@inherits BaseEditor
 
 @using RapidCMS.Common.Data
 
@@ -16,8 +16,8 @@
             <div class="form-check">
                 <input class="form-check-input" 
                        type="radio" 
-                       value="@option.Id" 
-                       id="@group-option@(++index)" 
+                       value=@option.Id
+                       id=@group-option@(++index)
                        name=@group 
                        checked=@(option.Id.Equals(value)) 
                        onchange=@(args => Property.Setter(Entity, option.Id)) />

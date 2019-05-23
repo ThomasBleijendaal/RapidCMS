@@ -1,4 +1,4 @@
-﻿@inherits BaseEditor<ICollection<string>>
+﻿@inherits BaseEditor
 
 @using RapidCMS.Common.Data
 
@@ -10,7 +10,6 @@
     var group = Guid.NewGuid().ToString();
 
     <div class="form-control form-control-select-list">
-        
         @foreach (var option in Options)
         {
             <div class="form-check">

@@ -13,6 +13,7 @@ using RapidCMS.UI.Components.Sections;
 
 namespace RapidCMS.UI.Models
 {
+    // TODO: move to more sane locations
     public class CustomButtonContainer
     {
         private Dictionary<string, Func<Type, RenderFragment>> _customButtons = new Dictionary<string, Func<Type, RenderFragment>>();
@@ -61,16 +62,14 @@ namespace RapidCMS.UI.Models
             {
                 return builder =>
                 {
-                    var editorType = (registration.EditorType.IsGenericTypeDefinition)
-                        ? registration.EditorType.MakeGenericType(typeof(string))
-                        : registration.EditorType;
+                    var editorType = registration.EditorType;
 
                     builder.OpenComponent(0, editorType);
 
-                    builder.AddAttribute(1, nameof(BaseEditor<string>.Entity), entity);
-                    builder.AddAttribute(2, nameof(BaseEditor<string>.Property), property);
-                    builder.AddAttribute(3, nameof(BaseEditor<string>.ValueMapper), valueMapper);
-                    builder.AddAttribute(4, nameof(BaseEditor<string>.DataProvider), dataProvider);
+                    builder.AddAttribute(1, nameof(BaseEditor.Entity), entity);
+                    builder.AddAttribute(2, nameof(BaseEditor.Property), property);
+                    builder.AddAttribute(3, nameof(BaseEditor.ValueMapper), valueMapper);
+                    builder.AddAttribute(4, nameof(BaseEditor.DataProvider), dataProvider);
 
                     builder.CloseComponent();
                 };

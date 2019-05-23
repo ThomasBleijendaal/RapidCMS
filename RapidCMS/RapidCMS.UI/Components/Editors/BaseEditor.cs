@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.ValueMappers;
@@ -8,7 +7,7 @@ using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.UI.Components.Editors
 {
-    public class BaseEditor<TValue> : ComponentBase
+    public class BaseEditor : ComponentBase
     {
         [Parameter]
         public IEntity Entity { get; private set; }

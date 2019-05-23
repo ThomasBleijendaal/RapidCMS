@@ -1,4 +1,4 @@
-﻿@inherits BaseEditor<bool?>
+﻿@inherits BaseEditor
 
 <input checked=@ValueMapper.MapToEditor(null, Property.Getter(Entity))
        onchange=@(args => Property.Setter(Entity, ValueMapper.MapFromEditor(null, args.Value)))

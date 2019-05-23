@@ -1,29 +1,64 @@
-﻿@inherits BaseEditor<string>
+﻿@inherits BaseEditor
 
 @using RapidCMS.Common.Data
 
 @if (Options != null)
 {
-    var value = Property.Getter(Entity);
-
-    <select class="form-control">
-        <option value=""></option>
+    <select class="form-control" onchange=@OnChange value="@SelectedIndex">
+        <option value="-1"></option>
         @foreach (var option in Options)
         {
-            <option value="@option.Id" selected=@(option.Id.Equals(value)) onchange=@(args => Property.Setter(Entity, option.Id))>@option.Label</option>
+            <option value=@option.Index>@option.NestedOption.Label</option>
         }
     </select>
 }
 @functions {
 #nullable enable
 
-    private IEnumerable<IOption>? Options;
+    private IEnumerable<Option>? Options;
+    private int SelectedIndex = -1;
 
     protected override async Task OnInitAsync()
     {
         if (DataProvider != null)
         {
-            Options = await DataProvider.GetAllOptionsAsync();
+            var value = Property.Getter(Entity);
+
+            var data = await DataProvider.GetAllOptionsAsync();
+
+            Options = data.Select((option, index) =>
+            {
+                if (option.Id.Equals(value))
+                {
+                    SelectedIndex = index;
+                }
+
+                return new Option
+                {
+                    Index = index,
+                    NestedOption = option
+                };
+            }).ToList();
         }
+    }
+
+    private void OnChange(UIChangeEventArgs args)
+    {
+        var index = int.Parse((string)args.Value);
+
+        if (index == -1)
+        {
+            Property.Setter(Entity, null);
+        }
+        else
+        {
+            Property.Setter(Entity, Options.ElementAt(index).NestedOption.Id);
+        }
+    }
+
+    public class Option
+    {
+        public int Index { get; set; }
+        public IOption NestedOption { get; set; }
     }
 }
