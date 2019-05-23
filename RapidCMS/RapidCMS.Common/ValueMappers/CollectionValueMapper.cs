@@ -14,7 +14,7 @@ namespace RapidCMS.Common.ValueMappers
 
         public override object MapToEditor(ValueMappingContext context, ICollection<TValue> value)
         {
-            return value;
+            return value.Select(x => (object)x).ToList();
         }
 
         public override string MapToView(ValueMappingContext context, ICollection<TValue> value)

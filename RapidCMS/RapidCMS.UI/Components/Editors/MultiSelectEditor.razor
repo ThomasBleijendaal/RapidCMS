@@ -42,22 +42,19 @@
 
     private void OnChange(UIChangeEventArgs e, object value)
     {
-        ICollection<object>? entityValue = Property.Getter(Entity) as ICollection<object>;
+        var rawValue = Property.Getter(Entity);
+        ICollection<object>? entityValue = rawValue as ICollection<object>;
 
-        if (entityValue == null)
+        if (entityValue != null)
         {
-            entityValue = new List<object>();
+            if ((bool)e.Value == true)
+            {
+                entityValue.Add(value);
+            }
+            else
+            {
+                entityValue.Remove(value);
+            }
         }
-
-        if ((bool)e.Value == true)
-        {
-            entityValue.Add(value);
-        }
-        else
-        {
-            entityValue.Remove(value);
-        }
-
-        Property.Setter(Entity, value);
     }
 }

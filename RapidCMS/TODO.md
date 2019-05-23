@@ -11,7 +11,7 @@ TODO:
 [x] ListEditorPaneConfig does not accept CustomButton
 [x] Checkbox form field
 [x] Nullable (numerics)
-[] EditorValue obstrusiveness (weird get and set stuff)
+[x] EditorValue obstrusiveness (weird get and set stuff)
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)
 [] IEntity.Id requirement is obstrusive
 [] SetOneToManyRelation with collection must be able to pass parentId into Repository

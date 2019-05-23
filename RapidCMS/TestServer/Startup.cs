@@ -473,7 +473,7 @@ namespace TestServer
 
                     editorPaneConfig.AddField(x => x.AzureTableStorageEntityIds)
                         .SetType(EditorType.MultiSelect)
-                        .SetValueMapper<CollectionValueMapper<string>>()
+                        .SetValueMapper<CollectionValueMapper<object>>()
                         .SetOneToManyRelation<AzureTableStorageEntity>("collection-10", relation =>
                         {
                             relation

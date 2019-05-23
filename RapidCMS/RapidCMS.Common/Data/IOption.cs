@@ -1,6 +1,6 @@
 ﻿namespace RapidCMS.Common.Data
 {
-    public interface IOption
+    public interface IElement
     {
         object Id { get; }
         

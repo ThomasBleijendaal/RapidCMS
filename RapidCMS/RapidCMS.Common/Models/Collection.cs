@@ -327,7 +327,7 @@ namespace RapidCMS.Common.Models
     internal class OneToManyCollectionRelation : OneToManyRelation
     {
         internal string CollectionAlias { get; set; }
-        internal IExpressionMetadata IdProperty { get; set; }
+        internal IPropertyMetadata IdProperty { get; set; }
         internal IExpressionMetadata DisplayProperty { get; set; }
     }
 
