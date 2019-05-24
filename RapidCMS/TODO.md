@@ -15,6 +15,12 @@ TODO:
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)
 [] IEntity.Id requirement is obstrusive
 [] SetOneToManyRelation with collection must be able to pass parentId into Repository
+    - DataCollection is transient helper class which contains the data for the relation (single or multiple entities)
+    - Data form DataCollection passed to Insert and Update repository methods
+        - During these save actions the relationship handling can be easily put in repository
+    - New collection editor required for editing relation collection (different than subcollection)
+    - Add + Remove buttons for adding and removing EXISTING entities, and new InsertAndAdd button which inserts a new entity and adds it as relation
+    - New CollectionDataProvider intermediate class handling all regular inter-collection relationships
 [] Extensible Dropdown (type ahead style insert of new elements + automatic update when used in list views)
 [] ValueMapper is obstrusive (not able to cast int to long should not be an issue)
 [] Explore if ValueMapper can be skipped since editors are using late resolving of value
