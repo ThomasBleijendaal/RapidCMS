@@ -12,53 +12,61 @@ namespace RapidCMS.Common.Data
         private readonly IPropertyMetadata _idProperty;
         private readonly IExpressionMetadata _labelProperty;
 
+        private readonly Task _init;
+
+        private List<IElement> _elements;
+
         public CollectionDataProvider(IRepository repository, IPropertyMetadata idProperty, IExpressionMetadata labelProperty)
         {
             _repository = repository;
             _idProperty = idProperty;
             _labelProperty = labelProperty;
+
+            _init = InitializeAsync();
         }
 
-        public Task AddElementAsync(IElement option)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        //public async Task<IEnumerable<IOption>> GetAllOptionsAsync()
-        //{
-        //    // TODO: parent id?
-        //    var entities = await _repository._GetAllAsObjectsAsync(null);
-
-        //    return entities.Select(entity => new OptionDTO
-        //    {
-        //        Id = _idProperty.Getter(entity),
-        //        Label = _labelProperty.StringGetter(entity)
-        //    });
-        //}
-
-        public async Task<IEnumerable<IElement>> GetAvailableElementsAsync()
+        public async Task InitializeAsync()
         {
             var entities = await _repository._GetAllAsObjectsAsync(null);
 
-            return entities.Select(entity => new ElementDTO
+            _elements = entities.Select(entity => new ElementDTO
             {
                 Id = _idProperty.Getter(entity),
                 Label = _labelProperty.StringGetter(entity)
-            });
+            } as IElement).ToList();
         }
 
-        public Task<IEnumerable<IElement>> GetRelatedElementsAsync()
+        public async Task AddElementAsync(IElement option)
         {
+            await _init;
+
+            _elements.Add(option);
+        }
+
+        public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
+        {
+            return Task.FromResult(_elements.AsEnumerable<IElement>());
+        }
+
+        public async Task<IEnumerable<IElement>> GetRelatedElementsAsync()
+        {
+            await _init;
+
             throw new System.NotImplementedException();
         }
 
-        public Task RemoveElementAsync(IElement option)
+
+        public async Task RemoveElementAsync(IElement option)
         {
+            await _init;
+
             throw new System.NotImplementedException();
         }
 
-        public Task SetElementAsync(IElement option)
+        public async Task SetElementAsync(IElement option)
         {
+            await _init;
+
             throw new System.NotImplementedException();
         }
     }
