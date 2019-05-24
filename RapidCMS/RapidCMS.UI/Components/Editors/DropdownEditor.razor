@@ -1,4 +1,4 @@
-﻿@inherits BaseEditor
+﻿@inherits BaseRelationEditor
 
 @using RapidCMS.Common.Data
 
@@ -20,45 +20,45 @@
 
     protected override async Task OnInitAsync()
     {
-        if (DataProvider != null)
-        {
-            var value = Property.Getter(Entity);
+        //if (DataCollection != null)
+        //{
+        //    var value = Property.Getter(Entity);
 
-            var data = await DataProvider.GetAllOptionsAsync();
+        //    var data = await DataCollection.GetAvailableElementsAsync();
 
-            Options = data.Select((option, index) =>
-            {
-                if (option.Id.Equals(value))
-                {
-                    SelectedIndex = index;
-                }
+        //    Options = data.Select((option, index) =>
+        //    {
+        //        if (option.Id.Equals(value))
+        //        {
+        //            SelectedIndex = index;
+        //        }
 
-                return new Option
-                {
-                    Index = index,
-                    NestedOption = option
-                };
-            }).ToList();
-        }
+        //        return new Option
+        //        {
+        //            Index = index,
+        //            NestedOption = option
+        //        };
+        //    }).ToList();
+        //}
     }
 
     private void OnChange(UIChangeEventArgs args)
     {
         var index = int.Parse((string)args.Value);
 
-        if (index == -1)
-        {
-            Property.Setter(Entity, null);
-        }
-        else
-        {
-            Property.Setter(Entity, Options.ElementAt(index).NestedOption.Id);
-        }
+        //if (index == -1)
+        //{
+        //    Property.Setter(Entity, null);
+        //}
+        //else
+        //{
+        //    Property.Setter(Entity, Options.ElementAt(index).NestedOption.Id);
+        //}
     }
 
     public class Option
     {
         public int Index { get; set; }
-        public IOption NestedOption { get; set; }
+        public IElement NestedOption { get; set; }
     }
 }

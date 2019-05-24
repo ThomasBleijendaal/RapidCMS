@@ -333,6 +333,6 @@ namespace RapidCMS.Common.Models
 
     internal class OneToManyDataProviderRelation : OneToManyRelation
     {
-        internal Type DataProviderType { get; set; }
+        internal Type DataCollectionType { get; set; }
     }
 }

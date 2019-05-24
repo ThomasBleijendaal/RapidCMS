@@ -6,7 +6,7 @@ using RapidCMS.Common.Models.DTOs;
 
 namespace RapidCMS.Common.Data
 {
-    internal class CollectionDataProvider : IDataProvider
+    internal class CollectionDataProvider : IDataCollection
     {
         private readonly IRepository _repository;
         private readonly IPropertyMetadata _idProperty;
@@ -19,16 +19,47 @@ namespace RapidCMS.Common.Data
             _labelProperty = labelProperty;
         }
 
-        public async Task<IEnumerable<IOption>> GetAllOptionsAsync()
+        public Task AddElementAsync(IElement option)
         {
-            // TODO: parent id?
+            throw new System.NotImplementedException();
+        }
+
+        //public async Task<IEnumerable<IOption>> GetAllOptionsAsync()
+        //{
+        //    // TODO: parent id?
+        //    var entities = await _repository._GetAllAsObjectsAsync(null);
+
+        //    return entities.Select(entity => new OptionDTO
+        //    {
+        //        Id = _idProperty.Getter(entity),
+        //        Label = _labelProperty.StringGetter(entity)
+        //    });
+        //}
+
+        public async Task<IEnumerable<IElement>> GetAvailableElementsAsync()
+        {
             var entities = await _repository._GetAllAsObjectsAsync(null);
 
-            return entities.Select(entity => new OptionDTO
+            return entities.Select(entity => new ElementDTO
             {
                 Id = _idProperty.Getter(entity),
                 Label = _labelProperty.StringGetter(entity)
             });
+        }
+
+        public Task<IEnumerable<IElement>> GetRelatedElementsAsync()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task RemoveElementAsync(IElement option)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task SetElementAsync(IElement option)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

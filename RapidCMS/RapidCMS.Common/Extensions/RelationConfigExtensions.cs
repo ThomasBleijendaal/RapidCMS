@@ -17,7 +17,7 @@ namespace RapidCMS.Common.Extensions
                 },
                 OneToManyRelationDataProviderConfig dataProviderConfig => new OneToManyDataProviderRelation
                 {
-                    DataProviderType = dataProviderConfig.DataProviderType
+                    DataCollectionType = dataProviderConfig.DataCollectionType
                 },
                 _ => default(OneToManyRelation)
             };

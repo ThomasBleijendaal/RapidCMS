@@ -4,7 +4,7 @@
 
 namespace RapidCMS.Common.Models.DTOs
 {
-    public class OptionDTO : IOption
+    public class ElementDTO : IElement
     {
         public object Id { get; set; }
         public string Label { get; set; }

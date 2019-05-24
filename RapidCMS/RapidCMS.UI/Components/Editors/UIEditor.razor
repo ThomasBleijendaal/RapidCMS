@@ -14,56 +14,56 @@
     {
         case EditorType.Custom:
 
-            @CustomEditors.GetCustomEditor(Field.CustomAlias, Entity, Field.Property, Field.ValueMapper, Field.DataProvider)
+            @CustomEditors.GetCustomEditor(Field.CustomAlias, Entity, Field.Property, Field.ValueMapper, Field.DataCollection)
 
             break;
 
         case EditorType.Readonly:
 
-            <Readonly Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" />
+            <Readonly Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper />
 
             break;
 
         case EditorType.Numeric:
 
-            <NumericEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" />
+            <NumericEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper />
 
             break;
 
         case EditorType.Checkbox:
 
-            <CheckboxEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" />
+            <CheckboxEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper />
 
             break;
 
         case EditorType.TextArea:
 
-            <TextAreaEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" />
+            <TextAreaEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper />
 
             break;
 
         case EditorType.TextBox:
         default:
 
-            <TextBoxEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" />
+            <TextBoxEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper />
 
             break;
 
         case EditorType.Select:
 
-            <SelectEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" DataProvider="Field.DataProvider" />
+            <SelectEditor DataCollection=@Field.DataCollection />
 
             break;
 
         case EditorType.MultiSelect:
 
-            <MultiSelectEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" DataProvider="Field.DataProvider" />
+            <MultiSelectEditor DataCollection=@Field.DataCollection />
 
             break;
 
         case EditorType.Dropdown:
 
-            <DropdownEditor Entity="@Entity" Property="@Field.Property" ValueMapper="@Field.ValueMapper" DataProvider="Field.DataProvider" />
+            <DropdownEditor DataCollection=@Field.DataCollection />
 
             break;
     }

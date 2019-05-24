@@ -69,12 +69,12 @@ namespace RapidCMS.Common.Models.Config
 
         // TODO: move all config into this function? (no SetId + SetDisplay?)
         // TODO: rename to select source or something
-        public FieldConfig<TEntity> SetOneToManyRelation<TDataProvider>()
-            where TDataProvider : IDataProvider
+        public FieldConfig<TEntity> SetOneToManyRelation<TDataCollection>()
+            where TDataCollection : IDataCollection
         {
             var config = new OneToManyRelationDataProviderConfig
             {
-                DataProviderType = typeof(TDataProvider)
+                DataCollectionType = typeof(TDataCollection)
             };
 
             OneToManyRelation = config;
@@ -102,7 +102,7 @@ namespace RapidCMS.Common.Models.Config
 
     public class OneToManyRelationDataProviderConfig : OneToManyRelationConfig
     {
-        internal Type DataProviderType { get; set; }
+        internal Type DataCollectionType { get; set; }
     }
 
     public class OneToManyRelationCollectionConfig : OneToManyRelationConfig

@@ -17,8 +17,11 @@ namespace RapidCMS.UI.Components.Editors
 
         [Parameter]
         public IValueMapper ValueMapper { get; private set; }
+    }
 
+    public class BaseRelationEditor : ComponentBase
+    {
         [Parameter]
-        public IDataProvider? DataProvider { get; private set; }
+        public IDataCollection? DataCollection { get; private set; }
     }
 }

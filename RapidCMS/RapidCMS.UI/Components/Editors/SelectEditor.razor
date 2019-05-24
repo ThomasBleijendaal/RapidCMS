@@ -1,11 +1,9 @@
-﻿@inherits BaseEditor
+﻿@inherits BaseRelationEditor
 
 @using RapidCMS.Common.Data
 
-@if (Options != null)
+@if (Options != null && SelectedOptions != null)
 {
-    var value = Property.Getter(Entity);
-
     var index = 0;
     var group = Guid.NewGuid().ToString();
 
@@ -19,8 +17,8 @@
                        value=@option.Id
                        id=@group-option@(++index)
                        name=@group 
-                       checked=@(option.Id.Equals(value)) 
-                       onchange=@(args => Property.Setter(Entity, option.Id)) />
+                       checked=@(SelectedOptions.Any(x => x.Id == option.Id)) 
+                       onchange=@(async args => await DataCollection.SetElementAsync(option)) />
                 <label class="form-check-label" for="@group-option@(index)">
                     @option.Label
                 </label>
@@ -31,13 +29,15 @@
 @functions {
 #nullable enable
 
-    private IEnumerable<IOption>? Options;
+    private IEnumerable<IElement>? Options;
+    private IEnumerable<IElement>? SelectedOptions;
 
     protected override async Task OnInitAsync()
     {
-        if (DataProvider != null)
+        if (DataCollection != null)
         {
-            Options = await DataProvider.GetAllOptionsAsync();
+            Options = await DataCollection.GetAvailableElementsAsync();
+            SelectedOptions = await DataCollection.GetRelatedElementsAsync();
         }
     }
 }

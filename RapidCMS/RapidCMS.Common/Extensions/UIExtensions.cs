@@ -42,12 +42,12 @@ namespace RapidCMS.Common.Extensions
                     case OneToManyCollectionRelation collectionRelation:
 
                         var repo = Root.GetRepository(collectionRelation.CollectionAlias);
-                        ui.DataProvider = new CollectionDataProvider(repo, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
+                        ui.DataCollection = new CollectionDataProvider(repo, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
                         break;
 
                     case OneToManyDataProviderRelation dataProviderRelation:
 
-                        ui.DataProvider = ServiceLocator.Instance.GetService<IDataProvider>(dataProviderRelation.DataProviderType);
+                        ui.DataCollection = ServiceLocator.Instance.GetService<IDataCollection>(dataProviderRelation.DataCollectionType);
                         break;
                 }
             }

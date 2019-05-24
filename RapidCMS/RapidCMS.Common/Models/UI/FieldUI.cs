@@ -13,7 +13,7 @@ namespace RapidCMS.Common.Models.UI
 
         public IValueMapper ValueMapper { get; internal set; }
         public IPropertyMetadata Property { get; internal set; }
-        public IDataProvider DataProvider { get; internal set; }
+        public IDataCollection DataCollection { get; internal set; }
 
         [Obsolete]
         public object GetValue(IEntity entity)

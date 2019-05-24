@@ -11,6 +11,9 @@ namespace RapidCMS.Common.Data
         Task<IEnumerable<IElement>> GetRelatedElementsAsync();
 
         Task AddElementAsync(IElement option);
+        Task SetElementAsync(IElement option);
         Task RemoveElementAsync(IElement option);
+
+        // TODO: initialize function
     }
 }
