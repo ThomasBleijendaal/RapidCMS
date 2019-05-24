@@ -62,6 +62,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
+        // TODO: downgrade propertyExpression to only accept strings (for ExpressionMetadata)
         public PropertyConfig<TEntity> AddProperty<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<PropertyConfig<TEntity>> configure = null)
         {
             var config = new PropertyConfig<TEntity>

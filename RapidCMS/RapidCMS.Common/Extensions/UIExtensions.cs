@@ -42,7 +42,10 @@ namespace RapidCMS.Common.Extensions
                     case OneToManyCollectionRelation collectionRelation:
 
                         var repo = Root.GetRepository(collectionRelation.CollectionAlias);
-                        ui.DataCollection = new CollectionDataProvider(repo, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
+                        ui.DataCollection = new CollectionDataProvider();
+
+                        ui.DataCollection.SetElementMetadata(repo, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
+
                         break;
 
                     case OneToManyDataProviderRelation dataProviderRelation:

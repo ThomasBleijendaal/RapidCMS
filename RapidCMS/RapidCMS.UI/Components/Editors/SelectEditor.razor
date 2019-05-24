@@ -36,6 +36,8 @@
     {
         if (DataCollection != null)
         {
+            DataCollection.SetRelationMetadata(Entity, Property);
+
             Options = await DataCollection.GetAvailableElementsAsync();
             SelectedOptions = await DataCollection.GetRelatedElementsAsync();
         }

@@ -8,15 +8,16 @@ namespace RapidCMS.Common.Data
 {
     internal class CollectionDataProvider : IDataCollection
     {
-        private readonly IRepository _repository;
-        private readonly IPropertyMetadata _idProperty;
-        private readonly IExpressionMetadata _labelProperty;
+        private IRepository _repository;
+        private IPropertyMetadata _idProperty;
+        private IExpressionMetadata _labelProperty;
 
-        private readonly Task _init;
+        private Task _init;
 
         private List<IElement> _elements;
+        private ICollection<object> _releatedElements;
 
-        public CollectionDataProvider(IRepository repository, IPropertyMetadata idProperty, IExpressionMetadata labelProperty)
+        public void SetElementMetadata(IRepository repository, IPropertyMetadata idProperty, IExpressionMetadata labelProperty)
         {
             _repository = repository;
             _idProperty = idProperty;
@@ -25,15 +26,24 @@ namespace RapidCMS.Common.Data
             _init = InitializeAsync();
         }
 
+        public void SetRelationMetadata(IEntity entity, IPropertyMetadata collectionProperty)
+        {
+            var data = collectionProperty.Getter(entity);
+
+            _releatedElements = data as ICollection<object>;
+        }
+
         public async Task InitializeAsync()
         {
             var entities = await _repository._GetAllAsObjectsAsync(null);
 
-            _elements = entities.Select(entity => new ElementDTO
-            {
-                Id = _idProperty.Getter(entity),
-                Label = _labelProperty.StringGetter(entity)
-            } as IElement).ToList();
+            _elements = entities
+                .Select(entity => (IElement)new ElementDTO
+                {
+                    Id = _idProperty.Getter(entity),
+                    Label = _labelProperty.StringGetter(entity)
+                })
+                .ToList();
         }
 
         public async Task AddElementAsync(IElement option)
@@ -45,7 +55,7 @@ namespace RapidCMS.Common.Data
 
         public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
         {
-            return Task.FromResult(_elements.AsEnumerable<IElement>());
+            return Task.FromResult(_elements.AsEnumerable());
         }
 
         public async Task<IEnumerable<IElement>> GetRelatedElementsAsync()
@@ -69,5 +79,7 @@ namespace RapidCMS.Common.Data
 
             throw new System.NotImplementedException();
         }
+
+        
     }
 }

@@ -51,19 +51,19 @@
 
         case EditorType.Select:
 
-            <SelectEditor DataCollection=@Field.DataCollection />
+            <SelectEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper DataCollection=@Field.DataCollection />
 
             break;
 
         case EditorType.MultiSelect:
 
-            <MultiSelectEditor DataCollection=@Field.DataCollection />
+            <MultiSelectEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper DataCollection=@Field.DataCollection />
 
             break;
 
         case EditorType.Dropdown:
 
-            <DropdownEditor DataCollection=@Field.DataCollection />
+            <DropdownEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper DataCollection=@Field.DataCollection />
 
             break;
     }
