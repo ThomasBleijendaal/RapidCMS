@@ -7,17 +7,19 @@ namespace RapidCMS.Common.Data
     // TODO: paginate etc
     public interface IDataCollection
     {
-        void SetElementMetadata(IRepository repository, IPropertyMetadata idProperty, IExpressionMetadata labelProperty);
-        void SetRelationMetadata(IEntity entity, IPropertyMetadata collectionProperty);
-
         Task<IEnumerable<IElement>> GetAvailableElementsAsync();
+    }
+
+    public interface IRelationDataCollection : IDataCollection
+    {
+        void SetElementMetadata(IRepository repository, IPropertyMetadata idProperty, IExpressionMetadata labelProperty);
+        Task SetRelationMetadataAsync(IEntity entity, IPropertyMetadata collectionProperty);
 
         Task<IEnumerable<IElement>> GetRelatedElementsAsync();
 
         Task AddElementAsync(IElement option);
-        Task SetElementAsync(IElement option);
         Task RemoveElementAsync(IElement option);
 
-        // TODO: initialize function
+        IEnumerable<IElement> GetCurrentRelatedElements();
     }
 }

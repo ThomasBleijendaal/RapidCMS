@@ -1,4 +1,6 @@
-﻿using RapidCMS.Common.Data;
+﻿using System.Collections.Generic;
+using System.Linq;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
@@ -9,6 +11,23 @@ namespace RapidCMS.Common.Extensions
 {
     internal static class UIExtensions
     {
+        public static IEnumerable<IRelation> GetRelations(this SectionUI section)
+        {
+            return section.Elements
+                .Select(element => element as FieldWithLabelUI)
+                .Where(field => field != null)
+                .Where(field => field?.DataCollection is IRelationDataCollection)
+                .Select(field =>
+                {
+                    var collection = field.DataCollection as IRelationDataCollection;
+                    var relatedElements = collection.GetCurrentRelatedElements();
+
+                    return new Relation(
+                        field.Property, 
+                        relatedElements.Select(x => new RelatedElement { Id = x.Id }));
+                });
+        }
+
         public static ButtonUI ToUI(this Button button)
         {
             return new ButtonUI
@@ -42,9 +61,11 @@ namespace RapidCMS.Common.Extensions
                     case OneToManyCollectionRelation collectionRelation:
 
                         var repo = Root.GetRepository(collectionRelation.CollectionAlias);
-                        ui.DataCollection = new CollectionDataProvider();
+                        var provider = new CollectionDataProvider();
 
-                        ui.DataCollection.SetElementMetadata(repo, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
+                        provider.SetElementMetadata(repo, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
+
+                        ui.DataCollection = provider;
 
                         break;
 

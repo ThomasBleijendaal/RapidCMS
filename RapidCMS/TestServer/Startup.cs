@@ -462,14 +462,14 @@ namespace TestServer
                         .SetType(EditorType.Dropdown)
                         .SetOneToManyRelation<DummyDataProvider>();
 
-                    editorPaneConfig.AddField(x => x.AzureTableStorageEntityId)
-                        .SetType(EditorType.Select)
-                        .SetOneToManyRelation<AzureTableStorageEntity>("collection-10", relation =>
-                        {
-                            relation
-                                .SetIdProperty(x => x.Id)
-                                .SetDisplayProperty(x => x.Description);
-                        });
+                    //editorPaneConfig.AddField(x => x.AzureTableStorageEntityId)
+                    //    .SetType(EditorType.Select)
+                    //    .SetOneToManyRelation<AzureTableStorageEntity>("collection-10", relation =>
+                    //    {
+                    //        relation
+                    //            .SetIdProperty(x => x.Id)
+                    //            .SetDisplayProperty(x => x.Description);
+                    //    });
 
                     editorPaneConfig.AddField(x => x.AzureTableStorageEntityIds)
                         .SetType(EditorType.MultiSelect)

@@ -14,7 +14,6 @@ using RapidCMS.Common.Models.UI;
 
 namespace RapidCMS.Common.Services
 {
-
     internal class CollectionService : ICollectionService
     {
         private readonly Root _root;
@@ -229,9 +228,9 @@ namespace RapidCMS.Common.Services
 
             // TODO: relations must not be simply set but must be added using seperate IRepository call after update to allow for better support
             // TODO: must track which releation(s) have been broken and which have been made to allow for absolute control
+
             var updatedEntity = node.Subject.Entity;
-
-
+            var relations = node.Sections.SelectMany(x => x.GetRelations());
 
             // TODO: what to do with this action
             if (button is CustomButton customButton)
@@ -248,11 +247,11 @@ namespace RapidCMS.Common.Services
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
 
                 case CrudType.Update:
-                    await collection.Repository._UpdateAsync(id, parentId, updatedEntity);
+                    await collection.Repository._UpdateAsync(id, parentId, updatedEntity, relations);
                     return new ReloadCommand();
 
                 case CrudType.Insert:
-                    var entity = await collection.Repository._InsertAsync(parentId, updatedEntity);
+                    var entity = await collection.Repository._InsertAsync(parentId, updatedEntity, relations);
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, entity.Id) };
 
                 case CrudType.Delete:
@@ -325,7 +324,7 @@ namespace RapidCMS.Common.Services
             }
         }
 
-        public async Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string id, string actionId, IEntity updatedEntity, object? customData)
+        public async Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string id, string actionId, NodeUI node, object? customData)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -340,8 +339,10 @@ namespace RapidCMS.Common.Services
 
             // TODO: relations must not be simply set but must be added using seperate IRepository call after update to allow for better support
             // TODO: must track which releation(s) have been broken and which have been made to allow for absolute control
-            var entityVariant = collection.GetEntityVariant(updatedEntity);
 
+            var updatedEntity = node.Subject.Entity;
+            var entityVariant = collection.GetEntityVariant(updatedEntity);
+            var relations = node.Sections.SelectMany(x => x.GetRelations());
 
             // TODO: what to do with this action
             if (button is CustomButton customButton)
@@ -358,11 +359,11 @@ namespace RapidCMS.Common.Services
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
 
                 case CrudType.Update:
-                    await collection.Repository._UpdateAsync(id, parentId, updatedEntity);
+                    await collection.Repository._UpdateAsync(id, parentId, updatedEntity, relations);
                     return new ReloadCommand();
 
                 case CrudType.Insert:
-                    updatedEntity = await collection.Repository._InsertAsync(parentId, updatedEntity);
+                    updatedEntity = await collection.Repository._InsertAsync(parentId, updatedEntity, relations);
                     return new UpdateParameterCommand
                     {
                         Action = Constants.New,

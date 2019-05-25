@@ -320,6 +320,7 @@ namespace RapidCMS.Common.Models
     }
 
     // TODO: horrible names
+    // TODO: structure is wrong..
     internal class OneToManyRelation
     {
     }

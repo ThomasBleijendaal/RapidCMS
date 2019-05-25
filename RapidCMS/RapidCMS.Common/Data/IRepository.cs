@@ -14,8 +14,8 @@ namespace RapidCMS.Common.Data
         Task<IEnumerable<IEntity>> _GetAllAsObjectsAsync(string? parentId);
 
         Task<IEntity> _NewAsync(string? parentId, Type? variantType);
-        Task<IEntity> _InsertAsync(string? parentId, IEntity entity);
-        Task _UpdateAsync(string id, string? parentId, IEntity entity);
+        Task<IEntity> _InsertAsync(string? parentId, IEntity entity, IEnumerable<IRelation> relations);
+        Task _UpdateAsync(string id, string? parentId, IEntity entity, IEnumerable<IRelation> relations);
         Task _DeleteAsync(string id, string? parentId);
 #pragma warning restore IDE1006 // Naming Styles
     }
@@ -30,8 +30,8 @@ namespace RapidCMS.Common.Data
         Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
 
         Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType);
-        Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity);
-        Task UpdateAsync(TKey id, TParentKey? parentId, TEntity entity);
+        Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity, IEnumerable<IRelation> relations);
+        Task UpdateAsync(TKey id, TParentKey? parentId, TEntity entity, IEnumerable<IRelation> relations);
         Task DeleteAsync(TKey id, TParentKey? parentId);
 
         TKey ParseKey(string id);
@@ -45,8 +45,8 @@ namespace RapidCMS.Common.Data
         public abstract Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
         public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
         public abstract Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType = null);
-        public abstract Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity);
-        public abstract Task UpdateAsync(TKey id, TParentKey? parentId, TEntity entity);
+        public abstract Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity, IEnumerable<IRelation> relations);
+        public abstract Task UpdateAsync(TKey id, TParentKey? parentId, TEntity entity, IEnumerable<IRelation> relations);
         public abstract Task DeleteAsync(TKey id, TParentKey? parentId);
 
         public abstract TKey ParseKey(string id);
@@ -67,14 +67,14 @@ namespace RapidCMS.Common.Data
             return (await NewAsync(ParseParentKey(parentId), variantType)) as IEntity;
         }
 
-        async Task<IEntity> IRepository._InsertAsync(string? parentId, IEntity entity)
+        async Task<IEntity> IRepository._InsertAsync(string? parentId, IEntity entity, IEnumerable<IRelation> relations)
         {
-            return (await InsertAsync(ParseParentKey(parentId), (TEntity)entity)) as IEntity;
+            return (await InsertAsync(ParseParentKey(parentId), (TEntity)entity, relations)) as IEntity;
         }
 
-        async Task IRepository._UpdateAsync(string id, string? parentId, IEntity entity)
+        async Task IRepository._UpdateAsync(string id, string? parentId, IEntity entity, IEnumerable<IRelation> relations)
         {
-            await UpdateAsync(ParseKey(id), ParseParentKey(parentId), (TEntity)entity);
+            await UpdateAsync(ParseKey(id), ParseParentKey(parentId), (TEntity)entity, relations);
         }
 
         async Task IRepository._DeleteAsync(string id, string? parentId)
@@ -91,8 +91,8 @@ namespace RapidCMS.Common.Data
         Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
 
         Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType);
-        Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity);
-        Task UpdateAsync(TKey id, TParentKey? parentId, TEntity entity);
+        Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity, IEnumerable<IRelation> relations);
+        Task UpdateAsync(TKey id, TParentKey? parentId, TEntity entity, IEnumerable<IRelation> relations);
         Task DeleteAsync(TKey id, TParentKey? parentId);
 
         TKey ParseKey(string id);
@@ -106,8 +106,8 @@ namespace RapidCMS.Common.Data
         public abstract Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
         public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
         public abstract Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType = null);
-        public abstract Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity);
-        public abstract Task UpdateAsync(TKey id, TParentKey? parentId, TEntity entity);
+        public abstract Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity, IEnumerable<IRelation> relations);
+        public abstract Task UpdateAsync(TKey id, TParentKey? parentId, TEntity entity, IEnumerable<IRelation> relations);
         public abstract Task DeleteAsync(TKey id, TParentKey? parentId);
 
         public abstract TKey ParseKey(string id);
@@ -128,14 +128,14 @@ namespace RapidCMS.Common.Data
             return (await NewAsync(ParseParentKey(parentId), variantType)) as IEntity;
         }
 
-        async Task<IEntity> IRepository._InsertAsync(string? parentId, IEntity entity)
+        async Task<IEntity> IRepository._InsertAsync(string? parentId, IEntity entity, IEnumerable<IRelation> relations)
         {
-            return (await InsertAsync(ParseParentKey(parentId), (TEntity)entity)) as IEntity;
+            return (await InsertAsync(ParseParentKey(parentId), (TEntity)entity, relations)) as IEntity;
         }
 
-        async Task IRepository._UpdateAsync(string id, string? parentId, IEntity entity)
+        async Task IRepository._UpdateAsync(string id, string? parentId, IEntity entity, IEnumerable<IRelation> relations)
         {
-            await UpdateAsync(ParseKey(id), ParseParentKey(parentId), (TEntity)entity);
+            await UpdateAsync(ParseKey(id), ParseParentKey(parentId), (TEntity)entity, relations);
         }
 
         async Task IRepository._DeleteAsync(string id, string? parentId)

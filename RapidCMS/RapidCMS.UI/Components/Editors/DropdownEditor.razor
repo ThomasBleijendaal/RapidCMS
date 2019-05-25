@@ -1,4 +1,4 @@
-﻿@inherits BaseRelationEditor
+﻿@inherits BaseDataEditor
 
 @using RapidCMS.Common.Data
 
@@ -6,59 +6,45 @@
 {
     <select class="form-control" onchange=@OnChange value="@SelectedIndex">
         <option value="-1"></option>
-        @foreach (var option in Options)
+        @foreach (var (option, index) in Options.Select((o, i) => (o, i)))
         {
-            <option value=@option.Index>@option.NestedOption.Label</option>
+            <option value=@index>@option.Label</option>
         }
     </select>
 }
 @functions {
 #nullable enable
 
-    private IEnumerable<Option>? Options;
+    private IEnumerable<IElement>? Options;
     private int SelectedIndex = -1;
 
     protected override async Task OnInitAsync()
     {
-        //if (DataCollection != null)
-        //{
-        //    var value = Property.Getter(Entity);
+        if (DataCollection != null)
+        {
+            var value = Property.Getter(Entity);
 
-        //    var data = await DataCollection.GetAvailableElementsAsync();
+            var data = await DataCollection.GetAvailableElementsAsync();
 
-        //    Options = data.Select((option, index) =>
-        //    {
-        //        if (option.Id.Equals(value))
-        //        {
-        //            SelectedIndex = index;
-        //        }
+            var list = data?.ToList();
 
-        //        return new Option
-        //        {
-        //            Index = index,
-        //            NestedOption = option
-        //        };
-        //    }).ToList();
-        //}
+            SelectedIndex = list?.FindIndex(option => option.Id == value) ?? -1;
+
+            Options = list;
+        }
     }
 
     private void OnChange(UIChangeEventArgs args)
     {
         var index = int.Parse((string)args.Value);
 
-        //if (index == -1)
-        //{
-        //    Property.Setter(Entity, null);
-        //}
-        //else
-        //{
-        //    Property.Setter(Entity, Options.ElementAt(index).NestedOption.Id);
-        //}
-    }
-
-    public class Option
-    {
-        public int Index { get; set; }
-        public IElement NestedOption { get; set; }
+        if (index == -1)
+        {
+            Property.Setter(Entity, null);
+        }
+        else
+        {
+            Property.Setter(Entity, Options.ElementAt(index).Id);
+        }
     }
 }

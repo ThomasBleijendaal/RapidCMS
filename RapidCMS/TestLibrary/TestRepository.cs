@@ -46,7 +46,7 @@ namespace TestLibrary
             return GetData(parentId).FirstOrDefault(x => x._Id == id);
         }
 
-        public override async Task<TestEntity> InsertAsync(int? parentId, TestEntity entity)
+        public override async Task<TestEntity> InsertAsync(int? parentId, TestEntity entity, IEnumerable<IRelation> relations)
         {
             await Task.Delay(1);
 
@@ -57,7 +57,7 @@ namespace TestLibrary
             return entity;
         }
 
-        public override async Task UpdateAsync(int id, int? parentId, TestEntity entity)
+        public override async Task UpdateAsync(int id, int? parentId, TestEntity entity, IEnumerable<IRelation> relations)
         {
             await Task.Delay(1);
 
@@ -145,7 +145,7 @@ namespace TestLibrary
             return Task.FromResult(_data.FirstOrDefault(x => x._Id == id && x.ParentId == parentId));
         }
 
-        public override async Task<TestEntity> InsertAsync(int? parentId, TestEntity entity)
+        public override async Task<TestEntity> InsertAsync(int? parentId, TestEntity entity, IEnumerable<IRelation> relations)
         {
             await Task.Delay(1);
 
@@ -181,7 +181,7 @@ namespace TestLibrary
             }
         }
 
-        public override async Task UpdateAsync(int id, int? parentId, TestEntity entity)
+        public override async Task UpdateAsync(int id, int? parentId, TestEntity entity, IEnumerable<IRelation> relations)
         {
             await Task.Delay(1);
 

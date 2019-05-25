@@ -56,7 +56,7 @@ namespace RapidCMS.UI.Models
             }
         }
 
-        public RenderFragment? GetCustomEditor(string editorAlias, IEntity entity, IPropertyMetadata property, IValueMapper valueMapper, IDataProvider dataProvider)
+        public RenderFragment? GetCustomEditor(string editorAlias, IEntity entity, IPropertyMetadata property, IValueMapper valueMapper, IDataCollection dataCollection)
         {
             if (_customButtons != null && _customButtons.TryGetValue(editorAlias, out var registration))
             {
@@ -69,7 +69,9 @@ namespace RapidCMS.UI.Models
                     builder.AddAttribute(1, nameof(BaseEditor.Entity), entity);
                     builder.AddAttribute(2, nameof(BaseEditor.Property), property);
                     builder.AddAttribute(3, nameof(BaseEditor.ValueMapper), valueMapper);
-                    builder.AddAttribute(4, nameof(BaseEditor.DataProvider), dataProvider);
+
+                    // TODO: check for use of this property
+                    // builder.AddAttribute(4, nameof(BaseRelationEditor.DataCollection), dataCollection);
 
                     builder.CloseComponent();
                 };

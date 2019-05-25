@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Common.ActionHandlers;
 using RapidCMS.Common.Data;
@@ -35,7 +36,7 @@ namespace TestServer.ActionHandlers
                 {
                     Description = $"New New New {i}",
                     Title = $"Item {i}"
-                });
+                }, Enumerable.Empty<IRelation>());
             }
             while (++i < max);
         }

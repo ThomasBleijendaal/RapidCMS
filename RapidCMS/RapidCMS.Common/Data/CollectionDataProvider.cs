@@ -1,21 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.DTOs;
 
+#nullable enable
+
 namespace RapidCMS.Common.Data
 {
-    internal class CollectionDataProvider : IDataCollection
+    internal class CollectionDataProvider : IRelationDataCollection
     {
-        private IRepository _repository;
-        private IPropertyMetadata _idProperty;
-        private IExpressionMetadata _labelProperty;
+        private IRepository? _repository;
+        private IPropertyMetadata? _idProperty;
+        private IExpressionMetadata? _labelProperty;
 
-        private Task _init;
+        private Task _init = Task.CompletedTask;
 
-        private List<IElement> _elements;
-        private ICollection<object> _releatedElements;
+        private List<IElement>? _elements;
+        private List<IElement>? _relatedElements;
+        private ICollection<object>? _relatedIds;
 
         public void SetElementMetadata(IRepository repository, IPropertyMetadata idProperty, IExpressionMetadata labelProperty)
         {
@@ -26,60 +31,94 @@ namespace RapidCMS.Common.Data
             _init = InitializeAsync();
         }
 
-        public void SetRelationMetadata(IEntity entity, IPropertyMetadata collectionProperty)
-        {
-            var data = collectionProperty.Getter(entity);
-
-            _releatedElements = data as ICollection<object>;
-        }
-
         public async Task InitializeAsync()
         {
-            var entities = await _repository._GetAllAsObjectsAsync(null);
+            if (_repository != null && _idProperty != null && _labelProperty != null)
+            {
+                var entities = await _repository._GetAllAsObjectsAsync(null);
 
-            _elements = entities
-                .Select(entity => (IElement)new ElementDTO
-                {
-                    Id = _idProperty.Getter(entity),
-                    Label = _labelProperty.StringGetter(entity)
-                })
-                .ToList();
+                _elements = entities
+                    .Select(entity => (IElement)new ElementDTO
+                    {
+                        Id = _idProperty.Getter(entity),
+                        Label = _labelProperty.StringGetter(entity)
+                    })
+                    .ToList();
+            }
         }
 
-        public async Task AddElementAsync(IElement option)
+        public async Task SetRelationMetadataAsync(IEntity entity, IPropertyMetadata collectionProperty)
         {
             await _init;
 
-            _elements.Add(option);
+            var data = collectionProperty.Getter(entity);
+
+            if (data is ICollection<object> objectCollection)
+            {
+                _relatedIds = objectCollection;
+            }
+            else if (data is IEnumerable enumerable)
+            {
+                var list = new List<object>();
+                foreach (var element in enumerable)
+                {
+                    list.Add(element);
+                }
+                _relatedIds = list;
+            }
+            else
+            {
+                throw new InvalidOperationException("Failed to convert relation property to ICollection<object>");
+            }
+
+            _relatedElements = _elements?.Where(x => _relatedIds.Contains(x.Id)).ToList();
         }
 
-        public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
+        public async Task<IEnumerable<IElement>> GetAvailableElementsAsync()
         {
-            return Task.FromResult(_elements.AsEnumerable());
+            await _init;
+
+            return _elements ?? Enumerable.Empty<IElement>();
         }
 
         public async Task<IEnumerable<IElement>> GetRelatedElementsAsync()
         {
             await _init;
 
-            throw new System.NotImplementedException();
+            if (_relatedIds != null)
+            {
+                return _elements.Where(x => _relatedIds.Contains(x.Id));
+            }
+            else
+            {
+                return Enumerable.Empty<IElement>();
+            }
         }
 
+        public async Task AddElementAsync(IElement option)
+        {
+            await _init;
 
+            _relatedElements?.Add(_elements.First(x => x.Id == option.Id));
+        }
         public async Task RemoveElementAsync(IElement option)
         {
             await _init;
 
-            throw new System.NotImplementedException();
+            _relatedElements?.Add(_elements.First(x => x.Id == option.Id));
         }
 
         public async Task SetElementAsync(IElement option)
         {
             await _init;
 
-            throw new System.NotImplementedException();
+            _relatedElements?.Clear();
+            _relatedElements?.Add(_elements.First(x => x.Id == option.Id));
         }
 
-        
+        public IEnumerable<IElement> GetCurrentRelatedElements()
+        {
+            return _relatedElements ?? Enumerable.Empty<IElement>();
+        }
     }
 }

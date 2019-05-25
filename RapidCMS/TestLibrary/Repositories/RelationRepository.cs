@@ -37,18 +37,22 @@ namespace TestLibrary.Repositories
             return _data.FirstOrDefault(x => x.RealId == id);
         }
 
-        public override async Task<RelationEntity> InsertAsync(int? parentId, RelationEntity entity)
+        public override async Task<RelationEntity> InsertAsync(int? parentId, RelationEntity entity, IEnumerable<IRelation> relations)
         {
             await Task.Delay(1);
 
             entity.RealId = _data.Max(x => x.RealId) + 1;
+            entity.AzureTableStorageEntityIds = relations
+                .First(x => x.Property.PropertyName == nameof(entity.AzureTableStorageEntityIds))
+                .RelatedElementIdsAs<string>()
+                .ToList();
 
             _data.Add(entity);
 
             return entity;
         }
 
-        public override async Task UpdateAsync(int id, int? parentId, RelationEntity entity)
+        public override async Task UpdateAsync(int id, int? parentId, RelationEntity entity, IEnumerable<IRelation> relations)
         {
             await Task.Delay(1);
 
@@ -57,6 +61,10 @@ namespace TestLibrary.Repositories
             element.Name = entity.Name;
             element.AzureTableStorageEntityId = entity.AzureTableStorageEntityId;
             element.Location = entity.Location;
+            entity.AzureTableStorageEntityIds = relations
+                .First(x => x.Property.PropertyName == nameof(entity.AzureTableStorageEntityIds))
+                .RelatedElementIdsAs<string>()
+                .ToList();
         }
 
         public override Task<RelationEntity> NewAsync(int? parentId, Type? variantType)

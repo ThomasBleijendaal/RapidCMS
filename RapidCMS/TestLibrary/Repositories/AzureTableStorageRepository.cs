@@ -72,7 +72,7 @@ namespace TestLibrary.Repositories
             }
         }
 
-        public override async Task<AzureTableStorageEntity> InsertAsync(string? parentId, AzureTableStorageEntity entity)
+        public override async Task<AzureTableStorageEntity> InsertAsync(string? parentId, AzureTableStorageEntity entity, IEnumerable<IRelation> relations)
         {
             await _initTask;
 
@@ -99,7 +99,7 @@ namespace TestLibrary.Repositories
             return new AzureTableStorageEntity { PartitionKey = parentId ?? DefaultParentId };
         }
 
-        public override async Task UpdateAsync(string id, string? parentId, AzureTableStorageEntity entity)
+        public override async Task UpdateAsync(string id, string? parentId, AzureTableStorageEntity entity, IEnumerable<IRelation> relations)
         {
             await _initTask;
 

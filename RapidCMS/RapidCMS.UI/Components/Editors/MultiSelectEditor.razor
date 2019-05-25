@@ -35,10 +35,12 @@
 
     protected override async Task OnInitAsync()
     {
-        if (DataCollection != null)
+        if (RelationDataCollection != null)
         {
-            Options = await DataCollection.GetAvailableElementsAsync();
-            SelectedOptions = await DataCollection.GetRelatedElementsAsync();
+            await RelationDataCollection.SetRelationMetadataAsync(Entity, Property);
+
+            Options = await RelationDataCollection.GetAvailableElementsAsync();
+            SelectedOptions = await RelationDataCollection.GetRelatedElementsAsync();
         }
     }
 
@@ -48,11 +50,11 @@
 
         if ((bool)e.Value == true)
         {
-            await DataCollection!.AddElementAsync(element);
+            await RelationDataCollection!.AddElementAsync(element);
         }
         else
         {
-            await DataCollection!.RemoveElementAsync(element);
+            await RelationDataCollection!.RemoveElementAsync(element);
         }
     }
 }
