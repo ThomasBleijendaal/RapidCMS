@@ -39,7 +39,7 @@ namespace TestServer
             services.AddDbContext<TestDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString"));
-            }, ServiceLifetime.Transient, ServiceLifetime.Transient);
+            }, ServiceLifetime.Scoped, ServiceLifetime.Scoped);
 
             services.AddSingleton<RepositoryA>();
             services.AddSingleton<RepositoryB>();

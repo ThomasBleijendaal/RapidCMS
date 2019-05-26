@@ -134,7 +134,7 @@ namespace RapidCMS.Common.Models
         }
 
         internal Type RepositoryType { get; set; }
-        internal IRepository Repository { get; set; }
+        internal Func<IRepository> Repository { get; set; }
 
         internal TreeView? TreeView { get; set; }
 
