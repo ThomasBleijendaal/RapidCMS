@@ -15,16 +15,10 @@ namespace TestLibrary.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<CountryEntity>()
-                .HasMany<PersonEntity>();
+                .HasKey(x => x._Id);
 
             modelBuilder.Entity<PersonEntity>()
-                .HasMany<CountryEntity>();
-
-            modelBuilder.Entity<PersonCountryEntity>()
-                .HasOne<PersonEntity>();
-
-            modelBuilder.Entity<PersonCountryEntity>()
-                .HasOne<CountryEntity>();
+                .HasKey(x => x._Id);
 
             modelBuilder.Entity<PersonCountryEntity>()
                 .HasKey(t => new { t.CountryId, t.PersonId });

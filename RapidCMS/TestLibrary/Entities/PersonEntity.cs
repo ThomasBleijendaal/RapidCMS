@@ -1,13 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using RapidCMS.Common.Data;
 
 namespace TestLibrary.Entities
 {
-    public class PersonEntity
+    public class PersonEntity : IEntity
     {
-        public int Id { get; set; }
+#pragma warning disable IDE1006 // Naming Styles
+        public int _Id { get; set; }
+#pragma warning restore IDE1006 // Naming Styles
         public string Name { get; set; }
-        public PersonCountryEntity Country { get; set; }
+        public ICollection<PersonCountryEntity> Country { get; set; }
+
+        [NotMapped]
+        string IEntity.Id { get => _Id.ToString(); set => _Id = int.Parse(value); }
     }
 }

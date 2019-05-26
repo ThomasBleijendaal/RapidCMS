@@ -5,9 +5,9 @@ namespace RapidCMS.Common.Models.Config
     // TODO: this class is a bit wonky
     public class SubCollectionListEditorConfig
     {
-        public int Index { get; set; }
+        internal int Index { get; set; }
 
-        public string CollectionAlias { get; set; }
+        internal string CollectionAlias { get; set; }
     }
 
     // HACK: this is a copy of ListEditorConfig<T>
