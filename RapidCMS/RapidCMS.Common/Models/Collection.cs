@@ -55,9 +55,14 @@ namespace RapidCMS.Common.Models
                 // register each collection in flat dictionary
                 _collectionMap.Add(collection.Alias, collection);
 
-                var repo = serviceProvider.GetRequiredService(collection.RepositoryType);
+                collection.Repository = () =>
+                {
+                    // TODO: horrible hack which leaks memory like hell
 
-                collection.Repository = (IRepository)repo;
+                    var scope = serviceProvider.CreateScope();
+
+                    return (IRepository)scope.ServiceProvider.GetRequiredService(collection.RepositoryType);
+                };
 
                 FindRepositoryForCollections(serviceProvider, collection.Collections);
             }
@@ -65,7 +70,7 @@ namespace RapidCMS.Common.Models
 
         public static IRepository? GetRepository(string collectionAlias)
         {
-            return _collectionMap.TryGetValue(collectionAlias, out var collection) ? collection.Repository : default;
+            return _collectionMap.TryGetValue(collectionAlias, out var collection) ? collection.Repository?.Invoke() : default;
         }
     }
 

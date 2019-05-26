@@ -53,7 +53,11 @@ namespace RapidCMS.Common.Data
 
             var data = collectionProperty.Getter(entity);
 
-            if (data is ICollection<object> objectCollection)
+            if (data is ICollection<IEntity> entityCollection)
+            {
+                _relatedIds = entityCollection.Select(x => (object)x.Id).ToList();
+            }
+            else if (data is ICollection<object> objectCollection)
             {
                 _relatedIds = objectCollection;
             }

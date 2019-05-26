@@ -20,6 +20,7 @@ using TestServer.Components.CustomSections;
 using Microsoft.EntityFrameworkCore;
 using TestLibrary.Data;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace TestServer
 {
@@ -544,7 +545,7 @@ namespace TestServer
                             editor.AddEditorPane(pane =>
                             {
                                 pane.AddField(f => f.Name);
-                                pane.AddField(f => f.Country)
+                                pane.AddField(f => f.Countries.Select(x => x.Country))
                                     .SetType(EditorType.MultiSelect)
                                     .SetOneToManyRelation<CountryEntity>("country-collection", relation =>
                                     {

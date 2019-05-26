@@ -10,7 +10,7 @@ namespace TestLibrary.Entities
         public int _Id { get; set; }
 #pragma warning restore IDE1006 // Naming Styles
         public string Name { get; set; }
-        public ICollection<PersonCountryEntity> Person { get; set; }
+        public ICollection<PersonCountryEntity> Persons { get; set; }
 
         [NotMapped]
         string IEntity.Id { get => _Id.ToString(); set => _Id = int.Parse(value); }
