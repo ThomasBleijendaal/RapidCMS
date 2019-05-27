@@ -11,4 +11,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0-preview5.19227.9" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resolvers\" />
+  </ItemGroup>
+
 </Project>

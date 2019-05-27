@@ -9,29 +9,39 @@ namespace RapidCMS.Common.Models.Config
 {
     // TODO: validate incoming parameters
 
-    public class RootConfig
+    public class CmsConfig : ICollectionRoot
     {
+        internal string SiteName = "RapidCMS";
+
+        public List<CollectionConfig> Collections { get; set; } = new List<CollectionConfig>();
         internal List<CustomButtonRegistration> CustomButtonRegistrations { get; set; } = new List<CustomButtonRegistration>();
         internal List<CustomEditorRegistration> CustomEditorRegistrations { get; set; } = new List<CustomEditorRegistration>();
         internal List<CustomSectionRegistration> CustomSectionRegistrations { get; set; } = new List<CustomSectionRegistration>();
 
-        public RootConfig AddCustomButton(Type buttonType)
+        public CmsConfig AddCustomButton(Type buttonType)
         {
             CustomButtonRegistrations.Add(new CustomButtonRegistration(buttonType));
 
             return this;
         }
 
-        public RootConfig AddCustomEditor(Type editorType)
+        public CmsConfig AddCustomEditor(Type editorType)
         {
             CustomEditorRegistrations.Add(new CustomEditorRegistration(editorType));
 
             return this;
         }
 
-        public RootConfig AddCustomSection(Type sectionType)
+        public CmsConfig AddCustomSection(Type sectionType)
         {
             CustomSectionRegistrations.Add(new CustomSectionRegistration(sectionType));
+
+            return this;
+        }
+
+        public CmsConfig SetSiteName(string siteName)
+        {
+            SiteName = siteName;
 
             return this;
         }
@@ -39,10 +49,14 @@ namespace RapidCMS.Common.Models.Config
 
     public class CollectionConfig : ICollectionRoot
     {
+        internal string Alias { get; set; }
+        internal string Name { get; set; }
+
         internal Type RepositoryType { get; set; }
 
-        public List<Collection> Collections { get; set; } = new List<Collection>();
-        internal List<EntityVariantConfig> EntityVariants { get; set; } = new List<EntityVariantConfig>();
+        public List<CollectionConfig> Collections { get; set; } = new List<CollectionConfig>();
+        internal List<EntityVariantConfig> SubEntityVariants { get; set; } = new List<EntityVariantConfig>();
+        internal EntityVariantConfig EntityVariant { get; set; }
 
         internal TreeViewConfig TreeView { get; set; }
         internal ListViewConfig ListView { get; set; }
@@ -64,7 +78,7 @@ namespace RapidCMS.Common.Models.Config
         public CollectionConfig<TEntity> AddEntityVariant<TDerivedEntity>(string name, string icon)
             where TDerivedEntity : TEntity
         {
-            EntityVariants.Add(new EntityVariantConfig
+            SubEntityVariants.Add(new EntityVariantConfig
             {
                 Name = name,
                 Icon = icon,

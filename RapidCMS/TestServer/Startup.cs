@@ -40,7 +40,7 @@ namespace TestServer
             services.AddDbContext<TestDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString"));
-            }, ServiceLifetime.Scoped, ServiceLifetime.Scoped);
+            });
 
             services.AddSingleton<RepositoryA>();
             services.AddSingleton<RepositoryB>();
@@ -52,9 +52,8 @@ namespace TestServer
 
             services.AddSingleton<RelationRepository>();
 
-            // TODO: fix transient which is not transient
-            services.AddTransient<CountryRepository>();
-            services.AddTransient<PersonRepository>();
+            services.AddScoped<CountryRepository>();
+            services.AddScoped<PersonRepository>();
 
             services.AddSingleton(CloudStorageAccount.DevelopmentStorageAccount);
             services.AddSingleton<AzureTableStorageRepository>();
@@ -68,10 +67,69 @@ namespace TestServer
                 config.AddCustomButton(typeof(CreateButton<>));
                 config.AddCustomEditor(typeof(PasswordEditor));
                 config.AddCustomSection(typeof(DashboardSection));
+
+                config.SetSiteName("Test Client");
+
+                config.AddCollection<CountryEntity>("country-collection", "Countries", collection =>
+                {
+                    collection
+                        .SetRepository<CountryRepository>()
+                        .SetTreeView(entity => entity.Name)
+                        .SetListView(list =>
+                        {
+                            list.AddDefaultButton(DefaultButtonType.New);
+                            list.SetListPane(pane =>
+                            {
+                                pane.AddProperty(p => p.Name);
+                            });
+                        })
+                        .SetNodeEditor(editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                            editor.AddDefaultButton(DefaultButtonType.Delete);
+                            editor.AddEditorPane(pane =>
+                            {
+                                pane.AddField(f => f.Name);
+                            });
+                        });
+                });
+
+                config.AddCollection<PersonEntity>("person-collection", "Persons", collection =>
+                {
+                    collection
+                        .SetRepository<PersonRepository>()
+                        .SetTreeView(entity => entity.Name)
+                        .SetListView(list =>
+                        {
+                            list.AddDefaultButton(DefaultButtonType.New);
+                            list.SetListPane(pane =>
+                            {
+                                pane.AddProperty(p => p.Name);
+                            });
+                        })
+                        .SetNodeEditor(editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                            editor.AddDefaultButton(DefaultButtonType.Delete);
+                            editor.AddEditorPane(pane =>
+                            {
+                                pane.AddField(f => f.Name);
+                                pane.AddField(f => f.Hack)
+                                    .SetType(EditorType.MultiSelect)
+                                    .SetOneToManyRelation<CountryEntity>("country-collection", relation =>
+                                    {
+                                        relation
+                                            .SetIdProperty(x => x._Id)
+                                            .SetDisplayProperty(x => x.Name);
+                                    });
+                            });
+                        });
+                });
             });
 
-            services.AddMvc()
-                .AddNewtonsoftJson();
+            services.AddMvc().AddNewtonsoftJson();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
@@ -495,68 +553,10 @@ namespace TestServer
                 });
             }
 
-            app.UseRapidCMS(root =>
-            {
-                root.SiteName = "Test Client";
-
-                root.AddCollection<CountryEntity>("country-collection", "Countries", collection =>
-                {
-                    collection
-                        .SetRepository<CountryRepository>()
-                        .SetTreeView(entity => entity.Name)
-                        .SetListView(list =>
-                        {
-                            list.AddDefaultButton(DefaultButtonType.New);
-                            list.SetListPane(pane =>
-                            {
-                                pane.AddProperty(p => p.Name);
-                            });
-                        })
-                        .SetNodeEditor(editor =>
-                        {
-                            editor.AddDefaultButton(DefaultButtonType.SaveNew);
-                            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
-                            editor.AddDefaultButton(DefaultButtonType.Delete);
-                            editor.AddEditorPane(pane =>
-                            {
-                                pane.AddField(f => f.Name);
-                            });
-                        });
-                });
-
-                root.AddCollection<PersonEntity>("person-collection", "Persons", collection =>
-                {
-                    collection
-                        .SetRepository<PersonRepository>()
-                        .SetTreeView(entity => entity.Name)
-                        .SetListView(list =>
-                        {
-                            list.AddDefaultButton(DefaultButtonType.New);
-                            list.SetListPane(pane =>
-                            {
-                                pane.AddProperty(p => p.Name);
-                            });
-                        })
-                        .SetNodeEditor(editor =>
-                        {
-                            editor.AddDefaultButton(DefaultButtonType.SaveNew);
-                            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
-                            editor.AddDefaultButton(DefaultButtonType.Delete);
-                            editor.AddEditorPane(pane =>
-                            {
-                                pane.AddField(f => f.Name);
-                                pane.AddField(f => f.Countries.Select(x => x.Country))
-                                    .SetType(EditorType.MultiSelect)
-                                    .SetOneToManyRelation<CountryEntity>("country-collection", relation =>
-                                    {
-                                        relation
-                                            .SetIdProperty(x => x._Id)
-                                            .SetDisplayProperty(x => x.Name);
-                                    });
-                            });
-                        });
-                });
-
+            app.UseRapidCMS();
+                //root =>
+            //{
+            
                 //root.AddCollection<RelationEntity>("collection-11", "Azure Table Storage Collecation with relations", collection =>
                 //{
                 //    collection
@@ -672,7 +672,7 @@ namespace TestServer
                 //        .SetListView(listView)
                 //        .SetNodeEditor(nodeEditor);
                 //});
-            });
+            //});
 
             if (env.IsDevelopment())
             {

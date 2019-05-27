@@ -42,3 +42,10 @@
         }
     </div>
 }
+
+@functions {
+    protected override void OnParametersSet()
+    {
+        StateHasChanged();
+    }
+}

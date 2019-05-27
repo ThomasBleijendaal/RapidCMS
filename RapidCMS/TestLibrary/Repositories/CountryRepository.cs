@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RapidCMS.Common.Data;
@@ -54,7 +55,7 @@ namespace TestLibrary.Repositories
 
         public override int? ParseParentKey(string parentId)
         {
-            return int.TryParse(parentId, out var id) ? id : default(int?); 
+            return int.TryParse(parentId, out var id) ? id : default(int?);
         }
 
         public override async Task UpdateAsync(int id, int? parentId, CountryEntity entity, IEnumerable<IRelation> relations)
@@ -86,16 +87,22 @@ namespace TestLibrary.Repositories
 
         public override async Task<IEnumerable<PersonEntity>> GetAllAsync(int? parentId)
         {
-            return await _dbContext.Persons.AsNoTracking().ToListAsync();
+            return await _dbContext.Persons.Include(x => x.Countries).AsNoTracking().ToListAsync();
         }
 
         public override async Task<PersonEntity> GetByIdAsync(int id, int? parentId)
         {
-            return await _dbContext.Persons.AsNoTracking().FirstOrDefaultAsync(x => x._Id == id);
+            return await _dbContext.Persons.Include(x => x.Countries).AsNoTracking().FirstOrDefaultAsync(x => x._Id == id);
         }
 
         public override async Task<PersonEntity> InsertAsync(int? parentId, PersonEntity entity, IEnumerable<IRelation> relations)
         {
+            entity.Countries = relations.First(r => r.Property.PropertyName == nameof(entity.Hack))
+                .RelatedElementIdsAs<int>().Select(id => new PersonCountryEntity
+                {
+                    CountryId = id
+                })
+                .ToList();
             var entry = _dbContext.Persons.Add(entity);
             await _dbContext.SaveChangesAsync();
 
@@ -119,9 +126,20 @@ namespace TestLibrary.Repositories
 
         public override async Task UpdateAsync(int id, int? parentId, PersonEntity entity, IEnumerable<IRelation> relations)
         {
-            var dbEntity = await _dbContext.Persons.FirstOrDefaultAsync(x => x._Id == id);
+            var dbEntity = await _dbContext.Persons.Include(x => x.Countries).FirstOrDefaultAsync(x => x._Id == id);
 
             dbEntity.Name = entity.Name;
+
+            var newCountries = relations.First(r => r.Property.PropertyName == nameof(dbEntity.Hack)).RelatedElementIdsAs<int>();
+
+            foreach (var country in dbEntity.Countries.Where(x => !newCountries.Contains(x.CountryId.Value)).ToList())
+            {
+                dbEntity.Countries.Remove(country);
+            }
+            foreach (var countryId in newCountries.Where(id => !dbEntity.Countries.Select(x => x.CountryId.Value).Contains(id)).ToList())
+            {
+                dbEntity.Countries.Add(new PersonCountryEntity { CountryId = countryId });
+            }
 
             _dbContext.Persons.Update(dbEntity);
             await _dbContext.SaveChangesAsync();

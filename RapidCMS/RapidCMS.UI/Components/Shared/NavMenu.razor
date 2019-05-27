@@ -4,10 +4,9 @@
 
 @inject ICollectionService CollectionService
 @inject IUriHelper UriHelper
-@inject Root Root;
 
 <div class="top-row navbar navbar-dark">
-    <a class="navbar-brand" href="">@Root.SiteName</a>
+    <a class="navbar-brand" href="">TODO@*@Root.SiteName*@</a>
 </div>
 
 <div class="@NavMenuCssClass" onclick="@ToggleNavMenu">
@@ -55,7 +54,7 @@
 
         if (!FindUrl(RootEntity.Collections, currentUrl))
         {
-            await GetCollectionsAsync();
+            //await GetCollectionsAsync();
         }
 
         StateHasChanged();

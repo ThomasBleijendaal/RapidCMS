@@ -77,6 +77,8 @@ else
         try
         {
             UI = await CollectionService.GetNodeEditorAsync(Action, CollectionAlias, VariantAlias, ParentId, Id);
+
+            StateHasChanged();
         }
         catch
         {

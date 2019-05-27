@@ -44,6 +44,8 @@ namespace RapidCMS.Common.Data
                         Label = _labelProperty.StringGetter(entity)
                     })
                     .ToList();
+
+                UpdateRelatedElements();
             }
         }
 
@@ -75,7 +77,12 @@ namespace RapidCMS.Common.Data
                 throw new InvalidOperationException("Failed to convert relation property to ICollection<object>");
             }
 
-            _relatedElements = _elements?.Where(x => _relatedIds.Contains(x.Id)).ToList();
+            UpdateRelatedElements();
+        }
+
+        private void UpdateRelatedElements()
+        {
+            _relatedElements = _elements?.Where(x => _relatedIds?.Contains(x.Id) ?? false).ToList();
         }
 
         public async Task<IEnumerable<IElement>> GetAvailableElementsAsync()
@@ -109,7 +116,7 @@ namespace RapidCMS.Common.Data
         {
             await _init;
 
-            _relatedElements?.Add(_elements.First(x => x.Id == option.Id));
+            _relatedElements?.RemoveAll(x => x.Id == option.Id);
         }
 
         public async Task SetElementAsync(IElement option)

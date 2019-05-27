@@ -33,17 +33,6 @@
     private IEnumerable<IElement>? Options;
     private IEnumerable<IElement>? SelectedOptions;
 
-    protected override async Task OnInitAsync()
-    {
-        if (RelationDataCollection != null)
-        {
-            await RelationDataCollection.SetRelationMetadataAsync(Entity, Property);
-
-            Options = await RelationDataCollection.GetAvailableElementsAsync();
-            SelectedOptions = await RelationDataCollection.GetRelatedElementsAsync();
-        }
-    }
-
     private async Task OnChangeAsync(UIChangeEventArgs e, object value)
     {
         var element = Options.First(x => x.Id.Equals(value));
@@ -55,6 +44,17 @@
         else
         {
             await RelationDataCollection!.RemoveElementAsync(element);
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (RelationDataCollection != null)
+        {
+            await RelationDataCollection.SetRelationMetadataAsync(Entity, Property);
+
+            Options = await RelationDataCollection.GetAvailableElementsAsync();
+            SelectedOptions = await RelationDataCollection.GetRelatedElementsAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
@@ -41,17 +42,17 @@ namespace RapidCMS.Common.Extensions
             };
         }
 
-        public static FieldUI ToUI(this Field field)
+        public static FieldUI ToUI(this Field field, IServiceProvider serviceProvider)
         {
-            return PopulateProperties(new FieldUI(), field);
+            return PopulateProperties(new FieldUI(), field, serviceProvider);
         }
 
-        private static T PopulateProperties<T>(T ui, Field field)
+        private static T PopulateProperties<T>(T ui, Field field, IServiceProvider serviceProvider)
             where T : FieldUI
         {
             ui.CustomAlias = (field is CustomField customField) ? customField.Alias : null;
             ui.Property = field.Property;
-            ui.ValueMapper = ServiceLocator.Instance.GetService<IValueMapper>(field.ValueMapperType);
+            ui.ValueMapper = serviceProvider.GetService<IValueMapper>(field.ValueMapperType);
             ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;
 
             if (field.OneToManyRelation != null)
@@ -60,7 +61,9 @@ namespace RapidCMS.Common.Extensions
                 {
                     case OneToManyCollectionRelation collectionRelation:
 
-                        var repo = Root.GetRepository(collectionRelation.CollectionAlias);
+                        var cr = serviceProvider.GetService<Root>(typeof(Root));
+
+                        var repo = cr.GetRepository(collectionRelation.CollectionAlias);
                         var provider = new CollectionDataProvider();
 
                         provider.SetElementMetadata(repo, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
@@ -71,7 +74,7 @@ namespace RapidCMS.Common.Extensions
 
                     case OneToManyDataProviderRelation dataProviderRelation:
 
-                        ui.DataCollection = ServiceLocator.Instance.GetService<IDataCollection>(dataProviderRelation.DataCollectionType);
+                        ui.DataCollection = serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType);
                         break;
                 }
             }
@@ -79,9 +82,9 @@ namespace RapidCMS.Common.Extensions
             return ui;
         }
 
-        public static FieldWithLabelUI ToFieldWithLabelUI(this Field field)
+        public static FieldWithLabelUI ToFieldWithLabelUI(this Field field, IServiceProvider serviceProvider)
         {
-            var ui = PopulateProperties(new FieldWithLabelUI(), field);
+            var ui = PopulateProperties(new FieldWithLabelUI(), field, serviceProvider);
 
             ui.Description = field.Description;
             ui.Name = field.Name;

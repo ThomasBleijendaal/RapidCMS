@@ -63,7 +63,7 @@ namespace RapidCMS.Common.Services
 
                 if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
                 {
-                    var entities = await collection.Repository.Invoke()._GetAllAsObjectsAsync(parentId);
+                    var entities = await collection.Repository._GetAllAsObjectsAsync(parentId);
 
                     dto.Nodes = await entities.ToListAsync(async entity =>
                     {
@@ -114,12 +114,12 @@ namespace RapidCMS.Common.Services
             var collection = _root.GetCollection(alias);
 
             var subEntityVariant = collection.GetEntityVariant(variantAlias);
-            var existingEntities = await collection.Repository.Invoke()._GetAllAsObjectsAsync(parentId);
+            var existingEntities = await collection.Repository._GetAllAsObjectsAsync(parentId);
             IEnumerable<UISubject> entities;
 
             if (action == Constants.New)
             {
-                var newEntity = await collection.Repository.Invoke()._NewAsync(parentId, subEntityVariant.Type);
+                var newEntity = await collection.Repository._NewAsync(parentId, subEntityVariant.Type);
 
                 entities = new[] {
                     new UISubject {
@@ -186,9 +186,9 @@ namespace RapidCMS.Common.Services
 
             var entity = action switch
             {
-                Constants.View => await collection.Repository.Invoke()._GetByIdAsync(id, parentId),
-                Constants.Edit => await collection.Repository.Invoke()._GetByIdAsync(id, parentId),
-                Constants.New => await collection.Repository.Invoke()._NewAsync(parentId, entityVariant.Type),
+                Constants.View => await collection.Repository._GetByIdAsync(id, parentId),
+                Constants.Edit => await collection.Repository._GetByIdAsync(id, parentId),
+                Constants.New => await collection.Repository._NewAsync(parentId, entityVariant.Type),
                 _ => null
             };
 
@@ -247,15 +247,15 @@ namespace RapidCMS.Common.Services
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
 
                 case CrudType.Update:
-                    await collection.Repository.Invoke()._UpdateAsync(id, parentId, updatedEntity, relations);
+                    await collection.Repository._UpdateAsync(id, parentId, updatedEntity, relations);
                     return new ReloadCommand();
 
                 case CrudType.Insert:
-                    var entity = await collection.Repository.Invoke()._InsertAsync(parentId, updatedEntity, relations);
+                    var entity = await collection.Repository._InsertAsync(parentId, updatedEntity, relations);
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, entity.Id) };
 
                 case CrudType.Delete:
-                    await collection.Repository.Invoke()._DeleteAsync(id, parentId);
+                    await collection.Repository._DeleteAsync(id, parentId);
                     return new NavigateCommand { Uri = UriHelper.Collection(Constants.List, collectionAlias, parentId) };
 
                 case CrudType.None:
@@ -359,11 +359,11 @@ namespace RapidCMS.Common.Services
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
 
                 case CrudType.Update:
-                    await collection.Repository.Invoke()._UpdateAsync(id, parentId, updatedEntity, relations);
+                    await collection.Repository._UpdateAsync(id, parentId, updatedEntity, relations);
                     return new ReloadCommand();
 
                 case CrudType.Insert:
-                    updatedEntity = await collection.Repository.Invoke()._InsertAsync(parentId, updatedEntity, relations);
+                    updatedEntity = await collection.Repository._InsertAsync(parentId, updatedEntity, relations);
                     return new UpdateParameterCommand
                     {
                         Action = Constants.New,
@@ -375,7 +375,7 @@ namespace RapidCMS.Common.Services
 
                 case CrudType.Delete:
 
-                    await collection.Repository.Invoke()._DeleteAsync(id, parentId);
+                    await collection.Repository._DeleteAsync(id, parentId);
                     return new ReloadCommand();
 
                 case CrudType.None:

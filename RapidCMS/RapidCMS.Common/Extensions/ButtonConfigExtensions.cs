@@ -4,7 +4,6 @@ using RapidCMS.Common.ActionHandlers;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
-using RapidCMS.Common.Services;
 
 #nullable enable
 
@@ -36,10 +35,10 @@ namespace RapidCMS.Common.Extensions
             };
         }
 
-        public static Button ToCustomButton(this CustomButtonConfig button)
+        public static Button ToCustomButton(this CustomButtonConfig button, IServiceProvider serviceProvider)
         {
             var handler = (button.ActionHandler != null)
-                ? ServiceLocator.Instance.GetService<IButtonActionHandler>(button.ActionHandler)
+                ? serviceProvider.GetService<IButtonActionHandler>(button.ActionHandler)
                 : new DefaultButtonActionHandler(button.CrudType, button.Action);
 
             return new CustomButton()
@@ -53,6 +52,15 @@ namespace RapidCMS.Common.Extensions
                 ShouldConfirm = handler.ShouldConfirm(),
                 IsPrimary = button.IsPrimary
             };
+        }
+    }
+
+    internal static class ServiceProviderExtensions
+    {
+        public static T GetService<T>(this IServiceProvider serviceProvider, Type type)
+            where T : class
+        {
+            return serviceProvider.GetService(type) as T ?? throw new InvalidOperationException($"Failed to resolve instance of type {type} and cast it as {typeof(T)}");
         }
     }
 }

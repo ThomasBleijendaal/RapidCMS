@@ -8,6 +8,7 @@ using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
+using RapidCMS.Common.Models.Config;
 
 #nullable enable
 
@@ -15,33 +16,40 @@ namespace RapidCMS.Common.Models
 {
     // TODO: static root stuff is horrible
 
-    // TODO: not really a model
-    public class Root : ICollectionRoot
+    public interface ICollectionResolver
     {
-        public Root(
-            IEnumerable<CustomButtonRegistration> customButtonRegistrations,
-            IEnumerable<CustomEditorRegistration> customEditorRegistrations,
-            IEnumerable<CustomSectionRegistration> customSectionRegistrations)
+        IRepository? GetRepository(string collectionAlias);
+    }
+
+    // TODO: not really a model
+    public class Root : ICollectionResolver
+    {
+        private readonly IServiceProvider _serviceProvider;
+
+        public Root(CmsConfig cmsConfig, IServiceProvider serviceProvider)
         {
-            CustomButtonRegistrations = customButtonRegistrations.ToList();
-            CustomEditorRegistrations = customEditorRegistrations.ToList();
-            CustomSectionRegistrations = customSectionRegistrations.ToList();
+            _serviceProvider = serviceProvider;
+
+            CustomButtonRegistrations = cmsConfig.CustomButtonRegistrations.ToList();
+            CustomEditorRegistrations = cmsConfig.CustomEditorRegistrations.ToList();
+            CustomSectionRegistrations = cmsConfig.CustomSectionRegistrations.ToList();
+
+            Collections = cmsConfig.ProcessCollections(serviceProvider);
+
+            SiteName = cmsConfig.SiteName;
+
+            FindRepositoryForCollections(_serviceProvider, Collections);
         }
 
-        private static Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
+        private Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
 
         public List<CustomButtonRegistration> CustomButtonRegistrations { get; internal set; }
         public List<CustomEditorRegistration> CustomEditorRegistrations { get; internal set; }
         public List<CustomSectionRegistration> CustomSectionRegistrations { get; internal set; }
 
-        public List<Collection> Collections { get; set; } = new List<Collection>();
+        public List<Collection> Collections { get; set; }
 
-        public string SiteName { get; set; } = "RapidCMS";
-
-        internal void MaterializeRepositories(IServiceProvider serviceProvider)
-        {
-            FindRepositoryForCollections(serviceProvider, Collections);
-        }
+        public string SiteName { get; set; }
 
         internal Collection GetCollection(string alias)
         {
@@ -53,24 +61,20 @@ namespace RapidCMS.Common.Models
             foreach (var collection in collections)
             {
                 // register each collection in flat dictionary
-                _collectionMap.Add(collection.Alias, collection);
-
-                collection.Repository = () =>
+                if (!_collectionMap.TryAdd(collection.Alias, collection))
                 {
-                    // TODO: horrible hack which leaks memory like hell
+                    throw new InvalidOperationException($"Duplicate collection alias '{collection.Alias}' not allowed.");
+                }
 
-                    var scope = serviceProvider.CreateScope();
-
-                    return (IRepository)scope.ServiceProvider.GetRequiredService(collection.RepositoryType);
-                };
+                collection.Repository = (IRepository)serviceProvider.GetRequiredService(collection.RepositoryType);
 
                 FindRepositoryForCollections(serviceProvider, collection.Collections);
             }
         }
 
-        public static IRepository? GetRepository(string collectionAlias)
+        public IRepository? GetRepository(string collectionAlias)
         {
-            return _collectionMap.TryGetValue(collectionAlias, out var collection) ? collection.Repository?.Invoke() : default;
+            return _collectionMap.TryGetValue(collectionAlias, out var collection) ? collection.Repository : default;
         }
     }
 
@@ -139,7 +143,7 @@ namespace RapidCMS.Common.Models
         }
 
         internal Type RepositoryType { get; set; }
-        internal Func<IRepository> Repository { get; set; }
+        internal IRepository Repository { get; set; }
 
         internal TreeView? TreeView { get; set; }
 
@@ -152,7 +156,7 @@ namespace RapidCMS.Common.Models
 
     public interface ICollectionRoot
     {
-        List<Collection> Collections { get; set; }
+        List<CollectionConfig> Collections { get; set; }
     }
 
     public enum EntityVisibilty
@@ -228,6 +232,7 @@ namespace RapidCMS.Common.Models
         internal List<SubCollectionListEditor> SubCollectionListEditors { get; set; }
     }
 
+    // TODO: change Buttons to not having resolved IButtonActionHandler during config time
     internal abstract class Button
     {
         internal string ButtonId { get; set; }

@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.Services;
@@ -12,23 +11,17 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class RapidCMSMiddleware
     {
-        public static IServiceCollection AddRapidCMS(this IServiceCollection services, Action<RootConfig>? config = null)
+        public static IServiceCollection AddRapidCMS(this IServiceCollection services, Action<CmsConfig>? config = null)
         {
-            var rootConfig = new RootConfig();
+            var rootConfig = new CmsConfig();
             config?.Invoke(rootConfig);
 
-            services.AddSingleton(rootConfig.CustomButtonRegistrations);
-            services.AddSingleton(rootConfig.CustomEditorRegistrations);
-            services.AddSingleton(rootConfig.CustomSectionRegistrations);
+            services.AddSingleton(rootConfig);
 
-            var root = new Root(
-                rootConfig.CustomButtonRegistrations,
-                rootConfig.CustomEditorRegistrations,
-                rootConfig.CustomSectionRegistrations);
+            services.AddScoped<Root>();
 
-            services.AddSingleton(root);
-            services.AddSingleton<ICollectionService, CollectionService>();
-            services.AddSingleton<IUIService, UIService>();
+            services.AddTransient<ICollectionService, CollectionService>();
+            services.AddTransient<IUIService, UIService>();
 
             services.AddSingleton<DefaultValueMapper>();
             services.AddSingleton<LongValueMapper>();
@@ -38,22 +31,13 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        public static IApplicationBuilder UseRapidCMS(this IApplicationBuilder app, Action<Root> configure)
+        public static IApplicationBuilder UseRapidCMS(this IApplicationBuilder app)
         {
             ServiceLocator.CreateInstance(app.ApplicationServices);
 
-            var root = app.ApplicationServices.GetRequiredService<Root>();
+            //var root = app.ApplicationServices.GetRequiredService<Root>();
 
-            configure.Invoke(root);
-
-            try
-            {
-                root.MaterializeRepositories(app.ApplicationServices);
-            }
-            catch
-            {
-
-            }
+            //configure.Invoke(root);
 
             return app;
         }

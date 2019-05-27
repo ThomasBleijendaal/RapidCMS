@@ -1,9 +1,4 @@
-﻿@*
-    // TODO: this should be made more nicer
-
-    // TODO: remove binding callback
-*@
-@using RapidCMS.Common.Enums
+﻿@using RapidCMS.Common.Enums
 @using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Data
 @using RapidCMS.UI.Models
@@ -85,5 +80,10 @@
     protected override void OnInit()
     {
         base.OnInit();
+    }
+
+    protected override void OnParametersSet()
+    {
+        StateHasChanged();
     }
 }

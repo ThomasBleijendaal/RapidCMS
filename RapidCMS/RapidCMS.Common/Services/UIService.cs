@@ -13,10 +13,12 @@ namespace RapidCMS.Common.Services
     internal class UIService : IUIService
     {
         private readonly Root _root;
+        private readonly IServiceProvider _serviceProvider;
 
-        public UIService(Root root)
+        public UIService(Root root, IServiceProvider serviceProvider)
         {
             _root = root;
+            _serviceProvider = serviceProvider;
         }
 
         public NodeUI GenerateNodeUI(ViewContext viewContext, NodeEditor nodeEditor)
@@ -34,7 +36,7 @@ namespace RapidCMS.Common.Services
                     {
                         var fields = pane.Fields.Select(field =>
                         {
-                            return (field.Index, element: (Element)field.ToFieldWithLabelUI());
+                            return (field.Index, element: (Element)field.ToFieldWithLabelUI(_serviceProvider));
                         });
 
                         var subCollections = pane.SubCollectionListEditors.Select(subCollection =>
@@ -75,7 +77,7 @@ namespace RapidCMS.Common.Services
                             .Where(button => button.IsCompatibleWithView(entityViewContext(entity)))
                             .ToList(button => button.ToUI()),
 
-                        Elements = listView.ViewPane.Fields.ToList(field => (Element)field.ToFieldWithLabelUI())
+                        Elements = listView.ViewPane.Fields.ToList(field => (Element)field.ToFieldWithLabelUI(_serviceProvider))
                     }
             };
         }
@@ -107,7 +109,7 @@ namespace RapidCMS.Common.Services
                             .Where(button => button.IsCompatibleWithView(entityViewContext(subject)))
                             .ToList(button => button.ToUI()),
 
-                        Elements = pane.Fields.ToList(field => (Element)field.ToFieldWithLabelUI())
+                        Elements = pane.Fields.ToList(field => (Element)field.ToFieldWithLabelUI(_serviceProvider))
                     };
                 }
             };
