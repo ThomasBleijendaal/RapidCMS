@@ -8,7 +8,7 @@ using RapidCMS.Common.ValueMappers;
 
 #nullable enable
 
-namespace RapidCMS.Common.Extensions
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class RapidCMSMiddleware
     {
@@ -16,6 +16,10 @@ namespace RapidCMS.Common.Extensions
         {
             var rootConfig = new RootConfig();
             config?.Invoke(rootConfig);
+
+            services.AddSingleton(rootConfig.CustomButtonRegistrations);
+            services.AddSingleton(rootConfig.CustomEditorRegistrations);
+            services.AddSingleton(rootConfig.CustomSectionRegistrations);
 
             var root = new Root(
                 rootConfig.CustomButtonRegistrations,
