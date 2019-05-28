@@ -318,7 +318,7 @@ namespace RapidCMS.Common.Models
         internal IPropertyMetadata Property { get; set; }
         internal Type ValueMapperType { get; set; }
 
-        internal OneToManyRelation? OneToManyRelation { get; set; }
+        internal Relation? Relation { get; set; }
     }
 
     internal class CustomField : Field
@@ -331,13 +331,11 @@ namespace RapidCMS.Common.Models
         internal string Alias { get; set; }
     }
 
-    // TODO: horrible names
-    // TODO: structure is wrong..
-    internal class OneToManyRelation
+    internal class Relation
     {
     }
 
-    internal class CollectionRelation : OneToManyRelation
+    internal class CollectionRelation : Relation
     {
         internal string CollectionAlias { get; set; }
         internal Type RelatedEntityType { get; set; }
@@ -345,7 +343,7 @@ namespace RapidCMS.Common.Models
         internal IExpressionMetadata DisplayProperty { get; set; }
     }
 
-    internal class DataProviderRelation : OneToManyRelation
+    internal class DataProviderRelation : Relation
     {
         internal Type DataCollectionType { get; set; }
     }

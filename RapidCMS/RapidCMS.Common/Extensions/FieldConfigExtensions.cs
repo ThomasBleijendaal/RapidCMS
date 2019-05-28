@@ -22,7 +22,7 @@ namespace RapidCMS.Common.Extensions
                     Readonly = field.Readonly,
                     ValueMapperType = field.ValueMapperType ?? typeof(DefaultValueMapper),
 
-                    OneToManyRelation = field.OneToManyRelation?.ToOneToManyRelation()
+                    Relation = field.Relation?.ToRelation()
                 };
             }
             else
@@ -38,7 +38,7 @@ namespace RapidCMS.Common.Extensions
                     Readonly = field.Readonly,
                     ValueMapperType = field.ValueMapperType ?? typeof(DefaultValueMapper),
 
-                    OneToManyRelation = field.OneToManyRelation?.ToOneToManyRelation()
+                    Relation = field.Relation?.ToRelation()
                 };
             }
         }

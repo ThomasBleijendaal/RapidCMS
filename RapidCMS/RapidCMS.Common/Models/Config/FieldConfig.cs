@@ -23,7 +23,7 @@ namespace RapidCMS.Common.Models.Config
 
         internal IPropertyMetadata Property { get; set; }
         internal Type ValueMapperType { get; set; }
-        internal RelationConfig? OneToManyRelation { get; set; }
+        internal RelationConfig? Relation { get; set; }
 
         internal EditorType Type { get; set; }
         internal Type CustomType { get; set; }
@@ -83,65 +83,26 @@ namespace RapidCMS.Common.Models.Config
                 DataCollectionType = typeof(TDataCollection)
             };
 
-            OneToManyRelation = config;
+            Relation = config;
 
             return this;
         }
 
         // TODO: perhaps add alias to differentiate between duplicate relations
-        public FieldConfig<TEntity> SetCollectionRelation<TRelatedEntity>(string collectionAlias, Action<RelationCollectionConfig<TEntity, TRelatedEntity>> configure)
+        public FieldConfig<TEntity> SetCollectionRelation<TRelatedEntity>(string collectionAlias, Action<CollectionRelationConfig<TEntity, TRelatedEntity>> configure)
         {
             if (Type != EditorType.Custom && Type.GetCustomAttribute<RelationAttribute>().Type != RelationType.Many)
             {
                 throw new InvalidOperationException("Cannot add CollectionRelation to Editor with no support for RelationType.Many");
             }
 
-            var config = new RelationCollectionConfig<TEntity, TRelatedEntity>();
+            var config = new CollectionRelationConfig<TEntity, TRelatedEntity>();
 
             configure.Invoke(config);
 
             config.CollectionAlias = collectionAlias;
 
-            OneToManyRelation = config;
-
-            return this;
-        }
-    }
-
-    public class RelationConfig
-    {
-    }
-
-    public class DataProviderRelationConfig : RelationConfig
-    {
-        internal Type DataCollectionType { get; set; }
-    }
-
-    public class CollectionRelationConfig : RelationConfig
-    {
-        internal string CollectionAlias { get; set; }
-        internal Type RelatedEntityType { get; set; }
-        internal IPropertyMetadata IdProperty { get; set; }
-        internal IExpressionMetadata DisplayProperty { get; set; }
-    }
-
-    public class RelationCollectionConfig<TEntity, TRelatedEntity> : CollectionRelationConfig
-    {
-        public RelationCollectionConfig()
-        {
-            RelatedEntityType = typeof(TRelatedEntity);
-        }
-
-        public RelationCollectionConfig<TEntity, TRelatedEntity> SetIdProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression)
-        {
-            IdProperty = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression);
-
-            return this;
-        }
-
-        public RelationCollectionConfig<TEntity, TRelatedEntity> SetDisplayProperty(Expression<Func<TRelatedEntity, string>> propertyExpression)
-        {
-            DisplayProperty = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression);
+            Relation = config;
 
             return this;
         }

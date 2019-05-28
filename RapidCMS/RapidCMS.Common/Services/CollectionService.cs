@@ -226,9 +226,6 @@ namespace RapidCMS.Common.Services
             var button = nodeEditor.Buttons.GetAllButtons().First(x => x.ButtonId == actionId);
             var buttonCrudType = button.GetCrudType();
 
-            // TODO: relations must not be simply set but must be added using seperate IRepository call after update to allow for better support
-            // TODO: must track which releation(s) have been broken and which have been made to allow for absolute control
-
             var updatedEntity = node.Subject.Entity;
             var relations = new RelationContainer(node.Sections.SelectMany(x => x.GetRelations()));
 
@@ -334,12 +331,7 @@ namespace RapidCMS.Common.Services
             var button = buttons.GetAllButtons().First(x => x.ButtonId == actionId);
             var buttonCrudType = button.GetCrudType();
 
-            //// since the id is known, get the entity variant from the entity
-            //var entity = await collection.Repository._GetByIdAsync(id, parentId);
-
-            // TODO: relations must not be simply set but must be added using seperate IRepository call after update to allow for better support
-            // TODO: must track which releation(s) have been broken and which have been made to allow for absolute control
-
+            // since the id is known, get the entity variant from the entity
             var updatedEntity = node.Subject.Entity;
             var entityVariant = collection.GetEntityVariant(updatedEntity);
             var relations = new RelationContainer(node.Sections.SelectMany(x => x.GetRelations()));

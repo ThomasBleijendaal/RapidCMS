@@ -14,7 +14,7 @@ TODO:
 [x] EditorValue obstrusiveness (weird get and set stuff)
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)
 [] IEntity.Id requirement is obstrusive
-[] SetOneToManyRelation with collection must be able to pass parentId into Repository
+[x] SetOneToManyRelation with collection must be able to pass parentId into Repository
     - DataCollection is transient helper class which contains the data for the relation (single or multiple entities)
     - Data form DataCollection passed to Insert and Update repository methods
         - During these save actions the relationship handling can be easily put in repository
@@ -24,9 +24,10 @@ TODO:
 [] Extensible Dropdown (type ahead style insert of new elements + automatic update when used in list views)
 [] ValueMapper is obstrusive (not able to cast int to long should not be an issue)
 [] Explore if ValueMapper can be skipped since editors are using late resolving of value
-[] PropertyMetadata safe propagation
 [] Recursive collection + check for recursion
-[] Relation support (one-many + many-many via discrete call on Repository) + recursive delete + EFCore support (non-transient DbContext)
+[x] Relation support (one-many + many-many via discrete call on Repository) 
+    [] recursive delete 
+    [] EFCore support (non-transient DbContext)
 [] Optimized Generic Abstract EFCoreRepository
 [] Pagination (consistent during session)
 [] Form validation
@@ -39,6 +40,7 @@ TODO:
 [] Top button bar should be side bar with meta
 [] Bind CustomButton and ActionHandler more together
 [] Allow for IExpressionMetadata is list views
+[] Property, Field, etc naming not totally consistent
 
 [] All config checked during startup
 [] Unit tests

@@ -5,7 +5,7 @@ namespace RapidCMS.Common.Extensions
 {
     internal static class RelationConfigExtensions
     {
-        public static OneToManyRelation ToOneToManyRelation(this RelationConfig config)
+        public static Relation ToRelation(this RelationConfig config)
         {
             return config switch
             {
@@ -20,7 +20,7 @@ namespace RapidCMS.Common.Extensions
                 {
                     DataCollectionType = dataProviderConfig.DataCollectionType
                 },
-                _ => default(OneToManyRelation)
+                _ => default(Relation)
             };
         }
     }

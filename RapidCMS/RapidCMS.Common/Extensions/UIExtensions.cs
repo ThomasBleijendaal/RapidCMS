@@ -4,9 +4,7 @@ using System.Linq;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Models;
-using RapidCMS.Common.Models.Metadata;
 using RapidCMS.Common.Models.UI;
-using RapidCMS.Common.Services;
 using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.Common.Extensions
@@ -24,7 +22,7 @@ namespace RapidCMS.Common.Extensions
                     var collection = field.DataCollection as IRelationDataCollection;
                     var relatedElements = collection.GetCurrentRelatedElements();
 
-                    return new Relation(
+                    return new Data.Relation(
                         collection.GetRelatedEntityType(),
                         field.Property, 
                         relatedElements.Select(x => new RelatedElement { Id = x.Id }));;
@@ -60,12 +58,13 @@ namespace RapidCMS.Common.Extensions
             ui.ValueMapper = serviceProvider.GetService<IValueMapper>(field.ValueMapperType);
             ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;
 
-            if (field.OneToManyRelation != null)
+            if (field.Relation != null)
             {
-                switch (field.OneToManyRelation)
+                switch (field.Relation)
                 {
                     case CollectionRelation collectionRelation:
 
+                        // TODO: horrible
                         var cr = serviceProvider.GetService<Root>(typeof(Root));
 
                         var repo = cr.GetRepository(collectionRelation.CollectionAlias);
