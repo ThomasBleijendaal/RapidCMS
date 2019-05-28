@@ -230,7 +230,7 @@ namespace RapidCMS.Common.Services
             // TODO: must track which releation(s) have been broken and which have been made to allow for absolute control
 
             var updatedEntity = node.Subject.Entity;
-            var relations = node.Sections.SelectMany(x => x.GetRelations());
+            var relations = new RelationContainer(node.Sections.SelectMany(x => x.GetRelations()));
 
             // TODO: what to do with this action
             if (button is CustomButton customButton)
@@ -342,7 +342,7 @@ namespace RapidCMS.Common.Services
 
             var updatedEntity = node.Subject.Entity;
             var entityVariant = collection.GetEntityVariant(updatedEntity);
-            var relations = node.Sections.SelectMany(x => x.GetRelations());
+            var relations = new RelationContainer(node.Sections.SelectMany(x => x.GetRelations()));
 
             // TODO: what to do with this action
             if (button is CustomButton customButton)

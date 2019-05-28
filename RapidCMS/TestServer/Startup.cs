@@ -120,7 +120,7 @@ namespace TestServer
                                 pane.AddField(f => f.Countries.Select(x => x.CountryId))
                                     .SetName("Countries")
                                     .SetType(EditorType.MultiSelect)
-                                    .SetOneToManyRelation<CountryEntity>("country-collection", relation =>
+                                    .SetCollectionRelation<CountryEntity>("country-collection", relation =>
                                     {
                                         relation
                                             .SetIdProperty(x => x._Id)
@@ -533,7 +533,7 @@ namespace TestServer
 
                     editorPaneConfig.AddField(x => x.Location)
                         .SetType(EditorType.Dropdown)
-                        .SetOneToManyRelation<DummyDataProvider>();
+                        .SetDataRelation<DummyDataProvider>();
 
                     //editorPaneConfig.AddField(x => x.AzureTableStorageEntityId)
                     //    .SetType(EditorType.Select)
@@ -546,7 +546,7 @@ namespace TestServer
 
                     editorPaneConfig.AddField(x => x.AzureTableStorageEntityIds)
                         .SetType(EditorType.MultiSelect)
-                        .SetOneToManyRelation<AzureTableStorageEntity>("collection-10", relation =>
+                        .SetCollectionRelation<AzureTableStorageEntity>("collection-10", relation =>
                         {
                             relation
                                 .SetIdProperty(x => x.Id)

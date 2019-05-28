@@ -337,14 +337,15 @@ namespace RapidCMS.Common.Models
     {
     }
 
-    internal class OneToManyCollectionRelation : OneToManyRelation
+    internal class CollectionRelation : OneToManyRelation
     {
         internal string CollectionAlias { get; set; }
+        internal Type RelatedEntityType { get; set; }
         internal IPropertyMetadata IdProperty { get; set; }
         internal IExpressionMetadata DisplayProperty { get; set; }
     }
 
-    internal class OneToManyDataProviderRelation : OneToManyRelation
+    internal class DataProviderRelation : OneToManyRelation
     {
         internal Type DataCollectionType { get; set; }
     }

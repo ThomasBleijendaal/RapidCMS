@@ -5,17 +5,18 @@ namespace RapidCMS.Common.Extensions
 {
     internal static class RelationConfigExtensions
     {
-        public static OneToManyRelation ToOneToManyRelation(this OneToManyRelationConfig config)
+        public static OneToManyRelation ToOneToManyRelation(this RelationConfig config)
         {
             return config switch
             {
-                OneToManyRelationCollectionConfig collectionConfig => new OneToManyCollectionRelation
+                CollectionRelationConfig collectionConfig => new CollectionRelation
                 {
                     CollectionAlias = collectionConfig.CollectionAlias,
+                    RelatedEntityType = collectionConfig.RelatedEntityType,
                     DisplayProperty = collectionConfig.DisplayProperty,
                     IdProperty = collectionConfig.IdProperty
                 },
-                OneToManyRelationDataProviderConfig dataProviderConfig => new OneToManyDataProviderRelation
+                DataProviderRelationConfig dataProviderConfig => new DataProviderRelation
                 {
                     DataCollectionType = dataProviderConfig.DataCollectionType
                 },

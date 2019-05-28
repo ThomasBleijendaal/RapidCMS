@@ -25,8 +25,9 @@ namespace RapidCMS.Common.Extensions
                     var relatedElements = collection.GetCurrentRelatedElements();
 
                     return new Relation(
+                        collection.GetRelatedEntityType(),
                         field.Property, 
-                        relatedElements.Select(x => new RelatedElement { Id = x.Id }));
+                        relatedElements.Select(x => new RelatedElement { Id = x.Id }));;
                 });
         }
 
@@ -63,20 +64,20 @@ namespace RapidCMS.Common.Extensions
             {
                 switch (field.OneToManyRelation)
                 {
-                    case OneToManyCollectionRelation collectionRelation:
+                    case CollectionRelation collectionRelation:
 
                         var cr = serviceProvider.GetService<Root>(typeof(Root));
 
                         var repo = cr.GetRepository(collectionRelation.CollectionAlias);
                         var provider = new CollectionDataProvider();
 
-                        provider.SetElementMetadata(repo, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
+                        provider.SetElementMetadata(repo, collectionRelation.RelatedEntityType, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
 
                         ui.DataCollection = provider;
 
                         break;
 
-                    case OneToManyDataProviderRelation dataProviderRelation:
+                    case DataProviderRelation dataProviderRelation:
 
                         ui.DataCollection = serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType);
                         break;

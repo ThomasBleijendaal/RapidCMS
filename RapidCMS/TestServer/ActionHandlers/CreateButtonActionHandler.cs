@@ -36,7 +36,7 @@ namespace TestServer.ActionHandlers
                 {
                     Description = $"New New New {i}",
                     Title = $"Item {i}"
-                }, Enumerable.Empty<IRelation>());
+                }, default);
             }
             while (++i < max);
         }

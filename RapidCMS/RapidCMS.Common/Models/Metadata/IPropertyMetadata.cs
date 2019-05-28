@@ -8,5 +8,7 @@ namespace RapidCMS.Common.Models.Metadata
         string PropertyName { get; }
         Type ObjectType { get; }
         Func<object, object> Getter { get; }
+
+        string Fingerprint { get; }
     }
 }

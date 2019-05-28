@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using RapidCMS.Common.Models.Metadata;
 
 #nullable enable
@@ -45,7 +47,9 @@ namespace RapidCMS.Common.Helpers
                         ObjectType = parameterTType,
                         PropertyName = lambdaExpression.ToString(),
                         PropertyType = lambdaExpression.Body.Type,
-                        Getter = ConvertToGetterViaLambda(parameterT, lambdaExpression, parameterTAsType)
+                        Getter = ConvertToGetterViaLambda(parameterT, lambdaExpression, parameterTAsType),
+
+                        Fingerprint = GetFingerprint(lambdaExpression)
                     };
                 }
                 else
@@ -127,7 +131,9 @@ namespace RapidCMS.Common.Helpers
                         Getter = getter,
                         Setter = setter,
                         PropertyName = name,
-                        PropertyType = parameterTPropertyType
+                        PropertyType = parameterTPropertyType,
+
+                        Fingerprint = GetFingerprint(lambdaExpression)
                     };
                 }
             }
@@ -161,7 +167,6 @@ namespace RapidCMS.Common.Helpers
                 return new ExpressionMetadata
                 {
                     PropertyName = name,
-                    PropertyType = lambdaExpression.Body.Type,
                     StringGetter = ConvertToStringGetterViaLambda(parameterT, lambdaExpression, parameterTAsType)
                 };
             }
@@ -212,6 +217,43 @@ namespace RapidCMS.Common.Helpers
             );
 
             return setExpression.Compile();
+        }
+
+        private readonly static SHA1CryptoServiceProvider Sha1 = new SHA1CryptoServiceProvider();
+
+        private static string GetFingerprint(Expression expression)
+        {
+            string fingerprint;
+
+            switch (expression)
+            {
+                case LambdaExpression lambda:
+
+                    fingerprint = $"{GetFingerprint(lambda.Body)}{lambda.Body.Type.ToString()}";
+                    break;
+
+                case MethodCallExpression call:
+
+                    fingerprint = $"{string.Join("", call.Arguments.Select(x => GetFingerprint(x)))}{call.Type.ToString()}";
+                    break;
+
+                case ParameterExpression param:
+
+                    fingerprint = $"{param.IsByRef}{param.Type.ToString()}";
+                    break;
+
+                case MemberExpression member:
+
+                    fingerprint = $"{member.Member.Name}{GetFingerprint(member.Expression)}";
+                    break;
+
+                default:
+
+                    fingerprint = expression.Type.ToString();
+                    break;
+            }
+
+            return Convert.ToBase64String(Sha1.ComputeHash(Encoding.UTF8.GetBytes(fingerprint)));
         }
     }
 }

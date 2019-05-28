@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
+using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Metadata;
 using RapidCMS.Common.ValueMappers;
@@ -21,7 +23,7 @@ namespace RapidCMS.Common.Models.Config
 
         internal IPropertyMetadata Property { get; set; }
         internal Type ValueMapperType { get; set; }
-        internal OneToManyRelationConfig? OneToManyRelation { get; set; }
+        internal RelationConfig? OneToManyRelation { get; set; }
 
         internal EditorType Type { get; set; }
         internal Type CustomType { get; set; }
@@ -68,12 +70,15 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        // TODO: move all config into this function? (no SetId + SetDisplay?)
-        // TODO: rename to select source or something
-        public FieldConfig<TEntity> SetOneToManyRelation<TDataCollection>()
+        public FieldConfig<TEntity> SetDataRelation<TDataCollection>()
             where TDataCollection : IDataCollection
         {
-            var config = new OneToManyRelationDataProviderConfig
+            if (Type != EditorType.Custom && Type.GetCustomAttribute<RelationAttribute>().Type != RelationType.One)
+            {
+                throw new InvalidOperationException("Cannot add DataRelation to Editor with no support for RelationType.One");
+            }
+
+            var config = new DataProviderRelationConfig
             {
                 DataCollectionType = typeof(TDataCollection)
             };
@@ -83,9 +88,15 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public FieldConfig<TEntity> SetOneToManyRelation<TRelatedEntity>(string collectionAlias, Action<OneToManyRelationCollectionConfig<TEntity, TRelatedEntity>> configure)
+        // TODO: perhaps add alias to differentiate between duplicate relations
+        public FieldConfig<TEntity> SetCollectionRelation<TRelatedEntity>(string collectionAlias, Action<RelationCollectionConfig<TEntity, TRelatedEntity>> configure)
         {
-            var config = new OneToManyRelationCollectionConfig<TEntity, TRelatedEntity>();
+            if (Type != EditorType.Custom && Type.GetCustomAttribute<RelationAttribute>().Type != RelationType.Many)
+            {
+                throw new InvalidOperationException("Cannot add CollectionRelation to Editor with no support for RelationType.Many");
+            }
+
+            var config = new RelationCollectionConfig<TEntity, TRelatedEntity>();
 
             configure.Invoke(config);
 
@@ -97,32 +108,38 @@ namespace RapidCMS.Common.Models.Config
         }
     }
 
-    public class OneToManyRelationConfig
+    public class RelationConfig
     {
     }
 
-    public class OneToManyRelationDataProviderConfig : OneToManyRelationConfig
+    public class DataProviderRelationConfig : RelationConfig
     {
         internal Type DataCollectionType { get; set; }
     }
 
-    public class OneToManyRelationCollectionConfig : OneToManyRelationConfig
+    public class CollectionRelationConfig : RelationConfig
     {
         internal string CollectionAlias { get; set; }
+        internal Type RelatedEntityType { get; set; }
         internal IPropertyMetadata IdProperty { get; set; }
         internal IExpressionMetadata DisplayProperty { get; set; }
     }
 
-    public class OneToManyRelationCollectionConfig<TEntity, TRelatedEntity> : OneToManyRelationCollectionConfig
+    public class RelationCollectionConfig<TEntity, TRelatedEntity> : CollectionRelationConfig
     {
-        public OneToManyRelationCollectionConfig<TEntity, TRelatedEntity> SetIdProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression)
+        public RelationCollectionConfig()
+        {
+            RelatedEntityType = typeof(TRelatedEntity);
+        }
+
+        public RelationCollectionConfig<TEntity, TRelatedEntity> SetIdProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression)
         {
             IdProperty = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression);
 
             return this;
         }
 
-        public OneToManyRelationCollectionConfig<TEntity, TRelatedEntity> SetDisplayProperty(Expression<Func<TRelatedEntity, string>> propertyExpression)
+        public RelationCollectionConfig<TEntity, TRelatedEntity> SetDisplayProperty(Expression<Func<TRelatedEntity, string>> propertyExpression)
         {
             DisplayProperty = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression);
 

@@ -13,6 +13,7 @@ namespace RapidCMS.Common.Data
     internal class CollectionDataProvider : IRelationDataCollection
     {
         private IRepository? _repository;
+        private Type? _relatedEntityType;
         private IPropertyMetadata? _idProperty;
         private IExpressionMetadata? _labelProperty;
 
@@ -22,9 +23,10 @@ namespace RapidCMS.Common.Data
         private List<IElement>? _relatedElements;
         private ICollection<object>? _relatedIds;
 
-        public void SetElementMetadata(IRepository repository, IPropertyMetadata idProperty, IExpressionMetadata labelProperty)
+        public void SetElementMetadata(IRepository repository, Type relatedEntityType, IPropertyMetadata idProperty, IExpressionMetadata labelProperty)
         {
             _repository = repository;
+            _relatedEntityType = relatedEntityType;
             _idProperty = idProperty;
             _labelProperty = labelProperty;
 
@@ -130,6 +132,11 @@ namespace RapidCMS.Common.Data
         public IEnumerable<IElement> GetCurrentRelatedElements()
         {
             return _relatedElements ?? Enumerable.Empty<IElement>();
+        }
+
+        public Type GetRelatedEntityType()
+        {
+            return _relatedEntityType ?? typeof(object);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RapidCMS.Common.Models.Metadata;
 
@@ -12,7 +13,7 @@ namespace RapidCMS.Common.Data
 
     public interface IRelationDataCollection : IDataCollection
     {
-        void SetElementMetadata(IRepository repository, IPropertyMetadata idProperty, IExpressionMetadata labelProperty);
+        void SetElementMetadata(IRepository repository, Type relatedEntityType, IPropertyMetadata idProperty, IExpressionMetadata labelProperty);
         Task SetRelationMetadataAsync(IEntity entity, IPropertyMetadata collectionProperty);
 
         Task<IEnumerable<IElement>> GetRelatedElementsAsync();
@@ -21,5 +22,7 @@ namespace RapidCMS.Common.Data
         Task RemoveElementAsync(IElement option);
 
         IEnumerable<IElement> GetCurrentRelatedElements();
+
+        Type GetRelatedEntityType();
     }
 }

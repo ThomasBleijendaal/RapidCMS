@@ -23,7 +23,7 @@ namespace RapidCMS.Common.Enums
         [Relation(RelationType.One)]
         Select,
 
-        [Relation(RelationType.One)]
+        [Relation(RelationType.Many)]
         MultiSelect
     }
 }
