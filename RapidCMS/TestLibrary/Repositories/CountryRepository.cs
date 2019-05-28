@@ -97,7 +97,7 @@ namespace TestLibrary.Repositories
 
         public override async Task<PersonEntity> InsertAsync(int? parentId, PersonEntity entity, IEnumerable<IRelation> relations)
         {
-            entity.Countries = relations.First(r => r.Property.PropertyName == nameof(entity.Hack))
+            entity.Countries = relations.First()
                 .RelatedElementIdsAs<int>().Select(id => new PersonCountryEntity
                 {
                     CountryId = id
@@ -130,7 +130,7 @@ namespace TestLibrary.Repositories
 
             dbEntity.Name = entity.Name;
 
-            var newCountries = relations.First(r => r.Property.PropertyName == nameof(dbEntity.Hack)).RelatedElementIdsAs<int>();
+            var newCountries = relations.First().RelatedElementIdsAs<int>();
 
             foreach (var country in dbEntity.Countries.Where(x => !newCountries.Contains(x.CountryId.Value)).ToList())
             {

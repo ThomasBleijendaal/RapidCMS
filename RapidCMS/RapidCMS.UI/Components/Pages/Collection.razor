@@ -55,9 +55,13 @@ else
                                     {
                                         if (element is FieldWithLabelUI field)
                                         {
-                                            if (!elementsProcessed.Contains(field.Property.PropertyName))
+                                            var name = (UI.ListType == ListType.TableView)
+                                                ? field.Expression.PropertyName
+                                                : field.Property.PropertyName;
+
+                                            if (!elementsProcessed.Contains(name))
                                             {
-                                                elementsProcessed.Add(field.Property.PropertyName);
+                                                elementsProcessed.Add(name);
 
                                                 <td>@field.Name<br /><small>@field.Description</small></td>
                                             }
@@ -84,16 +88,20 @@ else
                                     {
                                         if (element is FieldWithLabelUI field)
                                         {
+                                            var name = (UI.ListType == ListType.TableView)
+                                                ? field.Expression.PropertyName
+                                                : field.Property.PropertyName;
+
                                             // fill in the gaps (when dealing with multiple entity variants)
                                             // TODO: only do this when fill the gaps setting is active
-                                            while (elementsProcessed.IndexOf(field.Property.PropertyName) > index++)
+                                            while (elementsProcessed.IndexOf(name) > index++)
                                             {
                                                 <td>&nbsp;</td>
                                             }
 
                                             if (UI.ListType == ListType.TableView)
                                             {
-                                                <td>@field.GetReadonlyValue(subject.Entity)</td>
+                                                <td>@field.Expression.StringGetter(subject.Entity)</td>
                                             }
                                             else
                                             {

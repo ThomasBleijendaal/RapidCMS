@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using RapidCMS.Common.Models;
+using RapidCMS.Common.Models.Metadata;
 
 #nullable enable
 
@@ -21,29 +21,9 @@ namespace RapidCMS.Common.Helpers
         /// propertyType: string
         /// name: CompanyOwnerName
         /// </summary>
-        /// <exception cref="ArgumentException">Thrown when given LamdaExpression cannot be converted to a getter and setter.</exception>
         /// <param name="lambdaExpression">The LambdaExpression to be converted</param>
         /// <returns>GetterAndSetter object when successful, null when not.</returns>
-        public static IPropertyMetadata GetPropertyMetadata(LambdaExpression lambdaExpression)
-        {
-            return GetExpressionMetadata(lambdaExpression) as IPropertyMetadata
-                ?? throw new ArgumentException($"Given expression {lambdaExpression.ToString()} cannot be converted to Getter and Setter.");
-        }
-
-        /// <summary>
-        /// Converts a given LambdaExpression containing expression to get value from an object.
-        /// 
-        /// (Person x) => $"{x.FirstName} - {x.LastName}"  becomes:
-        /// getter: (object x) => (object)
-        /// objectType: Person
-        /// propertyType: string
-        /// 
-        /// When possible (LambdaExpression is a MemberExpression), it will return IPropertyMetadata similair to GetPropertyMetadata.
-        /// </summary>
-        /// <exception cref="ArgumentException">Thrown when given LambdaExpression cannot be converted to a getter.</exception>
-        /// <param name="lambdaExpression">The LambdaExpression to be converted</param>
-        /// <returns>GetterAndSetter object when successful, null when not.</returns>
-        public static IExpressionMetadata GetExpressionMetadata(LambdaExpression lambdaExpression)
+        public static IPropertyMetadata? GetPropertyMetadata(LambdaExpression lambdaExpression)
         {
             try
             {
@@ -60,10 +40,12 @@ namespace RapidCMS.Common.Helpers
                     parameterTType = lambdaExpression.Parameters.First().Type;
                     var parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
 
-                    return new ExpressionMetadata
+                    return new PropertyMetadata
                     {
-                        PropertyType = x.Type,
-                        StringGetter = ConvertToStringGetterViaLambda(parameterT, lambdaExpression, parameterTAsType)
+                        ObjectType = parameterTType,
+                        PropertyName = lambdaExpression.ToString(),
+                        PropertyType = lambdaExpression.Body.Type,
+                        Getter = ConvertToGetterViaLambda(parameterT, lambdaExpression, parameterTAsType)
                     };
                 }
                 else
@@ -137,23 +119,55 @@ namespace RapidCMS.Common.Helpers
 
                     var setter = ConvertToSetter(parameterT, parameterTProperty, setValueMethod, valueToType, instanceExpression);
                     var getter = ConvertToGetterViaMethod(parameterT, getValueMethod, instanceExpression);
-                    var stringGetter = parameterTPropertyType == typeof(string) ? ConvertToStringGetterViaMethod(parameterT, getValueMethod, instanceExpression) : null;
                     var name = string.Join("", names);
 
-                    return new PropertyMetadata
+                    return new FullPropertyMetadata
                     {
                         ObjectType = parameterTType,
                         Getter = getter,
                         Setter = setter,
-                        StringGetter = stringGetter,
                         PropertyName = name,
                         PropertyType = parameterTPropertyType
                     };
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                throw new ArgumentException($"Given expression {lambdaExpression.ToString()} cannot be converted to Getter.", ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Converts a given LambdaExpression containing expression to get value from an object.
+        /// 
+        /// (Person x) => $"{x.FirstName} - {x.LastName}"  becomes:
+        /// getter: (object x) => (object)
+        /// objectType: Person
+        /// propertyType: string
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when given LambdaExpression cannot be converted to a getter.</exception>
+        /// <param name="lambdaExpression">The LambdaExpression to be converted</param>
+        /// <returns>GetterAndSetter object when successful, null when not.</returns>
+        public static IExpressionMetadata? GetExpressionMetadata(LambdaExpression lambdaExpression)
+        {
+            try
+            {
+                var parameterT = Expression.Parameter(typeof(object), "x");
+                var parameterTType = lambdaExpression.Parameters.First().Type;
+                var parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
+
+                var name = ((lambdaExpression.Body as MemberExpression)?.Member as PropertyInfo)?.Name ?? lambdaExpression.ToString();
+
+                return new ExpressionMetadata
+                {
+                    PropertyName = name,
+                    PropertyType = lambdaExpression.Body.Type,
+                    StringGetter = ConvertToStringGetterViaLambda(parameterT, lambdaExpression, parameterTAsType)
+                };
+            }
+            catch
+            {
+                return null;
             }
         }
 
@@ -167,10 +181,10 @@ namespace RapidCMS.Common.Helpers
             return getExpression.Compile();
         }
 
-        private static Func<object, string> ConvertToStringGetterViaMethod(ParameterExpression parameterT, MethodInfo getValueMethod, Expression instanceExpression)
+        private static Func<object, object> ConvertToGetterViaLambda(ParameterExpression parameterT, LambdaExpression lambdaExpression, Expression parameterExpression)
         {
-            var getExpression = Expression.Lambda<Func<object, string>>(
-                Expression.Call(instanceExpression, getValueMethod),
+            var getExpression = Expression.Lambda<Func<object, object>>(
+                Expression.Convert(Expression.Invoke(lambdaExpression, parameterExpression), typeof(object)),
                 parameterT
             );
 
@@ -179,7 +193,12 @@ namespace RapidCMS.Common.Helpers
 
         private static Func<object, string> ConvertToStringGetterViaLambda(ParameterExpression parameterT, LambdaExpression lambdaExpression, Expression parameterExpression)
         {
-            var getExpression = Expression.Lambda<Func<object, string>>(Expression.Invoke(lambdaExpression, parameterExpression), parameterT);
+            var method = typeof(object).GetMethod(nameof(object.ToString));
+
+            var getExpression = Expression.Lambda<Func<object, string>>(
+                Expression.Call(Expression.Invoke(lambdaExpression, parameterExpression), method),
+                parameterT
+            );
 
             return getExpression.Compile();
         }

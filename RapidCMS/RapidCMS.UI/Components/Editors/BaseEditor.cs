@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Data;
-using RapidCMS.Common.Models;
+using RapidCMS.Common.Models.Metadata;
 using RapidCMS.Common.ValueMappers;
 
 #nullable enable
@@ -19,7 +20,18 @@ namespace RapidCMS.UI.Components.Editors
         public IValueMapper ValueMapper { get; private set; }
     }
 
-    public class BaseDataEditor : BaseEditor
+    public class BasePropertyEditor : BaseEditor
+    {
+        public new IFullPropertyMetadata Property
+        {
+            get
+            {
+                return base.Property as IFullPropertyMetadata ?? throw new InvalidOperationException($"{nameof(BasePropertyEditor)} requires usable Getter and Setter");
+            }
+        }
+    }
+
+    public class BaseDataEditor : BasePropertyEditor
     {
         [Parameter]
         public IDataCollection? DataCollection { get; private set; }

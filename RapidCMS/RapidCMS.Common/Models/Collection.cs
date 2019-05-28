@@ -9,6 +9,7 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models.Config;
+using RapidCMS.Common.Models.Metadata;
 
 #nullable enable
 
@@ -313,6 +314,7 @@ namespace RapidCMS.Common.Models
 
         internal EditorType DataType { get; set; } = EditorType.Readonly;
 
+        internal IExpressionMetadata Expression { get; set; }
         internal IPropertyMetadata Property { get; set; }
         internal Type ValueMapperType { get; set; }
 

@@ -81,6 +81,7 @@ namespace TestServer
                             list.SetListPane(pane =>
                             {
                                 pane.AddProperty(p => p.Name);
+                                pane.AddDefaultButton(DefaultButtonType.Edit);
                             });
                         })
                         .SetNodeEditor(editor =>
@@ -116,7 +117,8 @@ namespace TestServer
                             editor.AddEditorPane(pane =>
                             {
                                 pane.AddField(f => f.Name);
-                                pane.AddField(f => f.Hack)
+                                pane.AddField(f => f.Countries.Select(x => x.CountryId))
+                                    .SetName("Countries")
                                     .SetType(EditorType.MultiSelect)
                                     .SetOneToManyRelation<CountryEntity>("country-collection", relation =>
                                     {

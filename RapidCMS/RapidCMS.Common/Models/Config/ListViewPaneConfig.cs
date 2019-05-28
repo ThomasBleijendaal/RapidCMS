@@ -6,12 +6,15 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
+using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Models.Config
 {
     public class ListViewPaneConfig
     {
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
+
+        // TODO: not the best name
         internal List<PropertyConfig> Properties { get; set; } = new List<PropertyConfig>();
     }
 
@@ -62,12 +65,11 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        // TODO: downgrade propertyExpression to only accept strings (for ExpressionMetadata)
         public PropertyConfig<TEntity> AddProperty<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<PropertyConfig<TEntity>> configure = null)
         {
             var config = new PropertyConfig<TEntity>
             {
-                Property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression)
+                Property = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression)
             };
             config.Name = config.Property.PropertyName;
 

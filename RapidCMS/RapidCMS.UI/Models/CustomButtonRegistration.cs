@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Models;
+using RapidCMS.Common.Models.Metadata;
 using RapidCMS.Common.Models.UI;
 using RapidCMS.Common.ValueMappers;
 using RapidCMS.UI.Components.Editors;

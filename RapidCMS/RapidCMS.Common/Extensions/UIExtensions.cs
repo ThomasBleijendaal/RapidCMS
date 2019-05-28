@@ -4,6 +4,7 @@ using System.Linq;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Models;
+using RapidCMS.Common.Models.Metadata;
 using RapidCMS.Common.Models.UI;
 using RapidCMS.Common.Services;
 using RapidCMS.Common.ValueMappers;
@@ -51,7 +52,10 @@ namespace RapidCMS.Common.Extensions
             where T : FieldUI
         {
             ui.CustomAlias = (field is CustomField customField) ? customField.Alias : null;
+
+            ui.Expression = field.Expression;
             ui.Property = field.Property;
+
             ui.ValueMapper = serviceProvider.GetService<IValueMapper>(field.ValueMapperType);
             ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;
 

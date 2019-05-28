@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Helpers;
+using RapidCMS.Common.Models.Metadata;
 using RapidCMS.Common.ValueMappers;
 
 #nullable enable

@@ -15,13 +15,6 @@ namespace TestLibrary.Entities
         public ICollection<PersonCountryEntity> Countries { get; set; }
 
         [NotMapped]
-        public ICollection<object> Hack
-        {
-            get => Countries?.Select(x => x.CountryId as object).ToList() ?? Enumerable.Empty<object>().ToList();
-            set => throw new InvalidOperationException("wut");
-        }
-
-        [NotMapped]
         string IEntity.Id { get => _Id.ToString(); set => _Id = int.Parse(value); }
     }
 }

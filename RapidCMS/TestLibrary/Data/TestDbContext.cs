@@ -34,7 +34,7 @@ namespace TestLibrary.Data
         public TestDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<TestDbContext>();
-            optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS01;Database=RapidCMS;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=RapidCMS;Trusted_Connection=True;");
 
             var context = new TestDbContext(optionsBuilder.Options);
 

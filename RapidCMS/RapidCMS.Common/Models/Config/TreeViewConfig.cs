@@ -1,4 +1,6 @@
-﻿namespace RapidCMS.Common.Models.Config
+﻿using RapidCMS.Common.Models.Metadata;
+
+namespace RapidCMS.Common.Models.Config
 {
     public class TreeViewConfig
     {

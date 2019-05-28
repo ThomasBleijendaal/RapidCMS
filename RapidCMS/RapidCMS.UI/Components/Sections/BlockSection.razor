@@ -24,7 +24,7 @@
                     <div class="col-10">
                         @if (Subject.UsageType == UsageType.View)
                         {
-                            @field.GetReadonlyValue(Subject.Entity)
+                            @field.Expression.StringGetter(Subject.Entity)
                         }
                         else
                         {

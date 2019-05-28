@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using RapidCMS.Common.Models;
+using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Data
 {

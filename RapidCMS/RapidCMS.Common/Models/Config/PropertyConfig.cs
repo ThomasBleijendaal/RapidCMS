@@ -1,5 +1,6 @@
 ﻿using System;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Models.Metadata;
 using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.Common.Models.Config
@@ -9,8 +10,7 @@ namespace RapidCMS.Common.Models.Config
         internal string Name { get; set; }
         internal string Description { get; set; }
 
-        // TODO: ExpressionProperty?
-        internal IPropertyMetadata Property { get; set; }
+        internal IExpressionMetadata Property { get; set; }
 
         internal Type ValueMapperType { get; set; }
     }

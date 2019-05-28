@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RapidCMS.Common.Models;
+using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Data
 {
