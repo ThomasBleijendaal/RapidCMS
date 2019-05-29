@@ -6,7 +6,10 @@
 @inject IUriHelper UriHelper
 
 <div class="top-row navbar navbar-dark">
-    <a class="navbar-brand" href="">TODO@*@Root.SiteName*@</a>
+    @if (RootEntity != null)
+    {
+        <a class="navbar-brand" href="">@RootEntity.SiteName</a>
+    }
 </div>
 
 <div class="@NavMenuCssClass" onclick="@ToggleNavMenu">

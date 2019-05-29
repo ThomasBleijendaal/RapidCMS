@@ -33,12 +33,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IApplicationBuilder UseRapidCMS(this IApplicationBuilder app)
         {
-            ServiceLocator.CreateInstance(app.ApplicationServices);
-
-            //var root = app.ApplicationServices.GetRequiredService<Root>();
-
-            //configure.Invoke(root);
-
             return app;
         }
     }

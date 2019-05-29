@@ -42,6 +42,7 @@ namespace RapidCMS.Common.Services
         {
             var result = new CollectionTreeRootDTO
             {
+                SiteName = _root.SiteName,
                 Collections = await GetTreeViewForCollectionAsync(_root.Collections, null)
             };
 

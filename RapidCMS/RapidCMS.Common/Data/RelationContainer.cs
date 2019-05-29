@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using RapidCMS.Common.Helpers;
 
@@ -18,24 +19,24 @@ namespace RapidCMS.Common.Data
         {
             var property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression);
 
-            return Relations.FirstOrDefault(x => x.Property.Fingerprint == property.Fingerprint)?.RelatedElementIdsAs<TId>();
+            return Relations.FirstOrDefault(x => x.Property.Fingerprint == property.Fingerprint)?.RelatedElementIdsAs<TId>() ?? Enumerable.Empty<TId>();
         }
 
         public IEnumerable<IRelatedElement> GetRelatedElementsFor<TEntity, TValue>(Expression<Func<TEntity, TValue>> propertyExpression) where TEntity : IEntity
         {
             var property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression);
 
-            return Relations.FirstOrDefault(x => x.Property.Fingerprint == property.Fingerprint)?.RelatedElements;
+            return Relations.FirstOrDefault(x => x.Property.Fingerprint == property.Fingerprint)?.RelatedElements ?? Enumerable.Empty<IRelatedElement>();
         }
 
         public IEnumerable<IRelatedElement> GetRelatedElementsFor<TRelatedEntity>() where TRelatedEntity : IEntity
         {
-            return Relations.FirstOrDefault(x => x.RelatedEntity == typeof(TRelatedEntity))?.RelatedElements;
+            return Relations.FirstOrDefault(x => x.RelatedEntity == typeof(TRelatedEntity))?.RelatedElements ?? Enumerable.Empty<IRelatedElement>();
         }
 
         public IEnumerable<TId> GetRelatedElementIdsFor<TRelatedEntity, TId>() where TRelatedEntity : IEntity
         {
-            return Relations.FirstOrDefault(x => x.RelatedEntity == typeof(TRelatedEntity))?.RelatedElementIdsAs<TId>();
+            return Relations.FirstOrDefault(x => x.RelatedEntity == typeof(TRelatedEntity))?.RelatedElementIdsAs<TId>() ?? Enumerable.Empty<TId>();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace RapidCMS.Common.Models.Config
 
     public class CmsConfig : ICollectionRoot
     {
-        internal string SiteName = "RapidCMS";
+        internal string SiteName { get; set; } = "RapidCMS";
 
         public List<CollectionConfig> Collections { get; set; } = new List<CollectionConfig>();
         internal List<CustomButtonRegistration> CustomButtonRegistrations { get; set; } = new List<CustomButtonRegistration>();

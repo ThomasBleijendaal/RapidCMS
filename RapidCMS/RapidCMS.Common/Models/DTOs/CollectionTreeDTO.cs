@@ -13,7 +13,7 @@ namespace RapidCMS.Common.Models.DTOs
     }
     public class CollectionTreeRootDTO : CollectionTreeNodeDTO
     {
-
+        public string SiteName { get; set; }
     }
     
     public class CollectionTreeCollectionDTO
