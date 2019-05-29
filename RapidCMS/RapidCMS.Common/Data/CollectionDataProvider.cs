@@ -98,7 +98,7 @@ namespace RapidCMS.Common.Data
         {
             await _init;
 
-            if (_relatedIds != null)
+            if (_relatedIds != null && _elements != null)
             {
                 return _elements.Where(x => _relatedIds.Contains(x.Id));
             }

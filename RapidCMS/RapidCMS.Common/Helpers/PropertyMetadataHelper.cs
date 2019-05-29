@@ -189,9 +189,10 @@ namespace RapidCMS.Common.Helpers
         private static Func<object, object> ConvertToGetterViaLambda(ParameterExpression parameterT, LambdaExpression lambdaExpression, Expression parameterExpression)
         {
             var getExpression = Expression.Lambda<Func<object, object>>(
-                Expression.Convert(Expression.Invoke(lambdaExpression, parameterExpression), typeof(object)),
-                parameterT
-            );
+                Expression.Convert(
+                    Expression.Invoke(lambdaExpression, parameterExpression),
+                    typeof(object)),
+                parameterT);
 
             return getExpression.Compile();
         }
@@ -200,10 +201,23 @@ namespace RapidCMS.Common.Helpers
         {
             var method = typeof(object).GetMethod(nameof(object.ToString));
 
+            LabelTarget returnTarget = Expression.Label();
+
             var getExpression = Expression.Lambda<Func<object, string>>(
-                Expression.Call(Expression.Invoke(lambdaExpression, parameterExpression), method),
-                parameterT
-            );
+                Expression.TryFinally(
+                    Expression.Block(
+                        Expression.Return(
+                            returnTarget,
+                            Expression.Call(
+                                Expression.Invoke(lambdaExpression, parameterExpression),
+                                method),
+                            typeof(string))),
+                    Expression.Block(
+                        Expression.Return(
+                            returnTarget,
+                            Expression.Constant(string.Empty),
+                            typeof(string)))),
+                parameterT);
 
             return getExpression.Compile();
         }

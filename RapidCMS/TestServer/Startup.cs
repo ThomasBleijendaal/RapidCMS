@@ -129,6 +129,171 @@ namespace TestServer
                             });
                         });
                 });
+
+                config.AddCollection<RelationEntity>("collection-11", "Azure Table Storage Collecation with relations", collection =>
+                {
+                    collection
+                        .SetRepository<RelationRepository>()
+                        .SetTreeView(EntityVisibilty.Visible, entity => entity.Name)
+                        .SetListView(config =>
+                        {
+                            config.AddDefaultButton(DefaultButtonType.New);
+
+                            config.SetListPane(listPaneConfig =>
+                            {
+                                listPaneConfig.AddProperty(x => x.Id);
+                                listPaneConfig.AddProperty(x => x.Name);
+                                //listPaneConfig.AddProperty(x => x.AzureTableStorageEntityId);
+                                //listPaneConfig.AddProperty(x => x.AzureTableStorageEntityIds)
+                                //    .SetValueMapper<CollectionValueMapper<string>>();
+
+                                listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
+                                listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
+                            });
+                        })
+                        .SetNodeEditor(config =>
+                        {
+                            config.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+                            config.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
+                            config.AddDefaultButton(DefaultButtonType.Delete);
+
+                            config.AddEditorPane(editorPaneConfig =>
+                            {
+                                editorPaneConfig.AddField(x => x.Name);
+
+                                editorPaneConfig.AddField(x => x.Location)
+                                    .SetType(EditorType.Dropdown)
+                                    .SetDataRelation<DummyDataProvider>();
+
+                                editorPaneConfig.AddField(x => x.AzureTableStorageEntityId)
+                                    .SetName("Entity")
+                                    .SetType(EditorType.Select)
+                                    .SetCollectionRelation<AzureTableStorageEntity>("collection-10", relation =>
+                                    {
+                                        relation
+                                            .SetIdProperty(x => x.Id)
+                                            .SetDisplayProperty(x => x.Description);
+                                    });
+
+                                editorPaneConfig.AddField(x => x.AzureTableStorageEntityIds)
+                                    .SetName("Entities")
+                                    .SetType(EditorType.MultiSelect)
+                                    .SetCollectionRelation<AzureTableStorageEntity>("collection-10", relation =>
+                                    {
+                                        relation
+                                            .SetIdProperty(x => x.Id)
+                                            .SetDisplayProperty(x => x.Description);
+                                    });
+                            });
+                        });
+                });
+
+                config.AddCollection<AzureTableStorageEntity>("collection-10", "Azure Table Storage Collection", collection =>
+                {
+                    collection
+                        .SetRepository<AzureTableStorageRepository>()
+                        .SetTreeView(EntityVisibilty.Visible, entity => entity.Title)
+                        .SetListView(AzureTableStorageListView)
+                        .SetNodeEditor(AzureTableStorageEditor)
+
+                        .AddCollection<AzureTableStorageEntity>("collection-10-a", "Sub collection", subCollection =>
+                        {
+                            subCollection
+                                .SetRepository<AzureTableStorageRepository>()
+                                .SetTreeView(EntityVisibilty.Visible, entity => entity.Title)
+                                .SetListView(AzureTableStorageListView)
+                                .SetNodeEditor(AzureTableStorageEditor);
+                        });
+                });
+
+                //root.AddCollection<TestEntity>("collection-6", "Variant collection as blocks", collection =>
+                //{
+                //    collection
+                //        .SetRepository<VariantRepository>()
+                //        .SetTreeView(EntityVisibilty.Hidden, entity => entity.Name)
+                //        .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
+                //        .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
+                //        .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
+                //        .SetListEditor(ListEditorType.Block, listNodeEditorWithPolymorphism)
+                //        .SetNodeEditor(nodeEditorWithPolymorphism);
+                //});
+
+                //root.AddCollection<TestEntity>("collection-5", "Collections with variant sub collection", collection =>
+                //{
+                //    collection
+                //        .SetRepository<RepositoryF>()
+                //        .SetTreeView(EntityVisibilty.Visible, entity => entity.Name)
+                //        .SetListView(listView)
+                //        .SetNodeEditor(nodeEditorWithPolymorphicSubCollection)
+                //        .AddCollection<TestEntity>("sub-collection-3", "Sub Collection 3", subCollection =>
+                //        {
+                //            subCollection
+                //                .SetRepository<VariantRepository>()
+                //                .SetTreeView(EntityVisibilty.Visible, CollectionRootVisibility.Hidden, entity => entity.Name)
+                //                .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
+                //                .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
+                //                .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
+                //                .SetListView(listViewWithPolymorphism)
+                //                .SetListEditor(ListEditorType.Table, listNodeEditorWithPolymorphism)
+                //                .SetNodeEditor(nodeEditorWithPolymorphism);
+                //        });
+                //});
+
+                //root.AddCollection<TestEntity>("collection-4", "Collection with sub collections", collection =>
+                //{
+                //    collection
+                //        .SetRepository<RepositoryA>()
+                //        .SetTreeView(entity => entity.Name)
+                //        .SetListView(listView)
+                //        .SetNodeEditor(nodeEditorWithSubCollection)
+                //        .AddCollection<TestEntity>("sub-collection-1", "Sub Collection 1", subCollection =>
+                //        {
+                //            subCollection
+                //                .SetRepository<RepositoryB>()
+                //                //.SetTreeView(EntityVisibilty.Hidden, CollectionRootVisibility.Hidden, entity => entity.Name)
+                //                .SetListView(listView)
+                //                .SetListEditor(ListEditorType.Table, subListNodeEditor)
+                //                .SetNodeEditor(nodeEditor);
+                //        })
+                //        .AddCollection<TestEntity>("sub-collection-2", "Sub Collection 2", subCollection =>
+                //        {
+                //            subCollection
+                //                .SetRepository<RepositoryC>()
+                //                //.SetTreeView(EntityVisibilty.Hidden, CollectionRootVisibility.Hidden, entity => entity.Name)
+                //                .SetListEditor(ListEditorType.Block, subListNodeEditor)
+                //                .SetNodeEditor(nodeEditor);
+                //        });
+                //});
+
+                //root.AddCollection<TestEntity>("collection-3", "Variant collection", collection =>
+                //{
+                //    collection
+                //        .SetRepository<VariantRepository>()
+                //        .SetTreeView(EntityVisibilty.Visible, entity => entity.Name)
+                //        .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
+                //        .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
+                //        .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
+                //        .SetListView(listView)
+                //        .SetNodeEditor(nodeEditorWithPolymorphism);
+                //});
+
+                //root.AddCollection<TestEntity>("collection-2", "List editor collection", collection =>
+                //{
+                //    collection
+                //        .SetRepository<RepositoryD>()
+                //        .SetTreeView(EntityVisibilty.Hidden, entity => entity.Name)
+                //        .SetListEditor(ListEditorType.Table, listNodeEditor)
+                //        .SetNodeEditor(nodeEditor);
+                //});
+
+                //root.AddCollection<TestEntity>("collection-1", "Simple collection", collection =>
+                //{
+                //    collection
+                //        .SetRepository<RepositoryE>()
+                //        .SetTreeView(EntityVisibilty.Visible, entity => entity.Name)
+                //        .SetListView(listView)
+                //        .SetNodeEditor(nodeEditor);
+                //});
             });
 
             services.AddMvc().AddNewtonsoftJson();
@@ -137,11 +302,7 @@ namespace TestServer
             services.AddServerSideBlazor();
 
             services.AddCors();
-        }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
             #region done
 
             void listView(ListViewConfig<TestEntity> listViewConfig)
@@ -502,179 +663,11 @@ namespace TestServer
                         .SetValueMapper<BoolValueMapper>();
                 });
             }
+        }
 
-            void RelationListView(ListViewConfig<RelationEntity> config)
-            {
-                config
-                    .AddDefaultButton(DefaultButtonType.New);
-
-                config.SetListPane(listPaneConfig =>
-                {
-                    listPaneConfig.AddProperty(x => x.Id);
-                    listPaneConfig.AddProperty(x => x.Name);
-                    listPaneConfig.AddProperty(x => x.AzureTableStorageEntityId);
-                    listPaneConfig.AddProperty(x => x.AzureTableStorageEntityIds)
-                        .SetValueMapper<CollectionValueMapper<string>>();
-
-                    listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
-                    listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
-                });
-            }
-
-            void RelationEditor(NodeEditorConfig<RelationEntity> config)
-            {
-                config.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
-                config.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
-                config.AddDefaultButton(DefaultButtonType.Delete);
-
-                config.AddEditorPane(editorPaneConfig =>
-                {
-                    editorPaneConfig.AddField(x => x.Name);
-
-                    editorPaneConfig.AddField(x => x.Location)
-                        .SetType(EditorType.Dropdown)
-                        .SetDataRelation<DummyDataProvider>();
-
-                    //editorPaneConfig.AddField(x => x.AzureTableStorageEntityId)
-                    //    .SetType(EditorType.Select)
-                    //    .SetOneToManyRelation<AzureTableStorageEntity>("collection-10", relation =>
-                    //    {
-                    //        relation
-                    //            .SetIdProperty(x => x.Id)
-                    //            .SetDisplayProperty(x => x.Description);
-                    //    });
-
-                    editorPaneConfig.AddField(x => x.AzureTableStorageEntityIds)
-                        .SetType(EditorType.MultiSelect)
-                        .SetCollectionRelation<AzureTableStorageEntity>("collection-10", relation =>
-                        {
-                            relation
-                                .SetIdProperty(x => x.Id)
-                                .SetDisplayProperty(x => x.Description);
-                        });
-                });
-            }
-
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
             app.UseRapidCMS();
-                //root =>
-            //{
-            
-                //root.AddCollection<RelationEntity>("collection-11", "Azure Table Storage Collecation with relations", collection =>
-                //{
-                //    collection
-                //        .SetRepository<RelationRepository>()
-                //        .SetTreeView(EntityVisibilty.Visible, entity => entity.Name)
-                //        .SetListView(RelationListView)
-                //        .SetNodeEditor(RelationEditor);
-                //});
-
-                //root.AddCollection<AzureTableStorageEntity>("collection-10", "Azure Table Storage Collection", collection =>
-                //{
-                //    collection
-                //        .SetRepository<AzureTableStorageRepository>()
-                //        .SetTreeView(EntityVisibilty.Visible, entity => entity.Title)
-                //        .SetListView(AzureTableStorageListView)
-                //        .SetNodeEditor(AzureTableStorageEditor)
-
-                //        .AddCollection<AzureTableStorageEntity>("collection-10-a", "Sub collection", subCollection =>
-                //        {
-                //            subCollection
-                //                .SetRepository<AzureTableStorageRepository>()
-                //                .SetTreeView(EntityVisibilty.Visible, entity => entity.Title)
-                //                .SetListView(AzureTableStorageListView)
-                //                .SetNodeEditor(AzureTableStorageEditor);
-                //        });
-                //});
-
-                //root.AddCollection<TestEntity>("collection-6", "Variant collection as blocks", collection =>
-                //{
-                //    collection
-                //        .SetRepository<VariantRepository>()
-                //        .SetTreeView(EntityVisibilty.Hidden, entity => entity.Name)
-                //        .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
-                //        .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
-                //        .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
-                //        .SetListEditor(ListEditorType.Block, listNodeEditorWithPolymorphism)
-                //        .SetNodeEditor(nodeEditorWithPolymorphism);
-                //});
-
-                //root.AddCollection<TestEntity>("collection-5", "Collections with variant sub collection", collection =>
-                //{
-                //    collection
-                //        .SetRepository<RepositoryF>()
-                //        .SetTreeView(EntityVisibilty.Visible, entity => entity.Name)
-                //        .SetListView(listView)
-                //        .SetNodeEditor(nodeEditorWithPolymorphicSubCollection)
-                //        .AddCollection<TestEntity>("sub-collection-3", "Sub Collection 3", subCollection =>
-                //        {
-                //            subCollection
-                //                .SetRepository<VariantRepository>()
-                //                .SetTreeView(EntityVisibilty.Visible, CollectionRootVisibility.Hidden, entity => entity.Name)
-                //                .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
-                //                .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
-                //                .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
-                //                .SetListView(listViewWithPolymorphism)
-                //                .SetListEditor(ListEditorType.Table, listNodeEditorWithPolymorphism)
-                //                .SetNodeEditor(nodeEditorWithPolymorphism);
-                //        });
-                //});
-
-                //root.AddCollection<TestEntity>("collection-4", "Collection with sub collections", collection =>
-                //{
-                //    collection
-                //        .SetRepository<RepositoryA>()
-                //        .SetTreeView(entity => entity.Name)
-                //        .SetListView(listView)
-                //        .SetNodeEditor(nodeEditorWithSubCollection)
-                //        .AddCollection<TestEntity>("sub-collection-1", "Sub Collection 1", subCollection =>
-                //        {
-                //            subCollection
-                //                .SetRepository<RepositoryB>()
-                //                //.SetTreeView(EntityVisibilty.Hidden, CollectionRootVisibility.Hidden, entity => entity.Name)
-                //                .SetListView(listView)
-                //                .SetListEditor(ListEditorType.Table, subListNodeEditor)
-                //                .SetNodeEditor(nodeEditor);
-                //        })
-                //        .AddCollection<TestEntity>("sub-collection-2", "Sub Collection 2", subCollection =>
-                //        {
-                //            subCollection
-                //                .SetRepository<RepositoryC>()
-                //                //.SetTreeView(EntityVisibilty.Hidden, CollectionRootVisibility.Hidden, entity => entity.Name)
-                //                .SetListEditor(ListEditorType.Block, subListNodeEditor)
-                //                .SetNodeEditor(nodeEditor);
-                //        });
-                //});
-
-                //root.AddCollection<TestEntity>("collection-3", "Variant collection", collection =>
-                //{
-                //    collection
-                //        .SetRepository<VariantRepository>()
-                //        .SetTreeView(EntityVisibilty.Visible, entity => entity.Name)
-                //        .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
-                //        .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
-                //        .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
-                //        .SetListView(listView)
-                //        .SetNodeEditor(nodeEditorWithPolymorphism);
-                //});
-
-                //root.AddCollection<TestEntity>("collection-2", "List editor collection", collection =>
-                //{
-                //    collection
-                //        .SetRepository<RepositoryD>()
-                //        .SetTreeView(EntityVisibilty.Hidden, entity => entity.Name)
-                //        .SetListEditor(ListEditorType.Table, listNodeEditor)
-                //        .SetNodeEditor(nodeEditor);
-                //});
-
-                //root.AddCollection<TestEntity>("collection-1", "Simple collection", collection =>
-                //{
-                //    collection
-                //        .SetRepository<RepositoryE>()
-                //        .SetTreeView(EntityVisibilty.Visible, entity => entity.Name)
-                //        .SetListView(listView)
-                //        .SetNodeEditor(nodeEditor);
-                //});
-            //});
 
             if (env.IsDevelopment())
             {
@@ -685,7 +678,7 @@ namespace TestServer
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            
+
             app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
             app.UseHttpsRedirection();

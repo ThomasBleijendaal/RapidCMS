@@ -112,6 +112,24 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
         }
 
         [Test]
+        public void BasicNullStringExpression()
+        {
+            var instance = new BasicClass { Test = null };
+            Expression<Func<BasicClass, string>> func = (BasicClass x) => x.Test;
+
+            var data = PropertyMetadataHelper.GetExpressionMetadata(func);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual("", data.StringGetter(instance));
+
+            var propertyData = PropertyMetadataHelper.GetPropertyMetadata(func);
+
+            Assert.IsNotNull(propertyData as IFullPropertyMetadata);
+            Assert.AreEqual("Test", propertyData.PropertyName);
+            Assert.AreEqual(null, propertyData.Getter(instance));
+            Assert.AreEqual(typeof(string), propertyData.PropertyType);
+        }
+        [Test]
         public void BasicStringExpression2()
         {
             var instance = new BasicClass { Test = "Test Value" };

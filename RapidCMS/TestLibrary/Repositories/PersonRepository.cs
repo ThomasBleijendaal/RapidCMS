@@ -46,7 +46,7 @@ namespace TestLibrary.Repositories
 
         public override Task<PersonEntity> NewAsync(int? parentId, Type variantType = null)
         {
-            return Task.FromResult(new PersonEntity());
+            return Task.FromResult(new PersonEntity { Countries = new List<PersonCountryEntity>() });
         }
 
         public override int ParseKey(string id)
