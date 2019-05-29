@@ -201,6 +201,8 @@ namespace RapidCMS.Common.Helpers
         {
             var method = typeof(object).GetMethod(nameof(object.ToString));
 
+            // lambdaEpxression should always be an expression which returns a string 
+
             LabelTarget returnTarget = Expression.Label();
 
             var getExpression = Expression.Lambda<Func<object, string>>(
