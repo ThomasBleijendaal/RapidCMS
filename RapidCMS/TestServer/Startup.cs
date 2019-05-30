@@ -638,7 +638,8 @@ namespace TestServer
                     listPaneConfig.AddProperty(x => x.Title);
                     listPaneConfig.AddProperty(x => x.Description);
                     listPaneConfig.AddProperty(x => x.Password);
-                    listPaneConfig.AddProperty(x => x.Destroy == true ? "True" : x.Destroy == false ? "False" : "Null");
+                    listPaneConfig.AddProperty(x => x.Destroy == true ? "True" : x.Destroy == false ? "False" : "Null")
+                        .SetName("Destroy");
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);

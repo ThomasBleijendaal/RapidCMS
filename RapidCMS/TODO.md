@@ -24,7 +24,7 @@ TODO:
     - New CollectionDataProvider intermediate class handling all regular inter-collection relationships
 [] Extensible Dropdown (type ahead style insert of new elements + automatic update when used in list views)
 [] ValueMapper is obstrusive (not able to cast int to long should not be an issue)
-    [] Find solution for ValueMapper use in ListViewConfig
+    [] Find solution for ValueMapper use in ListViewConfig -> automatic valuemapper selection for given type + add it back to config + call it DisplayMapper
 [] Explore if ValueMapper can be skipped since editors are using late resolving of value
 [] Recursive collection + check for recursion
 [x] Relation support (one-many + many-many via discrete call on Repository) 
