@@ -55,7 +55,7 @@ namespace RapidCMS.Common.Extensions
             ui.Expression = field.Expression;
             ui.Property = field.Property;
 
-            ui.ValueMapper = serviceProvider.GetService<IValueMapper>(field.ValueMapperType);
+            ui.ValueMapper = field.ValueMapperType != null ? serviceProvider.GetService<IValueMapper>(field.ValueMapperType) : null;
             ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;
 
             if (field.Relation != null)

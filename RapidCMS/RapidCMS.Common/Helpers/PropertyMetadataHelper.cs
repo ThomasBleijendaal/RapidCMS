@@ -199,26 +199,15 @@ namespace RapidCMS.Common.Helpers
 
         private static Func<object, string> ConvertToStringGetterViaLambda(ParameterExpression parameterT, LambdaExpression lambdaExpression, Expression parameterExpression)
         {
-            var method = typeof(object).GetMethod(nameof(object.ToString));
-
-            // lambdaEpxression should always be an expression which returns a string 
-
-            LabelTarget returnTarget = Expression.Label();
+            if (lambdaExpression.ReturnType != typeof(string))
+            {
+                throw new ArgumentException("Expression must return a string.", nameof(lambdaExpression));
+            }
 
             var getExpression = Expression.Lambda<Func<object, string>>(
-                Expression.TryFinally(
-                    Expression.Block(
-                        Expression.Return(
-                            returnTarget,
-                            Expression.Call(
-                                Expression.Invoke(lambdaExpression, parameterExpression),
-                                method),
-                            typeof(string))),
-                    Expression.Block(
-                        Expression.Return(
-                            returnTarget,
-                            Expression.Constant(string.Empty),
-                            typeof(string)))),
+                Expression.Coalesce(
+                    Expression.Invoke(lambdaExpression, parameterExpression),
+                    Expression.Constant(string.Empty)),
                 parameterT);
 
             return getExpression.Compile();
@@ -235,7 +224,7 @@ namespace RapidCMS.Common.Helpers
             return setExpression.Compile();
         }
 
-        private readonly static SHA1CryptoServiceProvider Sha1 = new SHA1CryptoServiceProvider();
+        private readonly static SHA1CryptoServiceProvider _sha1 = new SHA1CryptoServiceProvider();
 
         private static string GetFingerprint(Expression expression)
         {
@@ -269,7 +258,7 @@ namespace RapidCMS.Common.Helpers
                     break;
             }
 
-            return Convert.ToBase64String(Sha1.ComputeHash(Encoding.UTF8.GetBytes(fingerprint)));
+            return Convert.ToBase64String(_sha1.ComputeHash(Encoding.UTF8.GetBytes(fingerprint)));
         }
     }
 }

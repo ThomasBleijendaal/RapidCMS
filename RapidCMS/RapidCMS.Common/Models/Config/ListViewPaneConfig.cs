@@ -6,7 +6,6 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
-using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Models.Config
 {
@@ -65,7 +64,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public PropertyConfig<TEntity> AddProperty<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<PropertyConfig<TEntity>> configure = null)
+        public PropertyConfig<TEntity> AddProperty(Expression<Func<TEntity, string>> propertyExpression, Action<PropertyConfig<TEntity>> configure = null)
         {
             var config = new PropertyConfig<TEntity>
             {

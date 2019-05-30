@@ -12,6 +12,7 @@ TODO:
 [x] Checkbox form field
 [x] Nullable (numerics)
 [x] EditorValue obstrusiveness (weird get and set stuff)
+[] Property, Field, etc naming not totally consistent -> Refactor all names and methods
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)
 [] IEntity.Id requirement is obstrusive
 [x] SetOneToManyRelation with collection must be able to pass parentId into Repository
@@ -23,6 +24,7 @@ TODO:
     - New CollectionDataProvider intermediate class handling all regular inter-collection relationships
 [] Extensible Dropdown (type ahead style insert of new elements + automatic update when used in list views)
 [] ValueMapper is obstrusive (not able to cast int to long should not be an issue)
+    [] Find solution for ValueMapper use in ListViewConfig
 [] Explore if ValueMapper can be skipped since editors are using late resolving of value
 [] Recursive collection + check for recursion
 [x] Relation support (one-many + many-many via discrete call on Repository) 
@@ -40,7 +42,6 @@ TODO:
 [] Top button bar should be side bar with meta
 [] Bind CustomButton and ActionHandler more together
 [] Allow for IExpressionMetadata is list views
-[] Property, Field, etc naming not totally consistent
 
 [] All config checked during startup
 [] Unit tests

@@ -102,8 +102,7 @@ namespace RapidCMS.Common.Extensions
                                     Description = property.Description,
                                     Name = property.Name,
                                     Readonly = true,
-                                    Expression = property.Property,
-                                    ValueMapperType = property.ValueMapperType ?? typeof(DefaultValueMapper)
+                                    Expression = property.Property
                                 })
                             }
                     };

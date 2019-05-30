@@ -1,7 +1,5 @@
-﻿using System;
-using RapidCMS.Common.Data;
+﻿using RapidCMS.Common.Data;
 using RapidCMS.Common.Models.Metadata;
-using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.Common.Models.Config
 {
@@ -11,8 +9,6 @@ namespace RapidCMS.Common.Models.Config
         internal string Description { get; set; }
 
         internal IExpressionMetadata Property { get; set; }
-
-        internal Type ValueMapperType { get; set; }
     }
 
     public class PropertyConfig<TEntity> : PropertyConfig
@@ -27,15 +23,6 @@ namespace RapidCMS.Common.Models.Config
         public PropertyConfig<TEntity> SetDescription(string description)
         {
             Description = description;
-            return this;
-        }
-
-        // TODO: check for mapper compatibility with value type in NodeProperty
-        public PropertyConfig<TEntity> SetValueMapper<TValueMapper>()
-            where TValueMapper : IValueMapper
-        {
-            ValueMapperType = typeof(TValueMapper);
-
             return this;
         }
     }

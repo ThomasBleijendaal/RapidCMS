@@ -143,9 +143,10 @@ namespace TestServer
                             {
                                 listPaneConfig.AddProperty(x => x.Id);
                                 listPaneConfig.AddProperty(x => x.Name);
-                                //listPaneConfig.AddProperty(x => x.AzureTableStorageEntityId);
-                                //listPaneConfig.AddProperty(x => x.AzureTableStorageEntityIds)
-                                //    .SetValueMapper<CollectionValueMapper<string>>();
+                                listPaneConfig.AddProperty(x => x.AzureTableStorageEntityId)
+                                    .SetName("Entity");
+                                listPaneConfig.AddProperty(x => string.Join(", ", x.AzureTableStorageEntityIds ?? Enumerable.Empty<string>()))
+                                    .SetName("Entities");
 
                                 listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
                                 listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
@@ -311,7 +312,7 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
                     .SetListPane(pane =>
                     {
-                        pane.AddProperty(x => x._Id);
+                        pane.AddProperty(x => x._Id.ToString());
                         pane.AddProperty(x => x.Name).SetDescription("This is a name");
                         pane.AddProperty(x => x.Description).SetDescription("This is a description");
                         pane.AddDefaultButton(DefaultButtonType.View, string.Empty);
@@ -326,7 +327,7 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
                     .SetListPane(pane =>
                     {
-                        pane.AddProperty(x => x._Id);
+                        pane.AddProperty(x => x._Id.ToString());
                         pane.AddProperty(x => x.Name).SetDescription("This is a name");
                         pane.AddProperty(x => x.Description).SetDescription("This is a description");
                         pane.AddDefaultButton(DefaultButtonType.View, string.Empty);
@@ -637,8 +638,7 @@ namespace TestServer
                     listPaneConfig.AddProperty(x => x.Title);
                     listPaneConfig.AddProperty(x => x.Description);
                     listPaneConfig.AddProperty(x => x.Password);
-                    listPaneConfig.AddProperty(x => x.Destroy)
-                        .SetValueMapper<BoolValueMapper>();
+                    listPaneConfig.AddProperty(x => x.Destroy == true ? "True" : x.Destroy == false ? "False" : "Null");
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
