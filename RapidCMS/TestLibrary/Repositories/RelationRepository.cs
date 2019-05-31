@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Extensions;
 using TestLibrary.Entities;
 
 #nullable enable
@@ -43,8 +44,8 @@ namespace TestLibrary.Repositories
 
             entity.RealId = _data.Max(x => x.RealId) + 1;
             entity.AzureTableStorageEntityIds = relations
-                .GetRelatedElementIdsFor<AzureTableStorageEntity, string>()
-                .ToList();
+                .GetRelatedElementsFor((RelationEntity x) => x.AzureTableStorageEntityIds)
+                .ToList(x => x.Id as string);
 
             _data.Add(entity);
 
@@ -61,8 +62,8 @@ namespace TestLibrary.Repositories
             element.AzureTableStorageEntityId = entity.AzureTableStorageEntityId;
             element.Location = entity.Location;
             entity.AzureTableStorageEntityIds = relations
-                .GetRelatedElementIdsFor<AzureTableStorageEntity, string>()
-                .ToList();
+                .GetRelatedElementsFor((RelationEntity x) => x.AzureTableStorageEntityIds)
+                .ToList(x => x.Id as string);
         }
 
         public override Task<RelationEntity> NewAsync(int? parentId, Type? variantType)

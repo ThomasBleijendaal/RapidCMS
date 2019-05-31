@@ -1,15 +1,26 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.AzureAD.UI;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.WindowsAzure.Storage;
-using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.ValueMappers;
 using TestLibrary;
+using TestLibrary.Data;
 using TestLibrary.DataProvider;
 using TestLibrary.Entities;
 using TestLibrary.Repositories;
@@ -17,10 +28,6 @@ using TestServer.ActionHandlers;
 using TestServer.Components.CustomButtons;
 using TestServer.Components.CustomEditors;
 using TestServer.Components.CustomSections;
-using Microsoft.EntityFrameworkCore;
-using TestLibrary.Data;
-using Microsoft.Extensions.Configuration;
-using System.Linq;
 
 namespace TestServer
 {
@@ -37,6 +44,88 @@ namespace TestServer
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            // ***********************************************
+            // For more info on:
+            // Microsoft.AspNetCore.Authentication.AzureAD.UI
+            // see:
+            // https://bit.ly/2Fv6Zxp
+            // This creates a 'virtual' controller 
+            // called 'Account' in an Area called 'AzureAd' that allows the
+            // 'AzureAd/Account/SignIn' and 'AzureAd/Account/SignOut'
+            // links to work
+            services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
+                .AddAzureAD(options => Configuration.Bind("AzureAd", options));
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential
+                // cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
+            // This configures the 'middleware' pipeline
+            // This is where code to determine what happens
+            // when a person logs in is configured and processed
+            services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    // Instead of using the default validation 
+                    // (validating against a single issuer value, as we do in
+                    // line of business apps), we inject our own multitenant validation logic
+                    ValidateIssuer = false,
+                    // If the app is meant to be accessed by entire organizations, 
+                    // add your issuer validation logic here.
+                    //IssuerValidator = (issuer, securityToken, validationParameters) => {
+                    //    if (myIssuerValidationLogic(issuer)) return issuer;
+                    //}
+                };
+                options.Events = new OpenIdConnectEvents
+                {
+                    OnTicketReceived = context =>
+                    {
+                        // If your authentication logic is based on users 
+                        // then add your logic here
+                        return Task.CompletedTask;
+                    },
+                    OnAuthenticationFailed = context =>
+                    {
+                        context.Response.Redirect("/Error");
+                        context.HandleResponse(); // Suppress the exception
+                        return Task.CompletedTask;
+                    },
+                    OnSignedOutCallbackRedirect = context =>
+                    {
+                        // This is called when a user logs out
+                        // redirect them back to the main page
+                        context.Response.Redirect("/");
+                        context.HandleResponse();
+                        return Task.CompletedTask;
+                    },
+                    // If your application needs to do authenticate single users, 
+                    // add your user validation below.
+                    //OnTokenValidated = context =>
+                    //{
+                    //    return myUserValidationLogic(context.Ticket.Principal);
+                    //}
+                };
+            });
+
+            services.AddMvc(options => { })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            // From: https://github.com/aspnet/Blazor/issues/1554
+            // Adds HttpContextAccessor
+            // Used to determine if a user is logged in
+            // and what their username is
+            services.AddHttpContextAccessor();
+            services.AddScoped<HttpContextAccessor>();
+            // Required for HttpClient support in the Blazor Client project
+            services.AddHttpClient();
+            services.AddScoped<HttpClient>();
+
+
+
             services.AddDbContext<TestDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString"));
@@ -691,6 +780,18 @@ namespace TestServer
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+            });
+
+
+            app.UseCookiePolicy();
+            app.UseAuthentication();
+            app.UseMvc(routes =>
+            {
+                
+                // Allows Blazor Client project code to call Blazor
+                // Server project pages
+                routes.MapRoute(name: "default",
+                template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
