@@ -12,6 +12,9 @@ TODO:
 [x] Checkbox form field
 [x] Nullable (numerics)
 [x] EditorValue obstrusiveness (weird get and set stuff)
+[] Authentication
+[] Authorizations
+    [] Hide buttons for actions user may not do 
 [] Property, Field, etc naming not totally consistent -> Refactor all names and methods
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)
 [] IEntity.Id requirement is obstrusive

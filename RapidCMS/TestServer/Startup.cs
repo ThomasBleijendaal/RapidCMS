@@ -112,20 +112,6 @@ namespace TestServer
                 };
             });
 
-            services.AddMvc(options => { })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-            // From: https://github.com/aspnet/Blazor/issues/1554
-            // Adds HttpContextAccessor
-            // Used to determine if a user is logged in
-            // and what their username is
-            services.AddHttpContextAccessor();
-            services.AddScoped<HttpContextAccessor>();
-            // Required for HttpClient support in the Blazor Client project
-            services.AddHttpClient();
-            services.AddScoped<HttpClient>();
-
-
-
             services.AddDbContext<TestDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString"));
@@ -153,6 +139,8 @@ namespace TestServer
 
             services.AddRapidCMS(config =>
             {
+                config.AllowAnonymousUser();
+
                 config.AddCustomButton(typeof(CreateButton<>));
                 config.AddCustomEditor(typeof(PasswordEditor));
                 config.AddCustomSection(typeof(DashboardSection));
@@ -386,7 +374,10 @@ namespace TestServer
                 //});
             });
 
-            services.AddMvc().AddNewtonsoftJson();
+            services.AddMvc(options =>
+            {
+                options.EnableEndpointRouting = false;
+            }).AddNewtonsoftJson();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
@@ -774,24 +765,20 @@ namespace TestServer
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseCookiePolicy();
+            app.UseAuthentication();
+
             app.UseRouting();
+
+            app.UseMvc(routes =>
+            {
+
+            });
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
-            });
-
-
-            app.UseCookiePolicy();
-            app.UseAuthentication();
-            app.UseMvc(routes =>
-            {
-                
-                // Allows Blazor Client project code to call Blazor
-                // Server project pages
-                routes.MapRoute(name: "default",
-                template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

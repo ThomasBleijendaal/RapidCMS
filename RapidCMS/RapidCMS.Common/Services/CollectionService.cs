@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using RapidCMS.Common.Authorization;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
@@ -18,11 +21,15 @@ namespace RapidCMS.Common.Services
     {
         private readonly Root _root;
         private readonly IUIService _uiService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IAuthorizationService _authorizationService;
 
-        public CollectionService(Root root, IUIService uiService)
+        public CollectionService(Root root, IUIService uiService, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
         {
             _root = root;
             _uiService = uiService;
+            _httpContextAccessor = httpContextAccessor;
+            _authorizationService = authorizationService;
         }
 
         private UsageType MapActionToUsageType(string action)
@@ -235,6 +242,11 @@ namespace RapidCMS.Common.Services
             {
                 await customButton.HandleActionAsync(parentId, id, customData);
             }
+
+            var isAuthorized = await _authorizationService.AuthorizeAsync(
+                _httpContextAccessor.HttpContext.User, 
+                updatedEntity, 
+                Operations.GetOperationForCrudType(buttonCrudType));
 
             switch (buttonCrudType)
             {

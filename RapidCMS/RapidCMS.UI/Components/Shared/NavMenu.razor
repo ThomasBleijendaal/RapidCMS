@@ -1,5 +1,8 @@
 ﻿@using RapidCMS.Common.Models.DTOs
 @using RapidCMS.Common.Services
+@using RapidCMS.UI.Components.Login
+@using Microsoft.AspNetCore.Http
+
 
 @inject ICollectionService CollectionService
 @inject IUriHelper UriHelper
@@ -9,6 +12,8 @@
     {
         <a class="navbar-brand" href="">@RootEntity.SiteName</a>
     }
+
+    <LoginControl />
 </div>
 
 <div class="@NavMenuCssClass" onclick="@ToggleNavMenu">

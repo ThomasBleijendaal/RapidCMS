@@ -12,6 +12,7 @@ namespace RapidCMS.Common.Models.Config
     public class CmsConfig : ICollectionRoot
     {
         internal string SiteName { get; set; } = "RapidCMS";
+        internal bool AllowAnonymousUsage { get; set; } = false;
 
         public List<CollectionConfig> Collections { get; set; } = new List<CollectionConfig>();
         internal List<CustomButtonRegistration> CustomButtonRegistrations { get; set; } = new List<CustomButtonRegistration>();
@@ -42,6 +43,13 @@ namespace RapidCMS.Common.Models.Config
         public CmsConfig SetSiteName(string siteName)
         {
             SiteName = siteName;
+
+            return this;
+        }
+
+        public CmsConfig AllowAnonymousUser()
+        {
+            AllowAnonymousUsage = true;
 
             return this;
         }
