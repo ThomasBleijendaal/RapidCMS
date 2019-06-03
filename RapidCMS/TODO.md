@@ -12,6 +12,7 @@ TODO:
 [x] Checkbox form field
 [x] Nullable (numerics)
 [x] EditorValue obstrusiveness (weird get and set stuff)
+[] Validation on models / viewmodels
 [] Authentication
 [] Authorizations
     [] Hide buttons for actions user may not do 
