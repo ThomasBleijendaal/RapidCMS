@@ -248,6 +248,11 @@ namespace RapidCMS.Common.Services
                 updatedEntity, 
                 Operations.GetOperationForCrudType(buttonCrudType));
 
+            if (!isAuthorized.Succeeded)
+            {
+                throw new UnauthorizedAccessException()
+            }
+
             switch (buttonCrudType)
             {
                 case CrudType.View:
