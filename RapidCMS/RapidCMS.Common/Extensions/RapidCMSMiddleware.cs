@@ -30,6 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<Root>();
 
             services.AddTransient<ICollectionService, CollectionService>();
+            services.AddTransient<ITreeService, TreeService>();
             services.AddTransient<IUIService, UIService>();
 
             services.AddSingleton<DefaultValueMapper>();

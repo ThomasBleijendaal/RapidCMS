@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using RapidCMS.Common.Authorization;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models;
@@ -9,26 +13,36 @@ using RapidCMS.Common.Models.UI;
 
 namespace RapidCMS.Common.Services
 {
-
     internal class UIService : IUIService
     {
-        private readonly Root _root;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IAuthorizationService _authorizationService;
 
-        public UIService(Root root, IServiceProvider serviceProvider)
+        public UIService(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
         {
-            _root = root;
             _serviceProvider = serviceProvider;
+            _httpContextAccessor = httpContextAccessor;
+            _authorizationService = authorizationService;
         }
 
-        public NodeUI GenerateNodeUI(ViewContext viewContext, NodeEditor nodeEditor)
+        public async Task<NodeUI> GenerateNodeUIAsync(ViewContext viewContext, NodeEditor nodeEditor)
         {
             return new NodeUI
             {
-                Buttons = nodeEditor.Buttons
+                Buttons = await nodeEditor.Buttons
                     .GetAllButtons()
                     .Where(button => button.IsCompatibleWithView(viewContext))
-                    .ToList(button => button.ToUI()),
+                    .WhereAsync(async button =>
+                    {
+                        var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                            _httpContextAccessor.HttpContext.User,
+                            viewContext.RepresentativeEntity,
+                            Operations.GetOperationForCrudType(button.GetCrudType()));
+
+                        return authorizationChallenge.Succeeded;
+                    })
+                    .ToListAsync(button => button.ToUI()),
 
                 Sections = nodeEditor.EditorPanes
                     .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(viewContext.EntityVariant.Type))

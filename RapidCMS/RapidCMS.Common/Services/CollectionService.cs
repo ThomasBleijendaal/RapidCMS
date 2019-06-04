@@ -12,6 +12,7 @@ using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.DTOs;
 using RapidCMS.Common.Models.UI;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 #nullable enable
 
@@ -43,147 +44,15 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        // TODO: make tree configuration aware of editors and viewers
-        // TODO: convert to proper UI model
-        public async Task<CollectionTreeRootDTO> GetCollectionsAsync()
+        private OperationAuthorizationRequirement MapActionToOperation(string action)
         {
-            var result = new CollectionTreeRootDTO
+            return action switch
             {
-                SiteName = _root.SiteName,
-                Collections = await GetTreeViewForCollectionAsync(_root.Collections, null)
+                Constants.Edit => Operations.Update,
+                Constants.New => Operations.Create,
+                Constants.View => Operations.View,
+                _ => throw new InvalidOperationException()
             };
-
-            return result;
-        }
-
-        private static async Task<List<CollectionTreeCollectionDTO>> GetTreeViewForCollectionAsync(IEnumerable<Collection> collections, string? parentId)
-        {
-            var result = new List<CollectionTreeCollectionDTO>();
-
-            foreach (var collection in collections)
-            {
-                var dto = new CollectionTreeCollectionDTO
-                {
-                    Alias = collection.Alias,
-                    Name = collection.Name,
-                    RootVisible = collection.TreeView?.RootVisibility == CollectionRootVisibility.Visible
-                };
-
-                if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
-                {
-                    var entities = await collection.Repository._GetAllAsObjectsAsync(parentId);
-
-                    dto.Nodes = await entities.ToListAsync(async entity =>
-                    {
-                        var subCollections = collection.Collections.Any()
-                            ? await GetTreeViewForCollectionAsync(collection.Collections, entity.Id)
-                            : Enumerable.Empty<CollectionTreeCollectionDTO>();
-
-                        var entityVariant = collection.GetEntityVariant(entity);
-
-                        return new CollectionTreeNodeDTO
-                        {
-                            Id = entity.Id,
-                            Name = collection.TreeView.Name.StringGetter.Invoke(entity),
-                            Path = UriHelper.Node(Constants.Edit, collection.Alias, entityVariant, parentId, entity.Id),
-                            Collections = subCollections.ToList()
-                        };
-                    });
-                }
-
-                dto.Path = new List<CollectionTreePathDTO>();
-
-                if (collection.ListView != null)
-                {
-                    dto.Path.Add(new CollectionTreePathDTO
-                    {
-                        Icon = "list",
-                        Path = UriHelper.Collection(Constants.List, collection.Alias, parentId)
-                    });
-                }
-
-                if (collection.ListEditor != null)
-                {
-                    dto.Path.Add(new CollectionTreePathDTO
-                    {
-                        Icon = "list-rich",
-                        Path = UriHelper.Collection(Constants.Edit, collection.Alias, parentId)
-                    });
-                }
-
-                result.Add(dto);
-            }
-
-            return result;
-        }
-
-        public async Task<ListUI> GetCollectionListViewAsync(string action, string alias, string? variantAlias, string? parentId)
-        {
-            var collection = _root.GetCollection(alias);
-
-            var subEntityVariant = collection.GetEntityVariant(variantAlias);
-            var existingEntities = await collection.Repository._GetAllAsObjectsAsync(parentId);
-            IEnumerable<UISubject> entities;
-
-            if (action == Constants.New)
-            {
-                var newEntity = await collection.Repository._NewAsync(parentId, subEntityVariant.Type);
-
-                entities = new[] {
-                    new UISubject {
-                        Entity = newEntity,
-                        UsageType = MapActionToUsageType(Constants.New)
-                    }
-                }.Concat(existingEntities.Select(ent => new UISubject
-                {
-                    Entity = ent,
-                    UsageType = MapActionToUsageType(Constants.Edit)
-                }));
-            }
-            else
-            {
-                entities = existingEntities.Select(ent => new UISubject
-                {
-                    Entity = ent,
-                    UsageType = MapActionToUsageType(Constants.Edit)
-                });
-            }
-
-            var listViewContext = new ViewContext(UsageType.List | MapActionToUsageType(action), collection.EntityVariant);
-
-            if (action == Constants.List)
-            {
-                var editor = _uiService.GenerateListUI(
-                    listViewContext,
-                    (subject) => new ViewContext(UsageType.View | UsageType.Node, collection.GetEntityVariant(subject.Entity)),
-                    collection.ListView);
-
-                editor.Entities = entities;
-                editor.ListType = ListType.TableView;
-
-                return editor;
-            }
-            else if (action.In(Constants.Edit, Constants.New))
-            {
-                var editor = _uiService.GenerateListUI(
-                    listViewContext,
-                    (subject) =>
-                    {
-                        return new ViewContext(UsageType.Node | subject.UsageType, collection.GetEntityVariant(subject.Entity));
-                    },
-                    collection.ListEditor);
-
-                editor.Entities = entities;
-                editor.ListType = collection.ListEditor.ListEditorType == ListEditorType.Table
-                    ? ListType.TableEditor
-                    : ListType.BlockEditor;
-
-                return editor;
-            }
-            else
-            {
-                throw new NotImplementedException($"Cannot do {action} on GetCollectionListViewAsync");
-            }
         }
 
         public async Task<NodeUI> GetNodeEditorAsync(string action, string alias, string variantAlias, string? parentId, string? id)
@@ -192,6 +61,7 @@ namespace RapidCMS.Common.Services
 
             var entityVariant = collection.GetEntityVariant(variantAlias);
 
+            // TODO: change switch to use MapActionToUsageType
             var entity = action switch
             {
                 Constants.View => await collection.Repository._GetByIdAsync(id, parentId),
@@ -210,10 +80,20 @@ namespace RapidCMS.Common.Services
                 entityVariant = collection.GetEntityVariant(entity);
             }
 
-            var viewContext = new ViewContext(UsageType.Node | MapActionToUsageType(action), entityVariant);
+            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                _httpContextAccessor.HttpContext.User,
+                entity,
+                MapActionToOperation(action));
+
+            if (!authorizationChallenge.Succeeded)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            var viewContext = new ViewContext(UsageType.Node | MapActionToUsageType(action), entityVariant, entity);
             var nodeEditor = collection.NodeEditor;
 
-            var node = _uiService.GenerateNodeUI(viewContext, nodeEditor);
+            var node = await _uiService.GenerateNodeUIAsync(viewContext, nodeEditor);
 
             node.Subject = new UISubject
             {
@@ -243,14 +123,14 @@ namespace RapidCMS.Common.Services
                 await customButton.HandleActionAsync(parentId, id, customData);
             }
 
-            var isAuthorized = await _authorizationService.AuthorizeAsync(
+            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
                 _httpContextAccessor.HttpContext.User, 
                 updatedEntity, 
                 Operations.GetOperationForCrudType(buttonCrudType));
 
-            if (!isAuthorized.Succeeded)
+            if (!authorizationChallenge.Succeeded)
             {
-                throw new UnauthorizedAccessException()
+                throw new UnauthorizedAccessException();
             }
 
             switch (buttonCrudType)
@@ -285,6 +165,75 @@ namespace RapidCMS.Common.Services
             }
         }
 
+        public async Task<ListUI> GetCollectionListViewAsync(string action, string alias, string? variantAlias, string? parentId)
+        {
+            var collection = _root.GetCollection(alias);
+
+            var subEntityVariant = collection.GetEntityVariant(variantAlias);
+            var existingEntities = await collection.Repository._GetAllAsObjectsAsync(parentId);
+            IEnumerable<UISubject> entities;
+
+            var newEntity = await collection.Repository._NewAsync(parentId, subEntityVariant.Type);
+
+            if (action == Constants.New)
+            {
+                entities = new[] {
+                    new UISubject {
+                        Entity = newEntity,
+                        UsageType = MapActionToUsageType(Constants.New)
+                    }
+                }.Concat(existingEntities.Select(ent => new UISubject
+                {
+                    Entity = ent,
+                    UsageType = MapActionToUsageType(Constants.Edit)
+                }));
+            }
+            else
+            {
+                entities = existingEntities.Select(ent => new UISubject
+                {
+                    Entity = ent,
+                    UsageType = MapActionToUsageType(Constants.Edit)
+                });
+            }
+
+            var listViewContext = new ViewContext(UsageType.List | MapActionToUsageType(action), collection.EntityVariant, newEntity);
+
+            if (action == Constants.List)
+            {
+                var editor = _uiService.GenerateListUI(
+                    listViewContext,
+                    (subject) => new ViewContext(UsageType.View | UsageType.Node, collection.GetEntityVariant(subject.Entity), subject.Entity),
+                    collection.ListView);
+
+                editor.Entities = entities;
+                editor.ListType = ListType.TableView;
+
+                return editor;
+            }
+            else if (action.In(Constants.Edit, Constants.New))
+            {
+                var editor = _uiService.GenerateListUI(
+                    listViewContext,
+                    (subject) =>
+                    {
+                        return new ViewContext(UsageType.Node | subject.UsageType, collection.GetEntityVariant(subject.Entity), subject.Entity);
+                    },
+                    collection.ListEditor);
+
+                editor.Entities = entities;
+                editor.ListType = collection.ListEditor.ListEditorType == ListEditorType.Table
+                    ? ListType.TableEditor
+                    : ListType.BlockEditor;
+
+                return editor;
+            }
+            else
+            {
+                throw new NotImplementedException($"Cannot do {action} on GetCollectionListViewAsync");
+            }
+        }
+
         public async Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string actionId, object? customData)
         {
             var collection = _root.GetCollection(collectionAlias);
@@ -297,6 +246,18 @@ namespace RapidCMS.Common.Services
             if (button is CustomButton customButton)
             {
                 await customButton.HandleActionAsync(parentId, null, customData);
+            }
+
+            var entity = await collection.Repository._NewAsync(parentId, collection.EntityVariant.Type);
+
+            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                _httpContextAccessor.HttpContext.User,
+                entity,
+                Operations.GetOperationForCrudType(buttonCrudType));
+
+            if (!authorizationChallenge.Succeeded)
+            {
+                throw new UnauthorizedAccessException();
             }
 
             switch (buttonCrudType)
@@ -358,6 +319,16 @@ namespace RapidCMS.Common.Services
             if (button is CustomButton customButton)
             {
                 await customButton.HandleActionAsync(parentId, id, customData);
+            }
+
+            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                _httpContextAccessor.HttpContext.User,
+                updatedEntity,
+                Operations.GetOperationForCrudType(buttonCrudType));
+
+            if (!authorizationChallenge.Succeeded)
+            {
+                throw new UnauthorizedAccessException();
             }
 
             switch (buttonCrudType)

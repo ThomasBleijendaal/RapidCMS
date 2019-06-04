@@ -1,45 +1,40 @@
-﻿@using RapidCMS.Common.Models.DTOs
+﻿@using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Services
-@using RapidCMS.UI.Components.Login
-@using Microsoft.AspNetCore.Http
 
-
-@inject ICollectionService CollectionService
+@inject ITreeService TreeService
 @inject IUriHelper UriHelper
 
 <div class="top-row navbar navbar-dark">
-    @if (RootEntity != null)
+    @if (TreeRoot != null)
     {
-        <a class="navbar-brand" href="">@RootEntity.SiteName</a>
+        <a class="navbar-brand" href="">@TreeRoot.Name</a>
     }
 
-    <LoginControl />
+    @if  (CustomLogin != null)
+    {
+        @CustomLogin
+    }
 </div>
 
-<div class="@NavMenuCssClass" onclick="@ToggleNavMenu">
+<div>
     <ul class="nav flex-column">
-        @if (RootEntity != null)
+        @if (TreeRoot != null)
         {
-            @foreach (var collection in RootEntity.Collections)
+            @foreach (var collection in TreeRoot.Collections)
             {
-                <CollectionTreeView Collection="@collection" CurrentUrl="@currentUrl" />
+                <Tree CollectionAlias=@collection />
             }
         }
     </ul>
 </div>
 
 @functions {
-    bool collapseNavMenu = true;
+#nullable enable
 
-    string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    TreeRootUI? TreeRoot;
 
-    void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-
-    CollectionTreeRootDTO RootEntity;
-    string currentUrl;
+    [CascadingParameter(Name = "CustomLogin")]
+    private RenderFragment? CustomLogin { get; set; }
 
     protected override async Task OnInitAsync()
     {
@@ -50,40 +45,42 @@
 
     private async Task GetCollectionsAsync()
     {
-        RootEntity = await CollectionService.GetCollectionsAsync();
+        TreeRoot = TreeService.GetRoot();
     }
 
     private async void LocationChanged(object sender, string e)
     {
-        var uri = new Uri(e);
+        //var uri = new Uri(e);
 
-        currentUrl = uri.AbsolutePath?.Substring(1);
+        //currentUrl = uri.AbsolutePath?.Substring(1);
 
-        if (!FindUrl(RootEntity.Collections, currentUrl))
-        {
-            //await GetCollectionsAsync();
-        }
+        //if (!FindUrl(RootEntity.Collections, currentUrl))
+        //{
+        //    //await GetCollectionsAsync();
+        //}
 
         StateHasChanged();
     }
 
-    private bool FindUrl(IEnumerable<CollectionTreeCollectionDTO> collections, string url)
-    {
-        if (!(collections?.Any() ?? false))
-        {
-            return false;
-        }
-        else if (collections.Any(x => x.Path.Any(x => x.Path == url)))
-        {
-            return true;
-        }
-        else if (collections.Where(x => x.Nodes != null).SelectMany(x => x.Nodes).Any(x => x.Path == url))
-        {
-            return true;
-        }
-        else
-        {
-            return FindUrl(collections.Where(x => x.Nodes != null).SelectMany(x => x.Nodes.SelectMany(y => y.Collections)), url);
-        }
-    }
+    // TODO: find solution for this
+
+    //private bool FindUrl(IEnumerable<CollectionTreeCollectionDTO> collections, string url)
+    //{
+    //    if (!(collections?.Any() ?? false))
+    //    {
+    //        return false;
+    //    }
+    //    else if (collections.Any(x => x.Path.Any(x => x.Path == url)))
+    //    {
+    //        return true;
+    //    }
+    //    else if (collections.Where(x => x.Nodes != null).SelectMany(x => x.Nodes).Any(x => x.Path == url))
+    //    {
+    //        return true;
+    //    }
+    //    else
+    //    {
+    //        return FindUrl(collections.Where(x => x.Nodes != null).SelectMany(x => x.Nodes.SelectMany(y => y.Collections)), url);
+    //    }
+    //}
 }

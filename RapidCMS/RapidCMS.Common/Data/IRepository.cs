@@ -13,6 +13,12 @@ namespace RapidCMS.Common.Data
         Task<IEntity> _GetByIdAsync(string id, string? parentId);
         Task<IEnumerable<IEntity>> _GetAllAsObjectsAsync(string? parentId);
 
+        /// <summary>
+        /// Create a new entity in-memory.
+        /// </summary>
+        /// <param name="parentId"></param>
+        /// <param name="variantType"></param>
+        /// <returns></returns>
         Task<IEntity> _NewAsync(string? parentId, Type? variantType);
         Task<IEntity> _InsertAsync(string? parentId, IEntity entity, IRelationContainer relations);
         Task _UpdateAsync(string id, string? parentId, IEntity entity, IRelationContainer relations);

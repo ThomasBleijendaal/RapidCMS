@@ -1,0 +1,47 @@
+﻿@using RapidCMS.Common.Models.UI
+@using RapidCMS.Common.Services
+
+@inject ITreeService TreeService
+
+@if (UI != null)
+{
+    <ul class="nav flex-column">
+        @foreach (var node in UI)
+        {
+            <li class="nav-item px-3">
+                @if (node.Path != null)
+                {
+                    <NavLink href=@node.Path>@node.Name</NavLink>
+                }
+                else
+                {
+                    <a href="#"><i class="oi oi-lock-locked"></i> @node.Name</a>
+                }
+
+                <ul class="nav flex-column">
+                    @foreach (var subCollection in node.Collections)
+                    {
+                        <Tree CollectionAlias=@subCollection ParentId=@node.Id />
+                    }
+                </ul>
+            </li>
+        }
+    </ul>
+}
+
+@functions {
+#nullable enable
+
+    List<TreeNodeUI>? UI;
+
+    protected override async Task OnInitAsync()
+    {
+        UI = await TreeService.GetNodesAsync(CollectionAlias, ParentId);
+    }
+
+    [Parameter]
+    private string CollectionAlias { get; set; }
+
+    [Parameter]
+    private string? ParentId { get; set; } = null;
+}

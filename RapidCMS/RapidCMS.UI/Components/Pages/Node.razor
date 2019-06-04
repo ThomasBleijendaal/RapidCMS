@@ -13,12 +13,7 @@
 @if (UI == null)
 {
     <div class="content">
-        <div class="top-row">
-
-        </div>
-        <div class="content">
-            <p>Loading..</p>
-        </div>
+        <p>Loading..</p>
     </div>
 }
 else
@@ -67,11 +62,6 @@ else
 
     NodeUI? UI;
 
-    protected override async Task OnParametersSetAsync()
-    {
-        await LoadDataAsync();
-    }
-
     protected override async Task LoadDataAsync()
     {
         try
@@ -83,6 +73,8 @@ else
         catch
         {
             UI = null;
+
+            throw;
         }
     }
 

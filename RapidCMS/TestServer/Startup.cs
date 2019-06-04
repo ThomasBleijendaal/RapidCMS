@@ -1,13 +1,12 @@
 ﻿using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +19,7 @@ using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.ValueMappers;
 using TestLibrary;
+using TestLibrary.Authorization;
 using TestLibrary.Data;
 using TestLibrary.DataProvider;
 using TestLibrary.Entities;
@@ -27,6 +27,7 @@ using TestLibrary.Repositories;
 using TestServer.ActionHandlers;
 using TestServer.Components.CustomButtons;
 using TestServer.Components.CustomEditors;
+using TestServer.Components.CustomLogin;
 using TestServer.Components.CustomSections;
 
 namespace TestServer
@@ -44,6 +45,8 @@ namespace TestServer
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            #region Authorization
+
             // ***********************************************
             // For more info on:
             // Microsoft.AspNetCore.Authentication.AzureAD.UI
@@ -112,6 +115,8 @@ namespace TestServer
                 };
             });
 
+            #endregion
+
             services.AddDbContext<TestDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString"));
@@ -137,13 +142,17 @@ namespace TestServer
 
             services.AddTransient<DummyDataProvider>();
 
+            services.AddSingleton<IAuthorizationHandler, CountryEntityAuthorizationHandler>();
+
             services.AddRapidCMS(config =>
             {
-                config.AllowAnonymousUser();
+                // config.AllowAnonymousUser();
 
                 config.AddCustomButton(typeof(CreateButton<>));
                 config.AddCustomEditor(typeof(PasswordEditor));
                 config.AddCustomSection(typeof(DashboardSection));
+
+                config.SetCustomLogin(typeof(LoginControl));
 
                 config.SetSiteName("Test Client");
 

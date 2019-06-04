@@ -34,6 +34,7 @@ namespace RapidCMS.Common.Models
             CustomButtonRegistrations = cmsConfig.CustomButtonRegistrations.ToList();
             CustomEditorRegistrations = cmsConfig.CustomEditorRegistrations.ToList();
             CustomSectionRegistrations = cmsConfig.CustomSectionRegistrations.ToList();
+            CustomLoginRegistration = cmsConfig.CustomLoginRegistration;
 
             Collections = cmsConfig.ProcessCollections(serviceProvider);
 
@@ -44,9 +45,10 @@ namespace RapidCMS.Common.Models
 
         private Dictionary<string, Collection> _collectionMap { get; set; } = new Dictionary<string, Collection>();
 
-        public List<CustomButtonRegistration> CustomButtonRegistrations { get; internal set; }
-        public List<CustomEditorRegistration> CustomEditorRegistrations { get; internal set; }
-        public List<CustomSectionRegistration> CustomSectionRegistrations { get; internal set; }
+        public List<CustomTypeRegistration> CustomButtonRegistrations { get; internal set; }
+        public List<CustomTypeRegistration> CustomEditorRegistrations { get; internal set; }
+        public List<CustomTypeRegistration> CustomSectionRegistrations { get; internal set; }
+        public CustomTypeRegistration? CustomLoginRegistration { get; internal set; }
 
         public List<Collection> Collections { get; set; }
 
@@ -79,41 +81,16 @@ namespace RapidCMS.Common.Models
         }
     }
 
-    // TODO: check if these Registration classes can be merged
-    public class CustomButtonRegistration
+    public class CustomTypeRegistration
     {
-        internal CustomButtonRegistration(Type buttonType)
+        internal CustomTypeRegistration(Type type)
         {
-            ButtonType = buttonType ?? throw new ArgumentNullException(nameof(buttonType));
-            ButtonAlias = buttonType.FullName;
+            Type = type ?? throw new ArgumentNullException(nameof(type));
+            Alias = type.FullName;
         }
 
-        public Type ButtonType { get; set; }
-        public string ButtonAlias { get; set; }
-    }
-
-    public class CustomEditorRegistration
-    {
-        internal CustomEditorRegistration(Type editorType)
-        {
-            EditorType = editorType ?? throw new ArgumentNullException(nameof(editorType));
-            EditorAlias = editorType.FullName;
-        }
-
-        public Type EditorType { get; set; }
-        public string EditorAlias { get; set; }
-    }
-
-    public class CustomSectionRegistration
-    {
-        internal CustomSectionRegistration(Type sectionType)
-        {
-            SectionType = sectionType ?? throw new ArgumentNullException(nameof(sectionType));
-            SectionAlias = sectionType.FullName;
-        }
-
-        public Type SectionType { get; set; }
-        public string SectionAlias { get; set; }
+        public Type Type { get; set; }
+        public string Alias { get; set; }
     }
 
     public class Collection

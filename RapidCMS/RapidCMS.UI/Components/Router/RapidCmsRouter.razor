@@ -4,7 +4,9 @@
 <CascadingValue Value="@CustomButtonContainer" Name="CustomButtons">
     <CascadingValue Value="@CustomEditorContainer" Name="CustomEditors">
         <CascadingValue Value="@CustomSectionContainer" Name="CustomSections">
-            <Router AppAssembly="typeof(RapidCmsRouter).Assembly" />
+            <CascadingValue Value="@CustomLogin" Name="CustomLogin">
+                <Router AppAssembly="typeof(RapidCmsRouter).Assembly" />
+            </CascadingValue>
         </CascadingValue>
     </CascadingValue>
 </CascadingValue>
@@ -17,6 +19,8 @@
     private CustomEditorContainer CustomEditorContainer { get; set; } = new CustomEditorContainer(null);
     private CustomSectionContainer CustomSectionContainer { get; set; } = new CustomSectionContainer(null);
 
+    private RenderFragment? CustomLogin { get; set; }
+
     [Inject]
     private Root Root { get; set; }
 
@@ -25,6 +29,8 @@
         CustomButtonContainer = new CustomButtonContainer(Root.CustomButtonRegistrations);
         CustomEditorContainer = new CustomEditorContainer(Root.CustomEditorRegistrations);
         CustomSectionContainer = new CustomSectionContainer(Root.CustomSectionRegistrations);
+
+        CustomLogin = Root.CustomLoginRegistration.ToRenderFragment();
 
         return base.OnParametersSetAsync();
     }

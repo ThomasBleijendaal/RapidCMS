@@ -1,4 +1,6 @@
-﻿namespace RapidCMS.Common.Models.DTOs
+﻿#nullable enable
+
+namespace RapidCMS.Common.Models.DTOs
 {
     public abstract class ViewCommand
     {

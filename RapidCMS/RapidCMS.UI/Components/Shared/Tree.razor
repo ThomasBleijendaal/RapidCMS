@@ -1,0 +1,51 @@
+﻿@using RapidCMS.Common.Models.UI
+@using RapidCMS.Common.Services
+
+@inject ITreeService TreeService
+
+@if (UI == null)
+{
+    <li>Loading tree..</li>
+}
+else if (UI.RootVisible)
+{
+    <li class="nav-item px-3">
+        @if (UI.Path != null)
+        {
+            <button onclick="@((UIMouseEventArgs e) => NodesVisible = !NodesVisible)">Toggle node visibility</button>
+            <NavLink href=@UI.Path><i class="oi oi-@UI.Icon"></i> @UI.Name</NavLink>
+
+            @if (NodesVisible)
+            {
+                <Nodes CollectionAlias=@CollectionAlias ParentId=@ParentId />
+            }
+        }
+        else
+        {
+            <a href="#"><i class="oi oi-lock-locked"></i> @UI.Name</a>
+        }
+    </li>
+}
+else
+{
+    <Nodes CollectionAlias=@CollectionAlias ParentId=@ParentId />
+}
+
+@functions {
+#nullable enable
+
+    bool NodesVisible = false;
+
+    TreeUI? UI;
+
+    protected override async Task OnInitAsync()
+    {
+        UI = await TreeService.GetTreeAsync(CollectionAlias, ParentId);
+    }
+
+    [Parameter]
+    private string CollectionAlias { get; set; }
+
+    [Parameter]
+    private string? ParentId { get; set; } = null;
+}

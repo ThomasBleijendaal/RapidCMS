@@ -14,12 +14,7 @@
 @if (UI == null)
 {
     <div class="content">
-        <div class="top-row">
-
-        </div>
-        <div class="content">
-            <p>Loading..</p>
-        </div>
+        <p>Loading..</p>
     </div>
 }
 else
@@ -125,7 +120,7 @@ else
                                                 var node = new NodeUI
                                                 {
                                                     Sections = new List<SectionUI>
-                                                    {
+                                                                {
                                                         section
                                                     },
                                                     Subject = subject
@@ -157,7 +152,7 @@ else
                             var node = new NodeUI
                             {
                                 Sections = new List<SectionUI>
-                                {
+                            {
                                     section
                                 },
                                 Subject = subject
@@ -196,16 +191,20 @@ else
 
     ListUI? UI;
 
-    protected override async Task OnParametersSetAsync()
-    {
-        await LoadDataAsync();
-    }
-
     protected override async Task LoadDataAsync()
     {
-        UI = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, VariantAlias, ParentId);
+        try
+        {
+            UI = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, VariantAlias, ParentId);
 
-        StateHasChanged();
+            StateHasChanged();
+        }
+        catch
+        {
+            UI = null;
+
+            throw;
+        }
     }
 
     async Task ButtonCallbackAsync(string actionId, BasePage view, object? customData)

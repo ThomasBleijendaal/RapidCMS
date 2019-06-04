@@ -2,33 +2,18 @@
 @using Microsoft.AspNetCore.Http
 
 @inject IHttpContextAccessor _httpContextAccessor
-@inject HttpClient Http
-<!--
-
-The Microsoft.AspNetCore.Authentication.AzureAD.UI
-
-NuGet package creates a 'virtual' controller that
-
-contains code that allows the
-
- /Account/signin and /Account/signout
-
- links to work
-
--->
 
 @if (User.Identity.Name != null)
 {
-    <b>You are logged in as: @GivenName</b>
-    <a class="ml-md-auto btn btn-primary"
-       href="/AzureAD/Account/SignOut?post_logout_redirect_uri=@RedirectUri"
-       target="_top">Logout</a>
+    <a class="btn btn-primary" href="#">
+        <i class="oi oi-person"></i>
+        @GivenName
+    </a>
+    <a class="btn btn-primary" href="/AzureAD/Account/SignOut?post_logout_redirect_uri=@RedirectUri" target="_top">Logout</a>
 }
 else
 {
-    <a class="ml-md-auto btn btn-primary"
-       href="/AzureAD/Account/SignIn?redirectUri=@RedirectUri"
-       target="_top">Login</a>
+    <a class="btn btn-primary" href="/AzureAD/Account/SignIn?redirectUri=@RedirectUri" target="_top">Login</a>
 }
 
 @functions {
@@ -43,9 +28,7 @@ else
             // Set the user to determine if they are logged in
             User = _httpContextAccessor.HttpContext.User;
             // Try to get the GivenName
-            var givenName =
-                _httpContextAccessor.HttpContext.User
-                .FindFirst(ClaimTypes.GivenName);
+            var givenName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.GivenName);
             if (givenName != null)
             {
                 GivenName = givenName.Value;

@@ -5,6 +5,8 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Helpers;
 
+#nullable enable
+
 namespace RapidCMS.Common.Models.Config
 {
     // TODO: validate incoming parameters
@@ -15,27 +17,35 @@ namespace RapidCMS.Common.Models.Config
         internal bool AllowAnonymousUsage { get; set; } = false;
 
         public List<CollectionConfig> Collections { get; set; } = new List<CollectionConfig>();
-        internal List<CustomButtonRegistration> CustomButtonRegistrations { get; set; } = new List<CustomButtonRegistration>();
-        internal List<CustomEditorRegistration> CustomEditorRegistrations { get; set; } = new List<CustomEditorRegistration>();
-        internal List<CustomSectionRegistration> CustomSectionRegistrations { get; set; } = new List<CustomSectionRegistration>();
+        internal List<CustomTypeRegistration> CustomButtonRegistrations { get; set; } = new List<CustomTypeRegistration>();
+        internal List<CustomTypeRegistration> CustomEditorRegistrations { get; set; } = new List<CustomTypeRegistration>();
+        internal List<CustomTypeRegistration> CustomSectionRegistrations { get; set; } = new List<CustomTypeRegistration>();
+        internal CustomTypeRegistration? CustomLoginRegistration { get; set; }
 
         public CmsConfig AddCustomButton(Type buttonType)
         {
-            CustomButtonRegistrations.Add(new CustomButtonRegistration(buttonType));
+            CustomButtonRegistrations.Add(new CustomTypeRegistration(buttonType));
 
             return this;
         }
 
         public CmsConfig AddCustomEditor(Type editorType)
         {
-            CustomEditorRegistrations.Add(new CustomEditorRegistration(editorType));
+            CustomEditorRegistrations.Add(new CustomTypeRegistration(editorType));
 
             return this;
         }
 
         public CmsConfig AddCustomSection(Type sectionType)
         {
-            CustomSectionRegistrations.Add(new CustomSectionRegistration(sectionType));
+            CustomSectionRegistrations.Add(new CustomTypeRegistration(sectionType));
+
+            return this;
+        }
+
+        public CmsConfig SetCustomLogin(Type loginType)
+        {
+            CustomLoginRegistration = new CustomTypeRegistration(loginType);
 
             return this;
         }

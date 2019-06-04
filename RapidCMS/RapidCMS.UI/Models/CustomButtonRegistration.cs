@@ -19,16 +19,16 @@ namespace RapidCMS.UI.Models
     {
         private Dictionary<string, Func<Type, RenderFragment>> _customButtons = new Dictionary<string, Func<Type, RenderFragment>>();
 
-        public CustomButtonContainer(IEnumerable<CustomButtonRegistration>? registrations)
+        public CustomButtonContainer(IEnumerable<CustomTypeRegistration>? registrations)
         {
             // TODO: make similair to CustomEditorContainer
             if (registrations != null)
             {
                 foreach (var registration in registrations)
                 {
-                    _customButtons.Add(registration.ButtonAlias, (contextType) => builder =>
+                    _customButtons.Add(registration.Alias, (contextType) => builder =>
                     {
-                        var genericButtonType = registration.ButtonType.MakeGenericType(contextType);
+                        var genericButtonType = registration.Type.MakeGenericType(contextType);
 
                         builder.OpenComponent(0, genericButtonType);
                         builder.CloseComponent();
@@ -47,13 +47,13 @@ namespace RapidCMS.UI.Models
 
     public class CustomEditorContainer
     {
-        private Dictionary<string, CustomEditorRegistration>? _customButtons;
+        private Dictionary<string, CustomTypeRegistration>? _customButtons;
 
-        public CustomEditorContainer(IEnumerable<CustomEditorRegistration>? registrations)
+        public CustomEditorContainer(IEnumerable<CustomTypeRegistration>? registrations)
         {
             if (registrations != null)
             {
-                _customButtons = registrations.ToDictionary(x => x.EditorAlias);
+                _customButtons = registrations.ToDictionary(x => x.Alias);
             }
         }
 
@@ -63,7 +63,7 @@ namespace RapidCMS.UI.Models
             {
                 return builder =>
                 {
-                    var editorType = registration.EditorType;
+                    var editorType = registration.Type;
 
                     builder.OpenComponent(0, editorType);
 
@@ -84,13 +84,13 @@ namespace RapidCMS.UI.Models
 
     public class CustomSectionContainer
     {
-        private Dictionary<string, CustomSectionRegistration>? _customButtons;
+        private Dictionary<string, CustomTypeRegistration>? _customButtons;
 
-        public CustomSectionContainer(IEnumerable<CustomSectionRegistration>? registrations)
+        public CustomSectionContainer(IEnumerable<CustomTypeRegistration>? registrations)
         {
             if (registrations != null)
             {
-                _customButtons = registrations.ToDictionary(x => x.SectionAlias);
+                _customButtons = registrations.ToDictionary(x => x.Alias);
             }
         }
 
@@ -100,7 +100,7 @@ namespace RapidCMS.UI.Models
             {
                 return builder =>
                 {
-                    builder.OpenComponent(0, registration.SectionType);
+                    builder.OpenComponent(0, registration.Type);
 
                     builder.AddAttribute(1, nameof(BaseSection.Section), section);
                     builder.AddAttribute(2, nameof(BaseSection.Subject), subject);
@@ -110,6 +110,26 @@ namespace RapidCMS.UI.Models
             }
 
             return null;
+        }
+    }
+
+    // TODO: extend with attributes
+    public static class CustomRegistrationRenderFragmentExtensions
+    {
+        public static RenderFragment? ToRenderFragment(this CustomTypeRegistration? registration)
+        {
+            if (registration != null)
+            {
+                return builder =>
+                {
+                    builder.OpenComponent(0, registration.Type);
+                    builder.CloseComponent();
+                };
+            }
+            else
+            {
+                return default;
+            }
         }
     }
 }

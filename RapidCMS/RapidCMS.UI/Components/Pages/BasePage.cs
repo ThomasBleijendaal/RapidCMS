@@ -71,6 +71,22 @@ namespace RapidCMS.UI.Components.Pages
             }
         }
 
+        protected override async Task OnParametersSetAsync()
+        {
+            try
+            {
+                await LoadDataAsync();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                UriHelper.NavigateTo("/unauthorized");
+            }
+            catch (Exception ex)
+            {
+                // crash burn
+            }
+        }
+
         protected virtual Task LoadDataAsync()
         {
             return Task.CompletedTask;
