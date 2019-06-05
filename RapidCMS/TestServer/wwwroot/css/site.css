@@ -2,7 +2,11 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background: #f3f3f0;
+    background: #f8f8f8;
+}
+
+.oi {
+    font-size: 15px !important;
 }
 
 app {
@@ -36,14 +40,13 @@ app {
     }
 
 .sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
-    background-attachment: fixed;
+    background-color: #eeeeee;
 }
 
     .sidebar .top-row {
         margin: 0;
         padding: 0 1rem;
-        background-color: rgba(0,0,0,0.4);
+        background-color: #03AAF3;
     }
 
     .sidebar .navbar-brand {
@@ -57,13 +60,31 @@ app {
         top: -2px;
     }
 
+ul {
+    margin: 0;
+    padding: 0;
+}
+li {
+    margin: 0;
+    padding: 0 0 0 1rem;
+}
+
 .nav-item {
     font-size: 0.9rem;
 }
 
+    .nav-item .toggle {
+        border: 0;
+        background: none;
+        margin: .9rem 0 0 -.5rem;
+        padding: 0;
+        float: left;
+        width: 1.5rem;
+    }
+
     .nav-item a {
         padding: 0 1rem;
-        color: #d7d7d7;
+        color: #070707;
         border-radius: 4px;
         height: 3rem;
         display: flex;
@@ -71,14 +92,24 @@ app {
         line-height: 2rem;
     }
 
+        .nav-item a.disabled {
+            color: #070707;
+        }
+
         .nav-item a.active {
-            background-color: rgba(255,255,255,0.25);
-            color: white;
+            background-color: rgba(255,255,255,0.5);
+            color: #070707;
         }
 
         .nav-item a:hover {
-            background-color: rgba(255,255,255,0.1);
-            color: white;
+            background-color: rgba(255,255,255,0.5);
+            color: #070707;
+            text-decoration: none;
+        }
+
+        .nav-item a.disabled:hover {
+            background-color: rgba(255,0,0,0.1);
+            color: #070707;
         }
 
 .content {
@@ -110,10 +141,13 @@ app {
 
 .sidebar {
     width: 450px;
-    height: 100vh;
-    overflow-y: scroll;
     position: sticky;
     top: 0;
+}
+
+.navroot {
+    height: calc(100vh - 3.5rem);
+    overflow-y: scroll;
 }
 
 .navbar-toggler {

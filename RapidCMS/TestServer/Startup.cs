@@ -146,7 +146,7 @@ namespace TestServer
 
             services.AddRapidCMS(config =>
             {
-                // config.AllowAnonymousUser();
+                config.AllowAnonymousUser();
 
                 config.AddCustomButton(typeof(CreateButton<>));
                 config.AddCustomEditor(typeof(PasswordEditor));

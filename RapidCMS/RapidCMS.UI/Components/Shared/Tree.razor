@@ -9,20 +9,29 @@
 }
 else if (UI.RootVisible)
 {
-    <li class="nav-item px-3">
-        @if (UI.Path != null)
-        {
-            <button onclick="@((UIMouseEventArgs e) => NodesVisible = !NodesVisible)">Toggle node visibility</button>
-            <NavLink href=@UI.Path><i class="oi oi-@UI.Icon"></i> @UI.Name</NavLink>
-
+    <li class="nav-item">
+        <button onclick="@((UIMouseEventArgs e) => NodesVisible = !NodesVisible)" class="toggle">
             @if (NodesVisible)
             {
-                <Nodes CollectionAlias=@CollectionAlias ParentId=@ParentId />
+                <i class="oi oi-chevron-bottom"></i>
             }
+            else
+            {
+                <i class="oi oi-chevron-right"></i>
+            }
+        </button>
+
+        @if (UI.Path != null)
+        {
+            <NavLink href=@UI.Path><i class="oi oi-@UI.Icon"></i> @UI.Name</NavLink>
         }
         else
         {
-            <a href="#"><i class="oi oi-lock-locked"></i> @UI.Name</a>
+            <a href="#" class="disabled"><i class="oi oi-lock-locked"></i> @UI.Name</a>
+        }
+        @if (NodesVisible)
+        {
+            <Nodes CollectionAlias=@CollectionAlias ParentId=@ParentId />
         }
     </li>
 }

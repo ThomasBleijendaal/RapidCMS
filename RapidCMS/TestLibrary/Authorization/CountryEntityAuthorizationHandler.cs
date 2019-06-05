@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
-using RapidCMS.Common.Authorization;
 using TestLibrary.Entities;
 
 namespace TestLibrary.Authorization
@@ -10,11 +9,8 @@ namespace TestLibrary.Authorization
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, OperationAuthorizationRequirement requirement, CountryEntity resource)
         {
-            if (requirement == Operations.View)
-            {
-                context.Succeed(requirement);
-            }
-
+            context.Succeed(requirement);
+            
             return Task.CompletedTask;
         }
     }
