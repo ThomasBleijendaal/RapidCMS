@@ -5,15 +5,10 @@
 
 TODO:
 
-[x] Sticky upper button bar
-[x] Make SetTreeView not required
-[x] EditorPane general label
-[x] ListEditorPaneConfig does not accept CustomButton
-[x] Checkbox form field
-[x] Nullable (numerics)
-[x] EditorValue obstrusiveness (weird get and set stuff)
+1.0
+[] Form validation
 [] Validation on models / viewmodels
-[x] Authentication
+[] Reordering
 [x] Authorizations
     [] Hide buttons for actions user may not do 
     [] NodeView
@@ -22,8 +17,6 @@ TODO:
     [] ListEditor
 [] Add NodeView to setup to allow for explicit node viewing configurations (node editor is not easily convertable)
 [] Property, Field, etc naming not totally consistent -> Refactor all names and methods
-[] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)
-[] IEntity.Id requirement is obstrusive
 [x] SetOneToManyRelation with collection 
     - Must be able to pass parentId into Repository
     [x] DataCollection is transient helper class which contains the data for the relation (single or multiple entities)
@@ -36,23 +29,24 @@ TODO:
 [] Extensible Dropdown (type ahead style insert of new elements + automatic update when used in list views)
 [] ValueMapper is obstrusive (not able to cast int to long should not be an issue)
     [] Find solution for ValueMapper use in ListViewConfig -> automatic valuemapper selection for given type + add it back to config + call it DisplayMapper
-[] Explore if ValueMapper can be skipped since editors are using late resolving of value -> cannot be skipped in ListViewConfig but should be skipped in editors
-[] Recursive collection + check for recursion
+    [] Explore if ValueMapper can be skipped since editors are using late resolving of value -> cannot be skipped in ListViewConfig but should be skipped in editors
 [x] Relation support (one-many + many-many via discrete call on Repository) 
     [] recursive delete 
     [] EFCore support (non-transient DbContext)
 [] Pagination (consistent during session)
-[] Form validation
-[] Reordering
-[] Editor visibility based upon predicates of current IEntity or evaluation by some object
 [] Redirect after deletion + consistent pagination / Return to parent button action
 [] AddSubCollectionListEditor should not create new pane (should be configured by user)
-[x] Confirmation on button should make it danger
 [] EnumDataTypeProvider support
 [] Top button bar should be side bar with meta
-[] Bind CustomButton and ActionHandler more together
 [] Allow for IExpressionMetadata is list views
+[] Recursive collection + check for recursion
+
+2.0
+[] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)
 [] Different set of collections for different entity variant (probably not needed)
+[] Bind CustomButton and ActionHandler more together
+[] IEntity.Id requirement is obstrusive
+[] Editor visibility based upon predicates of current IEntity or evaluation by some object
 
 [] All config checked during startup
 [] Unit tests
