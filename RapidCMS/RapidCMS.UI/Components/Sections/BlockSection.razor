@@ -24,7 +24,9 @@
                     <div class="col-10">
                         @if (Subject.UsageType == UsageType.View)
                         {
-                            @field.Expression.StringGetter(Subject.Entity)
+                            // TODO: make view first class and rely on StringGetter and not ReadOnly input
+                            // @field.Expression.StringGetter(Subject.Entity)
+                            <Readonly Property="field.Property" Entity="@Subject.Entity" ValueMapper="field.ValueMapper" />
                         }
                         else
                         {

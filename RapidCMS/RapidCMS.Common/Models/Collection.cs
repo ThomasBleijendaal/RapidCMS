@@ -16,6 +16,7 @@ using RapidCMS.Common.Models.Metadata;
 namespace RapidCMS.Common.Models
 {
     // TODO: static root stuff is horrible
+    // TODO: fix nullables
 
     public interface ICollectionResolver
     {

@@ -51,6 +51,7 @@ namespace RapidCMS.Common.Services
                 Constants.Edit => Operations.Update,
                 Constants.New => Operations.Create,
                 Constants.View => Operations.View,
+                Constants.List => Operations.List,
                 _ => throw new InvalidOperationException()
             };
         }
@@ -170,10 +171,21 @@ namespace RapidCMS.Common.Services
             var collection = _root.GetCollection(alias);
 
             var subEntityVariant = collection.GetEntityVariant(variantAlias);
-            var existingEntities = await collection.Repository._GetAllAsObjectsAsync(parentId);
-            IEnumerable<UISubject> entities;
-
             var newEntity = await collection.Repository._NewAsync(parentId, subEntityVariant.Type);
+
+            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                _httpContextAccessor.HttpContext.User,
+                newEntity,
+                MapActionToOperation(action));
+
+            if (!authorizationChallenge.Succeeded)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            var existingEntities = await collection.Repository._GetAllAsObjectsAsync(parentId);
+
+            IEnumerable<UISubject> entities;
 
             if (action == Constants.New)
             {
@@ -201,7 +213,7 @@ namespace RapidCMS.Common.Services
 
             if (action == Constants.List)
             {
-                var editor = _uiService.GenerateListUI(
+                var editor = await _uiService.GenerateListUIAsync(
                     listViewContext,
                     (subject) => new ViewContext(UsageType.View | UsageType.Node, collection.GetEntityVariant(subject.Entity), subject.Entity),
                     collection.ListView);
@@ -213,7 +225,7 @@ namespace RapidCMS.Common.Services
             }
             else if (action.In(Constants.Edit, Constants.New))
             {
-                var editor = _uiService.GenerateListUI(
+                var editor = await _uiService.GenerateListUIAsync(
                     listViewContext,
                     (subject) =>
                     {

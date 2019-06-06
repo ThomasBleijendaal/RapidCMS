@@ -43,10 +43,10 @@ else
 
                                 foreach (var subject in UI.Entities)
                                 {
-                                    var pane = UI.SectionForEntity(subject);
-                                    hasButtons = hasButtons || (pane.Buttons?.Any() ?? false);
+                                    var section = SubjectToSectionMap[subject.Entity.Id];
+                                    hasButtons = hasButtons || (section.Buttons?.Any() ?? false);
 
-                                    foreach (var element in pane.Elements)
+                                    foreach (var element in section.Elements)
                                     {
                                         if (element is FieldWithLabelUI field)
                                         {
@@ -74,7 +74,7 @@ else
                     <tbody>
                         @foreach (var subject in UI.Entities)
                         {
-                            var section = UI.SectionForEntity(subject);
+                            var section = SubjectToSectionMap[subject.Entity.Id];
                             var index = 0;
 
                             <tr>
@@ -120,7 +120,7 @@ else
                                                 var node = new NodeUI
                                                 {
                                                     Sections = new List<SectionUI>
-                                                                {
+                                                    {
                                                         section
                                                     },
                                                     Subject = subject
@@ -143,7 +143,7 @@ else
             {
                 @foreach (var subject in UI.Entities)
                 {
-                    var section = UI.SectionForEntity(subject);
+                    var section = SubjectToSectionMap[subject.Entity.Id];
 
                     <div class="top-row">
                         @foreach (var button in section.Buttons)
@@ -152,7 +152,7 @@ else
                             var node = new NodeUI
                             {
                                 Sections = new List<SectionUI>
-                            {
+                                {
                                     section
                                 },
                                 Subject = subject
@@ -164,7 +164,14 @@ else
                         }
                     </div>
 
-                    <BlockSection Section="section" Subject="subject" />
+                    if (!string.IsNullOrEmpty(section.CustomAlias))
+                    {
+                        @CustomSections.GetCustomSection(section.CustomAlias, section, subject);
+                    }
+                    else
+                    {
+                        <BlockSection Section="section" Subject="subject" />
+                    }
                 }
             }
         </div>
@@ -190,12 +197,25 @@ else
     private string? Id { get; set; } = null;
 
     ListUI? UI;
+    Dictionary<string, SectionUI> SubjectToSectionMap;
 
     protected override async Task LoadDataAsync()
     {
         try
         {
             UI = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, VariantAlias, ParentId);
+
+            // TODO: find better and nicer solution
+            // pulling all the entities through the UI since this is the only place where async works..
+            if (UI != null)
+            {
+                SubjectToSectionMap= new Dictionary<string, SectionUI>();
+
+                foreach (var subject in UI.Entities)
+                {
+                    SubjectToSectionMap.Add(subject.Entity.Id, await UI.SectionForEntityAsync(subject));
+                }
+            }
 
             StateHasChanged();
         }

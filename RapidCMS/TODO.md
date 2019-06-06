@@ -15,6 +15,7 @@ TODO:
     [x] NodeEditor
     [] ListView
     [] ListEditor
+[] Custom Section support in Collection.razor (lists) (RowSection)
 [] Add NodeView to setup to allow for explicit node viewing configurations (node editor is not easily convertable)
 [] Property, Field, etc naming not totally consistent -> Refactor all names and methods
 [x] SetOneToManyRelation with collection 
@@ -40,6 +41,7 @@ TODO:
 [] Top button bar should be side bar with meta
 [] Allow for IExpressionMetadata is list views
 [] Recursive collection + check for recursion
+[] Navigation command during pre-render (server side rendering) fails
 
 2.0
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)

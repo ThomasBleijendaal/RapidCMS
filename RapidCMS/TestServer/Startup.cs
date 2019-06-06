@@ -143,6 +143,7 @@ namespace TestServer
             services.AddTransient<DummyDataProvider>();
 
             services.AddSingleton<IAuthorizationHandler, CountryEntityAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, PersonEntityAuthorizationHandler>();
 
             services.AddRapidCMS(config =>
             {
@@ -193,6 +194,9 @@ namespace TestServer
                             list.SetListPane(pane =>
                             {
                                 pane.AddProperty(p => p.Name);
+                                pane.AddDefaultButton(DefaultButtonType.View);
+                                pane.AddDefaultButton(DefaultButtonType.Edit);
+                                pane.AddDefaultButton(DefaultButtonType.Delete);
                             });
                         })
                         .SetNodeEditor(editor =>

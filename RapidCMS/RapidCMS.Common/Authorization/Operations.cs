@@ -7,6 +7,7 @@ namespace RapidCMS.Common.Authorization
     public static class Operations
     {
         public static OperationAuthorizationRequirement None = new OperationAuthorizationRequirement { Name = nameof(CrudType.None) };
+        public static OperationAuthorizationRequirement List = new OperationAuthorizationRequirement { Name = nameof(CrudType.List) };
         public static OperationAuthorizationRequirement View = new OperationAuthorizationRequirement { Name = nameof(CrudType.View) };
         public static OperationAuthorizationRequirement Create = new OperationAuthorizationRequirement { Name = nameof(CrudType.Create) };
         public static OperationAuthorizationRequirement Read = new OperationAuthorizationRequirement { Name = nameof(CrudType.Read) };
