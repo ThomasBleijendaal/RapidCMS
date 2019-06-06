@@ -13,8 +13,8 @@ TODO:
     [] Hide buttons for actions user may not do 
     [] NodeView
     [x] NodeEditor
-    [] ListView
-    [] ListEditor
+    [x] ListView
+    [x] ListEditor
 [] Custom Section support in Collection.razor (lists) (RowSection)
 [] Add NodeView to setup to allow for explicit node viewing configurations (node editor is not easily convertable)
 [] Property, Field, etc naming not totally consistent -> Refactor all names and methods
