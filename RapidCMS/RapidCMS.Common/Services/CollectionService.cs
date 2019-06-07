@@ -58,6 +58,8 @@ namespace RapidCMS.Common.Services
 
         public async Task<NodeUI> GetNodeEditorAsync(string action, string alias, string variantAlias, string? parentId, string? id)
         {
+            var usageType = MapActionToUsageType(action);
+
             var collection = _root.GetCollection(alias);
 
             var entityVariant = collection.GetEntityVariant(variantAlias);
@@ -91,10 +93,10 @@ namespace RapidCMS.Common.Services
                 throw new UnauthorizedAccessException();
             }
 
-            var viewContext = new ViewContext(UsageType.Node | MapActionToUsageType(action), entityVariant, entity);
-            var nodeEditor = collection.NodeEditor;
+            var viewContext = new ViewContext(UsageType.Node | usageType, entityVariant, entity);
+            var config = usageType == UsageType.View ? collection.NodeView : collection.NodeEditor;
 
-            var node = await _uiService.GenerateNodeUIAsync(viewContext, nodeEditor);
+            var node = await _uiService.GenerateNodeUIAsync(viewContext, config);
 
             node.Subject = new UISubject
             {

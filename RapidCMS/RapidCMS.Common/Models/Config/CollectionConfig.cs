@@ -79,6 +79,7 @@ namespace RapidCMS.Common.Models.Config
         internal TreeViewConfig TreeView { get; set; }
         internal ListViewConfig ListView { get; set; }
         internal ListEditorConfig ListEditor { get; set; }
+        internal NodeViewConfig NodeView { get; set; }
         internal NodeEditorConfig NodeEditor { get; set; }
     }
 
@@ -148,6 +149,17 @@ namespace RapidCMS.Common.Models.Config
             config.ListEditorType = listEditorType;
 
             ListEditor = config;
+
+            return this;
+        }
+
+        public CollectionConfig<TEntity> SetNodeView(Action<NodeViewConfig<TEntity>> configure)
+        {
+            var config = new NodeViewConfig<TEntity>();
+
+            configure.Invoke(config);
+
+            NodeView = config;
 
             return this;
         }

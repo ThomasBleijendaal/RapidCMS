@@ -6,17 +6,20 @@
 TODO:
 
 1.0
-[] Form validation
-[] Validation on models / viewmodels
-[] Reordering
+[] Add NodeView to setup to allow for explicit node viewing configurations (node editor is not easily convertable)
 [x] Authorizations
     [] Hide buttons for actions user may not do 
     [] NodeView
     [x] NodeEditor
     [x] ListView
     [x] ListEditor
+[] Reordering
+[] Pagination (consistent during session)
+[] Redirect after deletion + consistent pagination / Return to parent button action
+[] Form validation
+[] Validation on models / viewmodels
+
 [] Custom Section support in Collection.razor (lists) (RowSection)
-[] Add NodeView to setup to allow for explicit node viewing configurations (node editor is not easily convertable)
 [] Property, Field, etc naming not totally consistent -> Refactor all names and methods
 [x] SetOneToManyRelation with collection 
     - Must be able to pass parentId into Repository
@@ -34,8 +37,6 @@ TODO:
 [x] Relation support (one-many + many-many via discrete call on Repository) 
     [] recursive delete 
     [] EFCore support (non-transient DbContext)
-[] Pagination (consistent during session)
-[] Redirect after deletion + consistent pagination / Return to parent button action
 [] AddSubCollectionListEditor should not create new pane (should be configured by user)
 [] EnumDataTypeProvider support
 [] Top button bar should be side bar with meta

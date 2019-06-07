@@ -14,7 +14,7 @@ namespace RapidCMS.Common.Extensions
         public static IEnumerable<IRelation> GetRelations(this SectionUI section)
         {
             return section.Elements
-                .Select(element => element as FieldWithLabelUI)
+                .Select(element => element as PropertyFieldUI)
                 .Where(field => field != null)
                 .Where(field => field?.DataCollection is IRelationDataCollection)
                 .Select(field =>
@@ -50,6 +50,13 @@ namespace RapidCMS.Common.Extensions
         private static T PopulateProperties<T>(T ui, Field field, IServiceProvider serviceProvider)
             where T : FieldUI
         {
+            FieldUI ui;
+
+            if (field is ExpressionField expressionField)
+            {
+
+            }
+
             ui.CustomAlias = (field is CustomField customField) ? customField.Alias : null;
 
             ui.Expression = field.Expression;
@@ -96,7 +103,7 @@ namespace RapidCMS.Common.Extensions
             return ui;
         }
 
-        public static SubCollectionUI ToUI(this SubCollectionListEditor subCollection)
+        public static SubCollectionUI ToUI(this SubCollectionList subCollection)
         {
             return new SubCollectionUI
             {

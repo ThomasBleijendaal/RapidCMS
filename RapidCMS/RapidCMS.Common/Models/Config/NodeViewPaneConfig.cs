@@ -10,9 +10,10 @@ using RapidCMS.Common.Helpers;
 namespace RapidCMS.Common.Models.Config
 {
     // TODO: add button support
-    public abstract class NodeEditorPaneConfig
+    // TODO: merge with NodeEditorPaneConfig
+    public abstract class NodeViewPaneConfig
     {
-        protected NodeEditorPaneConfig(Type variantType)
+        protected NodeViewPaneConfig(Type variantType)
         {
             VariantType = variantType ?? throw new ArgumentNullException(nameof(variantType));
         }
@@ -24,51 +25,50 @@ namespace RapidCMS.Common.Models.Config
 
         internal int FieldIndex { get; set; } = 0;
 
-        internal List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
+        internal List<PropertyConfig> Properties { get; set; } = new List<PropertyConfig>();
         internal List<SubCollectionListConfig> SubCollectionLists { get; set; } = new List<SubCollectionListConfig>();
     }
 
-    public class NodeEditorPaneConfig<TEntity> : NodeEditorPaneConfig
+    public class NodeViewPaneConfig<TEntity> : NodeViewPaneConfig
         where TEntity : IEntity
     {
-        public NodeEditorPaneConfig(Type variantType) : base(variantType)
+        public NodeViewPaneConfig(Type variantType) : base(variantType)
         {
         }
 
-        public NodeEditorPaneConfig(Type variantType, Type customSectionType) : base(variantType)
+        public NodeViewPaneConfig(Type variantType, Type customSectionType) : base(variantType)
         {
             CustomAlias = customSectionType.FullName;
         }
 
-        public NodeEditorPaneConfig<TEntity> SetLabel(string label)
+        public NodeViewPaneConfig<TEntity> SetLabel(string label)
         {
             Label = label;
 
             return this;
         }
 
-        public FieldConfig<TEntity> AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<FieldConfig<TEntity>>? configure = null)
+        public PropertyConfig<TEntity> AddProperty(Expression<Func<TEntity, string>> propertyExpression, Action<PropertyConfig<TEntity>>? configure = null)
         {
-            var config = new FieldConfig<TEntity>()
+            var config = new PropertyConfig<TEntity>()
             {
-                Property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression)
-                    ?? throw new InvalidPropertyExpressionException(nameof(propertyExpression)),
+                Property = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression) 
+                    ?? throw new InvalidExpressionException(nameof(propertyExpression)),
             };
             config.Name = config.Property.PropertyName;
-            config.Type = EditorTypeHelper.TryFindDefaultEditorType(config.Property.PropertyType);
 
             configure?.Invoke(config);
 
             config.Index = FieldIndex++;
 
-            Fields.Add(config);
+            Properties.Add(config);
 
             return config;
         }
 
         
         // TODO: check if sub collection is part of collection
-        public NodeEditorPaneConfig<TEntity> AddSubCollectionListEditor<TSubEntity>(string collectionAlias, Action<SubCollectionListConfig<TSubEntity>>? configure = null)
+        public NodeViewPaneConfig<TEntity> AddSubCollectionListView<TSubEntity>(string collectionAlias, Action<SubCollectionListConfig<TSubEntity>>? configure = null)
             where TSubEntity : IEntity
         {
             var config = new SubCollectionListConfig<TSubEntity>

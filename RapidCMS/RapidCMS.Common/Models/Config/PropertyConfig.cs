@@ -5,6 +5,8 @@ namespace RapidCMS.Common.Models.Config
 {
     public class PropertyConfig
     {
+        internal int Index { get; set; }
+
         internal string Name { get; set; }
         internal string Description { get; set; }
 

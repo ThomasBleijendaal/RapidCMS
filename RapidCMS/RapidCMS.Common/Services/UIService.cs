@@ -27,7 +27,7 @@ namespace RapidCMS.Common.Services
             _authorizationService = authorizationService;
         }
 
-        public async Task<NodeUI> GenerateNodeUIAsync(ViewContext viewContext, NodeEditor nodeEditor)
+        public async Task<NodeUI> GenerateNodeUIAsync(ViewContext viewContext, Node nodeEditor)
         {
             return new NodeUI
             {
@@ -54,7 +54,7 @@ namespace RapidCMS.Common.Services
                             return (field.Index, element: (Element)field.ToFieldWithLabelUI(_serviceProvider));
                         });
 
-                        var subCollections = pane.SubCollectionListEditors.Select(subCollection =>
+                        var subCollections = pane.SubCollectionLists.Select(subCollection =>
                         {
                             return (subCollection.Index, element: (Element)subCollection.ToUI());
                         });

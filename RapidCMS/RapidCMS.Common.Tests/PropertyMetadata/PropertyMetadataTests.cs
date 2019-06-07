@@ -176,8 +176,7 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
 
             var data = PropertyMetadataHelper.GetExpressionMetadata(func);
 
-            Assert.IsNotNull(data);
-            Assert.AreEqual("3", data.StringGetter(instance));
+            Assert.IsNull(data);
 
             var propertyData = PropertyMetadataHelper.GetPropertyMetadata(func);
 

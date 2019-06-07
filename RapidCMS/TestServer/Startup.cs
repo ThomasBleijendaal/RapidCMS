@@ -171,6 +171,16 @@ namespace TestServer
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                             });
                         })
+                        .SetNodeView(editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                            editor.AddDefaultButton(DefaultButtonType.Delete);
+                            editor.AddViewPane(pane =>
+                            {
+                                pane.AddProperty(f => f.Name);
+                            });
+                        })
                         .SetNodeEditor(editor =>
                         {
                             editor.AddDefaultButton(DefaultButtonType.SaveNew);
@@ -543,12 +553,12 @@ namespace TestServer
 
                     .AddEditorPane(pane =>
                     {
-                        pane.AddSubCollectionListEditor("sub-collection-1");
+                        pane.AddSubCollectionListEditor<TestEntity>("sub-collection-1");
                     })
 
                     .AddEditorPane(pane =>
                     {
-                        pane.AddSubCollectionListEditor("sub-collection-2");
+                        pane.AddSubCollectionListEditor<TestEntity>("sub-collection-2");
                     });
             }
 
@@ -580,7 +590,7 @@ namespace TestServer
 
                     .AddEditorPane(pane =>
                     {
-                        pane.AddSubCollectionListEditor("sub-collection-3");
+                        pane.AddSubCollectionListEditor<TestEntity>("sub-collection-3");
                     });
             }
 

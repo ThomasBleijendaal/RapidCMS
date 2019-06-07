@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Linq.Expressions;
 using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Metadata;
 using RapidCMS.Common.ValueMappers;
 
@@ -44,6 +42,11 @@ namespace RapidCMS.Common.Models.Config
         }
         public FieldConfig<TEntity> SetType(EditorType type)
         {
+            if (type == EditorType.Readonly)
+            {
+                Readonly = true;
+            }
+
             Type = type;
             return this;
         }

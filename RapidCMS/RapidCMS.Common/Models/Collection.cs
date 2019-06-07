@@ -129,7 +129,8 @@ namespace RapidCMS.Common.Models
         internal ListView ListView { get; set; }
         internal ListEditor ListEditor { get; set; }
 
-        internal NodeEditor NodeEditor { get; set; }
+        internal Node NodeView { get; set; }
+        internal Node NodeEditor { get; set; }
 
     }
 
@@ -167,21 +168,20 @@ namespace RapidCMS.Common.Models
     internal class ListEditor
     {
         internal ListEditorType ListEditorType { get; set; }
-        internal List<EditorPane> EditorPanes { get; set; }
+        internal List<Pane> EditorPanes { get; set; }
         internal List<Button> Buttons { get; set; }
     }
 
-    internal class SubCollectionListEditor : ListEditor
+    internal class SubCollectionList
     {
         internal int Index { get; set; }
-
         internal string CollectionAlias { get; set; }
     }
 
-    internal class NodeEditor
+    internal class Node
     {
         internal Type BaseType { get; set; }
-        internal List<EditorPane> EditorPanes { get; set; }
+        internal List<Pane> EditorPanes { get; set; }
         internal List<Button> Buttons { get; set; }
     }
 
@@ -193,6 +193,7 @@ namespace RapidCMS.Common.Models
         public string Alias { get; internal set; }
     }
 
+    [Obsolete]
     internal class ViewPane
     {
         internal string Name { get; set; }
@@ -201,14 +202,14 @@ namespace RapidCMS.Common.Models
         internal List<Button> Buttons { get; set; }
     }
 
-    internal class EditorPane
+    internal class Pane
     {
         internal string? CustomAlias { get; set; }
         internal string? Label { get; set; }
         internal Type VariantType { get; set; }
         internal List<Button> Buttons { get; set; }
         internal List<Field> Fields { get; set; }
-        internal List<SubCollectionListEditor> SubCollectionListEditors { get; set; }
+        internal List<SubCollectionList> SubCollectionLists { get; set; }
     }
 
     // TODO: change Buttons to not having resolved IButtonActionHandler during config time
@@ -280,7 +281,8 @@ namespace RapidCMS.Common.Models
         }
     }
 
-
+    // TODO: add Property in separate PropertyField, and Expression in ExpressionField derived 
+    // class to make easy differance between the two (major differance)
     internal class Field
     {
         internal int Index { get; set; }
@@ -291,15 +293,22 @@ namespace RapidCMS.Common.Models
         internal bool Readonly { get; set; } = true;
 
         internal EditorType DataType { get; set; } = EditorType.Readonly;
+    }
 
+    internal class ExpressionField : Field
+    {
         internal IExpressionMetadata Expression { get; set; }
+    }
+
+    internal class PropertyField : Field
+    {
         internal IPropertyMetadata Property { get; set; }
         internal Type ValueMapperType { get; set; }
 
         internal Relation? Relation { get; set; }
     }
 
-    internal class CustomField : Field
+    internal class CustomField : PropertyField
     {
         internal CustomField(Type customFieldType)
         {

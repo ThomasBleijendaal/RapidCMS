@@ -9,22 +9,22 @@ using RapidCMS.Common.Extensions;
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class NodeEditorConfig
+    public class NodeViewConfig
     {
         internal Type BaseType { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
-        internal List<NodeEditorPaneConfig> EditorPanes { get; set; } = new List<NodeEditorPaneConfig>();
+        internal List<NodeViewPaneConfig> ViewPanes { get; set; } = new List<NodeViewPaneConfig>();
     }
 
-    public class NodeEditorConfig<TEntity> : NodeEditorConfig
+    public class NodeViewConfig<TEntity> : NodeViewConfig
         where TEntity : IEntity
     {
-        public NodeEditorConfig()
+        public NodeViewConfig()
         {
             BaseType = typeof(TEntity);
         }
 
-        public NodeEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null, bool isPrimary = false)
+        public NodeViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig
             {
@@ -39,7 +39,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeEditorConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string label = null, string icon = null)
+        public NodeViewConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string label = null, string icon = null)
         {
             var button = new CustomButtonConfig(buttonType)
             {
@@ -54,7 +54,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeEditorConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string label = null, string icon = null)
+        public NodeViewConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string label = null, string icon = null)
         {
             var button = new CustomButtonConfig(buttonType)
             {
@@ -68,32 +68,32 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeEditorConfig<TEntity> AddEditorPane(Action<NodeEditorPaneConfig<TEntity>> configure)
+        public NodeViewConfig<TEntity> AddViewPane(Action<NodeViewPaneConfig<TEntity>> configure)
         {
-            return AddEditorPane<TEntity>(configure);
+            return AddViewPane<TEntity>(configure);
         }
 
-        public NodeEditorConfig<TEntity> AddEditorPane(Type customSectionType, Action<NodeEditorPaneConfig<TEntity>>? configure = null)
+        public NodeViewConfig<TEntity> AddViewPane(Type customSectionType, Action<NodeViewPaneConfig<TEntity>>? configure = null)
         {
-            return AddEditorPane<TEntity>(customSectionType, configure);
+            return AddViewPane<TEntity>(customSectionType, configure);
         }
 
-        public NodeEditorConfig<TEntity> AddEditorPane<TDerivedEntity>(Action<NodeEditorPaneConfig<TDerivedEntity>> configure)
+        public NodeViewConfig<TEntity> AddViewPane<TDerivedEntity>(Action<NodeViewPaneConfig<TDerivedEntity>> configure)
             where TDerivedEntity : TEntity
         {
-            return AddEditorPane(null, configure);
+            return AddViewPane(null, configure);
         }
 
-        private NodeEditorConfig<TEntity> AddEditorPane<TDerivedEntity>(Type? customSectionType, Action<NodeEditorPaneConfig<TDerivedEntity>>? configure)
+        private NodeViewConfig<TEntity> AddViewPane<TDerivedEntity>(Type? customSectionType, Action<NodeViewPaneConfig<TDerivedEntity>>? configure)
             where TDerivedEntity : TEntity
         {
             var config = customSectionType == null 
-                ? new NodeEditorPaneConfig<TDerivedEntity>(typeof(TDerivedEntity)) 
-                : new NodeEditorPaneConfig<TDerivedEntity>(typeof(TDerivedEntity), customSectionType);
+                ? new NodeViewPaneConfig<TDerivedEntity>(typeof(TDerivedEntity)) 
+                : new NodeViewPaneConfig<TDerivedEntity>(typeof(TDerivedEntity), customSectionType);
 
             configure?.Invoke(config);
 
-            EditorPanes.Add(config);
+            ViewPanes.Add(config);
 
             return this;
         }

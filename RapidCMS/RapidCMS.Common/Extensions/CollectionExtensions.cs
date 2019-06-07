@@ -97,13 +97,7 @@ namespace RapidCMS.Common.Extensions
                                     CustomButtonConfig customButton => customButton.ToCustomButton(serviceProvider),
                                     _ => throw new InvalidOperationException("Invalid ListView ViewPane Button")
                                 }),
-                                Fields = configReceiver.ListView.ListViewPane.Properties.ToList(property => new Field
-                                {
-                                    Description = property.Description,
-                                    Name = property.Name,
-                                    Readonly = true,
-                                    Expression = property.Property
-                                })
+                                Fields = configReceiver.ListView.ListViewPane.Properties.ToList(x => x.ToField())
                             }
                     };
                 }
@@ -123,7 +117,7 @@ namespace RapidCMS.Common.Extensions
                         }),
                         EditorPanes = editors.ToList(editor =>
                         {
-                            return new EditorPane
+                            return new Pane
                             {
                                 VariantType = editor.VariantType,
                                 Buttons = editor.Buttons.ToList(button => button switch
@@ -138,9 +132,39 @@ namespace RapidCMS.Common.Extensions
                     };
                 }
 
+                if (configReceiver.NodeView != null)
+                {
+                    collection.NodeView = new Node
+                    {
+                        Buttons = configReceiver.NodeView.Buttons.ToList(button => button switch
+                        {
+                            DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
+                            CustomButtonConfig customButton => customButton.ToCustomButton(serviceProvider),
+                            _ => throw new InvalidOperationException("Invalid NodeEditor Button")
+                        }),
+
+                        BaseType = configReceiver.NodeView.BaseType,
+
+                        EditorPanes = configReceiver.NodeView.ViewPanes.ToList(config =>
+                        {
+                            var pane = new Pane
+                            {
+                                CustomAlias = config.CustomAlias,
+                                Label = config.Label,
+                                VariantType = config.VariantType,
+                                Buttons = new List<Button>(),
+                                Fields = config.Properties.ToList(x => x.ToField()),
+                                SubCollectionLists = config.SubCollectionLists.ToList(x => x.ToSubCollectionList())
+                            };
+
+                            return pane;
+                        })
+                    };
+                }
+
                 if (configReceiver.NodeEditor != null)
                 {
-                    collection.NodeEditor = new NodeEditor
+                    collection.NodeEditor = new Node
                     {
                         Buttons = configReceiver.NodeEditor.Buttons.ToList(button => button switch
                         {
@@ -153,22 +177,14 @@ namespace RapidCMS.Common.Extensions
 
                         EditorPanes = configReceiver.NodeEditor.EditorPanes.ToList(config =>
                         {
-                            var pane = new EditorPane
+                            var pane = new Pane
                             {
                                 CustomAlias = config.CustomAlias,
                                 Label = config.Label,
                                 VariantType = config.VariantType,
                                 Buttons = new List<Button>(),
-                                Fields = config.Fields.ToList(field => field.ToField()),
-                                SubCollectionListEditors = config.SubCollectionListEditors.ToList(listEditor =>
-                                {
-                                    return new SubCollectionListEditor
-                                    {
-                                        Index = listEditor.Index,
-
-                                        CollectionAlias = listEditor.CollectionAlias
-                                    };
-                                })
+                                Fields = config.Fields.ToList(x => x.ToField()),
+                                SubCollectionLists = config.SubCollectionLists.ToList(x => x.ToSubCollectionList())
                             };
 
                             return pane;
