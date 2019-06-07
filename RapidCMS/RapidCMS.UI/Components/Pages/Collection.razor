@@ -5,7 +5,6 @@
 
 @using RapidCMS.Common.Enums
 @using RapidCMS.Common.Extensions
-@using RapidCMS.Common.Data
 @using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Services
 
@@ -48,11 +47,10 @@ else
 
                                     foreach (var element in section.Elements)
                                     {
-                                        if (element is FieldWithLabelUI field)
+                                        if (element is FieldUI field)
                                         {
-                                            var name = (UI.ListType == ListType.TableView)
-                                                ? field.Expression.PropertyName
-                                                : field.Property.PropertyName;
+                                            var name = (field as ExpressionFieldUI)?.Expression.PropertyName
+                                                ?? (field as PropertyFieldUI)?.Property.PropertyName;
 
                                             if (!elementsProcessed.Contains(name))
                                             {
@@ -81,11 +79,10 @@ else
                                 @{
                                     foreach (var element in section.Elements)
                                     {
-                                        if (element is FieldWithLabelUI field)
+                                        if (element is FieldUI field)
                                         {
-                                            var name = (UI.ListType == ListType.TableView)
-                                                ? field.Expression.PropertyName
-                                                : field.Property.PropertyName;
+                                            var name = (field as ExpressionFieldUI)?.Expression.PropertyName
+                                                ?? (field as PropertyFieldUI)?.Property.PropertyName;
 
                                             // fill in the gaps (when dealing with multiple entity variants)
                                             // TODO: only do this when fill the gaps setting is active
@@ -94,11 +91,11 @@ else
                                                 <td>&nbsp;</td>
                                             }
 
-                                            if (UI.ListType == ListType.TableView)
+                                            if (field is ExpressionFieldUI expressionField)
                                             {
-                                                <td>@field.Expression.StringGetter(subject.Entity)</td>
+                                                <td>@expressionField.Expression.StringGetter(subject.Entity)</td>
                                             }
-                                            else
+                                            else if (field is PropertyFieldUI propertyField)
                                             {
                                                 <td>
                                                     <UIEditor Field="field" Entity="@subject.Entity" />
@@ -120,7 +117,7 @@ else
                                                 var node = new NodeUI
                                                 {
                                                     Sections = new List<SectionUI>
-                                                    {
+                                                                        {
                                                         section
                                                     },
                                                     Subject = subject
@@ -139,7 +136,7 @@ else
                     </tbody>
                 </table>
             }
-            else if (UI.ListType.In(ListType.BlockEditor))
+            else if (UI.ListType == ListType.BlockEditor)
             {
                 @foreach (var subject in UI.Entities)
                 {
@@ -152,7 +149,7 @@ else
                             var node = new NodeUI
                             {
                                 Sections = new List<SectionUI>
-                                {
+                            {
                                     section
                                 },
                                 Subject = subject
@@ -209,7 +206,7 @@ else
             // pulling all the entities through the UI since this is the only place where async works..
             if (UI != null)
             {
-                SubjectToSectionMap= new Dictionary<string, SectionUI>();
+                SubjectToSectionMap = new Dictionary<string, SectionUI>();
 
                 foreach (var subject in UI.Entities)
                 {

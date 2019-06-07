@@ -44,27 +44,57 @@ namespace RapidCMS.Common.Extensions
 
         public static FieldUI ToUI(this Field field, IServiceProvider serviceProvider)
         {
-            return PopulateProperties(new FieldUI(), field, serviceProvider);
-        }
-
-        private static T PopulateProperties<T>(T ui, Field field, IServiceProvider serviceProvider)
-            where T : FieldUI
-        {
-            FieldUI ui;
-
             if (field is ExpressionField expressionField)
             {
+                var ui = new ExpressionFieldUI
+                {
+                    Expression = expressionField.Expression
+                };
 
+                PopulateProperties(ui, field);
+
+                return ui;
             }
+            else if (field is PropertyField propertyField)
+            {
+                PropertyFieldUI ui;
 
-            ui.CustomAlias = (field is CustomField customField) ? customField.Alias : null;
+                if (field is CustomField customPropertyField)
+                {
+                    ui = new CustomPropertyFieldUI
+                    {
+                        CustomAlias = customPropertyField.Alias
+                    };
+                }
+                else
+                {
+                    ui = new PropertyFieldUI();
+                }
 
-            ui.Expression = field.Expression;
-            ui.Property = field.Property;
+                PopulateProperties(ui, propertyField, serviceProvider);
 
-            ui.ValueMapper = field.ValueMapperType != null ? serviceProvider.GetService<IValueMapper>(field.ValueMapperType) : null;
+                return ui;
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+        }
+
+        private static void PopulateProperties(FieldUI ui, Field field)
+        {
+            ui.Description = field.Description;
+            ui.Name = field.Name;
             ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;
+        }
 
+        private static void PopulateProperties(PropertyFieldUI ui, PropertyField field, IServiceProvider serviceProvider)
+        {
+            PopulateProperties(ui, field);
+
+            ui.Property = field.Property;
+            ui.ValueMapper = field.ValueMapperType != null ? serviceProvider.GetService<IValueMapper>(field.ValueMapperType) : null;
+            
             if (field.Relation != null)
             {
                 switch (field.Relation)
@@ -89,18 +119,6 @@ namespace RapidCMS.Common.Extensions
                         break;
                 }
             }
-
-            return ui;
-        }
-
-        public static FieldWithLabelUI ToFieldWithLabelUI(this Field field, IServiceProvider serviceProvider)
-        {
-            var ui = PopulateProperties(new FieldWithLabelUI(), field, serviceProvider);
-
-            ui.Description = field.Description;
-            ui.Name = field.Name;
-
-            return ui;
         }
 
         public static SubCollectionUI ToUI(this SubCollectionList subCollection)

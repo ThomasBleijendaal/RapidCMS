@@ -11,8 +11,6 @@ namespace RapidCMS.Common.Models.UI
         public string Name { get; internal set; }
         public string Description { get; internal set; }
 
-        public string CustomAlias { get; internal set; }
-
         public EditorType Type { get; internal set; }
     }
 
@@ -26,5 +24,10 @@ namespace RapidCMS.Common.Models.UI
         public IValueMapper ValueMapper { get; internal set; }
         public IPropertyMetadata Property { get; internal set; }
         public IDataCollection DataCollection { get; internal set; }
+    }
+
+    public class CustomPropertyFieldUI : PropertyFieldUI
+    {
+        public string CustomAlias { get; internal set; }
     }
 }

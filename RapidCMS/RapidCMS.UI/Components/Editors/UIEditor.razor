@@ -5,62 +5,69 @@
 
 @if (Field != null && Entity != null)
 {
-    switch (Field.Type)
+    try
     {
-        case EditorType.Custom:
+        switch (Field.Type)
+        {
+            case EditorType.Custom:
 
-            @CustomEditors.GetCustomEditor(Field.CustomAlias, Entity, Field.Property, Field.ValueMapper, Field.DataCollection)
+                @CustomEditors.GetCustomEditor(CustomField.CustomAlias, Entity, CustomField.Property, CustomField.ValueMapper, CustomField.DataCollection)
 
-            break;
+                break;
 
-        case EditorType.Readonly:
+            case EditorType.Readonly:
 
-            <Readonly Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper />
+                <Readonly Entity=@Entity Property=@PropertyField.Property ValueMapper=@PropertyField.ValueMapper />
 
-            break;
+                break;
 
-        case EditorType.Numeric:
+            case EditorType.Numeric:
 
-            <NumericEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper />
+                <NumericEditor Entity=@Entity Property=@PropertyField.Property ValueMapper=@PropertyField.ValueMapper />
 
-            break;
+                break;
 
-        case EditorType.Checkbox:
+            case EditorType.Checkbox:
 
-            <CheckboxEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper />
+                <CheckboxEditor Entity=@Entity Property=@PropertyField.Property ValueMapper=@PropertyField.ValueMapper />
 
-            break;
+                break;
 
-        case EditorType.TextArea:
+            case EditorType.TextArea:
 
-            <TextAreaEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper />
+                <TextAreaEditor Entity=@Entity Property=@PropertyField.Property ValueMapper=@PropertyField.ValueMapper />
 
-            break;
+                break;
 
-        case EditorType.TextBox:
-        default:
+            case EditorType.TextBox:
+            default:
 
-            <TextBoxEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper />
+                <TextBoxEditor Entity=@Entity Property=@PropertyField.Property ValueMapper=@PropertyField.ValueMapper />
 
-            break;
+                break;
 
-        case EditorType.Select:
+            case EditorType.Select:
 
-            <SelectEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper DataCollection=@Field.DataCollection />
+                <SelectEditor Entity=@Entity Property=@PropertyField.Property ValueMapper=@PropertyField.ValueMapper DataCollection=@PropertyField.DataCollection />
 
-            break;
+                break;
 
-        case EditorType.MultiSelect:
+            case EditorType.MultiSelect:
 
-            <MultiSelectEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper DataCollection=@Field.DataCollection />
+                <MultiSelectEditor Entity=@Entity Property=@PropertyField.Property ValueMapper=@PropertyField.ValueMapper DataCollection=@PropertyField.DataCollection />
 
-            break;
+                break;
 
-        case EditorType.Dropdown:
+            case EditorType.Dropdown:
 
-            <DropdownEditor Entity=@Entity Property=@Field.Property ValueMapper=@Field.ValueMapper DataCollection=@Field.DataCollection />
+                <DropdownEditor Entity=@Entity Property=@PropertyField.Property ValueMapper=@PropertyField.ValueMapper DataCollection=@PropertyField.DataCollection />
 
-            break;
+                break;
+        }
+    }
+    catch (Exception ex)
+    {
+        throw new InvalidOperationException("Failed to cast Field into required Type", ex);
     }
 }
 
@@ -73,6 +80,9 @@
 
     [Parameter]
     private FieldUI? Field { get; set; }
+
+    private CustomPropertyFieldUI CustomField => (CustomPropertyFieldUI)Field;
+    private PropertyFieldUI PropertyField => (PropertyFieldUI)Field;
 
     [Parameter]
     private IEntity? Entity { get; set; }

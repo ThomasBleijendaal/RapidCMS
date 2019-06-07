@@ -51,7 +51,7 @@ namespace RapidCMS.Common.Services
                     {
                         var fields = pane.Fields.Select(field =>
                         {
-                            return (field.Index, element: (Element)field.ToFieldWithLabelUI(_serviceProvider));
+                            return (field.Index, element: (Element)field.ToUI(_serviceProvider));
                         });
 
                         var subCollections = pane.SubCollectionLists.Select(subCollection =>
@@ -121,7 +121,7 @@ namespace RapidCMS.Common.Services
                                 })
                                 .ToListAsync(button => button.ToUI()),
 
-                            Elements = listView.ViewPane.Fields.ToList(field => (Element)field.ToFieldWithLabelUI(_serviceProvider))
+                            Elements = listView.ViewPane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider))
                         };
                     }
                 }
@@ -175,7 +175,7 @@ namespace RapidCMS.Common.Services
                             })
                             .ToListAsync(button => button.ToUI()),
 
-                        Elements = pane.Fields.ToList(field => (Element)field.ToFieldWithLabelUI(_serviceProvider))
+                        Elements = pane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider))
                     };
                 }
             };

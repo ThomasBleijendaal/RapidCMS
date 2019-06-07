@@ -147,7 +147,7 @@ namespace TestServer
 
             services.AddRapidCMS(config =>
             {
-                config.AllowAnonymousUser();
+                // config.AllowAnonymousUser();
 
                 config.AddCustomButton(typeof(CreateButton<>));
                 config.AddCustomEditor(typeof(PasswordEditor));
@@ -207,6 +207,18 @@ namespace TestServer
                                 pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                                 pane.AddDefaultButton(DefaultButtonType.Delete);
+                            });
+                        })
+                        .SetNodeView(editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                            editor.AddDefaultButton(DefaultButtonType.Delete);
+                            editor.AddViewPane(pane =>
+                            {
+                                pane.AddProperty(f => f.Name);
+                                pane.AddProperty(f => string.Join(", ", f.Countries == null ? Enumerable.Empty<string>() : f.Countries.Select(x => x.Country.Name)))
+                                    .SetName("Countries");
                             });
                         })
                         .SetNodeEditor(editor =>

@@ -6,20 +6,17 @@
 TODO:
 
 1.0
-[] Add NodeView to setup to allow for explicit node viewing configurations (node editor is not easily convertable)
-[x] Authorizations
-    [] Hide buttons for actions user may not do 
-    [] NodeView
-    [x] NodeEditor
-    [x] ListView
-    [x] ListEditor
+[x] Add NodeView to setup to allow for explicit node viewing configurations (node editor is not easily convertable)
+    [] Test SubCollection List view 
 [] Reordering
-[] Pagination (consistent during session)
-[] Redirect after deletion + consistent pagination / Return to parent button action
 [] Form validation
-[] Validation on models / viewmodels
+    [] Validation on models / viewmodels
+[] Pagination (consistent during session)
+    [] Redirect after deletion + consistent pagination / Return to parent button action
+    [] Redirect after insertions + no update authorization goes to 403 page
 
 [] Custom Section support in Collection.razor (lists) (RowSection)
+[] Button support everywhere (no more new List<Button>)
 [] Property, Field, etc naming not totally consistent -> Refactor all names and methods
 [x] SetOneToManyRelation with collection 
     - Must be able to pass parentId into Repository

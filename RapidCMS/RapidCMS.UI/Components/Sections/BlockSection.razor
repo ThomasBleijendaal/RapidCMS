@@ -14,7 +14,7 @@
 
         @foreach (var element in Section.Elements)
         {
-            if (element is FieldWithLabelUI field)
+            if (element is FieldUI field)
             {
                 <div class="form-row">
                     <div class="col-2">
@@ -22,13 +22,11 @@
                         <small class="form-text text-muted">@field.Description</small>
                     </div>
                     <div class="col-10">
-                        @if (Subject.UsageType == UsageType.View)
+                        @if (field is ExpressionFieldUI expressionField)
                         {
-                            // TODO: make view first class and rely on StringGetter and not ReadOnly input
-                            // @field.Expression.StringGetter(Subject.Entity)
-                            <Readonly Property="field.Property" Entity="@Subject.Entity" ValueMapper="field.ValueMapper" />
+                            @expressionField.Expression.StringGetter(Subject.Entity)
                         }
-                        else
+                        else if (field is PropertyFieldUI propertyField)
                         {
                             <UIEditor Field="field" Entity="@Subject.Entity" />
                         }

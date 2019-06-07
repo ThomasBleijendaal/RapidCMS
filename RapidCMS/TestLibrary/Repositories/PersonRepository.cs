@@ -27,12 +27,12 @@ namespace TestLibrary.Repositories
 
         public override async Task<IEnumerable<PersonEntity>> GetAllAsync(int? parentId)
         {
-            return await _dbContext.Persons.Include(x => x.Countries).AsNoTracking().ToListAsync();
+            return await _dbContext.Persons.Include(x => x.Countries).ThenInclude(x => x.Country).AsNoTracking().ToListAsync();
         }
 
         public override async Task<PersonEntity> GetByIdAsync(int id, int? parentId)
         {
-            return await _dbContext.Persons.Include(x => x.Countries).AsNoTracking().FirstOrDefaultAsync(x => x._Id == id);
+            return await _dbContext.Persons.Include(x => x.Countries).ThenInclude(x => x.Country).AsNoTracking().FirstOrDefaultAsync(x => x._Id == id);
         }
 
         public override async Task<PersonEntity> InsertAsync(int? parentId, PersonEntity entity, IRelationContainer relations)
