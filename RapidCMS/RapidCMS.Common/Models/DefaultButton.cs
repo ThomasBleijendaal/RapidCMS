@@ -2,6 +2,7 @@
 using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.Extensions;
 
 #nullable enable
 

@@ -11,7 +11,9 @@ using RapidCMS.Common.Models.Config;
 namespace RapidCMS.Common.Models
 {
     // TODO: not really a model
-    public class Root : ICollectionResolver
+    // TODO: fix nullables
+
+    public class Root
     {
         private readonly IServiceProvider _serviceProvider;
 

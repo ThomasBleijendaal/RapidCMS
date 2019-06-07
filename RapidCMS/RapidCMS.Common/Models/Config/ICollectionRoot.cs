@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using RapidCMS.Common.Models.Config;
 
 #nullable enable
 
-namespace RapidCMS.Common.Models
+namespace RapidCMS.Common.Models.Config
 {
     public interface ICollectionRoot
     {
