@@ -1,12 +1,15 @@
 ﻿using RapidCMS.Common.Enums;
 using RapidCMS.Common.Models.Metadata;
 
-namespace RapidCMS.Common.Models.Config
+#nullable enable
+
+namespace RapidCMS.Common.Models
 {
-    public class TreeViewConfig
+    internal class TreeView
     {
-        internal EntityVisibilty EntityVisibilty { get; set; }
+        internal EntityVisibilty EntityVisibility { get; set; }
         internal CollectionRootVisibility RootVisibility { get; set; }
+
         internal IExpressionMetadata Name { get; set; }
     }
 }
