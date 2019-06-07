@@ -1,13 +1,11 @@
 ﻿using System.Threading.Tasks;
-using RapidCMS.Common.Models.DTOs;
+using RapidCMS.Common.Models.Commands;
 using RapidCMS.Common.Models.UI;
 
 #nullable enable
 
 namespace RapidCMS.Common.Services
 {
-    // TODO: rename NodeEditor to Node
-    // TODO: make UI service subject-aware (new, save existing etc)
     // TODO: make button handling more seperate
     // TODO: why variantAlias for ProcessNodeEditorAction and not ProcessListAction?
 

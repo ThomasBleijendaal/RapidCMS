@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.Authorization;
 using RapidCMS.Common.Data;
@@ -10,10 +11,8 @@ using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models;
-using RapidCMS.Common.Models.DTOs;
-using RapidCMS.Common.Models.UI;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using RapidCMS.Common.Models.Commands;
+using RapidCMS.Common.Models.UI;
 
 #nullable enable
 
