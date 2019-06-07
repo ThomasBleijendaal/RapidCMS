@@ -13,6 +13,7 @@ using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.DTOs;
 using RapidCMS.Common.Models.UI;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using RapidCMS.Common.Models.Commands;
 
 #nullable enable
 
@@ -157,7 +158,7 @@ namespace RapidCMS.Common.Services
                     return new NavigateCommand { Uri = UriHelper.Collection(Constants.List, collectionAlias, parentId) };
 
                 case CrudType.None:
-                    return new NullOperationCommand();
+                    return new NoOperationCommand();
 
                 case CrudType.Refresh:
                     return new ReloadCommand();
@@ -299,7 +300,7 @@ namespace RapidCMS.Common.Services
                     }
 
                 case CrudType.None:
-                    return new NullOperationCommand();
+                    return new NoOperationCommand();
 
                 case CrudType.Refresh:
                     return new ReloadCommand();
@@ -374,7 +375,7 @@ namespace RapidCMS.Common.Services
                     return new ReloadCommand();
 
                 case CrudType.None:
-                    return new NullOperationCommand();
+                    return new NoOperationCommand();
 
                 case CrudType.Refresh:
                     return new ReloadCommand();

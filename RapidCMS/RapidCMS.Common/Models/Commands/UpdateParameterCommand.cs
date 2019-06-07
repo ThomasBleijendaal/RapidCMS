@@ -1,27 +1,7 @@
 ﻿#nullable enable
 
-namespace RapidCMS.Common.Models.DTOs
+namespace RapidCMS.Common.Models.Commands
 {
-    public abstract class ViewCommand
-    {
-
-    }
-
-    public class NullOperationCommand : ViewCommand
-    {
-
-    }
-
-    public class NavigateCommand : ViewCommand
-    {
-        public string Uri { get; set; }
-    }
-
-    public class ReloadCommand : ViewCommand
-    {
-
-    }
-
     public class UpdateParameterCommand : ViewCommand
     {
         public string Action { get; set; }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using RapidCMS.Common.Models.Commands;
 using RapidCMS.Common.Models.DTOs;
 using RapidCMS.Common.Models.UI;
 using RapidCMS.UI.Components.Buttons;
@@ -65,7 +66,7 @@ namespace RapidCMS.UI.Components.Pages
 
                     break;
 
-                case NullOperationCommand _:
+                case NoOperationCommand _:
                 default:
                     break;
             }
