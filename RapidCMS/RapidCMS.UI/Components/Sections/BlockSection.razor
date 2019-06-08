@@ -35,9 +35,10 @@
             }
             else if (element is SubCollectionUI subCollection)
             {
-                <Collection Action="@Constants.Edit"
-                            CollectionAlias="@subCollection.CollectionAlias"
-                            ParentId="@Subject.Entity.Id" />
+                @* TODO: this switch is still bit of a hack *@
+                <Collection Action=@(Subject.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                            CollectionAlias=@subCollection.CollectionAlias
+                            ParentId=@Subject.Entity.Id />
             }
         }
     </div>

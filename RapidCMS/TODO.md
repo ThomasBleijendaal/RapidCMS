@@ -33,7 +33,6 @@ TODO:
     [] Explore if ValueMapper can be skipped since editors are using late resolving of value -> cannot be skipped in ListViewConfig but should be skipped in editors
 [x] Relation support (one-many + many-many via discrete call on Repository) 
     [] recursive delete 
-    [] EFCore support (non-transient DbContext)
 [] AddSubCollectionListEditor should not create new pane (should be configured by user)
 [] EnumDataTypeProvider support
 [] Top button bar should be side bar with meta

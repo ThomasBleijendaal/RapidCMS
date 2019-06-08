@@ -58,7 +58,7 @@ namespace RapidCMS.Common.Services
 
         public async Task<NodeUI> GetNodeEditorAsync(string action, string alias, string variantAlias, string? parentId, string? id)
         {
-            var usageType = MapActionToUsageType(action);
+            var usageType = UsageType.Node | MapActionToUsageType(action);
 
             var collection = _root.GetCollection(alias);
 
@@ -93,15 +93,15 @@ namespace RapidCMS.Common.Services
                 throw new UnauthorizedAccessException();
             }
 
-            var viewContext = new ViewContext(UsageType.Node | usageType, entityVariant, entity);
-            var config = usageType == UsageType.View ? collection.NodeView : collection.NodeEditor;
+            var viewContext = new ViewContext(usageType, entityVariant, entity);
+            var config = usageType.HasFlag(UsageType.View) ? collection.NodeView : collection.NodeEditor;
 
             var node = await _uiService.GenerateNodeUIAsync(viewContext, config);
 
             node.Subject = new UISubject
             {
                 Entity = entity,
-                UsageType = MapActionToUsageType(action)
+                UsageType = usageType
             };
 
             return node;
@@ -170,6 +170,8 @@ namespace RapidCMS.Common.Services
 
         public async Task<ListUI> GetCollectionListViewAsync(string action, string alias, string? variantAlias, string? parentId)
         {
+            var listUsageType = UsageType.List | MapActionToUsageType(action);
+
             var collection = _root.GetCollection(alias);
 
             var subEntityVariant = collection.GetEntityVariant(variantAlias);
@@ -194,12 +196,12 @@ namespace RapidCMS.Common.Services
                 entities = new[] {
                     new UISubject {
                         Entity = newEntity,
-                        UsageType = MapActionToUsageType(Constants.New)
+                        UsageType = UsageType.Node | MapActionToUsageType(Constants.New)
                     }
                 }.Concat(existingEntities.Select(ent => new UISubject
                 {
                     Entity = ent,
-                    UsageType = MapActionToUsageType(Constants.Edit)
+                    UsageType = UsageType.Node | MapActionToUsageType(Constants.Edit)
                 }));
             }
             else
@@ -207,17 +209,17 @@ namespace RapidCMS.Common.Services
                 entities = existingEntities.Select(ent => new UISubject
                 {
                     Entity = ent,
-                    UsageType = MapActionToUsageType(Constants.Edit)
+                    UsageType = UsageType.Node | MapActionToUsageType(Constants.Edit)
                 });
             }
 
-            var listViewContext = new ViewContext(UsageType.List | MapActionToUsageType(action), collection.EntityVariant, newEntity);
+            var listViewContext = new ViewContext(listUsageType, collection.EntityVariant, newEntity);
 
             if (action == Constants.List)
             {
                 var editor = await _uiService.GenerateListUIAsync(
                     listViewContext,
-                    (subject) => new ViewContext(UsageType.View | UsageType.Node, collection.GetEntityVariant(subject.Entity), subject.Entity),
+                    (subject) => new ViewContext(subject.UsageType, collection.GetEntityVariant(subject.Entity), subject.Entity),
                     collection.ListView);
 
                 editor.Entities = entities;
@@ -231,7 +233,7 @@ namespace RapidCMS.Common.Services
                     listViewContext,
                     (subject) =>
                     {
-                        return new ViewContext(UsageType.Node | subject.UsageType, collection.GetEntityVariant(subject.Entity), subject.Entity);
+                        return new ViewContext(subject.UsageType, collection.GetEntityVariant(subject.Entity), subject.Entity);
                     },
                     collection.ListEditor);
 
