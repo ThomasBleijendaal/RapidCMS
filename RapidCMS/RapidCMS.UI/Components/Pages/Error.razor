@@ -1,0 +1,36 @@
+﻿@page "/error"
+
+@using RapidCMS.Common.Helpers
+
+@inject IExceptionHelper ExceptionHelper
+
+<div class="content">
+    <p>An errror occured when your request was made.</p>
+    <p><a href="/" class="btn btn-primary">Return to home and start again.</a></p>
+</div>
+
+@{
+    // TODO: when IWebHostEnvironement becomes available, check for IsDevelopment
+
+    var ex = ExceptionHelper.GetLatestException();
+
+    if (ex != null)
+    {
+        <div class="content">
+            <p><code>@ex.Message</code></p>
+
+            <pre>@ex.StackTrace</pre>
+
+            @{
+                var innerException = ex.InnerException;
+
+                while (innerException != null)
+                {
+                    <p><code>@innerException.Message</code></p>
+
+                    innerException = innerException.InnerException;
+                }
+            }
+        </div>
+    }
+}

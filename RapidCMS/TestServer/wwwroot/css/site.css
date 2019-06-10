@@ -200,3 +200,8 @@ table td.button-cell {
     white-space: nowrap;
     text-align: right;
 }
+
+
+pre {
+    background: #f0f0f0;
+}

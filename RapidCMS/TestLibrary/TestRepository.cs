@@ -159,11 +159,7 @@ namespace TestLibrary
 
         public override Task<TestEntity> NewAsync(int? parentId, Type? variantType)
         {
-            if (variantType == null)
-            {
-                return Task.FromResult(default(TestEntity));
-            }
-            else if (variantType == typeof(TestEntityVariantA))
+            if (variantType == typeof(TestEntityVariantA))
             {
                 return Task.FromResult(new TestEntityVariantA() as TestEntity);
             }
@@ -177,7 +173,7 @@ namespace TestLibrary
             }
             else
             {
-                return Task.FromResult(default(TestEntity));
+                return Task.FromResult(new TestEntity());
             }
         }
 

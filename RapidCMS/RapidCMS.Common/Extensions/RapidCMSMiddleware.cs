@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.Authorization;
+using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.Services;
@@ -32,6 +33,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<ICollectionService, CollectionService>();
             services.AddTransient<ITreeService, TreeService>();
             services.AddTransient<IUIService, UIService>();
+
+            services.AddScoped<IExceptionHelper, ExceptionHelper>();
 
             services.AddSingleton<DefaultValueMapper>();
             services.AddSingleton<LongValueMapper>();

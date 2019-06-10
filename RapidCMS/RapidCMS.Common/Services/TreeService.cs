@@ -47,6 +47,7 @@ namespace RapidCMS.Common.Services
             {
                 Alias = collection.Alias,
                 Name = collection.Name,
+                EntitiesVisible = collection.TreeView?.EntityVisibility == EntityVisibilty.Visible,
                 RootVisible = collection.TreeView?.RootVisibility == CollectionRootVisibility.Visible
             };
 

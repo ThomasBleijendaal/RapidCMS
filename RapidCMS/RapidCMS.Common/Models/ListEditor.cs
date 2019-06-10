@@ -5,6 +5,7 @@ using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models
 {
+    // TODO: investigate combining with ListView
     internal class ListEditor
     {
         internal ListEditorType ListEditorType { get; set; }

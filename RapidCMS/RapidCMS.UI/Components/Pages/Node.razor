@@ -80,8 +80,15 @@ else
 
     async Task ButtonCallbackAsync(string actionId, BasePage view, object? customData)
     {
-        var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, UI, actionId, customData);
+        try
+        {
+            var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, UI, actionId, customData);
 
-        await HandleViewCommandAsync(command);
+            await HandleViewCommandAsync(command);
+        }
+        catch (Exception ex)
+        {
+            HandleException(ex);
+        }
     }
 }

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Commands;
-using RapidCMS.Common.Models.DTOs;
 using RapidCMS.Common.Models.UI;
 using RapidCMS.UI.Components.Buttons;
 using RapidCMS.UI.Models;
@@ -17,58 +17,68 @@ namespace RapidCMS.UI.Components.Pages
         [Inject]
         private IUriHelper UriHelper { get; set; }
 
+        [Inject]
+        private IExceptionHelper ExceptionHelper { get; set; }
+
         [CascadingParameter(Name = "CustomSections")]
         protected CustomSectionContainer CustomSections { get; set; }
 
         protected async Task HandleViewCommandAsync(ViewCommand command)
         {
-            if (command == null)
+            try
             {
-                return;
+                if (command == null)
+                {
+                    return;
+                }
+
+                switch (command)
+                {
+                    case NavigateCommand navigateCommand:
+
+                        UriHelper.NavigateTo(navigateCommand.Uri);
+
+                        break;
+
+                    case UpdateParameterCommand parameterCommand:
+
+                        var data = new Dictionary<string, object>()
+                        {
+                            { "Action", parameterCommand.Action },
+                            { "CollectionAlias", parameterCommand.CollectionAlias },
+                            { "VariantAlias", parameterCommand.VariantAlias }
+                        };
+
+                        if (parameterCommand.Id != null)
+                        {
+                            data.Add("Id", parameterCommand.Id);
+                        }
+
+                        if (parameterCommand.ParentId != null)
+                        {
+                            data.Add("ParentId", parameterCommand.ParentId);
+                        }
+
+                        var update = ParameterCollection.FromDictionary(data);
+
+                        // TODO: this sets invalid parameters..
+                        await SetParametersAsync(update);
+
+                        break;
+
+                    case ReloadCommand _:
+                        await LoadDataAsync();
+
+                        break;
+
+                    case NoOperationCommand _:
+                    default:
+                        break;
+                }
             }
-
-            switch (command)
+            catch (Exception ex)
             {
-                case NavigateCommand navigateCommand:
-
-                    UriHelper.NavigateTo(navigateCommand.Uri);
-
-                    break;
-
-                case UpdateParameterCommand parameterCommand:
-
-                    var data = new Dictionary<string, object>()
-                    {
-                        { "Action", parameterCommand.Action },
-                        { "CollectionAlias", parameterCommand.CollectionAlias },
-                        { "VariantAlias", parameterCommand.VariantAlias }
-                    };
-
-                    if (parameterCommand.Id != null)
-                    {
-                        data.Add("Id", parameterCommand.Id);
-                    }
-
-                    if (parameterCommand.ParentId != null)
-                    {
-                        data.Add("ParentId", parameterCommand.ParentId);
-                    }
-
-                    var update = ParameterCollection.FromDictionary(data);
-
-                    // TODO: this sets invalid parameters..
-                    await SetParametersAsync(update);
-
-                    break;
-
-                case ReloadCommand _:
-                    await LoadDataAsync();
-
-                    break;
-
-                case NoOperationCommand _:
-                default:
-                    break;
+                HandleException(ex);
             }
         }
 
@@ -78,13 +88,23 @@ namespace RapidCMS.UI.Components.Pages
             {
                 await LoadDataAsync();
             }
-            catch (UnauthorizedAccessException ex)
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
+        }
+
+        protected void HandleException(Exception ex)
+        {
+            if (ex is UnauthorizedAccessException)
             {
                 UriHelper.NavigateTo("/unauthorized");
             }
-            catch (Exception ex)
+            else
             {
-                // crash burn
+                ExceptionHelper.StoreException(ex);
+
+                UriHelper.NavigateTo("/error");
             }
         }
 

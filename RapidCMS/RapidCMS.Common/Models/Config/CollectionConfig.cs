@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
@@ -63,6 +64,11 @@ namespace RapidCMS.Common.Models.Config
 
             return this;
         }
+
+        public bool IsUnique(string alias)
+        {
+            return !Collections.Any(col => col.Alias == alias);
+        }
     }
 
     public class CollectionConfig : ICollectionRoot
@@ -81,6 +87,11 @@ namespace RapidCMS.Common.Models.Config
         internal ListEditorConfig ListEditor { get; set; }
         internal NodeViewConfig NodeView { get; set; }
         internal NodeEditorConfig NodeEditor { get; set; }
+
+        public bool IsUnique(string alias)
+        {
+            return !Collections.Any(col => col.Alias == alias);
+        }
     }
 
     public class CollectionConfig<TEntity> : CollectionConfig

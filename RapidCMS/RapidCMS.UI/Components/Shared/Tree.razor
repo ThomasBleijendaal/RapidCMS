@@ -10,16 +10,25 @@
 else if (UI.RootVisible)
 {
     <li class="nav-item">
-        <button onclick="@((UIMouseEventArgs e) => NodesVisible = !NodesVisible)" class="toggle">
-            @if (NodesVisible)
-            {
-                <i class="oi oi-chevron-bottom"></i>
-            }
-            else
-            {
-                <i class="oi oi-chevron-right"></i>
-            }
-        </button>
+        @if (UI.EntitiesVisible)
+        {
+            <button onclick="@((UIMouseEventArgs e) => NodesVisible = !NodesVisible)" class="toggle">
+                @if (NodesVisible)
+                {
+                    <i class="oi oi-chevron-bottom"></i>
+                }
+                else
+                {
+                    <i class="oi oi-chevron-right"></i>
+                }
+            </button>
+        }
+        else
+        {
+            <button class="toggle" disabled>
+                <i class="oi oi-minus"></i>
+            </button>
+        }
 
         @if (UI.Path != null)
         {

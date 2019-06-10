@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
-using RapidCMS.Common.ValueMappers;
 
 #nullable enable
 
@@ -15,10 +15,25 @@ namespace RapidCMS.Common.Extensions
         public static ICollectionRoot AddCollection<TEntity>(this ICollectionRoot root, string alias, string name, Action<CollectionConfig<TEntity>> configure)
             where TEntity : IEntity
         {
+            if (configure == null)
+            {
+                throw new ArgumentNullException(nameof(configure));
+            }
+
+            if (alias != alias.ToUrlFriendlyString())
+            {
+                throw new ArgumentException($"Use lowercase, hyphened strings as alias for collections, '{alias.ToUrlFriendlyString()}' instead of '{alias}'.");
+            }
+
+            if (!root.IsUnique(alias))
+            {
+                throw new NotUniqueException(nameof(alias));
+            }
+
             var configReceiver = new CollectionConfig<TEntity>
             {
-                Alias = alias,
-                Name = name,
+                Alias = alias ?? throw new ArgumentNullException(nameof(alias)),
+                Name = name ?? throw new ArgumentNullException(nameof(name)),
                 EntityVariant = new EntityVariantConfig
                 {
                     Icon = null,
@@ -34,21 +49,23 @@ namespace RapidCMS.Common.Extensions
             return root;
         }
 
-        // TODO: loose the serviceProvider
+        // TODO: lose the serviceProvider
         public static List<Collection> ProcessCollections(this ICollectionRoot root, IServiceProvider serviceProvider)
         {
             var list = new List<Collection>();
 
             foreach (var configReceiver in root.Collections)
             {
-                var collection = new Collection
+                var variant = new EntityVariant
                 {
-                    Alias = configReceiver.Alias,
-                    Name = configReceiver.Name
+                    Alias = configReceiver.EntityVariant.Type.FullName.ToUrlFriendlyString(),
+                    Icon = null,
+                    Name = configReceiver.EntityVariant.Name,
+                    Type = configReceiver.EntityVariant.Type
                 };
 
-                collection.RepositoryType = configReceiver.RepositoryType;
-
+                var collection = new Collection(configReceiver.Name, configReceiver.Alias, variant, configReceiver.RepositoryType);
+                
                 if (configReceiver.TreeView != null)
                 {
                     collection.TreeView = new TreeView
@@ -69,14 +86,6 @@ namespace RapidCMS.Common.Extensions
                         Type = variant.Type
                     });
                 }
-
-                collection.EntityVariant = new EntityVariant
-                {
-                    Alias = configReceiver.EntityVariant.Type.FullName.ToUrlFriendlyString(),
-                    Icon = null,
-                    Name = configReceiver.EntityVariant.Name,
-                    Type = configReceiver.EntityVariant.Type
-                };
 
                 if (configReceiver.ListView != null)
                 {

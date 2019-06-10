@@ -12,6 +12,7 @@ namespace RapidCMS.Common.Models.UI
         public string? Path { get; set; }
         public List<TreeNodeUI> Nodes { get; set; }
 
+        public bool EntitiesVisible { get; set; }
         public bool RootVisible { get; set; }
     }
 

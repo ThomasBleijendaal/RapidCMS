@@ -200,19 +200,23 @@ else
     {
         try
         {
-            UI = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, VariantAlias, ParentId);
+            var newUI = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, VariantAlias, ParentId);
+            var newSubjectToSectionMap = new Dictionary<string, SectionUI>();
 
             // TODO: find better and nicer solution
             // pulling all the entities through the UI since this is the only place where async works..
-            if (UI != null)
+            // TODO: triggers exception during save of new entity in list editor
+            if (newUI != null)
             {
-                SubjectToSectionMap = new Dictionary<string, SectionUI>();
 
-                foreach (var subject in UI.Entities)
+                foreach (var subject in newUI.Entities)
                 {
-                    SubjectToSectionMap.Add(subject.Entity.Id, await UI.SectionForEntityAsync(subject));
+                    newSubjectToSectionMap.Add(subject.Entity.Id, await newUI.SectionForEntityAsync(subject));
                 }
             }
+
+            UI = newUI;
+            SubjectToSectionMap = newSubjectToSectionMap;
 
             StateHasChanged();
         }

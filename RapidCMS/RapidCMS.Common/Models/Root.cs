@@ -46,7 +46,9 @@ namespace RapidCMS.Common.Models
 
         internal Collection GetCollection(string alias)
         {
-            return _collectionMap[alias];
+            return _collectionMap.TryGetValue(alias, out var collection) 
+                ? collection 
+                : throw new KeyNotFoundException($"Cannot find collection with alias {alias}");
         }
 
         private void FindRepositoryForCollections(IServiceProvider serviceProvider, IEnumerable<Collection> collections)

@@ -40,6 +40,7 @@ namespace RapidCMS.Common.Services
                 Constants.Edit => UsageType.Edit,
                 Constants.New => UsageType.New,
                 Constants.View => UsageType.View,
+                Constants.List => UsageType.List,
                 _ => (UsageType)0
             };
         }
@@ -61,21 +62,26 @@ namespace RapidCMS.Common.Services
             var usageType = UsageType.Node | MapActionToUsageType(action);
 
             var collection = _root.GetCollection(alias);
+            
+            var config = usageType.HasFlag(UsageType.View) ? collection.NodeView : collection.NodeEditor;
+            if (config == null)
+            {
+                throw new InvalidOperationException($"Failed to get UI configuration from collection {alias} for action {action}");
+            }
 
             var entityVariant = collection.GetEntityVariant(variantAlias);
 
-            // TODO: change switch to use MapActionToUsageType
-            var entity = action switch
+            var entity = usageType switch
             {
-                Constants.View => await collection.Repository._GetByIdAsync(id, parentId),
-                Constants.Edit => await collection.Repository._GetByIdAsync(id, parentId),
-                Constants.New => await collection.Repository._NewAsync(parentId, entityVariant.Type),
+                UsageType.Node | UsageType.View => await collection.Repository._GetByIdAsync(id, parentId),
+                UsageType.Node | UsageType.Edit => await collection.Repository._GetByIdAsync(id, parentId),
+                UsageType.Node | UsageType.New => await collection.Repository._NewAsync(parentId, entityVariant.Type),
                 _ => null
             };
 
             if (entity == null)
             {
-                throw new Exception("Failed to get entity for given parameters.");
+                throw new Exception("Failed to get entity for given id(s)");
             }
 
             if (action != Constants.New)
@@ -94,8 +100,7 @@ namespace RapidCMS.Common.Services
             }
 
             var viewContext = new ViewContext(usageType, entityVariant, entity);
-            var config = usageType.HasFlag(UsageType.View) ? collection.NodeView : collection.NodeEditor;
-
+            
             var node = await _uiService.GenerateNodeUIAsync(viewContext, config);
 
             node.Subject = new UISubject
@@ -114,7 +119,13 @@ namespace RapidCMS.Common.Services
             var entityVariant = collection.GetEntityVariant(variantAlias);
 
             var nodeEditor = collection.NodeEditor;
-            var button = nodeEditor.Buttons.GetAllButtons().First(x => x.ButtonId == actionId);
+            var button = nodeEditor?.Buttons?.GetAllButtons().FirstOrDefault(x => x.ButtonId == actionId);
+
+            if (button == null)
+            {
+                throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
+            }
+
             var buttonCrudType = button.GetCrudType();
 
             var updatedEntity = node.Subject.Entity;
@@ -191,7 +202,7 @@ namespace RapidCMS.Common.Services
 
             IEnumerable<UISubject> entities;
 
-            if (action == Constants.New)
+            if (listUsageType.HasFlag(UsageType.New))
             {
                 entities = new[] {
                     new UISubject {
@@ -215,8 +226,13 @@ namespace RapidCMS.Common.Services
 
             var listViewContext = new ViewContext(listUsageType, collection.EntityVariant, newEntity);
 
-            if (action == Constants.List)
+            if (listUsageType == UsageType.List)
             {
+                if (collection.ListView == null)
+                {
+                    throw new InvalidOperationException($"Failed to get UI configuration from collection {alias} for action {action}");
+                }
+
                 var editor = await _uiService.GenerateListUIAsync(
                     listViewContext,
                     (subject) => new ViewContext(subject.UsageType, collection.GetEntityVariant(subject.Entity), subject.Entity),
@@ -229,6 +245,11 @@ namespace RapidCMS.Common.Services
             }
             else if (action.In(Constants.Edit, Constants.New))
             {
+                if (collection.ListEditor == null)
+                {
+                    throw new InvalidOperationException($"Failed to get UI configuration from collection {alias} for action {action}");
+                }
+
                 var editor = await _uiService.GenerateListUIAsync(
                     listViewContext,
                     (subject) =>
@@ -246,7 +267,7 @@ namespace RapidCMS.Common.Services
             }
             else
             {
-                throw new NotImplementedException($"Cannot do {action} on GetCollectionListViewAsync");
+                throw new NotImplementedException($"Failed to process {action} for collection {alias}");
             }
         }
 
