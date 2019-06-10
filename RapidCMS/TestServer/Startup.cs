@@ -795,7 +795,7 @@ namespace TestServer
                 app.UseHsts();
             }
 
-            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:5001", "https://localhost:44391/"));
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
