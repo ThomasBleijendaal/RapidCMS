@@ -69,10 +69,7 @@ namespace RapidCMS.Common.Models.Config
         public NodeViewPaneConfig<TEntity> AddSubCollectionListView<TSubEntity>(string collectionAlias, Action<SubCollectionListConfig<TSubEntity>>? configure = null)
             where TSubEntity : IEntity
         {
-            var config = new SubCollectionListConfig<TSubEntity>
-            {
-                CollectionAlias = collectionAlias
-            };
+            var config = new SubCollectionListConfig<TSubEntity>(collectionAlias);
 
             configure?.Invoke(config);
 
