@@ -16,7 +16,7 @@ namespace RapidCMS.Common.Models.Config
     public class ListViewConfig<TEntity> : ListViewConfig
         where TEntity : IEntity
     {
-        public ListViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null, bool isPrimary = false)
+        public ListViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig
             {
@@ -31,7 +31,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ListViewConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string label = null, string icon = null)
+        public ListViewConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string? label = null, string? icon = null)
         {
             var button = new CustomButtonConfig(buttonType)
             {
@@ -46,7 +46,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ListViewConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string label = null, string icon = null)
+        public ListViewConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
         {
             var button = new CustomButtonConfig(buttonType)
             {

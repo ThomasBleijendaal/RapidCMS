@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-
+﻿using System;
+using System.Collections.Generic;
+using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models.Config
 {

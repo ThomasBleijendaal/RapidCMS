@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Helpers;
 
 
@@ -107,12 +108,7 @@ namespace RapidCMS.Common.Models.Config
         public CollectionConfig<TEntity> AddEntityVariant<TDerivedEntity>(string name, string icon)
             where TDerivedEntity : TEntity
         {
-            SubEntityVariants.Add(new EntityVariantConfig
-            {
-                Name = name,
-                Icon = icon,
-                Type = typeof(TDerivedEntity)
-            });
+            SubEntityVariants.Add(new EntityVariantConfig(name, typeof(TDerivedEntity), icon));
 
             return this;
         }
@@ -127,13 +123,13 @@ namespace RapidCMS.Common.Models.Config
             return SetTreeView(entityVisibility, default, nameExpression);
         }
 
-        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string>> nameExpression)
+        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string>>? nameExpression)
         {
             TreeView = new TreeViewConfig
             {
                 EntityVisibilty = entityVisibility,
                 RootVisibility = rootVisibility,
-                Name = PropertyMetadataHelper.GetExpressionMetadata(nameExpression)
+                Name = nameExpression == null ? null : PropertyMetadataHelper.GetExpressionMetadata(nameExpression) ?? throw new InvalidExpressionException(nameof(nameExpression))
             };
 
             return this;

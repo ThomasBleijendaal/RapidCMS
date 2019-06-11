@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
 
@@ -68,7 +69,7 @@ namespace RapidCMS.Common.Models.Config
         {
             var config = new FieldConfig<TEntity>()
             {
-                Property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression)
+                Property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression) ?? throw new InvalidPropertyExpressionException(nameof(propertyExpression))
             };
             config.Name = config.Property.PropertyName;
             config.Type = EditorTypeHelper.TryFindDefaultEditorType(config.Property.PropertyType);

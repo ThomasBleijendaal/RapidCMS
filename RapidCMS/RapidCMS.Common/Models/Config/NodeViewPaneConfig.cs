@@ -51,8 +51,7 @@ namespace RapidCMS.Common.Models.Config
         {
             var config = new PropertyConfig<TEntity>()
             {
-                Property = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression) 
-                    ?? throw new InvalidExpressionException(nameof(propertyExpression)),
+                Property = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression) ?? throw new InvalidExpressionException(nameof(propertyExpression)),
             };
             config.Name = config.Property.PropertyName;
 
@@ -65,7 +64,7 @@ namespace RapidCMS.Common.Models.Config
             return config;
         }
 
-        
+
         // TODO: check if sub collection is part of collection
         public NodeViewPaneConfig<TEntity> AddSubCollectionListView<TSubEntity>(string collectionAlias, Action<SubCollectionListConfig<TSubEntity>>? configure = null)
             where TSubEntity : IEntity

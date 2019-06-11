@@ -80,7 +80,7 @@ namespace RapidCMS.Common.Services
                     var node = new TreeNodeUI
                     {
                         Id = entity.Id,
-                        Name = collection.TreeView.Name.StringGetter.Invoke(entity),
+                        Name = collection.TreeView.Name!.StringGetter.Invoke(entity),
                         Collections = collection.Collections.ToList(subCollection => subCollection.Alias)
                     };
 

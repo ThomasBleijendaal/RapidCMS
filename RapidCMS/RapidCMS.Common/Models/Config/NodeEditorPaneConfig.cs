@@ -50,8 +50,7 @@ namespace RapidCMS.Common.Models.Config
         {
             var config = new FieldConfig<TEntity>()
             {
-                Property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression)
-                    ?? throw new InvalidPropertyExpressionException(nameof(propertyExpression)),
+                Property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression) ?? throw new InvalidPropertyExpressionException(nameof(propertyExpression)),
             };
             config.Name = config.Property.PropertyName;
             config.Type = EditorTypeHelper.TryFindDefaultEditorType(config.Property.PropertyType);
@@ -65,7 +64,7 @@ namespace RapidCMS.Common.Models.Config
             return config;
         }
 
-        
+
         // TODO: check if sub collection is part of collection
         public NodeEditorPaneConfig<TEntity> AddSubCollectionListEditor<TSubEntity>(string collectionAlias, Action<SubCollectionListConfig<TSubEntity>>? configure = null)
             where TSubEntity : IEntity

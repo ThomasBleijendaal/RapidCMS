@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Metadata;
 
@@ -23,14 +24,14 @@ namespace RapidCMS.Common.Models.Config
 
         public CollectionRelationConfig<TEntity, TRelatedEntity> SetIdProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression)
         {
-            IdProperty = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression);
+            IdProperty = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression) ?? throw new InvalidPropertyExpressionException(nameof(propertyExpression));
 
             return this;
         }
 
         public CollectionRelationConfig<TEntity, TRelatedEntity> SetDisplayProperty(Expression<Func<TRelatedEntity, string>> propertyExpression)
         {
-            DisplayProperty = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression);
+            DisplayProperty = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression) ?? throw new InvalidExpressionException(nameof(propertyExpression));
 
             return this;
         }

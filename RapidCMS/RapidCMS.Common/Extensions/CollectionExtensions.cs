@@ -33,12 +33,7 @@ namespace RapidCMS.Common.Extensions
             {
                 Alias = alias ?? throw new ArgumentNullException(nameof(alias)),
                 Name = name ?? throw new ArgumentNullException(nameof(name)),
-                EntityVariant = new EntityVariantConfig
-                {
-                    Icon = null,
-                    Name = typeof(TEntity).Name,
-                    Type = typeof(TEntity)
-                }
+                EntityVariant = new EntityVariantConfig(typeof(TEntity).Name, typeof(TEntity))
             };
 
             configure.Invoke(configReceiver);

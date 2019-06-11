@@ -7,7 +7,6 @@
 
         // viewers
         View = 1,
-        // TODO: merge list with view
         List = 1,
         Create = 2,
         Read = 3,

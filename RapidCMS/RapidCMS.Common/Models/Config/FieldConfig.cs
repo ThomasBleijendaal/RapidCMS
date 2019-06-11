@@ -80,10 +80,7 @@ namespace RapidCMS.Common.Models.Config
                 throw new InvalidOperationException("Cannot add DataRelation to Editor with no support for RelationType.One");
             }
 
-            var config = new DataProviderRelationConfig
-            {
-                DataCollectionType = typeof(TDataCollection)
-            };
+            var config = new DataProviderRelationConfig(typeof(TDataCollection));
 
             Relation = config;
 

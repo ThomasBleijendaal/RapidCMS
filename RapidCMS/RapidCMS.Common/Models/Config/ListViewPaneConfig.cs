@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
 
@@ -68,7 +69,7 @@ namespace RapidCMS.Common.Models.Config
         {
             var config = new PropertyConfig<TEntity>
             {
-                Property = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression)
+                Property = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression) ?? throw new InvalidPropertyExpressionException(nameof(propertyExpression))
             };
             config.Name = config.Property.PropertyName;
 

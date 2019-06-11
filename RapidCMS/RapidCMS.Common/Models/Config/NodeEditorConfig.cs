@@ -5,11 +5,15 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 
-
 namespace RapidCMS.Common.Models.Config
 {
     public class NodeEditorConfig
     {
+        public NodeEditorConfig(Type baseType)
+        {
+            BaseType = baseType ?? throw new ArgumentNullException(nameof(baseType));
+        }
+
         internal Type BaseType { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
         internal List<NodeEditorPaneConfig> EditorPanes { get; set; } = new List<NodeEditorPaneConfig>();
@@ -18,12 +22,11 @@ namespace RapidCMS.Common.Models.Config
     public class NodeEditorConfig<TEntity> : NodeEditorConfig
         where TEntity : IEntity
     {
-        public NodeEditorConfig()
+        public NodeEditorConfig() : base(typeof(TEntity))
         {
-            BaseType = typeof(TEntity);
         }
 
-        public NodeEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null, bool isPrimary = false)
+        public NodeEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig
             {
@@ -38,7 +41,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeEditorConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string label = null, string icon = null)
+        public NodeEditorConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string? label = null, string? icon = null)
         {
             var button = new CustomButtonConfig(buttonType)
             {
@@ -53,7 +56,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeEditorConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string label = null, string icon = null)
+        public NodeEditorConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
         {
             var button = new CustomButtonConfig(buttonType)
             {

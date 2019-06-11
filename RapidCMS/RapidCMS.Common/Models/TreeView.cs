@@ -9,6 +9,6 @@ namespace RapidCMS.Common.Models
         internal EntityVisibilty EntityVisibility { get; set; }
         internal CollectionRootVisibility RootVisibility { get; set; }
 
-        internal IExpressionMetadata Name { get; set; }
+        internal IExpressionMetadata? Name { get; set; }
     }
 }

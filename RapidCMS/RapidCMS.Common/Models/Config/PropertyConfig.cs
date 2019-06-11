@@ -16,7 +16,6 @@ namespace RapidCMS.Common.Models.Config
     public class PropertyConfig<TEntity> : PropertyConfig
         where TEntity : IEntity
     {
-        
         public PropertyConfig<TEntity> SetName(string name)
         {
             Name = name;

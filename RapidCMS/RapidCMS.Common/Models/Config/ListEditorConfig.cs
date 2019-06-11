@@ -18,7 +18,7 @@ namespace RapidCMS.Common.Models.Config
     public class ListEditorConfig<TEntity> : ListEditorConfig
         where TEntity : IEntity
     {
-        public ListEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null, bool isPrimary = false)
+        public ListEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig
             {
@@ -33,7 +33,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ListEditorConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string label = null, string icon = null)
+        public ListEditorConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string? label = null, string? icon = null)
         {
             var button = new CustomButtonConfig(buttonType)
             {
