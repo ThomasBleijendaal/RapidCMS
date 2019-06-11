@@ -1,7 +1,6 @@
 ﻿using System;
 using RapidCMS.Common.Models.Metadata;
 
-#nullable enable
 
 namespace RapidCMS.Common.Models
 {

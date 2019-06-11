@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using RapidCMS.Common.Models.DTOs;
 using RapidCMS.Common.Models.Metadata;
 
-#nullable enable
 
 namespace RapidCMS.Common.Data
 {

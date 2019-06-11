@@ -29,22 +29,18 @@
 </div>
 
 @functions {
-#nullable enable
 
     TreeRootUI? TreeRoot;
 
     [CascadingParameter(Name = "CustomLogin")]
     private RenderFragment? CustomLogin { get; set; }
 
-    protected override async Task OnInitAsync()
+    protected override void OnInit()
     {
+        base.OnInit();
+
         UriHelper.OnLocationChanged += LocationChanged;
-
-        await GetCollectionsAsync();
-    }
-
-    private async Task GetCollectionsAsync()
-    {
+        
         TreeRoot = TreeService.GetRoot();
     }
 

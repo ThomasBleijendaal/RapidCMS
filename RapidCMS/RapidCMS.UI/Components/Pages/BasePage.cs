@@ -8,7 +8,6 @@ using RapidCMS.Common.Models.UI;
 using RapidCMS.UI.Components.Buttons;
 using RapidCMS.UI.Models;
 
-#nullable enable
 
 namespace RapidCMS.UI.Components.Pages
 {

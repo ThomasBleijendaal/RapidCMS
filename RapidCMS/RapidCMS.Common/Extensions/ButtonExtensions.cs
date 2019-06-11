@@ -2,7 +2,6 @@
 using System.Linq;
 using RapidCMS.Common.Models;
 
-#nullable enable
 
 namespace RapidCMS.Common.Extensions
 {

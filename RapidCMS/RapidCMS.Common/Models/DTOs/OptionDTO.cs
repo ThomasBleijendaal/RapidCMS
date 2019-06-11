@@ -1,6 +1,5 @@
 ﻿using RapidCMS.Common.Data;
 
-#nullable enable
 
 namespace RapidCMS.Common.Models.DTOs
 {

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Models.UI;
 
-#nullable enable
 
 namespace RapidCMS.UI.Components.Sections
 {

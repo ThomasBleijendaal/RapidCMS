@@ -10,7 +10,6 @@ using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.Services;
 using RapidCMS.Common.ValueMappers;
 
-#nullable enable
 
 namespace Microsoft.Extensions.DependencyInjection
 {

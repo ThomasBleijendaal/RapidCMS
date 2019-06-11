@@ -2,7 +2,6 @@
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
 
-#nullable enable
 
 namespace RapidCMS.UI.Components.Buttons
 {

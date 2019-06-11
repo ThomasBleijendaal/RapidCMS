@@ -5,7 +5,6 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Helpers;
 
-#nullable enable
 
 namespace RapidCMS.Common.Models.Config
 {

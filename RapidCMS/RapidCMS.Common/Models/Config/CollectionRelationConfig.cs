@@ -3,7 +3,6 @@ using System.Linq.Expressions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Metadata;
 
-#nullable enable
 
 namespace RapidCMS.Common.Models.Config
 {

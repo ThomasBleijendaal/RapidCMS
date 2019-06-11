@@ -1,7 +1,6 @@
 ﻿using RapidCMS.Common.Enums;
 using System;
 
-#nullable enable
 
 namespace RapidCMS.Common.Models.Config
 {

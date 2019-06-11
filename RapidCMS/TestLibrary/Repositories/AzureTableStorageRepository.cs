@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TestLibrary.Entities;
 
-#nullable enable
 
 namespace TestLibrary.Repositories
 {

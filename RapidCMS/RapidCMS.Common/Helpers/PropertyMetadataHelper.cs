@@ -7,7 +7,6 @@ using System.Security.Cryptography;
 using System.Text;
 using RapidCMS.Common.Models.Metadata;
 
-#nullable enable
 
 namespace RapidCMS.Common.Helpers
 {
@@ -224,7 +223,7 @@ namespace RapidCMS.Common.Helpers
             return setExpression.Compile();
         }
 
-        private readonly static SHA1CryptoServiceProvider _sha1 = new SHA1CryptoServiceProvider();
+        private readonly static SHA1CryptoServiceProvider Sha1 = new SHA1CryptoServiceProvider();
 
         private static string GetFingerprint(Expression expression)
         {
@@ -258,7 +257,7 @@ namespace RapidCMS.Common.Helpers
                     break;
             }
 
-            return Convert.ToBase64String(_sha1.ComputeHash(Encoding.UTF8.GetBytes(fingerprint)));
+            return Convert.ToBase64String(Sha1.ComputeHash(Encoding.UTF8.GetBytes(fingerprint)));
         }
     }
 }

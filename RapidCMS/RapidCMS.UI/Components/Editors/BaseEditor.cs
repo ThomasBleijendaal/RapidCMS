@@ -4,7 +4,6 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Models.Metadata;
 using RapidCMS.Common.ValueMappers;
 
-#nullable enable
 
 namespace RapidCMS.UI.Components.Editors
 {

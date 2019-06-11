@@ -2,7 +2,6 @@
 using RapidCMS.Common.Models.Commands;
 using RapidCMS.Common.Models.UI;
 
-#nullable enable
 
 namespace RapidCMS.Common.Services
 {

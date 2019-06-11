@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 
-#nullable enable
 
 namespace RapidCMS.Common.Models
 {

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 
-#nullable enable
 
 namespace TestLibrary
 {

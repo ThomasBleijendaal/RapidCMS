@@ -7,7 +7,6 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
 using TestLibrary.Entities;
 
-#nullable enable
 
 namespace TestLibrary.Repositories
 {

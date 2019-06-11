@@ -10,8 +10,6 @@ using RapidCMS.Common.ValueMappers;
 using RapidCMS.UI.Components.Editors;
 using RapidCMS.UI.Components.Sections;
 
-#nullable enable
-
 namespace RapidCMS.UI.Models
 {
     // TODO: move to more sane locations

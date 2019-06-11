@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 
-#nullable enable
 
 namespace RapidCMS.Common.ActionHandlers
 {

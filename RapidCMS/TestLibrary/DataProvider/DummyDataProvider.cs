@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Models;
 
-#nullable enable
 
 namespace TestLibrary.DataProvider
 {

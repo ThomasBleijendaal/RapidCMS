@@ -10,7 +10,6 @@ using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
 
-#nullable enable
 
 namespace RapidCMS.Common.Services
 {

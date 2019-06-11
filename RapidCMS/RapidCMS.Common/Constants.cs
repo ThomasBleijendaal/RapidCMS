@@ -4,7 +4,6 @@
 
 namespace RapidCMS.Common
 {
-    // TODO: change to ENUM
     public static class Constants
     {
         public const string Edit = "edit";

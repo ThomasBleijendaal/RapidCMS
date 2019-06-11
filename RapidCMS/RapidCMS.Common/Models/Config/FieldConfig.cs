@@ -6,7 +6,6 @@ using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models.Metadata;
 using RapidCMS.Common.ValueMappers;
 
-#nullable enable
 
 namespace RapidCMS.Common.Models.Config
 {

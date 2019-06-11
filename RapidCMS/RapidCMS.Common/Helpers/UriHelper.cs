@@ -1,6 +1,5 @@
 ﻿using RapidCMS.Common.Models;
 
-#nullable enable
 
 namespace RapidCMS.Common.Helpers
 {

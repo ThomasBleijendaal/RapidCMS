@@ -7,8 +7,6 @@ using RapidCMS.Common.Enums;
 using TestLibrary.Entities;
 using TestLibrary.Repositories;
 
-#nullable enable
-
 namespace TestServer.ActionHandlers
 {
     public class CreateButtonActionHandler : IButtonActionHandler

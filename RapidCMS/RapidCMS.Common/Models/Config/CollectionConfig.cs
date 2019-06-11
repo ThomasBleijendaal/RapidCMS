@@ -6,7 +6,6 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Helpers;
 
-#nullable enable
 
 namespace RapidCMS.Common.Models.Config
 {

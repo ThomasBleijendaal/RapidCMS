@@ -2,7 +2,6 @@
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Models;
 
-#nullable enable
 
 namespace RapidCMS.Common.Data
 {

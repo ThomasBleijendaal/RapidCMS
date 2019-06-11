@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Common.Data;
 
-#nullable enable
 
 namespace RapidCMS.Common.Models
 {
