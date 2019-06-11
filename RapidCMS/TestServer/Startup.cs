@@ -129,6 +129,7 @@ namespace TestServer
             services.AddSingleton<RepositoryE>();
             services.AddSingleton<RepositoryF>();
             services.AddSingleton<VariantRepository>();
+            services.AddSingleton<ValidationRepository>();
 
             services.AddSingleton<RelationRepository>();
 
@@ -156,6 +157,35 @@ namespace TestServer
                 config.SetCustomLogin(typeof(LoginControl));
 
                 config.SetSiteName("Test Client");
+
+                config.AddCollection<ValidationEntity>("validation-collection", "Validation entities", collection =>
+                {
+                    collection
+                        .SetRepository<ValidationRepository>()
+                        .SetTreeView(e => e.Name)
+                        .SetListView(list =>
+                        {
+                            list.AddDefaultButton(DefaultButtonType.New);
+                            list.SetListPane(pane =>
+                            {
+                                pane.AddProperty(p => p.Name);
+                                pane.AddDefaultButton(DefaultButtonType.Edit);
+                            });
+                        })
+                        .SetNodeEditor(editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                            editor.AddDefaultButton(DefaultButtonType.Delete);
+                            editor.AddEditorPane(pane =>
+                            {
+                                pane.AddField(f => f.Name);
+                                pane.AddField(f => f.NotRequired);
+                                pane.AddField(f => f.Range)
+                                    .SetValueMapper<LongValueMapper>();
+                            });
+                        });
+                });
 
                 //config.AddCollection<CountryEntity>("country-collection", "Countries", collection =>
                 //{
@@ -352,31 +382,31 @@ namespace TestServer
                 //        });
                 //});
 
-                config.AddCollection<TestEntity>("collection-4", "Collection with sub collections", collection =>
-                {
-                    collection
-                        .SetRepository<RepositoryA>()
-                        .SetTreeView(entity => entity.Name)
-                        .SetListView(listView)
-                        .SetNodeEditor(nodeEditorWithSubCollection)
-                        .AddCollection<TestEntity>("sub-collection-1", "Sub Collection 1", subCollection =>
-                        {
-                            subCollection
-                                .SetRepository<RepositoryB>()
-                                //.SetTreeView(EntityVisibilty.Hidden, CollectionRootVisibility.Hidden, entity => entity.Name)
-                                .SetListView(listView)
-                                .SetListEditor(ListEditorType.Table, subListNodeEditor)
-                                .SetNodeEditor(nodeEditor);
-                        })
-                        .AddCollection<TestEntity>("sub-collection-2", "Sub Collection 2", subCollection =>
-                        {
-                            subCollection
-                                .SetRepository<RepositoryC>()
-                                //.SetTreeView(EntityVisibilty.Hidden, CollectionRootVisibility.Hidden, entity => entity.Name)
-                                .SetListEditor(ListEditorType.Block, subListNodeEditor)
-                                .SetNodeEditor(nodeEditor);
-                        });
-                });
+                //config.AddCollection<TestEntity>("collection-4", "Collection with sub collections", collection =>
+                //{
+                //    collection
+                //        .SetRepository<RepositoryA>()
+                //        .SetTreeView(entity => entity.Name)
+                //        .SetListView(listView)
+                //        .SetNodeEditor(nodeEditorWithSubCollection)
+                //        .AddCollection<TestEntity>("sub-collection-1", "Sub Collection 1", subCollection =>
+                //        {
+                //            subCollection
+                //                .SetRepository<RepositoryB>()
+                //                //.SetTreeView(EntityVisibilty.Hidden, CollectionRootVisibility.Hidden, entity => entity.Name)
+                //                .SetListView(listView)
+                //                .SetListEditor(ListEditorType.Table, subListNodeEditor)
+                //                .SetNodeEditor(nodeEditor);
+                //        })
+                //        .AddCollection<TestEntity>("sub-collection-2", "Sub Collection 2", subCollection =>
+                //        {
+                //            subCollection
+                //                .SetRepository<RepositoryC>()
+                //                //.SetTreeView(EntityVisibilty.Hidden, CollectionRootVisibility.Hidden, entity => entity.Name)
+                //                .SetListEditor(ListEditorType.Block, subListNodeEditor)
+                //                .SetNodeEditor(nodeEditor);
+                //        });
+                //});
 
                 //config.AddCollection<TestEntity>("collection-3", "Variant collection", collection =>
                 //{

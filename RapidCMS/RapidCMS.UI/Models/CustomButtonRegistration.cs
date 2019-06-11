@@ -65,9 +65,9 @@ namespace RapidCMS.UI.Models
 
                     builder.OpenComponent(0, editorType);
 
-                    builder.AddAttribute(1, nameof(BaseEditor.Entity), entity);
-                    builder.AddAttribute(2, nameof(BaseEditor.Property), property);
-                    builder.AddAttribute(3, nameof(BaseEditor.ValueMapper), valueMapper);
+                    builder.AddAttribute(1, "Entity", entity);
+                    builder.AddAttribute(2, "Property", property);
+                    builder.AddAttribute(3, "ValueMapper", valueMapper);
 
                     // TODO: check for use of this property
                     // builder.AddAttribute(4, nameof(BaseRelationEditor.DataCollection), dataCollection);

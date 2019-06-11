@@ -21,7 +21,7 @@
     {
         if (DataCollection != null)
         {
-            var value = Property.Getter(Entity);
+            var value = GetValue(false);
 
             var data = await DataCollection.GetAvailableElementsAsync();
 
@@ -39,11 +39,11 @@
 
         if (index == -1)
         {
-            Property.Setter(Entity, null);
+            SetValue(null, false);
         }
         else
         {
-            Property.Setter(Entity, Options.ElementAt(index).Id);
+            SetValue(Options.ElementAt(index).Id, false);
         }
     }
 }

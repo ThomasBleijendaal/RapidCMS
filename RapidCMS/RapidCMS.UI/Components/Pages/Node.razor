@@ -18,28 +18,30 @@
 }
 else
 {
-    <div class="top-row first">
-        @{
-            @foreach (var button in UI.Buttons)
-            {
-                var context = CreateButtonContext<BasePage>(this, button, ButtonCallbackAsync);
+    <CascadingValue Name="EditContext" Value="EditContext">
+        <div class="top-row first">
+            @{
+                @foreach (var button in UI.Buttons)
+                {
+                    var context = CreateButtonContext<BasePage>(this, button, ButtonCallbackAsync);
 
-                <UIButton TContext="BasePage" Button="button" Context="context" />
+                    <UIButton TContext="BasePage" Button="button" Context="context" />
+                }
+            }
+        </div>
+
+        @foreach (var section in UI.Sections)
+        {
+            if (!string.IsNullOrEmpty(section.CustomAlias))
+            {
+                @CustomSections.GetCustomSection(section.CustomAlias, section, UI.Subject);
+            }
+            else
+            {
+                <BlockSection Section="section" Subject="UI.Subject" />
             }
         }
-    </div>
-
-    @foreach (var section in UI.Sections)
-    {
-        if (!string.IsNullOrEmpty(section.CustomAlias))
-        {
-            @CustomSections.GetCustomSection(section.CustomAlias, section, UI.Subject);
-        }
-        else
-        {
-            <BlockSection Section="section" Subject="UI.Subject" />
-        }
-    }
+    </CascadingValue>
 }
 
 @functions {

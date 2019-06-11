@@ -4,7 +4,7 @@
 @using RapidCMS.Common
 @using RapidCMS.Common.Enums
 
-@if (Section.Elements.Any())
+@if (Section?.Elements.Any() ?? false && Subject != null)
 {
     <div class="content">
         @if (!string.IsNullOrWhiteSpace(Section.Label))

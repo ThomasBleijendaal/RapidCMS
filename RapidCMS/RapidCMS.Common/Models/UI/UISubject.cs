@@ -1,4 +1,5 @@
-﻿using RapidCMS.Common.Data;
+﻿using System;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models.UI
@@ -8,4 +9,6 @@ namespace RapidCMS.Common.Models.UI
         public UsageType UsageType { get; internal set; }
         public IEntity Entity { get; internal set; }
     }
+
+
 }

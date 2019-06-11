@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.Authorization;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models;
@@ -23,13 +24,20 @@ namespace RapidCMS.Common.Services
         private readonly IUIService _uiService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IValidationService _validationService;
 
-        public CollectionService(Root root, IUIService uiService, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
+        public CollectionService(
+            Root root, 
+            IUIService uiService, 
+            IHttpContextAccessor httpContextAccessor, 
+            IAuthorizationService authorizationService,
+            IValidationService validationService)
         {
             _root = root;
             _uiService = uiService;
             _httpContextAccessor = httpContextAccessor;
             _authorizationService = authorizationService;
+            _validationService = validationService;
         }
 
         private UsageType MapActionToUsageType(string action)
@@ -128,22 +136,29 @@ namespace RapidCMS.Common.Services
             var buttonCrudType = button.GetCrudType();
 
             var updatedEntity = node.Subject.Entity;
+
+            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                _httpContextAccessor.HttpContext.User,
+                updatedEntity,
+                Operations.GetOperationForCrudType(buttonCrudType));
+
+            if (!authorizationChallenge.Succeeded)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            var isValid = await _validationService.IsValidAsync(updatedEntity);
+            if (!isValid)
+            {
+                throw new InvalidEntityException();
+            }
+
             var relations = new RelationContainer(node.Sections.SelectMany(x => x.GetRelations()));
 
             // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
                 await customButton.HandleActionAsync(parentId, id, customData);
-            }
-
-            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                _httpContextAccessor.HttpContext.User, 
-                updatedEntity, 
-                Operations.GetOperationForCrudType(buttonCrudType));
-
-            if (!authorizationChallenge.Succeeded)
-            {
-                throw new UnauthorizedAccessException();
             }
 
             switch (buttonCrudType)
@@ -285,24 +300,24 @@ namespace RapidCMS.Common.Services
                 throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
             }
 
+            var entity = await collection.Repository._NewAsync(parentId, collection.EntityVariant.Type);
+
             var buttonCrudType = button.GetCrudType();
+
+            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+               _httpContextAccessor.HttpContext.User,
+               entity,
+               Operations.GetOperationForCrudType(buttonCrudType));
+
+            if (!authorizationChallenge.Succeeded)
+            {
+                throw new UnauthorizedAccessException();
+            }
 
             // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
                 await customButton.HandleActionAsync(parentId, null, customData);
-            }
-
-            var entity = await collection.Repository._NewAsync(parentId, collection.EntityVariant.Type);
-
-            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                _httpContextAccessor.HttpContext.User,
-                entity,
-                Operations.GetOperationForCrudType(buttonCrudType));
-
-            if (!authorizationChallenge.Succeeded)
-            {
-                throw new UnauthorizedAccessException();
             }
 
             switch (buttonCrudType)
@@ -362,16 +377,7 @@ namespace RapidCMS.Common.Services
 
             var buttonCrudType = button.GetCrudType();
 
-            // since the id is known, get the entity variant from the entity
             var updatedEntity = node.Subject.Entity;
-            var entityVariant = collection.GetEntityVariant(updatedEntity);
-            var relations = new RelationContainer(node.Sections.SelectMany(x => x.GetRelations()));
-
-            // TODO: what to do with this action
-            if (button is CustomButton customButton)
-            {
-                await customButton.HandleActionAsync(parentId, id, customData);
-            }
 
             var authorizationChallenge = await _authorizationService.AuthorizeAsync(
                 _httpContextAccessor.HttpContext.User,
@@ -381,6 +387,16 @@ namespace RapidCMS.Common.Services
             if (!authorizationChallenge.Succeeded)
             {
                 throw new UnauthorizedAccessException();
+            }
+
+            // since the id is known, get the entity variant from the entity
+            var entityVariant = collection.GetEntityVariant(updatedEntity);
+            var relations = new RelationContainer(node.Sections.SelectMany(x => x.GetRelations()));
+
+            // TODO: what to do with this action
+            if (button is CustomButton customButton)
+            {
+                await customButton.HandleActionAsync(parentId, id, customData);
             }
 
             switch (buttonCrudType)

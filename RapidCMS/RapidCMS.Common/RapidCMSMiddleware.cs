@@ -10,7 +10,6 @@ using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.Services;
 using RapidCMS.Common.ValueMappers;
 
-
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class RapidCMSMiddleware
@@ -32,6 +31,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<ICollectionService, CollectionService>();
             services.AddTransient<ITreeService, TreeService>();
             services.AddTransient<IUIService, UIService>();
+
+            services.AddTransient<IValidationService, ValidationService>();
 
             services.AddScoped<IExceptionHelper, ExceptionHelper>();
 

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Commands;
 using RapidCMS.Common.Models.UI;
+using RapidCMS.Common.Validation;
 using RapidCMS.UI.Components.Buttons;
 using RapidCMS.UI.Models;
 
@@ -21,6 +23,8 @@ namespace RapidCMS.UI.Components.Pages
 
         [CascadingParameter(Name = "CustomSections")]
         protected CustomSectionContainer CustomSections { get; set; }
+
+        protected EditContext EditContext { get; private set; } 
 
         protected async Task HandleViewCommandAsync(ViewCommand command)
         {
@@ -85,7 +89,16 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
+                // TODO: manage when reloading
+                // TODO: manage nesting of pages
+                if (EditContext == null)
+                {
+                    EditContext = new EditContext();
+                }
+
                 await LoadDataAsync();
+
+                EditContext.RequestValidation();
             }
             catch (Exception ex)
             {
@@ -98,6 +111,11 @@ namespace RapidCMS.UI.Components.Pages
             if (ex is UnauthorizedAccessException)
             {
                 UriHelper.NavigateTo("/unauthorized");
+            }
+            else if (ex is InvalidEntityException)
+            {
+                // crash burn die
+                throw ex;
             }
             else
             {
@@ -114,7 +132,7 @@ namespace RapidCMS.UI.Components.Pages
 
         protected ButtonContext<TContext> CreateButtonContext<TContext>(TContext context, ButtonUI button, Func<string, TContext, object?, Task> callback)
         {
-            return new ButtonContext<TContext>
+            return new ButtonContext<TContext>(EditContext)
             {
                 ButtonId = button.ButtonId,
                 CallbackAsync = callback,

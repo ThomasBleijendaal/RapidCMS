@@ -2,6 +2,7 @@
 @using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Data
 @using RapidCMS.UI.Models
+@using Microsoft.AspNetCore.Components.Forms
 
 @if (Field != null && Entity != null)
 {
@@ -72,8 +73,6 @@
 }
 
 @functions {
-
-
     [CascadingParameter(Name = "CustomEditors")]
     protected CustomEditorContainer CustomEditors { get; set; }
 

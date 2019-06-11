@@ -7,7 +7,7 @@
     var index = 0;
     var group = Guid.NewGuid().ToString();
 
-    var value = Property.Getter(Entity);
+    var value = GetValue(false);
 
     <div class="form-control form-control-select-list">
         
@@ -20,7 +20,7 @@
                        id=@group-option@(++index)
                        name=@group 
                        checked=@(option.Id.Equals(value)) 
-                       onchange=@(async args => Property.Setter(Entity, option.Id)) />
+                       onchange=@(async args => SetValue(option.Id, false)) />
                 <label class="form-check-label" for="@group-option@(index)">
                     @option.Label
                 </label>
