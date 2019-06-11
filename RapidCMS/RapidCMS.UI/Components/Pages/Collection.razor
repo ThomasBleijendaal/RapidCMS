@@ -42,21 +42,23 @@ else
 
                                 foreach (var subject in UI.Entities)
                                 {
-                                    var section = SubjectToSectionMap[subject.Entity.Id];
-                                    hasButtons = hasButtons || (section.Buttons?.Any() ?? false);
-
-                                    foreach (var element in section.Elements)
+                                    if (SubjectToSectionMap.TryGetValue(subject.Entity.Id, out var section))
                                     {
-                                        if (element is FieldUI field)
+                                        hasButtons = hasButtons || (section.Buttons?.Any() ?? false);
+
+                                        foreach (var element in section.Elements)
                                         {
-                                            var name = (field as ExpressionFieldUI)?.Expression.PropertyName
-                                                ?? (field as PropertyFieldUI)?.Property.PropertyName;
-
-                                            if (!elementsProcessed.Contains(name))
+                                            if (element is FieldUI field)
                                             {
-                                                elementsProcessed.Add(name);
+                                                var name = (field as ExpressionFieldUI)?.Expression.PropertyName
+                                                    ?? (field as PropertyFieldUI)?.Property.PropertyName;
 
-                                                <td>@field.Name<br /><small>@field.Description</small></td>
+                                                if (!elementsProcessed.Contains(name))
+                                                {
+                                                    elementsProcessed.Add(name);
+
+                                                    <td>@field.Name<br /><small>@field.Description</small></td>
+                                                }
                                             }
                                         }
                                     }
@@ -72,66 +74,68 @@ else
                     <tbody>
                         @foreach (var subject in UI.Entities)
                         {
-                            var section = SubjectToSectionMap[subject.Entity.Id];
-                            var index = 0;
+                            if (SubjectToSectionMap.TryGetValue(subject.Entity.Id, out var section))
+                            {
+                                var index = 0;
 
-                            <tr>
-                                @{
-                                    foreach (var element in section.Elements)
-                                    {
-                                        if (element is FieldUI field)
+                                <tr>
+                                    @{
+                                        foreach (var element in section.Elements)
                                         {
-                                            var name = (field as ExpressionFieldUI)?.Expression.PropertyName
-                                                ?? (field as PropertyFieldUI)?.Property.PropertyName;
+                                            if (element is FieldUI field)
+                                            {
+                                                var name = (field as ExpressionFieldUI)?.Expression.PropertyName
+                                                    ?? (field as PropertyFieldUI)?.Property.PropertyName;
 
-                                            // fill in the gaps (when dealing with multiple entity variants)
-                                            // TODO: only do this when fill the gaps setting is active
-                                            while (elementsProcessed.IndexOf(name) > index++)
-                                            {
-                                                <td>&nbsp;</td>
-                                            }
+                                                // fill in the gaps (when dealing with multiple entity variants)
+                                                // TODO: only do this when fill the gaps setting is active
+                                                while (elementsProcessed.IndexOf(name) > index++)
+                                                {
+                                                    <td>&nbsp;</td>
+                                                }
 
-                                            if (field is ExpressionFieldUI expressionField)
-                                            {
-                                                <td>@expressionField.Expression.StringGetter(subject.Entity)</td>
-                                            }
-                                            else if (field is PropertyFieldUI propertyField)
-                                            {
-                                                <td>
-                                                    <UIEditor Field="field" Entity="@subject.Entity" />
-                                                </td>
+                                                if (field is ExpressionFieldUI expressionField)
+                                                {
+                                                    <td>@expressionField.Expression.StringGetter(subject.Entity)</td>
+                                                }
+                                                else if (field is PropertyFieldUI propertyField)
+                                                {
+                                                    <td>
+                                                        <UIEditor Field="field" Entity="@subject.Entity" />
+                                                    </td>
+                                                }
                                             }
                                         }
-                                    }
-                                    // fill in the gaps (when dealing with multiple entity variants)
-                                    while (elementsProcessed.Count > index++)
-                                    {
-                                        <td>&nbsp;</td>
-                                    }
-                                    if (section.Buttons?.Any() ?? false)
-                                    {
-                                        <td class="button-cell">
-                                            @foreach (var button in section.Buttons)
-                                            {
-                                                // TODO: WEIRD
-                                                var node = new NodeUI
+                                        // fill in the gaps (when dealing with multiple entity variants)
+                                        while (elementsProcessed.Count > index++)
+                                        {
+                                            <td>&nbsp;</td>
+                                        }
+                                        if (section.Buttons?.Any() ?? false)
+                                        {
+                                            <td class="button-cell">
+                                                @foreach (var button in section.Buttons)
                                                 {
-                                                    Sections = new List<SectionUI>
-                                                                        {
-                                                        section
-                                                    },
-                                                    Subject = subject
-                                                };
+                                                    // TODO: WEIRD
+                                                    var node = new NodeUI
+                                                    {
+                                                        Sections = new List<SectionUI>
+                                                        {
+                                                            section
+                                                        },
+                                                        Subject = subject
+                                                    };
 
-                                                var context = CreateButtonContext(node, button, NodeButtonCallbackAsync);
+                                                    var context = CreateButtonContext(node, button, NodeButtonCallbackAsync);
 
-                                                <UIButton TContext="NodeUI" Button="button" Context="context" />
-                                            }
-                                        </td>
+                                                    <UIButton TContext="NodeUI" Button="button" Context="context" />
+                                                }
+                                            </td>
+                                        }
                                     }
-                                }
 
-                            </tr>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>
@@ -140,34 +144,35 @@ else
             {
                 @foreach (var subject in UI.Entities)
                 {
-                    var section = SubjectToSectionMap[subject.Entity.Id];
+                    if (SubjectToSectionMap.TryGetValue(subject.Entity.Id, out var section))
+                    {
+                        <div class="top-row">
+                            @foreach (var button in section.Buttons)
+                            {
+                                // TODO: WEIRD
+                                var node = new NodeUI
+                                {
+                                    Sections = new List<SectionUI>
+                                    {
+                                        section
+                                    },
+                                    Subject = subject
+                                };
 
-                    <div class="top-row">
-                        @foreach (var button in section.Buttons)
+                                var context = CreateButtonContext(node, button, NodeButtonCallbackAsync);
+
+                                <UIButton TContext="NodeUI" Button="button" Context="context" />
+                            }
+                        </div>
+
+                        if (!string.IsNullOrEmpty(section.CustomAlias))
                         {
-                            // TODO: WEIRD
-                            var node = new NodeUI
-                            {
-                                Sections = new List<SectionUI>
-                            {
-                                    section
-                                },
-                                Subject = subject
-                            };
-
-                            var context = CreateButtonContext(node, button, NodeButtonCallbackAsync);
-
-                            <UIButton TContext="NodeUI" Button="button" Context="context" />
+                            @CustomSections.GetCustomSection(section.CustomAlias, section, subject);
                         }
-                    </div>
-
-                    if (!string.IsNullOrEmpty(section.CustomAlias))
-                    {
-                        @CustomSections.GetCustomSection(section.CustomAlias, section, subject);
-                    }
-                    else
-                    {
-                        <BlockSection Section="section" Subject="subject" />
+                        else
+                        {
+                            <BlockSection Section="section" Subject="subject" />
+                        }
                     }
                 }
             }
@@ -207,7 +212,6 @@ else
             // TODO: triggers exception during save of new entity in list editor
             if (newUI != null)
             {
-
                 foreach (var subject in newUI.Entities)
                 {
                     newSubjectToSectionMap.Add(subject.Entity.Id, await newUI.SectionForEntityAsync(subject));
