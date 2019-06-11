@@ -84,7 +84,7 @@ namespace RapidCMS.Common.Services
                 throw new Exception("Failed to get entity for given id(s)");
             }
 
-            if (action != Constants.New)
+            if (!usageType.HasFlag(UsageType.New))
             {
                 entityVariant = collection.GetEntityVariant(entity);
             }
@@ -243,7 +243,7 @@ namespace RapidCMS.Common.Services
 
                 return editor;
             }
-            else if (action.In(Constants.Edit, Constants.New))
+            else if (listUsageType.HasFlag(UsageType.Edit) || listUsageType.HasFlag(UsageType.New))
             {
                 if (collection.ListEditor == null)
                 {
@@ -274,9 +274,18 @@ namespace RapidCMS.Common.Services
         public async Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string actionId, object? customData)
         {
             var collection = _root.GetCollection(collectionAlias);
+            var usageType = MapActionToUsageType(action);
 
-            var buttons = action == Constants.List ? collection.ListView.Buttons : collection.ListEditor.Buttons;
-            var button = buttons.GetAllButtons().First(x => x.ButtonId == actionId);
+            var buttons = usageType.HasFlag(UsageType.List) 
+                ? collection.ListView?.Buttons 
+                : collection.ListEditor?.Buttons;
+            var button = buttons?.GetAllButtons().FirstOrDefault(x => x.ButtonId == actionId);
+
+            if (button == null)
+            {
+                throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
+            }
+
             var buttonCrudType = button.GetCrudType();
 
             // TODO: what to do with this action
@@ -305,7 +314,7 @@ namespace RapidCMS.Common.Services
                         throw new InvalidOperationException();
                     }
 
-                    if (action == Constants.List)
+                    if (usageType.HasFlag(UsageType.List))
                     {
                         return new NavigateCommand { Uri = UriHelper.Node(Constants.New, collectionAlias, entityVariant, parentId, null) };
                     }
@@ -340,11 +349,18 @@ namespace RapidCMS.Common.Services
         public async Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string id, string actionId, NodeUI node, object? customData)
         {
             var collection = _root.GetCollection(collectionAlias);
+            var usageType = MapActionToUsageType(action);
 
-            var buttons = action == Constants.List
-                ? collection.ListView.ViewPane.Buttons
-                : collection.ListEditor.EditorPanes.SelectMany(pane => pane.Buttons);
-            var button = buttons.GetAllButtons().First(x => x.ButtonId == actionId);
+            var buttons = usageType.HasFlag(UsageType.List)
+                ? collection.ListView?.ViewPane?.Buttons
+                : collection.ListEditor?.EditorPanes?.SelectMany(pane => pane.Buttons);
+            var button = buttons?.GetAllButtons().FirstOrDefault(x => x.ButtonId == actionId);
+
+            if (button == null)
+            {
+                throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
+            }
+
             var buttonCrudType = button.GetCrudType();
 
             // since the id is known, get the entity variant from the entity
