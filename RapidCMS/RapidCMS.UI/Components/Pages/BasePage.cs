@@ -111,7 +111,7 @@ namespace RapidCMS.UI.Components.Pages
 
         private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
         {
-            throw new NotImplementedException();
+            
         }
 
         protected void HandleException(Exception ex)
