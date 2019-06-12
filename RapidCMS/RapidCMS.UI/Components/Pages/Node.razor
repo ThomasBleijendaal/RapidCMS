@@ -30,6 +30,8 @@ else
             }
         </div>
 
+
+
         @foreach (var section in UI.Sections)
         {
             if (!string.IsNullOrEmpty(section.CustomAlias))
@@ -68,6 +70,9 @@ else
         try
         {
             UI = await CollectionService.GetNodeEditorAsync(Action, CollectionAlias, VariantAlias, ParentId, Id);
+
+            // HACK: this is not good
+            EditContext.Entity = UI.Subject.Entity;
 
             StateHasChanged();
         }

@@ -24,6 +24,9 @@ namespace RapidCMS.UI.Components.Pages
         [CascadingParameter(Name = "CustomSections")]
         protected CustomSectionContainer CustomSections { get; set; }
 
+        [Inject]
+        private IServiceProvider ServiceProvider { get; set; }
+
         protected EditContext EditContext { get; private set; } 
 
         protected async Task HandleViewCommandAsync(ViewCommand command)
@@ -93,17 +96,22 @@ namespace RapidCMS.UI.Components.Pages
                 // TODO: manage nesting of pages
                 if (EditContext == null)
                 {
-                    EditContext = new EditContext();
+                    EditContext = new EditContext(ServiceProvider);
+
+                    EditContext.OnValidationStateChanged += OnValidationStateChanged;
                 }
 
                 await LoadDataAsync();
-
-                EditContext.RequestValidation();
             }
             catch (Exception ex)
             {
                 HandleException(ex);
             }
+        }
+
+        private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         protected void HandleException(Exception ex)
@@ -114,8 +122,9 @@ namespace RapidCMS.UI.Components.Pages
             }
             else if (ex is InvalidEntityException)
             {
-                // crash burn die
-                throw ex;
+                // trigger validation since entity is invalid
+                // TODO: await?
+                EditContext.IsValidAsync().GetAwaiter().GetResult();
             }
             else
             {
@@ -132,15 +141,28 @@ namespace RapidCMS.UI.Components.Pages
 
         protected ButtonContext<TContext> CreateButtonContext<TContext>(TContext context, ButtonUI button, Func<string, TContext, object?, Task> callback)
         {
+            async Task ButtonCallbackWithValidationAsync(string actionId, TContext context, object? customData)
+            {
+                if (await EditContext.IsValidAsync())
+                {
+                    await callback.Invoke(actionId, context, customData);
+                }
+            }
+
+            var buttonCallback = (!button.RequiresValidForm)
+                ? callback
+                : ButtonCallbackWithValidationAsync;
+
             return new ButtonContext<TContext>(EditContext)
             {
                 ButtonId = button.ButtonId,
-                CallbackAsync = callback,
+                CallbackAsync = buttonCallback,
                 Context = context,
                 Icon = button.Icon,
                 Label = button.Label,
                 ShouldConfirm = button.ShouldConfirm,
-                IsPrimary = button.IsPrimary
+                IsPrimary = button.IsPrimary,
+                RequiresValidForm = button.RequiresValidForm
             };
         }
     }

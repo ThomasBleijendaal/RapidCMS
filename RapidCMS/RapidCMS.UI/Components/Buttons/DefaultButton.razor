@@ -1,13 +1,11 @@
 ﻿@typeparam TContext
 
-@* // TODO:  *@
-
 @inherits  BaseButton<TContext>
 
 <button type="button" 
         class="btn @(Context.IsPrimary ? "btn-primary" : (Context.ShouldConfirm) ? "btn-danger" : "btn-light")" 
         onclick=@ButtonClickAsync
-        disabled=@(!FormIsValid ? "disabled" : null)>
+        disabled=@(!FormIsValid && Context.RequiresValidForm ? "disabled" : null)>
     <i class="oi oi-@Context.Icon"></i> @Context.Label
 </button>
 

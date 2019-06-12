@@ -7,7 +7,8 @@
         public string Icon { get; internal set; }
         public bool ShouldConfirm { get; internal set; }
         public bool IsPrimary { get; internal set; }
+        public bool RequiresValidForm { get; internal set; }
 
-        public string CustomAlias { get; internal set; }
+        public string? CustomAlias { get; internal set; }
     }
 }

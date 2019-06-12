@@ -38,6 +38,7 @@ namespace RapidCMS.Common.Extensions
                 Label = button.Label,
                 ShouldConfirm = button.ShouldConfirm,
                 IsPrimary = button.IsPrimary,
+                RequiresValidForm = button.RequiresValidForm,
                 CustomAlias = (button is CustomButton customButton) ? customButton.Alias : null
             };
         }

@@ -9,9 +9,9 @@ namespace RapidCMS.Common.ActionHandlers
     internal class DefaultButtonActionHandler : IButtonActionHandler
     {
         private readonly CrudType _crudType;
-        private readonly Action _action;
+        private readonly Action? _action;
 
-        public DefaultButtonActionHandler(CrudType crudType, Action action)
+        public DefaultButtonActionHandler(CrudType crudType, Action? action)
         {
             _crudType = crudType;
             _action = action;
@@ -24,11 +24,16 @@ namespace RapidCMS.Common.ActionHandlers
 
         public Task InvokeAsync(string? parentId, string? id, object? customData)
         {
-            _action.Invoke();
+            _action?.Invoke();
             return Task.CompletedTask;
         }
 
         public bool IsCompatibleWithView(ViewContext viewContext)
+        {
+            return true;
+        }
+
+        public bool RequiresValidForm()
         {
             return true;
         }

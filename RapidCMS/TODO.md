@@ -15,6 +15,7 @@ TODO:
     [] Redirect after deletion + consistent pagination / Return to parent button action
     [] Redirect after insertions + no update authorization goes to 403 page
 
+[] Investigate replacing button callbacks with events
 [] Custom Section support in Collection.razor (lists) (RowSection)
 [] Button support everywhere (no more new List<Button>)
 [] Property, Field, etc naming not totally consistent -> Refactor all names and methods

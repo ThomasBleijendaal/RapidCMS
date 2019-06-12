@@ -30,7 +30,8 @@ namespace RapidCMS.Common.Extensions
                 : new List<Button>(),
                 Metadata = baseEntityVariant,
                 ShouldConfirm = button.ButtonType == DefaultButtonType.Delete,
-                IsPrimary = button.IsPrimary
+                IsPrimary = button.IsPrimary,
+                RequiresValidForm = button.ButtonType.In(DefaultButtonType.SaveNew, DefaultButtonType.SaveExisting)
             };
         }
 
@@ -49,7 +50,8 @@ namespace RapidCMS.Common.Extensions
                 Label = button.Label,
                 Buttons = new List<Button>(),
                 ShouldConfirm = handler.ShouldConfirm(),
-                IsPrimary = button.IsPrimary
+                IsPrimary = button.IsPrimary,
+                RequiresValidForm = handler.RequiresValidForm()
             };
         }
     }
@@ -60,6 +62,12 @@ namespace RapidCMS.Common.Extensions
             where T : class
         {
             return serviceProvider.GetService(type) as T ?? throw new InvalidOperationException($"Failed to resolve instance of type {type} and cast it as {typeof(T)}");
+        }
+
+        public static T GetService<T>(this IServiceProvider serviceProvider)
+            where T : class
+        {
+            return serviceProvider.GetService(typeof(T)) as T ?? throw new InvalidOperationException($"Failed to resolve instance of type {typeof(T)}");
         }
     }
 }

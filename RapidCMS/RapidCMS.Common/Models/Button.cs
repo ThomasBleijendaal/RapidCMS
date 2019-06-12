@@ -14,6 +14,7 @@ namespace RapidCMS.Common.Models
         internal string Icon { get; set; }
         internal bool ShouldConfirm { get; set; }
         internal bool IsPrimary { get; set; }
+        internal bool RequiresValidForm { get; set; }
 
         internal List<Button> Buttons { get; set; }
 

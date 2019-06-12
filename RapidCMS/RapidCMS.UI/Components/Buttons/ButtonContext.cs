@@ -4,6 +4,7 @@ using RapidCMS.Common.Validation;
 
 namespace RapidCMS.UI.Components.Buttons
 {
+    // TODO: not really a context
     public class ButtonContext<TContext>
     {
         public ButtonContext(EditContext editContext)
@@ -15,10 +16,13 @@ namespace RapidCMS.UI.Components.Buttons
         public string Icon { get; set; }
         public string ButtonId { get; set; }
         public Func<string, TContext, object?, Task> CallbackAsync { get; set; }
+
         public TContext Context { get; set; }
         public EditContext EditContext { get; }
+
         public bool ShouldConfirm { get; set; }
         public bool IsPrimary { get; set; }
+        public bool RequiresValidForm { get; set; }
 
     }
 }

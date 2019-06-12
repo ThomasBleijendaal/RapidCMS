@@ -44,6 +44,11 @@ namespace TestServer.ActionHandlers
             return viewContext.Usage.HasFlag(UsageType.List);
         }
 
+        public bool RequiresValidForm()
+        {
+            return false;
+        }
+
         public bool ShouldConfirm()
         {
             return true;

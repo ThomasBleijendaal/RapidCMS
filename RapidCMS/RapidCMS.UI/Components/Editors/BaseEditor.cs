@@ -66,6 +66,11 @@ namespace RapidCMS.UI.Components.Editors
         {
             if (EditContext == null)
             {
+                if (CascadedEditContext == null)
+                {
+                    throw new InvalidOperationException($"{GetType()} requires a CascadingParameter {nameof(EditContext)}.");
+                }
+
                 EditContext = CascadedEditContext;
             }
             else if (EditContext != CascadedEditContext)
@@ -75,6 +80,7 @@ namespace RapidCMS.UI.Components.Editors
 
             return base.OnParametersSetAsync();
         }
+
     }
 
     public class BaseDataEditor : BasePropertyEditor
