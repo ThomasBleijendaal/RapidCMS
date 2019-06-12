@@ -1,5 +1,14 @@
 ﻿@inherits BasePropertyEditor
 
-<input value=@GetValue() 
+@using RapidCMS.Common.Enums
+
+<input value=@GetValue()
        onchange=@(args => SetValue(args.Value))
-       class="form-control" />
+       class="form-control @((State == ValidationState.Valid ? "is-valid" : State == ValidationState.Invalid ? "is-invalid" : ""))" />
+
+@foreach (var message in GetValidationMessages())
+{
+    <div class="invalid-feedback">
+        @message
+    </div>
+}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using RapidCMS.Common.Services;
 namespace RapidCMS.Common.Validation
 {
     // TODO: change field to property
+    // TOOD: change IFullPropertyMetadata to IPropertyMetadata
     public class EditContext
     {
         private readonly Dictionary<IFullPropertyMetadata, FieldState> _fieldStates = new Dictionary<IFullPropertyMetadata, FieldState>();
@@ -25,35 +27,36 @@ namespace RapidCMS.Common.Validation
 
         public event EventHandler<FieldChangedEventArgs> OnFieldChanged;
 
-        public event EventHandler<ValidationRequestedEventArgs> OnValidationRequested;
-
         public event EventHandler<ValidationStateChangedEventArgs> OnValidationStateChanged;
 
         public void NotifyFieldChanged(IFullPropertyMetadata property)
         {
+            ValidateProperty(property);
+
             GetFieldState(property).IsModified = true;
             OnFieldChanged?.Invoke(this, new FieldChangedEventArgs(property));
-
-            // TODO: 
-            //IsValid = !IsValid;
-
-            //OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(IsValid));
         }
 
-        public async Task<bool> IsValidAsync()
+        public bool IsValid()
         {
-            var validator = _serviceProvider.GetService<IValidationService>();
+            ValidateModel();
 
-            var result = await validator.IsValidAsync(Entity);
-
-            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(result));
-
-            return result;
+            return HasValidationMessages();
         }
 
         public bool IsModified()
         {
             return _fieldStates.Any(x => x.Value.IsModified);
+        }
+
+        public bool IsValid(IFullPropertyMetadata property)
+        {
+            return !GetFieldState(property).GetValidationMessages().Any();
+        }
+
+        public bool WasValidated(IFullPropertyMetadata property)
+        {
+            return GetFieldState(property).WasValidated;
         }
 
         public IEnumerable<string> GetValidationMessages()
@@ -78,6 +81,11 @@ namespace RapidCMS.Common.Validation
             }
         }
 
+        private bool HasValidationMessages()
+        {
+            return GetValidationMessages().Any();
+        }
+
         private FieldState GetFieldState(IFullPropertyMetadata property)
         {
             if (!_fieldStates.TryGetValue(property, out var fieldState))
@@ -89,16 +97,59 @@ namespace RapidCMS.Common.Validation
             return fieldState;
         }
 
+        private FieldState? GetFieldState(string propertyName)
+        {
+            return _fieldStates.SingleOrDefault(field => field.Key.PropertyName == propertyName).Value;
+        }
+
+        private void ClearAllFieldStates()
+        {
+            foreach (var fieldState in _fieldStates)
+            {
+                fieldState.Value.ClearMessages();
+            }
+        }
+
         private void ValidateModel()
         {
+            var context = new ValidationContext(Entity, _serviceProvider, null);
+            var results = new List<ValidationResult>();
 
+            Validator.TryValidateObject(Entity, context, results, true);
+
+            ClearAllFieldStates();
+
+            _fieldStates.ForEach(kv => kv.Value.WasValidated = true);
+
+            foreach (var result in results)
+            {
+                result.MemberNames.ForEach(name => GetFieldState(name)?.AddMessage(result.ErrorMessage));
+            }
+
+            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !HasValidationMessages()));
         }
 
         private void ValidateProperty(IFullPropertyMetadata property)
         {
+            var context = new ValidationContext(Entity, _serviceProvider, null)
+            {
+                MemberName = property.PropertyName
+            };
+            var results = new List<ValidationResult>();
 
+            Validator.TryValidateProperty(property.Getter(Entity), context, results);
+
+            var state = GetFieldState(property);
+            state.ClearMessages();
+            state.WasValidated = true;
+
+            foreach (var result in results)
+            {
+                state.AddMessage(result.ErrorMessage);
+            }
+
+            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !HasValidationMessages()));
         }
-
     }
 
     internal class FieldState
@@ -112,11 +163,22 @@ namespace RapidCMS.Common.Validation
             _property = property ?? throw new ArgumentNullException(nameof(property));
         }
 
+        public bool WasValidated { get; set; }
         public bool IsModified { get; set; }
 
         public IEnumerable<string> GetValidationMessages()
         {
             return _messages;
+        }
+
+        public void AddMessage(string message)
+        {
+            _messages.Add(message);
+        }
+
+        public void ClearMessages()
+        {
+            _messages.Clear();
         }
     }
 
@@ -129,8 +191,7 @@ namespace RapidCMS.Common.Validation
 
         public IFullPropertyMetadata FullPropertyMetadata { get; }
     }
-    public class ValidationRequestedEventArgs { }
-
+    
     public class ValidationStateChangedEventArgs
     {
         public ValidationStateChangedEventArgs(bool isValid)
@@ -138,55 +199,6 @@ namespace RapidCMS.Common.Validation
             IsValid = isValid;
         }
 
-        public bool IsValid { get; set; }
+        public bool IsValid { get; private set; }
     }
-
-    //public class ValidationMessageStore
-    //{
-    //    private readonly EditContext _editContext;
-    //    private readonly Dictionary<IFullPropertyMetadata, List<string>> _messages = new Dictionary<IFullPropertyMetadata, List<string>>();
-
-    //    public ValidationMessageStore(EditContext editContext)
-    //    {
-    //        _editContext = editContext ?? throw new ArgumentNullException(nameof(editContext));
-    //    }
-
-    //    public void Add(IFullPropertyMetadata property, string message) => GetOrCreateMessagesListForField(property).Add(message);
-
-    //    public void AddRange(IFullPropertyMetadata property, IEnumerable<string> messages) => GetOrCreateMessagesListForField(property).AddRange(messages);
-
-    //    public IEnumerable<string> this[IFullPropertyMetadata property] => _messages.TryGetValue(property, out var messages) ? messages : Enumerable.Empty<string>();
-
-    //    public void Clear()
-    //    {
-    //        foreach (var fieldIdentifier in _messages.Keys)
-    //        {
-    //            DissociateFromField(fieldIdentifier);
-    //        }
-
-    //        _messages.Clear();
-    //    }
-
-    //    public void Clear(IFullPropertyMetadata property)
-    //    {
-    //        DissociateFromField(property);
-    //        _messages.Remove(property);
-    //    }
-
-    //    private List<string> GetOrCreateMessagesListForField(IFullPropertyMetadata property)
-    //    {
-    //        if (!_messages.TryGetValue(property, out var messagesForField))
-    //        {
-    //            messagesForField = new List<string>();
-    //            _messages.Add(property, messagesForField);
-    //            AssociateWithField(property);
-    //        }
-
-    //        return messagesForField;
-    //    }
-
-    //    private void AssociateWithField(IFullPropertyMetadata property) => _editContext.GetFieldState(property).AssociateWithValidationMessageStore(this);
-
-    //    private void DissociateFromField(IFullPropertyMetadata property) => _editContext.GetFieldState(property)?.DissociateFromValidationMessageStore(this);
-    //}
 }

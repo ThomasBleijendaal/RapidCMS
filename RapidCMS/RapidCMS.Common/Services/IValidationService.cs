@@ -7,11 +7,13 @@ using RapidCMS.Common.Data;
 
 namespace RapidCMS.Common.Services
 {
+    [Obsolete("Use EditContext instead")]
     public interface IValidationService
     {
         Task<bool> IsValidAsync(IEntity entity);
     }
 
+    [Obsolete("Use EditContext instead")]
     public class ValidationService : IValidationService
     {
         private readonly IServiceProvider _serviceProvider;

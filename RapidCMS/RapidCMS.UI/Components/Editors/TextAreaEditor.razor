@@ -1,5 +1,14 @@
 ﻿@inherits BasePropertyEditor
 
+@using RapidCMS.Common.Enums
+
 <textarea value=@GetValue()
           onchange=@(args => SetValue(args.Value))
-          class="form-control"></textarea>
+          class="form-control @((State == ValidationState.Valid ? "is-valid" : State == ValidationState.Invalid ? "is-invalid" : ""))"></textarea>
+
+@foreach (var message in GetValidationMessages())
+{
+    <div class="invalid-feedback">
+        @message
+    </div>
+}

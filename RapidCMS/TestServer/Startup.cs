@@ -182,6 +182,7 @@ namespace TestServer
                                 pane.AddField(f => f.Name);
                                 pane.AddField(f => f.NotRequired);
                                 pane.AddField(f => f.Range)
+                                    .SetName("Range Setting")
                                     .SetValueMapper<LongValueMapper>();
                             });
                         });

@@ -111,7 +111,7 @@ namespace RapidCMS.UI.Components.Pages
 
         private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
         {
-            
+            StateHasChanged();
         }
 
         protected void HandleException(Exception ex)
@@ -124,7 +124,7 @@ namespace RapidCMS.UI.Components.Pages
             {
                 // trigger validation since entity is invalid
                 // TODO: await?
-                EditContext.IsValidAsync().GetAwaiter().GetResult();
+                EditContext.IsValid();
             }
             else
             {
@@ -143,7 +143,7 @@ namespace RapidCMS.UI.Components.Pages
         {
             async Task ButtonCallbackWithValidationAsync(string actionId, TContext context, object? customData)
             {
-                if (await EditContext.IsValidAsync())
+                if (EditContext.IsValid())
                 {
                     await callback.Invoke(actionId, context, customData);
                 }
