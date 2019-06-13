@@ -11,6 +11,8 @@ TODO:
 [] Reordering
 [] Form validation
     [] Validation on models / viewmodels
+    [] ValueMapper issues (nullable / non-nullable)
+    [] Move EditContext into UI class and remove UISubject
 [] Pagination (consistent during session)
     [] Redirect after deletion + consistent pagination / Return to parent button action
     [] Redirect after insertions + no update authorization goes to 403 page
