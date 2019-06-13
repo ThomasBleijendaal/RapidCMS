@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace RapidCMS.Common.Extensions
 {
     internal static class EnumExtensions
     {
-        public static TAttribute GetCustomAttribute<TAttribute>(this Enum e)
+        public static TAttribute? GetCustomAttribute<TAttribute>(this Enum e)
             where TAttribute : Attribute
         {
             var member = e.GetType().GetMember(e.ToString()).FirstOrDefault();
@@ -21,7 +20,7 @@ namespace RapidCMS.Common.Extensions
                 return attribute as TAttribute;
             }
 
-            return null;
+            return default;
         }
     }
 }

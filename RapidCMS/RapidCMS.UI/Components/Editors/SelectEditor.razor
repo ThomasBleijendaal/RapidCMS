@@ -1,6 +1,7 @@
 ﻿@inherits BaseDataEditor
 
 @using RapidCMS.Common.Data
+@using RapidCMS.UI.Helpers
 
 @if (Options != null)
 {
@@ -9,17 +10,16 @@
 
     var value = GetValue(false);
 
-    <div class="form-control form-control-select-list">
-        
+    <div class="form-control form-control-select-list @(CssHelper.GetValidationClass(State))">
         @foreach (var option in Options)
         {
             <div class="form-check">
-                <input class="form-check-input" 
-                       type="radio" 
+                <input class="form-check-input"
+                       type="radio"
                        value=@option.Id
-                       id=@group-option@(++index)
-                       name=@group 
-                       checked=@(option.Id.Equals(value)) 
+                       id="@group-option@(++index)"
+                       name=@group
+                       checked=@(option.Id.Equals(value))
                        onchange=@(async args => SetValue(option.Id, false)) />
                 <label class="form-check-label" for="@group-option@(index)">
                     @option.Label
@@ -27,6 +27,13 @@
             </div>
         }
     </div>
+
+    @foreach (var message in GetValidationMessages())
+    {
+        <div class="invalid-feedback">
+            @message
+        </div>
+    }
 }
 @functions {
 

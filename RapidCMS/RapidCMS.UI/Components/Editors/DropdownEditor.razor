@@ -1,16 +1,24 @@
 ﻿@inherits BaseDataEditor
 
 @using RapidCMS.Common.Data
+@using RapidCMS.UI.Helpers
 
 @if (Options != null)
 {
-    <select class="form-control" onchange=@OnChange value="@SelectedIndex">
+    <select class="form-control @(CssHelper.GetValidationClass(State))" onchange=@OnChange value="@SelectedIndex">
         <option value="-1"></option>
         @foreach (var (option, index) in Options.Select((o, i) => (o, i)))
         {
             <option value=@index>@option.Label</option>
         }
     </select>
+
+    @foreach (var message in GetValidationMessages())
+    {
+        <div class="invalid-feedback">
+            @message
+        </div>
+    }
 }
 @functions {
 
@@ -27,7 +35,7 @@
 
             var list = data?.ToList();
 
-            SelectedIndex = list?.FindIndex(option => option.Id == value) ?? -1;
+            SelectedIndex = list?.FindIndex(option => option.Id.Equals(value)) ?? -1;
 
             Options = list;
         }

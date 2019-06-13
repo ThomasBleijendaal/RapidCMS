@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Data;
@@ -9,13 +8,17 @@ using RapidCMS.Common.Models.Metadata;
 using RapidCMS.Common.Validation;
 using RapidCMS.Common.ValueMappers;
 
-
 namespace RapidCMS.UI.Components.Editors
 {
-    // TODO: move validation to BaseEditor after it supports IPropertyMetadata
-
-    public class BaseEditor : ComponentBase
+    public class BaseEditor : ComponentBase, IDisposable
     {
+        [CascadingParameter(Name = "EditContext")]
+        private EditContext CascadedEditContext { get; set; }
+
+        protected EditContext EditContext { get; set; }
+
+        protected ValidationState State { get; private set; }
+
         [Parameter]
         protected IEntity Entity { get; private set; }
 
@@ -24,28 +27,6 @@ namespace RapidCMS.UI.Components.Editors
 
         [Parameter]
         protected IValueMapper ValueMapper { get; private set; }
-
-        protected object GetValue(bool useValueMapper = true)
-        {
-            if (useValueMapper)
-            {
-                return ValueMapper.MapToEditor(null, Property.Getter(Entity));
-            }
-            else
-            {
-                return Property.Getter(Entity);
-            }
-        }
-    }
-
-    public class BasePropertyEditor : BaseEditor, IDisposable
-    {
-        [CascadingParameter(Name = "EditContext")]
-        private EditContext CascadedEditContext { get; set; }
-
-        protected EditContext EditContext { get; set; }
-
-        protected ValidationState State { get; private set; }
 
         protected override Task OnParametersSetAsync()
         {
@@ -58,6 +39,8 @@ namespace RapidCMS.UI.Components.Editors
 
                 EditContext = CascadedEditContext;
                 EditContext.OnValidationStateChanged += ValidationStateChangeHandler;
+
+                EditContext.NotifyPropertyStartedListening(Property);
             }
             else if (EditContext != CascadedEditContext)
             {
@@ -67,18 +50,16 @@ namespace RapidCMS.UI.Components.Editors
             return base.OnParametersSetAsync();
         }
 
-        protected void SetValue(object value, bool useValueMapper = true)
+        protected object GetValue(bool useValueMapper = true)
         {
             if (useValueMapper)
             {
-                Property.Setter(Entity, ValueMapper.MapFromEditor(null, value));
+                return ValueMapper.MapToEditor(null, Property.Getter(Entity));
             }
             else
             {
-                Property.Setter(Entity, value);
+                return Property.Getter(Entity);
             }
-
-            EditContext.NotifyFieldChanged(Property);
         }
 
         protected IEnumerable<string> GetValidationMessages()
@@ -86,14 +67,7 @@ namespace RapidCMS.UI.Components.Editors
             return EditContext.GetValidationMessages(Property);
         }
 
-        private new IFullPropertyMetadata Property
-        {
-            get
-            {
-                return base.Property as IFullPropertyMetadata ?? throw new InvalidOperationException($"{nameof(BasePropertyEditor)} requires usable Getter and Setter");
-            }
-        }
-
+        
         private void ValidationStateChangeHandler(object sender, ValidationStateChangedEventArgs eventArgs)
         {
             if (EditContext.WasValidated(Property))
@@ -127,19 +101,5 @@ namespace RapidCMS.UI.Components.Editors
                 EditContext.OnValidationStateChanged -= ValidationStateChangeHandler;
             }
         }
-    }
-
-    public class BaseDataEditor : BasePropertyEditor
-    {
-        [Parameter]
-        public IDataCollection? DataCollection { get; private set; }
-    }
-
-    public class BaseRelationEditor : BaseEditor
-    {
-        [Parameter]
-        private IDataCollection? DataCollection { get; set; }
-
-        public IRelationDataCollection? RelationDataCollection => DataCollection as IRelationDataCollection;
     }
 }

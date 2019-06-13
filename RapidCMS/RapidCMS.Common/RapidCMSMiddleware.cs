@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.Authorization;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
@@ -40,6 +41,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<LongValueMapper>();
             services.AddSingleton<BoolValueMapper>();
             services.AddSingleton(typeof(CollectionValueMapper<>), typeof(CollectionValueMapper<>));
+            services.AddSingleton(typeof(EnumValueMapper<>), typeof(EnumValueMapper<>));
+
+            services.AddSingleton(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
 
             // From: https://github.com/aspnet/Blazor/issues/1554
             // Adds HttpContextAccessor

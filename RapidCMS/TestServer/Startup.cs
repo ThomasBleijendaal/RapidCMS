@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.WindowsAzure.Storage;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models;
@@ -23,6 +24,7 @@ using TestLibrary.Authorization;
 using TestLibrary.Data;
 using TestLibrary.DataProvider;
 using TestLibrary.Entities;
+using TestLibrary.Enums;
 using TestLibrary.Repositories;
 using TestServer.ActionHandlers;
 using TestServer.Components.CustomButtons;
@@ -184,6 +186,14 @@ namespace TestServer
                                 pane.AddField(f => f.Range)
                                     .SetName("Range Setting")
                                     .SetValueMapper<LongValueMapper>();
+                                pane.AddField(f => f.Accept)
+                                    .SetName("Accept this")
+                                    .SetValueMapper<BoolValueMapper>();
+                                pane.AddField(f => f.Textarea)
+                                    .SetType(EditorType.TextArea);
+                                pane.AddField(f => f.Enum)
+                                    .SetType(EditorType.Select)
+                                    .SetDataCollection<EnumDataProvider<TestEnum>>();
                             });
                         });
                 });

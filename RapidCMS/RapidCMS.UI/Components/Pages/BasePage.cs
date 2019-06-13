@@ -123,7 +123,6 @@ namespace RapidCMS.UI.Components.Pages
             else if (ex is InvalidEntityException)
             {
                 // trigger validation since entity is invalid
-                // TODO: await?
                 EditContext.IsValid();
             }
             else

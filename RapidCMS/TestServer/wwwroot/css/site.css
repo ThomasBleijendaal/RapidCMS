@@ -1,8 +1,9 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background: #f8f8f8;
+    /*font-family: 'Segoe UI';*/
+    font-size: 15px;
+    background: #e8e8e8;
 }
 
 .oi {
@@ -19,10 +20,7 @@ app {
     height: 3.5rem;
     display: flex;
     align-items: center;
-    background: #fff;
-    box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
-    margin-bottom: 1rem;
-    padding: 2rem 1rem;
+    padding: 0rem 1rem;
 }
 
     .top-row.first {
@@ -35,12 +33,9 @@ app {
     flex: 1;
 }
 
-    .main .top-row {
-        border-bottom: 1px solid #f1f1f1;
-    }
 
 .sidebar {
-    background-color: #eeeeee;
+    background-color: #e8e8e8;
 }
 
     .sidebar .top-row {
@@ -62,21 +57,22 @@ app {
 
 ul {
     margin: 0;
-    padding: 0;
+    padding: 0 0 0 0;
 }
+
 li {
-    margin: 0;
+    margin: 0 0 0 0;
     padding: 0 0 0 1rem;
 }
 
 .nav-item {
-    font-size: 0.9rem;
+    font-size: 0.8666666667rem;
 }
-
+    
     .nav-item .toggle {
         border: 0;
         background: none;
-        margin: .9rem 0 0 -.5rem;
+        margin: 1rem -2rem 0 -1rem;
         padding: 0;
         float: left;
         width: 1.5rem;
@@ -85,11 +81,12 @@ li {
     .nav-item a {
         padding: 0 1rem;
         color: #070707;
-        border-radius: 4px;
         height: 3rem;
         display: flex;
         align-items: center;
         line-height: 2rem;
+        margin-left: -1rem;
+        padding-left: 2rem;
     }
 
         .nav-item a.disabled {
@@ -116,7 +113,7 @@ li {
     background: #fff;
     padding: 1.1rem 1rem 1rem 1rem;
     box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
-    margin: 1rem;
+    margin: 0rem 1rem 1rem;
 }
 
     .content .content,
@@ -147,7 +144,8 @@ app {
 
 .navroot {
     height: calc(100vh - 3.5rem);
-    overflow-y: scroll;
+    overflow-y: auto;
+    border-right: 1px solid #ddd;
 }
 
 .navbar-toggler {
@@ -165,6 +163,7 @@ a.current-page {
 
 .btn {
     margin-right: 5px;
+    border-radius: 0;
 }
 
 .form-row {
@@ -175,6 +174,14 @@ a.current-page {
     .form-row:last-of-type {
         border-bottom: 0;
     }
+
+.form-control {
+    border-radius: 0;
+}
+
+.input-group-prepend *, .input-group-append * {
+    border-radius: 0 !important;
+}
 
 .nav-item div a {
     width: 50%;
@@ -193,14 +200,17 @@ small {
 
 table thead td, table thead td {
     border-top: 0 !important;
-    border-bottom: 3px solid #dee2e6;
+    border-bottom: 2px solid #dee2e6;
+}
+
+table td {
+    vertical-align: middle !important;
 }
 
 table td.button-cell {
     white-space: nowrap;
     text-align: right;
 }
-
 
 pre {
     background: #f0f0f0;

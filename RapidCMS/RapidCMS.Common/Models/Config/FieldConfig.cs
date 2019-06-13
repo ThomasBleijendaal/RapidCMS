@@ -72,7 +72,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public FieldConfig<TEntity> SetDataRelation<TDataCollection>()
+        public FieldConfig<TEntity> SetDataCollection<TDataCollection>()
             where TDataCollection : IDataCollection
         {
             if (Type != EditorType.Custom && Type.GetCustomAttribute<RelationAttribute>().Type != RelationType.One)

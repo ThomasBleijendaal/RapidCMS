@@ -20,8 +20,10 @@ namespace TestLibrary.Repositories
                     new ValidationEntity {
                         Id = "1",
                         Name = "Name",
-                        NotRequired = "fdsa",
-                        Range = 3
+                        NotRequired = "A-ok",
+                        Range = 10,
+                        Accept = false,
+                        Textarea = "Some text some text"
                     }
                 }
             };

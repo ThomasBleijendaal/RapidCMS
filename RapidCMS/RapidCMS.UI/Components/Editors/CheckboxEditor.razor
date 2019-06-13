@@ -1,17 +1,19 @@
 ﻿@inherits BasePropertyEditor
 
-@using RapidCMS.Common.Enums
+@using RapidCMS.UI.Helpers
 
 <div class="form-check">
     <input checked=@GetValue()
            onchange=@(args => SetValue(args.Value))
-            type="checkbox"
-            class="form-check-input @((State == ValidationState.Valid ? "is-valid" : State == ValidationState.Invalid ? "is-invalid" : ""))" />
+           type="checkbox"
+           class="form-check-input @(CssHelper.GetValidationClass(State))" />
+
+    <label class="form-check-label">&nbsp;</label>
 
     @foreach (var message in GetValidationMessages())
     {
-    <div class="invalid-feedback">
-        @message
-    </div>
+        <div class="invalid-feedback">
+            @message
+        </div>
     }
 </div>

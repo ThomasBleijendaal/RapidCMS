@@ -4,7 +4,7 @@ using RapidCMS.Common.Data;
 namespace RapidCMS.Common.Models.UI
 {
     // TODO: move back to internal sets when weird Collection.razor NodeUI creation is no longer required
-
+    // TODO: Replace UISubject with EditContext
     public class NodeUI
     {
         public UISubject Subject { get; set; }

@@ -2,20 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models.Metadata;
-using RapidCMS.Common.Services;
 
 namespace RapidCMS.Common.Validation
 {
-    // TODO: change field to property
-    // TOOD: change IFullPropertyMetadata to IPropertyMetadata
     public class EditContext
     {
-        private readonly Dictionary<IFullPropertyMetadata, FieldState> _fieldStates = new Dictionary<IFullPropertyMetadata, FieldState>();
+        private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();
         private readonly IServiceProvider _serviceProvider;
 
         public EditContext(IServiceProvider serviceProvider)
@@ -29,11 +24,16 @@ namespace RapidCMS.Common.Validation
 
         public event EventHandler<ValidationStateChangedEventArgs> OnValidationStateChanged;
 
-        public void NotifyFieldChanged(IFullPropertyMetadata property)
+        public void NotifyPropertyStartedListening(IPropertyMetadata property)
+        {
+            GetPropertyState(property);
+        }
+
+        public void NotifyPropertyChanged(IPropertyMetadata property)
         {
             ValidateProperty(property);
 
-            GetFieldState(property).IsModified = true;
+            GetPropertyState(property).IsModified = true;
             OnFieldChanged?.Invoke(this, new FieldChangedEventArgs(property));
         }
 
@@ -41,7 +41,7 @@ namespace RapidCMS.Common.Validation
         {
             ValidateModel();
 
-            return HasValidationMessages();
+            return !HasValidationMessages();
         }
 
         public bool IsModified()
@@ -49,14 +49,14 @@ namespace RapidCMS.Common.Validation
             return _fieldStates.Any(x => x.Value.IsModified);
         }
 
-        public bool IsValid(IFullPropertyMetadata property)
+        public bool IsValid(IPropertyMetadata property)
         {
-            return !GetFieldState(property).GetValidationMessages().Any();
+            return !GetPropertyState(property).GetValidationMessages().Any();
         }
 
-        public bool WasValidated(IFullPropertyMetadata property)
+        public bool WasValidated(IPropertyMetadata property)
         {
-            return GetFieldState(property).WasValidated;
+            return GetPropertyState(property).WasValidated;
         }
 
         public IEnumerable<string> GetValidationMessages()
@@ -70,7 +70,7 @@ namespace RapidCMS.Common.Validation
             }
         }
 
-        public IEnumerable<string> GetValidationMessages(IFullPropertyMetadata property)
+        public IEnumerable<string> GetValidationMessages(IPropertyMetadata property)
         {
             if (_fieldStates.TryGetValue(property, out var state))
             {
@@ -86,18 +86,18 @@ namespace RapidCMS.Common.Validation
             return GetValidationMessages().Any();
         }
 
-        private FieldState GetFieldState(IFullPropertyMetadata property)
+        private PropertyState GetPropertyState(IPropertyMetadata property)
         {
             if (!_fieldStates.TryGetValue(property, out var fieldState))
             {
-                fieldState = new FieldState(property);
+                fieldState = new PropertyState(property);
                 _fieldStates.Add(property, fieldState);
             }
 
             return fieldState;
         }
 
-        private FieldState? GetFieldState(string propertyName)
+        private PropertyState? GetFieldState(string propertyName)
         {
             return _fieldStates.SingleOrDefault(field => field.Key.PropertyName == propertyName).Value;
         }
@@ -119,17 +119,17 @@ namespace RapidCMS.Common.Validation
 
             ClearAllFieldStates();
 
-            _fieldStates.ForEach(kv => kv.Value.WasValidated = true);
-
             foreach (var result in results)
             {
                 result.MemberNames.ForEach(name => GetFieldState(name)?.AddMessage(result.ErrorMessage));
             }
 
+            _fieldStates.ForEach(kv => kv.Value.WasValidated = true);
+
             OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !HasValidationMessages()));
         }
 
-        private void ValidateProperty(IFullPropertyMetadata property)
+        private void ValidateProperty(IPropertyMetadata property)
         {
             var context = new ValidationContext(Entity, _serviceProvider, null)
             {
@@ -139,7 +139,7 @@ namespace RapidCMS.Common.Validation
 
             Validator.TryValidateProperty(property.Getter(Entity), context, results);
 
-            var state = GetFieldState(property);
+            var state = GetPropertyState(property);
             state.ClearMessages();
             state.WasValidated = true;
 
@@ -150,55 +150,5 @@ namespace RapidCMS.Common.Validation
 
             OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !HasValidationMessages()));
         }
-    }
-
-    internal class FieldState
-    {
-        private List<string> _messages = new List<string>();
-
-        private IFullPropertyMetadata _property;
-
-        public FieldState(IFullPropertyMetadata property)
-        {
-            _property = property ?? throw new ArgumentNullException(nameof(property));
-        }
-
-        public bool WasValidated { get; set; }
-        public bool IsModified { get; set; }
-
-        public IEnumerable<string> GetValidationMessages()
-        {
-            return _messages;
-        }
-
-        public void AddMessage(string message)
-        {
-            _messages.Add(message);
-        }
-
-        public void ClearMessages()
-        {
-            _messages.Clear();
-        }
-    }
-
-    public class FieldChangedEventArgs
-    {
-        public FieldChangedEventArgs(IFullPropertyMetadata fullPropertyMetadata)
-        {
-            FullPropertyMetadata = fullPropertyMetadata;
-        }
-
-        public IFullPropertyMetadata FullPropertyMetadata { get; }
-    }
-    
-    public class ValidationStateChangedEventArgs
-    {
-        public ValidationStateChangedEventArgs(bool isValid)
-        {
-            IsValid = isValid;
-        }
-
-        public bool IsValid { get; private set; }
     }
 }
