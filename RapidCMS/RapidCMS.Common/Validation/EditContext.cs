@@ -3,22 +3,27 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Validation
 {
-    public class EditContext
+    // TODO: fix memory leak due to events
+    public sealed class EditContext
     {
         private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();
         private readonly IServiceProvider _serviceProvider;
 
-        public EditContext(IServiceProvider serviceProvider)
+        public EditContext(IEntity entity, UsageType usageType, IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider;
+            Entity = entity ?? throw new ArgumentNullException(nameof(entity));
+            UsageType = usageType;
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public IEntity Entity { get; set; }
+        public IEntity Entity { get; private set; }
+        public UsageType UsageType { get; private set; }
 
         public event EventHandler<FieldChangedEventArgs> OnFieldChanged;
 

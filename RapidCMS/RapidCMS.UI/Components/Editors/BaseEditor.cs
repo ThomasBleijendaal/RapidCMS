@@ -38,13 +38,16 @@ namespace RapidCMS.UI.Components.Editors
                 }
 
                 EditContext = CascadedEditContext;
-                EditContext.OnValidationStateChanged += ValidationStateChangeHandler;
 
-                EditContext.NotifyPropertyStartedListening(Property);
+                AttachValidationStateChangedListener();
             }
             else if (EditContext != CascadedEditContext)
             {
-                throw new InvalidOperationException($"{GetType()} does not support changing the {nameof(EditContext)} dynamically.");
+                DetachValidationStateChangedListener();
+
+                EditContext = CascadedEditContext;
+
+                AttachValidationStateChangedListener();
             }
 
             return base.OnParametersSetAsync();
@@ -92,6 +95,15 @@ namespace RapidCMS.UI.Components.Editors
         void IDisposable.Dispose()
         {
             DetachValidationStateChangedListener();
+        }
+
+        private void AttachValidationStateChangedListener()
+        {
+            if (EditContext != null)
+            {
+                EditContext.OnValidationStateChanged += ValidationStateChangeHandler;
+                EditContext.NotifyPropertyStartedListening(Property);
+            }
         }
 
         private void DetachValidationStateChangedListener()

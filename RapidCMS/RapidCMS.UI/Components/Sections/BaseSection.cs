@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Models.UI;
-
+using RapidCMS.Common.Validation;
 
 namespace RapidCMS.UI.Components.Sections
 {
@@ -9,7 +9,6 @@ namespace RapidCMS.UI.Components.Sections
         [Parameter]
         public SectionUI? Section { get; private set; }
 
-        [Parameter]
-        public UISubject? Subject { get; private set; }
+        [CascadingParameter(Name = "EditContext")] public EditContext EditContext { get; private set; }
     }
 }

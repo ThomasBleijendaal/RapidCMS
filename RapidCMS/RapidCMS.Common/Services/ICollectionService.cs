@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using RapidCMS.Common.Models.Commands;
 using RapidCMS.Common.Models.UI;
-
+using RapidCMS.Common.Validation;
 
 namespace RapidCMS.Common.Services
 {
@@ -15,6 +15,6 @@ namespace RapidCMS.Common.Services
         Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string id, string actionId, NodeUI node, object? customData);
         
         Task<NodeUI> GetNodeEditorAsync(string action, string collectionAlias, string variantAlias, string? parentId, string? id);
-        Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, NodeUI node, string actionId, object? customData);
+        Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, EditContext editContext, string actionId, object? customData);
     }
 }

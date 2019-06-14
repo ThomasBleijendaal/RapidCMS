@@ -92,7 +92,7 @@ namespace RapidCMS.UI.Models
             }
         }
 
-        public RenderFragment? GetCustomSection(string sectionAlias, SectionUI section, UISubject subject)
+        public RenderFragment? GetCustomSection(string sectionAlias, SectionUI section)
         {
             if (_customButtons != null && _customButtons.TryGetValue(sectionAlias, out var registration))
             {
@@ -101,7 +101,6 @@ namespace RapidCMS.UI.Models
                     builder.OpenComponent(0, registration.Type);
 
                     builder.AddAttribute(1, nameof(BaseSection.Section), section);
-                    builder.AddAttribute(2, nameof(BaseSection.Subject), subject);
 
                     builder.CloseComponent();
                 };

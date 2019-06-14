@@ -18,7 +18,7 @@
 }
 else
 {
-    <CascadingValue Name="EditContext" Value="EditContext">
+    @*<CascadingValue Name="EditContext" Value="UI.EditContext">*@
         <div class="top-row first">
             @foreach (var button in UI.Buttons)
             {
@@ -118,13 +118,13 @@ else
                                                     @foreach (var button in section.Buttons)
                                                     {
                                                         // TODO: WEIRD
-                                                        var node = new NodeUI
+                                                        var node = new NodeUI(null)
                                                         {
                                                             Sections = new List<SectionUI>
-                                                                                                        {
+                                                                                                                        {
                                                             section
                                                         },
-                                                            Subject = subject
+                                                            // Subject = subject
                                                         };
 
                                                         var context = CreateButtonContext(node, button, NodeButtonCallbackAsync);
@@ -151,13 +151,13 @@ else
                                 @foreach (var button in section.Buttons)
                                 {
                                     // TODO: WEIRD
-                                    var node = new NodeUI
+                                    var node = new NodeUI(null)
                                     {
                                         Sections = new List<SectionUI>
                                     {
                                         section
                                     },
-                                        Subject = subject
+                                        // Subject = subject
                                     };
 
                                     var context = CreateButtonContext(node, button, NodeButtonCallbackAsync);
@@ -168,7 +168,7 @@ else
 
                             if (!string.IsNullOrEmpty(section.CustomAlias))
                             {
-                                @CustomSections.GetCustomSection(section.CustomAlias, section, subject);
+                                @CustomSections.GetCustomSection(section.CustomAlias, section);
                             }
                             else
                             {
@@ -179,7 +179,7 @@ else
                 }
             </div>
         }
-    </CascadingValue>
+    @*</CascadingValue>*@
 }
 @functions {
 

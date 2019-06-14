@@ -10,11 +10,12 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Extensions;
+using RapidCMS.Common.Validation;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Commands;
 using RapidCMS.Common.Models.UI;
-
+using RapidCMS.Common.Validation;
 
 namespace RapidCMS.Common.Services
 {
@@ -25,19 +26,22 @@ namespace RapidCMS.Common.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationService _authorizationService;
         private readonly IValidationService _validationService;
+        private readonly IServiceProvider _serviceProvider;
 
         public CollectionService(
             Root root, 
             IUIService uiService, 
             IHttpContextAccessor httpContextAccessor, 
             IAuthorizationService authorizationService,
-            IValidationService validationService)
+            IValidationService validationService,
+            IServiceProvider serviceProvider)
         {
             _root = root;
             _uiService = uiService;
             _httpContextAccessor = httpContextAccessor;
             _authorizationService = authorizationService;
             _validationService = validationService;
+            _serviceProvider = serviceProvider;
         }
 
         private UsageType MapActionToUsageType(string action)
@@ -107,19 +111,13 @@ namespace RapidCMS.Common.Services
             }
 
             var viewContext = new ViewContext(usageType, entityVariant, entity);
-            
-            var node = await _uiService.GenerateNodeUIAsync(viewContext, config);
+            var editContext = new EditContext(entity, usageType, _serviceProvider);
 
-            node.Subject = new UISubject
-            {
-                Entity = entity,
-                UsageType = usageType
-            };
-
+            var node = await _uiService.GenerateNodeUIAsync(viewContext, editContext, config);
             return node;
         }
 
-        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, NodeUI node, string actionId, object? customData)
+        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, EditContext editContext, string actionId, object? customData)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -127,7 +125,6 @@ namespace RapidCMS.Common.Services
 
             var nodeEditor = collection.NodeEditor;
             var button = nodeEditor?.Buttons?.GetAllButtons().FirstOrDefault(x => x.ButtonId == actionId);
-
             if (button == null)
             {
                 throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
@@ -135,7 +132,7 @@ namespace RapidCMS.Common.Services
 
             var buttonCrudType = button.GetCrudType();
 
-            var updatedEntity = node.Subject.Entity;
+            var updatedEntity = editContext.Entity;
 
             var authorizationChallenge = await _authorizationService.AuthorizeAsync(
                 _httpContextAccessor.HttpContext.User,
@@ -147,13 +144,14 @@ namespace RapidCMS.Common.Services
                 throw new UnauthorizedAccessException();
             }
 
-            var isValid = await _validationService.IsValidAsync(updatedEntity);
-            if (!isValid)
+            if (!editContext.IsValid())
             {
                 throw new InvalidEntityException();
             }
 
-            var relations = new RelationContainer(node.Sections.SelectMany(x => x.GetRelations()));
+            // TODO: fix this
+            RelationContainer relations = null;
+            // var relations = new RelationContainer(node.Sections.SelectMany(x => x.GetRelations()));
 
             // TODO: what to do with this action
             if (button is CustomButton customButton)

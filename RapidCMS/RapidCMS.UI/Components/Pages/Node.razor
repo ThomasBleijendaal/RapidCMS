@@ -18,7 +18,7 @@
 }
 else
 {
-    <CascadingValue Name="EditContext" Value="EditContext">
+    <CascadingValue Name="EditContext" Value="UI.EditContext">
         <div class="top-row first">
             @{
                 @foreach (var button in UI.Buttons)
@@ -34,11 +34,11 @@ else
         {
             if (!string.IsNullOrEmpty(section.CustomAlias))
             {
-                @CustomSections.GetCustomSection(section.CustomAlias, section, UI.Subject);
+                @CustomSections.GetCustomSection(section.CustomAlias, section);
             }
             else
             {
-                <BlockSection Section="section" Subject="UI.Subject" />
+                <BlockSection Section="section" />
             }
         }
     </CascadingValue>
@@ -69,9 +69,6 @@ else
         {
             UI = await CollectionService.GetNodeEditorAsync(Action, CollectionAlias, VariantAlias, ParentId, Id);
 
-            // HACK: this is not good
-            EditContext.Entity = UI.Subject.Entity;
-
             StateHasChanged();
         }
         catch
@@ -86,7 +83,7 @@ else
     {
         try
         {
-            var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, UI, actionId, customData);
+            var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, UI.EditContext, actionId, customData);
 
             await HandleViewCommandAsync(command);
         }

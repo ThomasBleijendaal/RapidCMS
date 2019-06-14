@@ -15,12 +15,9 @@
 </CascadingValue>
 
 @functions {
-    [CascadingParameter(Name = "CustomButtons")]
-    protected CustomButtonContainer CustomButtons { get; set; }
+    [CascadingParameter(Name = "CustomButtons")] protected CustomButtonContainer CustomButtons { get; set; }
 
-    [Parameter]
-    private ButtonUI Button { get; set; }
+    [Parameter] private ButtonUI Button { get; set; }
 
-    [Parameter]
-    private ButtonContext<TContext> Context { get; set; }
+    [Parameter] private ButtonContext<TContext> Context { get; set; }
 }

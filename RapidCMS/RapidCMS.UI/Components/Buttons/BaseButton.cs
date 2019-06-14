@@ -4,24 +4,26 @@ using RapidCMS.Common.Validation;
 using System;
 using System.Threading.Tasks;
 
-
 namespace RapidCMS.UI.Components.Buttons
 {
     public class BaseButton<TContext> : ComponentBase, IDisposable
     {
-        [Inject]
-        private IJSRuntime JsRuntime { get; set; }
+        [Inject] private IJSRuntime JsRuntime { get; set; }
 
-        [CascadingParameter]
-        protected ButtonContext<TContext> Context { get; set; }
+        [CascadingParameter] protected ButtonContext<TContext> Context { get; set; }
+
+        [CascadingParameter(Name = "EditContext")] private EditContext EditContext { get; set; }
 
         protected bool FormIsValid { get; private set; } = true;
 
         protected async Task ButtonClickAsync(object? customData = null)
         {
-            var confirm = !Context.ShouldConfirm || await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+            if (Context.RequiresValidForm && !EditContext.IsValid())
+            {
+                return;
+            }
 
-            if (confirm)
+            if (!Context.ShouldConfirm || await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?"))
             {
                 await Context.CallbackAsync.Invoke(Context.ButtonId, Context.Context, customData);
             }
@@ -29,7 +31,7 @@ namespace RapidCMS.UI.Components.Buttons
 
         protected override Task OnParametersSetAsync()
         {
-            Context.EditContext.OnValidationStateChanged += OnValidationStateChanged;
+            EditContext.OnValidationStateChanged += OnValidationStateChanged;
 
             return base.OnParametersSetAsync();
         }
@@ -43,7 +45,7 @@ namespace RapidCMS.UI.Components.Buttons
 
         void IDisposable.Dispose()
         {
-            Context.EditContext.OnValidationStateChanged -= OnValidationStateChanged;
+            EditContext.OnValidationStateChanged -= OnValidationStateChanged;
         }
     }
 }

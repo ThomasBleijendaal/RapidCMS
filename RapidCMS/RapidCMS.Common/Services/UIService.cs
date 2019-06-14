@@ -9,7 +9,7 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
-
+using RapidCMS.Common.Validation;
 
 namespace RapidCMS.Common.Services
 {
@@ -26,9 +26,9 @@ namespace RapidCMS.Common.Services
             _authorizationService = authorizationService;
         }
 
-        public async Task<NodeUI> GenerateNodeUIAsync(ViewContext viewContext, Node nodeEditor)
+        public async Task<NodeUI> GenerateNodeUIAsync(ViewContext viewContext, EditContext editContext, Node nodeEditor)
         {
-            return new NodeUI
+            return new NodeUI(editContext)
             {
                 Buttons = await nodeEditor.Buttons
                     .GetAllButtons()

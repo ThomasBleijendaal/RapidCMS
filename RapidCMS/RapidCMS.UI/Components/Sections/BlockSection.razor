@@ -4,7 +4,7 @@
 @using RapidCMS.Common
 @using RapidCMS.Common.Enums
 
-@if (Section?.Elements.Any() ?? false && Subject != null)
+@if (Section?.Elements.Any() ?? false && EditContext != null)
 {
     <div class="content">
         @if (!string.IsNullOrWhiteSpace(Section.Label))
@@ -24,11 +24,11 @@
                     <div class="col-10">
                         @if (field is ExpressionFieldUI expressionField)
                         {
-                            @expressionField.Expression.StringGetter(Subject.Entity)
+                            @expressionField.Expression.StringGetter(EditContext.Entity)
                         }
                         else if (field is PropertyFieldUI propertyField)
                         {
-                            <UIEditor Field="field" Entity="@Subject.Entity" />
+                            <UIEditor Field="field" Entity="@EditContext.Entity" />
                         }
                     </div>
                 </div>
@@ -36,9 +36,9 @@
             else if (element is SubCollectionUI subCollection)
             {
                 @* TODO: this switch is still bit of a hack *@
-                <Collection Action=@(Subject.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                <Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
                             CollectionAlias=@subCollection.CollectionAlias
-                            ParentId=@Subject.Entity.Id />
+                            ParentId=@EditContext.Entity.Id />
             }
         }
     </div>
