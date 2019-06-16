@@ -10,8 +10,10 @@ namespace RapidCMS.UI.Components
         [CascadingParameter(Name = "EditContext")] private EditContext CascadedEditContext { get; set; }
         protected EditContext EditContext { get; set; }
 
-        protected override Task OnParametersSetAsync()
+        public override async Task SetParametersAsync(ParameterCollection parameters)
         {
+            await base.SetParametersAsync(parameters);
+
             if (EditContext == null)
             {
                 if (CascadedEditContext == null)
@@ -31,9 +33,7 @@ namespace RapidCMS.UI.Components
 
                 AttachValidationStateChangedListener();
             }
-
-            return base.OnParametersSetAsync();
-       }
+        }
 
         protected abstract void AttachValidationStateChangedListener();
         protected abstract void DetachValidationStateChangedListener();

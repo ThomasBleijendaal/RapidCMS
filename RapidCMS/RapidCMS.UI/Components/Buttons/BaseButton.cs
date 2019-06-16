@@ -12,7 +12,7 @@ namespace RapidCMS.UI.Components.Buttons
 
         [Parameter] protected ButtonViewModel Model { get; set; }
 
-        protected bool FormIsValid { get; private set; } = true;
+        protected bool FormIsValid { get; private set; }
 
         protected async Task ButtonClickAsync(object? customData = null)
         {
@@ -40,6 +40,7 @@ namespace RapidCMS.UI.Components.Buttons
             if (EditContext != null)
             {
                 EditContext.OnValidationStateChanged += ValidationStateChangeHandler;
+                FormIsValid = true;
             }
         }
 

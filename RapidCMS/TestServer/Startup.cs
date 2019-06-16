@@ -174,6 +174,30 @@ namespace TestServer
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                             });
                         })
+                        .SetListEditor(ListEditorType.Table, listEditor =>
+                        {
+                            listEditor.AddDefaultButton(DefaultButtonType.New);
+                            listEditor.AddEditor(editor =>
+                            {
+                                editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                                editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                                editor.AddDefaultButton(DefaultButtonType.Delete);
+
+                                editor.AddField(f => f.Name);
+                                editor.AddField(f => f.NotRequired);
+                                editor.AddField(f => f.Range)
+                                    .SetName("Range Setting")
+                                    .SetValueMapper<LongValueMapper>();
+                                editor.AddField(f => f.Accept)
+                                    .SetName("Accept this")
+                                    .SetValueMapper<BoolValueMapper>();
+                                editor.AddField(f => f.Textarea)
+                                    .SetType(EditorType.TextArea);
+                                editor.AddField(f => f.Enum)
+                                    .SetType(EditorType.Dropdown)
+                                    .SetDataCollection<EnumDataProvider<TestEnum>>();
+                            });
+                        })
                         .SetNodeEditor(editor =>
                         {
                             editor.AddDefaultButton(DefaultButtonType.SaveNew);

@@ -31,19 +31,21 @@ namespace RapidCMS.Common.Services
         {
             return new NodeUI(editContext)
             {
-                Buttons = await nodeEditor.Buttons
-                    .GetAllButtons()
-                    .Where(button => button.IsCompatibleWithView(viewContext))
-                    .WhereAsync(async button =>
-                    {
-                        var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                            _httpContextAccessor.HttpContext.User,
-                            viewContext.RepresentativeEntity,
-                            Operations.GetOperationForCrudType(button.GetCrudType()));
+                Buttons = nodeEditor.Buttons == null
+                    ? null
+                    : await nodeEditor.Buttons
+                        .GetAllButtons()
+                        .Where(button => button.IsCompatibleWithView(viewContext))
+                        .WhereAsync(async button =>
+                        {
+                            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                                _httpContextAccessor.HttpContext.User,
+                                viewContext.RepresentativeEntity,
+                                Operations.GetOperationForCrudType(button.GetCrudType()));
 
-                        return authorizationChallenge.Succeeded;
-                    })
-                    .ToListAsync(button => button.ToUI()),
+                            return authorizationChallenge.Succeeded;
+                        })
+                        .ToListAsync(button => button.ToUI()),
 
                 Sections = nodeEditor.EditorPanes
                     .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(viewContext.EntityVariant.Type))
@@ -79,7 +81,7 @@ namespace RapidCMS.Common.Services
                 ListType = ListType.TableView,
 
                 Buttons = listView.Buttons == null
-                    ? new List<ButtonUI>()
+                    ? null
                     : await listView.Buttons
                         .GetAllButtons()
                         .Where(button => button.IsCompatibleWithView(listViewContext))
@@ -94,39 +96,38 @@ namespace RapidCMS.Common.Services
                         })
                         .ToListAsync(button => button.ToUI()),
 
-                SectionForEntityAsync = async (entity) =>
-                {
-                    if (listView.ViewPane == null)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        var viewContext = entityViewContext(entity);
-
-                        return new SectionUI
+                SectionsForEntity = listView.ViewPane == null
+                    ? null
+                    : await editContexts.ToDictionaryAsync(
+                        editContext => editContext.Entity.Id,
+                        async editContext =>
                         {
-                            // TODO: custom?
-                            // CustomAlias = (listView.ViewPane is CustomEditorPane customEditorPane) ? customEditorPane.Alias : null,
+                            var viewContext = entityViewContext(editContext);
 
-                            Buttons = await listView.ViewPane.Buttons
-                                .GetAllButtons()
-                                .Where(button => button.IsCompatibleWithView(viewContext))
-                                .WhereAsync(async button =>
+                            return new List<SectionUI> {
+                                new SectionUI
                                 {
-                                    var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                                        _httpContextAccessor.HttpContext.User,
-                                        viewContext.RepresentativeEntity,
-                                        Operations.GetOperationForCrudType(button.GetCrudType()));
+                                    // TODO: custom?
+                                    // CustomAlias
 
-                                    return authorizationChallenge.Succeeded;
-                                })
-                                .ToListAsync(button => button.ToUI()),
+                                    Buttons = await listView.ViewPane.Buttons
+                                        .GetAllButtons()
+                                        .Where(button => button.IsCompatibleWithView(viewContext))
+                                        .WhereAsync(async button =>
+                                        {
+                                            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                                                _httpContextAccessor.HttpContext.User,
+                                                editContext.Entity,
+                                                Operations.GetOperationForCrudType(button.GetCrudType()));
 
-                            Elements = listView.ViewPane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider))
-                        };
-                    }
-                }
+                                            return authorizationChallenge.Succeeded;
+                                        })
+                                        .ToListAsync(button => button.ToUI()),
+
+                                    Elements = listView.ViewPane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider))
+                                }
+                            };
+                        })
             };
         }
 
@@ -138,52 +139,56 @@ namespace RapidCMS.Common.Services
                     ? ListType.TableEditor
                     : ListType.BlockEditor,
 
-                Buttons = await listEditor.Buttons
-                    .GetAllButtons()
-                    .Where(button => button.IsCompatibleWithView(listViewContext))
-                    .WhereAsync(async button =>
-                    {
-                        var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                            _httpContextAccessor.HttpContext.User,
-                            listViewContext.RepresentativeEntity,
-                            Operations.GetOperationForCrudType(button.GetCrudType()));
+                Buttons = listEditor.Buttons == null
+                    ? null
+                    : await listEditor.Buttons
+                        .GetAllButtons()
+                        .Where(button => button.IsCompatibleWithView(listViewContext))
+                        .WhereAsync(async button =>
+                        {
+                            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                                _httpContextAccessor.HttpContext.User,
+                                listViewContext.RepresentativeEntity,
+                                Operations.GetOperationForCrudType(button.GetCrudType()));
 
-                        return authorizationChallenge.Succeeded;
-                    })
-                    .ToListAsync(button => button.ToUI()),
+                            return authorizationChallenge.Succeeded;
+                        })
+                        .ToListAsync(button => button.ToUI()),
 
-                SectionForEntityAsync = async (subject) =>
-                {
-                    var pane = listEditor.EditorPanes.FirstOrDefault(pane => pane.VariantType.IsSameTypeOrDerivedFrom(subject.Entity.GetType()));
+                SectionsForEntity = listEditor.EditorPanes == null
+                    ? null
+                    : await editContexts.ToDictionaryAsync(
+                        editContext => editContext.Entity.Id,
+                        async editContext =>
+                        {
+                            var viewContext = entityViewContext(editContext);
 
-                    if (pane == null)
-                    {
-                        return null;
-                    }
+                            return await listEditor.EditorPanes
+                                .Where(pane => pane.VariantType.IsSameTypeOrDerivedFrom(editContext.Entity.GetType()))
+                                .ToListAsync(async pane =>
+                                {
+                                    return new SectionUI
+                                    {
+                                        CustomAlias = pane.CustomAlias,
 
-                    var viewContext = entityViewContext(subject);
+                                        Buttons = await pane.Buttons
+                                            .GetAllButtons()
+                                            .Where(button => button.IsCompatibleWithView(viewContext))
+                                            .WhereAsync(async button =>
+                                            {
+                                                var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                                                    _httpContextAccessor.HttpContext.User,
+                                                    editContext.Entity,
+                                                    Operations.GetOperationForCrudType(button.GetCrudType()));
 
-                    return new SectionUI
-                    {
-                        CustomAlias = pane.CustomAlias,
+                                                return authorizationChallenge.Succeeded;
+                                            })
+                                            .ToListAsync(button => button.ToUI()),
 
-                        Buttons = await pane.Buttons
-                            .GetAllButtons()
-                            .Where(button => button.IsCompatibleWithView(viewContext))
-                            .WhereAsync(async button =>
-                            {
-                                var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                                    _httpContextAccessor.HttpContext.User,
-                                    viewContext.RepresentativeEntity,
-                                    Operations.GetOperationForCrudType(button.GetCrudType()));
-
-                                return authorizationChallenge.Succeeded;
-                            })
-                            .ToListAsync(button => button.ToUI()),
-
-                        Elements = pane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider))
-                    };
-                }
+                                        Elements = pane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider))
+                                    };
+                                });
+                        })
             };
         }
     }

@@ -63,6 +63,8 @@ namespace RapidCMS.UI.Components.Editors
             {
                 EditContext.OnValidationStateChanged += ValidationStateChangeHandler;
                 EditContext.NotifyPropertyStartedListening(Property);
+
+                State = ValidationState.NotValidated;
             }
         }
 

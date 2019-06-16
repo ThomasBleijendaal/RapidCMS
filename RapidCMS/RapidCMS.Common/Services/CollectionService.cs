@@ -223,7 +223,7 @@ namespace RapidCMS.Common.Services
             }
 
             var listViewContext = new ViewContext(listUsageType, collection.EntityVariant, newEntity);
-            var rootEditContext = new EditContext(listUsageType);
+            var rootEditContext = new EditContext(newEntity, listUsageType, _serviceProvider);
 
             if (listUsageType == UsageType.List)
             {

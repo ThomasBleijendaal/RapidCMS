@@ -35,14 +35,13 @@ else
             </div>
         }
     </CascadingValue>
-    @if (UI.EditContexts.Any())
+    @if (UI.EditContexts.Any() && UI.SectionsForEntity != null)
     {
-        <div class="content">
-            @if (UI.ListType.In(ListType.TableView, ListType.TableEditor))
-            {
-                var elementsProcessed = new List<string>
-                    ();
+        @if (UI.ListType.In(ListType.TableView, ListType.TableEditor))
+        {
+            var elementsProcessed = new List<string>();
 
+            <div class="content">
                 <table class="table">
                     <thead>
                         <tr>
@@ -51,21 +50,27 @@ else
 
                                 foreach (var context in UI.EditContexts)
                                 {
-                                    if (SubjectToSectionMap.TryGetValue(context.Entity.Id, out var section))
+                                    if (UI.SectionsForEntity.TryGetValue(context.Entity.Id, out var sections))
                                     {
-                                        hasButtons = hasButtons || (section.Buttons?.Any() ?? false);
-
-                                        foreach (var element in section.Elements)
+                                        foreach (var section in sections)
                                         {
-                                            if (element is FieldUI field)
+                                            hasButtons = hasButtons || (section.Buttons?.Any() ?? false);
+
+                                            if (section.Elements != null)
                                             {
-                                                var name = (field as ExpressionFieldUI)?.Expression.PropertyName ?? (field as PropertyFieldUI)?.Property.PropertyName;
-
-                                                if (name != null && !elementsProcessed.Contains(name))
+                                                foreach (var element in section.Elements)
                                                 {
-                                                    elementsProcessed.Add(name);
+                                                    if (element is FieldUI field)
+                                                    {
+                                                        var name = (field as ExpressionFieldUI)?.Expression.PropertyName ?? (field as PropertyFieldUI)?.Property.PropertyName;
 
-                                                    <td>@field.Name<br /><small>@field.Description</small></td>
+                                                        if (name != null && !elementsProcessed.Contains(name))
+                                                        {
+                                                            elementsProcessed.Add(name);
+
+                                                            <td>@field.Name<br /><small>@field.Description</small></td>
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -82,77 +87,87 @@ else
                     <tbody>
                         @foreach (var context in UI.EditContexts)
                         {
-                            if (SubjectToSectionMap.TryGetValue(context.Entity.Id, out var section))
+                            if (UI.SectionsForEntity.TryGetValue(context.Entity.Id, out var sections))
                             {
-                                var index = 0;
-
                                 <CascadingValue Name="EditContext" Value="context">
-                                    <tr>
-                                        @{
-                                            foreach (var element in section.Elements)
-                                            {
-                                                if (element is FieldUI field)
-                                                {
-                                                    var name = (field as ExpressionFieldUI)?.Expression.PropertyName ?? (field as PropertyFieldUI)?.Property.PropertyName;
+                                    @foreach (var section in sections)
+                                    {
+                                        var index = 0;
 
-                                                    if (name == null)
+                                        @if (section.Elements != null)
+                                        {
+
+                                            <tr>
+                                                @{
+                                                    foreach (var element in section.Elements)
                                                     {
-                                                        continue;
-                                                    }
+                                                        if (element is FieldUI field)
+                                                        {
+                                                            var name = (field as ExpressionFieldUI)?.Expression.PropertyName ?? (field as PropertyFieldUI)?.Property.PropertyName;
 
+                                                            if (name == null)
+                                                            {
+                                                                continue;
+                                                            }
+
+                                                            // fill in the gaps (when dealing with multiple entity variants)
+                                                            // TODO: only do this when fill the gaps setting is active
+                                                            while (elementsProcessed.IndexOf(name) > index++)
+                                                            {
+                                                                <td>&nbsp;</td>
+                                                            }
+
+                                                            if (field is ExpressionFieldUI expressionField)
+                                                            {
+                                                                <td>@expressionField.Expression.StringGetter(context.Entity)</td>
+                                                            }
+                                                            else if (field is PropertyFieldUI propertyField)
+                                                            {
+                                                                <td>
+                                                                    <UIEditor Field="field" Entity="@context.Entity" />
+                                                                </td>
+                                                            }
+                                                        }
+                                                    }
                                                     // fill in the gaps (when dealing with multiple entity variants)
-                                                    // TODO: only do this when fill the gaps setting is active
-                                                    while (elementsProcessed.IndexOf(name) > index++)
+                                                    while (elementsProcessed.Count > index++)
                                                     {
                                                         <td>&nbsp;</td>
                                                     }
+                                                    if (section.Buttons != null && section.Buttons.Any())
+                                                    {
+                                                        <td class="button-cell">
+                                                            @foreach (var button in section.Buttons)
+                                                            {
+                                                                var model = CreateButtonViewModel(button);
 
-                                                    if (field is ExpressionFieldUI expressionField)
-                                                    {
-                                                        <td>@expressionField.Expression.StringGetter(context.Entity)</td>
-                                                    }
-                                                    else if (field is PropertyFieldUI propertyField)
-                                                    {
-                                                        <td>
-                                                            <UIEditor Field="field" Entity="@context.Entity" />
+                                                                // TODO: deattach
+                                                                model.OnClick += NodeButtonOnClickAsync;
+
+                                                                <UIButton Button="button" Model="model" />
+                                                            }
                                                         </td>
                                                     }
                                                 }
-                                            }
-                                            // fill in the gaps (when dealing with multiple entity variants)
-                                            while (elementsProcessed.Count > index++)
-                                            {
-                                                <td>&nbsp;</td>
-                                            }
-                                            if (section.Buttons != null && section.Buttons.Any())
-                                            {
-                                                <td class="button-cell">
-                                                    @foreach (var button in section.Buttons)
-                                                    {
-                                                        var model = CreateButtonViewModel(button);
 
-                                                        // TODO: deattach
-                                                        model.OnClick += NodeButtonOnClickAsync;
-
-                                                        <UIButton Button="button" Model="model" />
-                                                    }
-                                                </td>
-                                            }
+                                            </tr>
                                         }
-
-                                    </tr>
+                                    }
                                 </CascadingValue>
                             }
                         }
                     </tbody>
                 </table>
-            }
-            else if (UI.ListType == ListType.BlockEditor)
+            </div>
+        }
+        else if (UI.ListType == ListType.BlockEditor)
+        {
+            @foreach (var context in UI.EditContexts)
             {
-                @foreach (var context in UI.EditContexts)
-                {
-                    <CascadingValue Name="EditContext" Value="context">
-                        @if (SubjectToSectionMap.TryGetValue(context.Entity.Id, out var section))
+                <CascadingValue Name="EditContext" Value="context">
+                    @if (UI.SectionsForEntity.TryGetValue(context.Entity.Id, out var sections))
+                    {
+                        foreach (var section in sections)
                         {
                             if (section.Buttons != null)
                             {
@@ -178,10 +193,10 @@ else
                                 <BlockSection Section="section" />
                             }
                         }
-                    </CascadingValue>
-                }
+                    }
+                </CascadingValue>
             }
-        </div>
+        }
     }
 }
 @functions {
@@ -198,28 +213,12 @@ else
     [Parameter] private string? Id { get; set; } = null;
 
     ListUI? UI;
-    Dictionary<string, SectionUI> SubjectToSectionMap;
 
     protected override async Task LoadDataAsync()
     {
         try
         {
-            var newUI = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, VariantAlias, ParentId);
-            var newSubjectToSectionMap = new Dictionary<string, SectionUI>();
-
-            // TODO: find better and nicer solution
-            // pulling all the entities through the UI since this is the only place where async works..
-            // TODO: triggers exception during save of new entity in list editor
-            if (newUI != null)
-            {
-                foreach (var context in newUI.EditContexts)
-                {
-                    newSubjectToSectionMap.Add(context.Entity.Id, await newUI.SectionForEntityAsync(context));
-                }
-            }
-
-            UI = newUI;
-            SubjectToSectionMap = newSubjectToSectionMap;
+            UI = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, VariantAlias, ParentId);
 
             StateHasChanged();
         }

@@ -40,5 +40,17 @@ namespace RapidCMS.Common.Extensions
 
             return result;
         }
+
+        public static async Task<Dictionary<TKey, TValue>> ToDictionaryAsync<TSource, TKey, TValue>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TValue>> asyncValueSelector)
+        {
+            var result = new Dictionary<TKey, TValue>();
+
+            foreach (var element in source)
+            {
+                result.Add(keySelector(element), await asyncValueSelector(element));
+            }
+
+            return result;
+        }
     }
 }

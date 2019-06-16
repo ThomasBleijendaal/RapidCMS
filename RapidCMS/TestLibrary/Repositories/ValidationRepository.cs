@@ -57,7 +57,7 @@ namespace TestLibrary.Repositories
 
         public override Task<ValidationEntity> NewAsync(int? parentId, Type? variantType = null)
         {
-            return Task.FromResult(new ValidationEntity());
+            return Task.FromResult(new ValidationEntity { Id = "" });
         }
 
         public override int ParseKey(string id)

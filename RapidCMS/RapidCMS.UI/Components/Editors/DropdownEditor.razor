@@ -25,7 +25,7 @@
     private IEnumerable<IElement>? Options;
     private int SelectedIndex = -1;
 
-    protected override async Task OnInitAsync()
+    protected override async Task OnParametersSetAsync()
     {
         if (DataCollection != null)
         {

@@ -10,10 +10,11 @@ TODO:
     [] Test SubCollection List view 
 [] Reordering
 [] Form validation
-    [] Validation on models / viewmodels
+    [x] Validation on models / viewmodels
     [] ValueMapper issues (nullable / non-nullable)
     [] Move EditContext into UI class and remove UISubject
     [] Remove Name = "EditContext" from CascadingParameters
+    [] In listview: After updating entity 2 the EditContext of entity 1 is reset
 [] Pagination (consistent during session)
     [] Redirect after deletion + consistent pagination / Return to parent button action
     [] Redirect after insertions + no update authorization goes to 403 page

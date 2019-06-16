@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Validation;
 
@@ -21,7 +20,6 @@ namespace RapidCMS.Common.Models.UI
 
         public List<ButtonUI>? Buttons { get; internal set; }
 
-        // TODO: this could and should return multiple items
-        public Func<EditContext, Task<SectionUI?>>? SectionForEntityAsync { get; internal set; }
+        public Dictionary<string, List<SectionUI>>? SectionsForEntity { get; internal set; }
     }
 }
