@@ -18,7 +18,7 @@ namespace RapidCMS.Common.Models.UI
         [Obsolete("Remove me")]
         public UISubject Subject { get; }
 
-        public List<ButtonUI> Buttons { get; set; }
-        public List<SectionUI> Sections { get; set; }
+        public List<ButtonUI>? Buttons { get; set; }
+        public List<SectionUI>? Sections { get; set; }
     }
 }

@@ -7,6 +7,7 @@
 
 @using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Services
+@using RapidCMS.UI.Models
 
 @inject ICollectionService CollectionService
 
@@ -19,26 +20,35 @@
 else
 {
     <CascadingValue Name="EditContext" Value="UI.EditContext">
-        <div class="top-row first">
-            @{
-                @foreach (var button in UI.Buttons)
-                {
-                    var context = CreateButtonContext<BasePage>(this, button, ButtonCallbackAsync);
-
-                    <UIButton TContext="BasePage" Button="button" Context="context" />
-                }
-            }
-        </div>
-
-        @foreach (var section in UI.Sections)
+        @if (UI.Buttons != null)
         {
-            if (!string.IsNullOrEmpty(section.CustomAlias))
+            <div class="top-row first">
+                @{
+                    @foreach (var button in UI.Buttons)
+                    {
+                        var model = CreateButtonViewModel(button);
+
+                        // TODO: deattach
+                        model.OnClick += ButtonOnClickAsync;
+
+                        <UIButton Button="button" Model="model" />
+                    }
+                }
+            </div>
+        }
+
+        @if (UI.Sections != null)
+        {
+            @foreach (var section in UI.Sections)
             {
-                @CustomSections.GetCustomSection(section.CustomAlias, section);
-            }
-            else
-            {
-                <BlockSection Section="section" />
+                if (!string.IsNullOrEmpty(section.CustomAlias))
+                {
+                    @CustomSections.GetCustomSection(section.CustomAlias, section);
+                }
+                else
+                {
+                    <BlockSection Section="section" />
+                }
             }
         }
     </CascadingValue>
@@ -46,20 +56,15 @@ else
 
 @functions {
 
-    [Parameter]
-    private string Action { get; set; }
+    [Parameter] private string Action { get; set; }
 
-    [Parameter]
-    private string? ParentId { get; set; } = null;
+    [Parameter] private string? ParentId { get; set; } = null;
 
-    [Parameter]
-    private string CollectionAlias { get; set; }
+    [Parameter] private string CollectionAlias { get; set; }
 
-    [Parameter]
-    private string VariantAlias { get; set; }
+    [Parameter] private string VariantAlias { get; set; }
 
-    [Parameter]
-    private string? Id { get; set; } = null;
+    [Parameter] private string? Id { get; set; } = null;
 
     NodeUI? UI;
 
@@ -79,11 +84,18 @@ else
         }
     }
 
-    async Task ButtonCallbackAsync(string actionId, BasePage view, object? customData)
+    async void ButtonOnClickAsync(object sender, ButtonClickEventArgs args)
     {
+        var model = sender as ButtonViewModel;
+
         try
         {
-            var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, UI.EditContext, actionId, customData);
+            if (model == null)
+            {
+                throw new ArgumentException($"Argument must be of type {typeof(ButtonViewModel)}.", nameof(sender));
+            }
+
+            var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, args.EditContext, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }

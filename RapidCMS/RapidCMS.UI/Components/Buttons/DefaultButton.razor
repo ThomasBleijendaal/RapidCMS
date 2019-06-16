@@ -1,10 +1,8 @@
-﻿@typeparam TContext
-
-@inherits  BaseButton<TContext>
+﻿@inherits  BaseButton
 
 <button type="button" 
-        class="btn @(Context.IsPrimary ? "btn-primary" : (Context.ShouldConfirm) ? "btn-danger" : "btn-light")" 
+        class="btn @(Model.IsPrimary ? "btn-primary" : (Model.ShouldConfirm) ? "btn-danger" : "btn-light")" 
         onclick=@ButtonClickAsync
-        disabled=@(!FormIsValid && Context.RequiresValidForm ? "disabled" : null)>
-    <i class="oi oi-@Context.Icon"></i> @Context.Label
+        disabled=@(!FormIsValid && Model.RequiresValidForm ? "disabled" : null)>
+    <i class="oi oi-@Model.Icon"></i> @Model.Label
 </button>

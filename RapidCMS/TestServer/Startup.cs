@@ -152,7 +152,7 @@ namespace TestServer
             {
                 config.AllowAnonymousUser();
 
-                config.AddCustomButton(typeof(CreateButton<>));
+                config.AddCustomButton(typeof(CreateButton));
                 config.AddCustomEditor(typeof(PasswordEditor));
                 config.AddCustomSection(typeof(DashboardSection));
 
@@ -784,7 +784,7 @@ namespace TestServer
             {
                 config
                     .AddDefaultButton(DefaultButtonType.New, isPrimary: true)
-                    .AddCustomButton<CreateButtonActionHandler>(typeof(CreateButton<>), "Custom create!");
+                    .AddCustomButton<CreateButtonActionHandler>(typeof(CreateButton), "Custom create!");
 
                 config.SetListPane(listPaneConfig =>
                 {

@@ -33,8 +33,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<ITreeService, TreeService>();
             services.AddTransient<IUIService, UIService>();
 
-            services.AddTransient<IValidationService, ValidationService>();
-
             services.AddScoped<IExceptionHelper, ExceptionHelper>();
 
             services.AddSingleton<DefaultValueMapper>();

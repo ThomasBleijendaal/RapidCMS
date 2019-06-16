@@ -1,23 +1,19 @@
-﻿@typeparam TContext
-
-@using RapidCMS.Common.Models.UI
+﻿@using RapidCMS.Common.Models.UI
 @using RapidCMS.UI.Models
 
-<CascadingValue Value="Context">
-    @if (!string.IsNullOrEmpty(Button.CustomAlias))
-    {
-        @CustomButtons.GetCustomButton(Button.CustomAlias, typeof(TContext))
-    }
-    else
-    {
-        <DefaultButton TContext="TContext" />
-    }
-</CascadingValue>
+@if (!string.IsNullOrEmpty(Button.CustomAlias))
+{
+    @CustomButtons.GetCustomButton(Button.CustomAlias, Model)
+}
+else
+{
+    <DefaultButton Model="Model" />
+}
 
 @functions {
     [CascadingParameter(Name = "CustomButtons")] protected CustomButtonContainer CustomButtons { get; set; }
 
     [Parameter] private ButtonUI Button { get; set; }
 
-    [Parameter] private ButtonContext<TContext> Context { get; set; }
+    [Parameter] private ButtonViewModel Model { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Models;
@@ -10,7 +11,7 @@ namespace RapidCMS.Common.Services
     internal interface IUIService
     {
         Task<NodeUI> GenerateNodeUIAsync(ViewContext viewContext, EditContext editContext, Node nodeEditor);
-        Task<ListUI> GenerateListUIAsync(ViewContext listViewContext, Func<UISubject, ViewContext> entityViewContext, ListView listView);
-        Task<ListUI> GenerateListUIAsync(ViewContext listViewContext, Func<UISubject, ViewContext> entityViewContext, ListEditor listEditor);
+        Task<ListUI> GenerateListUIAsync(ViewContext listViewContext, EditContext rootEditContext, IEnumerable<EditContext> editContexts, Func<EditContext, ViewContext> entityViewContext, ListView listView);
+        Task<ListUI> GenerateListUIAsync(ViewContext listViewContext, EditContext rootEditContext, IEnumerable<EditContext> editContexts, Func<EditContext, ViewContext> entityViewContext, ListEditor listEditor);
     }
 }

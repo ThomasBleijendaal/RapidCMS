@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.Authorization;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
@@ -71,12 +72,14 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public async Task<ListUI> GenerateListUIAsync(ViewContext listViewContext, Func<UISubject, ViewContext> entityViewContext, ListView listView)
+        public async Task<ListUI> GenerateListUIAsync(ViewContext listViewContext, EditContext rootEditContext, IEnumerable<EditContext> editContexts, Func<EditContext, ViewContext> entityViewContext, ListView listView)
         {
-            return new ListUI
+            return new ListUI(rootEditContext, editContexts)
             {
-                Buttons = listView.Buttons == null 
-                    ? new List<ButtonUI>() 
+                ListType = ListType.TableView,
+
+                Buttons = listView.Buttons == null
+                    ? new List<ButtonUI>()
                     : await listView.Buttons
                         .GetAllButtons()
                         .Where(button => button.IsCompatibleWithView(listViewContext))
@@ -127,10 +130,14 @@ namespace RapidCMS.Common.Services
             };
         }
 
-        public async Task<ListUI> GenerateListUIAsync(ViewContext listViewContext, Func<UISubject, ViewContext> entityViewContext, ListEditor listEditor)
+        public async Task<ListUI> GenerateListUIAsync(ViewContext listViewContext, EditContext rootEditContext, IEnumerable<EditContext> editContexts, Func<EditContext, ViewContext> entityViewContext, ListEditor listEditor)
         {
-            return new ListUI
+            return new ListUI(rootEditContext, editContexts)
             {
+                ListType = listEditor.ListEditorType == ListEditorType.Table
+                    ? ListType.TableEditor
+                    : ListType.BlockEditor,
+
                 Buttons = await listEditor.Buttons
                     .GetAllButtons()
                     .Where(button => button.IsCompatibleWithView(listViewContext))

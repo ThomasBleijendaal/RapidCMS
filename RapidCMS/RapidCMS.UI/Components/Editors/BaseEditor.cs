@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
@@ -10,48 +8,15 @@ using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.UI.Components.Editors
 {
-    public class BaseEditor : ComponentBase, IDisposable
+    public class BaseEditor : EditContextComponentBase
     {
-        [CascadingParameter(Name = "EditContext")]
-        private EditContext CascadedEditContext { get; set; }
-
-        protected EditContext EditContext { get; set; }
-
         protected ValidationState State { get; private set; }
 
-        [Parameter]
-        protected IEntity Entity { get; private set; }
+        [Parameter] protected IEntity Entity { get; private set; }
 
-        [Parameter]
-        protected IPropertyMetadata Property { get; private set; }
+        [Parameter] protected IPropertyMetadata Property { get; private set; }
 
-        [Parameter]
-        protected IValueMapper ValueMapper { get; private set; }
-
-        protected override Task OnParametersSetAsync()
-        {
-            if (EditContext == null)
-            {
-                if (CascadedEditContext == null)
-                {
-                    throw new InvalidOperationException($"{GetType()} requires a CascadingParameter {nameof(EditContext)}.");
-                }
-
-                EditContext = CascadedEditContext;
-
-                AttachValidationStateChangedListener();
-            }
-            else if (EditContext != CascadedEditContext)
-            {
-                DetachValidationStateChangedListener();
-
-                EditContext = CascadedEditContext;
-
-                AttachValidationStateChangedListener();
-            }
-
-            return base.OnParametersSetAsync();
-        }
+        [Parameter] protected IValueMapper ValueMapper { get; private set; }
 
         protected object GetValue(bool useValueMapper = true)
         {
@@ -70,7 +35,7 @@ namespace RapidCMS.UI.Components.Editors
             return EditContext.GetValidationMessages(Property);
         }
 
-        
+
         private void ValidationStateChangeHandler(object sender, ValidationStateChangedEventArgs eventArgs)
         {
             if (EditContext.WasValidated(Property))
@@ -92,12 +57,7 @@ namespace RapidCMS.UI.Components.Editors
             StateHasChanged();
         }
 
-        void IDisposable.Dispose()
-        {
-            DetachValidationStateChangedListener();
-        }
-
-        private void AttachValidationStateChangedListener()
+        protected override void AttachValidationStateChangedListener()
         {
             if (EditContext != null)
             {
@@ -106,7 +66,7 @@ namespace RapidCMS.UI.Components.Editors
             }
         }
 
-        private void DetachValidationStateChangedListener()
+        protected override void DetachValidationStateChangedListener()
         {
             if (EditContext != null)
             {

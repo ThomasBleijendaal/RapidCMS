@@ -1,51 +1,54 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using RapidCMS.Common.Validation;
-using System;
-using System.Threading.Tasks;
+using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Components.Buttons
 {
-    public class BaseButton<TContext> : ComponentBase, IDisposable
+    public class BaseButton : EditContextComponentBase
     {
         [Inject] private IJSRuntime JsRuntime { get; set; }
 
-        [CascadingParameter] protected ButtonContext<TContext> Context { get; set; }
-
-        [CascadingParameter(Name = "EditContext")] private EditContext EditContext { get; set; }
+        [Parameter] protected ButtonViewModel Model { get; set; }
 
         protected bool FormIsValid { get; private set; } = true;
 
         protected async Task ButtonClickAsync(object? customData = null)
         {
-            if (Context.RequiresValidForm && !EditContext.IsValid())
+            if (Model.RequiresValidForm && !(EditContext?.IsValid() ?? true))
             {
                 return;
             }
 
-            if (!Context.ShouldConfirm || await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?"))
+            // TODO: make message configurable
+            if (!Model.ShouldConfirm || await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?"))
             {
-                await Context.CallbackAsync.Invoke(Context.ButtonId, Context.Context, customData);
+                Model.NotifyClick(EditContext, customData);
             }
         }
 
-        protected override Task OnParametersSetAsync()
-        {
-            EditContext.OnValidationStateChanged += OnValidationStateChanged;
-
-            return base.OnParametersSetAsync();
-        }
-
-        private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
+        private void ValidationStateChangeHandler(object sender, ValidationStateChangedEventArgs e)
         {
             FormIsValid = e.IsValid;
 
             StateHasChanged();
         }
 
-        void IDisposable.Dispose()
+        protected override void AttachValidationStateChangedListener()
         {
-            EditContext.OnValidationStateChanged -= OnValidationStateChanged;
+            if (EditContext != null)
+            {
+                EditContext.OnValidationStateChanged += ValidationStateChangeHandler;
+            }
+        }
+
+        protected override void DetachValidationStateChangedListener()
+        {
+            if (EditContext != null)
+            {
+                EditContext.OnValidationStateChanged -= ValidationStateChangeHandler;
+            }
         }
     }
 }

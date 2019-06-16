@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Data;
@@ -7,57 +6,57 @@ using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Metadata;
 using RapidCMS.Common.Models.UI;
 using RapidCMS.Common.ValueMappers;
-using RapidCMS.UI.Components.Editors;
 using RapidCMS.UI.Components.Sections;
 
 namespace RapidCMS.UI.Models
 {
     // TODO: move to more sane locations
-    public class CustomButtonContainer
+    public abstract class CustomContainer
     {
-        private Dictionary<string, Func<Type, RenderFragment>> _customButtons = new Dictionary<string, Func<Type, RenderFragment>>();
+        protected Dictionary<string, CustomTypeRegistration>? _customRegistrations;
 
-        public CustomButtonContainer(IEnumerable<CustomTypeRegistration>? registrations)
+        public CustomContainer(IEnumerable<CustomTypeRegistration>? registrations)
         {
-            // TODO: make similair to CustomEditorContainer
             if (registrations != null)
             {
-                foreach (var registration in registrations)
-                {
-                    _customButtons.Add(registration.Alias, (contextType) => builder =>
-                    {
-                        var genericButtonType = registration.Type.MakeGenericType(contextType);
-
-                        builder.OpenComponent(0, genericButtonType);
-                        builder.CloseComponent();
-                    });
-                }
+                _customRegistrations = registrations.ToDictionary(x => x.Alias);
             }
-        }
-
-        public RenderFragment? GetCustomButton(string buttonAlias, Type contextType)
-        {
-            return _customButtons.TryGetValue(buttonAlias, out var customButton)
-                ? customButton.Invoke(contextType)
-                : null;
         }
     }
 
-    public class CustomEditorContainer
+    public class CustomButtonContainer : CustomContainer
     {
-        private Dictionary<string, CustomTypeRegistration>? _customButtons;
-
-        public CustomEditorContainer(IEnumerable<CustomTypeRegistration>? registrations)
+        public CustomButtonContainer(IEnumerable<CustomTypeRegistration> registrations) : base(registrations)
         {
-            if (registrations != null)
+        }
+
+        public RenderFragment? GetCustomButton(string buttonAlias, ButtonViewModel model)
+        {
+            if (_customRegistrations != null && _customRegistrations.TryGetValue(buttonAlias, out var registration))
             {
-                _customButtons = registrations.ToDictionary(x => x.Alias);
+                return builder =>
+                {
+                    builder.OpenComponent(0, registration.Type);
+
+                    builder.AddAttribute(1, "Model", model);
+                    
+                    builder.CloseComponent();
+                };
             }
+
+            return null;
+        }
+    }
+
+    public class CustomEditorContainer : CustomContainer
+    {
+        public CustomEditorContainer(IEnumerable<CustomTypeRegistration> registrations) : base(registrations)
+        {
         }
 
         public RenderFragment? GetCustomEditor(string editorAlias, IEntity entity, IPropertyMetadata property, IValueMapper valueMapper, IDataCollection dataCollection)
         {
-            if (_customButtons != null && _customButtons.TryGetValue(editorAlias, out var registration))
+            if (_customRegistrations != null && _customRegistrations.TryGetValue(editorAlias, out var registration))
             {
                 return builder =>
                 {
@@ -80,21 +79,15 @@ namespace RapidCMS.UI.Models
         }
     }
 
-    public class CustomSectionContainer
+    public class CustomSectionContainer : CustomContainer
     {
-        private Dictionary<string, CustomTypeRegistration>? _customButtons;
-
-        public CustomSectionContainer(IEnumerable<CustomTypeRegistration>? registrations)
+        public CustomSectionContainer(IEnumerable<CustomTypeRegistration> registrations) : base(registrations)
         {
-            if (registrations != null)
-            {
-                _customButtons = registrations.ToDictionary(x => x.Alias);
-            }
         }
 
         public RenderFragment? GetCustomSection(string sectionAlias, SectionUI section)
         {
-            if (_customButtons != null && _customButtons.TryGetValue(sectionAlias, out var registration))
+            if (_customRegistrations != null && _customRegistrations.TryGetValue(sectionAlias, out var registration))
             {
                 return builder =>
                 {
@@ -110,7 +103,7 @@ namespace RapidCMS.UI.Models
         }
     }
 
-    // TODO: extend with attributes
+    // TODO: extend with attributes (wait for blazor update to pass dictionay as attributes in)
     public static class CustomRegistrationRenderFragmentExtensions
     {
         public static RenderFragment? ToRenderFragment(this CustomTypeRegistration? registration)

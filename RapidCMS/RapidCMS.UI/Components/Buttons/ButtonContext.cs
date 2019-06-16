@@ -4,8 +4,6 @@ using RapidCMS.Common.Validation;
 
 namespace RapidCMS.UI.Components.Buttons
 {
-    // TODO: not really a context
-    // TODO: investigate removing TContext since buttons have EditContext available
     public class ButtonContext<TContext>
     {
         public string Label { get; set; }

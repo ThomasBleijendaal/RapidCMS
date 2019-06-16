@@ -15,6 +15,14 @@ namespace RapidCMS.Common.Validation
         private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();
         private readonly IServiceProvider _serviceProvider;
 
+        public EditContext(UsageType usageType)
+        {
+            // TODO: fix this constructor (either defaults, or fix via inheritance of simpler base type)
+            Entity = null;
+            UsageType = usageType;
+            _serviceProvider = null;
+        }
+
         public EditContext(IEntity entity, UsageType usageType, IServiceProvider serviceProvider)
         {
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));

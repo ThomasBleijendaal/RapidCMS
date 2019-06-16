@@ -1,14 +1,12 @@
-﻿@typeparam TContext
+﻿@inherits BaseButton
 
 @using RapidCMS.UI.Components.Buttons
-
-@inherits BaseButton<TContext>
 
 <div class="input-group col-3">
     <input bind="@NumberOfItems" type="text" class="form-control" />
     <div class="input-group-append">
         <button type="button" class="btn btn-outline-primary" onclick="@CreateAsync">
-            <i class="oi oi-@(Context.Icon ?? "puzzle-piece")"></i> @Context.Label
+            <i class="oi oi-@(Model.Icon ?? "puzzle-piece")"></i> @Model.Label
         </button>
     </div>
 </div>

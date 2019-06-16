@@ -13,7 +13,7 @@ using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Components.Pages
 {
-    public class BasePage : ComponentBase
+    public abstract class BasePage : ComponentBase
     {
         [Inject]
         private IUriHelper UriHelper { get; set; }
@@ -119,13 +119,11 @@ namespace RapidCMS.UI.Components.Pages
             return Task.CompletedTask;
         }
 
-        protected ButtonContext<TContext> CreateButtonContext<TContext>(TContext context, ButtonUI button, Func<string, TContext, object?, Task> callback)
+        protected ButtonViewModel CreateButtonViewModel(ButtonUI button)
         {
-            return new ButtonContext<TContext>
+            return new ButtonViewModel
             {
                 ButtonId = button.ButtonId,
-                CallbackAsync = callback,
-                Context = context,
                 Icon = button.Icon,
                 Label = button.Label,
                 ShouldConfirm = button.ShouldConfirm,
@@ -133,5 +131,20 @@ namespace RapidCMS.UI.Components.Pages
                 RequiresValidForm = button.RequiresValidForm
             };
         }
+
+        //protected ButtonContext<TContext> CreateButtonContext<TContext>(TContext context, ButtonUI button, Func<string, TContext, object?, Task> callback)
+        //{
+        //    return new ButtonContext<TContext>
+        //    {
+        //        ButtonId = button.ButtonId,
+        //        CallbackAsync = callback,
+        //        Context = context,
+        //        Icon = button.Icon,
+        //        Label = button.Label,
+        //        ShouldConfirm = button.ShouldConfirm,
+        //        IsPrimary = button.IsPrimary,
+        //        RequiresValidForm = button.RequiresValidForm
+        //    };
+        //}
     }
 }
