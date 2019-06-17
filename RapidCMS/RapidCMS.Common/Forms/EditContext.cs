@@ -7,7 +7,7 @@ using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models.Metadata;
 
-namespace RapidCMS.Common.Validation
+namespace RapidCMS.Common.Forms
 {
     // TODO: fix memory leak due to events
     public sealed class EditContext
@@ -40,6 +40,18 @@ namespace RapidCMS.Common.Validation
 
             GetPropertyState(property).IsModified = true;
             OnFieldChanged?.Invoke(this, new FieldChangedEventArgs(property));
+        }
+
+        public void NotifyPropertyBusy(IPropertyMetadata property)
+        {
+            GetPropertyState(property).IsBusy = true;
+            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(false));
+        }
+
+        public void NotifyPropertyFinished(IPropertyMetadata property)
+        {
+            GetPropertyState(property).IsBusy = false;
+            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs());
         }
 
         public bool IsValid()
@@ -128,6 +140,10 @@ namespace RapidCMS.Common.Validation
             {
                 result.MemberNames.ForEach(name => GetFieldState(name)?.AddMessage(result.ErrorMessage));
             }
+
+            _fieldStates
+                .Where(kv => kv.Value.IsBusy)
+                .ForEach(kv => kv.Value.AddMessage($"The {kv.Key.PropertyName} field indicates it is performing an asynchronous task which must be awaited."));
 
             _fieldStates.ForEach(kv => kv.Value.WasValidated = true);
 

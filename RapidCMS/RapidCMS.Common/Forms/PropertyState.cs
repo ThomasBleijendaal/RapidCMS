@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using RapidCMS.Common.Models.Metadata;
 
-namespace RapidCMS.Common.Validation
+namespace RapidCMS.Common.Forms
 {
     internal class PropertyState
     {
@@ -17,6 +17,7 @@ namespace RapidCMS.Common.Validation
 
         public bool WasValidated { get; set; }
         public bool IsModified { get; set; }
+        public bool IsBusy { get; set; }
 
         public IEnumerable<string> GetValidationMessages()
         {

@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using RapidCMS.Common.Data;
 using TestLibrary.Enums;
-using TestLibrary.Validation;
 
 namespace TestLibrary.Entities
 {
@@ -12,6 +11,8 @@ namespace TestLibrary.Entities
         [Required]
         public string Name { get; set; }
 
+        public string Dummy { get; set; }
+
         [Required]
         [Range(1.0, 10.0)]
         public long Range { get; set; }
@@ -20,7 +21,6 @@ namespace TestLibrary.Entities
         public string NotRequired { get; set; }
 
         [Required]
-        [True]
         public bool Accept { get; set; }
 
         [Required]
@@ -30,5 +30,8 @@ namespace TestLibrary.Entities
 
         [Required]
         public TestEnum? Enum { get; set; }
+
+        [Required]
+        public int CountryId { get; set; }
     }
 }

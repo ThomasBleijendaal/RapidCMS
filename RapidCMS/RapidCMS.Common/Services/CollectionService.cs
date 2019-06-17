@@ -10,12 +10,11 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Validation;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Commands;
 using RapidCMS.Common.Models.UI;
-using RapidCMS.Common.Validation;
+using RapidCMS.Common.Forms;
 
 namespace RapidCMS.Common.Services
 {
@@ -141,7 +140,7 @@ namespace RapidCMS.Common.Services
                 throw new UnauthorizedAccessException();
             }
 
-            if (!editContext.IsValid())
+            if (button.RequiresValidForm && !editContext.IsValid())
             {
                 throw new InvalidEntityException();
             }
@@ -365,6 +364,11 @@ namespace RapidCMS.Common.Services
             if (!authorizationChallenge.Succeeded)
             {
                 throw new UnauthorizedAccessException();
+            }
+
+            if (button.RequiresValidForm && !editContext.IsValid())
+            {
+                throw new InvalidEntityException();
             }
 
             // since the id is known, get the entity variant from the entity

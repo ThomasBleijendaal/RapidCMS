@@ -1,7 +1,6 @@
 ﻿using System;
 using RapidCMS.Common.Models.Metadata;
-using RapidCMS.Common.Validation;
-
+using RapidCMS.Common.Forms;
 
 namespace RapidCMS.UI.Components.Editors
 {

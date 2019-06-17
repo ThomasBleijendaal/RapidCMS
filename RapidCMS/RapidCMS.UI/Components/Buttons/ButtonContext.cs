@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using RapidCMS.Common.Validation;
+using RapidCMS.Common.Forms;
 
 namespace RapidCMS.UI.Components.Buttons
 {

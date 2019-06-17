@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using RapidCMS.Common.Enums;
-using RapidCMS.Common.Validation;
+using RapidCMS.Common.Forms;
 
 namespace RapidCMS.Common.Models.UI
 {

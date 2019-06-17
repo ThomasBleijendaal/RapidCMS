@@ -1,5 +1,5 @@
 ﻿using System;
-using RapidCMS.Common.Validation;
+using RapidCMS.Common.Forms;
 
 namespace RapidCMS.UI.Models
 {

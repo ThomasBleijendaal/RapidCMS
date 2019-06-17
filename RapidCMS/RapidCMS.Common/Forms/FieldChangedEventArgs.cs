@@ -1,6 +1,6 @@
 ﻿using RapidCMS.Common.Models.Metadata;
 
-namespace RapidCMS.Common.Validation
+namespace RapidCMS.Common.Forms
 {
     public class FieldChangedEventArgs
     {

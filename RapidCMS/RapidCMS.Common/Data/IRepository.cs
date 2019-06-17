@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -47,6 +48,8 @@ namespace RapidCMS.Common.Data
         where TEntity : IEntity
         where TParentKey : struct
     {
+        protected SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
         public abstract Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
         public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
         public abstract Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType = null);
@@ -59,32 +62,86 @@ namespace RapidCMS.Common.Data
 
         async Task<IEntity> IRepository._GetByIdAsync(string id, string? parentId)
         {
-            return (await GetByIdAsync(ParseKey(id), ParseParentKey(parentId))) as IEntity;
+            await _semaphoreSlim.WaitAsync();
+
+            try
+            {
+                return (await GetByIdAsync(ParseKey(id), ParseParentKey(parentId))) as IEntity;
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         async Task<IEnumerable<IEntity>> IRepository._GetAllAsObjectsAsync(string? parentId)
         {
-            return (await GetAllAsync(ParseParentKey(parentId))).Cast<IEntity>();
+            await _semaphoreSlim.WaitAsync();
+
+            try
+            {
+                return (await GetAllAsync(ParseParentKey(parentId))).Cast<IEntity>();
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         async Task<IEntity> IRepository._NewAsync(string? parentId, Type? variantType)
         {
-            return (await NewAsync(ParseParentKey(parentId), variantType)) as IEntity;
+            await _semaphoreSlim.WaitAsync();
+
+            try
+            {
+                return (await NewAsync(ParseParentKey(parentId), variantType)) as IEntity;
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         async Task<IEntity> IRepository._InsertAsync(string? parentId, IEntity entity, IRelationContainer relations)
         {
-            return (await InsertAsync(ParseParentKey(parentId), (TEntity)entity, relations)) as IEntity;
+            await _semaphoreSlim.WaitAsync();
+
+            try
+            {
+                return (await InsertAsync(ParseParentKey(parentId), (TEntity)entity, relations)) as IEntity;
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         async Task IRepository._UpdateAsync(string id, string? parentId, IEntity entity, IRelationContainer relations)
         {
-            await UpdateAsync(ParseKey(id), ParseParentKey(parentId), (TEntity)entity, relations);
+            await _semaphoreSlim.WaitAsync();
+
+            try
+            {
+                await UpdateAsync(ParseKey(id), ParseParentKey(parentId), (TEntity)entity, relations);
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         async Task IRepository._DeleteAsync(string id, string? parentId)
         {
-            await DeleteAsync(ParseKey(id), ParseParentKey(parentId));
+            await _semaphoreSlim.WaitAsync();
+
+            try
+            {
+                await DeleteAsync(ParseKey(id), ParseParentKey(parentId));
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
     }
 
@@ -92,6 +149,7 @@ namespace RapidCMS.Common.Data
         where TEntity : IEntity
         where TParentKey : class
     {
+
         Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
         Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
 
@@ -108,6 +166,8 @@ namespace RapidCMS.Common.Data
         where TEntity : IEntity
         where TParentKey : class
     {
+        protected SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+
         public abstract Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
         public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
         public abstract Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType = null);
@@ -120,32 +180,86 @@ namespace RapidCMS.Common.Data
 
         async Task<IEntity> IRepository._GetByIdAsync(string id, string? parentId)
         {
-            return (await GetByIdAsync(ParseKey(id), ParseParentKey(parentId))) as IEntity;
+            await _semaphoreSlim.WaitAsync();
+
+            try
+            {
+                return (await GetByIdAsync(ParseKey(id), ParseParentKey(parentId))) as IEntity;
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         async Task<IEnumerable<IEntity>> IRepository._GetAllAsObjectsAsync(string? parentId)
         {
-            return (await GetAllAsync(ParseParentKey(parentId))).Cast<IEntity>();
+            await _semaphoreSlim.WaitAsync();
+
+            try
+            {
+                return (await GetAllAsync(ParseParentKey(parentId))).Cast<IEntity>();
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         async Task<IEntity> IRepository._NewAsync(string? parentId, Type? variantType)
         {
-            return (await NewAsync(ParseParentKey(parentId), variantType)) as IEntity;
+            await _semaphoreSlim.WaitAsync();
+
+            try
+            {
+                return (await NewAsync(ParseParentKey(parentId), variantType)) as IEntity;
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         async Task<IEntity> IRepository._InsertAsync(string? parentId, IEntity entity, IRelationContainer relations)
         {
-            return (await InsertAsync(ParseParentKey(parentId), (TEntity)entity, relations)) as IEntity;
+            await _semaphoreSlim.WaitAsync();
+
+            try
+            {
+                return (await InsertAsync(ParseParentKey(parentId), (TEntity)entity, relations)) as IEntity;
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         async Task IRepository._UpdateAsync(string id, string? parentId, IEntity entity, IRelationContainer relations)
         {
-            await UpdateAsync(ParseKey(id), ParseParentKey(parentId), (TEntity)entity, relations);
+            await _semaphoreSlim.WaitAsync();
+
+            try
+            {
+                await UpdateAsync(ParseKey(id), ParseParentKey(parentId), (TEntity)entity, relations);
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         async Task IRepository._DeleteAsync(string id, string? parentId)
         {
-            await DeleteAsync(ParseKey(id), ParseParentKey(parentId));
+            await _semaphoreSlim.WaitAsync();
+
+            try
+            {
+                await DeleteAsync(ParseKey(id), ParseParentKey(parentId));
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
     }
 }

@@ -154,6 +154,7 @@ namespace TestServer
 
                 config.AddCustomButton(typeof(CreateButton));
                 config.AddCustomEditor(typeof(PasswordEditor));
+                config.AddCustomEditor(typeof(UploadEditor));
                 config.AddCustomSection(typeof(DashboardSection));
 
                 config.SetCustomLogin(typeof(LoginControl));
@@ -204,6 +205,7 @@ namespace TestServer
                             editor.AddEditorPane(pane =>
                             {
                                 pane.AddField(f => f.Name);
+                                pane.AddField(f => f.Dummy).SetType(typeof(UploadEditor));
                                 pane.AddField(f => f.NotRequired);
                                 pane.AddField(f => f.Range)
                                     .SetName("Range Setting");
@@ -214,45 +216,65 @@ namespace TestServer
                                 pane.AddField(f => f.Enum)
                                     .SetType(EditorType.Select)
                                     .SetDataCollection<EnumDataProvider<TestEnum>>();
+                                pane.AddField(f => f.CountryId)
+                                    .SetType(EditorType.Select)
+                                    .SetCollectionRelation<CountryEntity>("country-collection", relation =>
+                                    {
+                                        relation
+                                            .SetIdProperty(x => x._Id)
+                                            .SetDisplayProperty(x => x.Name);
+                                    });
+
+                                pane.AddSubCollectionListEditor<CountryEntity>("country-collection");
                             });
                         });
                 });
 
-                //config.AddCollection<CountryEntity>("country-collection", "Countries", collection =>
-                //{
-                //    collection
-                //        .SetRepository<CountryRepository>()
-                //        .SetTreeView(entity => entity.Name)
-                //        .SetListView(list =>
-                //        {
-                //            list.AddDefaultButton(DefaultButtonType.New);
-                //            list.SetListPane(pane =>
-                //            {
-                //                pane.AddProperty(p => p.Name);
-                //                pane.AddDefaultButton(DefaultButtonType.Edit);
-                //            });
-                //        })
-                //        .SetNodeView(editor =>
-                //        {
-                //            editor.AddDefaultButton(DefaultButtonType.SaveNew);
-                //            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
-                //            editor.AddDefaultButton(DefaultButtonType.Delete);
-                //            editor.AddViewPane(pane =>
-                //            {
-                //                pane.AddProperty(f => f.Name);
-                //            });
-                //        })
-                //        .SetNodeEditor(editor =>
-                //        {
-                //            editor.AddDefaultButton(DefaultButtonType.SaveNew);
-                //            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
-                //            editor.AddDefaultButton(DefaultButtonType.Delete);
-                //            editor.AddEditorPane(pane =>
-                //            {
-                //                pane.AddField(f => f.Name);
-                //            });
-                //        });
-                //});
+                config.AddCollection<CountryEntity>("country-collection", "Countries", collection =>
+                {
+                    collection
+                        .SetRepository<CountryRepository>()
+                        .SetTreeView(entity => entity.Name)
+                        .SetListView(list =>
+                        {
+                            list.AddDefaultButton(DefaultButtonType.New);
+                            list.SetListPane(pane =>
+                            {
+                                pane.AddProperty(p => p.Name);
+                                pane.AddDefaultButton(DefaultButtonType.Edit);
+                            });
+                        })
+                        .SetListEditor(ListEditorType.Block, list =>
+                        {
+                            list.AddDefaultButton(DefaultButtonType.New);
+                            list.AddEditor(pane =>
+                            {
+                                pane.AddField(p => p.Name);
+                                pane.AddDefaultButton(DefaultButtonType.SaveExisting);
+                                pane.AddDefaultButton(DefaultButtonType.SaveNew);
+                            });
+                        })
+                        .SetNodeView(editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                            editor.AddDefaultButton(DefaultButtonType.Delete);
+                            editor.AddViewPane(pane =>
+                            {
+                                pane.AddProperty(f => f.Name);
+                            });
+                        })
+                        .SetNodeEditor(editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                            editor.AddDefaultButton(DefaultButtonType.Delete);
+                            editor.AddEditorPane(pane =>
+                            {
+                                pane.AddField(f => f.Name);
+                            });
+                        });
+                });
 
                 //config.AddCollection<PersonEntity>("person-collection", "Persons", collection =>
                 //{

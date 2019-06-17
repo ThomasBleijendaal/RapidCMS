@@ -1,0 +1,48 @@
+@inherits BasePropertyEditor
+
+@using RapidCMS.UI.Components.Editors
+@using RapidCMS.UI.Helpers
+
+<div class="input-group">
+    <div class="input-group-prepend">
+        <button type="button" class="btn btn-danger" onclick="@WaitAsync">
+            <i class="oi oi-timer"></i> Wait 10 sec
+        </button>
+    </div>
+    <input value=@GetValue()
+           onchange=@(args => SetValue(args.Value))
+           class="form-control @(CssHelper.GetValidationClass(State))" />
+
+    @if (waiting)
+    {
+        <p>
+            Waiting..
+        </p>
+    }
+
+    @foreach (var message in GetValidationMessages())
+    {
+        <div class="invalid-feedback">
+            @message
+        </div>
+    }
+</div>
+
+@functions {
+    private bool waiting = false;
+
+    private async Task WaitAsync()
+    {
+        EditContext.NotifyPropertyBusy(Property);
+        waiting = true;
+
+        StateHasChanged();
+
+        await Task.Delay(10000);
+
+        EditContext.NotifyPropertyFinished(Property);
+        waiting = false;
+
+        StateHasChanged();
+    }
+}

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
+using RapidCMS.Common.Forms;
 using RapidCMS.Common.Models.Commands;
 using RapidCMS.Common.Models.UI;
-using RapidCMS.Common.Validation;
 
 namespace RapidCMS.Common.Services
 {

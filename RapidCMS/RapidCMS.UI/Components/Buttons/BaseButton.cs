@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using RapidCMS.Common.Validation;
+using RapidCMS.Common.Forms;
 using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Components.Buttons
@@ -30,7 +30,7 @@ namespace RapidCMS.UI.Components.Buttons
 
         private void ValidationStateChangeHandler(object sender, ValidationStateChangedEventArgs e)
         {
-            FormIsValid = e.IsValid;
+            FormIsValid = e.IsValid != false;
 
             StateHasChanged();
         }

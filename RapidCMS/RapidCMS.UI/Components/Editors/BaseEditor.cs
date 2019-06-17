@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.Forms;
 using RapidCMS.Common.Models.Metadata;
-using RapidCMS.Common.Validation;
 using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.UI.Components.Editors
@@ -34,7 +34,6 @@ namespace RapidCMS.UI.Components.Editors
         {
             return EditContext.GetValidationMessages(Property);
         }
-
 
         private void ValidationStateChangeHandler(object sender, ValidationStateChangedEventArgs eventArgs)
         {

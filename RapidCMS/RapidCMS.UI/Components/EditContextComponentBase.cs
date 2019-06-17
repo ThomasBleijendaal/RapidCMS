@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Validation;
+using RapidCMS.Common.Forms;
 
 namespace RapidCMS.UI.Components
 {
@@ -10,9 +10,9 @@ namespace RapidCMS.UI.Components
         [CascadingParameter(Name = "EditContext")] private EditContext CascadedEditContext { get; set; }
         protected EditContext EditContext { get; set; }
 
-        public override async Task SetParametersAsync(ParameterCollection parameters)
+        public override Task SetParametersAsync(ParameterCollection parameters)
         {
-            await base.SetParametersAsync(parameters);
+            parameters.SetParameterProperties(this);
 
             if (EditContext == null)
             {
@@ -33,6 +33,8 @@ namespace RapidCMS.UI.Components
 
                 AttachValidationStateChangedListener();
             }
+
+            return base.SetParametersAsync(ParameterCollection.Empty);
         }
 
         protected abstract void AttachValidationStateChangedListener();

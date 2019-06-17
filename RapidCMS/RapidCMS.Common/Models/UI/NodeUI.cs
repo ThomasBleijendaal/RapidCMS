@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using RapidCMS.Common.Validation;
+using RapidCMS.Common.Forms;
 
 namespace RapidCMS.Common.Models.UI
 {
     // TODO: move back to internal sets when weird Collection.razor NodeUI creation is no longer required
-    
+
     public class NodeUI
     {
         public NodeUI(EditContext editContext)
