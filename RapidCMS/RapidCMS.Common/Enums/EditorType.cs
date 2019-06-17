@@ -11,7 +11,7 @@ namespace RapidCMS.Common.Enums
 
         Readonly,
 
-        [DefaultType(typeof(int), typeof(long), typeof(uint), typeof(ulong))]
+        [DefaultType(typeof(int), typeof(long), typeof(uint), typeof(ulong), typeof(int?), typeof(long?), typeof(uint?), typeof(ulong?))]
         Numeric,
 
         [DefaultType(typeof(bool), typeof(bool?))]

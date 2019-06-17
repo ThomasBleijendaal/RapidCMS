@@ -186,11 +186,9 @@ namespace TestServer
                                 editor.AddField(f => f.Name);
                                 editor.AddField(f => f.NotRequired);
                                 editor.AddField(f => f.Range)
-                                    .SetName("Range Setting")
-                                    .SetValueMapper<LongValueMapper>();
+                                    .SetName("Range Setting");
                                 editor.AddField(f => f.Accept)
-                                    .SetName("Accept this")
-                                    .SetValueMapper<BoolValueMapper>();
+                                    .SetName("Accept this");
                                 editor.AddField(f => f.Textarea)
                                     .SetType(EditorType.TextArea);
                                 editor.AddField(f => f.Enum)
@@ -208,11 +206,9 @@ namespace TestServer
                                 pane.AddField(f => f.Name);
                                 pane.AddField(f => f.NotRequired);
                                 pane.AddField(f => f.Range)
-                                    .SetName("Range Setting")
-                                    .SetValueMapper<LongValueMapper>();
+                                    .SetName("Range Setting");
                                 pane.AddField(f => f.Accept)
-                                    .SetName("Accept this")
-                                    .SetValueMapper<BoolValueMapper>();
+                                    .SetName("Accept this");
                                 pane.AddField(f => f.Textarea)
                                     .SetType(EditorType.TextArea);
                                 pane.AddField(f => f.Enum)
@@ -527,7 +523,7 @@ namespace TestServer
                         pane.SetLabel("General");
 
                         pane.AddField(x => x._Id)
-                            .SetValueMapper<LongValueMapper>()
+                            .SetValueMapper<NullableLongValueMapper>()
                             .SetReadonly(true);
 
                         pane.AddField(x => x.Name)
@@ -539,7 +535,7 @@ namespace TestServer
 
                         pane.AddField(x => x.Number)
                             .SetDescription("This is a number")
-                            .SetValueMapper<LongValueMapper>()
+                            .SetValueMapper<NullableLongValueMapper>()
                             .SetType(EditorType.Numeric);
                     });
             }
@@ -568,7 +564,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper<LongValueMapper>()
+                        .SetValueMapper<NullableLongValueMapper>()
                         .SetType(EditorType.Numeric);
                 });
             }
@@ -597,7 +593,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper<LongValueMapper>()
+                        .SetValueMapper<NullableLongValueMapper>()
                         .SetType(EditorType.Numeric);
                 });
             }
@@ -612,7 +608,7 @@ namespace TestServer
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x._Id)
-                            .SetValueMapper<LongValueMapper>()
+                            .SetValueMapper<NullableLongValueMapper>()
                             .SetReadonly(true);
 
                         pane.AddField(x => x.Name)
@@ -624,7 +620,7 @@ namespace TestServer
 
                         pane.AddField(x => x.Number)
                             .SetDescription("This is a number")
-                            .SetValueMapper<LongValueMapper>()
+                            .SetValueMapper<NullableLongValueMapper>()
                             .SetType(EditorType.Numeric);
                     })
 
@@ -649,7 +645,7 @@ namespace TestServer
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x._Id)
-                            .SetValueMapper<LongValueMapper>()
+                            .SetValueMapper<NullableLongValueMapper>()
                             .SetReadonly(true);
 
                         pane.AddField(x => x.Name)
@@ -661,7 +657,7 @@ namespace TestServer
 
                         pane.AddField(x => x.Number)
                             .SetDescription("This is a number")
-                            .SetValueMapper<LongValueMapper>()
+                            .SetValueMapper<NullableLongValueMapper>()
                             .SetType(EditorType.Numeric);
                     })
 
@@ -681,7 +677,7 @@ namespace TestServer
                     .AddEditorPane(pane =>
                     {
                         pane.AddField(x => x._Id)
-                            .SetValueMapper<LongValueMapper>()
+                            .SetValueMapper<NullableLongValueMapper>()
                             .SetReadonly(true);
 
                         pane.AddField(x => x.Name)
@@ -693,7 +689,7 @@ namespace TestServer
 
                         pane.AddField(x => x.Number)
                             .SetDescription("This is a number")
-                            .SetValueMapper<LongValueMapper>()
+                            .SetValueMapper<NullableLongValueMapper>()
                             .SetType(EditorType.Numeric);
                     })
 
@@ -740,7 +736,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper<LongValueMapper>()
+                        .SetValueMapper<NullableLongValueMapper>()
                         .SetType(EditorType.Numeric);
 
                     editor.AddField(x => x.Title)
@@ -768,7 +764,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper<LongValueMapper>()
+                        .SetValueMapper<NullableLongValueMapper>()
                         .SetType(EditorType.Numeric);
 
                     editor.AddField(x => x.Image)
@@ -796,7 +792,7 @@ namespace TestServer
 
                     editor.AddField(x => x.Number)
                         .SetDescription("This is a number")
-                        .SetValueMapper<LongValueMapper>()
+                        .SetValueMapper<NullableLongValueMapper>()
                         .SetType(EditorType.Numeric);
 
                     editor.AddField(x => x.Quote)
@@ -839,7 +835,7 @@ namespace TestServer
                     editorPaneConfig.AddField(x => x.Password)
                         .SetType(typeof(PasswordEditor));
                     editorPaneConfig.AddField(x => x.Destroy)
-                        .SetValueMapper<BoolValueMapper>();
+                        .SetValueMapper<NullableBoolValueMapper>();
                 });
             }
 

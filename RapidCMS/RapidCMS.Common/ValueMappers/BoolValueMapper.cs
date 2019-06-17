@@ -1,14 +1,16 @@
-﻿using RapidCMS.Common.Data;
+﻿using RapidCMS.Common.Attributes;
+using RapidCMS.Common.Data;
 
 namespace RapidCMS.Common.ValueMappers
 {
-    public class BoolValueMapper : ValueMapper<bool?>
+    [DefaultType(typeof(bool))]
+    public class BoolValueMapper : ValueMapper<bool>
     {
-        public override bool? MapFromEditor(ValueMappingContext context, object value)
+        public override bool MapFromEditor(ValueMappingContext context, object value)
         {
             if (value is string stringValue)
             {
-                return bool.TryParse(stringValue, out var boolValue) ? boolValue : default(bool?);
+                return bool.TryParse(stringValue, out var boolValue) ? boolValue : default;
             }
             else if (value is bool boolValue)
             {
@@ -20,14 +22,14 @@ namespace RapidCMS.Common.ValueMappers
             }
         }
 
-        public override object MapToEditor(ValueMappingContext context, bool? value)
+        public override object MapToEditor(ValueMappingContext context, bool value)
         {
             return value;
         }
 
-        public override string MapToView(ValueMappingContext context, bool? value)
+        public override string MapToView(ValueMappingContext context, bool value)
         {
-            return value?.ToString() ?? "Null";
+            return value.ToString();
         }
     }
 }

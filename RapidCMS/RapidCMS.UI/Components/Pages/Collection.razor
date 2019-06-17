@@ -90,6 +90,7 @@ else
                             if (UI.SectionsForEntity.TryGetValue(context.Entity.Id, out var sections))
                             {
                                 <CascadingValue Name="EditContext" Value="context">
+
                                     @foreach (var section in sections)
                                     {
                                         var index = 0;

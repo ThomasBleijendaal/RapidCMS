@@ -4,6 +4,7 @@ using RapidCMS.Common.Validation;
 
 namespace RapidCMS.UI.Components.Sections
 {
+    // TODO: EditContextComponentBase?
     public class BaseSection : ComponentBase
     {
         [Parameter]

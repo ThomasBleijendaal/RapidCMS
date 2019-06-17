@@ -4,7 +4,7 @@
 @using RapidCMS.Common
 @using RapidCMS.Common.Enums
 
-@if (Section?.Elements.Any() ?? false && EditContext != null)
+@if (Section != null && Section.Elements.Any() && EditContext != null)
 {
     <div class="content">
         @if (!string.IsNullOrWhiteSpace(Section.Label))
@@ -12,33 +12,36 @@
             <h2 class="block-header">@Section.Label</h2>
         }
 
-        @foreach (var element in Section.Elements)
+        @if (Section.Elements != null)
         {
-            if (element is FieldUI field)
+            @foreach (var element in Section.Elements)
             {
-                <div class="form-row">
-                    <div class="col-2">
-                        <label>@field.Name</label>
-                        <small class="form-text text-muted">@field.Description</small>
+                if (element is FieldUI field)
+                {
+                    <div class="form-row">
+                        <div class="col-2">
+                            <label>@field.Name</label>
+                            <small class="form-text text-muted">@field.Description</small>
+                        </div>
+                        <div class="col-10">
+                            @if (field is ExpressionFieldUI expressionField)
+                            {
+                                @expressionField.Expression.StringGetter(EditContext.Entity)
+                            }
+                            else if (field is PropertyFieldUI propertyField)
+                            {
+                                <UIEditor Field="field" Entity="@EditContext.Entity" />
+                            }
+                        </div>
                     </div>
-                    <div class="col-10">
-                        @if (field is ExpressionFieldUI expressionField)
-                        {
-                            @expressionField.Expression.StringGetter(EditContext.Entity)
-                        }
-                        else if (field is PropertyFieldUI propertyField)
-                        {
-                            <UIEditor Field="field" Entity="@EditContext.Entity" />
-                        }
-                    </div>
-                </div>
-            }
-            else if (element is SubCollectionUI subCollection)
-            {
-                @* TODO: this switch is still bit of a hack *@
-                <Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
-                            CollectionAlias=@subCollection.CollectionAlias
-                            ParentId=@EditContext.Entity.Id />
+                }
+                else if (element is SubCollectionUI subCollection)
+                {
+                    @* TODO: this switch is still bit of a hack *@
+                    <Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                                CollectionAlias=@subCollection.CollectionAlias
+                                ParentId=@EditContext.Entity.Id />
+                }
             }
         }
     </div>

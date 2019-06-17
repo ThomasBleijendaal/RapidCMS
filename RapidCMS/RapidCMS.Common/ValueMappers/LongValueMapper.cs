@@ -1,14 +1,16 @@
-﻿using RapidCMS.Common.Data;
+﻿using RapidCMS.Common.Attributes;
+using RapidCMS.Common.Data;
 
 namespace RapidCMS.Common.ValueMappers
 {
-    public class LongValueMapper : ValueMapper<long?>
+    [DefaultType(typeof(long))]
+    public class LongValueMapper : ValueMapper<long>
     {
-        public override long? MapFromEditor(ValueMappingContext context, object value)
+        public override long MapFromEditor(ValueMappingContext context, object value)
         {
             if (value is string stringValue)
             {
-                return long.TryParse(stringValue, out var longValue) ? longValue : default(long?);
+                return long.TryParse(stringValue, out var longValue) ? longValue : default;
             }
             else if (value is long longValue)
             {
@@ -20,14 +22,14 @@ namespace RapidCMS.Common.ValueMappers
             }
         }
 
-        public override object MapToEditor(ValueMappingContext context, long? value)
+        public override object MapToEditor(ValueMappingContext context, long value)
         {
             return value;
         }
 
-        public override string MapToView(ValueMappingContext context, long? value)
+        public override string MapToView(ValueMappingContext context, long value)
         {
-            return value?.ToString() ?? string.Empty;
+            return value.ToString();
         }
     }
 }

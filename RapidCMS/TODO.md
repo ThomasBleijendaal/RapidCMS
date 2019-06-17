@@ -9,19 +9,27 @@ TODO:
 [x] Add NodeView to setup to allow for explicit node viewing configurations (node editor is not easily convertable)
     [] Test SubCollection List view 
 [] Reordering
+    [] Update to Blazor preview 6 to support @key on EditContext
 [] Form validation
     [x] Validation on models / viewmodels
-    [] ValueMapper issues (nullable / non-nullable)
-    [] Move EditContext into UI class and remove UISubject
+    [x] ValueMapper issues (nullable / non-nullable)
+    [x] Move EditContext into UI class and remove UISubject
     [] Remove Name = "EditContext" from CascadingParameters
     [] In listview: After updating entity 2 the EditContext of entity 1 is reset
+    [] Checkbox always checked..
+    [] EditContext in CollectionRelation Select / Dropdowns is null
+    [] Allow for custom validation logic in Editor (for example: to prevent saving when upload is busy)
+    [] Nested EditContext does not work (validation is triggered, but not used)
 [] Pagination (consistent during session)
     [] Redirect after deletion + consistent pagination / Return to parent button action
     [] Redirect after insertions + no update authorization goes to 403 page
 
-[] Investigate replacing button callbacks with events
+[] Order of collection form configuration is not maintained
+
+[x] Investigate replacing button callbacks with events
 [] Custom Section support in Collection.razor (lists) (RowSection)
 [] Button support everywhere (no more new List<Button>)
+    [] ButtonActionHandler as generic parameter to CustomButton
 [] Property, Field, etc naming not totally consistent -> Refactor all names and methods
 [x] SetOneToManyRelation with collection 
     - Must be able to pass parentId into Repository
@@ -32,10 +40,12 @@ TODO:
     [x] Add + Remove buttons for adding and removing EXISTING entities 
     [] New CollectionDataProvider intermediate class handling all regular inter-collection relationships
     [] New InsertAndAdd button which inserts a new entity and adds it as relation -> not for multipleselect but for subcollection typed stuff
+    [] DataCollection must support data from collection like CollectionRelation, but without the relation stuff
+    [] Allow for setting ParentId in CollectionRelation for limiting entity selection
 [] Extensible Dropdown (type ahead style insert of new elements + automatic update when used in list views)
-[] ValueMapper is obstrusive (not able to cast int to long should not be an issue)
+[] ValueMapper is obstrusive
     [] Find solution for ValueMapper use in ListViewConfig -> automatic valuemapper selection for given type + add it back to config + call it DisplayMapper
-    [] Explore if ValueMapper can be skipped since editors are using late resolving of value -> cannot be skipped in ListViewConfig but should be skipped in editors
+    [] Explore if ValueMapper can be skipped since editors are using late resolving of value -> can be skipped in ListViewConfig but should not be skipped in editors
 [x] Relation support (one-many + many-many via discrete call on Repository) 
     [] recursive delete 
 [] AddSubCollectionListEditor should not create new pane (should be configured by user)
@@ -52,6 +62,7 @@ TODO:
 [] Bind CustomButton and ActionHandler more together
 [] IEntity.Id requirement is obstrusive
 [] Editor visibility based upon predicates of current IEntity or evaluation by some object
+[] Sub collection buttons connected to collection to prevent numerous buttons on each sub collection row
 
 [] All config checked during startup
 [] Unit tests

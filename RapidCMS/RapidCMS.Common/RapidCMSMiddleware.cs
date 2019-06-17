@@ -36,8 +36,16 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IExceptionHelper, ExceptionHelper>();
 
             services.AddSingleton<DefaultValueMapper>();
-            services.AddSingleton<LongValueMapper>();
+
             services.AddSingleton<BoolValueMapper>();
+            services.AddSingleton<NullableBoolValueMapper>();
+            services.AddSingleton<IntValueMapper>();
+            services.AddSingleton<NullableIntValueMapper>();
+            services.AddSingleton<LongValueMapper>();
+            services.AddSingleton<NullableLongValueMapper>();
+            services.AddSingleton<FloatValueMapper>();
+            services.AddSingleton<NullableFloatValueMapper>();
+
             services.AddSingleton(typeof(CollectionValueMapper<>), typeof(CollectionValueMapper<>));
             services.AddSingleton(typeof(EnumValueMapper<>), typeof(EnumValueMapper<>));
 
