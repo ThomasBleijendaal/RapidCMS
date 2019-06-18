@@ -260,7 +260,12 @@ else
                 throw new ArgumentException($"Argument must be of type {typeof(ButtonViewModel)}.", nameof(sender));
             }
 
-            var command = await CollectionService.ProcessListActionAsync(Action, CollectionAlias, ParentId, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
+            if (UI == null)
+            {
+                throw new InvalidOperationException("UI is null");
+            }
+
+            var command = await CollectionService.ProcessListActionAsync(Action, CollectionAlias, ParentId, args.EditContext.Entity.Id, args.EditContext, null, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }

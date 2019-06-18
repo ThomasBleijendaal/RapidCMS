@@ -14,10 +14,11 @@ TODO:
     [x] Allow for custom validation logic in Editor (for example: to prevent saving when upload is busy)
     [x] Nested EditContext does not work (validation is triggered, but not used)
     [x] Collection ignores button RequiresValidForm
-    [] Make relations work again
+    [x] Make relations work again
+    [] Validation on BaseRelationEditor? -> Via EditContext?
 
 [x] SetOneToManyRelation with collection 
-    - Must be able to pass parentId into Repository
+    [] Must be able to pass parentId into Repository
     [x] DataCollection is transient helper class which contains the data for the relation (single or multiple entities)
     [x] Data form DataCollection passed to Insert and Update repository methods
         [x] During these save actions the relationship handling can be easily put in repository
@@ -27,6 +28,7 @@ TODO:
     [] New InsertAndAdd button which inserts a new entity and adds it as relation -> not for multipleselect but for subcollection typed stuff
     [] DataCollection must support data from collection like CollectionRelation, but without the relation stuff
     [] Allow for setting ParentId in CollectionRelation for limiting entity selection
+    [] Put RelationContainer in EditContext to make relations in Node + Collection working again
 
 [] Make side bar tree react to collection actions (CRUD)
 

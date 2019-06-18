@@ -113,7 +113,7 @@ namespace RapidCMS.Common.Services
             return node;
         }
 
-        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, EditContext editContext, string actionId, object? customData)
+        public async Task<ViewCommand> ProcessNodeEditorActionAsync(string collectionAlias, string variantAlias, string? parentId, string? id, EditContext editContext, IRelationContainer relationContainer, string actionId, object? customData)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -145,10 +145,6 @@ namespace RapidCMS.Common.Services
                 throw new InvalidEntityException();
             }
 
-            // TODO: fix this
-            RelationContainer relations = null;
-            // var relations = new RelationContainer(node.Sections.SelectMany(x => x.GetRelations()));
-
             // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
@@ -164,11 +160,11 @@ namespace RapidCMS.Common.Services
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
 
                 case CrudType.Update:
-                    await collection.Repository._UpdateAsync(id, parentId, updatedEntity, relations);
+                    await collection.Repository._UpdateAsync(id, parentId, updatedEntity, relationContainer);
                     return new ReloadCommand();
 
                 case CrudType.Insert:
-                    var entity = await collection.Repository._InsertAsync(parentId, updatedEntity, relations);
+                    var entity = await collection.Repository._InsertAsync(parentId, updatedEntity, relationContainer);
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, entity.Id) };
 
                 case CrudType.Delete:
@@ -337,7 +333,7 @@ namespace RapidCMS.Common.Services
             }
         }
 
-        public async Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string id, EditContext editContext, string actionId, object? customData)
+        public async Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string id, EditContext editContext, IRelationContainer relationContainer, string actionId, object? customData)
         {
             var collection = _root.GetCollection(collectionAlias);
             var usageType = MapActionToUsageType(action);
@@ -374,10 +370,6 @@ namespace RapidCMS.Common.Services
             // since the id is known, get the entity variant from the entity
             var entityVariant = collection.GetEntityVariant(updatedEntity);
 
-            // TODO: fix this
-            RelationContainer relations = null;
-            // var relations = new RelationContainer(node.Sections.SelectMany(x => x.GetRelations()));
-
             // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
@@ -393,11 +385,11 @@ namespace RapidCMS.Common.Services
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
 
                 case CrudType.Update:
-                    await collection.Repository._UpdateAsync(id, parentId, updatedEntity, relations);
+                    await collection.Repository._UpdateAsync(id, parentId, updatedEntity, relationContainer);
                     return new ReloadCommand();
 
                 case CrudType.Insert:
-                    updatedEntity = await collection.Repository._InsertAsync(parentId, updatedEntity, relations);
+                    updatedEntity = await collection.Repository._InsertAsync(parentId, updatedEntity, relationContainer);
                     return new UpdateParameterCommand
                     {
                         Action = Constants.New,

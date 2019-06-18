@@ -107,14 +107,15 @@ namespace RapidCMS.Common.Services
                         async editContext =>
                         {
                             var viewContext = entityViewContext(editContext);
+                            var type = editContext.Entity.GetType();
 
-                            return new List<SectionUI> {
-                                new SectionUI
-                                {
-                                    // TODO: custom?
-                                    // CustomAlias
+                            // TODO: view pane not yet capable of entity variants
+                            var section = new SectionUI
+                            {
+                                // TODO: custom?
+                                // CustomAlias
 
-                                    Buttons = await listView.ViewPane.Buttons
+                                Buttons = await listView.ViewPane.Buttons
                                         .GetAllButtons()
                                         .Where(button => button.IsCompatibleWithView(viewContext))
                                         .WhereAsync(async button =>
@@ -128,16 +129,28 @@ namespace RapidCMS.Common.Services
                                         })
                                         .ToListAsync(button => button.ToUI()),
 
-                                    Elements = listView.ViewPane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider))
-                                }
+                                Elements = listView.ViewPane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider))
                             };
+                            
+                            if (!fieldsPerType.ContainsKey(type) && section.Elements != null)
+                            {
+                                fieldsPerType.Add(type, section.Elements.Where(x => x is FieldUI).ToList(x => (FieldUI)x));
+                            }
+
+                            sectionsHaveButtons = sectionsHaveButtons || (section.Buttons?.Any() ?? false);
+
+                            return new List<SectionUI> { section };
                         })
             };
 
             list.SectionsHaveButtons = sectionsHaveButtons;
-            list.MaxUniqueFieldsInSingleEntity = fieldsPerType.Max(x => x.Value.Count());
-            list.UniqueFields = fieldsPerType.SelectMany(x => x.Value).Distinct(new FieldUIEqualityComparer()).ToList();
-            list.CommonFields = fieldsPerType.GetCommonValues(new FieldUIEqualityComparer()).ToList();
+
+            if (fieldsPerType.Any())
+            {
+                list.MaxUniqueFieldsInSingleEntity = fieldsPerType.Max(x => x.Value.Count());
+                list.UniqueFields = fieldsPerType.SelectMany(x => x.Value).Distinct(new FieldUIEqualityComparer()).ToList();
+                list.CommonFields = fieldsPerType.GetCommonValues(new FieldUIEqualityComparer()).ToList();
+            }
 
             return list;
         }
@@ -218,9 +231,13 @@ namespace RapidCMS.Common.Services
             };
 
             list.SectionsHaveButtons = sectionsHaveButtons;
-            list.MaxUniqueFieldsInSingleEntity = fieldsPerType.Max(x => x.Value.Count());
-            list.UniqueFields = fieldsPerType.SelectMany(x => x.Value).Distinct(new FieldUIEqualityComparer()).ToList();
-            list.CommonFields = fieldsPerType.GetCommonValues(new FieldUIEqualityComparer()).ToList();
+
+            if (fieldsPerType.Any())
+            {
+                list.MaxUniqueFieldsInSingleEntity = fieldsPerType.Max(x => x.Value.Count());
+                list.UniqueFields = fieldsPerType.SelectMany(x => x.Value).Distinct(new FieldUIEqualityComparer()).ToList();
+                list.CommonFields = fieldsPerType.GetCommonValues(new FieldUIEqualityComparer()).ToList();
+            }
 
             return list;
         }

@@ -9,7 +9,7 @@ using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.Common.Extensions
 {
-    internal static class UIExtensions
+    public static class UIExtensions
     {
         public static IEnumerable<IRelation> GetRelations(this SectionUI section)
         {
@@ -29,7 +29,7 @@ namespace RapidCMS.Common.Extensions
                 });
         }
 
-        public static ButtonUI ToUI(this Button button)
+        internal static ButtonUI ToUI(this Button button)
         {
             return new ButtonUI
             {
@@ -43,7 +43,7 @@ namespace RapidCMS.Common.Extensions
             };
         }
 
-        public static FieldUI ToUI(this Field field, IServiceProvider serviceProvider)
+        internal static FieldUI ToUI(this Field field, IServiceProvider serviceProvider)
         {
             if (field is ExpressionField expressionField)
             {
@@ -122,7 +122,7 @@ namespace RapidCMS.Common.Extensions
             }
         }
 
-        public static SubCollectionUI ToUI(this SubCollectionList subCollection)
+        internal static SubCollectionUI ToUI(this SubCollectionList subCollection)
         {
             return new SubCollectionUI
             {

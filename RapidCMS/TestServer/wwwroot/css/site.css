@@ -213,6 +213,7 @@ small {
 table thead td, table thead td {
     border-top: 0 !important;
     border-bottom: 2px solid #ced4da;
+    vertical-align: top !important;
 }
 
 table td {

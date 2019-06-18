@@ -5,6 +5,8 @@
 @page "/node/{Action}/{ParentId}/{CollectionAlias}/entity/{VariantAlias}"
 @page "/node/{Action}/{ParentId}/{CollectionAlias}/entity/{VariantAlias}/{Id}"
 
+@using RapidCMS.Common.Extensions
+@using RapidCMS.Common.Data
 @using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Services
 @using RapidCMS.UI.Models
@@ -95,7 +97,14 @@ else
                 throw new ArgumentException($"Argument must be of type {typeof(ButtonViewModel)}.", nameof(sender));
             }
 
-            var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, args.EditContext, model.ButtonId, args.Data);
+            if (UI == null)
+            {
+                throw new InvalidOperationException("UI is null");
+            }
+
+            var relations = new RelationContainer(UI.Sections.SelectMany(x => x.GetRelations()));
+
+            var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, args.EditContext, relations, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }
