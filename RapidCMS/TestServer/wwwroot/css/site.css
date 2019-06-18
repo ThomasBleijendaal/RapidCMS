@@ -24,13 +24,20 @@ app {
 }
 
     .top-row.first {
-        position: sticky;
-        top: 0;
-        z-index: 10000000000;
     }
 
 .main {
     flex: 1;
+    margin-left: 450px;
+}
+
+.sidebar {
+    width: 450px;
+    position: fixed;
+    top: 0;
+    height: 100%;
+    overflow-x: hidden;
+    border-right: 1px solid #ddd;
 }
 
 
@@ -136,16 +143,8 @@ app {
     flex-direction: row;
 }
 
-.sidebar {
-    width: 450px;
-    position: sticky;
-    top: 0;
-}
 
 .navroot {
-    height: calc(100vh - 3.5rem);
-    overflow-y: auto;
-    border-right: 1px solid #ddd;
 }
 
 .navbar-toggler {

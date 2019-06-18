@@ -43,6 +43,25 @@ namespace RapidCMS.Common.Extensions
             return root;
         }
 
+        public static ICollectionRoot AddSelfAsRecursiveCollection<TEntity>(this CollectionConfig<TEntity> root)
+            where TEntity : IEntity
+        {
+            var configReceiver = new CollectionConfig<TEntity>
+            {
+                Alias = root.Alias,
+                Name = root.Name,
+                EntityVariant = root.EntityVariant,
+
+                Recursive = true
+            };
+
+            configReceiver.RepositoryType = root.RepositoryType ?? throw new InvalidOperationException("Cannot add self without a Repository, use SetRepository first.");
+
+            root.Collections.Add(configReceiver);
+
+            return root;
+        }
+
         // TODO: lose the serviceProvider
         public static List<Collection> ProcessCollections(this ICollectionRoot root, IServiceProvider serviceProvider)
         {
@@ -58,7 +77,7 @@ namespace RapidCMS.Common.Extensions
                     Type = configReceiver.EntityVariant.Type
                 };
 
-                var collection = new Collection(configReceiver.Name, configReceiver.Alias, variant, configReceiver.RepositoryType);
+                var collection = new Collection(configReceiver.Name, configReceiver.Alias, variant, configReceiver.RepositoryType, configReceiver.Recursive);
                 
                 if (configReceiver.TreeView != null)
                 {

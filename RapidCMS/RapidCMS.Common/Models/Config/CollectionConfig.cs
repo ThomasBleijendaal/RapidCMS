@@ -73,6 +73,7 @@ namespace RapidCMS.Common.Models.Config
 
     public class CollectionConfig : ICollectionRoot
     {
+        internal bool Recursive { get; set; }
         internal string Alias { get; set; }
         internal string Name { get; set; }
 

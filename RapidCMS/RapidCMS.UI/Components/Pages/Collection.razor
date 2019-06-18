@@ -41,13 +41,13 @@ else
         {
             var elementsProcessed = new List<string>();
 
+            var hasButtons = false;
+
             <div class="content">
                 <table class="table">
                     <thead>
                         <tr>
                             @{
-                                var hasButtons = false;
-
                                 foreach (var context in UI.EditContexts)
                                 {
                                     if (UI.SectionsForEntity.TryGetValue(context.Entity.Id, out var sections))
@@ -135,17 +135,21 @@ else
                                                     {
                                                         <td>&nbsp;</td>
                                                     }
-                                                    if (section.Buttons != null && section.Buttons.Any())
+                                                    if (hasButtons)
                                                     {
                                                         <td class="button-cell">
-                                                            @foreach (var button in section.Buttons)
+                                                            @if (section.Buttons != null && section.Buttons.Any())
                                                             {
-                                                                var model = CreateButtonViewModel(button);
+                                                                @foreach (var button in section.Buttons)
+                                                                {
+                                                                    var model = CreateButtonViewModel(button);
 
-                                                                // TODO: deattach
-                                                                model.OnClick += NodeButtonOnClickAsync;
+                                                                    // TODO: deattach
+                                                                    model.OnClick += NodeButtonOnClickAsync;
 
-                                                                <UIButton Button="button" Model="model" />
+                                                                    <UIButton Button="button" Model="model" />
+                                                                }
+
                                                             }
                                                         </td>
                                                     }

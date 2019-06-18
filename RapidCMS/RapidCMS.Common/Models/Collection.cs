@@ -8,16 +8,19 @@ namespace RapidCMS.Common.Models
 {
     public class Collection
     {
-        public Collection(string name, string alias, EntityVariant entityVariant, Type repositoryType)
+        public Collection(string name, string alias, EntityVariant entityVariant, Type repositoryType, bool isRecursive = false)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
             EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
             RepositoryType = repositoryType ?? throw new ArgumentNullException(nameof(repositoryType));
+
+            Recursive = isRecursive;
         }
 
         internal string Name { get; private set; }
         internal string Alias { get; private set; }
+        internal bool Recursive { get; private set; }
 
         public List<Collection> Collections { get; set; } = new List<Collection>();
 

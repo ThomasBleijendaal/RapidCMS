@@ -172,6 +172,7 @@ namespace TestServer
                             list.SetListPane(pane =>
                             {
                                 pane.AddProperty(p => p.Name);
+                                pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                             });
                         })
@@ -180,6 +181,7 @@ namespace TestServer
                             listEditor.AddDefaultButton(DefaultButtonType.New);
                             listEditor.AddEditor(editor =>
                             {
+                                editor.AddDefaultButton(DefaultButtonType.View);
                                 editor.AddDefaultButton(DefaultButtonType.SaveNew);
                                 editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                                 editor.AddDefaultButton(DefaultButtonType.Delete);
@@ -195,6 +197,16 @@ namespace TestServer
                                 editor.AddField(f => f.Enum)
                                     .SetType(EditorType.Dropdown)
                                     .SetDataCollection<EnumDataProvider<TestEnum>>();
+                            });
+                        })
+                        .SetNodeView(view =>
+                        {
+                            view.AddViewPane(pane =>
+                            {
+                                pane.AddProperty(f => f.Name);
+                                pane.AddProperty(f => f.Dummy);
+
+                                pane.AddSubCollectionListView<CountryEntity>("country-collection");
                             });
                         })
                         .SetNodeEditor(editor =>
@@ -227,7 +239,9 @@ namespace TestServer
 
                                 pane.AddSubCollectionListEditor<CountryEntity>("country-collection");
                             });
-                        });
+                        })
+                        .AddSelfAsRecursiveCollection();
+                        
                 });
 
                 config.AddCollection<CountryEntity>("country-collection", "Countries", collection =>
