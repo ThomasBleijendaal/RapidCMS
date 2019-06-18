@@ -234,8 +234,9 @@ namespace TestServer
                                     .SetCollectionRelation<CountryEntity>("country-collection", relation =>
                                     {
                                         relation
-                                            .SetIdProperty(x => x._Id)
-                                            .SetDisplayProperty(x => x.Name);
+                                            .SetElementIdProperty(x => x._Id)
+                                            .SetElementDisplayProperty(x => x.Name)
+                                            .SetRepositoryParentIdProperty(x => x.Id);
 
                                     });
 
@@ -334,8 +335,8 @@ namespace TestServer
                                     .SetCollectionRelation<CountryEntity>("country-collection", relation =>
                                     {
                                         relation
-                                            .SetIdProperty(x => x._Id)
-                                            .SetDisplayProperty(x => x.Name);
+                                            .SetElementIdProperty(x => x._Id)
+                                            .SetElementDisplayProperty(x => x.Name);
                                     });
                             });
                         });
@@ -383,8 +384,8 @@ namespace TestServer
                                     .SetCollectionRelation<AzureTableStorageEntity>("collection-10", relation =>
                                     {
                                         relation
-                                            .SetIdProperty(x => x.Id)
-                                            .SetDisplayProperty(x => x.Description);
+                                            .SetElementIdProperty(x => x.Id)
+                                            .SetElementDisplayProperty(x => x.Description);
                                     });
 
                                 editorPaneConfig.AddField(x => x.AzureTableStorageEntityIds)
@@ -393,8 +394,8 @@ namespace TestServer
                                     .SetCollectionRelation<AzureTableStorageEntity>("collection-10", relation =>
                                     {
                                         relation
-                                            .SetIdProperty(x => x.Id)
-                                            .SetDisplayProperty(x => x.Description);
+                                            .SetElementIdProperty(x => x.Id)
+                                            .SetElementDisplayProperty(x => x.Description);
                                     });
                             });
                         });

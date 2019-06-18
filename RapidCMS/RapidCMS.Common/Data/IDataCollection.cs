@@ -13,7 +13,7 @@ namespace RapidCMS.Common.Data
 
     public interface IRelationDataCollection : IDataCollection
     {
-        void SetElementMetadata(IRepository repository, Type relatedEntityType, IPropertyMetadata idProperty, IExpressionMetadata labelProperty);
+        void SetElementMetadata(IRepository repository, Type relatedEntityType, IPropertyMetadata? repositoryParentIdProperty, IPropertyMetadata idProperty, IExpressionMetadata labelProperty);
         Task SetRelationMetadataAsync(IEntity entity, IPropertyMetadata collectionProperty);
 
         Task<IEnumerable<IElement>> GetRelatedElementsAsync();

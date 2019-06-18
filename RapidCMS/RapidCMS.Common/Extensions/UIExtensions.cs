@@ -108,7 +108,7 @@ namespace RapidCMS.Common.Extensions
                         var repo = cr.GetRepository(collectionRelation.CollectionAlias);
                         var provider = new CollectionDataProvider();
 
-                        provider.SetElementMetadata(repo, collectionRelation.RelatedEntityType, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
+                        provider.SetElementMetadata(repo, collectionRelation.RelatedEntityType, null, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
 
                         ui.DataCollection = provider;
 

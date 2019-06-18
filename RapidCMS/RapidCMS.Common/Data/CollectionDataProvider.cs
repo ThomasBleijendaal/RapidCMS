@@ -14,6 +14,7 @@ namespace RapidCMS.Common.Data
     {
         private IRepository? _repository;
         private Type? _relatedEntityType;
+        private IPropertyMetadata? _repositoryParentIdProperty;
         private IPropertyMetadata? _idProperty;
         private IExpressionMetadata? _labelProperty;
 
@@ -23,16 +24,18 @@ namespace RapidCMS.Common.Data
         private List<IElement>? _relatedElements;
         private ICollection<object>? _relatedIds;
 
-        public void SetElementMetadata(IRepository repository, Type relatedEntityType, IPropertyMetadata idProperty, IExpressionMetadata labelProperty)
+        public void SetElementMetadata(IRepository repository, Type relatedEntityType, IPropertyMetadata? repositoryParentIdProperty, IPropertyMetadata idProperty, IExpressionMetadata labelProperty)
         {
             _repository = repository;
             _relatedEntityType = relatedEntityType;
+            _repositoryParentIdProperty = repositoryParentIdProperty;
             _idProperty = idProperty;
             _labelProperty = labelProperty;
 
             _init = InitializeAsync();
         }
 
+        // TODO: replace (null); with repositoryParentIdProperty
         public async Task InitializeAsync()
         {
             if (_repository != null && _idProperty != null && _labelProperty != null)

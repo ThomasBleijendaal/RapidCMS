@@ -11,6 +11,7 @@ namespace RapidCMS.Common.Models.Config
     {
         internal string CollectionAlias { get; set; }
         internal Type RelatedEntityType { get; set; }
+        internal IPropertyMetadata RepositoryParentIdProperty { get; set; }
         internal IPropertyMetadata IdProperty { get; set; }
         internal IExpressionMetadata DisplayProperty { get; set; }
     }
@@ -22,16 +23,23 @@ namespace RapidCMS.Common.Models.Config
             RelatedEntityType = typeof(TRelatedEntity);
         }
 
-        public CollectionRelationConfig<TEntity, TRelatedEntity> SetIdProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression)
+        public CollectionRelationConfig<TEntity, TRelatedEntity> SetElementIdProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression)
         {
             IdProperty = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression) ?? throw new InvalidPropertyExpressionException(nameof(propertyExpression));
 
             return this;
         }
 
-        public CollectionRelationConfig<TEntity, TRelatedEntity> SetDisplayProperty(Expression<Func<TRelatedEntity, string>> propertyExpression)
+        public CollectionRelationConfig<TEntity, TRelatedEntity> SetElementDisplayProperty(Expression<Func<TRelatedEntity, string>> propertyExpression)
         {
             DisplayProperty = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression) ?? throw new InvalidExpressionException(nameof(propertyExpression));
+
+            return this;
+        }
+
+        public CollectionRelationConfig<TEntity, TRelatedEntity> SetRepositoryParentIdProperty<TValue>(Expression<Func<TEntity, TValue>> propertyExpression)
+        {
+            RepositoryParentIdProperty = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression) ?? throw new InvalidPropertyExpressionException(nameof(propertyExpression));
 
             return this;
         }
