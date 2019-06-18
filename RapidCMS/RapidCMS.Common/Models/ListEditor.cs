@@ -8,6 +8,7 @@ namespace RapidCMS.Common.Models
     internal class ListEditor
     {
         internal ListEditorType ListEditorType { get; set; }
+        internal EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; set; }
         internal List<Pane>? EditorPanes { get; set; }
         internal List<Button>? Buttons { get; set; }
     }

@@ -38,6 +38,11 @@ namespace RapidCMS.Common.Extensions
             }
         }
 
+        public static IEnumerable<TValue> GetCommonValues<TKey, TValue>(this IDictionary<TKey, IEnumerable<TValue>> dictionary, IEqualityComparer<TValue> equalityComparer)
+        {
+            return dictionary.SelectMany(x => x.Value).Where(x => dictionary.Values.All(v => v.Contains(x, equalityComparer))).Distinct(equalityComparer);
+        }
+
         public class Group<TKey, TElement> : IGrouping<TKey, TElement>
         {
             public Group(TKey key, List<TElement> elements)

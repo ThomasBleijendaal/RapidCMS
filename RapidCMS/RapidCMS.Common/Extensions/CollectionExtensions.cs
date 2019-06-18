@@ -131,6 +131,7 @@ namespace RapidCMS.Common.Extensions
                     collection.ListEditor = new ListEditor
                     {
                         ListEditorType = configReceiver.ListEditor.ListEditorType,
+                        EmptyVariantColumnVisibility = configReceiver.ListEditor.EmptyVariantColumnVisibility,
                         Buttons = configReceiver.ListEditor.Buttons.ToList(button => button switch
                         {
                             DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),

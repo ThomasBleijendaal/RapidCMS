@@ -147,13 +147,24 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
+        public CollectionConfig<TEntity> SetListEditor(Action<ListEditorConfig<TEntity>> configure)
+        {
+            return SetListEditor(default, default, configure);
+        }
+
         public CollectionConfig<TEntity> SetListEditor(ListEditorType listEditorType, Action<ListEditorConfig<TEntity>> configure)
+        {
+            return SetListEditor(listEditorType, default, configure);
+        }
+
+        public CollectionConfig<TEntity> SetListEditor(ListEditorType listEditorType, EmptyVariantColumnVisibility emptyVariantColumnVisibility, Action<ListEditorConfig<TEntity>> configure)
         {
             var config = new ListEditorConfig<TEntity>();
 
             configure.Invoke(config);
 
             config.ListEditorType = listEditorType;
+            config.EmptyVariantColumnVisibility = emptyVariantColumnVisibility;
 
             ListEditor = config;
 

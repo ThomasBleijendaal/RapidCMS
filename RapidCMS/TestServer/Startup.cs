@@ -228,6 +228,8 @@ namespace TestServer
                                 pane.AddField(f => f.Enum)
                                     .SetType(EditorType.Select)
                                     .SetDataCollection<EnumDataProvider<TestEnum>>();
+
+
                                 pane.AddField(f => f.CountryId)
                                     .SetType(EditorType.Select)
                                     .SetCollectionRelation<CountryEntity>("country-collection", relation =>
@@ -416,17 +418,17 @@ namespace TestServer
                 //        });
                 //});
 
-                //config.AddCollection<TestEntity>("collection-6", "Variant collection as blocks", collection =>
-                //{
-                //    collection
-                //        .SetRepository<VariantRepository>()
-                //        .SetTreeView(EntityVisibilty.Hidden, entity => entity.Name)
-                //        .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
-                //        .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
-                //        .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
-                //        .SetListEditor(ListEditorType.Block, listNodeEditorWithPolymorphism)
-                //        .SetNodeEditor(nodeEditorWithPolymorphism);
-                //});
+                config.AddCollection<TestEntity>("collection-6", "Variant collection as blocks", collection =>
+                {
+                    collection
+                        .SetRepository<VariantRepository>()
+                        .SetTreeView(EntityVisibilty.Hidden, entity => entity.Name)
+                        .AddEntityVariant<TestEntityVariantA>("Variant A", "align-left")
+                        .AddEntityVariant<TestEntityVariantB>("Variant B", "align-center")
+                        .AddEntityVariant<TestEntityVariantC>("Variant C", "align-right")
+                        .SetListEditor(ListEditorType.Table, EmptyVariantColumnVisibility.Collapse, listNodeEditorWithPolymorphism)
+                        .SetNodeEditor(nodeEditorWithPolymorphism);
+                });
 
                 //config.AddCollection<TestEntity>("collection-5", "Collections with variant sub collection", collection =>
                 //{

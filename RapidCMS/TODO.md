@@ -5,8 +5,6 @@ TODO:
 
 1.0
 
-[] AddSubCollectionListEditor display is horrible
-
 [] Form validation
     [x] Validation on models / viewmodels
     [x] ValueMapper issues (nullable / non-nullable)

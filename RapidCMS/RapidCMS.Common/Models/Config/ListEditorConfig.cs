@@ -10,6 +10,7 @@ namespace RapidCMS.Common.Models.Config
     public class ListEditorConfig
     {
         internal ListEditorType ListEditorType { get; set; }
+        internal EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
         internal List<ListEditorPaneConfig> ListEditors { get; set; } = new List<ListEditorPaneConfig>();
 

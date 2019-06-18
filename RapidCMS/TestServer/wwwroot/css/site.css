@@ -38,10 +38,6 @@ app {
     height: 100%;
     overflow-x: hidden;
     border-right: 1px solid #ddd;
-}
-
-
-.sidebar {
     background-color: #e8e8e8;
 }
 
@@ -53,13 +49,6 @@ app {
 
     .sidebar .navbar-brand {
         font-size: 1.1rem;
-    }
-
-    .sidebar .oi {
-        width: 2rem;
-        font-size: 1.1rem;
-        vertical-align: text-top;
-        top: -2px;
     }
 
 ul {
@@ -75,7 +64,7 @@ li {
 .nav-item {
     font-size: 0.8666666667rem;
 }
-    
+
     .nav-item .toggle {
         border: 0;
         background: none;
@@ -83,6 +72,13 @@ li {
         padding: 0;
         float: left;
         width: 1.5rem;
+    }
+
+    .nav-item .oi {
+        width: 2rem;
+        font-size: 1.1rem;
+        vertical-align: text-top;
+        top: -2px;
     }
 
     .nav-item a {
@@ -123,19 +119,35 @@ li {
     margin: 0rem 1rem 1rem;
 }
 
-    .content .content,
     .content .top-row {
-        background: #fafafa;
+    }
+
+    .content .nested-content {
+        margin: 1.1rem -1rem -1rem -1rem;
+        padding-bottom: 2rem;
+        background: #efefef;
+    }
+
+    .nested-content:first-of-type {
+        margin-top: -1.1rem;
+    }
+
+    .nested-content + .form-row {
+        margin-top: 2rem;
+    }
+
+    .content .content {
     }
 
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-h2.block-header {
-    font-size: 1.6rem;
-    margin: -1rem -1rem 2rem -1rem;
-    padding: 1rem;
+.block-header {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: -1rem -1rem 1rem -1rem;
+    padding: .5rem 1rem;
     border-bottom: 1px solid #dee2e6;
 }
 
@@ -166,8 +178,9 @@ a.current-page {
 }
 
 .form-row {
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
+    padding-top: .1rem;
+    padding-bottom: .1rem;
+    margin-bottom: .5rem;
 }
 
     .form-row:last-of-type {
@@ -199,17 +212,17 @@ small {
 
 table thead td, table thead td {
     border-top: 0 !important;
-    border-bottom: 2px solid #dee2e6;
+    border-bottom: 2px solid #ced4da;
 }
 
 table td {
     vertical-align: middle !important;
 }
 
-table td.button-cell {
-    white-space: nowrap;
-    text-align: right;
-}
+    table td.button-cell {
+        white-space: nowrap;
+        text-align: right;
+    }
 
 pre {
     background: #f0f0f0;

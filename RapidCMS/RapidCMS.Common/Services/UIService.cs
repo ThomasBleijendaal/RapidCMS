@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.Authorization;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.EqualityComparers;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Forms;
 using RapidCMS.Common.Models;
@@ -76,7 +77,10 @@ namespace RapidCMS.Common.Services
 
         public async Task<ListUI> GenerateListUIAsync(ViewContext listViewContext, EditContext rootEditContext, IEnumerable<EditContext> editContexts, Func<EditContext, ViewContext> entityViewContext, ListView listView)
         {
-            return new ListUI(rootEditContext, editContexts)
+            var fieldsPerType = new Dictionary<Type, IEnumerable<FieldUI>>();
+            var sectionsHaveButtons = false;
+
+            var list = new ListUI(rootEditContext, editContexts)
             {
                 ListType = ListType.TableView,
 
@@ -129,15 +133,27 @@ namespace RapidCMS.Common.Services
                             };
                         })
             };
+
+            list.SectionsHaveButtons = sectionsHaveButtons;
+            list.MaxUniqueFieldsInSingleEntity = fieldsPerType.Max(x => x.Value.Count());
+            list.UniqueFields = fieldsPerType.SelectMany(x => x.Value).Distinct(new FieldUIEqualityComparer()).ToList();
+            list.CommonFields = fieldsPerType.GetCommonValues(new FieldUIEqualityComparer()).ToList();
+
+            return list;
         }
 
         public async Task<ListUI> GenerateListUIAsync(ViewContext listViewContext, EditContext rootEditContext, IEnumerable<EditContext> editContexts, Func<EditContext, ViewContext> entityViewContext, ListEditor listEditor)
         {
-            return new ListUI(rootEditContext, editContexts)
+            var fieldsPerType = new Dictionary<Type, IEnumerable<FieldUI>>();
+            var sectionsHaveButtons = false;
+
+            var list = new ListUI(rootEditContext, editContexts)
             {
                 ListType = listEditor.ListEditorType == ListEditorType.Table
                     ? ListType.TableEditor
                     : ListType.BlockEditor,
+
+                EmptyVariantColumnVisibility = listEditor.EmptyVariantColumnVisibility,
 
                 Buttons = listEditor.Buttons == null
                     ? null
@@ -162,12 +178,13 @@ namespace RapidCMS.Common.Services
                         async editContext =>
                         {
                             var viewContext = entityViewContext(editContext);
+                            var type = editContext.Entity.GetType();
 
                             return await listEditor.EditorPanes
-                                .Where(pane => pane.VariantType.IsSameTypeOrDerivedFrom(editContext.Entity.GetType()))
+                                .Where(pane => pane.VariantType.IsSameTypeOrDerivedFrom(type))
                                 .ToListAsync(async pane =>
                                 {
-                                    return new SectionUI
+                                    var section = new SectionUI
                                     {
                                         CustomAlias = pane.CustomAlias,
 
@@ -187,9 +204,25 @@ namespace RapidCMS.Common.Services
 
                                         Elements = pane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider))
                                     };
+
+                                    if (!fieldsPerType.ContainsKey(type) && section.Elements != null)
+                                    {
+                                        fieldsPerType.Add(type, section.Elements.Where(x => x is FieldUI).ToList(x => (FieldUI)x));
+                                    }
+
+                                    sectionsHaveButtons = sectionsHaveButtons || (section.Buttons?.Any() ?? false);
+
+                                    return section;
                                 });
                         })
             };
+
+            list.SectionsHaveButtons = sectionsHaveButtons;
+            list.MaxUniqueFieldsInSingleEntity = fieldsPerType.Max(x => x.Value.Count());
+            list.UniqueFields = fieldsPerType.SelectMany(x => x.Value).Distinct(new FieldUIEqualityComparer()).ToList();
+            list.CommonFields = fieldsPerType.GetCommonValues(new FieldUIEqualityComparer()).ToList();
+
+            return list;
         }
     }
 }

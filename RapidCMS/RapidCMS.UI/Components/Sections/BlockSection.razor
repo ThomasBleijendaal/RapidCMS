@@ -6,14 +6,14 @@
 
 @if (Section != null && Section.Elements.Any() && EditContext != null)
 {
-    <div class="content">
-        @if (!string.IsNullOrWhiteSpace(Section.Label))
-        {
-            <h2 class="block-header">@Section.Label</h2>
-        }
+    @if (Section.Elements != null)
+    {
+        <div class="content">
+            @if (!string.IsNullOrWhiteSpace(Section.Label))
+            {
+                <h2 class="block-header">@Section.Label</h2>
+            }
 
-        @if (Section.Elements != null)
-        {
             @foreach (var element in Section.Elements)
             {
                 if (element is FieldUI field)
@@ -37,14 +37,16 @@
                 }
                 else if (element is SubCollectionUI subCollection)
                 {
-                    @* TODO: this switch is still bit of a hack *@
-                    <Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
-                                CollectionAlias=@subCollection.CollectionAlias
-                                ParentId=@EditContext.Entity.Id />
+                    <div class="nested-content">
+                        @* TODO: this switch is still bit of a hack *@
+                        <Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                                    CollectionAlias=@subCollection.CollectionAlias
+                                    ParentId=@EditContext.Entity.Id />
+                    </div>
                 }
             }
-        }
-    </div>
+        </div>
+    }
 }
 
 @functions {
