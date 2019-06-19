@@ -104,11 +104,12 @@ namespace RapidCMS.Common.Extensions
 
                         // TODO: horrible
                         var cr = serviceProvider.GetService<Root>(typeof(Root));
-
                         var repo = cr.GetRepository(collectionRelation.CollectionAlias);
                         var provider = new CollectionDataProvider();
 
-                        provider.SetElementMetadata(repo, collectionRelation.RelatedEntityType, null, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
+
+
+                        provider.SetElementMetadata(repo, collectionRelation.RelatedEntityType, collectionRelation.RepositoryParentIdProperty, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
 
                         ui.DataCollection = provider;
 

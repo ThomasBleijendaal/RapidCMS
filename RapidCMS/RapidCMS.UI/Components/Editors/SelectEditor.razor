@@ -43,6 +43,7 @@
     {
         if (DataCollection != null)
         {
+            await DataCollection.SetEntityAsync(Entity);
             Options = await DataCollection.GetAvailableElementsAsync();
         }
     }

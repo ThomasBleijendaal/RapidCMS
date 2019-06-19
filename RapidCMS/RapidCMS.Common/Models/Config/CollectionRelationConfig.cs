@@ -4,7 +4,6 @@ using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Metadata;
 
-
 namespace RapidCMS.Common.Models.Config
 {
     public class CollectionRelationConfig : RelationConfig
@@ -37,7 +36,8 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionRelationConfig<TEntity, TRelatedEntity> SetRepositoryParentIdProperty<TValue>(Expression<Func<TEntity, TValue>> propertyExpression)
+        // HACK: hardcoded IEntity.Id type (string)
+        public CollectionRelationConfig<TEntity, TRelatedEntity> SetRepositoryParentIdProperty(Expression<Func<TEntity, string>> propertyExpression)
         {
             RepositoryParentIdProperty = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression) ?? throw new InvalidPropertyExpressionException(nameof(propertyExpression));
 

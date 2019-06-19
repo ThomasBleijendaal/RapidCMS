@@ -18,8 +18,6 @@ namespace RapidCMS.Common.Data
         private IPropertyMetadata? _idProperty;
         private IExpressionMetadata? _labelProperty;
 
-        private Task _init = Task.CompletedTask;
-
         private List<IElement>? _elements;
         private List<IElement>? _relatedElements;
         private ICollection<object>? _relatedIds;
@@ -31,16 +29,14 @@ namespace RapidCMS.Common.Data
             _repositoryParentIdProperty = repositoryParentIdProperty;
             _idProperty = idProperty;
             _labelProperty = labelProperty;
-
-            _init = InitializeAsync();
         }
 
-        // TODO: replace (null); with repositoryParentIdProperty
-        public async Task InitializeAsync()
+        public async Task SetEntityAsync(IEntity entity)
         {
             if (_repository != null && _idProperty != null && _labelProperty != null)
             {
-                var entities = await _repository._GetAllAsObjectsAsync(null);
+                var parentId = _repositoryParentIdProperty?.Getter.Invoke(entity) as string;
+                var entities = await _repository._GetAllAsObjectsAsync(parentId);
 
                 _elements = entities
                     .Select(entity => (IElement)new ElementDTO
@@ -49,16 +45,14 @@ namespace RapidCMS.Common.Data
                         Label = _labelProperty.StringGetter(entity)
                     })
                     .ToList();
-
-                UpdateRelatedElements();
             }
         }
 
         public async Task SetRelationMetadataAsync(IEntity entity, IPropertyMetadata collectionProperty)
         {
-            await _init;
-
             var data = collectionProperty.Getter(entity);
+
+            await SetEntityAsync(entity);
 
             if (data is ICollection<IEntity> entityCollection)
             {
@@ -90,46 +84,40 @@ namespace RapidCMS.Common.Data
             _relatedElements = _elements?.Where(x => _relatedIds?.Contains(x.Id) ?? false).ToList();
         }
 
-        public async Task<IEnumerable<IElement>> GetAvailableElementsAsync()
+        public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
         {
-            await _init;
-
-            return _elements ?? Enumerable.Empty<IElement>();
+            return Task.FromResult(_elements ?? Enumerable.Empty<IElement>());
         }
 
-        public async Task<IEnumerable<IElement>> GetRelatedElementsAsync()
+        public Task<IEnumerable<IElement>> GetRelatedElementsAsync()
         {
-            await _init;
-
             if (_relatedIds != null && _elements != null)
             {
-                return _elements.Where(x => _relatedIds.Contains(x.Id));
+                return Task.FromResult(_elements.Where(x => _relatedIds.Contains(x.Id)));
             }
             else
             {
-                return Enumerable.Empty<IElement>();
+                return Task.FromResult(Enumerable.Empty<IElement>());
             }
         }
 
-        public async Task AddElementAsync(IElement option)
+        public Task AddElementAsync(IElement option)
         {
-            await _init;
-
             _relatedElements?.Add(_elements.First(x => x.Id == option.Id));
+
+            return Task.CompletedTask;
         }
-        public async Task RemoveElementAsync(IElement option)
+        public Task RemoveElementAsync(IElement option)
         {
-            await _init;
-
-            _relatedElements?.RemoveAll(x => x.Id == option.Id);
+            return Task.FromResult(_relatedElements?.RemoveAll(x => x.Id == option.Id));
         }
 
-        public async Task SetElementAsync(IElement option)
+        public Task SetElementAsync(IElement option)
         {
-            await _init;
-
             _relatedElements?.Clear();
             _relatedElements?.Add(_elements.First(x => x.Id == option.Id));
+
+            return Task.CompletedTask;
         }
 
         public IEnumerable<IElement> GetCurrentRelatedElements()

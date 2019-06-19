@@ -60,6 +60,8 @@ TODO:
 [] Navigation command during pre-render (server side rendering) fails
 [] Use Blazor CSS parameter features
 [] Date editor
+[] Refresh data / relation collections upon save
+    [] More events from EditContext and bind nested EditContext to root
 
 1.1
 

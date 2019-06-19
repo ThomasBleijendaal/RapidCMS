@@ -41,5 +41,10 @@ namespace RapidCMS.Common.Data
 
             return Task.FromResult(list.AsEnumerable());
         }
+
+        public Task SetEntityAsync(IEntity entity)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

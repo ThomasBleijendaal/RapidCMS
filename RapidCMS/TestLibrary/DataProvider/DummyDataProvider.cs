@@ -20,6 +20,11 @@ namespace TestLibrary.DataProvider
             return Task.FromResult(data);
         }
 
+        public Task SetEntityAsync(IEntity entity)
+        {
+            return Task.CompletedTask;
+        }
+
         public class Data : IElement
         {
             public Data(string id, string label)
