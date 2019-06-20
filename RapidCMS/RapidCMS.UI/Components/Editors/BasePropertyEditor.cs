@@ -18,7 +18,7 @@ namespace RapidCMS.UI.Components.Editors
         {
             if (useValueMapper)
             {
-                Property.Setter(Entity, ValueMapper.MapFromEditor(null, value));
+                Property.Setter(Entity, ValueMapper.MapFromEditor(value));
             }
             else
             {

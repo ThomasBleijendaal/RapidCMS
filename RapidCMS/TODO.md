@@ -51,11 +51,6 @@ TODO:
 
 [] Property, Field, etc naming not totally consistent -> Refactor all names and methods
 
-[x] ValueMapper is obstrusive
-    [] Remove obsolete ToView in ValueMapper
-    [x] Find solution for ValueMapper use in ListViewConfig -> automatic valuemapper selection for given type + add it back to config + call it DisplayMapper
-    [x] Explore if ValueMapper can be skipped since editors are using late resolving of value -> can be skipped in ListViewConfig but should not be skipped in editors
-
 [] Top button bar should be side bar with meta
 [] Navigation command during pre-render (server side rendering) fails
 [] Use Blazor CSS parameter features

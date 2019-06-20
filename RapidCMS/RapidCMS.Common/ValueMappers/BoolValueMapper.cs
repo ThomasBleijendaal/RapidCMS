@@ -1,12 +1,11 @@
 ﻿using RapidCMS.Common.Attributes;
-using RapidCMS.Common.Data;
 
 namespace RapidCMS.Common.ValueMappers
 {
     [DefaultType(typeof(bool))]
     public class BoolValueMapper : ValueMapper<bool>
     {
-        public override bool MapFromEditor(ValueMappingContext context, object value)
+        public override bool MapFromEditor(object value)
         {
             if (value is string stringValue)
             {
@@ -22,14 +21,9 @@ namespace RapidCMS.Common.ValueMappers
             }
         }
 
-        public override object MapToEditor(ValueMappingContext context, bool value)
+        public override object MapToEditor(bool value)
         {
             return value;
-        }
-
-        public override string MapToView(ValueMappingContext context, bool value)
-        {
-            return value.ToString();
         }
     }
 }

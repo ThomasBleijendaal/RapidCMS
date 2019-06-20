@@ -1,12 +1,11 @@
 ﻿using RapidCMS.Common.Attributes;
-using RapidCMS.Common.Data;
 
 namespace RapidCMS.Common.ValueMappers
 {
     [DefaultType(typeof(long))]
     public class LongValueMapper : ValueMapper<long>
     {
-        public override long MapFromEditor(ValueMappingContext context, object value)
+        public override long MapFromEditor(object value)
         {
             if (value is string stringValue)
             {
@@ -22,14 +21,9 @@ namespace RapidCMS.Common.ValueMappers
             }
         }
 
-        public override object MapToEditor(ValueMappingContext context, long value)
+        public override object MapToEditor(long value)
         {
             return value;
-        }
-
-        public override string MapToView(ValueMappingContext context, long value)
-        {
-            return value.ToString();
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using RapidCMS.Common.Data;
-
-namespace RapidCMS.Common.ValueMappers
+﻿namespace RapidCMS.Common.ValueMappers
 {
     public abstract class ValueMapper<TModel> : IValueMapper, IValueMapper<TModel>
     {
@@ -11,7 +8,7 @@ namespace RapidCMS.Common.ValueMappers
         /// <param name="context"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public abstract TModel MapFromEditor(ValueMappingContext context, object value);
+        public abstract TModel MapFromEditor(object value);
 
         /// <summary>
         /// Returned value should usually be as string, but can be different when used in complex editors.
@@ -19,30 +16,16 @@ namespace RapidCMS.Common.ValueMappers
         /// <param name="context"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public abstract object MapToEditor(ValueMappingContext context, TModel value);
+        public abstract object MapToEditor(TModel value);
 
-        /// <summary>
-        /// Always string. 
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        [Obsolete("Check if this is obsolete and can be replaced by using IExpressionMetadata.StringGetter")]
-        public abstract string MapToView(ValueMappingContext context, TModel value);
-
-        object IValueMapper.MapFromEditor(ValueMappingContext context, object value)
+        object IValueMapper.MapFromEditor(object value)
         {
-            return MapFromEditor(context, value);
+            return MapFromEditor(value);
         }
 
-        object IValueMapper.MapToEditor(ValueMappingContext context, object value)
+        object IValueMapper.MapToEditor(object value)
         {
-            return MapToEditor(context, (TModel)value);
-        }
-
-        string IValueMapper.MapToView(ValueMappingContext context, object value)
-        {
-            return MapToView(context, (TModel)value);
+            return MapToEditor((TModel)value);
         }
     }
 }

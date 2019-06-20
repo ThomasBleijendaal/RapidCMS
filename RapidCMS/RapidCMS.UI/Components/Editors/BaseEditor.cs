@@ -22,7 +22,7 @@ namespace RapidCMS.UI.Components.Editors
         {
             if (useValueMapper)
             {
-                return ValueMapper.MapToEditor(null, Property.Getter(Entity));
+                return ValueMapper.MapToEditor(Property.Getter(Entity));
             }
             else
             {
