@@ -30,8 +30,6 @@ TODO:
     [] Allow for setting ParentId in CollectionRelation for limiting entity selection
     [] Put RelationContainer in EditContext to make relations in Node + Collection working again
 
-[] Make side bar tree react to collection actions (CRUD)
-
 [x] Relation support (one-many + many-many via discrete call on Repository) 
     [] recursive delete 
 
@@ -57,11 +55,13 @@ TODO:
 [] Date editor
 [] Refresh data / relation collections upon save
     [] More events from EditContext and bind nested EditContext to root
+    [] Make side bar tree react to collection actions (CRUD)
+        [] Make possible to open sub collections with hidden root element
+    [] OnBeforeUnload EditContext IsModified check
 
 1.1
 
 [] Order of collection form configuration is not maintained
-
 
 2.0
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)
