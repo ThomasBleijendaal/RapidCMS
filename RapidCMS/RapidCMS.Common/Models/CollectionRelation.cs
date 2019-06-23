@@ -12,7 +12,7 @@ namespace RapidCMS.Common.Models
         internal Type RelatedEntityType { get; set; }
         internal IPropertyMetadata? RepositoryParentIdProperty { get; set; }
         internal IPropertyMetadata IdProperty { get; set; }
-        internal IExpressionMetadata DisplayProperty { get; set; }
+        internal List<IExpressionMetadata> DisplayProperties { get; set; }
 
         internal Func<IEntity, IEnumerable<IRelatedElement>, IEnumerable<string>?>? ValidationFunction { get; set; }
     }

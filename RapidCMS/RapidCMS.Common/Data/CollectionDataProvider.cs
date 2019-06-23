@@ -16,7 +16,7 @@ namespace RapidCMS.Common.Data
         private readonly Type _relatedEntityType;
         private readonly IPropertyMetadata? _repositoryParentIdProperty;
         private readonly IPropertyMetadata _idProperty;
-        private readonly IExpressionMetadata _labelProperty;
+        private readonly IEnumerable<IExpressionMetadata> _labelProperties;
 
         private IEntity? _entity;
 
@@ -24,13 +24,13 @@ namespace RapidCMS.Common.Data
         private List<IElement>? _relatedElements;
         private ICollection<object>? _relatedIds;
 
-        public CollectionDataProvider(IRepository repository, Type relatedEntityType, IPropertyMetadata? repositoryParentIdProperty, IPropertyMetadata idProperty, IExpressionMetadata labelProperty)
+        public CollectionDataProvider(IRepository repository, Type relatedEntityType, IPropertyMetadata? repositoryParentIdProperty, IPropertyMetadata idProperty, IEnumerable<IExpressionMetadata> labelProperties)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _relatedEntityType = relatedEntityType ?? throw new ArgumentNullException(nameof(relatedEntityType));
             _repositoryParentIdProperty = repositoryParentIdProperty;
             _idProperty = idProperty ?? throw new ArgumentNullException(nameof(idProperty));
-            _labelProperty = labelProperty ?? throw new ArgumentNullException(nameof(labelProperty));
+            _labelProperties = labelProperties ?? throw new ArgumentNullException(nameof(labelProperties));
         }
 
         public async Task SetEntityAsync(IEntity entity)
@@ -44,7 +44,7 @@ namespace RapidCMS.Common.Data
                 .Select(entity => (IElement)new ElementDTO
                 {
                     Id = _idProperty.Getter(entity),
-                    Label = _labelProperty.StringGetter(entity)
+                    Labels = _labelProperties.Select(x => x.StringGetter(entity))
                 })
                 .ToList();
         }

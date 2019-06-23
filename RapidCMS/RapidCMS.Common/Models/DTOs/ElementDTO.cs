@@ -1,4 +1,5 @@
-﻿using RapidCMS.Common.Data;
+﻿using System.Collections.Generic;
+using RapidCMS.Common.Data;
 
 
 namespace RapidCMS.Common.Models.DTOs
@@ -6,6 +7,6 @@ namespace RapidCMS.Common.Models.DTOs
     public class ElementDTO : IElement
     {
         public object Id { get; set; }
-        public string Label { get; set; }
+        public IEnumerable<string> Labels { get; set; }
     }
 }

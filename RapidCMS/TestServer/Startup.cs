@@ -161,91 +161,91 @@ namespace TestServer
 
                 config.SetSiteName("Test Client");
 
-                //config.AddCollection<ValidationEntity>("validation-collection", "Validation entities", collection =>
-                //{
-                //    collection
-                //        .SetRepository<ValidationRepository>()
-                //        .SetTreeView(e => e.Name)
-                //        .SetListView(list =>
-                //        {
-                //            list.AddDefaultButton(DefaultButtonType.New);
-                //            list.SetListPane(pane =>
-                //            {
-                //                pane.AddProperty(p => p.Name);
-                //                pane.AddDefaultButton(DefaultButtonType.View);
-                //                pane.AddDefaultButton(DefaultButtonType.Edit);
-                //            });
-                //        })
-                //        .SetListEditor(ListEditorType.Table, listEditor =>
-                //        {
-                //            listEditor.AddDefaultButton(DefaultButtonType.New);
-                //            listEditor.AddEditor(editor =>
-                //            {
-                //                editor.AddDefaultButton(DefaultButtonType.View);
-                //                editor.AddDefaultButton(DefaultButtonType.SaveNew);
-                //                editor.AddDefaultButton(DefaultButtonType.SaveExisting);
-                //                editor.AddDefaultButton(DefaultButtonType.Delete);
+                config.AddCollection<ValidationEntity>("validation-collection", "Validation entities", collection =>
+                {
+                    collection
+                        .SetRepository<ValidationRepository>()
+                        .SetTreeView(e => e.Name)
+                        .SetListView(list =>
+                        {
+                            list.AddDefaultButton(DefaultButtonType.New);
+                            list.SetListPane(pane =>
+                            {
+                                pane.AddProperty(p => p.Name);
+                                pane.AddDefaultButton(DefaultButtonType.View);
+                                pane.AddDefaultButton(DefaultButtonType.Edit);
+                            });
+                        })
+                        .SetListEditor(ListEditorType.Table, listEditor =>
+                        {
+                            listEditor.AddDefaultButton(DefaultButtonType.New);
+                            listEditor.AddEditor(editor =>
+                            {
+                                editor.AddDefaultButton(DefaultButtonType.View);
+                                editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                                editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                                editor.AddDefaultButton(DefaultButtonType.Delete);
 
-                //                editor.AddField(f => f.Name);
-                //                editor.AddField(f => f.NotRequired);
-                //                editor.AddField(f => f.Range)
-                //                    .SetName("Range Setting");
-                //                editor.AddField(f => f.Accept)
-                //                    .SetName("Accept this");
-                //                editor.AddField(f => f.Textarea)
-                //                    .SetType(EditorType.TextArea);
-                //                editor.AddField(f => f.Enum)
-                //                    .SetType(EditorType.Dropdown)
-                //                    .SetDataCollection<EnumDataProvider<TestEnum>>();
-                //            });
-                //        })
-                //        .SetNodeView(view =>
-                //        {
-                //            view.AddViewPane(pane =>
-                //            {
-                //                pane.AddProperty(f => f.Name);
-                //                pane.AddProperty(f => f.Dummy);
+                                editor.AddField(f => f.Name);
+                                editor.AddField(f => f.NotRequired);
+                                editor.AddField(f => f.Range)
+                                    .SetName("Range Setting");
+                                editor.AddField(f => f.Accept)
+                                    .SetName("Accept this");
+                                editor.AddField(f => f.Textarea)
+                                    .SetType(EditorType.TextArea);
+                                editor.AddField(f => f.Enum)
+                                    .SetType(EditorType.Dropdown)
+                                    .SetDataCollection<EnumDataProvider<TestEnum>>();
+                            });
+                        })
+                        .SetNodeView(view =>
+                        {
+                            view.AddViewPane(pane =>
+                            {
+                                pane.AddProperty(f => f.Name);
+                                pane.AddProperty(f => f.Dummy);
 
-                //                pane.AddSubCollectionListView<CountryEntity>("country-collection");
-                //            });
-                //        })
-                //        .SetNodeEditor(editor =>
-                //        {
-                //            editor.AddDefaultButton(DefaultButtonType.SaveNew);
-                //            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
-                //            editor.AddDefaultButton(DefaultButtonType.Delete);
-                //            editor.AddEditorPane(pane =>
-                //            {
-                //                pane.AddField(f => f.Name);
-                //                pane.AddField(f => f.Dummy).SetType(typeof(UploadEditor));
-                //                pane.AddField(f => f.NotRequired);
-                //                pane.AddField(f => f.Range)
-                //                    .SetName("Range Setting");
-                //                pane.AddField(f => f.Accept)
-                //                    .SetName("Accept this");
-                //                pane.AddField(f => f.Textarea)
-                //                    .SetType(EditorType.TextArea);
-                //                pane.AddField(f => f.Enum)
-                //                    .SetType(EditorType.Select)
-                //                    .SetDataCollection<EnumDataProvider<TestEnum>>();
+                                pane.AddSubCollectionListView<CountryEntity>("country-collection");
+                            });
+                        })
+                        .SetNodeEditor(editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                            editor.AddDefaultButton(DefaultButtonType.Delete);
+                            editor.AddEditorPane(pane =>
+                            {
+                                pane.AddField(f => f.Name);
+                                pane.AddField(f => f.Dummy).SetType(typeof(UploadEditor));
+                                pane.AddField(f => f.NotRequired);
+                                pane.AddField(f => f.Range)
+                                    .SetName("Range Setting");
+                                pane.AddField(f => f.Accept)
+                                    .SetName("Accept this");
+                                pane.AddField(f => f.Textarea)
+                                    .SetType(EditorType.TextArea);
+                                pane.AddField(f => f.Enum)
+                                    .SetType(EditorType.Select)
+                                    .SetDataCollection<EnumDataProvider<TestEnum>>();
 
-                //                pane.AddField(f => f.CountryId)
-                //                    .SetType(EditorType.Select)
-                //                    .SetCollectionRelation<CountryEntity>("country-collection", relation =>
-                //                    {
-                //                        relation
-                //                            .SetElementIdProperty(x => x._Id)
-                //                            .SetElementDisplayProperty(x => x.Name)
-                //                            .SetRepositoryParentIdProperty(x => x.Id);
+                                pane.AddField(f => f.CountryId)
+                                    .SetType(EditorType.Select)
+                                    .SetCollectionRelation<CountryEntity>("country-collection", relation =>
+                                    {
+                                        relation
+                                            .SetElementIdProperty(x => x._Id)
+                                            .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name)
+                                            .SetRepositoryParentIdProperty(x => x.Id);
 
-                //                    });
+                                    });
 
-                //                pane.AddSubCollectionListEditor<CountryEntity>("country-collection");
-                //            });
-                //        })
-                //        .AddSelfAsRecursiveCollection();
-                        
-                //});
+                                pane.AddSubCollectionListEditor<CountryEntity>("country-collection");
+                            });
+                        })
+                        .AddSelfAsRecursiveCollection();
+
+                });
 
                 config.AddCollection<CountryEntity>("country-collection", "Countries", collection =>
                 {
@@ -311,7 +311,7 @@ namespace TestServer
                                     {
                                         relation
                                             .SetElementIdProperty(x => x._Id)
-                                            .SetElementDisplayProperty(x => x.Name);
+                                            .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
 
                                         relation
                                             .ValidateRelation((person, related) =>
@@ -358,7 +358,7 @@ namespace TestServer
                                     {
                                         relation
                                             .SetElementIdProperty(x => x._Id)
-                                            .SetElementDisplayProperty(x => x.Name);
+                                            .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
 
                                         relation
                                             .ValidateRelation((person, related) =>

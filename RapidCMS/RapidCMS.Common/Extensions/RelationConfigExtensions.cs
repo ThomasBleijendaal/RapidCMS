@@ -14,7 +14,7 @@ namespace RapidCMS.Common.Extensions
                 {
                     CollectionAlias = collectionConfig.CollectionAlias,
                     RelatedEntityType = collectionConfig.RelatedEntityType,
-                    DisplayProperty = collectionConfig.DisplayProperty,
+                    DisplayProperties = collectionConfig.DisplayProperties,
                     IdProperty = collectionConfig.IdProperty,
                     RepositoryParentIdProperty = collectionConfig.RepositoryParentIdProperty,
 

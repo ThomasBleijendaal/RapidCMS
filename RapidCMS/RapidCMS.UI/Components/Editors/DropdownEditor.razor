@@ -9,7 +9,7 @@
         <option value="-1"></option>
         @foreach (var (option, index) in Options.Select((o, i) => (o, i)))
         {
-            <option value=@index>@option.Label</option>
+            <option value=@index>@option.Labels.First()</option>
         }
     </select>
 

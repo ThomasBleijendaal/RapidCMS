@@ -26,7 +26,7 @@ namespace RapidCMS.Common.Data
                     list.Add(new ElementDTO
                     {
                         Id = value,
-                        Label = attribute.Name
+                        Labels = new[] { attribute.Name }
                     });
                 }
                 else
@@ -34,7 +34,7 @@ namespace RapidCMS.Common.Data
                     list.Add(new ElementDTO
                     {
                         Id = value,
-                        Label = value.ToString()
+                        Labels = new[] { value.ToString() }
                     });
                 }
             }

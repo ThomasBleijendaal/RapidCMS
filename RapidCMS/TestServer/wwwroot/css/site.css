@@ -128,16 +128,16 @@ li {
         background: #efefef;
     }
 
-    .nested-content:first-of-type {
-        margin-top: -1.1rem;
-    }
+.nested-content:first-of-type {
+    margin-top: -1.1rem;
+}
 
-    .nested-content + .form-row {
-        margin-top: 2rem;
-    }
+.nested-content + .form-row {
+    margin-top: 2rem;
+}
 
-    .content .content {
-    }
+.content .content {
+}
 
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
@@ -190,6 +190,14 @@ a.current-page {
 .form-control {
     border-radius: 0;
 }
+
+    .form-control .row {
+        margin: 0;
+    }
+    .form-control .col {
+        padding: 0;
+    }
+
 
 .input-group-prepend *, .input-group-append * {
     border-radius: 0 !important;

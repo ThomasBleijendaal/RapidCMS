@@ -1,10 +1,11 @@
-﻿namespace RapidCMS.Common.Data
+﻿using System.Collections.Generic;
+
+namespace RapidCMS.Common.Data
 {
     public interface IElement
     {
         object Id { get; }
 
-        // TODO: make label columnable (support for multiple columns in UI)
-        string Label { get; }
+        IEnumerable<string> Labels { get; }
     }
 }

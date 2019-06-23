@@ -15,7 +15,7 @@ namespace RapidCMS.Common.Models.Config
         internal Type RelatedEntityType { get; set; }
         internal IPropertyMetadata? RepositoryParentIdProperty { get; set; }
         internal IPropertyMetadata IdProperty { get; set; }
-        internal IExpressionMetadata DisplayProperty { get; set; }
+        internal List<IExpressionMetadata> DisplayProperties { get; set; }
 
         internal Func<IEntity, IEnumerable<IRelatedElement>, IEnumerable<string>?>? ValidationFunction { get; set; }
     }
@@ -34,9 +34,11 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionRelationConfig<TEntity, TRelatedEntity> SetElementDisplayProperty(Expression<Func<TRelatedEntity, string>> propertyExpression)
+        public CollectionRelationConfig<TEntity, TRelatedEntity> SetElementDisplayProperties(params Expression<Func<TRelatedEntity, string>>[] propertyExpressions)
         {
-            DisplayProperty = PropertyMetadataHelper.GetExpressionMetadata(propertyExpression) ?? throw new InvalidExpressionException(nameof(propertyExpression));
+            DisplayProperties = propertyExpressions
+                .Select(propertyExpression => PropertyMetadataHelper.GetExpressionMetadata(propertyExpression) ?? throw new InvalidExpressionException(nameof(propertyExpression)))
+                .ToList();
 
             return this;
         }

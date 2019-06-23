@@ -44,7 +44,7 @@ namespace RapidCMS.Common.Extensions
                                 collectionRelation.RelatedEntityType,
                                 collectionRelation.RepositoryParentIdProperty,
                                 collectionRelation.IdProperty,
-                                collectionRelation.DisplayProperty);
+                                collectionRelation.DisplayProperties);
 
                             IRelationValidator? validator = collectionRelation.ValidationFunction != null
                                 ? new CollectionDataValidator(field.Property, collectionRelation.ValidationFunction)

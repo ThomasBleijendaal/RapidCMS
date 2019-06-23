@@ -30,12 +30,12 @@ namespace TestLibrary.DataProvider
             public Data(string id, string label)
             {
                 Id = id;
-                Label = label;
+                Labels = new[] { label };
             }
 
             public object Id { get; set; }
 
-            public string Label { get; set; }
+            public IEnumerable<string> Labels { get; set; }
         }
     }
 }
