@@ -162,37 +162,41 @@ else
         {
             @foreach (var context in UI.EditContexts)
             {
-                <CascadingValue Name="EditContext" Value="context">
-                    @if (UI.SectionsForEntity.TryGetValue(context.Entity.Id, out var sections))
-                    {
-                        foreach (var section in sections)
-                        {
-                            if (section.Buttons != null)
+                <div class="content">
+                    <div class="nested-content">
+                        <CascadingValue Name="EditContext" Value="context">
+                            @if (UI.SectionsForEntity.TryGetValue(context.Entity.Id, out var sections))
                             {
-                                <div class="top-row">
-                                    @foreach (var button in section.Buttons)
+                                foreach (var section in sections)
+                                {
+                                    if (section.Buttons != null)
                                     {
-                                        var model = CreateButtonViewModel(button);
+                                        <div class="top-row">
+                                            @foreach (var button in section.Buttons)
+                                            {
+                                                var model = CreateButtonViewModel(button);
 
-                                        // TODO: deattach
-                                        model.OnClick += NodeButtonOnClickAsync;
+                                                // TODO: deattach
+                                                model.OnClick += NodeButtonOnClickAsync;
 
-                                        <UIButton Button="button" Model="model" />
+                                                <UIButton Button="button" Model="model" />
+                                            }
+                                        </div>
                                     }
-                                </div>
-                            }
 
-                            if (!string.IsNullOrEmpty(section.CustomAlias))
-                            {
-                                @CustomSections.GetCustomSection(section.CustomAlias, section);
+                                    if (!string.IsNullOrEmpty(section.CustomAlias))
+                                    {
+                                        @CustomSections.GetCustomSection(section.CustomAlias, section);
+                                    }
+                                    else
+                                    {
+                                        <BlockSection Section="section" />
+                                    }
+                                }
                             }
-                            else
-                            {
-                                <BlockSection Section="section" />
-                            }
-                        }
-                    }
-                </CascadingValue>
+                        </CascadingValue>
+                    </div>
+                </div>
             }
         }
     }
@@ -265,7 +269,7 @@ else
                 throw new InvalidOperationException("UI is null");
             }
 
-            var command = await CollectionService.ProcessListActionAsync(Action, CollectionAlias, ParentId, args.EditContext.Entity.Id, args.EditContext, null, model.ButtonId, args.Data);
+            var command = await CollectionService.ProcessListActionAsync(Action, CollectionAlias, ParentId, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }

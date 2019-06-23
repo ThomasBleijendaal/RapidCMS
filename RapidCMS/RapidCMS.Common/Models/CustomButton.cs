@@ -2,7 +2,7 @@
 using RapidCMS.Common.ActionHandlers;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
-
+using RapidCMS.Common.Forms;
 
 namespace RapidCMS.Common.Models
 {
@@ -17,9 +17,9 @@ namespace RapidCMS.Common.Models
         {
             return ActionHandler.GetCrudType();
         }
-        internal override bool IsCompatibleWithView(ViewContext viewContext)
+        internal override bool IsCompatibleWithForm(EditContext editContext)
         {
-            return ActionHandler.IsCompatibleWithView(viewContext);
+            return ActionHandler.IsCompatibleWithForm(editContext);
         }
         internal Task HandleActionAsync(string? parentId, string? id, object? customData)
         {

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using RapidCMS.Common.ActionHandlers;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.Forms;
 using TestLibrary.Entities;
 using TestLibrary.Repositories;
 
@@ -39,9 +40,9 @@ namespace TestServer.ActionHandlers
             while (++i < max);
         }
 
-        public bool IsCompatibleWithView(ViewContext viewContext)
+        public bool IsCompatibleWithForm(EditContext editContext)
         {
-            return viewContext.Usage.HasFlag(UsageType.List);
+            return editContext.UsageType.HasFlag(UsageType.List);
         }
 
         public bool RequiresValidForm()

@@ -15,7 +15,7 @@ namespace TestLibrary.Validation
                 }
                 else
                 {
-                    return null;
+                    return ValidationResult.Success;
                 }
             }
             else

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
+using RapidCMS.Common.Forms;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
 using RapidCMS.Common.ValueMappers;
@@ -43,7 +44,7 @@ namespace RapidCMS.Common.Extensions
             };
         }
 
-        internal static FieldUI ToUI(this Field field, IServiceProvider serviceProvider)
+        internal static FieldUI ToUI(this Field field, IServiceProvider serviceProvider, EditContext editContext)
         {
             if (field is ExpressionField expressionField)
             {
@@ -72,7 +73,7 @@ namespace RapidCMS.Common.Extensions
                     ui = new PropertyFieldUI();
                 }
 
-                PopulateProperties(ui, propertyField, serviceProvider);
+                PopulateProperties(ui, propertyField, serviceProvider, editContext);
 
                 return ui;
             }
@@ -89,37 +90,16 @@ namespace RapidCMS.Common.Extensions
             ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;
         }
 
-        private static void PopulateProperties(PropertyFieldUI ui, PropertyField field, IServiceProvider serviceProvider)
+        private static void PopulateProperties(PropertyFieldUI ui, PropertyField field, IServiceProvider serviceProvider, EditContext editContext)
         {
-            PopulateProperties(ui, field);
+            PopulateProperties((FieldUI)ui, (Field)field);
 
             ui.Property = field.Property;
             ui.ValueMapper = field.ValueMapperType != null ? serviceProvider.GetService<IValueMapper>(field.ValueMapperType) : null;
             
             if (field.Relation != null)
             {
-                switch (field.Relation)
-                {
-                    case CollectionRelation collectionRelation:
-
-                        // TODO: horrible
-                        var cr = serviceProvider.GetService<Root>(typeof(Root));
-                        var repo = cr.GetRepository(collectionRelation.CollectionAlias);
-                        var provider = new CollectionDataProvider();
-
-
-
-                        provider.SetElementMetadata(repo, collectionRelation.RelatedEntityType, collectionRelation.RepositoryParentIdProperty, collectionRelation.IdProperty, collectionRelation.DisplayProperty);
-
-                        ui.DataCollection = provider;
-
-                        break;
-
-                    case DataProviderRelation dataProviderRelation:
-
-                        ui.DataCollection = serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType);
-                        break;
-                }
+                ui.DataCollection = editContext.DataContext.GetDataCollection(field.Property);
             }
         }
 

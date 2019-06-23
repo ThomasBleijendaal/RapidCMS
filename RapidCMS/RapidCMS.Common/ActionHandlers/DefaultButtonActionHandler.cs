@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
-
+using RapidCMS.Common.Forms;
 
 namespace RapidCMS.Common.ActionHandlers
 {
@@ -28,7 +27,7 @@ namespace RapidCMS.Common.ActionHandlers
             return Task.CompletedTask;
         }
 
-        public bool IsCompatibleWithView(ViewContext viewContext)
+        public bool IsCompatibleWithForm(EditContext editContext)
         {
             return true;
         }

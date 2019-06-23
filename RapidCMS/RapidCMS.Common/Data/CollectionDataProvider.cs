@@ -12,40 +12,41 @@ namespace RapidCMS.Common.Data
 
     internal class CollectionDataProvider : IRelationDataCollection
     {
-        private IRepository? _repository;
-        private Type? _relatedEntityType;
-        private IPropertyMetadata? _repositoryParentIdProperty;
-        private IPropertyMetadata? _idProperty;
-        private IExpressionMetadata? _labelProperty;
+        private readonly IRepository _repository;
+        private readonly Type _relatedEntityType;
+        private readonly IPropertyMetadata? _repositoryParentIdProperty;
+        private readonly IPropertyMetadata _idProperty;
+        private readonly IExpressionMetadata _labelProperty;
+
+        private IEntity? _entity;
 
         private List<IElement>? _elements;
         private List<IElement>? _relatedElements;
         private ICollection<object>? _relatedIds;
 
-        public void SetElementMetadata(IRepository repository, Type relatedEntityType, IPropertyMetadata? repositoryParentIdProperty, IPropertyMetadata idProperty, IExpressionMetadata labelProperty)
+        public CollectionDataProvider(IRepository repository, Type relatedEntityType, IPropertyMetadata? repositoryParentIdProperty, IPropertyMetadata idProperty, IExpressionMetadata labelProperty)
         {
-            _repository = repository;
-            _relatedEntityType = relatedEntityType;
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _relatedEntityType = relatedEntityType ?? throw new ArgumentNullException(nameof(relatedEntityType));
             _repositoryParentIdProperty = repositoryParentIdProperty;
-            _idProperty = idProperty;
-            _labelProperty = labelProperty;
+            _idProperty = idProperty ?? throw new ArgumentNullException(nameof(idProperty));
+            _labelProperty = labelProperty ?? throw new ArgumentNullException(nameof(labelProperty));
         }
 
         public async Task SetEntityAsync(IEntity entity)
         {
-            if (_repository != null && _idProperty != null && _labelProperty != null)
-            {
-                var parentId = _repositoryParentIdProperty?.Getter.Invoke(entity) as string;
-                var entities = await _repository._GetAllAsObjectsAsync(parentId);
+            _entity = entity;
 
-                _elements = entities
-                    .Select(entity => (IElement)new ElementDTO
-                    {
-                        Id = _idProperty.Getter(entity),
-                        Label = _labelProperty.StringGetter(entity)
-                    })
-                    .ToList();
-            }
+            var parentId = _repositoryParentIdProperty?.Getter.Invoke(_entity) as string;
+            var entities = await _repository._GetAllAsObjectsAsync(parentId);
+
+            _elements = entities
+                .Select(entity => (IElement)new ElementDTO
+                {
+                    Id = _idProperty.Getter(entity),
+                    Label = _labelProperty.StringGetter(entity)
+                })
+                .ToList();
         }
 
         public async Task SetRelationMetadataAsync(IEntity entity, IPropertyMetadata collectionProperty)
@@ -91,14 +92,11 @@ namespace RapidCMS.Common.Data
 
         public Task<IEnumerable<IElement>> GetRelatedElementsAsync()
         {
-            if (_relatedIds != null && _elements != null)
-            {
-                return Task.FromResult(_elements.Where(x => _relatedIds.Contains(x.Id)));
-            }
-            else
-            {
-                return Task.FromResult(Enumerable.Empty<IElement>());
-            }
+            var relatedElements = (_relatedIds != null && _elements != null)
+                ? _elements.Where(x => _relatedIds.Contains(x.Id))
+                : Enumerable.Empty<IElement>();
+
+            return Task.FromResult(relatedElements);
         }
 
         public Task AddElementAsync(IElement option)
