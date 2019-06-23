@@ -5,25 +5,68 @@ using System.Linq;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
+using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Forms
 {
     // TODO: fix memory leak due to events
+    // TODO: make EditContext expose serviceProvider via interface
+    // TODO: make EditContext expose IDataCollection via interface
     public sealed class EditContext
     {
         private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();
         private readonly IServiceProvider _serviceProvider;
 
-        public EditContext(IEntity entity, UsageType usageType, IServiceProvider serviceProvider)
+        internal EditContext(
+            IEntity entity,
+            EntityVariant entityVariant,
+            UsageType usageType,
+            IServiceProvider serviceProvider)
         {
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             UsageType = usageType;
+            EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+
+            DataContext = DataContext.Empty;
+        }
+
+        internal EditContext(
+            IEntity entity, 
+            EntityVariant entityVariant, 
+            UsageType usageType, 
+            Node config,
+            IServiceProvider serviceProvider)
+        {
+            Entity = entity ?? throw new ArgumentNullException(nameof(entity));
+            UsageType = usageType;
+            EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+
+            DataContext = new DataContext(config ?? throw new ArgumentNullException(nameof(config)), _serviceProvider);
+        }
+
+        internal EditContext(
+            IEntity entity,
+            EntityVariant entityVariant,
+            UsageType usageType,
+            ListEditor config,
+            IServiceProvider serviceProvider)
+        {
+            Entity = entity ?? throw new ArgumentNullException(nameof(entity));
+            UsageType = usageType;
+            EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+
+            DataContext = new DataContext(config ?? throw new ArgumentNullException(nameof(config)), _serviceProvider);
         }
 
         public IEntity Entity { get; private set; }
         public UsageType UsageType { get; private set; }
+        public EntityVariant EntityVariant { get; private set; }
+
+        internal DataContext DataContext { get; private set; }
 
         public event EventHandler<FieldChangedEventArgs> OnFieldChanged;
 
@@ -132,18 +175,30 @@ namespace RapidCMS.Common.Forms
             var context = new ValidationContext(Entity, _serviceProvider, null);
             var results = new List<ValidationResult>();
 
-            Validator.TryValidateObject(Entity, context, results, true);
+            try
+            {
+                // even though this says Try, and therefore it should not throw an error, IT DOES when a given property is not part of Entity
+                Validator.TryValidateObject(Entity, context, results, true);
+            }
+            catch
+            {
+
+            }
 
             ClearAllFieldStates();
+
+            _fieldStates
+                .Where(kv => kv.Value.IsBusy)
+                .ForEach(kv => results.Add(new ValidationResult(
+                    $"The {kv.Key.PropertyName} field indicates it is performing an asynchronous task which must be awaited.",
+                    new[] { kv.Key.PropertyName })));
+
+            results.AddRange(DataContext.ValidateRelations(Entity));
 
             foreach (var result in results)
             {
                 result.MemberNames.ForEach(name => GetFieldState(name)?.AddMessage(result.ErrorMessage));
             }
-
-            _fieldStates
-                .Where(kv => kv.Value.IsBusy)
-                .ForEach(kv => kv.Value.AddMessage($"The {kv.Key.PropertyName} field indicates it is performing an asynchronous task which must be awaited."));
 
             _fieldStates.ForEach(kv => kv.Value.WasValidated = true);
 
@@ -158,7 +213,17 @@ namespace RapidCMS.Common.Forms
             };
             var results = new List<ValidationResult>();
 
-            Validator.TryValidateProperty(property.Getter(Entity), context, results);
+            try
+            {
+                // even though this says Try, and therefore it should not throw an error, IT DOES when a given property is not part of Entity
+                Validator.TryValidateProperty(property.Getter(Entity), context, results);
+            }
+            catch
+            {
+
+            }
+
+            results.AddRange(DataContext.ValidateRelation(Entity, property));
 
             var state = GetPropertyState(property);
             state.ClearMessages();

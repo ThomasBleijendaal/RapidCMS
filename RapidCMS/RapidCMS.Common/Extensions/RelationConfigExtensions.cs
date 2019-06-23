@@ -1,4 +1,5 @@
-﻿using RapidCMS.Common.Models;
+﻿using System;
+using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 
 namespace RapidCMS.Common.Extensions
@@ -9,19 +10,21 @@ namespace RapidCMS.Common.Extensions
         {
             return config switch
             {
-                CollectionRelationConfig collectionConfig => new CollectionRelation
+                CollectionRelationConfig collectionConfig => (Relation)new CollectionRelation
                 {
                     CollectionAlias = collectionConfig.CollectionAlias,
                     RelatedEntityType = collectionConfig.RelatedEntityType,
                     DisplayProperty = collectionConfig.DisplayProperty,
                     IdProperty = collectionConfig.IdProperty,
-                    RepositoryParentIdProperty = collectionConfig.RepositoryParentIdProperty
+                    RepositoryParentIdProperty = collectionConfig.RepositoryParentIdProperty,
+
+                    ValidationFunction = collectionConfig.ValidationFunction
                 },
                 DataProviderRelationConfig dataProviderConfig => new DataProviderRelation
                 {
                     DataCollectionType = dataProviderConfig.DataCollectionType
                 },
-                _ => default(Relation)
+                _ => throw new InvalidOperationException("Invalid RelationConfig")
             };
         }
     }

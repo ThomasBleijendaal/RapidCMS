@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.Authorization;
-using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.EqualityComparers;
 using RapidCMS.Common.Extensions;
@@ -28,20 +27,20 @@ namespace RapidCMS.Common.Services
             _authorizationService = authorizationService;
         }
 
-        public async Task<NodeUI> GenerateNodeUIAsync(ViewContext viewContext, EditContext editContext, Node nodeEditor)
+        public async Task<NodeUI> GenerateNodeUIAsync(EditContext editContext, Node nodeEditor)
         {
-            return new NodeUI(editContext)
+            var nodeUI = new NodeUI(editContext)
             {
                 Buttons = nodeEditor.Buttons == null
                     ? null
                     : await nodeEditor.Buttons
                         .GetAllButtons()
-                        .Where(button => button.IsCompatibleWithView(viewContext))
+                        .Where(button => button.IsCompatibleWithForm(editContext))
                         .WhereAsync(async button =>
                         {
                             var authorizationChallenge = await _authorizationService.AuthorizeAsync(
                                 _httpContextAccessor.HttpContext.User,
-                                viewContext.RepresentativeEntity,
+                                editContext.Entity,
                                 Operations.GetOperationForCrudType(button.GetCrudType()));
 
                             return authorizationChallenge.Succeeded;
@@ -49,12 +48,12 @@ namespace RapidCMS.Common.Services
                         .ToListAsync(button => button.ToUI()),
 
                 Sections = nodeEditor.EditorPanes
-                    .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(viewContext.EntityVariant.Type))
+                    .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(editContext.EntityVariant.Type))
                     .ToList(pane =>
                     {
                         var fields = pane.Fields.Select(field =>
                         {
-                            return (field.Index, element: (Element)field.ToUI(_serviceProvider));
+                            return (field.Index, element: (Element)field.ToUI(_serviceProvider, editContext));
                         });
 
                         var subCollections = pane.SubCollectionLists.Select(subCollection =>
@@ -73,9 +72,11 @@ namespace RapidCMS.Common.Services
                         };
                     })
             };
+
+            return nodeUI;
         }
 
-        public async Task<ListUI> GenerateListUIAsync(ViewContext listViewContext, EditContext rootEditContext, IEnumerable<EditContext> editContexts, Func<EditContext, ViewContext> entityViewContext, ListView listView)
+        public async Task<ListUI> GenerateListUIAsync(EditContext rootEditContext, IEnumerable<EditContext> editContexts, ListView listView)
         {
             var fieldsPerType = new Dictionary<Type, IEnumerable<FieldUI>>();
             var sectionsHaveButtons = false;
@@ -88,12 +89,12 @@ namespace RapidCMS.Common.Services
                     ? null
                     : await listView.Buttons
                         .GetAllButtons()
-                        .Where(button => button.IsCompatibleWithView(listViewContext))
+                        .Where(button => button.IsCompatibleWithForm(rootEditContext))
                         .WhereAsync(async button =>
                         {
                             var authorizationChallenge = await _authorizationService.AuthorizeAsync(
                                 _httpContextAccessor.HttpContext.User,
-                                listViewContext.RepresentativeEntity,
+                                rootEditContext.Entity,
                                 Operations.GetOperationForCrudType(button.GetCrudType()));
 
                             return authorizationChallenge.Succeeded;
@@ -106,7 +107,6 @@ namespace RapidCMS.Common.Services
                         editContext => editContext.Entity.Id,
                         async editContext =>
                         {
-                            var viewContext = entityViewContext(editContext);
                             var type = editContext.Entity.GetType();
 
                             // TODO: view pane not yet capable of entity variants
@@ -117,7 +117,7 @@ namespace RapidCMS.Common.Services
 
                                 Buttons = await listView.ViewPane.Buttons
                                         .GetAllButtons()
-                                        .Where(button => button.IsCompatibleWithView(viewContext))
+                                        .Where(button => button.IsCompatibleWithForm(editContext))
                                         .WhereAsync(async button =>
                                         {
                                             var authorizationChallenge = await _authorizationService.AuthorizeAsync(
@@ -129,7 +129,7 @@ namespace RapidCMS.Common.Services
                                         })
                                         .ToListAsync(button => button.ToUI()),
 
-                                Elements = listView.ViewPane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider))
+                                Elements = listView.ViewPane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider, editContext))
                             };
                             
                             if (!fieldsPerType.ContainsKey(type) && section.Elements != null)
@@ -155,7 +155,7 @@ namespace RapidCMS.Common.Services
             return list;
         }
 
-        public async Task<ListUI> GenerateListUIAsync(ViewContext listViewContext, EditContext rootEditContext, IEnumerable<EditContext> editContexts, Func<EditContext, ViewContext> entityViewContext, ListEditor listEditor)
+        public async Task<ListUI> GenerateListUIAsync(EditContext rootEditContext, IEnumerable<EditContext> editContexts, ListEditor listEditor)
         {
             var fieldsPerType = new Dictionary<Type, IEnumerable<FieldUI>>();
             var sectionsHaveButtons = false;
@@ -172,12 +172,12 @@ namespace RapidCMS.Common.Services
                     ? null
                     : await listEditor.Buttons
                         .GetAllButtons()
-                        .Where(button => button.IsCompatibleWithView(listViewContext))
+                        .Where(button => button.IsCompatibleWithForm(rootEditContext))
                         .WhereAsync(async button =>
                         {
                             var authorizationChallenge = await _authorizationService.AuthorizeAsync(
                                 _httpContextAccessor.HttpContext.User,
-                                listViewContext.RepresentativeEntity,
+                                rootEditContext.Entity,
                                 Operations.GetOperationForCrudType(button.GetCrudType()));
 
                             return authorizationChallenge.Succeeded;
@@ -190,7 +190,6 @@ namespace RapidCMS.Common.Services
                         editContext => editContext.Entity.Id,
                         async editContext =>
                         {
-                            var viewContext = entityViewContext(editContext);
                             var type = editContext.Entity.GetType();
 
                             return await listEditor.EditorPanes
@@ -203,7 +202,7 @@ namespace RapidCMS.Common.Services
 
                                         Buttons = await pane.Buttons
                                             .GetAllButtons()
-                                            .Where(button => button.IsCompatibleWithView(viewContext))
+                                            .Where(button => button.IsCompatibleWithForm(editContext))
                                             .WhereAsync(async button =>
                                             {
                                                 var authorizationChallenge = await _authorizationService.AuthorizeAsync(
@@ -215,7 +214,7 @@ namespace RapidCMS.Common.Services
                                             })
                                             .ToListAsync(button => button.ToUI()),
 
-                                        Elements = pane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider))
+                                        Elements = pane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider, editContext))
                                     };
 
                                     if (!fieldsPerType.ContainsKey(type) && section.Elements != null)

@@ -3,7 +3,7 @@ using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
-
+using RapidCMS.Common.Forms;
 
 namespace RapidCMS.Common.Models
 {
@@ -31,9 +31,9 @@ namespace RapidCMS.Common.Models
                     return 0;
             }
         }
-        internal override bool IsCompatibleWithView(ViewContext viewContext)
+        internal override bool IsCompatibleWithForm(EditContext editContext)
         {
-            return DefaultButtonType.GetCustomAttribute<ActionsAttribute>().Usages?.Any(x => viewContext.Usage.HasFlag(x)) ?? false;
+            return DefaultButtonType.GetCustomAttribute<ActionsAttribute>()?.Usages?.Any(x => editContext.UsageType.HasFlag(x)) ?? false;
         }
     }
 }

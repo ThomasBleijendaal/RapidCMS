@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
-
+using RapidCMS.Common.Forms;
 
 namespace RapidCMS.Common.Models
 {
@@ -22,6 +21,6 @@ namespace RapidCMS.Common.Models
         internal object Metadata { get; set; }
 
         internal abstract CrudType GetCrudType();
-        internal virtual bool IsCompatibleWithView(ViewContext viewContext) { return true; }
+        internal virtual bool IsCompatibleWithForm(EditContext editContext) { return true; }
     }
 }

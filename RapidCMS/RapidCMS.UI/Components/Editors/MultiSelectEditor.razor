@@ -8,7 +8,7 @@
     var index = 0;
     var group = Guid.NewGuid().ToString();
 
-    <div class="form-control form-control-select-list">
+    <div class="form-control form-control-select-list @(CssHelper.GetValidationClass(State))">
         @foreach (var option in Options)
         {
             var check = SelectedOptions.Any(x => x.Id.Equals(option.Id));
@@ -26,7 +26,15 @@
                 </label>
             </div>
         }
+
     </div>
+
+    @foreach (var message in GetValidationMessages())
+    {
+        <div class="invalid-feedback">
+            @message
+        </div>
+    }
 }
 @functions {
 
@@ -56,5 +64,7 @@
         {
             await RelationDataCollection!.RemoveElementAsync(element);
         }
+
+        EditContext.NotifyPropertyChanged(Property);
     }
 }

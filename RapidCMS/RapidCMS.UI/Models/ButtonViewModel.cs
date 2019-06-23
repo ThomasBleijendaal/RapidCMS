@@ -1,4 +1,5 @@
 ﻿using System;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Forms;
 
 namespace RapidCMS.UI.Models

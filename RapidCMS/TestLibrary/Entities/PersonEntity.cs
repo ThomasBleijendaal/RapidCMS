@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using RapidCMS.Common.Data;
@@ -11,7 +12,12 @@ namespace TestLibrary.Entities
 #pragma warning disable IDE1006 // Naming Styles
         public int _Id { get; set; }
 #pragma warning restore IDE1006 // Naming Styles
+
+        [Required]
+        [MinLength(5)]
+        [MaxLength(20)]
         public string Name { get; set; }
+
         public ICollection<PersonCountryEntity> Countries { get; set; }
 
         [NotMapped]

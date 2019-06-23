@@ -104,7 +104,7 @@ else
 
             var relations = new RelationContainer(UI.Sections.SelectMany(x => x.GetRelations()));
 
-            var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, args.EditContext, relations, model.ButtonId, args.Data);
+            var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, args.EditContext, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }
