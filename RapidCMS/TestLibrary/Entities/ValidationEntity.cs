@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using RapidCMS.Common.Data;
 using TestLibrary.Enums;
+using TestLibrary.Validation;
 
 namespace TestLibrary.Entities
 {
@@ -21,6 +22,7 @@ namespace TestLibrary.Entities
         public string NotRequired { get; set; }
 
         [Required]
+        [True]
         public bool Accept { get; set; }
 
         [Required]

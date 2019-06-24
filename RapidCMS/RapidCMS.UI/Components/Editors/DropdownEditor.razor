@@ -6,7 +6,10 @@
 @if (Options != null)
 {
     <select class="form-control @(CssHelper.GetValidationClass(State))" onchange=@OnChange value="@SelectedIndex">
-        <option value="-1"></option>
+        @if (IsNullable)
+        {
+            <option value="-1"></option>
+        }
         @foreach (var (option, index) in Options.Select((o, i) => (o, i)))
         {
             <option value=@index>@option.Labels.First()</option>
@@ -25,10 +28,14 @@
     private IEnumerable<IElement>? Options;
     private int SelectedIndex = -1;
 
+    private bool IsNullable;
+
     protected override async Task OnParametersSetAsync()
     {
         if (DataCollection != null)
         {
+            IsNullable = Nullable.GetUnderlyingType(Property.PropertyType) != null;
+
             var value = GetValue(false);
 
             await DataCollection.SetEntityAsync(Entity);
@@ -37,6 +44,12 @@
             var list = data?.ToList();
 
             SelectedIndex = list?.FindIndex(option => option.Id.Equals(value)) ?? -1;
+
+            if (SelectedIndex == -1)
+            {
+                // make dropdown nullable for current non-selection
+                IsNullable = true;
+            }
 
             Options = list;
         }
@@ -53,6 +66,14 @@
         else
         {
             SetValue(Options.ElementAt(index).Id, false);
+        }
+        
+        // reset nullable when option is selected
+        if (Nullable.GetUnderlyingType(Property.PropertyType) == null && IsNullable)
+        {
+            IsNullable = false;
+
+            StateHasChanged();
         }
     }
 }
