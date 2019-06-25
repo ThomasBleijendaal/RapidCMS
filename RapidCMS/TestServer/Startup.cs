@@ -16,7 +16,6 @@ using Microsoft.WindowsAzure.Storage;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.ValueMappers;
 using TestLibrary;
@@ -31,6 +30,7 @@ using TestServer.Components.CustomButtons;
 using TestServer.Components.CustomEditors;
 using TestServer.Components.CustomLogin;
 using TestServer.Components.CustomSections;
+using Blazor.FileReader;
 
 namespace TestServer
 {
@@ -123,6 +123,8 @@ namespace TestServer
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString"));
             });
+
+            services.AddFileReaderService();
 
             services.AddSingleton<RepositoryA>();
             services.AddSingleton<RepositoryB>();
@@ -239,12 +241,30 @@ namespace TestServer
                                             .SetRepositoryParentIdProperty(x => x.Id);
 
                                     });
-
-                                pane.AddSubCollectionListEditor<CountryEntity>("country-collection");
                             });
                         })
                         .AddSelfAsRecursiveCollection();
 
+                });
+
+                config.AddCollection<CountryEntity>("related-country-collection", "Countries", collection =>
+                {
+                    collection
+                        .SetRepository<CountryRepository>()
+                        .SetListEditor(ListEditorType.Table, list =>
+                        {
+                            list.AddDefaultButton(DefaultButtonType.New);
+                            list.AddDefaultButton(DefaultButtonType.Add);
+                            list.AddEditor(pane =>
+                            {
+                                pane.AddField(p => p.Name);
+                                pane.AddDefaultButton(DefaultButtonType.SaveExisting);
+                                pane.AddDefaultButton(DefaultButtonType.SaveNew);
+
+                                pane.AddDefaultButton(DefaultButtonType.Delete);
+                                pane.AddDefaultButton(DefaultButtonType.Remove);
+                            });
+                        });
                 });
 
                 config.AddCollection<CountryEntity>("country-collection", "Countries", collection =>
@@ -351,9 +371,32 @@ namespace TestServer
                             editor.AddEditorPane(pane =>
                             {
                                 pane.AddField(f => f.Name);
+                                //pane.AddField(f => f.Countries.Select(x => x.CountryId))
+                                //    .SetName("Countries")
+                                //    .SetType(EditorType.MultiSelect)
+                                //    .SetCollectionRelation<CountryEntity>("country-collection", relation =>
+                                //    {
+                                //        relation
+                                //            .SetElementIdProperty(x => x._Id)
+                                //            .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
+
+                                //        relation
+                                //            .ValidateRelation((person, related) =>
+                                //            {
+                                //                if (!related.Count().In(2,3))
+                                //                {
+                                //                    return new[] { "Person must have 2 or 3 countries." };
+                                //                }
+
+                                //                return default;
+                                //            });
+                                //    });
+                            });
+                            editor.AddEditorPane(pane =>
+                            {
                                 pane.AddField(f => f.Countries.Select(x => x.CountryId))
                                     .SetName("Countries")
-                                    .SetType(EditorType.MultiSelect)
+                                    .SetType(EditorType.Collection)
                                     .SetCollectionRelation<CountryEntity>("country-collection", relation =>
                                     {
                                         relation
@@ -363,7 +406,7 @@ namespace TestServer
                                         relation
                                             .ValidateRelation((person, related) =>
                                             {
-                                                if (!related.Count().In(2,3))
+                                                if (!related.Count().In(2, 3))
                                                 {
                                                     return new[] { "Person must have 2 or 3 countries." };
                                                 }

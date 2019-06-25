@@ -5,11 +5,7 @@ using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Commands;
-using RapidCMS.Common.Models.UI;
-using RapidCMS.Common.Forms;
-using RapidCMS.UI.Components.Buttons;
 using RapidCMS.UI.Models;
-
 
 namespace RapidCMS.UI.Components.Pages
 {
@@ -117,19 +113,6 @@ namespace RapidCMS.UI.Components.Pages
         protected virtual Task LoadDataAsync()
         {
             return Task.CompletedTask;
-        }
-
-        protected ButtonViewModel CreateButtonViewModel(ButtonUI button)
-        {
-            return new ButtonViewModel
-            {
-                ButtonId = button.ButtonId,
-                Icon = button.Icon,
-                Label = button.Label,
-                ShouldConfirm = button.ShouldConfirm,
-                IsPrimary = button.IsPrimary,
-                RequiresValidForm = button.RequiresValidForm
-            };
         }
 
         //protected ButtonContext<TContext> CreateButtonContext<TContext>(TContext context, ButtonUI button, Func<string, TContext, object?, Task> callback)

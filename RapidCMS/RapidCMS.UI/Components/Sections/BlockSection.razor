@@ -4,52 +4,56 @@
 @using RapidCMS.Common
 @using RapidCMS.Common.Enums
 
-@if (Section != null && Section.Elements.Any() && EditContext != null)
+@if (Section != null && Section.Elements != null && Section.Elements.Any() && EditContext != null)
 {
-    @if (Section.Elements != null)
-    {
-        <div class="content">
-            @if (!string.IsNullOrWhiteSpace(Section.Label))
-            {
-                <h2 class="block-header">@Section.Label</h2>
-            }
+    <div class="content">
+        @if (!string.IsNullOrWhiteSpace(Section.Label))
+        {
+            <h2 class="block-header">@Section.Label</h2>
+        }
 
-            @foreach (var element in Section.Elements)
+        @foreach (var element in Section.Elements)
+        {
+            if (element is FieldUI field)
             {
-                if (element is FieldUI field)
-                {
-                    <div class="form-row">
-                        <div class="col-2">
-                            <label class="col-form-label">@field.Name</label>
-                            <small class="form-text text-muted">@field.Description</small>
-                        </div>
-                        <div class="col-10">
-                            @if (field is ExpressionFieldUI expressionField)
-                            {
-                                @expressionField.Expression.StringGetter(EditContext.Entity)
-                            }
-                            else if (field is PropertyFieldUI propertyField)
-                            {
-                                <UIEditor Field="field" Entity="@EditContext.Entity" />
-                            }
-                        </div>
-                    </div>
-                }
-                else if (element is SubCollectionUI subCollection)
-                {
-                    <div class="nested-content">
-                        @* TODO: this switch is still bit of a hack *@
-                        <Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
-                                    CollectionAlias=@subCollection.CollectionAlias
-                                    ParentId=@EditContext.Entity.Id />
-                    </div>
-                }
+                <div class="form-row">
+                    <label>@field.Name</label>
+                    <small class="form-text text-muted">@field.Description</small>
+                </div>
+                <div class="col-10">
+                    @if (field is ExpressionFieldUI expressionField)
+                    {
+                        @expressionField.Expression.StringGetter(EditContext.Entity)
+                    }
+                    else if (field is PropertyFieldUI propertyField)
+                    {
+                        <UIEditor Field="field" Entity="@EditContext.Entity" />
+                    }
+                </div>
             }
-        </div>
-    }
+            else if (element is SubCollectionUI subCollection)
+            {
+                <div class="nested-content">
+                    <Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                                CollectionAlias=@subCollection.CollectionAlias
+                                ParentId=@EditContext.Entity.Id />
+                </div>
+            }
+            else if (element is RelatedCollectionUI relatedCollection)
+            {
+                <div class="nested-content">
+                    @* TODO: this switch is still bit of a hack *@
+                    <Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                                CollectionAlias=@relatedCollection.CollectionAlias
+                                ParentId=@EditContext.Entity.Id />
+                </div>
+            }
+        }
+    </div>
 }
 
 @functions {
+    // TODO: is this still needed?
     protected override void OnParametersSet()
     {
         StateHasChanged();

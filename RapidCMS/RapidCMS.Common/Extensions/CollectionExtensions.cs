@@ -170,6 +170,7 @@ namespace RapidCMS.Common.Extensions
 
                         EditorPanes = configReceiver.NodeView.ViewPanes.ToList(config =>
                         {
+                            // TODO: put this new into Extension Method
                             var pane = new Pane
                             {
                                 CustomAlias = config.CustomAlias,
@@ -177,7 +178,10 @@ namespace RapidCMS.Common.Extensions
                                 VariantType = config.VariantType,
                                 Buttons = new List<Button>(),
                                 Fields = config.Properties.ToList(x => x.ToField()),
-                                SubCollectionLists = config.SubCollectionLists.ToList(x => x.ToSubCollectionList())
+                                SubCollectionLists = config.SubCollectionLists.ToList(x => x.ToSubCollectionList()),
+
+                                // TODO:
+                                RelatedCollectionLists = new List<RelatedCollectionList>()
                             };
 
                             return pane;
@@ -207,7 +211,8 @@ namespace RapidCMS.Common.Extensions
                                 VariantType = config.VariantType,
                                 Buttons = new List<Button>(),
                                 Fields = config.Fields.ToList(x => x.ToField()),
-                                SubCollectionLists = config.SubCollectionLists.ToList(x => x.ToSubCollectionList())
+                                SubCollectionLists = config.SubCollectionLists.ToList(x => x.ToSubCollectionList()),
+                                RelatedCollectionLists = config.RelatedCollectionLists.ToList(x => x.ToRelatedCollectionList())
                             };
 
                             return pane;

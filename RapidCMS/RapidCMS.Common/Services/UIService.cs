@@ -61,12 +61,19 @@ namespace RapidCMS.Common.Services
                             return (subCollection.Index, element: (Element)subCollection.ToUI());
                         });
 
+                        var relatedCollections = pane.RelatedCollectionLists.Select(relatedCollection =>
+                        {
+                            return (relatedCollection.Index, element: (Element)relatedCollection.ToUI());
+                        });
+
                         return new SectionUI
                         {
                             CustomAlias = pane.CustomAlias,
                             Label = pane.Label,
 
-                            Elements = fields.Union(subCollections)
+                            Elements = fields
+                                .Union(subCollections)
+                                .Union(relatedCollections)
                                 .OrderBy(x => x.Index)
                                 .ToList(x => x.element)
                         };

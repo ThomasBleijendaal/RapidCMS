@@ -7,6 +7,7 @@
 @using RapidCMS.Common.Extensions
 @using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Services
+@using RapidCMS.UI.Extensions
 @using RapidCMS.UI.Models
 
 @inject ICollectionService CollectionService
@@ -25,7 +26,7 @@ else
             <div class="top-row first">
                 @foreach (var button in UI.Buttons)
                 {
-                    var model = CreateButtonViewModel(button);
+                    var model = button.ToViewModel();
 
                     // TODO: deattach
                     model.OnClick += ListButtonOnClickAsync;
@@ -137,7 +138,7 @@ else
                                                             {
                                                                 @foreach (var button in section.Buttons)
                                                                 {
-                                                                    var model = CreateButtonViewModel(button);
+                                                                    var model = button.ToViewModel();
 
                                                                     // TODO: deattach
                                                                     model.OnClick += NodeButtonOnClickAsync;
@@ -174,7 +175,7 @@ else
                                         <div class="top-row">
                                             @foreach (var button in section.Buttons)
                                             {
-                                                var model = CreateButtonViewModel(button);
+                                                var model = button.ToViewModel();
 
                                                 // TODO: deattach
                                                 model.OnClick += NodeButtonOnClickAsync;

@@ -25,6 +25,7 @@ TODO:
     [] recursive delete 
 
 [] Reordering
+
     [] Update to Blazor preview 6 to support @key on EditContext
         [] In listview: After updating entity 2 the EditContext of entity 1 is reset
         [] Put library statics in library (css / icons / js)
@@ -52,6 +53,8 @@ TODO:
         [] Make possible to open sub collections with hidden root element
     [] OnBeforeUnload EditContext IsModified check
 
+[] Merge NodeViewPane and NodeEditorPaneConfig
+
 1.1
 
 [] Order of collection form configuration is not maintained
@@ -60,6 +63,8 @@ TODO:
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)
     [] ParentId must be IEntity to support different types of nesting of repos
     [] Repository compatibility must be checked when using these nestings
+    [] Buttons must be able to point to editors in other collections (view in collection-a, but edit in collection-b)
+    [] Remove collection-alias and move to some other system
 [] Different set of collections for different entity variant (probably not needed)
 [] IEntity.Id requirement is obstrusive
 [] Editor visibility based upon predicates of current IEntity or evaluation by some object
