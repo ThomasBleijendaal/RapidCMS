@@ -9,8 +9,7 @@
 @using RapidCMS.Common.Services
 @using RapidCMS.UI.Extensions
 @using RapidCMS.UI.Models
-
-@inject ICollectionService CollectionService
+@using RapidCMS.UI.Components.Forms
 
 @if (UI == null)
 {
@@ -20,7 +19,7 @@
 }
 else
 {
-    <CascadingValue Name="EditContext" Value="UI.RootEditContext">
+    <CascadingEditContext EditContext=@UI.RootEditContext>
         @if (UI.Buttons != null)
         {
             <div class="top-row first">
@@ -35,7 +34,8 @@ else
                 }
             </div>
         }
-    </CascadingValue>
+    </CascadingEditContext>
+
     @if (UI.EditContexts.Any() && UI.SectionsForEntity != null)
     {
         @if (UI.ListType.In(ListType.TableView, ListType.TableEditor))
@@ -79,8 +79,7 @@ else
                         {
                             if (UI.SectionsForEntity.TryGetValue(context.Entity.Id, out var sections))
                             {
-                                <CascadingValue Name="EditContext" Value="context">
-
+                                <CascadingEditContext EditContext=@context>
                                     @foreach (var section in sections)
                                     {
                                         var index = 0;
@@ -152,7 +151,7 @@ else
                                             </tr>
                                         }
                                     }
-                                </CascadingValue>
+                                </CascadingEditContext>
                             }
                         }
                     </tbody>
@@ -165,7 +164,7 @@ else
             {
                 <div class="content">
                     <div class="nested-content">
-                        <CascadingValue Name="EditContext" Value="context">
+                        <CascadingEditContext EditContext=@context>
                             @if (UI.SectionsForEntity.TryGetValue(context.Entity.Id, out var sections))
                             {
                                 foreach (var section in sections)
@@ -195,7 +194,7 @@ else
                                     }
                                 }
                             }
-                        </CascadingValue>
+                        </CascadingEditContext>
                     </div>
                 </div>
             }
@@ -203,6 +202,8 @@ else
     }
 }
 @functions {
+
+    [Inject] private ICollectionService CollectionService { get; set; }
 
     [Parameter] private string Action { get; set; }
 

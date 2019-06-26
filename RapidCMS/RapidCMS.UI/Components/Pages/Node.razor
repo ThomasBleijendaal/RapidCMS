@@ -11,6 +11,7 @@
 @using RapidCMS.Common.Services
 @using RapidCMS.UI.Extensions
 @using RapidCMS.UI.Models
+@using RapidCMS.UI.Components.Forms
 
 @if (UI == null)
 {
@@ -20,7 +21,7 @@
 }
 else
 {
-    <CascadingValue Name="EditContext" Value="UI.EditContext">
+    <CascadingEditContext EditContext=@UI.EditContext>
         @if (UI.Buttons != null)
         {
             <div class="top-row first">
@@ -52,7 +53,7 @@ else
                 }
             }
         }
-    </CascadingValue>
+    </CascadingEditContext>
 }
 
 @code {

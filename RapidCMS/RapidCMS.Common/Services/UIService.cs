@@ -83,7 +83,7 @@ namespace RapidCMS.Common.Services
             return nodeUI;
         }
 
-        public async Task<ListUI> GenerateListUIAsync(EditContext rootEditContext, IEnumerable<EditContext> editContexts, ListView listView)
+        public async Task<ListUI> GenerateListUIAsync(EditContext rootEditContext, List<EditContext> editContexts, ListView listView)
         {
             var fieldsPerType = new Dictionary<Type, IEnumerable<FieldUI>>();
             var sectionsHaveButtons = false;
@@ -162,7 +162,7 @@ namespace RapidCMS.Common.Services
             return list;
         }
 
-        public async Task<ListUI> GenerateListUIAsync(EditContext rootEditContext, IEnumerable<EditContext> editContexts, ListEditor listEditor)
+        public async Task<ListUI> GenerateListUIAsync(EditContext rootEditContext, List<EditContext> editContexts, ListEditor listEditor)
         {
             var fieldsPerType = new Dictionary<Type, IEnumerable<FieldUI>>();
             var sectionsHaveButtons = false;

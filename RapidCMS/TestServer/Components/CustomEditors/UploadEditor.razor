@@ -39,7 +39,7 @@
     [Inject] IFileReaderService FileReaderService { get; set; }
 
     private bool waiting = false;
-
+    
     private async Task ResetValidation(UIChangeEventArgs args)
     {
         EditContext.NotifyPropertyChanged(Property);
