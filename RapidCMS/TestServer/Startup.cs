@@ -938,15 +938,12 @@ namespace TestServer
 
             app.UseRouting();
 
-            app.UseMvc(routes =>
-            {
-
-            });
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+                // endpoints.MapDefaultControllerRoute();
+                // endpoints.MapFallbackToPage("/_Host");
             });
         }
     }
