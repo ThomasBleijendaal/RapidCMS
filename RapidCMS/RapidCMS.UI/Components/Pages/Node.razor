@@ -12,8 +12,6 @@
 @using RapidCMS.UI.Extensions
 @using RapidCMS.UI.Models
 
-@inject ICollectionService CollectionService
-
 @if (UI == null)
 {
     <div class="content">
@@ -57,7 +55,9 @@ else
     </CascadingValue>
 }
 
-@functions {
+@code {
+
+    [Inject] private ICollectionService CollectionService { get; set; }
 
     [Parameter] private string Action { get; set; }
 

@@ -141,6 +141,12 @@ namespace RapidCMS.Common.Forms
             }
         }
 
+        public void AddValidationMessage(IPropertyMetadata property, string message)
+        {
+            GetPropertyState(property).AddMessage(message);
+            GetPropertyState(property).WasValidated = true;
+        }
+
         private bool HasValidationMessages()
         {
             return GetValidationMessages().Any();

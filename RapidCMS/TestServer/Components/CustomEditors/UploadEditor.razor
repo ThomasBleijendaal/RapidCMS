@@ -8,14 +8,13 @@
 
 <div class="input-group">
     <div class="input-group-prepend">
-        <button type="button" class="btn" onclick="@UploadAsync">
+        <button type="button" class="btn" @onclick=@UploadAsync>
             <i class="oi oi-timer"></i> Upload file to blob
         </button>
     </div>
-    <input value=@GetValue()
-           type="file"
-           ref="fileUpload"
-           onchange=@(args => SetValue(args.Value))
+    <input type="file"
+           @ref="fileUpload"
+           @onchange=@ResetValidation
            class="form-control @(CssHelper.GetValidationClass(State))" />
 
     @if (waiting)
@@ -41,7 +40,12 @@
 
     private bool waiting = false;
 
-    private async Task UploadAsync()
+    private async Task ResetValidation(UIChangeEventArgs args)
+    {
+        EditContext.NotifyPropertyChanged(Property);
+    }
+
+    private async Task UploadAsync(UIMouseEventArgs args)
     {
         EditContext.NotifyPropertyBusy(Property);
         waiting = true;
@@ -55,11 +59,27 @@
 
         foreach (var file in await fileUploadRef.EnumerateFilesAsync())
         {
-            var blob = blobContainer.GetBlockBlobReference(Guid.NewGuid().ToString());
+            var fileInfo = await file.ReadFileInfoAsync();
 
-            var stream = await file.OpenReadAsync();
+            if (fileInfo.Size > 10 * 1024 * 1024)
+            {
+                EditContext.AddValidationMessage(Property, "File is too big. Max 10 MB");
 
-            await blob.UploadFromStreamAsync(stream);
+                continue;
+            }
+
+            try
+            {
+                var blob = blobContainer.GetBlockBlobReference(Guid.NewGuid().ToString());
+
+                var stream = await file.CreateMemoryStreamAsync(8192);
+
+                await blob.UploadFromStreamAsync(stream);
+            }
+            catch (Exception ex)
+            {
+                EditContext.AddValidationMessage(Property, $"Failed to upload file: {ex.Message}");
+            }
         }
 
         EditContext.NotifyPropertyFinished(Property);

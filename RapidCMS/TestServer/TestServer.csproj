@@ -14,7 +14,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Tewr.Blazor.FileReader" Version="0.11.19128" />
+    <PackageReference Include="Tewr.Blazor.FileReader" Version="0.12.19168" />
   </ItemGroup>
 
   <ItemGroup>

@@ -17,18 +17,20 @@
             if (element is FieldUI field)
             {
                 <div class="form-row">
-                    <label>@field.Name</label>
-                    <small class="form-text text-muted">@field.Description</small>
-                </div>
-                <div class="col-10">
-                    @if (field is ExpressionFieldUI expressionField)
-                    {
-                        @expressionField.Expression.StringGetter(EditContext.Entity)
-                    }
-                    else if (field is PropertyFieldUI propertyField)
-                    {
-                        <UIEditor Field="field" Entity="@EditContext.Entity" />
-                    }
+                    <div class="col-2">
+                        <label>@field.Name</label>
+                        <small class="form-text text-muted">@field.Description</small>
+                    </div>
+                    <div class="col-10">
+                        @if (field is ExpressionFieldUI expressionField)
+                        {
+                            @expressionField.Expression.StringGetter(EditContext.Entity)
+                        }
+                        else if (field is PropertyFieldUI propertyField)
+                        {
+                            <UIEditor Field="field" Entity="@EditContext.Entity" />
+                        }
+                    </div>
                 </div>
             }
             else if (element is SubCollectionUI subCollection)

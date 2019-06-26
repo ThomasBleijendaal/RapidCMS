@@ -124,7 +124,7 @@ namespace TestServer
                 options.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString"));
             });
 
-            services.AddFileReaderService();
+            services.AddFileReaderService(options => options.InitializeOnFirstCall = true);
 
             services.AddSingleton<RepositoryA>();
             services.AddSingleton<RepositoryB>();
