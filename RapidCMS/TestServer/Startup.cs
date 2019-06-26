@@ -61,13 +61,13 @@ namespace TestServer
             services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
                 .AddAzureAD(options => Configuration.Bind("AzureAd", options));
 
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential
-                // cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+            //services.Configure<CookiePolicyOptions>(options =>
+            //{
+            //    // This lambda determines whether user consent for non-essential
+            //    // cookies is needed for a given request.
+            //    options.CheckConsentNeeded = context => true;
+            //    options.MinimumSameSitePolicy = SameSiteMode.None;
+            //});
 
             // This configures the 'middleware' pipeline
             // This is where code to determine what happens
@@ -550,8 +550,6 @@ namespace TestServer
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            services.AddCors();
-
             #region Editors
 
             void listView(ListViewConfig<TestEntity> listViewConfig)
@@ -928,12 +926,10 @@ namespace TestServer
                 app.UseHsts();
             }
 
-            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:5001", "https://localhost:44391/"));
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseCookiePolicy();
+            //app.UseCookiePolicy();
             app.UseAuthentication();
 
             app.UseRouting();
@@ -942,8 +938,7 @@ namespace TestServer
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
-                // endpoints.MapDefaultControllerRoute();
-                // endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
