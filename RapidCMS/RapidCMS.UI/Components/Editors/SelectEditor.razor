@@ -25,7 +25,7 @@
                                    id="@group-option@(index)"
                                    name=@group
                                    checked=@(option.Id.Equals(value))
-                                   onchange=@(async args=> SetValue(option.Id, false)) />
+                                   @onchange=@(async args=> SetValue(option.Id, false)) />
                             @option.Labels.First()
                         </label>
                     </div>

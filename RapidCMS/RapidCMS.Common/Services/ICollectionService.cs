@@ -7,7 +7,6 @@ using RapidCMS.Common.Models.UI;
 namespace RapidCMS.Common.Services
 {
     // TODO: make button handling more seperate
-    // TODO: remove IRelationContainer and put in EditContext
     // TODO: why variantAlias for ProcessNodeEditorAction and not ProcessListAction?
 
     public interface ICollectionService

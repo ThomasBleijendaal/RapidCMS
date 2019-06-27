@@ -7,7 +7,7 @@
         <span class="input-group-text">#</span>
     </div>
     <input value=@GetValue()
-           onchange=@(args => SetValue(args.Value))
+           @onchange=@(args => SetValue(args.Value))
            type="number"
            class="form-control @(CssHelper.GetValidationClass(State))" />
 

@@ -5,7 +5,7 @@
 
 @if (Options != null)
 {
-    <select class="form-control @(CssHelper.GetValidationClass(State))" onchange=@OnChange value="@SelectedIndex">
+    <select class="form-control @(CssHelper.GetValidationClass(State))" @onchange=@OnChange value="@SelectedIndex">
         @if (IsNullable)
         {
             <option value="-1"></option>

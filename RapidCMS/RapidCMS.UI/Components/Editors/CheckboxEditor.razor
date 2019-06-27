@@ -4,7 +4,7 @@
 
 <div class="form-check">
     <input checked=@GetValue()
-           onchange=@(args => SetValue(args.Value))
+           @onchange=@(args => SetValue(args.Value))
            type="checkbox"
            class="form-check-input position-static @(CssHelper.GetValidationClass(State))" />
 
