@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Forms;
 using RapidCMS.Common.Models.Commands;
@@ -11,7 +12,7 @@ namespace RapidCMS.Common.Services
 
     public interface ICollectionService
     {
-        Task<ListUI> GetCollectionListViewAsync(string action, string collectionAlias, string? variantAlias, string? parentId);
+        Task<ListUI> GetCollectionListViewAsync(string action, string collectionAlias, string? variantAlias, string? parentId, IEnumerable<string>? entityIds);
         Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string actionId, object? customData);
         Task<ViewCommand> ProcessListActionAsync(string action, string collectionAlias, string? parentId, string id, EditContext editContext, string actionId, object? customData);
         

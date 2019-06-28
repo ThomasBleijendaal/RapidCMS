@@ -1,4 +1,6 @@
-﻿namespace RapidCMS.Common.Models.UI
+﻿using System;
+
+namespace RapidCMS.Common.Models.UI
 {
     public class RelatedCollectionUI : Element
     {

@@ -184,7 +184,7 @@ namespace RapidCMS.Common.Services
             }
         }
 
-        public async Task<ListUI> GetCollectionListViewAsync(string action, string alias, string? variantAlias, string? parentId)
+        public async Task<ListUI> GetCollectionListViewAsync(string action, string alias, string? variantAlias, string? parentId, IEnumerable<string>? entityIds)
         {
             var listUsageType = UsageType.List | MapActionToUsageType(action);
 
@@ -204,6 +204,12 @@ namespace RapidCMS.Common.Services
             }
 
             var existingEntities = await collection.Repository._GetAllAsObjectsAsync(parentId);
+
+            // HACK: this is a bit of a hack
+            if (entityIds != null)
+            {
+                existingEntities = existingEntities.Where(x => entityIds.Contains(x.Id));
+            }
 
             var rootEditContext = new EditContext(newEntity, collection.GetEntityVariant(newEntity), listUsageType, _serviceProvider);
 

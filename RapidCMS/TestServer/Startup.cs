@@ -397,7 +397,7 @@ namespace TestServer
                                 pane.AddField(f => f.Countries.Select(x => x.CountryId))
                                     .SetName("Countries")
                                     .SetType(EditorType.Collection)
-                                    .SetCollectionRelation<CountryEntity>("country-collection", relation =>
+                                    .SetCollectionRelation<CountryEntity>("related-country-collection", relation =>
                                     {
                                         relation
                                             .SetElementIdProperty(x => x._Id)

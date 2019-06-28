@@ -5,30 +5,22 @@ TODO:
 
 1.0
 
-[x] SetOneToManyRelation with collection 
-    [x] Must be able to pass parentId into Repository
-    [x] DataCollection is transient helper class which contains the data for the relation (single or multiple entities)
-    [x] Data form DataCollection passed to Insert and Update repository methods
-        [x] During these save actions the relationship handling can be easily put in repository
-    [x] New collection editor required for editing relation collection (different than subcollection)
-    [x] Add + Remove buttons for adding and removing EXISTING entities 
-    [x] New CollectionDataProvider intermediate class handling all regular inter-collection relationships
-    [] New InsertAndAdd button which inserts a new entity and adds it as relation 
-        -> not for multipleselect but for subcollection typed stuff
-    [x] DataCollection must support data from collection like CollectionRelation, but without the relation stuff
-    [x] Allow for setting ParentId in CollectionRelation for limiting entity selection
-    [x] Put RelationContainer in EditContext to make relations in Node + Collection working again
-
-[] BaseEditor SetValue not non-nullable safe
-
-[x] Relation support (one-many + many-many via discrete call on Repository) 
-    [] recursive delete 
+[] ManyToMany Collection Relation
+    [] New IRepository methods
+        -> void AddRelation<RelatedEntityType>(entityId, relatedEntityId)
+        -> void RemoveRelation<RelatedEntityType>(entityId, relatedEntityId)
+        -> IEnumerable<object> GetRelatedEntityIds<RelatedEntityType>(entityId)
+    [] New Collection Page features
+        -> ParentCollectionAlias + ParentId (for sub collection nesting)
+        -> RelatedCollectionAlias + RelatedId (for related collection nesting)
+    [] New Collection Page element
+        -> Pick entity (top of tbody, using UI.RootEditContext, or UI.PickRelatedEntityEditContext)
 
 [] Reordering
-
+    [] New IRepository methods
+        -> {unknown}
     [] Update to Blazor preview 6 to support @key on EditContext
         [] In listview: After updating entity 2 the EditContext of entity 1 is reset
-        [] Put library statics in library (css / icons / js)
     [] Pagination (consistent during session)
         [] Redirect after deletion + consistent pagination / Return to parent button action
         [] Redirect after insertions + no update authorization goes to 403 page
@@ -71,6 +63,7 @@ TODO:
 [] Sub collection buttons connected to collection to prevent numerous buttons on each sub collection row (like Update All)
 [] Extensible Dropdown (type ahead style insert of new elements + automatic update when used in list views)
 [] ValueMapper support in NodeView and ListView (instead of hard string cast)
+[] Put library statics in library (css / icons / js)
 
 x.x
 [] All config checked during startup

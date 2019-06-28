@@ -40,6 +40,7 @@ namespace RapidCMS.Common.Extensions
                             }
 
                             IDataCollection provider = new CollectionDataProvider(
+                                collectionRelation.CollectionAlias,
                                 repo,
                                 collectionRelation.RelatedEntityType,
                                 collectionRelation.RepositoryParentIdProperty,

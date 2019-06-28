@@ -209,6 +209,10 @@ else
 
     [Parameter] private string? ParentId { get; set; } = null;
 
+    // HACK: this is a bit of a hack
+    // TODO: when RowSection / TableSection is pulled out of this Page, this parameter should be refactored
+    [Parameter] private IEnumerable<string>? EntityIds { get; set; } = null;
+
     [Parameter] private string CollectionAlias { get; set; }
 
     [Parameter] private string VariantAlias { get; set; }
@@ -222,7 +226,7 @@ else
     {
         try
         {
-            UI = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, VariantAlias, ParentId);
+            UI = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, VariantAlias, ParentId, EntityIds);
 
             StateHasChanged();
         }

@@ -24,13 +24,20 @@ namespace RapidCMS.Common.Data
         private List<IElement>? _relatedElements;
         private ICollection<object>? _relatedIds;
 
-        public CollectionDataProvider(IRepository repository, Type relatedEntityType, IPropertyMetadata? repositoryParentIdProperty, IPropertyMetadata idProperty, IEnumerable<IExpressionMetadata> labelProperties)
+        public CollectionDataProvider(string collectionAlias, IRepository repository, Type relatedEntityType, IPropertyMetadata? repositoryParentIdProperty, IPropertyMetadata idProperty, IEnumerable<IExpressionMetadata> labelProperties)
         {
+            CollectionAlias = collectionAlias;
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _relatedEntityType = relatedEntityType ?? throw new ArgumentNullException(nameof(relatedEntityType));
             _repositoryParentIdProperty = repositoryParentIdProperty;
             _idProperty = idProperty ?? throw new ArgumentNullException(nameof(idProperty));
             _labelProperties = labelProperties ?? throw new ArgumentNullException(nameof(labelProperties));
+        }
+
+        public string CollectionAlias { get; private set; }
+        public Task<IEnumerable<string>> GetRelatedIdsAsync()
+        {
+            return Task.FromResult(_relatedIds.Select(x => x.ToString()));
         }
 
         public async Task SetEntityAsync(IEntity entity)
