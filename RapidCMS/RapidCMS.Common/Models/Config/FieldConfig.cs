@@ -87,7 +87,6 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        // TODO: remove
         // TODO: perhaps add alias to differentiate between duplicate relations
         public FieldConfig<TEntity> SetCollectionRelation<TRelatedEntity>(string collectionAlias, Action<CollectionRelationConfig<TEntity, TRelatedEntity>> configure)
         {

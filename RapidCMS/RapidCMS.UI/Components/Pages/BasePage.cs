@@ -42,9 +42,13 @@ namespace RapidCMS.UI.Components.Pages
                         var data = new Dictionary<string, object>()
                         {
                             { "Action", parameterCommand.Action },
-                            { "CollectionAlias", parameterCommand.CollectionAlias },
-                            { "VariantAlias", parameterCommand.VariantAlias }
+                            { "CollectionAlias", parameterCommand.CollectionAlias }
                         };
+
+                        if (parameterCommand.VariantAlias != null)
+                        {
+                            data.Add("VariantAlias", parameterCommand.VariantAlias);
+                        }
 
                         if (parameterCommand.Id != null)
                         {

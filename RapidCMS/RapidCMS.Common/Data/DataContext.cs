@@ -81,9 +81,11 @@ namespace RapidCMS.Common.Data
             }
         }
 
-        internal IRelationContainer GenerateRelationContainer()
+        internal IRelationContainer? GenerateRelationContainer()
         {
-            return new RelationContainer(_relationDataCollections.Select(x => GetRelation(x)));
+            return (_dataCollections == null) 
+                ? default 
+                : new RelationContainer(_relationDataCollections.Select(x => GetRelation(x)));
         }
 
         private IRelation GetRelation(KeyValuePair<IPropertyMetadata, IRelationDataCollection> kv)

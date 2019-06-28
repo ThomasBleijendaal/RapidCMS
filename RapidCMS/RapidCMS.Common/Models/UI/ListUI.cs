@@ -20,7 +20,6 @@ namespace RapidCMS.Common.Models.UI
         public EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; internal set; }
 
         public List<ButtonUI>? Buttons { get; internal set; }
-
         public Dictionary<string, List<SectionUI>>? SectionsForEntity { get; internal set; }
 
         public List<FieldUI>? UniqueFields { get; internal set; }

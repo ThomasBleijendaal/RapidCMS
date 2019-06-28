@@ -251,6 +251,15 @@ namespace TestServer
                 {
                     collection
                         .SetRepository<CountryRepository>()
+                        .SetListView(list =>
+                        {
+                            // list.AddDefaultButton(DefaultButtonType.Cancel);
+                            list.SetListPane(pane =>
+                            {
+                                pane.AddProperty(p => p.Name);
+                                pane.AddDefaultButton(DefaultButtonType.Pick);
+                            });
+                        })
                         .SetListEditor(ListEditorType.Table, list =>
                         {
                             list.AddDefaultButton(DefaultButtonType.New);
@@ -394,9 +403,11 @@ namespace TestServer
                             });
                             editor.AddEditorPane(pane =>
                             {
+                                pane.AddRelatedCollectionListEditor<CountryEntity>("related-country-collection");
+
                                 pane.AddField(f => f.Countries.Select(x => x.CountryId))
                                     .SetName("Countries")
-                                    .SetType(EditorType.Collection)
+                                    .SetType(EditorType.MultiSelect)
                                     .SetCollectionRelation<CountryEntity>("related-country-collection", relation =>
                                     {
                                         relation

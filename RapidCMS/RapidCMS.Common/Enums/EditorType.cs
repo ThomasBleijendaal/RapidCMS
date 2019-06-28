@@ -24,9 +24,6 @@ namespace RapidCMS.Common.Enums
         Select,
 
         [Relation(RelationType.Many)]
-        MultiSelect,
-
-        [Relation(RelationType.Many)]
-        Collection
+        MultiSelect
     }
 }

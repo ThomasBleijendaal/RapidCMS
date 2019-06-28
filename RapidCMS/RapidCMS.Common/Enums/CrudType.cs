@@ -19,6 +19,7 @@
         // list action
         Add = 100,
         Remove = 101,
+        Pick = 102,
 
         // specials
         Refresh = 1001

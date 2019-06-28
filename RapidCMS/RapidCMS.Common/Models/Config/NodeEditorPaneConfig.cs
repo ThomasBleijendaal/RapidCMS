@@ -81,12 +81,12 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeEditorPaneConfig<TEntity> AddRelatedCollectionListEditor<TRelatedEntity>(string collectionAlias, Action<RelatedCollectionListConfig<TEntity,TRelatedEntity>> configure)
+        public NodeEditorPaneConfig<TEntity> AddRelatedCollectionListEditor<TRelatedEntity>(string collectionAlias, Action<RelatedCollectionListConfig<TEntity,TRelatedEntity>>? configure = null)
             where TRelatedEntity : IEntity
         {
             var config = new RelatedCollectionListConfig<TEntity, TRelatedEntity>(collectionAlias);
 
-            configure.Invoke(config);
+            configure?.Invoke(config);
 
             config.Index = FieldIndex++;
 

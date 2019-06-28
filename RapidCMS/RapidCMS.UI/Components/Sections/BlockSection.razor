@@ -36,6 +36,7 @@
             else if (element is SubCollectionUI subCollection)
             {
                 <div class="nested-content">
+                    @* TODO: change to something which is not a page *@
                     <Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
                                 CollectionAlias=@subCollection.CollectionAlias
                                 ParentId=@EditContext.Entity.Id />
@@ -43,12 +44,14 @@
             }
             else if (element is RelatedCollectionUI relatedCollection)
             {
-                <div class="nested-content">
-                    @* TODO: this switch is still bit of a hack *@
-                    <Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
-                                CollectionAlias=@relatedCollection.CollectionAlias
-                                ParentId=@EditContext.Entity.Id />
-                </div>
+                if (!EditContext.UsageType.HasFlag(UsageType.New))
+                {
+                    <div class="nested-content">
+                        <RelationCollection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                                    CollectionAlias=@relatedCollection.CollectionAlias
+                                    RelatedEntity=@EditContext.Entity />
+                    </div>
+                }
             }
         }
     </div>

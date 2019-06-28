@@ -24,9 +24,8 @@ namespace RapidCMS.Common.Data
         private List<IElement>? _relatedElements;
         private ICollection<object>? _relatedIds;
 
-        public CollectionDataProvider(string collectionAlias, IRepository repository, Type relatedEntityType, IPropertyMetadata? repositoryParentIdProperty, IPropertyMetadata idProperty, IEnumerable<IExpressionMetadata> labelProperties)
+        public CollectionDataProvider(IRepository repository, Type relatedEntityType, IPropertyMetadata? repositoryParentIdProperty, IPropertyMetadata idProperty, IEnumerable<IExpressionMetadata> labelProperties)
         {
-            CollectionAlias = collectionAlias;
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _relatedEntityType = relatedEntityType ?? throw new ArgumentNullException(nameof(relatedEntityType));
             _repositoryParentIdProperty = repositoryParentIdProperty;
@@ -34,18 +33,12 @@ namespace RapidCMS.Common.Data
             _labelProperties = labelProperties ?? throw new ArgumentNullException(nameof(labelProperties));
         }
 
-        public string CollectionAlias { get; private set; }
-        public Task<IEnumerable<string>> GetRelatedIdsAsync()
-        {
-            return Task.FromResult(_relatedIds.Select(x => x.ToString()));
-        }
-
         public async Task SetEntityAsync(IEntity entity)
         {
             _entity = entity;
 
             var parentId = _repositoryParentIdProperty?.Getter.Invoke(_entity) as string;
-            var entities = await _repository._GetAllAsObjectsAsync(parentId);
+            var entities = await _repository.InternalGetAllAsync(parentId);
 
             _elements = entities
                 .Select(entity => (IElement)new ElementDTO

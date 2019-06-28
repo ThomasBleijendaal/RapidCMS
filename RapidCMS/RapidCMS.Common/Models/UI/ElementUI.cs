@@ -1,6 +1,6 @@
 ﻿namespace RapidCMS.Common.Models.UI
 {
-    public class Element
+    public class ElementUI
     {
 
     }

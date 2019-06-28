@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RapidCMS.Common.Data;
@@ -29,6 +30,16 @@ namespace TestLibrary.Repositories
             return await _dbContext.Countries.AsNoTracking().ToListAsync();
         }
 
+        public override async Task<IEnumerable<CountryEntity>?> GetAllRelatedAsync(IEntity relatedEntity)
+        {
+            if (relatedEntity is PersonEntity person)
+            {
+                return await _dbContext.Countries.Where(x => x.Persons.Any(x => x.PersonId == person._Id)).ToListAsync();
+            }
+
+            return null;
+        }
+
         public override async Task<CountryEntity> GetByIdAsync(int id, int? parentId)
         {
             return await _dbContext.Countries.AsNoTracking().FirstOrDefaultAsync(x => x._Id == id);
@@ -55,6 +66,26 @@ namespace TestLibrary.Repositories
         public override int? ParseParentKey(string parentId)
         {
             return int.TryParse(parentId, out var id) ? id : default(int?);
+        }
+
+        public override async Task AddAsync(IEntity relatedEntity, int id)
+        {
+            if (relatedEntity is PersonEntity person)
+            {
+                var entry = new PersonCountryEntity { CountryId = id, PersonId = person._Id };
+                _dbContext.PersonContries.Add(entry);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public override async Task RemoveAsync(IEntity relatedEntity, int id)
+        {
+            if (relatedEntity is PersonEntity person)
+            {
+                var entry = new PersonCountryEntity { CountryId = id, PersonId = person._Id };
+                _dbContext.PersonContries.Remove(entry);
+                await _dbContext.SaveChangesAsync();
+            }
         }
 
         public override async Task UpdateAsync(int id, int? parentId, CountryEntity entity, IRelationContainer relations)
