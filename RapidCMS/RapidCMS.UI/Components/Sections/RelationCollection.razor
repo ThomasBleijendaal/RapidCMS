@@ -189,20 +189,24 @@ else
             }
         }
     }
+    else
+    {
+        <div class="content">
+            <p>No furter elements are available.</p>
+        </div>
+    }
 }
 @code {
 
     [Inject] private ICollectionService CollectionService { get; set; }
 
-    [Parameter] private string Action { get; set; }
+    // [Parameter] private string Action { get; set; }
 
     [Parameter] private IEntity RelatedEntity { get; set; }
 
-    [Parameter] private string CollectionAlias { get; set; }
+    // [Parameter] private string CollectionAlias { get; set; }
 
-    [Obsolete]
-    [Parameter] private string? Id { get; set; } = null;
-
+    
     ListUI? UI;
 
     protected override async Task LoadDataAsync()

@@ -182,6 +182,9 @@ namespace RapidCMS.Common.Services
                 case CrudType.Refresh:
                     return new ReloadCommand();
 
+                case CrudType.Return:
+                    throw new NotImplementedException();
+
                 default:
                     throw new InvalidOperationException();
             }
@@ -319,6 +322,9 @@ namespace RapidCMS.Common.Services
                 case CrudType.Refresh:
                     return new ReloadCommand();
 
+                case CrudType.Return:
+                    return new ReturnCommand();
+
                 default:
                     throw new InvalidOperationException();
             }
@@ -403,6 +409,9 @@ namespace RapidCMS.Common.Services
                 case CrudType.Refresh:
                     return new ReloadCommand();
 
+                case CrudType.Return:
+                    return new ReturnCommand();
+
                 default:
                     throw new InvalidOperationException();
             }
@@ -428,7 +437,7 @@ namespace RapidCMS.Common.Services
             }
 
             var existingEntities = listUsageType.HasFlag(UsageType.Add)
-                ? await collection.Repository.InternalGetAllAsync(null)
+                ? await collection.Repository.InternalGetAllNonRelatedAsync(relatedEntity)
                 : await collection.Repository.InternalGetAllRelatedAsync(relatedEntity);
 
             var rootEditContext = new EditContext(newEntity, collection.GetEntityVariant(newEntity), listUsageType, _serviceProvider);
@@ -497,7 +506,7 @@ namespace RapidCMS.Common.Services
             var collection = _root.GetCollection(collectionAlias);
             var usageType = MapActionToUsageType(action);
 
-            var buttons = usageType.HasFlag(UsageType.List)
+            var buttons = usageType.HasFlag(UsageType.List) || usageType.HasFlag(UsageType.Add)
                 ? collection.ListView?.Buttons
                 : collection.ListEditor?.Buttons;
             var button = buttons?.GetAllButtons().FirstOrDefault(x => x.ButtonId == actionId);
@@ -567,6 +576,9 @@ namespace RapidCMS.Common.Services
                 case CrudType.Refresh:
                     return new ReloadCommand();
 
+                case CrudType.Return:
+                    return new ReturnCommand();
+
                 default:
                     throw new InvalidOperationException();
             }
@@ -631,6 +643,7 @@ namespace RapidCMS.Common.Services
 
                 case CrudType.Insert:
                     updatedEntity = await collection.Repository.InternalInsertAsync(null, updatedEntity, relationContainer);
+                    await collection.Repository.InternalAddAsync(relatedEntity, updatedEntity.Id);
                     return new UpdateParameterCommand
                     {
                         Action = Constants.New,

@@ -18,8 +18,7 @@ namespace RapidCMS.Common.Authorization
         public static OperationAuthorizationRequirement Add = new OperationAuthorizationRequirement { Name = nameof(CrudType.Add) };
         public static OperationAuthorizationRequirement Remove = new OperationAuthorizationRequirement { Name = nameof(CrudType.Remove) };
         public static OperationAuthorizationRequirement Pick = new OperationAuthorizationRequirement { Name = nameof(CrudType.Pick) };
-        public static OperationAuthorizationRequirement Refresh = new OperationAuthorizationRequirement { Name = nameof(CrudType.Refresh) };
-
+        
         public static OperationAuthorizationRequirement GetOperationForCrudType(CrudType type)
         {
             return type switch
@@ -34,7 +33,8 @@ namespace RapidCMS.Common.Authorization
                 CrudType.Add => Add,
                 CrudType.Remove => Remove,
                 CrudType.Pick => Pick,
-                CrudType.Refresh => Refresh,
+                CrudType.Refresh => None,
+                CrudType.Return => None,
                 _ => throw new InvalidOperationException($"Operation of type {type} is not supported.")
             };
         }

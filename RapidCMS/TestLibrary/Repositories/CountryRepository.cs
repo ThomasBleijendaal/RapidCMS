@@ -39,6 +39,15 @@ namespace TestLibrary.Repositories
 
             return null;
         }
+        public override async Task<IEnumerable<CountryEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity)
+        {
+            if (relatedEntity is PersonEntity person)
+            {
+                return await _dbContext.Countries.Where(x => !x.Persons.Any(x => x.PersonId == person._Id)).ToListAsync();
+            }
+
+            return null;
+        }
 
         public override async Task<CountryEntity> GetByIdAsync(int id, int? parentId)
         {

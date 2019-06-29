@@ -253,7 +253,7 @@ namespace TestServer
                         .SetRepository<CountryRepository>()
                         .SetListView(list =>
                         {
-                            // list.AddDefaultButton(DefaultButtonType.Cancel);
+                            list.AddDefaultButton(DefaultButtonType.Return);
                             list.SetListPane(pane =>
                             {
                                 pane.AddProperty(p => p.Name);

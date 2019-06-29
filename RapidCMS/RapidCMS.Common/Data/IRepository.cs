@@ -11,6 +11,7 @@ namespace RapidCMS.Common.Data
         Task<IEntity> InternalGetByIdAsync(string id, string? parentId);
         Task<IEnumerable<IEntity>> InternalGetAllAsync(string? parentId);
         Task<IEnumerable<IEntity>> InternalGetAllRelatedAsync(IEntity relatedEntity);
+        Task<IEnumerable<IEntity>> InternalGetAllNonRelatedAsync(IEntity relatedEntity);
 
         /// <summary>
         /// Create a new entity in-memory.
@@ -36,6 +37,7 @@ namespace RapidCMS.Common.Data
         Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
         Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
         Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity);
+        Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity);
 
         Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType);
         Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity, IRelationContainer? relations);
@@ -57,6 +59,8 @@ namespace RapidCMS.Common.Data
         public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
         public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllRelatedAsync)} on the {GetType()}.");
+        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity)
+            => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllNonRelatedAsync)} on the {GetType()}.");
 
         public abstract Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType = null);
         public abstract Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity, IRelationContainer? relations);
@@ -106,6 +110,20 @@ namespace RapidCMS.Common.Data
             try
             {
                 return (await GetAllRelatedAsync(relatedEntity))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+            }
+            finally
+            {
+                Semaphore.SemaphoreSlim.Release();
+            }
+        }
+
+        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllNonRelatedAsync(IEntity relatedEntity)
+        {
+            await Semaphore.SemaphoreSlim.WaitAsync();
+
+            try
+            {
+                return (await GetAllNonRelatedAsync(relatedEntity))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {
@@ -205,6 +223,7 @@ namespace RapidCMS.Common.Data
         Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
         Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
         Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity entity);
+        Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity entity);
 
         Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType);
         Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity, IRelationContainer? relations);
@@ -232,6 +251,8 @@ namespace RapidCMS.Common.Data
         public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
         public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllRelatedAsync)} on {GetType()}.");
+        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity)
+            => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllNonRelatedAsync)} on {GetType()}.");
 
         public abstract Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType = null);
         public abstract Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity, IRelationContainer? relations);
@@ -281,6 +302,20 @@ namespace RapidCMS.Common.Data
             try
             {
                 return (await GetAllRelatedAsync(relatedEntity))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+            }
+            finally
+            {
+                Semaphore.SemaphoreSlim.Release();
+            }
+        }
+
+        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllNonRelatedAsync(IEntity relatedEntity)
+        {
+            await Semaphore.SemaphoreSlim.WaitAsync();
+
+            try
+            {
+                return (await GetAllNonRelatedAsync(relatedEntity))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {

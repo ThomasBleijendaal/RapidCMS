@@ -21,7 +21,8 @@
         Remove = 101,
         Pick = 102,
 
-        // specials
+        // navigation actions
+        Return = 1000,
         Refresh = 1001
     }
 }

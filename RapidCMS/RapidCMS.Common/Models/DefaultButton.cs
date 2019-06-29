@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using RapidCMS.Common.Attributes;
-using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Forms;
@@ -41,6 +40,9 @@ namespace RapidCMS.Common.Models
 
                 case DefaultButtonType.Pick:
                     return CrudType.Pick;
+
+                case DefaultButtonType.Return:
+                    return CrudType.Return;
 
                 default:
                     return 0;

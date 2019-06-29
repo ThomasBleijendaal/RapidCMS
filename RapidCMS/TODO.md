@@ -47,6 +47,8 @@ TODO:
 
 [] Merge NodeViewPane and NodeEditorPaneConfig
 
+[] Implement Return everywhere + fallback to javascript:history.back();
+
 1.1
 
 [] Order of collection form configuration is not maintained

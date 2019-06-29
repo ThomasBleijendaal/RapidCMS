@@ -11,14 +11,18 @@ namespace RapidCMS.UI.Components.Pages
 {
     public abstract class BasePage : ComponentBase
     {
-        [Inject]
-        private IUriHelper UriHelper { get; set; }
+        private UpdateParameterCommand? _previousParameterCommand = null;
 
-        [Inject]
-        private IExceptionHelper ExceptionHelper { get; set; }
+        [Inject] private IUriHelper UriHelper { get; set; }
+        [Inject] private IExceptionHelper ExceptionHelper { get; set; }
 
-        [CascadingParameter(Name = "CustomSections")]
-        protected CustomSectionContainer CustomSections { get; set; }
+        [CascadingParameter(Name = "CustomSections")] protected CustomSectionContainer CustomSections { get; set; }
+
+        [Parameter] protected string Action { get; set; }
+        [Parameter] protected string CollectionAlias { get; set; }
+        [Parameter] protected string VariantAlias { get; set; }
+        [Parameter] protected string? ParentId { get; set; } = null;
+        [Parameter] protected string? Id { get; set; } = null;
 
         protected async Task HandleViewCommandAsync(ViewCommand command)
         {
@@ -27,6 +31,11 @@ namespace RapidCMS.UI.Components.Pages
                 if (command == null)
                 {
                     return;
+                }
+
+                if (command is ReturnCommand && _previousParameterCommand != null)
+                {
+                    command = _previousParameterCommand;
                 }
 
                 switch (command)
@@ -38,6 +47,15 @@ namespace RapidCMS.UI.Components.Pages
                         break;
 
                     case UpdateParameterCommand parameterCommand:
+
+                        _previousParameterCommand = new UpdateParameterCommand
+                        {
+                            Action = Action,
+                            CollectionAlias = CollectionAlias,
+                            Id = Id,
+                            ParentId = ParentId,
+                            VariantAlias = VariantAlias
+                        };
 
                         var data = new Dictionary<string, object>()
                         {
