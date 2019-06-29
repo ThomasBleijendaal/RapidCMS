@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Commands;
@@ -15,6 +16,7 @@ namespace RapidCMS.UI.Components.Pages
 
         [Inject] private IUriHelper UriHelper { get; set; }
         [Inject] private IExceptionHelper ExceptionHelper { get; set; }
+        [Inject] private IJSRuntime JSRuntime { get; set; }
 
         [CascadingParameter(Name = "CustomSections")] protected CustomSectionContainer CustomSections { get; set; }
 
@@ -33,9 +35,16 @@ namespace RapidCMS.UI.Components.Pages
                     return;
                 }
 
-                if (command is ReturnCommand && _previousParameterCommand != null)
+                if (command is ReturnCommand)
                 {
-                    command = _previousParameterCommand;
+                    if (_previousParameterCommand != null)
+                    {
+                        command = _previousParameterCommand;
+                    }
+                    else
+                    {
+                        command = new NavigateBackCommand();
+                    }
                 }
 
                 switch (command)
@@ -43,6 +52,13 @@ namespace RapidCMS.UI.Components.Pages
                     case NavigateCommand navigateCommand:
 
                         UriHelper.NavigateTo(navigateCommand.Uri);
+
+                        break;
+
+                    case NavigateBackCommand navigateBackCommand:
+
+                        // TODO: improve this
+                        await JSRuntime.InvokeAsync<bool>("history.back");
 
                         break;
 

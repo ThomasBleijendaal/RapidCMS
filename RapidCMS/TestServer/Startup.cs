@@ -315,6 +315,7 @@ namespace TestServer
                             editor.AddDefaultButton(DefaultButtonType.SaveNew);
                             editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                             editor.AddDefaultButton(DefaultButtonType.Delete);
+                            editor.AddDefaultButton(DefaultButtonType.Return);
                             editor.AddEditorPane(pane =>
                             {
                                 pane.AddField(f => f.Name);

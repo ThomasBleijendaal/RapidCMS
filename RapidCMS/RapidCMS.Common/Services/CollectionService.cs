@@ -183,7 +183,7 @@ namespace RapidCMS.Common.Services
                     return new ReloadCommand();
 
                 case CrudType.Return:
-                    throw new NotImplementedException();
+                    return new ReturnCommand();
 
                 default:
                     throw new InvalidOperationException();
