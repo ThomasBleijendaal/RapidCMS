@@ -5,27 +5,9 @@ TODO:
 
 1.0
 
-[] ManyToMany Collection Relation
-    [] New IRepository methods
-        -> void AddRelation<RelatedEntityType>(entityId, relatedEntityId)
-        -> void RemoveRelation<RelatedEntityType>(entityId, relatedEntityId)
-        -> IEnumerable<object> GetRelatedEntityIds<RelatedEntityType>(entityId)
-    [] New Collection Page features
-        -> ParentCollectionAlias + ParentId (for sub collection nesting)
-        -> RelatedCollectionAlias + RelatedId (for related collection nesting)
-    [] New Collection Page element
-        -> Pick entity (top of tbody, using UI.RootEditContext, or UI.PickRelatedEntityEditContext)
+[x] ManyToMany Collection Relation
 
-[] Reordering
-    [] New IRepository methods
-        -> {unknown}
-    [] Update to Blazor preview 6 to support @key on EditContext
-        [] In listview: After updating entity 2 the EditContext of entity 1 is reset
-    [] Pagination (consistent during session)
-        [] Redirect after deletion + consistent pagination / Return to parent button action
-        [] Redirect after insertions + no update authorization goes to 403 page
-
-[] List Editor does not take missing editor in account
+[x] List Editor does not take missing editor in account
 
 [] Custom Section support in Collection.razor (lists) (RowSection)
 
@@ -53,6 +35,15 @@ TODO:
 
 [] Order of collection form configuration is not maintained
 
+[] Reordering
+    [] New IRepository methods
+        -> {unknown}
+    [] Update to Blazor preview 6 to support @key on EditContext
+        [] In listview: After updating entity 2 the EditContext of entity 1 is reset
+    [] Pagination (consistent during session)
+        [] Redirect after deletion + consistent pagination / Return to parent button action
+        [] Redirect after insertions + no update authorization goes to 403 page
+
 2.0
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)
     [] ParentId must be IEntity to support different types of nesting of repos
@@ -66,6 +57,7 @@ TODO:
 [] Extensible Dropdown (type ahead style insert of new elements + automatic update when used in list views)
 [] ValueMapper support in NodeView and ListView (instead of hard string cast)
 [] Put library statics in library (css / icons / js)
+[] Investigate if GenericXConfig -> XConfig -> X can be reduces to GenericXConfig -> X (No more FieldConfig<> -> FieldConfig -> Field, but FieldConfig<> -> Field)
 
 x.x
 [] All config checked during startup

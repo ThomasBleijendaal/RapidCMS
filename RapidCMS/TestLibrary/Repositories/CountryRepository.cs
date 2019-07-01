@@ -34,7 +34,7 @@ namespace TestLibrary.Repositories
         {
             if (relatedEntity is PersonEntity person)
             {
-                return await _dbContext.Countries.Where(x => x.Persons.Any(x => x.PersonId == person._Id)).ToListAsync();
+                return await _dbContext.Countries.Where(x => x.Persons.Any(x => x.PersonId == person._Id)).AsNoTracking().ToListAsync();
             }
 
             return null;
@@ -43,7 +43,7 @@ namespace TestLibrary.Repositories
         {
             if (relatedEntity is PersonEntity person)
             {
-                return await _dbContext.Countries.Where(x => !x.Persons.Any(x => x.PersonId == person._Id)).ToListAsync();
+                return await _dbContext.Countries.Where(x => !x.Persons.Any(x => x.PersonId == person._Id)).AsNoTracking().ToListAsync();
             }
 
             return null;
@@ -91,9 +91,12 @@ namespace TestLibrary.Repositories
         {
             if (relatedEntity is PersonEntity person)
             {
-                var entry = new PersonCountryEntity { CountryId = id, PersonId = person._Id };
-                _dbContext.PersonContries.Remove(entry);
-                await _dbContext.SaveChangesAsync();
+                var entry = await _dbContext.PersonContries.FirstOrDefaultAsync(x => x.CountryId == id && x.PersonId == person._Id);
+                if (entry != null)
+                {
+                    _dbContext.PersonContries.Remove(entry);
+                    await _dbContext.SaveChangesAsync();
+                }
             }
         }
 

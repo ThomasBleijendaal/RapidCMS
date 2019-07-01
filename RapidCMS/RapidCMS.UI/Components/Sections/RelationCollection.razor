@@ -191,9 +191,18 @@ else
     }
     else
     {
-        <div class="content">
-            <p>No furter elements are available.</p>
-        </div>
+        if (Action == Constants.Add)
+        {
+            <div class="content">
+                <p>No furter elements are available.</p>
+            </div>
+        }
+        else
+        {
+            <div class="content">
+                <p>No related elements found.</p>
+            </div>
+        }
     }
 }
 @code {
@@ -206,7 +215,7 @@ else
 
     // [Parameter] private string CollectionAlias { get; set; }
 
-    
+
     ListUI? UI;
 
     protected override async Task LoadDataAsync()

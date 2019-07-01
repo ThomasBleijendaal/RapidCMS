@@ -130,6 +130,10 @@ else
                                                     {
                                                         <td colspan=@(UI.UniqueFields.Count - index)>&nbsp;</td>
                                                     }
+                                                    else if (UI.MaxUniqueFieldsInSingleEntity > index)
+                                                    {
+                                                        <td colspan=@(UI.MaxUniqueFieldsInSingleEntity - index)>&nbsp;</td>
+                                                    }
                                                     if (UI.SectionsHaveButtons)
                                                     {
                                                         <td class="button-cell">

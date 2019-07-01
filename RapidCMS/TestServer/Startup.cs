@@ -152,7 +152,7 @@ namespace TestServer
 
             services.AddRapidCMS(config =>
             {
-                config.AllowAnonymousUser();
+                // config.AllowAnonymousUser();
 
                 config.AddCustomButton(typeof(CreateButton));
                 config.AddCustomEditor(typeof(PasswordEditor));
@@ -328,37 +328,49 @@ namespace TestServer
                     collection
                         .SetRepository<PersonRepository>()
                         .SetTreeView(entity => entity.Name)
-                        .SetListEditor(ListEditorType.Block, editor =>
+                        //.SetListEditor(ListEditorType.Block, editor =>
+                        //{
+                        //    editor.AddDefaultButton(DefaultButtonType.New);
+                        //    editor.AddEditor(pane =>
+                        //    {
+                        //        pane.AddField(p => p.Name);
+                        //        pane.AddField(f => f.Countries.Select(x => x.CountryId))
+                        //            .SetName("Countries")
+                        //            .SetType(EditorType.MultiSelect)
+                        //            .SetCollectionRelation<CountryEntity>("country-collection", relation =>
+                        //            {
+                        //                relation
+                        //                    .SetElementIdProperty(x => x._Id)
+                        //                    .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
+
+                        //                relation
+                        //                    .ValidateRelation((person, related) =>
+                        //                    {
+                        //                        if (!related.Count().In(2, 3))
+                        //                        {
+                        //                            return new[] { "Person must have 2 or 3 countries." };
+                        //                        }
+
+                        //                        return default;
+                        //                    });
+                        //            });
+                        //        pane.AddDefaultButton(DefaultButtonType.View);
+                        //        pane.AddDefaultButton(DefaultButtonType.Edit);
+                        //        pane.AddDefaultButton(DefaultButtonType.Delete);
+                        //        pane.AddDefaultButton(DefaultButtonType.SaveNew);
+                        //        pane.AddDefaultButton(DefaultButtonType.SaveExisting);
+                        //    });
+                        //})
+                        .SetListView(view =>
                         {
-                            editor.AddDefaultButton(DefaultButtonType.New);
-                            editor.AddEditor(pane =>
+                            view.AddDefaultButton(DefaultButtonType.New);
+                            view.SetListPane(pane =>
                             {
-                                pane.AddField(p => p.Name);
-                                pane.AddField(f => f.Countries.Select(x => x.CountryId))
-                                    .SetName("Countries")
-                                    .SetType(EditorType.MultiSelect)
-                                    .SetCollectionRelation<CountryEntity>("country-collection", relation =>
-                                    {
-                                        relation
-                                            .SetElementIdProperty(x => x._Id)
-                                            .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
-
-                                        relation
-                                            .ValidateRelation((person, related) =>
-                                            {
-                                                if (!related.Count().In(2, 3))
-                                                {
-                                                    return new[] { "Person must have 2 or 3 countries." };
-                                                }
-
-                                                return default;
-                                            });
-                                    });
+                                pane.AddProperty(p => p.Name);
+                                
                                 pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                                 pane.AddDefaultButton(DefaultButtonType.Delete);
-                                pane.AddDefaultButton(DefaultButtonType.SaveNew);
-                                pane.AddDefaultButton(DefaultButtonType.SaveExisting);
                             });
                         })
                         .SetNodeView(editor =>
@@ -369,8 +381,8 @@ namespace TestServer
                             editor.AddViewPane(pane =>
                             {
                                 pane.AddProperty(f => f.Name);
-                                pane.AddProperty(f => string.Join(", ", f.Countries == null ? Enumerable.Empty<string>() : f.Countries.Select(x => x.Country.Name)))
-                                    .SetName("Countries");
+
+                                pane.AddRelatedCollectionListView<CountryEntity>("related-country-collection");
                             });
                         })
                         .SetNodeEditor(editor =>
@@ -381,10 +393,15 @@ namespace TestServer
                             editor.AddEditorPane(pane =>
                             {
                                 pane.AddField(f => f.Name);
+                            });
+                            editor.AddEditorPane(pane =>
+                            {
+                                pane.AddRelatedCollectionListEditor<CountryEntity>("related-country-collection");
+
                                 //pane.AddField(f => f.Countries.Select(x => x.CountryId))
                                 //    .SetName("Countries")
                                 //    .SetType(EditorType.MultiSelect)
-                                //    .SetCollectionRelation<CountryEntity>("country-collection", relation =>
+                                //    .SetCollectionRelation<CountryEntity>("related-country-collection", relation =>
                                 //    {
                                 //        relation
                                 //            .SetElementIdProperty(x => x._Id)
@@ -393,7 +410,7 @@ namespace TestServer
                                 //        relation
                                 //            .ValidateRelation((person, related) =>
                                 //            {
-                                //                if (!related.Count().In(2,3))
+                                //                if (!related.Count().In(2, 3))
                                 //                {
                                 //                    return new[] { "Person must have 2 or 3 countries." };
                                 //                }
@@ -401,31 +418,6 @@ namespace TestServer
                                 //                return default;
                                 //            });
                                 //    });
-                            });
-                            editor.AddEditorPane(pane =>
-                            {
-                                pane.AddRelatedCollectionListEditor<CountryEntity>("related-country-collection");
-
-                                pane.AddField(f => f.Countries.Select(x => x.CountryId))
-                                    .SetName("Countries")
-                                    .SetType(EditorType.MultiSelect)
-                                    .SetCollectionRelation<CountryEntity>("related-country-collection", relation =>
-                                    {
-                                        relation
-                                            .SetElementIdProperty(x => x._Id)
-                                            .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
-
-                                        relation
-                                            .ValidateRelation((person, related) =>
-                                            {
-                                                if (!related.Count().In(2, 3))
-                                                {
-                                                    return new[] { "Person must have 2 or 3 countries." };
-                                                }
-
-                                                return default;
-                                            });
-                                    });
                             });
                         });
                 });

@@ -40,34 +40,6 @@ namespace RapidCMS.Common.Services
             _serviceProvider = serviceProvider;
         }
 
-        private UsageType MapActionToUsageType(string action)
-        {
-            return action switch
-            {
-                Constants.Edit => UsageType.Edit,
-                Constants.New => UsageType.New,
-                Constants.Add => UsageType.Add,
-                Constants.View => UsageType.View,
-                Constants.List => UsageType.List,
-                Constants.Pick => UsageType.Pick,
-                _ => (UsageType)0
-            };
-        }
-
-        private OperationAuthorizationRequirement MapActionToOperation(string action)
-        {
-            return action switch
-            {
-                Constants.Edit => Operations.Update,
-                Constants.New => Operations.Create,
-                Constants.Add => Operations.Add,
-                Constants.View => Operations.View,
-                Constants.List => Operations.List,
-                Constants.Pick => Operations.Pick,
-                _ => throw new InvalidOperationException()
-            };
-        }
-
         public async Task<NodeUI> GetNodeEditorAsync(string action, string alias, string variantAlias, string? parentId, string? id)
         {
             var usageType = UsageType.Node | MapActionToUsageType(action);
@@ -84,10 +56,10 @@ namespace RapidCMS.Common.Services
 
             var entity = usageType switch
             {
-                UsageType.Node | UsageType.View => await collection.Repository.InternalGetByIdAsync(id ?? throw new InvalidOperationException(), parentId),
-                UsageType.Node | UsageType.Edit => await collection.Repository.InternalGetByIdAsync(id ?? throw new InvalidOperationException(), parentId),
+                UsageType.Node | UsageType.View => await collection.Repository.InternalGetByIdAsync(id ?? throw new InvalidOperationException($"Cannot View Node when {id} is null"), parentId),
+                UsageType.Node | UsageType.Edit => await collection.Repository.InternalGetByIdAsync(id ?? throw new InvalidOperationException($"Cannot Edit Node when {id} is null"), parentId),
                 UsageType.Node | UsageType.New => await collection.Repository.InternalNewAsync(parentId, entityVariant.Type),
-                _ => null
+                _ => throw new InvalidOperationException($"UsageType {usageType} is invalid for this method")
             };
 
             if (entity == null)
@@ -100,15 +72,7 @@ namespace RapidCMS.Common.Services
                 entityVariant = collection.GetEntityVariant(entity);
             }
 
-            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                _httpContextAccessor.HttpContext.User,
-                entity,
-                MapActionToOperation(action));
-
-            if (!authorizationChallenge.Succeeded)
-            {
-                throw new UnauthorizedAccessException();
-            }
+            await EnsureAuthorizedUserAsync(action, entity);
 
             var editContext = new EditContext(entity, entityVariant, usageType, config, _serviceProvider);
 
@@ -133,20 +97,8 @@ namespace RapidCMS.Common.Services
 
             var updatedEntity = editContext.Entity;
 
-            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                _httpContextAccessor.HttpContext.User,
-                updatedEntity,
-                Operations.GetOperationForCrudType(buttonCrudType));
-
-            if (!authorizationChallenge.Succeeded)
-            {
-                throw new UnauthorizedAccessException();
-            }
-
-            if (button.RequiresValidForm && !editContext.IsValid())
-            {
-                throw new InvalidEntityException();
-            }
+            await EnsureAuthorizedUserAsync(buttonCrudType, updatedEntity);
+            EnsureValidEditContext(editContext, button);
 
             var relationContainer = editContext.DataContext.GenerateRelationContainer();
 
@@ -199,15 +151,7 @@ namespace RapidCMS.Common.Services
             var subEntityVariant = collection.GetEntityVariant(variantAlias);
             var newEntity = await collection.Repository.InternalNewAsync(parentId, subEntityVariant.Type);
 
-            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                _httpContextAccessor.HttpContext.User,
-                newEntity,
-                MapActionToOperation(action));
-
-            if (!authorizationChallenge.Succeeded)
-            {
-                throw new UnauthorizedAccessException();
-            }
+            await EnsureAuthorizedUserAsync(action, newEntity);
 
             var existingEntities = await collection.Repository.InternalGetAllAsync(parentId);
 
@@ -276,15 +220,7 @@ namespace RapidCMS.Common.Services
 
             var buttonCrudType = button.GetCrudType();
 
-            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-               _httpContextAccessor.HttpContext.User,
-               entity,
-               Operations.GetOperationForCrudType(buttonCrudType));
-
-            if (!authorizationChallenge.Succeeded)
-            {
-                throw new UnauthorizedAccessException();
-            }
+            await EnsureAuthorizedUserAsync(action, entity);
 
             // TODO: what to do with this action
             if (button is CustomButton customButton)
@@ -349,20 +285,8 @@ namespace RapidCMS.Common.Services
 
             var updatedEntity = editContext.Entity;
 
-            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                _httpContextAccessor.HttpContext.User,
-                updatedEntity,
-                Operations.GetOperationForCrudType(buttonCrudType));
-
-            if (!authorizationChallenge.Succeeded)
-            {
-                throw new UnauthorizedAccessException();
-            }
-
-            if (button.RequiresValidForm && !editContext.IsValid())
-            {
-                throw new InvalidEntityException();
-            }
+            await EnsureAuthorizedUserAsync(buttonCrudType, updatedEntity);
+            EnsureValidEditContext(editContext, button);
 
             var relationContainer = editContext.DataContext.GenerateRelationContainer();
 
@@ -426,15 +350,7 @@ namespace RapidCMS.Common.Services
             var subEntityVariant = collection.EntityVariant;
             var newEntity = await collection.Repository.InternalNewAsync(collectionAlias, subEntityVariant.Type);
 
-            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                _httpContextAccessor.HttpContext.User,
-                newEntity,
-                MapActionToOperation(action));
-
-            if (!authorizationChallenge.Succeeded)
-            {
-                throw new UnauthorizedAccessException();
-            }
+            await EnsureAuthorizedUserAsync(action, relatedEntity);
 
             var existingEntities = listUsageType.HasFlag(UsageType.Add)
                 ? await collection.Repository.InternalGetAllNonRelatedAsync(relatedEntity)
@@ -516,18 +432,18 @@ namespace RapidCMS.Common.Services
                 throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
             }
 
-            var entity = await collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type);
+            var newEntity = await collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type);
 
             var buttonCrudType = button.GetCrudType();
 
-            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-               _httpContextAccessor.HttpContext.User,
-               entity,
-               Operations.GetOperationForCrudType(buttonCrudType));
-
-            if (!authorizationChallenge.Succeeded)
+            // authorization is dependent on whether the user tries to add something to the related entity, or if they are modifying the collections entity
+            if (buttonCrudType.In(CrudType.Create))
             {
-                throw new UnauthorizedAccessException();
+                await EnsureAuthorizedUserAsync(buttonCrudType, newEntity);
+            }
+            else
+            {
+                await EnsureAuthorizedUserAsync(buttonCrudType, relatedEntity);
             }
 
             // TODO: what to do with this action
@@ -603,20 +519,8 @@ namespace RapidCMS.Common.Services
 
             var updatedEntity = editContext.Entity;
 
-            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                _httpContextAccessor.HttpContext.User,
-                updatedEntity,
-                Operations.GetOperationForCrudType(buttonCrudType));
-
-            if (!authorizationChallenge.Succeeded)
-            {
-                throw new UnauthorizedAccessException();
-            }
-
-            if (button.RequiresValidForm && !editContext.IsValid())
-            {
-                throw new InvalidEntityException();
-            }
+            await EnsureAuthorizedUserAsync(buttonCrudType, updatedEntity);
+            EnsureValidEditContext(editContext, button);
 
             var relationContainer = editContext.DataContext.GenerateRelationContainer();
 
@@ -677,6 +581,65 @@ namespace RapidCMS.Common.Services
                 default:
                     throw new InvalidOperationException();
             }
+        }
+
+        private static void EnsureValidEditContext(EditContext editContext, Button button)
+        {
+            if (button.RequiresValidForm && !editContext.IsValid())
+            {
+                throw new InvalidEntityException();
+            }
+        }
+
+        private Task EnsureAuthorizedUserAsync(CrudType crudType, IEntity entity)
+        {
+            return EnsureAuthorizedUserAsync(Operations.GetOperationForCrudType(crudType), entity);
+        }
+
+        private Task EnsureAuthorizedUserAsync(string action, IEntity entity)
+        {
+            return EnsureAuthorizedUserAsync(MapActionToOperation(action), entity);
+        }
+
+        private async Task EnsureAuthorizedUserAsync(OperationAuthorizationRequirement operation, IEntity entity)
+        {
+            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                            _httpContextAccessor.HttpContext.User,
+                            entity,
+                            operation);
+
+            if (!authorizationChallenge.Succeeded)
+            {
+                throw new UnauthorizedAccessException();
+            }
+        }
+
+        private OperationAuthorizationRequirement MapActionToOperation(string action)
+        {
+            return action switch
+            {
+                Constants.Edit => Operations.Update,
+                Constants.New => Operations.Create,
+                Constants.Add => Operations.Add,
+                Constants.View => Operations.View,
+                Constants.List => Operations.List,
+                Constants.Pick => Operations.Pick,
+                _ => throw new InvalidOperationException()
+            };
+        }
+
+        private UsageType MapActionToUsageType(string action)
+        {
+            return action switch
+            {
+                Constants.Edit => UsageType.Edit,
+                Constants.New => UsageType.New,
+                Constants.Add => UsageType.Add,
+                Constants.View => UsageType.View,
+                Constants.List => UsageType.List,
+                Constants.Pick => UsageType.Pick,
+                _ => (UsageType)0
+            };
         }
     }
 }

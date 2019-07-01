@@ -46,7 +46,7 @@ namespace RapidCMS.Common.Enums
 
         // TODO: implement
         [DefaultIconLabel(Icon = "arrow-left", Label = "Return")]
-        [Actions(UsageType.Node, UsageType.List)]
+        [Actions(UsageType.Node, UsageType.List | UsageType.Add, UsageType.List | UsageType.Edit, UsageType.List | UsageType.New, UsageType.List | UsageType.Pick)]
         Return
     }
 }

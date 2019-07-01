@@ -12,7 +12,6 @@ namespace RapidCMS.Common.Forms
 {
     // TODO: fix memory leak due to events
     // TODO: make EditContext expose serviceProvider via interface
-    // TODO: make EditContext expose IDataCollection via interface
     public sealed class EditContext
     {
         private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();

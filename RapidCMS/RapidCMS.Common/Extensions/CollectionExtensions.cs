@@ -179,9 +179,7 @@ namespace RapidCMS.Common.Extensions
                                 Buttons = new List<Button>(),
                                 Fields = config.Properties.ToList(x => x.ToField()),
                                 SubCollectionLists = config.SubCollectionLists.ToList(x => x.ToSubCollectionList()),
-
-                                // TODO:
-                                RelatedCollectionLists = new List<RelatedCollectionList>()
+                                RelatedCollectionLists = config.RelatedCollectionLists.ToList(x => x.ToRelatedCollectionList())
                             };
 
                             return pane;
