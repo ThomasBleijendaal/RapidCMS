@@ -52,13 +52,11 @@ namespace RapidCMS.Common.Services
                 throw new InvalidOperationException($"Failed to get UI configuration from collection {alias} for action {action}");
             }
 
-            var entityVariant = collection.GetEntityVariant(variantAlias);
-
             var entity = usageType switch
             {
                 UsageType.Node | UsageType.View => await collection.Repository.InternalGetByIdAsync(id ?? throw new InvalidOperationException($"Cannot View Node when {id} is null"), parentId),
                 UsageType.Node | UsageType.Edit => await collection.Repository.InternalGetByIdAsync(id ?? throw new InvalidOperationException($"Cannot Edit Node when {id} is null"), parentId),
-                UsageType.Node | UsageType.New => await collection.Repository.InternalNewAsync(parentId, entityVariant.Type),
+                UsageType.Node | UsageType.New => await collection.Repository.InternalNewAsync(parentId, collection.GetEntityVariant(variantAlias).Type),
                 _ => throw new InvalidOperationException($"UsageType {usageType} is invalid for this method")
             };
 
@@ -67,14 +65,9 @@ namespace RapidCMS.Common.Services
                 throw new Exception("Failed to get entity for given id(s)");
             }
 
-            if (!usageType.HasFlag(UsageType.New))
-            {
-                entityVariant = collection.GetEntityVariant(entity);
-            }
-
             await EnsureAuthorizedUserAsync(action, entity);
 
-            var editContext = new EditContext(entity, entityVariant, usageType, config, _serviceProvider);
+            var editContext = new EditContext(entity, usageType, config, _serviceProvider);
 
             var node = await _uiService.GenerateNodeUIAsync(editContext, config);
             return node;
@@ -155,12 +148,12 @@ namespace RapidCMS.Common.Services
 
             var existingEntities = await collection.Repository.InternalGetAllAsync(parentId);
 
-            var rootEditContext = new EditContext(newEntity, collection.GetEntityVariant(newEntity), listUsageType, _serviceProvider);
+            var rootEditContext = new EditContext(newEntity, listUsageType, _serviceProvider);
 
             if (listUsageType == UsageType.List)
             {
                 var entities = existingEntities
-                    .Select(ent => new EditContext(ent, collection.GetEntityVariant(ent), UsageType.Node | MapActionToUsageType(Constants.Edit), _serviceProvider))
+                    .Select(ent => new EditContext(ent, UsageType.Node | MapActionToUsageType(Constants.Edit), _serviceProvider))
                     .ToList();
 
                 if (collection.ListView == null)
@@ -182,13 +175,13 @@ namespace RapidCMS.Common.Services
                 var entities = existingEntities
                     .Select(ent =>
                     {
-                        return new EditContext(ent, collection.GetEntityVariant(ent), UsageType.Node | MapActionToUsageType(Constants.Edit), collection.ListEditor, _serviceProvider);
+                        return new EditContext(ent, UsageType.Node | MapActionToUsageType(Constants.Edit), collection.ListEditor, _serviceProvider);
                     })
                     .ToList();
 
                 if (listUsageType.HasFlag(UsageType.New))
                 {
-                    entities.Insert(0, new EditContext(newEntity, collection.GetEntityVariant(newEntity), UsageType.Node | MapActionToUsageType(Constants.New), collection.ListEditor, _serviceProvider));
+                    entities.Insert(0, new EditContext(newEntity, UsageType.Node | MapActionToUsageType(Constants.New), collection.ListEditor, _serviceProvider));
                 }
 
                 var editor = await _uiService.GenerateListUIAsync(rootEditContext, entities, collection.ListEditor);
@@ -356,12 +349,12 @@ namespace RapidCMS.Common.Services
                 ? await collection.Repository.InternalGetAllNonRelatedAsync(relatedEntity)
                 : await collection.Repository.InternalGetAllRelatedAsync(relatedEntity);
 
-            var rootEditContext = new EditContext(newEntity, collection.GetEntityVariant(newEntity), listUsageType, _serviceProvider);
+            var rootEditContext = new EditContext(relatedEntity, listUsageType, _serviceProvider);
 
             if (listUsageType == UsageType.List)
             {
                 var entities = existingEntities
-                    .Select(ent => new EditContext(ent, collection.GetEntityVariant(ent), UsageType.Node | MapActionToUsageType(Constants.Edit), _serviceProvider))
+                    .Select(ent => new EditContext(ent, UsageType.Node | MapActionToUsageType(Constants.Edit), _serviceProvider))
                     .ToList();
 
                 if (collection.ListView == null)
@@ -376,7 +369,7 @@ namespace RapidCMS.Common.Services
             else if (listUsageType.HasFlag(UsageType.Add))
             {
                 var entities = existingEntities
-                    .Select(ent => new EditContext(ent, collection.GetEntityVariant(ent), UsageType.Node | MapActionToUsageType(Constants.Pick), _serviceProvider))
+                    .Select(ent => new EditContext(ent, UsageType.Node | MapActionToUsageType(Constants.Pick), _serviceProvider))
                     .ToList();
 
                 if (collection.ListView == null)
@@ -398,13 +391,13 @@ namespace RapidCMS.Common.Services
                 var entities = existingEntities
                     .Select(ent =>
                     {
-                        return new EditContext(ent, collection.GetEntityVariant(ent), UsageType.Node | MapActionToUsageType(Constants.Edit), collection.ListEditor, _serviceProvider);
+                        return new EditContext(ent, UsageType.Node | MapActionToUsageType(Constants.Edit), collection.ListEditor, _serviceProvider);
                     })
                     .ToList();
 
                 if (listUsageType.HasFlag(UsageType.New))
                 {
-                    entities.Insert(0, new EditContext(newEntity, collection.GetEntityVariant(newEntity), UsageType.Node | MapActionToUsageType(Constants.New), collection.ListEditor, _serviceProvider));
+                    entities.Insert(0, new EditContext(newEntity, UsageType.Node | MapActionToUsageType(Constants.New), collection.ListEditor, _serviceProvider));
                 }
 
                 var editor = await _uiService.GenerateListUIAsync(rootEditContext, entities, collection.ListEditor);
@@ -436,15 +429,7 @@ namespace RapidCMS.Common.Services
 
             var buttonCrudType = button.GetCrudType();
 
-            // authorization is dependent on whether the user tries to add something to the related entity, or if they are modifying the collections entity
-            if (buttonCrudType.In(CrudType.Create))
-            {
-                await EnsureAuthorizedUserAsync(buttonCrudType, newEntity);
-            }
-            else
-            {
-                await EnsureAuthorizedUserAsync(buttonCrudType, relatedEntity);
-            }
+            await EnsureAuthorizedUserAsync(buttonCrudType, newEntity);
 
             // TODO: what to do with this action
             if (button is CustomButton customButton)
@@ -520,6 +505,7 @@ namespace RapidCMS.Common.Services
             var updatedEntity = editContext.Entity;
 
             await EnsureAuthorizedUserAsync(buttonCrudType, updatedEntity);
+
             EnsureValidEditContext(editContext, button);
 
             var relationContainer = editContext.DataContext.GenerateRelationContainer();

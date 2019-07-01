@@ -5,10 +5,6 @@ TODO:
 
 1.0
 
-[x] ManyToMany Collection Relation
-
-[x] List Editor does not take missing editor in account
-
 [] Custom Section support in Collection.razor (lists) (RowSection)
 
 [] Button support everywhere (no more new List<Button>)
@@ -34,6 +30,7 @@ TODO:
 1.1
 
 [] Order of collection form configuration is not maintained
+[] Tidy up Operations
 
 [] Reordering
     [] New IRepository methods
@@ -58,6 +55,7 @@ TODO:
 [] ValueMapper support in NodeView and ListView (instead of hard string cast)
 [] Put library statics in library (css / icons / js)
 [] Investigate if GenericXConfig -> XConfig -> X can be reduces to GenericXConfig -> X (No more FieldConfig<> -> FieldConfig -> Field, but FieldConfig<> -> Field)
+[] GetRelationListViewAsync method evaluates authorization for all buttons to relatedEntity, while the processing functions will evaluate authorizaton sometimes to IEntity and sometimes to IRelatedEntity.
 
 x.x
 [] All config checked during startup

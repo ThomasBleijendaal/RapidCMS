@@ -29,6 +29,8 @@ namespace RapidCMS.Common.Services
 
         public async Task<NodeUI> GenerateNodeUIAsync(EditContext editContext, Node nodeEditor)
         {
+            var type = editContext.Entity.GetType();
+
             var nodeUI = new NodeUI(editContext)
             {
                 Buttons = nodeEditor.Buttons == null
@@ -48,7 +50,7 @@ namespace RapidCMS.Common.Services
                         .ToListAsync(button => button.ToUI()),
 
                 Sections = nodeEditor.EditorPanes
-                    .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(editContext.EntityVariant.Type))
+                    .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(type))
                     .ToList(pane =>
                     {
                         var fields = pane.Fields.Select(field =>
