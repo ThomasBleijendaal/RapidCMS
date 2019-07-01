@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using RapidCMS.Common.Attributes;
-using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Forms;
@@ -17,16 +16,34 @@ namespace RapidCMS.Common.Models
             {
                 case DefaultButtonType.New:
                     return CrudType.Create;
+
                 case DefaultButtonType.SaveNew:
                     return CrudType.Insert;
+
                 case DefaultButtonType.SaveExisting:
                     return CrudType.Update;
+
                 case DefaultButtonType.Delete:
                     return CrudType.Delete;
+
                 case DefaultButtonType.Edit:
                     return CrudType.Read;
+
                 case DefaultButtonType.View:
                     return CrudType.View;
+
+                case DefaultButtonType.Remove:
+                    return CrudType.Remove;
+
+                case DefaultButtonType.Add:
+                    return CrudType.Add;
+
+                case DefaultButtonType.Pick:
+                    return CrudType.Pick;
+
+                case DefaultButtonType.Return:
+                    return CrudType.Return;
+
                 default:
                     return 0;
             }

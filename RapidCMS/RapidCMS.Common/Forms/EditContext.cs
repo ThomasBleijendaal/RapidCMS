@@ -12,7 +12,6 @@ namespace RapidCMS.Common.Forms
 {
     // TODO: fix memory leak due to events
     // TODO: make EditContext expose serviceProvider via interface
-    // TODO: make EditContext expose IDataCollection via interface
     public sealed class EditContext
     {
         private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();
@@ -20,13 +19,11 @@ namespace RapidCMS.Common.Forms
 
         internal EditContext(
             IEntity entity,
-            EntityVariant entityVariant,
             UsageType usageType,
             IServiceProvider serviceProvider)
         {
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             UsageType = usageType;
-            EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
             DataContext = DataContext.Empty;
@@ -34,14 +31,12 @@ namespace RapidCMS.Common.Forms
 
         internal EditContext(
             IEntity entity, 
-            EntityVariant entityVariant, 
             UsageType usageType, 
             Node config,
             IServiceProvider serviceProvider)
         {
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             UsageType = usageType;
-            EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
             DataContext = new DataContext(config ?? throw new ArgumentNullException(nameof(config)), _serviceProvider);
@@ -49,14 +44,12 @@ namespace RapidCMS.Common.Forms
 
         internal EditContext(
             IEntity entity,
-            EntityVariant entityVariant,
             UsageType usageType,
             ListEditor config,
             IServiceProvider serviceProvider)
         {
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             UsageType = usageType;
-            EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
             DataContext = new DataContext(config ?? throw new ArgumentNullException(nameof(config)), _serviceProvider);
@@ -64,7 +57,6 @@ namespace RapidCMS.Common.Forms
 
         public IEntity Entity { get; private set; }
         public UsageType UsageType { get; private set; }
-        public EntityVariant EntityVariant { get; private set; }
 
         internal DataContext DataContext { get; private set; }
 
@@ -139,6 +131,12 @@ namespace RapidCMS.Common.Forms
                     yield return message;
                 }
             }
+        }
+
+        public void AddValidationMessage(IPropertyMetadata property, string message)
+        {
+            GetPropertyState(property).AddMessage(message);
+            GetPropertyState(property).WasValidated = true;
         }
 
         private bool HasValidationMessages()

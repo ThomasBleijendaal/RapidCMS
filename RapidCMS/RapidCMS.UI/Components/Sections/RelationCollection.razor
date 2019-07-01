@@ -1,16 +1,5 @@
 @inherits BasePage
 
-@page "/collection/{Action}/{CollectionAlias}"
-@page "/collection/{Action}/{CollectionAlias}/{ParentId}"
-
-@using RapidCMS.Common.Enums
-@using RapidCMS.Common.Extensions
-@using RapidCMS.Common.Models.UI
-@using RapidCMS.Common.Services
-@using RapidCMS.UI.Extensions
-@using RapidCMS.UI.Models
-@using RapidCMS.UI.Components.Forms
-
 @if (UI == null)
 {
     <div class="content">
@@ -130,10 +119,6 @@ else
                                                     {
                                                         <td colspan=@(UI.UniqueFields.Count - index)>&nbsp;</td>
                                                     }
-                                                    else if (UI.MaxUniqueFieldsInSingleEntity > index)
-                                                    {
-                                                        <td colspan=@(UI.MaxUniqueFieldsInSingleEntity - index)>&nbsp;</td>
-                                                    }
                                                     if (UI.SectionsHaveButtons)
                                                     {
                                                         <td class="button-cell">
@@ -204,21 +189,32 @@ else
             }
         }
     }
+    else
+    {
+        if (Action == Constants.Add)
+        {
+            <div class="content">
+                <p>No furter elements are available.</p>
+            </div>
+        }
+        else
+        {
+            <div class="content">
+                <p>No related elements found.</p>
+            </div>
+        }
+    }
 }
-@functions {
+@code {
 
     [Inject] private ICollectionService CollectionService { get; set; }
 
     // [Parameter] private string Action { get; set; }
 
-    // [Parameter] private string? ParentId { get; set; } = null;
+    [Parameter] private IEntity RelatedEntity { get; set; }
 
     // [Parameter] private string CollectionAlias { get; set; }
 
-    // [Parameter] private string VariantAlias { get; set; }
-
-    // [Obsolete]
-    // [Parameter] private string? Id { get; set; } = null;
 
     ListUI? UI;
 
@@ -226,7 +222,7 @@ else
     {
         try
         {
-            UI = await CollectionService.GetCollectionListViewAsync(Action, CollectionAlias, VariantAlias, ParentId);
+            UI = await CollectionService.GetRelationListViewAsync(Action, CollectionAlias, RelatedEntity);
 
             StateHasChanged();
         }
@@ -249,7 +245,7 @@ else
                 throw new ArgumentException($"Argument must be of type {typeof(ButtonViewModel)}.", nameof(sender));
             }
 
-            var command = await CollectionService.ProcessListActionAsync(Action, CollectionAlias, ParentId, model.ButtonId, args.Data);
+            var command = await CollectionService.ProcessRelationActionAsync(Action, CollectionAlias, RelatedEntity, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }
@@ -275,7 +271,7 @@ else
                 throw new InvalidOperationException("UI is null");
             }
 
-            var command = await CollectionService.ProcessListActionAsync(Action, CollectionAlias, ParentId, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
+            var command = await CollectionService.ProcessRelationActionAsync(Action, CollectionAlias, RelatedEntity, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }

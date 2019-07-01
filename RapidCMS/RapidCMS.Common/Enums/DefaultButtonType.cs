@@ -37,6 +37,16 @@ namespace RapidCMS.Common.Enums
         // Remove existing Entity
         [DefaultIconLabel(Icon = "circle-x", Label = "Remove")]
         [Actions(UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.View)]
-        Remove
+        Remove,
+
+        // Pick existing Entity to Add
+        [DefaultIconLabel(Icon = "plus", Label = "Pick")]
+        [Actions(UsageType.Node | UsageType.Pick)]
+        Pick,
+
+        // TODO: implement
+        [DefaultIconLabel(Icon = "arrow-left", Label = "Return")]
+        [Actions(UsageType.Node, UsageType.List | UsageType.Add, UsageType.List | UsageType.Edit, UsageType.List | UsageType.New, UsageType.List | UsageType.Pick)]
+        Return
     }
 }

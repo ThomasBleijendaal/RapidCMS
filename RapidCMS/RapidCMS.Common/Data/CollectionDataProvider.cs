@@ -38,7 +38,7 @@ namespace RapidCMS.Common.Data
             _entity = entity;
 
             var parentId = _repositoryParentIdProperty?.Getter.Invoke(_entity) as string;
-            var entities = await _repository._GetAllAsObjectsAsync(parentId);
+            var entities = await _repository.InternalGetAllAsync(parentId);
 
             _elements = entities
                 .Select(entity => (IElement)new ElementDTO

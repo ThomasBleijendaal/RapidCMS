@@ -1,0 +1,80 @@
+@inherits BaseSection
+
+@using RapidCMS.Common.Models.UI
+@using RapidCMS.Common
+@using RapidCMS.Common.Enums
+@using RapidCMS.UI.Extensions
+
+@if (Section != null && Section.Elements != null && Section.Elements.Any() && EditContext != null)
+{
+    var collapseEmptyCells = UI.EmptyVariantColumnVisibility == EmptyVariantColumnVisibility.Collapse;
+    var index = 0;
+
+    <tr>
+        @{
+            foreach (var element in Section.Elements)
+            {
+                if (element is FieldUI field)
+                {
+                    var name = (field as ExpressionFieldUI)?.Expression.PropertyName ?? (field as PropertyFieldUI)?.Property.PropertyName;
+                    if (name == null)
+                    {
+                        continue;
+                    }
+
+                    if (!collapseEmptyCells)
+                    {
+                        var position = UI.UniqueFields?.FindIndex(x => x.Name == field.Name) ?? UI.MaxUniqueFieldsInSingleEntity;
+
+                        // fill in the gaps (when dealing with multiple entity variants)
+                        if (position > index)
+                        {
+                            <td colspan=@(position - index)>&nbsp;</td>
+
+                            index = position;
+                        }
+                    }
+
+                    index++;
+
+                    if (field is ExpressionFieldUI expressionField)
+                    {
+                        <td>@expressionField.Expression.StringGetter(EditContext.Entity)</td>
+                    }
+                    else if (field is PropertyFieldUI propertyField)
+                    {
+                        <td>
+                            <UIEditor Field="field" Entity="@EditContext.Entity" />
+                        </td>
+                    }
+                }
+            }
+            // fill in the gaps (when dealing with multiple entity variants)
+            if (!collapseEmptyCells && UI.UniqueFields?.Count > index)
+            {
+                <td colspan=@(UI.UniqueFields.Count - index)>&nbsp;</td>
+            }
+            if (UI.SectionsHaveButtons)
+            {
+                <td class="button-cell">
+                    @if (Section.Buttons != null && Section.Buttons.Any())
+                    {
+                        @foreach (var button in Section.Buttons)
+                        {
+                            var model = button.ToViewModel();
+
+                            // TODO: deattach
+                            // model.OnClick += NodeButtonOnClickAsync;
+
+                            <UIButton Button="button" Model="model" />
+                        }
+                    }
+                </td>
+            }
+        }
+    </tr>
+}
+
+@functions {
+    [Parameter] public ListUI UI { get; private set; }
+}

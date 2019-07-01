@@ -3,7 +3,7 @@
 @using RapidCMS.UI.Helpers
 
 <input value=@GetValue()
-       onchange=@(args => SetValue(args.Value))
+       @onchange=@(args => SetValue(args.Value))
        class="form-control @(CssHelper.GetValidationClass(State))" />
 
 @foreach (var message in GetValidationMessages())

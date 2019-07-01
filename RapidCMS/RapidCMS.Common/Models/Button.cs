@@ -18,6 +18,7 @@ namespace RapidCMS.Common.Models
         internal List<Button> Buttons { get; set; }
 
         // TODO: how does this behave in custom buttons?
+        // TODO: add EntityVariant to this
         internal object Metadata { get; set; }
 
         internal abstract CrudType GetCrudType();

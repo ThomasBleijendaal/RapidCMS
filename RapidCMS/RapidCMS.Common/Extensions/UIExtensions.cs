@@ -110,5 +110,13 @@ namespace RapidCMS.Common.Extensions
                 CollectionAlias = subCollection.CollectionAlias
             };
         }
+
+        internal static RelatedCollectionUI ToUI(this RelatedCollectionList relatedCollection)
+        {
+            return new RelatedCollectionUI
+            {
+                CollectionAlias = relatedCollection.CollectionAlias
+            };
+        }
     }
 }

@@ -9,9 +9,9 @@
 @using RapidCMS.Common.Data
 @using RapidCMS.Common.Models.UI
 @using RapidCMS.Common.Services
+@using RapidCMS.UI.Extensions
 @using RapidCMS.UI.Models
-
-@inject ICollectionService CollectionService
+@using RapidCMS.UI.Components.Forms
 
 @if (UI == null)
 {
@@ -21,14 +21,14 @@
 }
 else
 {
-    <CascadingValue Name="EditContext" Value="UI.EditContext">
+    <CascadingEditContext EditContext=@UI.EditContext>
         @if (UI.Buttons != null)
         {
             <div class="top-row first">
                 @{
                     @foreach (var button in UI.Buttons)
                     {
-                        var model = CreateButtonViewModel(button);
+                        var model = button.ToViewModel();
 
                         // TODO: deattach
                         model.OnClick += ButtonOnClickAsync;
@@ -53,20 +53,22 @@ else
                 }
             }
         }
-    </CascadingValue>
+    </CascadingEditContext>
 }
 
-@functions {
+@code {
 
-    [Parameter] private string Action { get; set; }
+    [Inject] private ICollectionService CollectionService { get; set; }
 
-    [Parameter] private string? ParentId { get; set; } = null;
+    // [Parameter] private string Action { get; set; }
 
-    [Parameter] private string CollectionAlias { get; set; }
+    // [Parameter] private string? ParentId { get; set; } = null;
 
-    [Parameter] private string VariantAlias { get; set; }
+    // [Parameter] private string CollectionAlias { get; set; }
 
-    [Parameter] private string? Id { get; set; } = null;
+    // [Parameter] private string VariantAlias { get; set; }
+
+    // [Parameter] private string? Id { get; set; } = null;
 
     NodeUI? UI;
 

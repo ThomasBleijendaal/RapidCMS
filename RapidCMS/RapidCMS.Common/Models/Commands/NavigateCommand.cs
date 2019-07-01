@@ -5,4 +5,8 @@ namespace RapidCMS.Common.Models.Commands
     {
         public string Uri { get; set; }
     }
+    public class NavigateBackCommand : ViewCommand
+    {
+
+    }
 }

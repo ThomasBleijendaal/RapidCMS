@@ -30,7 +30,7 @@ namespace RapidCMS.Common.Services
         public async Task<TreeUI?> GetTreeAsync(string alias, string? parentId)
         {
             var collection = _root.GetCollection(alias);
-            var testEntity = await collection.Repository._NewAsync(parentId, collection.EntityVariant.Type);
+            var testEntity = await collection.Repository.InternalNewAsync(parentId, collection.EntityVariant.Type);
 
             var viewAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
                 _httpContextAccessor.HttpContext.User,
@@ -71,7 +71,7 @@ namespace RapidCMS.Common.Services
 
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
             {
-                var entities = await collection.Repository._GetAllAsObjectsAsync(parentId);
+                var entities = await collection.Repository.InternalGetAllAsync(parentId);
 
                 return await entities.ToListAsync(async entity =>
                 {

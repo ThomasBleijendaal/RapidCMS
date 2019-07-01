@@ -1,0 +1,10 @@
+@using RapidCMS.Common.Forms
+
+<CascadingValue @key=@EditContext.Entity Name="EditContext" Value=@EditContext>
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter] private RenderFragment ChildContent { get; set; }
+    [Parameter] private EditContext EditContext { get; set; }
+}

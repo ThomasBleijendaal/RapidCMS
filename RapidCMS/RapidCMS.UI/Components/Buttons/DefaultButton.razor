@@ -2,7 +2,7 @@
 
 <button type="button" 
         class="btn @(Model.IsPrimary ? "btn-primary" : (Model.ShouldConfirm) ? "btn-danger" : "btn-light")" 
-        onclick=@ButtonClickAsync
+        @onclick=@ButtonClickAsync
         disabled=@(!FormIsValid && Model.RequiresValidForm ? "disabled" : null)>
     <i class="oi oi-@Model.Icon"></i> @Model.Label
 </button>

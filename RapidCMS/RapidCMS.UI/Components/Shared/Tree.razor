@@ -12,7 +12,7 @@ else if (UI.RootVisible)
     <li class="nav-item">
         @if (UI.EntitiesVisible)
         {
-            <button onclick="@((UIMouseEventArgs e) => NodesVisible = !NodesVisible)" class="toggle">
+            <button @onclick="@((UIMouseEventArgs e) => NodesVisible = !NodesVisible)" class="toggle">
                 @if (NodesVisible)
                 {
                     <i class="oi oi-chevron-bottom"></i>

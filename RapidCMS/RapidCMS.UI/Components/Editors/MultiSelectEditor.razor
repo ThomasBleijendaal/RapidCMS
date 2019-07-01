@@ -25,7 +25,7 @@
                                    id="@group-option@(index)"
                                    name=@group
                                    checked=@check
-                                   onchange=@((UIChangeEventArgs __e) => OnChangeAsync(__e, option.Id)) />
+                                   @onchange=@((UIChangeEventArgs __e) => OnChangeAsync(__e, option.Id)) />
 
                             @option.Labels.First()
                         </label>

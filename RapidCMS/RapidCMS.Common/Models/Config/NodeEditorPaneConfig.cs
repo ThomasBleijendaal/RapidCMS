@@ -25,6 +25,7 @@ namespace RapidCMS.Common.Models.Config
 
         internal List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
         internal List<SubCollectionListConfig> SubCollectionLists { get; set; } = new List<SubCollectionListConfig>();
+        internal List<RelatedCollectionListConfig> RelatedCollectionLists { get; set; } = new List<RelatedCollectionListConfig>();
     }
 
     public class NodeEditorPaneConfig<TEntity> : NodeEditorPaneConfig
@@ -76,6 +77,20 @@ namespace RapidCMS.Common.Models.Config
             config.Index = FieldIndex++;
 
             SubCollectionLists.Add(config);
+
+            return this;
+        }
+
+        public NodeEditorPaneConfig<TEntity> AddRelatedCollectionListEditor<TRelatedEntity>(string collectionAlias, Action<RelatedCollectionListConfig<TEntity,TRelatedEntity>>? configure = null)
+            where TRelatedEntity : IEntity
+        {
+            var config = new RelatedCollectionListConfig<TEntity, TRelatedEntity>(collectionAlias);
+
+            configure?.Invoke(config);
+
+            config.Index = FieldIndex++;
+
+            RelatedCollectionLists.Add(config);
 
             return this;
         }

@@ -2,22 +2,26 @@
 
 @using RapidCMS.UI.Components.Editors
 @using RapidCMS.UI.Helpers
+@using Microsoft.WindowsAzure.Storage
+@using Microsoft.AspNetCore.Components
+@using Blazor.FileReader
 
 <div class="input-group">
     <div class="input-group-prepend">
-        <button type="button" class="btn btn-danger" onclick="@WaitAsync">
-            <i class="oi oi-timer"></i> Wait 10 sec
+        <button type="button" class="btn" @onclick=@UploadAsync>
+            <i class="oi oi-timer"></i> Upload file to blob
         </button>
     </div>
-    <input value=@GetValue()
-           onchange=@(args => SetValue(args.Value))
+    <input type="file"
+           @ref="fileUpload"
+           @onchange=@ResetValidation
            class="form-control @(CssHelper.GetValidationClass(State))" />
 
     @if (waiting)
     {
-        <p>
-            Waiting..
-        </p>
+        <div class="input-group-append">
+            Uploading
+        </div>
     }
 
     @foreach (var message in GetValidationMessages())
@@ -29,20 +33,57 @@
 </div>
 
 @functions {
-    private bool waiting = false;
+    ElementRef fileUpload;
 
-    private async Task WaitAsync()
+    [Inject] CloudStorageAccount Account { get; set; }
+    [Inject] IFileReaderService FileReaderService { get; set; }
+
+    private bool waiting = false;
+    
+    private async Task ResetValidation(UIChangeEventArgs args)
+    {
+        EditContext.NotifyPropertyChanged(Property);
+    }
+
+    private async Task UploadAsync(UIMouseEventArgs args)
     {
         EditContext.NotifyPropertyBusy(Property);
         waiting = true;
-
         StateHasChanged();
 
-        await Task.Delay(10000);
+        var blobClient = Account.CreateCloudBlobClient();
+        var blobContainer = blobClient.GetContainerReference("blazor-uploads");
+        await blobContainer.CreateIfNotExistsAsync();
+
+        var fileUploadRef = FileReaderService.CreateReference(fileUpload);
+
+        foreach (var file in await fileUploadRef.EnumerateFilesAsync())
+        {
+            var fileInfo = await file.ReadFileInfoAsync();
+
+            if (fileInfo.Size > 10 * 1024 * 1024)
+            {
+                EditContext.AddValidationMessage(Property, "File is too big. Max 10 MB");
+
+                continue;
+            }
+
+            try
+            {
+                var blob = blobContainer.GetBlockBlobReference(Guid.NewGuid().ToString());
+
+                var stream = await file.CreateMemoryStreamAsync(8192);
+
+                await blob.UploadFromStreamAsync(stream);
+            }
+            catch (Exception ex)
+            {
+                EditContext.AddValidationMessage(Property, $"Failed to upload file: {ex.Message}");
+            }
+        }
 
         EditContext.NotifyPropertyFinished(Property);
         waiting = false;
-
         StateHasChanged();
     }
 }

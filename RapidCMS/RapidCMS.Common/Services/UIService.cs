@@ -29,6 +29,8 @@ namespace RapidCMS.Common.Services
 
         public async Task<NodeUI> GenerateNodeUIAsync(EditContext editContext, Node nodeEditor)
         {
+            var type = editContext.Entity.GetType();
+
             var nodeUI = new NodeUI(editContext)
             {
                 Buttons = nodeEditor.Buttons == null
@@ -48,17 +50,22 @@ namespace RapidCMS.Common.Services
                         .ToListAsync(button => button.ToUI()),
 
                 Sections = nodeEditor.EditorPanes
-                    .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(editContext.EntityVariant.Type))
+                    .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(type))
                     .ToList(pane =>
                     {
                         var fields = pane.Fields.Select(field =>
                         {
-                            return (field.Index, element: (Element)field.ToUI(_serviceProvider, editContext));
+                            return (field.Index, element: (ElementUI)field.ToUI(_serviceProvider, editContext));
                         });
 
                         var subCollections = pane.SubCollectionLists.Select(subCollection =>
                         {
-                            return (subCollection.Index, element: (Element)subCollection.ToUI());
+                            return (subCollection.Index, element: (ElementUI)subCollection.ToUI());
+                        });
+
+                        var relatedCollections = pane.RelatedCollectionLists.Select(relatedCollection =>
+                        {
+                            return (relatedCollection.Index, element: (ElementUI)relatedCollection.ToUI());
                         });
 
                         return new SectionUI
@@ -66,7 +73,9 @@ namespace RapidCMS.Common.Services
                             CustomAlias = pane.CustomAlias,
                             Label = pane.Label,
 
-                            Elements = fields.Union(subCollections)
+                            Elements = fields
+                                .Union(subCollections)
+                                .Union(relatedCollections)
                                 .OrderBy(x => x.Index)
                                 .ToList(x => x.element)
                         };
@@ -76,7 +85,7 @@ namespace RapidCMS.Common.Services
             return nodeUI;
         }
 
-        public async Task<ListUI> GenerateListUIAsync(EditContext rootEditContext, IEnumerable<EditContext> editContexts, ListView listView)
+        public async Task<ListUI> GenerateListUIAsync(EditContext rootEditContext, List<EditContext> editContexts, ListView listView)
         {
             var fieldsPerType = new Dictionary<Type, IEnumerable<FieldUI>>();
             var sectionsHaveButtons = false;
@@ -129,7 +138,7 @@ namespace RapidCMS.Common.Services
                                         })
                                         .ToListAsync(button => button.ToUI()),
 
-                                Elements = listView.ViewPane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider, editContext))
+                                Elements = listView.ViewPane.Fields.ToList(field => (ElementUI)field.ToUI(_serviceProvider, editContext))
                             };
                             
                             if (!fieldsPerType.ContainsKey(type) && section.Elements != null)
@@ -155,7 +164,7 @@ namespace RapidCMS.Common.Services
             return list;
         }
 
-        public async Task<ListUI> GenerateListUIAsync(EditContext rootEditContext, IEnumerable<EditContext> editContexts, ListEditor listEditor)
+        public async Task<ListUI> GenerateListUIAsync(EditContext rootEditContext, List<EditContext> editContexts, ListEditor listEditor)
         {
             var fieldsPerType = new Dictionary<Type, IEnumerable<FieldUI>>();
             var sectionsHaveButtons = false;
@@ -214,7 +223,7 @@ namespace RapidCMS.Common.Services
                                             })
                                             .ToListAsync(button => button.ToUI()),
 
-                                        Elements = pane.Fields.ToList(field => (Element)field.ToUI(_serviceProvider, editContext))
+                                        Elements = pane.Fields.ToList(field => (ElementUI)field.ToUI(_serviceProvider, editContext))
                                     };
 
                                     if (!fieldsPerType.ContainsKey(type) && section.Elements != null)
