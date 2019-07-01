@@ -110,7 +110,7 @@ namespace RapidCMS.Common.Services
                         })
                         .ToListAsync(button => button.ToUI()),
 
-                SectionsForEntity = listView.ViewPane == null
+                SectionsForEntity = listView.ViewPanes == null
                     ? null
                     : await editContexts.ToDictionaryAsync(
                         editContext => editContext.Entity.Id,
@@ -118,37 +118,41 @@ namespace RapidCMS.Common.Services
                         {
                             var type = editContext.Entity.GetType();
 
-                            // TODO: view pane not yet capable of entity variants
-                            var section = new SectionUI
-                            {
-                                // TODO: custom?
-                                // CustomAlias
+                            return await listView.ViewPanes
+                                .Where(pane => pane.VariantType.IsSameTypeOrDerivedFrom(type))
+                                .ToListAsync(async pane =>
+                                {
+                                    // TODO: view pane not yet capable of entity variants
+                                    var section = new SectionUI
+                                    {
+                                        CustomAlias = pane.CustomAlias,
 
-                                Buttons = await listView.ViewPane.Buttons
-                                        .GetAllButtons()
-                                        .Where(button => button.IsCompatibleWithForm(editContext))
-                                        .WhereAsync(async button =>
-                                        {
-                                            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                                                _httpContextAccessor.HttpContext.User,
-                                                editContext.Entity,
-                                                Operations.GetOperationForCrudType(button.GetCrudType()));
+                                        Buttons = await pane.Buttons
+                                                .GetAllButtons()
+                                                .Where(button => button.IsCompatibleWithForm(editContext))
+                                                .WhereAsync(async button =>
+                                                {
+                                                    var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                                                        _httpContextAccessor.HttpContext.User,
+                                                        editContext.Entity,
+                                                        Operations.GetOperationForCrudType(button.GetCrudType()));
 
-                                            return authorizationChallenge.Succeeded;
-                                        })
-                                        .ToListAsync(button => button.ToUI()),
+                                                    return authorizationChallenge.Succeeded;
+                                                })
+                                                .ToListAsync(button => button.ToUI()),
 
-                                Elements = listView.ViewPane.Fields.ToList(field => (ElementUI)field.ToUI(_serviceProvider, editContext))
-                            };
-                            
-                            if (!fieldsPerType.ContainsKey(type) && section.Elements != null)
-                            {
-                                fieldsPerType.Add(type, section.Elements.Where(x => x is FieldUI).ToList(x => (FieldUI)x));
-                            }
+                                        Elements = pane.Fields.ToList(field => (ElementUI)field.ToUI(_serviceProvider, editContext))
+                                    };
 
-                            sectionsHaveButtons = sectionsHaveButtons || (section.Buttons?.Any() ?? false);
+                                    if (!fieldsPerType.ContainsKey(type) && section.Elements != null)
+                                    {
+                                        fieldsPerType.Add(type, section.Elements.Where(x => x is FieldUI).ToList(x => (FieldUI)x));
+                                    }
 
-                            return new List<SectionUI> { section };
+                                    sectionsHaveButtons = sectionsHaveButtons || (section.Buttons?.Any() ?? false);
+
+                                    return section;
+                                });
                         })
             };
 

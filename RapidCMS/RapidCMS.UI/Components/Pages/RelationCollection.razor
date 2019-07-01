@@ -71,73 +71,81 @@ else
                                 <CascadingEditContext EditContext=@context>
                                     @foreach (var section in sections)
                                     {
-                                        var index = 0;
-
-                                        @if (section.Elements != null)
+                                        if (!string.IsNullOrEmpty(section.CustomAlias))
                                         {
-                                            <tr>
-                                                @{
-                                                    foreach (var element in section.Elements)
-                                                    {
-                                                        if (element is FieldUI field)
+                                            @CustomSections.GetCustomSection(section.CustomAlias, section);
+                                        }
+                                        else
+                                        {
+
+                                            var index = 0;
+
+                                            @if (section.Elements != null)
+                                            {
+                                                <tr>
+                                                    @{
+                                                        foreach (var element in section.Elements)
                                                         {
-                                                            var name = (field as ExpressionFieldUI)?.Expression.PropertyName ?? (field as PropertyFieldUI)?.Property.PropertyName;
-                                                            if (name == null)
+                                                            if (element is FieldUI field)
                                                             {
-                                                                continue;
-                                                            }
-
-                                                            if (!collapseEmptyCells)
-                                                            {
-                                                                var position = UI.UniqueFields?.FindIndex(x => x.Name == field.Name) ?? UI.MaxUniqueFieldsInSingleEntity;
-
-                                                                // fill in the gaps (when dealing with multiple entity variants)
-                                                                if (position > index)
+                                                                var name = (field as ExpressionFieldUI)?.Expression.PropertyName ?? (field as PropertyFieldUI)?.Property.PropertyName;
+                                                                if (name == null)
                                                                 {
-                                                                    <td colspan=@(position - index)>&nbsp;</td>
-
-                                                                    index = position;
+                                                                    continue;
                                                                 }
-                                                            }
 
-                                                            index++;
+                                                                if (!collapseEmptyCells)
+                                                                {
+                                                                    var position = UI.UniqueFields?.FindIndex(x => x.Name == field.Name) ?? UI.MaxUniqueFieldsInSingleEntity;
 
-                                                            if (field is ExpressionFieldUI expressionField)
-                                                            {
-                                                                <td>@expressionField.Expression.StringGetter(context.Entity)</td>
-                                                            }
-                                                            else if (field is PropertyFieldUI propertyField)
-                                                            {
-                                                                <td>
-                                                                    <UIEditor Field="field" Entity="@context.Entity" />
-                                                                </td>
+                                                                    // fill in the gaps (when dealing with multiple entity variants)
+                                                                    if (position > index)
+                                                                    {
+                                                                        <td colspan=@(position - index)>&nbsp;</td>
+
+                                                                        index = position;
+                                                                    }
+                                                                }
+
+                                                                index++;
+
+                                                                if (field is ExpressionFieldUI expressionField)
+                                                                {
+                                                                    <td>@expressionField.Expression.StringGetter(context.Entity)</td>
+                                                                }
+                                                                else if (field is PropertyFieldUI propertyField)
+                                                                {
+                                                                    <td>
+                                                                        <UIEditor Field="field" Entity="@context.Entity" />
+                                                                    </td>
+                                                                }
                                                             }
                                                         }
-                                                    }
-                                                    // fill in the gaps (when dealing with multiple entity variants)
-                                                    if (!collapseEmptyCells && UI.UniqueFields?.Count > index)
-                                                    {
-                                                        <td colspan=@(UI.UniqueFields.Count - index)>&nbsp;</td>
-                                                    }
-                                                    if (UI.SectionsHaveButtons)
-                                                    {
-                                                        <td class="button-cell">
-                                                            @if (section.Buttons != null && section.Buttons.Any())
-                                                            {
-                                                                @foreach (var button in section.Buttons)
+                                                        // fill in the gaps (when dealing with multiple entity variants)
+                                                        if (!collapseEmptyCells && UI.UniqueFields?.Count > index)
+                                                        {
+                                                            <td colspan=@(UI.UniqueFields.Count - index)>&nbsp;</td>
+                                                        }
+                                                        if (UI.SectionsHaveButtons)
+                                                        {
+                                                            <td class="button-cell">
+                                                                @if (section.Buttons != null && section.Buttons.Any())
                                                                 {
-                                                                    var model = button.ToViewModel();
+                                                                    @foreach (var button in section.Buttons)
+                                                                    {
+                                                                        var model = button.ToViewModel();
 
-                                                                    // TODO: deattach
-                                                                    model.OnClick += NodeButtonOnClickAsync;
+                                                                        // TODO: deattach
+                                                                        model.OnClick += NodeButtonOnClickAsync;
 
-                                                                    <UIButton Button="button" Model="model" />
+                                                                        <UIButton Button="button" Model="model" />
+                                                                    }
                                                                 }
-                                                            }
-                                                        </td>
+                                                            </td>
+                                                        }
                                                     }
-                                                }
-                                            </tr>
+                                                </tr>
+                                            }
                                         }
                                     }
                                 </CascadingEditContext>
@@ -209,12 +217,7 @@ else
 
     [Inject] private ICollectionService CollectionService { get; set; }
 
-    // [Parameter] private string Action { get; set; }
-
     [Parameter] private IEntity RelatedEntity { get; set; }
-
-    // [Parameter] private string CollectionAlias { get; set; }
-
 
     ListUI? UI;
 

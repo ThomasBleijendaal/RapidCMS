@@ -12,6 +12,7 @@ namespace RapidCMS.Common.Models.Config
 {
     public class ListViewPaneConfig
     {
+        internal Type VariantType { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
 
         // TODO: not the best name

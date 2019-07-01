@@ -10,7 +10,7 @@ namespace RapidCMS.Common.Models.Config
     public class ListViewConfig
     {
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
-        internal ListViewPaneConfig ListViewPane { get; set; }
+        internal List<ListViewPaneConfig> ListViewPanes { get; set; } = new List<ListViewPaneConfig>();
     }
 
     public class ListViewConfig<TEntity> : ListViewConfig
@@ -60,14 +60,21 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        // TODO: add polymorphism
-        public ListViewConfig<TEntity> SetListPane(Action<ListViewPaneConfig<TEntity>> configure)
+        public ListViewConfig<TEntity> AddListPane(Action<ListViewPaneConfig<TEntity>> configure)
+        {
+            return AddListPane<TEntity>(configure);
+        }
+
+        public ListViewConfig<TEntity> AddListPane<TDerivedEntity>(Action<ListViewPaneConfig<TEntity>> configure)
+            where TDerivedEntity : TEntity
         {
             var config = new ListViewPaneConfig<TEntity>();
 
             configure.Invoke(config);
 
-            ListViewPane = config;
+            config.VariantType = typeof(TDerivedEntity);
+
+            ListViewPanes.Add(config);
 
             return this;
         }

@@ -78,7 +78,7 @@ namespace RapidCMS.Common.Extensions
                 };
 
                 var collection = new Collection(configReceiver.Name, configReceiver.Alias, variant, configReceiver.RepositoryType, configReceiver.Recursive);
-                
+
                 if (configReceiver.TreeView != null)
                 {
                     collection.TreeView = new TreeView
@@ -102,6 +102,8 @@ namespace RapidCMS.Common.Extensions
 
                 if (configReceiver.ListView != null)
                 {
+                    var views = configReceiver.ListView.ListViewPanes;
+
                     collection.ListView = new ListView
                     {
                         Buttons = configReceiver.ListView.Buttons.ToList(button => button switch
@@ -110,17 +112,20 @@ namespace RapidCMS.Common.Extensions
                             CustomButtonConfig customButton => customButton.ToCustomButton(serviceProvider),
                             _ => throw new InvalidOperationException("Invalid ListView Button")
                         }),
-                        ViewPane = configReceiver.ListView.ListViewPane == null ? null :
-                            new ViewPane
+                        ViewPanes = views.ToList(view =>
+                        {
+                            return new Pane
                             {
-                                Buttons = configReceiver.ListView.ListViewPane.Buttons.ToList(button => button switch
+                                VariantType = view.VariantType,
+                                Buttons = view.Buttons.ToList(button => button switch
                                 {
                                     DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
                                     CustomButtonConfig customButton => customButton.ToCustomButton(serviceProvider),
                                     _ => throw new InvalidOperationException("Invalid ListView ViewPane Button")
                                 }),
-                                Fields = configReceiver.ListView.ListViewPane.Properties.ToList(x => x.ToField())
-                            }
+                                Fields = view.Properties.ToList(x => x.ToField())
+                            };
+                        })
                     };
                 }
 

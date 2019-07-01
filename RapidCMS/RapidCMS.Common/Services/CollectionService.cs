@@ -265,7 +265,7 @@ namespace RapidCMS.Common.Services
             var usageType = MapActionToUsageType(action);
 
             var buttons = usageType.HasFlag(UsageType.List)
-                ? collection.ListView?.ViewPane?.Buttons
+                ? collection.ListView?.ViewPanes?.SelectMany(pane => pane.Buttons)
                 : collection.ListEditor?.EditorPanes?.SelectMany(pane => pane.Buttons);
             var button = buttons?.GetAllButtons().FirstOrDefault(x => x.ButtonId == actionId);
 
@@ -491,7 +491,7 @@ namespace RapidCMS.Common.Services
             var usageType = MapActionToUsageType(action);
 
             var buttons = usageType.HasFlag(UsageType.List) || usageType.HasFlag(UsageType.Add)
-                ? collection.ListView?.ViewPane?.Buttons
+                ? collection.ListView?.ViewPanes?.SelectMany(pane => pane.Buttons)
                 : collection.ListEditor?.EditorPanes?.SelectMany(pane => pane.Buttons);
             var button = buttons?.GetAllButtons().FirstOrDefault(x => x.ButtonId == actionId);
 

@@ -152,7 +152,7 @@ namespace TestServer
 
             services.AddRapidCMS(config =>
             {
-                // config.AllowAnonymousUser();
+                config.AllowAnonymousUser();
 
                 config.AddCustomButton(typeof(CreateButton));
                 config.AddCustomEditor(typeof(PasswordEditor));
@@ -171,7 +171,7 @@ namespace TestServer
                         .SetListView(list =>
                         {
                             list.AddDefaultButton(DefaultButtonType.New);
-                            list.SetListPane(pane =>
+                            list.AddListPane(pane =>
                             {
                                 pane.AddProperty(p => p.Name);
                                 pane.AddDefaultButton(DefaultButtonType.View);
@@ -254,7 +254,7 @@ namespace TestServer
                         .SetListView(list =>
                         {
                             list.AddDefaultButton(DefaultButtonType.Return);
-                            list.SetListPane(pane =>
+                            list.AddListPane(pane =>
                             {
                                 pane.AddProperty(p => p.Name);
                                 pane.AddDefaultButton(DefaultButtonType.Pick);
@@ -284,7 +284,7 @@ namespace TestServer
                         .SetListView(list =>
                         {
                             list.AddDefaultButton(DefaultButtonType.New);
-                            list.SetListPane(pane =>
+                            list.AddListPane(pane =>
                             {
                                 pane.AddProperty(p => p.Name);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
@@ -364,7 +364,7 @@ namespace TestServer
                         .SetListView(view =>
                         {
                             view.AddDefaultButton(DefaultButtonType.New);
-                            view.SetListPane(pane =>
+                            view.AddListPane(pane =>
                             {
                                 pane.AddProperty(p => p.Name);
                                 
@@ -603,7 +603,7 @@ namespace TestServer
             {
                 listViewConfig
                     .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
-                    .SetListPane(pane =>
+                    .AddListPane(pane =>
                     {
                         pane.AddProperty(x => x._Id.ToString()).SetName("Id");
                         pane.AddProperty(x => x.Name).SetDescription("This is a name");
@@ -618,7 +618,7 @@ namespace TestServer
             {
                 listViewConfig
                     .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
-                    .SetListPane(pane =>
+                    .AddListPane(pane =>
                     {
                         pane.AddProperty(x => x._Id.ToString()).SetName("Id");
                         pane.AddProperty(x => x.Name).SetDescription("This is a name");
@@ -923,7 +923,7 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.New, isPrimary: true)
                     .AddCustomButton<CreateButtonActionHandler>(typeof(CreateButton), "Custom create!");
 
-                config.SetListPane(listPaneConfig =>
+                config.AddListPane(listPaneConfig =>
                 {
                     listPaneConfig.AddProperty(x => x.Id);
                     listPaneConfig.AddProperty(x => x.Title);

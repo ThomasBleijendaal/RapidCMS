@@ -11,7 +11,6 @@ namespace TestLibrary.Authorization
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, OperationAuthorizationRequirement requirement, CountryEntity resource)
         {
-            //if (resource._Id < 4)
             if (requirement.In(Operations.None, Operations.Add, Operations.Pick, Operations.Remove, Operations.Insert))
             {
                 context.Succeed(requirement);
