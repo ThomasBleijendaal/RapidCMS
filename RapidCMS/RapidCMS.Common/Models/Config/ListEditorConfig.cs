@@ -68,8 +68,6 @@ namespace RapidCMS.Common.Models.Config
             return AddEditor<TEntity>(configure);
         }
 
-        // TODO: do not allow for more than one editor of the same EntityType
-
         public ListEditorConfig<TEntity> AddEditor<TDerivedEntity>(Action<ListEditorPaneConfig<TDerivedEntity>> configure)
             where TDerivedEntity : TEntity
         {

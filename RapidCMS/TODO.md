@@ -1,45 +1,53 @@
-1. Unique collection alias -> yes. TODO: enforce
-2. Public or internal? -> internal all internals 
-
 TODO:
 
 1.0
 
-[] Custom Section support in Collection.razor (lists) (RowSection)
+[] Tidy up Operations
+[] Documentation + Examples
 
-[] Button support everywhere (no more new List<Button>)
-    [] ButtonActionHandler as generic parameter to CustomButton
-    [] Bind CustomButton and ActionHandler more together
+1.1
+
+[] Date editor
+
+[] Pagination (consistent during session)
+
+[] Order of collection form configuration is not maintained
+  
+[] Redirect after deletion + consistent pagination / Return to parent button action
+[] Redirect after insertions + no update authorization goes to 403 page
 
 [] Property, Field, etc naming not totally consistent -> Refactor all names and methods
 
-[] Top button bar should be side bar with meta
-[] Navigation command during pre-render (server side rendering) fails
-[] Use Blazor CSS parameter features
-[] Date editor
 [] Refresh data / relation collections upon save
     [] More events from EditContext and bind nested EditContext to root
     [] Make side bar tree react to collection actions (CRUD)
         [] Make possible to open sub collections with hidden root element
     [] OnBeforeUnload EditContext IsModified check
 
-[] Merge NodeViewPane and NodeEditorPaneConfig
+[] Custom Section support in Collection.razor (lists) (RowSection)
+    [] Fix further
+
+1.2
 
 [] Implement Return everywhere + fallback to javascript:history.back();
-
-1.1
-
-[] Order of collection form configuration is not maintained
-[] Tidy up Operations
 
 [] Reordering
     [] New IRepository methods
         -> {unknown}
     [] Update to Blazor preview 6 to support @key on EditContext
         [] In listview: After updating entity 2 the EditContext of entity 1 is reset
-    [] Pagination (consistent during session)
-        [] Redirect after deletion + consistent pagination / Return to parent button action
-        [] Redirect after insertions + no update authorization goes to 403 page
+
+[] Merge NodeViewPane and NodeEditorPaneConfig
+
+1.3
+
+[] Button support everywhere (no more new List<Button>)
+    [] ButtonActionHandler as generic parameter to CustomButton
+    [] Bind CustomButton and ActionHandler more together
+
+[] Top button bar should be side bar with meta
+[] Navigation command during pre-render (server side rendering) fails
+[] Use Blazor CSS parameter features
 
 2.0
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)
@@ -56,6 +64,7 @@ TODO:
 [] Put library statics in library (css / icons / js)
 [] Investigate if GenericXConfig -> XConfig -> X can be reduces to GenericXConfig -> X (No more FieldConfig<> -> FieldConfig -> Field, but FieldConfig<> -> Field)
 [] GetRelationListViewAsync method evaluates authorization for all buttons to relatedEntity, while the processing functions will evaluate authorizaton sometimes to IEntity and sometimes to IRelatedEntity.
+[] Hide sections of the tree when user is unauthorized
 
 x.x
 [] All config checked during startup
