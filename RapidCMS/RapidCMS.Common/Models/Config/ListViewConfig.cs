@@ -60,19 +60,30 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ListViewConfig<TEntity> AddListPane(Action<ListViewPaneConfig<TEntity>> configure)
+        public ListViewConfig<TEntity> AddRow(Action<ListViewPaneConfig<TEntity>> configure)
         {
-            return AddListPane<TEntity>(configure);
+            return AddRow<TEntity>(configure);
         }
 
-        public ListViewConfig<TEntity> AddListPane<TDerivedEntity>(Action<ListViewPaneConfig<TEntity>> configure)
+        public ListViewConfig<TEntity> AddRow(Type customSectionType, Action<ListViewPaneConfig<TEntity>> configure)
+        {
+            return AddRow<TEntity>(customSectionType, configure);
+        }
+
+        public ListViewConfig<TEntity> AddRow<TDerivedEntity>(Action<ListViewPaneConfig<TDerivedEntity>> configure)
             where TDerivedEntity : TEntity
         {
-            var config = new ListViewPaneConfig<TEntity>();
+            return AddRow(null, configure);
+        }
 
-            configure.Invoke(config);
+        private ListViewConfig<TEntity> AddRow<TDerivedEntity>(Type? customSectionType, Action<ListViewPaneConfig<TDerivedEntity>>? configure)
+            where TDerivedEntity : TEntity
+        {
+            var config = customSectionType == null
+                ? new ListViewPaneConfig<TDerivedEntity>(typeof(TDerivedEntity))
+                : new ListViewPaneConfig<TDerivedEntity>(typeof(TDerivedEntity), customSectionType);
 
-            config.VariantType = typeof(TDerivedEntity);
+            configure?.Invoke(config);
 
             ListViewPanes.Add(config);
 

@@ -116,6 +116,7 @@ namespace RapidCMS.Common.Extensions
                         {
                             return new Pane
                             {
+                                CustomAlias = view.CustomAlias,
                                 VariantType = view.VariantType,
                                 Buttons = view.Buttons.ToList(button => button switch
                                 {
@@ -147,6 +148,7 @@ namespace RapidCMS.Common.Extensions
                         {
                             return new Pane
                             {
+                                CustomAlias = editor.CustomAlias,
                                 VariantType = editor.VariantType,
                                 Buttons = editor.Buttons.ToList(button => button switch
                                 {

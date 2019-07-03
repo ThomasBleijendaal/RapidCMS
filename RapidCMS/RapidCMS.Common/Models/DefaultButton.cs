@@ -27,7 +27,7 @@ namespace RapidCMS.Common.Models
                     return CrudType.Delete;
 
                 case DefaultButtonType.Edit:
-                    return CrudType.Read;
+                    return CrudType.Edit;
 
                 case DefaultButtonType.View:
                     return CrudType.View;

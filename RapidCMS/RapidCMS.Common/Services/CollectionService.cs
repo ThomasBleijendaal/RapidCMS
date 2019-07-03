@@ -106,7 +106,7 @@ namespace RapidCMS.Common.Services
                 case CrudType.View:
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.View, collectionAlias, entityVariant, parentId, id) };
 
-                case CrudType.Read:
+                case CrudType.Edit:
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
 
                 case CrudType.Update:
@@ -297,7 +297,7 @@ namespace RapidCMS.Common.Services
                 case CrudType.View:
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.View, collectionAlias, entityVariant, parentId, id) };
 
-                case CrudType.Read:
+                case CrudType.Edit:
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
 
                 case CrudType.Update:
@@ -524,7 +524,7 @@ namespace RapidCMS.Common.Services
                 case CrudType.View:
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.View, collectionAlias, entityVariant, null, id) };
 
-                case CrudType.Read:
+                case CrudType.Edit:
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, null, id) };
 
                 case CrudType.Update:
@@ -607,9 +607,9 @@ namespace RapidCMS.Common.Services
                 Constants.Edit => Operations.Update,
                 Constants.New => Operations.Create,
                 Constants.Add => Operations.Add,
-                Constants.View => Operations.View,
-                Constants.List => Operations.List,
-                Constants.Pick => Operations.Pick,
+                Constants.View => Operations.Read,
+                Constants.List => Operations.Read,
+                Constants.Pick => Operations.Add,
                 _ => throw new InvalidOperationException()
             };
         }

@@ -180,7 +180,7 @@ else
                             {
                                 foreach (var section in sections)
                                 {
-                                    if (section.Buttons != null)
+                                    if (section.Buttons != null && section.Buttons.Any())
                                     {
                                         <div class="top-row">
                                             @foreach (var button in section.Buttons)

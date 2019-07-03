@@ -12,6 +12,13 @@ namespace RapidCMS.Common.Models.Config
 {
     public class ListViewPaneConfig
     {
+        protected ListViewPaneConfig(Type variantType)
+        {
+            VariantType = variantType ?? throw new ArgumentNullException(nameof(variantType));
+        }
+
+        internal string? CustomAlias { get; set; }
+
         internal Type VariantType { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
 
@@ -22,6 +29,15 @@ namespace RapidCMS.Common.Models.Config
     public class ListViewPaneConfig<TEntity> : ListViewPaneConfig
         where TEntity : IEntity
     {
+        public ListViewPaneConfig(Type variantType) : base(variantType)
+        {
+        }
+
+        public ListViewPaneConfig(Type variantType, Type customSectionType) : base(variantType)
+        {
+            CustomAlias = customSectionType.FullName;
+        }
+
         public ListViewPaneConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig

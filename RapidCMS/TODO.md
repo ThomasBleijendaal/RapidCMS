@@ -2,10 +2,11 @@ TODO:
 
 1.0
 
-[] Tidy up Operations
 [] Documentation + Examples
 
 1.1
+
+[] Dashboard
 
 [] Date editor
 
@@ -48,6 +49,10 @@ TODO:
 [] Top button bar should be side bar with meta
 [] Navigation command during pre-render (server side rendering) fails
 [] Use Blazor CSS parameter features
+
+1.4
+
+[] Add more than one view to page (to allow for ListView + CustomBlock)
 
 2.0
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)

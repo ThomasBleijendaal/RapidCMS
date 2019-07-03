@@ -2,7 +2,11 @@
 
 @using RapidCMS.UI.Components.Sections
 
-<div class="content">
-    <h1 class="display-1">Super fancy dashboard</h1>
-    <p>Entity <code>@EditContext.Entity.Id</code> performing <kbd>@EditContext.UsageType.ToString()</kbd>.</p>
-</div>
+<tr>
+    <td>
+        <p>Custom pane</p>
+    </td>
+    <td colspan="99">
+        <p>Entity <code>@EditContext.Entity.Id</code> performing <kbd>@EditContext.UsageType.ToString()</kbd>.</p>
+    </td>
+</tr>

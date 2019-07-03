@@ -6,33 +6,55 @@ namespace RapidCMS.Common.Authorization
 {
     public static class Operations
     {
-        // TODO: consolidate (Add + Pick similair etc)
-        public static OperationAuthorizationRequirement None = new OperationAuthorizationRequirement { Name = nameof(CrudType.None) };
-        public static OperationAuthorizationRequirement List = new OperationAuthorizationRequirement { Name = nameof(CrudType.List) };
-        public static OperationAuthorizationRequirement View = new OperationAuthorizationRequirement { Name = nameof(CrudType.View) };
-        public static OperationAuthorizationRequirement Create = new OperationAuthorizationRequirement { Name = nameof(CrudType.Create) };
-        public static OperationAuthorizationRequirement Read = new OperationAuthorizationRequirement { Name = nameof(CrudType.Read) };
-        public static OperationAuthorizationRequirement Insert = new OperationAuthorizationRequirement { Name = nameof(CrudType.Insert) };
-        public static OperationAuthorizationRequirement Update = new OperationAuthorizationRequirement { Name = nameof(CrudType.Update) };
-        public static OperationAuthorizationRequirement Delete = new OperationAuthorizationRequirement { Name = nameof(CrudType.Delete) };
-        public static OperationAuthorizationRequirement Add = new OperationAuthorizationRequirement { Name = nameof(CrudType.Add) };
-        public static OperationAuthorizationRequirement Remove = new OperationAuthorizationRequirement { Name = nameof(CrudType.Remove) };
-        public static OperationAuthorizationRequirement Pick = new OperationAuthorizationRequirement { Name = nameof(CrudType.Pick) };
+        /// <summary>
+        /// Operation with no data action (refresh data, return to previous view, etc)
+        /// </summary>
+        public static OperationAuthorizationRequirement None = new OperationAuthorizationRequirement { Name = nameof(None) };
+
+        /// <summary>
+        /// Read-only viewing of entity
+        /// </summary>
+        public static OperationAuthorizationRequirement Read = new OperationAuthorizationRequirement { Name = nameof(Read) };
+
+        /// <summary>
+        /// Creating a new instance of entity
+        /// </summary>
+        public static OperationAuthorizationRequirement Create = new OperationAuthorizationRequirement { Name = nameof(Create) };
+
+        /// <summary>
+        /// Modifying an existing instance of entity
+        /// </summary>
+        public static OperationAuthorizationRequirement Update = new OperationAuthorizationRequirement { Name = nameof(Update) };
+
+        /// <summary>
+        /// Deleting an existing instance of entity
+        /// </summary>
+        public static OperationAuthorizationRequirement Delete = new OperationAuthorizationRequirement { Name = nameof(Delete) };
+
+        /// <summary>
+        /// Adding a relation to an existing entity
+        /// </summary>
+        public static OperationAuthorizationRequirement Add = new OperationAuthorizationRequirement { Name = nameof(Add) };
+
+        /// <summary>
+        /// Removing an existing relation to an existing entity
+        /// </summary>
+        public static OperationAuthorizationRequirement Remove = new OperationAuthorizationRequirement { Name = nameof(Remove) };
         
         public static OperationAuthorizationRequirement GetOperationForCrudType(CrudType type)
         {
             return type switch
             {
                 CrudType.None => None,
-                CrudType.View => View,
+                CrudType.View => Read,
                 CrudType.Create => Create,
-                CrudType.Read => Read,
-                CrudType.Insert => Insert,
+                CrudType.Edit => Update,
+                CrudType.Insert => Create,
                 CrudType.Update => Update,
                 CrudType.Delete => Delete,
                 CrudType.Add => Add,
                 CrudType.Remove => Remove,
-                CrudType.Pick => Pick,
+                CrudType.Pick => Add,
                 CrudType.Refresh => None,
                 CrudType.Return => None,
                 _ => throw new InvalidOperationException($"Operation of type {type} is not supported.")

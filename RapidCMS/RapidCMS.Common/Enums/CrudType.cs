@@ -9,7 +9,7 @@
         View = 1,
         List = 1,
         Create = 2,
-        Read = 3,
+        Edit = 3,
 
         // modifyers
         Insert = 4,

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
@@ -13,6 +12,13 @@ namespace RapidCMS.Common.Models.Config
 {
     public class ListEditorPaneConfig
     {
+        protected ListEditorPaneConfig(Type variantType)
+        {
+            VariantType = variantType ?? throw new ArgumentNullException(nameof(variantType));
+        }
+
+        internal string? CustomAlias { get; set; }
+
         internal Type VariantType { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
         internal List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
@@ -21,6 +27,15 @@ namespace RapidCMS.Common.Models.Config
     public class ListEditorPaneConfig<TEntity> : ListEditorPaneConfig
         where TEntity : IEntity
     {
+        public ListEditorPaneConfig(Type variantType) : base(variantType)
+        {
+        }
+
+        public ListEditorPaneConfig(Type variantType, Type customSectionType) : base(variantType)
+        {
+            CustomAlias = customSectionType.FullName;
+        }
+
         public ListEditorPaneConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig

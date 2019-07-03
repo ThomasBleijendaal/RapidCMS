@@ -70,23 +70,23 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeEditorConfig<TEntity> AddEditorPane(Action<NodeEditorPaneConfig<TEntity>> configure)
+        public NodeEditorConfig<TEntity> AddSection(Action<NodeEditorPaneConfig<TEntity>> configure)
         {
-            return AddEditorPane<TEntity>(configure);
+            return AddSection<TEntity>(configure);
         }
 
-        public NodeEditorConfig<TEntity> AddEditorPane(Type customSectionType, Action<NodeEditorPaneConfig<TEntity>>? configure = null)
+        public NodeEditorConfig<TEntity> AddSection(Type customSectionType, Action<NodeEditorPaneConfig<TEntity>>? configure = null)
         {
-            return AddEditorPane<TEntity>(customSectionType, configure);
+            return AddSection<TEntity>(customSectionType, configure);
         }
 
-        public NodeEditorConfig<TEntity> AddEditorPane<TDerivedEntity>(Action<NodeEditorPaneConfig<TDerivedEntity>> configure)
+        public NodeEditorConfig<TEntity> AddSection<TDerivedEntity>(Action<NodeEditorPaneConfig<TDerivedEntity>> configure)
             where TDerivedEntity : TEntity
         {
-            return AddEditorPane(null, configure);
+            return AddSection(null, configure);
         }
 
-        private NodeEditorConfig<TEntity> AddEditorPane<TDerivedEntity>(Type? customSectionType, Action<NodeEditorPaneConfig<TDerivedEntity>>? configure)
+        private NodeEditorConfig<TEntity> AddSection<TDerivedEntity>(Type? customSectionType, Action<NodeEditorPaneConfig<TDerivedEntity>>? configure)
             where TDerivedEntity : TEntity
         {
             var config = customSectionType == null 

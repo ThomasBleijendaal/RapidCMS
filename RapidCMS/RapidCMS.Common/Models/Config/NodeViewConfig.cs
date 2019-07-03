@@ -70,23 +70,23 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeViewConfig<TEntity> AddViewPane(Action<NodeViewPaneConfig<TEntity>> configure)
+        public NodeViewConfig<TEntity> AddSection(Action<NodeViewPaneConfig<TEntity>> configure)
         {
-            return AddViewPane<TEntity>(configure);
+            return AddSection<TEntity>(configure);
         }
 
-        public NodeViewConfig<TEntity> AddViewPane(Type customSectionType, Action<NodeViewPaneConfig<TEntity>>? configure = null)
+        public NodeViewConfig<TEntity> AddSection(Type customSectionType, Action<NodeViewPaneConfig<TEntity>>? configure = null)
         {
-            return AddViewPane<TEntity>(customSectionType, configure);
+            return AddSection<TEntity>(customSectionType, configure);
         }
 
-        public NodeViewConfig<TEntity> AddViewPane<TDerivedEntity>(Action<NodeViewPaneConfig<TDerivedEntity>> configure)
+        public NodeViewConfig<TEntity> AddSection<TDerivedEntity>(Action<NodeViewPaneConfig<TDerivedEntity>> configure)
             where TDerivedEntity : TEntity
         {
-            return AddViewPane(null, configure);
+            return AddSection(null, configure);
         }
 
-        private NodeViewConfig<TEntity> AddViewPane<TDerivedEntity>(Type? customSectionType, Action<NodeViewPaneConfig<TDerivedEntity>>? configure)
+        private NodeViewConfig<TEntity> AddSection<TDerivedEntity>(Type? customSectionType, Action<NodeViewPaneConfig<TDerivedEntity>>? configure)
             where TDerivedEntity : TEntity
         {
             var config = customSectionType == null 

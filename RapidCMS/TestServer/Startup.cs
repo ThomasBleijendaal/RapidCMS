@@ -158,6 +158,7 @@ namespace TestServer
                 config.AddCustomEditor(typeof(PasswordEditor));
                 config.AddCustomEditor(typeof(UploadEditor));
                 config.AddCustomSection(typeof(DashboardSection));
+                config.AddCustomSection(typeof(BlockSection));
 
                 config.SetCustomLogin(typeof(LoginControl));
 
@@ -171,7 +172,7 @@ namespace TestServer
                         .SetListView(list =>
                         {
                             list.AddDefaultButton(DefaultButtonType.New);
-                            list.AddListPane(pane =>
+                            list.AddRow(pane =>
                             {
                                 pane.AddProperty(p => p.Name);
                                 pane.AddDefaultButton(DefaultButtonType.View);
@@ -181,7 +182,7 @@ namespace TestServer
                         .SetListEditor(ListEditorType.Table, listEditor =>
                         {
                             listEditor.AddDefaultButton(DefaultButtonType.New);
-                            listEditor.AddEditor(editor =>
+                            listEditor.AddSection(editor =>
                             {
                                 editor.AddDefaultButton(DefaultButtonType.View);
                                 editor.AddDefaultButton(DefaultButtonType.SaveNew);
@@ -203,7 +204,7 @@ namespace TestServer
                         })
                         .SetNodeView(view =>
                         {
-                            view.AddViewPane(pane =>
+                            view.AddSection(pane =>
                             {
                                 pane.AddProperty(f => f.Name);
                                 pane.AddProperty(f => f.Dummy);
@@ -216,7 +217,7 @@ namespace TestServer
                             editor.AddDefaultButton(DefaultButtonType.SaveNew);
                             editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                             editor.AddDefaultButton(DefaultButtonType.Delete);
-                            editor.AddEditorPane(pane =>
+                            editor.AddSection(pane =>
                             {
                                 pane.AddField(f => f.Name);
                                 pane.AddField(f => f.Dummy).SetType(typeof(UploadEditor));
@@ -254,7 +255,7 @@ namespace TestServer
                         .SetListView(list =>
                         {
                             list.AddDefaultButton(DefaultButtonType.Return);
-                            list.AddListPane(pane =>
+                            list.AddRow(pane =>
                             {
                                 pane.AddProperty(p => p.Name);
                                 pane.AddDefaultButton(DefaultButtonType.Pick);
@@ -264,7 +265,7 @@ namespace TestServer
                         {
                             list.AddDefaultButton(DefaultButtonType.New);
                             list.AddDefaultButton(DefaultButtonType.Add);
-                            list.AddEditor(pane =>
+                            list.AddSection(pane =>
                             {
                                 pane.AddField(p => p.Name);
                                 pane.AddDefaultButton(DefaultButtonType.SaveExisting);
@@ -284,42 +285,50 @@ namespace TestServer
                         .SetListView(list =>
                         {
                             list.AddDefaultButton(DefaultButtonType.New);
-                            list.AddListPane(pane =>
+                            list.AddRow(pane =>
                             {
                                 pane.AddProperty(p => p.Name);
+                                pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                             });
+                            list.AddRow(pane =>
+                            {
+                                pane.AddProperty(p => p._Id.ToString());
+                            });
+                            list.AddRow(typeof(DashboardSection), config => { });
                         })
                         .SetListEditor(ListEditorType.Block, list =>
                         {
                             list.AddDefaultButton(DefaultButtonType.New);
-                            list.AddEditor(pane =>
+                            list.AddSection(pane =>
                             {
                                 pane.AddField(p => p.Name);
                                 pane.AddDefaultButton(DefaultButtonType.SaveExisting);
                                 pane.AddDefaultButton(DefaultButtonType.SaveNew);
                             });
+                            list.AddSection(typeof(BlockSection), config => { });
                         })
                         .SetNodeView(editor =>
                         {
                             editor.AddDefaultButton(DefaultButtonType.SaveNew);
                             editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                             editor.AddDefaultButton(DefaultButtonType.Delete);
-                            editor.AddViewPane(pane =>
+                            editor.AddSection(pane =>
                             {
                                 pane.AddProperty(f => f.Name);
                             });
+                            editor.AddSection(typeof(BlockSection), config => { });
                         })
                         .SetNodeEditor(editor =>
                         {
                             editor.AddDefaultButton(DefaultButtonType.SaveNew);
                             editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                             editor.AddDefaultButton(DefaultButtonType.Delete);
-                            editor.AddDefaultButton(DefaultButtonType.Return);
-                            editor.AddEditorPane(pane =>
+                            editor.AddSection(pane =>
                             {
                                 pane.AddField(f => f.Name);
                             });
+                            editor.AddSection(typeof(BlockSection), config => { });
                         });
                 });
 
@@ -364,7 +373,7 @@ namespace TestServer
                         .SetListView(view =>
                         {
                             view.AddDefaultButton(DefaultButtonType.New);
-                            view.AddListPane(pane =>
+                            view.AddRow(pane =>
                             {
                                 pane.AddProperty(p => p.Name);
                                 
@@ -378,7 +387,7 @@ namespace TestServer
                             editor.AddDefaultButton(DefaultButtonType.SaveNew);
                             editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                             editor.AddDefaultButton(DefaultButtonType.Delete);
-                            editor.AddViewPane(pane =>
+                            editor.AddSection(pane =>
                             {
                                 pane.AddProperty(f => f.Name);
 
@@ -390,11 +399,11 @@ namespace TestServer
                             editor.AddDefaultButton(DefaultButtonType.SaveNew);
                             editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                             editor.AddDefaultButton(DefaultButtonType.Delete);
-                            editor.AddEditorPane(pane =>
+                            editor.AddSection(pane =>
                             {
                                 pane.AddField(f => f.Name);
                             });
-                            editor.AddEditorPane(pane =>
+                            editor.AddSection(pane =>
                             {
                                 pane.AddRelatedCollectionListEditor<CountryEntity>("related-country-collection");
 
@@ -603,7 +612,7 @@ namespace TestServer
             {
                 listViewConfig
                     .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
-                    .AddListPane(pane =>
+                    .AddRow(pane =>
                     {
                         pane.AddProperty(x => x._Id.ToString()).SetName("Id");
                         pane.AddProperty(x => x.Name).SetDescription("This is a name");
@@ -618,7 +627,7 @@ namespace TestServer
             {
                 listViewConfig
                     .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
-                    .AddListPane(pane =>
+                    .AddRow(pane =>
                     {
                         pane.AddProperty(x => x._Id.ToString()).SetName("Id");
                         pane.AddProperty(x => x.Name).SetDescription("This is a name");
@@ -635,7 +644,7 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true)
                     .AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true)
                     .AddDefaultButton(DefaultButtonType.Delete)
-                    .AddEditorPane(pane =>
+                    .AddSection(pane =>
                     {
                         pane.SetLabel("General");
 
@@ -660,7 +669,7 @@ namespace TestServer
             void listNodeEditor(ListEditorConfig<TestEntity> listEditorConfig)
             {
                 listEditorConfig.AddDefaultButton(DefaultButtonType.New);
-                listEditorConfig.AddEditor(editor =>
+                listEditorConfig.AddSection(editor =>
                 {
                     editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.View);
@@ -689,7 +698,7 @@ namespace TestServer
             void subListNodeEditor(ListEditorConfig<TestEntity> listEditorConfig)
             {
                 listEditorConfig.AddDefaultButton(DefaultButtonType.New);
-                listEditorConfig.AddEditor(editor =>
+                listEditorConfig.AddSection(editor =>
                 {
                     editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.View);
@@ -722,7 +731,7 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true)
                     .AddDefaultButton(DefaultButtonType.Delete)
 
-                    .AddEditorPane(pane =>
+                    .AddSection(pane =>
                     {
                         pane.AddField(x => x._Id)
                             .SetValueMapper<NullableLongValueMapper>()
@@ -741,12 +750,12 @@ namespace TestServer
                             .SetType(EditorType.Numeric);
                     })
 
-                    .AddEditorPane(pane =>
+                    .AddSection(pane =>
                     {
                         pane.AddSubCollectionListEditor<TestEntity>("sub-collection-1");
                     })
 
-                    .AddEditorPane(pane =>
+                    .AddSection(pane =>
                     {
                         pane.AddSubCollectionListEditor<TestEntity>("sub-collection-2");
                     });
@@ -759,7 +768,7 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true)
                     .AddDefaultButton(DefaultButtonType.Delete)
 
-                    .AddEditorPane(pane =>
+                    .AddSection(pane =>
                     {
                         pane.AddField(x => x._Id)
                             .SetValueMapper<NullableLongValueMapper>()
@@ -778,7 +787,7 @@ namespace TestServer
                             .SetType(EditorType.Numeric);
                     })
 
-                    .AddEditorPane(pane =>
+                    .AddSection(pane =>
                     {
                         pane.AddSubCollectionListEditor<TestEntity>("sub-collection-3");
                     });
@@ -791,7 +800,7 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true)
                     .AddDefaultButton(DefaultButtonType.Delete)
 
-                    .AddEditorPane(pane =>
+                    .AddSection(pane =>
                     {
                         pane.AddField(x => x._Id)
                             .SetValueMapper<NullableLongValueMapper>()
@@ -810,19 +819,19 @@ namespace TestServer
                             .SetType(EditorType.Numeric);
                     })
 
-                    .AddEditorPane<TestEntityVariantA>(pane =>
+                    .AddSection<TestEntityVariantA>(pane =>
                     {
                         pane.AddField(x => x.Title)
                             .SetDescription("This is a title");
                     })
 
-                    .AddEditorPane<TestEntityVariantB>(pane =>
+                    .AddSection<TestEntityVariantB>(pane =>
                     {
                         pane.AddField(x => x.Image)
                             .SetDescription("This is an image");
                     })
 
-                    .AddEditorPane<TestEntityVariantC>(pane =>
+                    .AddSection<TestEntityVariantC>(pane =>
                     {
                         pane.AddField(x => x.Quote)
                             .SetDescription("This is a quote");
@@ -832,7 +841,7 @@ namespace TestServer
             void listNodeEditorWithPolymorphism(ListEditorConfig<TestEntity> listEditorConfig)
             {
                 listEditorConfig.AddDefaultButton(DefaultButtonType.New, isPrimary: true);
-                listEditorConfig.AddEditor<TestEntityVariantA>(editor =>
+                listEditorConfig.AddSection<TestEntityVariantA>(editor =>
                 {
                     editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.View);
@@ -860,7 +869,7 @@ namespace TestServer
                         .SetDescription("This is a title");
                 });
 
-                listEditorConfig.AddEditor<TestEntityVariantB>(editor =>
+                listEditorConfig.AddSection<TestEntityVariantB>(editor =>
                 {
                     editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.View);
@@ -888,7 +897,7 @@ namespace TestServer
                         .SetDescription("This is an image");
                 });
 
-                listEditorConfig.AddEditor<TestEntityVariantC>(editor =>
+                listEditorConfig.AddSection<TestEntityVariantC>(editor =>
                 {
                     editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                     editor.AddDefaultButton(DefaultButtonType.View);
@@ -923,7 +932,7 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.New, isPrimary: true)
                     .AddCustomButton<CreateButtonActionHandler>(typeof(CreateButton), "Custom create!");
 
-                config.AddListPane(listPaneConfig =>
+                config.AddRow(listPaneConfig =>
                 {
                     listPaneConfig.AddProperty(x => x.Id);
                     listPaneConfig.AddProperty(x => x.Title);
@@ -943,9 +952,9 @@ namespace TestServer
                 config.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                 config.AddDefaultButton(DefaultButtonType.Delete);
 
-                config.AddEditorPane(typeof(DashboardSection));
+                config.AddSection(typeof(DashboardSection));
 
-                config.AddEditorPane(editorPaneConfig =>
+                config.AddSection(editorPaneConfig =>
                 {
                     editorPaneConfig.AddField(x => x.Title);
                     editorPaneConfig.AddField(x => x.Description);

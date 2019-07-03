@@ -35,7 +35,7 @@ namespace RapidCMS.Common.Services
             var viewAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
                 _httpContextAccessor.HttpContext.User,
                 testEntity,
-                Operations.View);
+                Operations.Read);
 
             var editAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
                 _httpContextAccessor.HttpContext.User,
@@ -98,7 +98,7 @@ namespace RapidCMS.Common.Services
                         var viewAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
                             _httpContextAccessor.HttpContext.User,
                             entity,
-                            Operations.View);
+                            Operations.Read);
 
                         if (viewAuthorizationChallenge.Succeeded)
                         {

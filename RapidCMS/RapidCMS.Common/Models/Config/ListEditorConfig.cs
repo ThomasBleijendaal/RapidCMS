@@ -63,19 +63,31 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ListEditorConfig<TEntity> AddEditor(Action<ListEditorPaneConfig<TEntity>> configure)
+        public ListEditorConfig<TEntity> AddSection(Action<ListEditorPaneConfig<TEntity>> configure)
         {
-            return AddEditor<TEntity>(configure);
+            return AddSection<TEntity>(configure);
         }
 
-        public ListEditorConfig<TEntity> AddEditor<TDerivedEntity>(Action<ListEditorPaneConfig<TDerivedEntity>> configure)
+        public ListEditorConfig<TEntity> AddSection(Type customSectionType, Action<ListEditorPaneConfig<TEntity>> configure)
+        {
+            return AddSection<TEntity>(customSectionType, configure);
+        }
+
+        public ListEditorConfig<TEntity> AddSection<TDerivedEntity>(Action<ListEditorPaneConfig<TDerivedEntity>> configure)
             where TDerivedEntity : TEntity
         {
-            var config = new ListEditorPaneConfig<TDerivedEntity>();
+            return AddSection(null, configure);
+        }
+
+
+        public ListEditorConfig<TEntity> AddSection<TDerivedEntity>(Type? customSectionType, Action<ListEditorPaneConfig<TDerivedEntity>> configure)
+            where TDerivedEntity : TEntity
+        {
+            var config = customSectionType == null
+                ? new ListEditorPaneConfig<TDerivedEntity>(typeof(TDerivedEntity))
+                : new ListEditorPaneConfig<TDerivedEntity>(typeof(TDerivedEntity), customSectionType);
 
             configure.Invoke(config);
-
-            config.VariantType = typeof(TDerivedEntity);
 
             ListEditors.Add(config);
 
