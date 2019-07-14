@@ -6,7 +6,6 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models.Config;
 
-
 namespace RapidCMS.Common.Models
 {
     // TODO: not really a model
@@ -23,6 +22,7 @@ namespace RapidCMS.Common.Models
             CustomButtonRegistrations = cmsConfig.CustomButtonRegistrations.ToList();
             CustomEditorRegistrations = cmsConfig.CustomEditorRegistrations.ToList();
             CustomSectionRegistrations = cmsConfig.CustomSectionRegistrations.ToList();
+            CustomDashboardSectionRegistrations = cmsConfig.CustomDashboardSectionRegistrations.ToList();
             CustomLoginRegistration = cmsConfig.CustomLoginRegistration;
 
             Collections = cmsConfig.ProcessCollections(serviceProvider);
@@ -37,6 +37,7 @@ namespace RapidCMS.Common.Models
         public List<CustomTypeRegistration> CustomButtonRegistrations { get; internal set; }
         public List<CustomTypeRegistration> CustomEditorRegistrations { get; internal set; }
         public List<CustomTypeRegistration> CustomSectionRegistrations { get; internal set; }
+        public List<CustomTypeRegistration> CustomDashboardSectionRegistrations { get; internal set; }
         public CustomTypeRegistration? CustomLoginRegistration { get; internal set; }
 
         public List<Collection> Collections { get; set; }

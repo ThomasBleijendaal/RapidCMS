@@ -11,6 +11,7 @@ namespace RapidCMS.Common
         public const string Add = "add";
         public const string Pick = "pick";
 
+        // TODO: merge with view
         public const string List = "list";
 
         public const string View = "view";

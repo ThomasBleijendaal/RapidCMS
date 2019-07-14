@@ -6,7 +6,9 @@ TODO:
 
 1.1
 
-[] Dashboard
+[v] Dashboard
+
+[] Merge 2 relation patterns into a single one (either via IRelationContainer or via IRepository methods)
 
 [] Date editor
 

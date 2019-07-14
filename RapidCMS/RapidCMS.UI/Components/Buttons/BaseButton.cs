@@ -10,7 +10,7 @@ namespace RapidCMS.UI.Components.Buttons
     {
         [Inject] private IJSRuntime JsRuntime { get; set; }
 
-        [Parameter] protected ButtonViewModel Model { get; set; }
+        [Parameter] internal protected ButtonViewModel Model { get; set; }
 
         protected bool FormIsValid { get; private set; }
 

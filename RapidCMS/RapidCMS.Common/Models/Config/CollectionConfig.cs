@@ -21,6 +21,7 @@ namespace RapidCMS.Common.Models.Config
         internal List<CustomTypeRegistration> CustomButtonRegistrations { get; set; } = new List<CustomTypeRegistration>();
         internal List<CustomTypeRegistration> CustomEditorRegistrations { get; set; } = new List<CustomTypeRegistration>();
         internal List<CustomTypeRegistration> CustomSectionRegistrations { get; set; } = new List<CustomTypeRegistration>();
+        internal List<CustomTypeRegistration> CustomDashboardSectionRegistrations { get; set; } = new List<CustomTypeRegistration>();
         internal CustomTypeRegistration? CustomLoginRegistration { get; set; }
 
         public CmsConfig AddCustomButton(Type buttonType)
@@ -68,6 +69,25 @@ namespace RapidCMS.Common.Models.Config
         public bool IsUnique(string alias)
         {
             return !Collections.Any(col => col.Alias == alias);
+        }
+
+        public CmsConfig AddDashboardSection(Type customDashboardSectionType)
+        {
+            CustomDashboardSectionRegistrations.Add(new CustomTypeRegistration(customDashboardSectionType));
+
+            return this;
+        }
+
+        public CmsConfig AddDashboardSection(string collectionAlias)
+        {
+            CustomDashboardSectionRegistrations.Add(
+                new CustomTypeRegistration(
+                    typeof(Collection),
+                    new Dictionary<string, string> {
+                        { "Action", Constants.List },
+                        { "CollectionAlias", collectionAlias } }));
+
+            return this;
         }
     }
 

@@ -20,8 +20,8 @@ namespace TestLibrary.Repositories
 
         public override async Task DeleteAsync(int id, int? parentId)
         {
-            var entry = new CountryEntity { _Id = id };
-            _dbContext.Countries.Remove(entry);
+            var entry = new PersonEntity { _Id = id };
+            _dbContext.Persons.Remove(entry);
             await _dbContext.SaveChangesAsync();
         }
 

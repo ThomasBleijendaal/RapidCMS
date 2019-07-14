@@ -1,1 +1,35 @@
 ﻿@page "/"
+
+@layout MainLayout
+
+@inject Root root
+
+@foreach (var section in root.CustomDashboardSectionRegistrations)
+{
+    @RenderType(section);
+}
+
+@code {
+    RenderFragment RenderType(CustomTypeRegistration section)
+    {
+        return builder =>
+        {
+            var type = section.Type == typeof(RapidCMS.Common.Models.Collection)
+                ? typeof(Collection)
+                : section.Type;
+
+            builder.OpenComponent(0, type);
+
+            if (section.Parameters != null)
+            {
+                var index = 1;
+                section.Parameters.ForEach(kv =>
+                {
+                    builder.AddAttribute(index++, kv.Key, kv.Value);
+                });
+            }
+
+            builder.CloseComponent();
+        };
+    }
+}

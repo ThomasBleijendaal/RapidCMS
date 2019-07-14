@@ -12,11 +12,11 @@ namespace RapidCMS.UI.Components.Editors
     {
         protected ValidationState State { get; private set; }
 
-        [Parameter] protected IEntity Entity { get; private set; }
+        [Parameter] internal protected IEntity Entity { get; private set; }
 
-        [Parameter] protected IPropertyMetadata Property { get; private set; }
+        [Parameter] internal protected IPropertyMetadata Property { get; private set; }
 
-        [Parameter] protected IValueMapper ValueMapper { get; private set; }
+        [Parameter] internal protected IValueMapper ValueMapper { get; private set; }
 
         protected object GetValue(bool useValueMapper = true)
         {

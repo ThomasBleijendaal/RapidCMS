@@ -31,6 +31,7 @@ using TestServer.Components.CustomEditors;
 using TestServer.Components.CustomLogin;
 using TestServer.Components.CustomSections;
 using Blazor.FileReader;
+using TestServer.Components.CustomDashboard;
 
 namespace TestServer
 {
@@ -163,6 +164,9 @@ namespace TestServer
                 config.SetCustomLogin(typeof(LoginControl));
 
                 config.SetSiteName("Test Client");
+
+                config.AddDashboardSection(typeof(CustomDashboard));
+                config.AddDashboardSection("person-collection");
 
                 config.AddCollection<ValidationEntity>("validation-collection", "Validation entities", collection =>
                 {

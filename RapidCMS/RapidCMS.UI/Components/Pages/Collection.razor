@@ -1,15 +1,9 @@
 @inherits BasePage
 
+@layout MainLayout
+
 @page "/collection/{Action}/{CollectionAlias}"
 @page "/collection/{Action}/{CollectionAlias}/{ParentId}"
-
-@using RapidCMS.Common.Enums
-@using RapidCMS.Common.Extensions
-@using RapidCMS.Common.Models.UI
-@using RapidCMS.Common.Services
-@using RapidCMS.UI.Extensions
-@using RapidCMS.UI.Models
-@using RapidCMS.UI.Components.Forms
 
 @if (UI == null)
 {

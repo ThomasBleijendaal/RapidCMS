@@ -51,13 +51,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
 
-            // From: https://github.com/aspnet/Blazor/issues/1554
-            // Adds HttpContextAccessor
-            // Used to determine if a user is logged in
-            // and what their username is
             services.AddHttpContextAccessor();
             services.AddScoped<HttpContextAccessor>();
-            // Required for HttpClient support in the Blazor Client project
+
             services.AddHttpClient();
             services.AddScoped<HttpClient>();
 
