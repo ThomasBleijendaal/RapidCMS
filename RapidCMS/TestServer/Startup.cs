@@ -166,7 +166,7 @@ namespace TestServer
                 config.SetSiteName("Test Client");
 
                 config.AddDashboardSection(typeof(CustomDashboard));
-                config.AddDashboardSection("person-collection");
+                config.AddDashboardSection("person-collection", edit: true);
 
                 config.AddCollection<ValidationEntity>("validation-collection", "Validation entities", collection =>
                 {
