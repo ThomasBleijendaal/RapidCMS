@@ -51,15 +51,15 @@ app {
         font-size: 1.1rem;
     }
 
-ul {
-    margin: 0;
-    padding: 0 0 0 0;
-}
+    .sidebar ul {
+        margin: 0;
+        padding: 0 0 0 0;
+    }
 
-li {
-    margin: 0 0 0 0;
-    padding: 0 0 0 1rem;
-}
+    .sidebar li {
+        margin: 0 0 0 0;
+        padding: 0 0 0 1rem;
+    }
 
 .nav-item {
     font-size: 0.8666666667rem;
@@ -194,6 +194,7 @@ a.current-page {
     .form-control .row {
         margin: 0;
     }
+
     .form-control .col {
         padding: 0;
     }
@@ -235,4 +236,12 @@ table td {
 
 pre {
     background: #f0f0f0;
+}
+
+.pagination {
+    margin-top: 4rem;
+}
+
+.page-item:first-child .page-link, .page-item:last-child .page-link {
+    border-radius: 0px !important;
 }

@@ -11,16 +11,21 @@ namespace RapidCMS.Common.Extensions
     {
         internal static IEnumerable<(IPropertyMetadata property, IDataCollection relation, IRelationValidator? validator)> GetDataCollections(this Node node, IServiceProvider serviceProvider)
         {
-            return GetDataCollections(serviceProvider, node.EditorPanes);
+            return GetDataCollections(node.EditorPanes, serviceProvider);
         }
 
         internal static IEnumerable<(IPropertyMetadata property, IDataCollection relation, IRelationValidator? validator)> GetDataCollections(this ListEditor listEditor, IServiceProvider serviceProvider)
         {
-            return GetDataCollections(serviceProvider, listEditor.EditorPanes);
+            return GetDataCollections(listEditor.EditorPanes, serviceProvider);
         }
 
-        private static IEnumerable<(IPropertyMetadata property, IDataCollection relation, IRelationValidator? validator)> GetDataCollections(IServiceProvider serviceProvider, List<Pane>? panes)
+        internal static IEnumerable<(IPropertyMetadata property, IDataCollection relation, IRelationValidator? validator)> GetDataCollections(this List<Pane>? panes, IServiceProvider serviceProvider)
         {
+            if (panes == null)
+            {
+                return Enumerable.Empty<(IPropertyMetadata property, IDataCollection relation, IRelationValidator? validator)>();
+            }
+
             return panes
                 .SelectMany(pane => pane.Fields)
                 .WhereAs(field => field as PropertyField)
@@ -60,7 +65,7 @@ namespace RapidCMS.Common.Extensions
 
                             throw new InvalidOperationException();
                     }
-                });
+                }); 
         }
     }
 }

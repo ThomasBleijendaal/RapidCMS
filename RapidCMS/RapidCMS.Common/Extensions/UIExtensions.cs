@@ -44,7 +44,17 @@ namespace RapidCMS.Common.Extensions
             };
         }
 
-        internal static FieldUI ToUI(this Field field, IServiceProvider serviceProvider, EditContext editContext)
+        internal static FieldUI ToUI(this Field field)
+        {
+            return new FieldUI
+            {
+                Description = field.Description,
+                Name = field.Name,
+                Type = field.DataType
+            };
+        }
+
+        internal static FieldUI ToUI(this Field field, IServiceProvider serviceProvider, DataContext dataContext)
         {
             if (field is ExpressionField expressionField)
             {
@@ -73,7 +83,7 @@ namespace RapidCMS.Common.Extensions
                     ui = new PropertyFieldUI();
                 }
 
-                PopulateProperties(ui, propertyField, serviceProvider, editContext);
+                PopulateProperties(ui, propertyField, serviceProvider, dataContext);
 
                 return ui;
             }
@@ -90,7 +100,7 @@ namespace RapidCMS.Common.Extensions
             ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;
         }
 
-        private static void PopulateProperties(PropertyFieldUI ui, PropertyField field, IServiceProvider serviceProvider, EditContext editContext)
+        private static void PopulateProperties(PropertyFieldUI ui, PropertyField field, IServiceProvider serviceProvider, DataContext dataContext)
         {
             PopulateProperties((FieldUI)ui, (Field)field);
 
@@ -99,7 +109,7 @@ namespace RapidCMS.Common.Extensions
             
             if (field.Relation != null)
             {
-                ui.DataCollection = editContext.DataContext.GetDataCollection(field.Property);
+                ui.DataCollection = dataContext.GetDataCollection(field.Property);
             }
         }
 

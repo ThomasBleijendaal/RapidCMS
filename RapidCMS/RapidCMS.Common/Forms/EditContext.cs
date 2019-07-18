@@ -12,7 +12,8 @@ namespace RapidCMS.Common.Forms
 {
     // TODO: fix memory leak due to events
     // TODO: make EditContext expose serviceProvider via interface
-    public sealed class EditContext
+    // TODO: remove DataContext from EditContext
+    public sealed class EditContext : IServiceProvider
     {
         private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();
         private readonly IServiceProvider _serviceProvider;
@@ -25,40 +26,26 @@ namespace RapidCMS.Common.Forms
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             UsageType = usageType;
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-
-            DataContext = DataContext.Empty;
         }
 
-        internal EditContext(
-            IEntity entity, 
-            UsageType usageType, 
-            Node config,
-            IServiceProvider serviceProvider)
-        {
-            Entity = entity ?? throw new ArgumentNullException(nameof(entity));
-            UsageType = usageType;
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        //internal EditContext(
+        //    IEntity entity,
+        //    UsageType usageType,
+        //    ListEditor config,
+        //    IServiceProvider serviceProvider)
+        //{
+        //    Entity = entity ?? throw new ArgumentNullException(nameof(entity));
+        //    UsageType = usageType;
+        //    _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
-            DataContext = new DataContext(config ?? throw new ArgumentNullException(nameof(config)), _serviceProvider);
-        }
-
-        internal EditContext(
-            IEntity entity,
-            UsageType usageType,
-            ListEditor config,
-            IServiceProvider serviceProvider)
-        {
-            Entity = entity ?? throw new ArgumentNullException(nameof(entity));
-            UsageType = usageType;
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-
-            DataContext = new DataContext(config ?? throw new ArgumentNullException(nameof(config)), _serviceProvider);
-        }
+        //    //DataContext = new DataContext(config ?? throw new ArgumentNullException(nameof(config)), _serviceProvider);
+        //}
 
         public IEntity Entity { get; private set; }
         public UsageType UsageType { get; private set; }
 
-        internal DataContext DataContext { get; private set; }
+        // TODO: this thing here is weird
+        internal DataContext DataContext { get; set; }
 
         public event EventHandler<FieldChangedEventArgs> OnFieldChanged;
 
@@ -233,6 +220,11 @@ namespace RapidCMS.Common.Forms
             }
 
             OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !HasValidationMessages()));
+        }
+
+        public object GetService(Type serviceType)
+        {
+            return _serviceProvider.GetService(serviceType);
         }
     }
 }

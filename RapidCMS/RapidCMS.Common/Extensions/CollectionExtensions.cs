@@ -106,6 +106,7 @@ namespace RapidCMS.Common.Extensions
 
                     collection.ListView = new ListView
                     {
+                        PageSize = configReceiver.ListView.PageSize,
                         Buttons = configReceiver.ListView.Buttons.ToList(button => button switch
                         {
                             DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
@@ -136,6 +137,7 @@ namespace RapidCMS.Common.Extensions
 
                     collection.ListEditor = new ListEditor
                     {
+                        PageSize = configReceiver.ListEditor.PageSize,
                         ListEditorType = configReceiver.ListEditor.ListEditorType,
                         EmptyVariantColumnVisibility = configReceiver.ListEditor.EmptyVariantColumnVisibility,
                         Buttons = configReceiver.ListEditor.Buttons.ToList(button => button switch

@@ -33,7 +33,7 @@
             {
                 <div class="nested-content">
                     @* TODO: change to something which is not a page *@
-                    <Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                    <RapidCMS.UI.Components.Pages.Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
                                 CollectionAlias=@subCollection.CollectionAlias
                                 ParentId=@EditContext.Entity.Id />
                 </div>

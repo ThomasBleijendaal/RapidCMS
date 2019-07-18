@@ -7,7 +7,7 @@
 @page "/node/{Action}/{ParentId}/{CollectionAlias}/entity/{VariantAlias}"
 @page "/node/{Action}/{ParentId}/{CollectionAlias}/entity/{VariantAlias}/{Id}"
 
-@if (UI == null)
+@if (EditContext == null)
 {
     <div class="content">
         <p>Loading..</p>
@@ -15,12 +15,12 @@
 }
 else
 {
-    <CascadingEditContext EditContext=@UI.EditContext>
-        @if (UI.Buttons != null)
+    <CascadingEditContext EditContext=@EditContext>
+        @if (Buttons != null)
         {
             <div class="top-row first">
                 @{
-                    @foreach (var button in UI.Buttons)
+                    @foreach (var button in Buttons)
                     {
                         var model = button.ToViewModel();
 
@@ -33,9 +33,9 @@ else
             </div>
         }
 
-        @if (UI.Sections != null)
+        @if (Sections != null)
         {
-            @foreach (var section in UI.Sections)
+            @foreach (var section in Sections)
             {
                 if (!string.IsNullOrEmpty(section.CustomAlias))
                 {
@@ -51,22 +51,30 @@ else
 }
 
 @code {
+    [Inject] private IEditContextService EditContextService { get; set; }
+    [Inject] private IEditorService EditorService { get; set; }
 
-    [Inject] private ICollectionService CollectionService { get; set; }
-
-    NodeUI? UI;
+    EditContext? EditContext;
+    IEnumerable<ButtonUI>? Buttons;
+    IEnumerable<SectionUI>? Sections;
 
     protected override async Task LoadDataAsync()
     {
         try
         {
-            UI = await CollectionService.GetNodeEditorAsync(Action, CollectionAlias, VariantAlias, ParentId, Id);
+            var editContext = await EditContextService.GetEntityAsync(GetUsageType(), CollectionAlias, VariantAlias, ParentId, Id);
+            var view = await EditorService.GetNodeAsync(GetUsageType(), CollectionAlias);
+
+            Buttons = await view.GetButtonsForEditContextAsync(editContext);
+            Sections = await view.GetSectionsForEditContextAsync(editContext);
+
+            EditContext = editContext;
 
             StateHasChanged();
         }
         catch
         {
-            UI = null;
+            EditContext = null;
 
             throw;
         }
@@ -83,14 +91,7 @@ else
                 throw new ArgumentException($"Argument must be of type {typeof(ButtonViewModel)}.", nameof(sender));
             }
 
-            if (UI == null)
-            {
-                throw new InvalidOperationException("UI is null");
-            }
-
-            var relations = new RelationContainer(UI.Sections.SelectMany(x => x.GetRelations()));
-
-            var command = await CollectionService.ProcessNodeEditorActionAsync(CollectionAlias, VariantAlias, ParentId, Id, args.EditContext, model.ButtonId, args.Data);
+            var command = await EditContextService.ProcessEntityActionAsync(GetUsageType(), CollectionAlias, ParentId, Id, args.EditContext, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }

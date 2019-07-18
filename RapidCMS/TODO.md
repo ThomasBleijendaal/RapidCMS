@@ -12,7 +12,8 @@ TODO:
 
 [] Date editor
 
-[] Pagination (consistent during session)
+[v] Pagination 
+    [] consistent during session
 
 [] Order of collection form configuration is not maintained
   
@@ -29,6 +30,8 @@ TODO:
 
 [] Custom Section support in Collection.razor (lists) (RowSection)
     [] Fix further
+
+[] Remove UIEditor, and render editor directly
 
 1.2
 

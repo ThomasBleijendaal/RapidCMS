@@ -166,7 +166,7 @@ namespace TestServer
                 config.SetSiteName("Test Client");
 
                 config.AddDashboardSection(typeof(CustomDashboard));
-                config.AddDashboardSection("person-collection", edit: true);
+                config.AddDashboardSection("person-collection", edit: false);
 
                 config.AddCollection<ValidationEntity>("validation-collection", "Validation entities", collection =>
                 {
@@ -258,6 +258,8 @@ namespace TestServer
                         .SetRepository<CountryRepository>()
                         .SetListView(list =>
                         {
+                            list.SetPageSize(3);
+
                             list.AddDefaultButton(DefaultButtonType.Return);
                             list.AddRow(pane =>
                             {
@@ -267,6 +269,8 @@ namespace TestServer
                         })
                         .SetListEditor(ListEditorType.Table, list =>
                         {
+                            list.SetPageSize(3);
+
                             list.AddDefaultButton(DefaultButtonType.New);
                             list.AddDefaultButton(DefaultButtonType.Add);
                             list.AddSection(pane =>
@@ -299,7 +303,7 @@ namespace TestServer
                             {
                                 pane.AddProperty(p => p._Id.ToString());
                             });
-                            list.AddRow(typeof(DashboardSection), config => { });
+                            // list.AddRow(typeof(DashboardSection), config => { });
                         })
                         .SetListEditor(ListEditorType.Block, list =>
                         {
@@ -310,7 +314,7 @@ namespace TestServer
                                 pane.AddDefaultButton(DefaultButtonType.SaveExisting);
                                 pane.AddDefaultButton(DefaultButtonType.SaveNew);
                             });
-                            list.AddSection(typeof(BlockSection), config => { });
+                            // list.AddSection(typeof(BlockSection), config => { });
                         })
                         .SetNodeView(editor =>
                         {
@@ -321,7 +325,7 @@ namespace TestServer
                             {
                                 pane.AddProperty(f => f.Name);
                             });
-                            editor.AddSection(typeof(BlockSection), config => { });
+                            // editor.AddSection(typeof(BlockSection), config => { });
                         })
                         .SetNodeEditor(editor =>
                         {
@@ -332,7 +336,7 @@ namespace TestServer
                             {
                                 pane.AddField(f => f.Name);
                             });
-                            editor.AddSection(typeof(BlockSection), config => { });
+                            // editor.AddSection(typeof(BlockSection), config => { });
                         });
                 });
 
@@ -376,6 +380,8 @@ namespace TestServer
                         //})
                         .SetListView(view =>
                         {
+                            view.SetPageSize(2);
+
                             view.AddDefaultButton(DefaultButtonType.New);
                             view.AddRow(pane =>
                             {

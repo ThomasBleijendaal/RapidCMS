@@ -25,9 +25,19 @@ namespace TestLibrary.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public override async Task<IEnumerable<PersonEntity>> GetAllAsync(int? parentId)
+        public override async Task<IEnumerable<PersonEntity>> GetAllAsync(int? parentId, IQuery query)
         {
-            return await _dbContext.Persons.Include(x => x.Countries).ThenInclude(x => x.Country).AsNoTracking().ToListAsync();
+            var persons = await _dbContext.Persons
+                .Include(x => x.Countries).ThenInclude(x => x.Country)
+                .OrderBy(x => x._Id)
+                .Skip(query.Skip)
+                .Take(query.Take + 1)
+                .AsNoTracking()
+                .ToListAsync();
+
+            query.HasMoreData(persons.Count > query.Take);
+
+            return persons.Take(query.Take);
         }
 
         public override async Task<PersonEntity> GetByIdAsync(int id, int? parentId)
@@ -35,7 +45,7 @@ namespace TestLibrary.Repositories
             return await _dbContext.Persons.Include(x => x.Countries).ThenInclude(x => x.Country).AsNoTracking().FirstOrDefaultAsync(x => x._Id == id);
         }
 
-        public override async Task<PersonEntity> InsertAsync(int? parentId, PersonEntity entity, IRelationContainer relations)
+        public override async Task<PersonEntity> InsertAsync(int? parentId, PersonEntity entity, IRelationContainer? relations)
         {
             entity.Countries = relations.GetRelatedElementIdsFor<CountryEntity, int>().Select(id => new PersonCountryEntity { CountryId = id }).ToList();
             var entry = _dbContext.Persons.Add(entity);
@@ -44,7 +54,7 @@ namespace TestLibrary.Repositories
             return entry.Entity;
         }
 
-        public override Task<PersonEntity> NewAsync(int? parentId, Type variantType = null)
+        public override Task<PersonEntity> NewAsync(int? parentId, Type? variantType = null)
         {
             return Task.FromResult(new PersonEntity { Countries = new List<PersonCountryEntity>() });
         }
@@ -54,12 +64,12 @@ namespace TestLibrary.Repositories
             return int.Parse(id);
         }
 
-        public override int? ParseParentKey(string parentId)
+        public override int? ParseParentKey(string? parentId)
         {
             return int.TryParse(parentId, out var id) ? id : default(int?);
         }
 
-        public override async Task UpdateAsync(int id, int? parentId, PersonEntity entity, IRelationContainer relations)
+        public override async Task UpdateAsync(int id, int? parentId, PersonEntity entity, IRelationContainer? relations)
         {
             var dbEntity = await _dbContext.Persons.Include(x => x.Countries).FirstOrDefaultAsync(x => x._Id == id);
 

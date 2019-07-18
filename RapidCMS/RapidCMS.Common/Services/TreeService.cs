@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.Authorization;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
@@ -67,11 +68,10 @@ namespace RapidCMS.Common.Services
         public async Task<List<TreeNodeUI>> GetNodesAsync(string alias, string? parentId)
         {
             var collection = _root.GetCollection(alias);
-            
 
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
             {
-                var entities = await collection.Repository.InternalGetAllAsync(parentId);
+                var entities = await collection.Repository.InternalGetAllAsync(parentId, Query.TakeElements(25)); // TODO: pagination
 
                 return await entities.ToListAsync(async entity =>
                 {

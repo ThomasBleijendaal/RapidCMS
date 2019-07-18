@@ -43,7 +43,7 @@ namespace TestLibrary.Repositories
             await _table!.ExecuteAsync(op);
         }
 
-        public override async Task<IEnumerable<AzureTableStorageEntity>> GetAllAsync(string? parentId)
+        public override async Task<IEnumerable<AzureTableStorageEntity>> GetAllAsync(string? parentId, IQuery query)
         {
             await _initTask;
 
@@ -71,7 +71,7 @@ namespace TestLibrary.Repositories
             }
         }
 
-        public override async Task<AzureTableStorageEntity> InsertAsync(string? parentId, AzureTableStorageEntity entity, IRelationContainer relations)
+        public override async Task<AzureTableStorageEntity> InsertAsync(string? parentId, AzureTableStorageEntity entity, IRelationContainer? relations)
         {
             await _initTask;
 
@@ -98,7 +98,7 @@ namespace TestLibrary.Repositories
             return new AzureTableStorageEntity { PartitionKey = parentId ?? DefaultParentId };
         }
 
-        public override async Task UpdateAsync(string id, string? parentId, AzureTableStorageEntity entity, IRelationContainer relations)
+        public override async Task UpdateAsync(string id, string? parentId, AzureTableStorageEntity entity, IRelationContainer? relations)
         {
             await _initTask;
 

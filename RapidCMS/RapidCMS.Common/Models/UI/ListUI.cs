@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Forms;
 
@@ -7,24 +9,35 @@ namespace RapidCMS.Common.Models.UI
 {
     public class ListUI
     {
-        public ListUI(EditContext rootEditContext, List<EditContext> editContexts)
+        public ListUI(Func<EditContext, Task<List<ButtonUI>?>> buttons, Func<EditContext, Task<List<SectionUI>?>> sectionsForEntity)
         {
-            RootEditContext = rootEditContext ?? throw new ArgumentNullException(nameof(rootEditContext));
-            EditContexts = editContexts ?? throw new ArgumentNullException(nameof(editContexts));
+            Buttons = buttons ?? throw new ArgumentNullException(nameof(buttons));
+            SectionsForEntity = sectionsForEntity ?? throw new ArgumentNullException(nameof(sectionsForEntity));
         }
-
-        public EditContext RootEditContext { get; set; }
-        public List<EditContext> EditContexts { get; set; }
 
         public ListType ListType { get; internal set; }
         public EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; internal set; }
 
-        public List<ButtonUI>? Buttons { get; internal set; }
-        public Dictionary<string, List<SectionUI>>? SectionsForEntity { get; internal set; }
+        internal Func<EditContext, Task<List<ButtonUI>?>> Buttons { get; set; }
+
+        internal Func<EditContext, Task<List<SectionUI>?>> SectionsForEntity { get; set; }
 
         public List<FieldUI>? UniqueFields { get; internal set; }
         public List<FieldUI>? CommonFields { get; internal set; }
         public int MaxUniqueFieldsInSingleEntity { get; internal set; }
         public bool SectionsHaveButtons { get; internal set; }
+
+        public int PageSize { get; internal set; }
+
+        // TODO: convert to real functions
+        public async Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(EditContext editContext)
+        {
+            return await Buttons(editContext) ?? Enumerable.Empty<ButtonUI>();
+        }
+
+        public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(EditContext editContext)
+        {
+            return await SectionsForEntity(editContext) ?? Enumerable.Empty<SectionUI>();
+        }
     }
 }

@@ -9,6 +9,7 @@ namespace RapidCMS.Common.Models.Config
 {
     public class ListEditorConfig
     {
+        internal int? PageSize { get; set; }
         internal ListEditorType ListEditorType { get; set; }
         internal EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
@@ -19,6 +20,13 @@ namespace RapidCMS.Common.Models.Config
     public class ListEditorConfig<TEntity> : ListEditorConfig
         where TEntity : IEntity
     {
+        public ListEditorConfig<TEntity> SetPageSize(int pageSize)
+        {
+            PageSize = pageSize;
+
+            return this;
+        }
+
         public ListEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig

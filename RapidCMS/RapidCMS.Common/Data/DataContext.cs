@@ -8,10 +8,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RapidCMS.Common.Data
 {
+    [Obsolete("This thing is weird, requires refactor")]
     internal class DataContext
     {
-        internal static DataContext Empty => new DataContext();
-
         private readonly Dictionary<IPropertyMetadata, IDataCollection>? _dataCollections;
         private readonly Dictionary<IPropertyMetadata, IRelationValidator?>? _validators;
 
@@ -21,26 +20,29 @@ namespace RapidCMS.Common.Data
                 .Select(x => new KeyValuePair<IPropertyMetadata, IRelationDataCollection>(x.Key, (IRelationDataCollection)x.Value))
                 ?? throw new InvalidOperationException("Incorrect DataContext");
 
-        private DataContext()
+        internal DataContext(List<Pane>? panes, IServiceProvider serviceProvider)
         {
-
-        }
-
-        internal DataContext(Node config, IServiceProvider serviceProvider)
-        {
-            var configuration = config.GetDataCollections(serviceProvider);
+            var configuration = panes.GetDataCollections(serviceProvider);
 
             _dataCollections = configuration.ToDictionary(x => x.property, x => x.relation);
             _validators = configuration.ToDictionary(x => x.property, x => x.validator);
         }
 
-        internal DataContext(ListEditor config, IServiceProvider serviceProvider)
-        {
-            var configuration = config.GetDataCollections(serviceProvider);
+        //internal DataContext(ListEditor config, IServiceProvider serviceProvider)
+        //{
+        //    var configuration = config.GetDataCollections(serviceProvider);
 
-            _dataCollections = configuration.ToDictionary(x => x.property, x => x.relation);
-            _validators = configuration.ToDictionary(x => x.property, x => x.validator);
-        }
+        //    _dataCollections = configuration.ToDictionary(x => x.property, x => x.relation);
+        //    _validators = configuration.ToDictionary(x => x.property, x => x.validator);
+        //}
+
+        //internal DataContext(ListView config, IServiceProvider serviceProvider)
+        //{
+        //    //var configuration = config.GetDataCollections(serviceProvider);
+
+        //    //_dataCollections = configuration.ToDictionary(x => x.property, x => x.relation);
+        //    //_validators = configuration.ToDictionary(x => x.property, x => x.validator);
+        //}
 
         internal IDataCollection GetDataCollection(IPropertyMetadata propertyMetadata)
         {
