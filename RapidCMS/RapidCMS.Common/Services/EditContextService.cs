@@ -111,10 +111,9 @@ namespace RapidCMS.Common.Services
 
             var relationContainer = editContext.DataContext.GenerateRelationContainer();
 
-            // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
-                await customButton.HandleActionAsync(parentId, id, customData);
+                buttonCrudType = await customButton.HandleActionAsync(parentId, id, customData) ?? buttonCrudType;
             }
 
             switch (buttonCrudType)
@@ -171,10 +170,9 @@ namespace RapidCMS.Common.Services
 
             await EnsureAuthorizedUserAsync(buttonCrudType, entity);
 
-            // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
-                await customButton.HandleActionAsync(parentId, null, customData);
+                buttonCrudType = await customButton.HandleActionAsync(parentId, null, customData) ?? buttonCrudType;
             }
 
             switch (buttonCrudType)
@@ -241,10 +239,9 @@ namespace RapidCMS.Common.Services
             // since the id is known, get the entity variant from the entity
             var entityVariant = collection.GetEntityVariant(updatedEntity);
 
-            // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
-                await customButton.HandleActionAsync(parentId, id, customData);
+                buttonCrudType = await customButton.HandleActionAsync(parentId, id, customData) ?? buttonCrudType;
             }
 
             switch (buttonCrudType)
@@ -309,10 +306,9 @@ namespace RapidCMS.Common.Services
 
             await EnsureAuthorizedUserAsync(buttonCrudType, newEntity);
 
-            // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
-                await customButton.HandleActionAsync(null, null, customData);
+                buttonCrudType = await customButton.HandleActionAsync(null, null, customData) ?? buttonCrudType;
             }
 
             switch (buttonCrudType)
@@ -390,10 +386,9 @@ namespace RapidCMS.Common.Services
             // since the id is known, get the entity variant from the entity
             var entityVariant = collection.GetEntityVariant(updatedEntity);
 
-            // TODO: what to do with this action
             if (button is CustomButton customButton)
             {
-                await customButton.HandleActionAsync(null, id, customData);
+                buttonCrudType = await customButton.HandleActionAsync(null, id, customData) ?? buttonCrudType;
             }
 
             switch (buttonCrudType)

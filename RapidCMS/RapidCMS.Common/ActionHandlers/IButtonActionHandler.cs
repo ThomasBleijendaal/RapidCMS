@@ -10,7 +10,7 @@ namespace RapidCMS.Common.ActionHandlers
         CrudType GetCrudType();
         bool IsCompatibleWithForm(EditContext editContext);
         bool ShouldConfirm();
-        Task InvokeAsync(string? parentId, string? id, object? customData);
+        Task<CrudType?> InvokeAsync(string? parentId, string? id, object? customData);
         bool RequiresValidForm();
     }
 }

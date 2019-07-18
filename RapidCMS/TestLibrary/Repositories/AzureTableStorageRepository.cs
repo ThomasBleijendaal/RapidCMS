@@ -3,6 +3,7 @@ using Microsoft.WindowsAzure.Storage.Table;
 using RapidCMS.Common.Data;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using TestLibrary.Entities;
 
@@ -18,7 +19,7 @@ namespace TestLibrary.Repositories
         private Task _initTask;
         private CloudTable? _table = null;
 
-        public AzureTableStorageRepository(CloudStorageAccount cloudStorageAccount)
+        public AzureTableStorageRepository(CloudStorageAccount cloudStorageAccount, SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
         {
             _initTask = Task.Run(async () =>
             {

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
 using TestLibrary.Entities;
-
 
 namespace TestLibrary.Repositories
 {
@@ -20,6 +19,10 @@ namespace TestLibrary.Repositories
                 Name = "No relation"
             }
         };
+
+        public RelationRepository(SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
+        {
+        }
 
         protected string Name => "Relation Repo";
 

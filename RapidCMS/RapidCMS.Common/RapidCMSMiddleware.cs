@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -56,6 +57,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddHttpClient();
             services.AddScoped<HttpClient>();
+
+            // scoped semaphore for repositories
+            services.AddScoped(serviceProvider => new SemaphoreSlim(1, 1));
 
             return services;
         }

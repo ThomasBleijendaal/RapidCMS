@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 
 namespace RapidCMS.Common.Data
 {
@@ -55,6 +56,13 @@ namespace RapidCMS.Common.Data
         where TEntity : IEntity
         where TParentKey : struct
     {
+        private SemaphoreSlim Semaphore { get; set; }
+
+        public BaseStructRepository(SemaphoreSlim semaphore)
+        {
+            Semaphore = semaphore;
+        }
+
         public abstract Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
         public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery query);
         public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery query)
@@ -77,7 +85,7 @@ namespace RapidCMS.Common.Data
 
         async Task<IEntity> IRepository.InternalGetByIdAsync(string id, string? parentId)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -85,13 +93,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task<IEnumerable<IEntity>> IRepository.InternalGetAllAsync(string? parentId, IQuery query)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -99,13 +107,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task<IEnumerable<IEntity>> IRepository.InternalGetAllRelatedAsync(IEntity relatedEntity, IQuery query)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -113,13 +121,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task<IEnumerable<IEntity>> IRepository.InternalGetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -127,13 +135,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task<IEntity> IRepository.InternalNewAsync(string? parentId, Type? variantType)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -141,13 +149,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task<IEntity> IRepository.InternalInsertAsync(string? parentId, IEntity entity, IRelationContainer? relations)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -155,13 +163,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task IRepository.InternalUpdateAsync(string id, string? parentId, IEntity entity, IRelationContainer? relations)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -169,13 +177,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task IRepository.InternalDeleteAsync(string id, string? parentId)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -183,13 +191,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task IRepository.InternalAddAsync(IEntity relatedEntity, string id)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -197,12 +205,12 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
         async Task IRepository.InternalRemoveAsync(IEntity relatedEntity, string id)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -210,7 +218,7 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
     }
@@ -237,16 +245,17 @@ namespace RapidCMS.Common.Data
         TParentKey? ParseParentKey(string? parentId);
     }
 
-    // TODO: ugly, probably DI this properly
-    public static class Semaphore
-    {
-        public static SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1, 1);
-    }
-
     public abstract class BaseClassRepository<TKey, TParentKey, TEntity> : IRepository, IClassRepository<TKey, TParentKey, TEntity>
         where TEntity : IEntity
         where TParentKey : class
     {
+        private SemaphoreSlim Semaphore { get; set; }
+
+        public BaseClassRepository(SemaphoreSlim semaphore)
+        {
+            Semaphore = semaphore;
+        }
+
         public abstract Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
         public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery query);
         public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery query)
@@ -269,7 +278,7 @@ namespace RapidCMS.Common.Data
 
         async Task<IEntity> IRepository.InternalGetByIdAsync(string id, string? parentId)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -277,13 +286,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task<IEnumerable<IEntity>> IRepository.InternalGetAllAsync(string? parentId, IQuery query)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -291,13 +300,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task<IEnumerable<IEntity>> IRepository.InternalGetAllRelatedAsync(IEntity relatedEntity, IQuery query)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -305,13 +314,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task<IEnumerable<IEntity>> IRepository.InternalGetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -319,13 +328,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task<IEntity> IRepository.InternalNewAsync(string? parentId, Type? variantType)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -333,13 +342,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task<IEntity> IRepository.InternalInsertAsync(string? parentId, IEntity entity, IRelationContainer? relations)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -347,13 +356,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task IRepository.InternalUpdateAsync(string id, string? parentId, IEntity entity, IRelationContainer? relations)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -361,13 +370,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task IRepository.InternalDeleteAsync(string id, string? parentId)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -375,13 +384,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task IRepository.InternalAddAsync(IEntity relatedEntity, string id)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -389,13 +398,13 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
 
         async Task IRepository.InternalRemoveAsync(IEntity relatedEntity, string id)
         {
-            await Semaphore.SemaphoreSlim.WaitAsync();
+            await Semaphore.WaitAsync();
 
             try
             {
@@ -403,7 +412,7 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
-                Semaphore.SemaphoreSlim.Release();
+                Semaphore.Release();
             }
         }
     }

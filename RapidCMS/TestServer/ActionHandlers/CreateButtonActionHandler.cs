@@ -24,7 +24,7 @@ namespace TestServer.ActionHandlers
             return CrudType.Refresh;
         }
 
-        public async Task InvokeAsync(string? parentId, string? id, object? customData)
+        public async Task<CrudType?> InvokeAsync(string? parentId, string? id, object? customData)
         {
             var i = 0;
             var max = Convert.ToInt64(customData);
@@ -38,6 +38,8 @@ namespace TestServer.ActionHandlers
                 }, default);
             }
             while (++i < max);
+
+            return default;
         }
 
         public bool IsCompatibleWithForm(EditContext editContext)

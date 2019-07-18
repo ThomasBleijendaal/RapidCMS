@@ -21,7 +21,7 @@ namespace RapidCMS.Common.Models
         {
             return ActionHandler.IsCompatibleWithForm(editContext);
         }
-        internal Task HandleActionAsync(string? parentId, string? id, object? customData)
+        internal Task<CrudType?> HandleActionAsync(string? parentId, string? id, object? customData)
         {
             return ActionHandler.InvokeAsync(parentId, id, customData);
         }

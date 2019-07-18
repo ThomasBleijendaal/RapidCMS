@@ -127,22 +127,22 @@ namespace TestServer
 
             services.AddFileReaderService(options => options.InitializeOnFirstCall = true);
 
-            services.AddSingleton<RepositoryA>();
-            services.AddSingleton<RepositoryB>();
-            services.AddSingleton<RepositoryC>();
-            services.AddSingleton<RepositoryD>();
-            services.AddSingleton<RepositoryE>();
-            services.AddSingleton<RepositoryF>();
-            services.AddSingleton<VariantRepository>();
-            services.AddSingleton<ValidationRepository>();
+            services.AddScoped<RepositoryA>();
+            services.AddScoped<RepositoryB>();
+            services.AddScoped<RepositoryC>();
+            services.AddScoped<RepositoryD>();
+            services.AddScoped<RepositoryE>();
+            services.AddScoped<RepositoryF>();
+            services.AddScoped<VariantRepository>();
+            services.AddScoped<ValidationRepository>();
 
-            services.AddSingleton<RelationRepository>();
+            services.AddScoped<RelationRepository>();
 
             services.AddScoped<CountryRepository>();
             services.AddScoped<PersonRepository>();
 
             services.AddSingleton(CloudStorageAccount.DevelopmentStorageAccount);
-            services.AddSingleton<AzureTableStorageRepository>();
+            services.AddScoped<AzureTableStorageRepository>();
 
             services.AddTransient<CreateButtonActionHandler>();
 

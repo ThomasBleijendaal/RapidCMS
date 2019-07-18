@@ -21,10 +21,10 @@ namespace RapidCMS.Common.ActionHandlers
             return _crudType;
         }
 
-        public Task InvokeAsync(string? parentId, string? id, object? customData)
+        public Task<CrudType?> InvokeAsync(string? parentId, string? id, object? customData)
         {
             _action?.Invoke();
-            return Task.CompletedTask;
+            return Task.FromResult(default(CrudType?));
         }
 
         public bool IsCompatibleWithForm(EditContext editContext)

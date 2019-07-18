@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using TestLibrary.Entities;
@@ -11,7 +12,7 @@ namespace TestLibrary.Repositories
     {
         private readonly Dictionary<int, ValidationEntity> _data;
 
-        public ValidationRepository()
+        public ValidationRepository(SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
         {
             _data = new Dictionary<int, ValidationEntity>
             {

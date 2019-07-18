@@ -121,7 +121,6 @@ namespace RapidCMS.Common.Services
             List<Pane>? panes;
             int? pageSize;
 
-            // TODO: merge IF
             if (usageType == UsageType.List || usageType.HasFlag(UsageType.Add))
             {
                 var listView = collection.ListView;
@@ -187,14 +186,12 @@ namespace RapidCMS.Common.Services
                     .Where(button => button.IsCompatibleWithForm(editContext))
                     .WhereAsync(async button =>
                     {
-                        //var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                        //    _httpContextAccessor.HttpContext.User,
-                        //    editContext.Entity,
-                        //    Operations.GetOperationForCrudType(button.GetCrudType()));
+                        var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                            _httpContextAccessor.HttpContext.User,
+                            editContext.Entity,
+                            Operations.GetOperationForCrudType(button.GetCrudType()));
 
-                        //return authorizationChallenge.Succeeded;
-
-                        return true;
+                        return authorizationChallenge.Succeeded;
                     })
                     .ToListAsync(button => button.ToUI());
             }
@@ -221,14 +218,12 @@ namespace RapidCMS.Common.Services
                             .Where(button => button.IsCompatibleWithForm(editContext))
                             .WhereAsync(async button =>
                             {
-                                //var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                                //    _httpContextAccessor.HttpContext.User,
-                                //    editContext.Entity,
-                                //    Operations.GetOperationForCrudType(button.GetCrudType()));
+                                var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                                    _httpContextAccessor.HttpContext.User,
+                                    editContext.Entity,
+                                    Operations.GetOperationForCrudType(button.GetCrudType()));
 
-                                //return authorizationChallenge.Succeeded;
-
-                                return true;
+                                return authorizationChallenge.Succeeded;
                             })
                             .ToListAsync(button => button.ToUI()),
 
