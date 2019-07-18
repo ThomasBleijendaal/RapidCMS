@@ -36,7 +36,7 @@ namespace TestLibrary.Repositories
             return Task.CompletedTask;
         }
 
-        public override Task<IEnumerable<ValidationEntity>> GetAllAsync(int? parentId)
+        public override Task<IEnumerable<ValidationEntity>> GetAllAsync(int? parentId, IQuery query)
         {
             return Task.FromResult(_data.Select(x => x.Value));
         }
@@ -46,7 +46,7 @@ namespace TestLibrary.Repositories
             return Task.FromResult(_data[id]);
         }
 
-        public override Task<ValidationEntity> InsertAsync(int? parentId, ValidationEntity entity, IRelationContainer relations)
+        public override Task<ValidationEntity> InsertAsync(int? parentId, ValidationEntity entity, IRelationContainer? relations)
         {
             entity.Id = (_data.Count + 1).ToString();
 
@@ -70,7 +70,7 @@ namespace TestLibrary.Repositories
             return int.TryParse(parentId, out var id) ? id : default(int?);
         }
 
-        public override Task UpdateAsync(int id, int? parentId, ValidationEntity entity, IRelationContainer relations)
+        public override Task UpdateAsync(int id, int? parentId, ValidationEntity entity, IRelationContainer? relations)
         {
             _data[id] = entity;
 

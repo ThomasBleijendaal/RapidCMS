@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using RapidCMS.Common.Enums;
 
-
 namespace RapidCMS.Common.Models
 {
-    // TODO: investigate combining with ListView
     internal class ListEditor
     {
+        internal int? PageSize { get; set; }
         internal ListEditorType ListEditorType { get; set; }
         internal EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; set; }
         internal List<Pane>? EditorPanes { get; set; }

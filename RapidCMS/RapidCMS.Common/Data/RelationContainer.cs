@@ -6,7 +6,7 @@ using RapidCMS.Common.Helpers;
 
 namespace RapidCMS.Common.Data
 {
-    public class RelationContainer : IRelationContainer
+    internal class RelationContainer : IRelationContainer
     {
         public RelationContainer(IEnumerable<IRelation> relations)
         {

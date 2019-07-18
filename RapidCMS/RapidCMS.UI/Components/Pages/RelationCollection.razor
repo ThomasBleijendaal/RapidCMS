@@ -1,6 +1,6 @@
 @inherits BasePage
 
-@if (UI == null)
+@if (RootEditContext == null)
 {
     <div class="content">
         <p>Loading..</p>
@@ -8,11 +8,11 @@
 }
 else
 {
-    <CascadingEditContext EditContext=@UI.RootEditContext>
-        @if (UI.Buttons != null)
+    <CascadingEditContext EditContext=@RootEditContext>
+        @if (Buttons != null)
         {
             <div class="top-row first">
-                @foreach (var button in UI.Buttons)
+                @foreach (var button in Buttons)
                 {
                     var model = button.ToViewModel();
 
@@ -25,7 +25,7 @@ else
         }
     </CascadingEditContext>
 
-    @if (UI.EditContexts.Any() && UI.SectionsForEntity != null)
+    @if (Sections != null)
     {
         @if (UI.ListType.In(ListType.TableView, ListType.TableEditor))
         {
@@ -64,137 +64,142 @@ else
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var context in UI.EditContexts)
+                        @foreach (var (context, sections) in Sections)
                         {
-                            if (UI.SectionsForEntity.TryGetValue(context.Entity.Id, out var sections))
-                            {
-                                <CascadingEditContext EditContext=@context>
-                                    @foreach (var section in sections)
-                                    {
-                                        if (!string.IsNullOrEmpty(section.CustomAlias))
-                                        {
-                                            @CustomSections.GetCustomSection(section.CustomAlias, section);
-                                        }
-                                        else
-                                        {
-
-                                            var index = 0;
-
-                                            @if (section.Elements != null)
-                                            {
-                                                <tr>
-                                                    @{
-                                                        foreach (var element in section.Elements)
-                                                        {
-                                                            if (element is FieldUI field)
-                                                            {
-                                                                var name = (field as ExpressionFieldUI)?.Expression.PropertyName ?? (field as PropertyFieldUI)?.Property.PropertyName;
-                                                                if (name == null)
-                                                                {
-                                                                    continue;
-                                                                }
-
-                                                                if (!collapseEmptyCells)
-                                                                {
-                                                                    var position = UI.UniqueFields?.FindIndex(x => x.Name == field.Name) ?? UI.MaxUniqueFieldsInSingleEntity;
-
-                                                                    // fill in the gaps (when dealing with multiple entity variants)
-                                                                    if (position > index)
-                                                                    {
-                                                                        <td colspan=@(position - index)>&nbsp;</td>
-
-                                                                        index = position;
-                                                                    }
-                                                                }
-
-                                                                index++;
-
-                                                                if (field is ExpressionFieldUI expressionField)
-                                                                {
-                                                                    <td>@expressionField.Expression.StringGetter(context.Entity)</td>
-                                                                }
-                                                                else if (field is PropertyFieldUI propertyField)
-                                                                {
-                                                                    <td>
-                                                                        <UIEditor Field="field" Entity="@context.Entity" />
-                                                                    </td>
-                                                                }
-                                                            }
-                                                        }
-                                                        // fill in the gaps (when dealing with multiple entity variants)
-                                                        if (!collapseEmptyCells && UI.UniqueFields?.Count > index)
-                                                        {
-                                                            <td colspan=@(UI.UniqueFields.Count - index)>&nbsp;</td>
-                                                        }
-                                                        if (UI.SectionsHaveButtons)
-                                                        {
-                                                            <td class="button-cell">
-                                                                @if (section.Buttons != null && section.Buttons.Any())
-                                                                {
-                                                                    @foreach (var button in section.Buttons)
-                                                                    {
-                                                                        var model = button.ToViewModel();
-
-                                                                        // TODO: deattach
-                                                                        model.OnClick += NodeButtonOnClickAsync;
-
-                                                                        <UIButton Button="button" Model="model" />
-                                                                    }
-                                                                }
-                                                            </td>
-                                                        }
-                                                    }
-                                                </tr>
-                                            }
-                                        }
-                                    }
-                                </CascadingEditContext>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-        else if (UI.ListType == ListType.BlockEditor)
-        {
-            @foreach (var context in UI.EditContexts)
-            {
-                <div class="content">
-                    <div class="nested-content">
-                        <CascadingEditContext EditContext=@context>
-                            @if (UI.SectionsForEntity.TryGetValue(context.Entity.Id, out var sections))
-                            {
-                                foreach (var section in sections)
+                            <CascadingEditContext EditContext=@context>
+                                @foreach (var section in sections)
                                 {
-                                    if (section.Buttons != null)
-                                    {
-                                        <div class="top-row">
-                                            @foreach (var button in section.Buttons)
-                                            {
-                                                var model = button.ToViewModel();
-
-                                                // TODO: deattach
-                                                model.OnClick += NodeButtonOnClickAsync;
-
-                                                <UIButton Button="button" Model="model" />
-                                            }
-                                        </div>
-                                    }
-
                                     if (!string.IsNullOrEmpty(section.CustomAlias))
                                     {
                                         @CustomSections.GetCustomSection(section.CustomAlias, section);
                                     }
                                     else
                                     {
-                                        <BlockSection Section="section" />
+
+                                        var index = 0;
+
+                                        @if (section.Elements != null)
+                                        {
+                                            <tr>
+                                                @{
+                                                    foreach (var element in section.Elements)
+                                                    {
+                                                        if (element is FieldUI field)
+                                                        {
+                                                            var name = (field as ExpressionFieldUI)?.Expression.PropertyName ?? (field as PropertyFieldUI)?.Property.PropertyName;
+                                                            if (name == null)
+                                                            {
+                                                                continue;
+                                                            }
+
+                                                            if (!collapseEmptyCells)
+                                                            {
+                                                                var position = UI.UniqueFields?.FindIndex(x => x.Name == field.Name) ?? UI.MaxUniqueFieldsInSingleEntity;
+
+                                                                // fill in the gaps (when dealing with multiple entity variants)
+                                                                if (position > index)
+                                                                {
+                                                                    <td colspan=@(position - index)>&nbsp;</td>
+
+                                                                    index = position;
+                                                                }
+                                                            }
+
+                                                            index++;
+
+                                                            if (field is ExpressionFieldUI expressionField)
+                                                            {
+                                                                <td>@expressionField.Expression.StringGetter(context.Entity)</td>
+                                                            }
+                                                            else if (field is PropertyFieldUI propertyField)
+                                                            {
+                                                                <td>
+                                                                    <UIEditor Field="field" Entity="@context.Entity" />
+                                                                </td>
+                                                            }
+                                                        }
+                                                    }
+                                                    // fill in the gaps (when dealing with multiple entity variants)
+                                                    if (!collapseEmptyCells && UI.UniqueFields?.Count > index)
+                                                    {
+                                                        <td colspan=@(UI.UniqueFields.Count - index)>&nbsp;</td>
+                                                    }
+                                                    if (UI.SectionsHaveButtons)
+                                                    {
+                                                        <td class="button-cell">
+                                                            @if (section.Buttons != null && section.Buttons.Any())
+                                                            {
+                                                                @foreach (var button in section.Buttons)
+                                                                {
+                                                                    var model = button.ToViewModel();
+
+                                                                    // TODO: deattach
+                                                                    model.OnClick += NodeButtonOnClickAsync;
+
+                                                                    <UIButton Button="button" Model="model" />
+                                                                }
+                                                            }
+                                                        </td>
+                                                    }
+                                                }
+                                            </tr>
+                                        }
                                     }
+                                }
+                            </CascadingEditContext>
+                        }
+                    </tbody>
+                </table>
+
+                <Paginator CurrentPage="@CurrentPage"
+                           MaxPage="@MaxPage"
+                           OnPageChanged="@PageChangedAsync" />
+            </div>
+        }
+        else if (UI.ListType == ListType.BlockEditor)
+        {
+            @foreach (var (context, sections) in Sections)
+            {
+                <div class="content">
+                    <div class="nested-content">
+                        <CascadingEditContext EditContext=@context>
+
+                            @foreach (var section in sections)
+                            {
+                                if (section.Buttons != null)
+                                {
+                                    <div class="top-row">
+                                        @foreach (var button in section.Buttons)
+                                        {
+                                            var model = button.ToViewModel();
+
+                                            // TODO: deattach
+                                            model.OnClick += NodeButtonOnClickAsync;
+
+                                            <UIButton Button="button" Model="model" />
+                                        }
+                                    </div>
+                                }
+
+                                if (!string.IsNullOrEmpty(section.CustomAlias))
+                                {
+                                    @CustomSections.GetCustomSection(section.CustomAlias, section);
+                                }
+                                else
+                                {
+                                    <BlockSection Section="section" />
                                 }
                             }
                         </CascadingEditContext>
                     </div>
                 </div>
             }
+
+            <div class="content">
+                <Paginator CurrentPage="@CurrentPage"
+                           MaxPage="@MaxPage"
+                           OnPageChanged="@PageChangedAsync" />
+            </div>
         }
     }
     else
@@ -215,17 +220,44 @@ else
 }
 @code {
 
-    [Inject] private ICollectionService CollectionService { get; set; }
-
     [Parameter] private IEntity RelatedEntity { get; set; }
 
+    [Inject] private IEditContextService EditContextService { get; set; }
+    [Inject] private IEditorService EditorService { get; set; }
+
+    EditContext? RootEditContext;
+
+    IEnumerable<ButtonUI>? Buttons;
+    IEnumerable<(EditContext editContext, IEnumerable<SectionUI> sections)>? Sections;
+
     ListUI? UI;
+
+    int CurrentPage = 1;
+    int? MaxPage = null;
+
+    UsageType previousUsage;
 
     protected override async Task LoadDataAsync()
     {
         try
         {
-            UI = await CollectionService.GetRelationListViewAsync(Action, CollectionAlias, RelatedEntity);
+            var rootEditContext = await EditContextService.GetRootAsync(GetUsageType(), CollectionAlias, ParentId);
+
+            UI = await EditorService.GetListAsync(GetUsageType(), CollectionAlias);
+
+            Buttons = await UI.GetButtonsForEditContextAsync(rootEditContext);
+
+            if (previousUsage != GetUsageType())
+            {
+                CurrentPage = 1;
+                MaxPage = null;
+
+                previousUsage = GetUsageType();
+            }
+
+            await LoadSectionsAsync();
+
+            RootEditContext = rootEditContext;
 
             StateHasChanged();
         }
@@ -235,6 +267,43 @@ else
 
             throw;
         }
+    }
+
+    async void PageChangedAsync(int page)
+    {
+        CurrentPage = page;
+
+        await LoadSectionsAsync();
+    }
+
+    async Task LoadSectionsAsync()
+    {
+        if (UI == null)
+        {
+            return;
+        }
+
+        var query = Query.Create(UI.PageSize, CurrentPage);
+
+        var editContexts = await EditContextService.GetRelatedEntitiesAsync(GetUsageType(), CollectionAlias, RelatedEntity, query);
+        Sections = await editContexts.ToListAsync(async editContext => (editContext, await UI.GetSectionsForEditContextAsync(editContext)));
+
+        if (!query.MoreDataAvailable)
+        {
+            MaxPage = CurrentPage;
+
+            if (CurrentPage > 1 && !Sections.Any())
+            {
+                CurrentPage--;
+                await LoadSectionsAsync();
+            }
+        }
+        if (MaxPage == CurrentPage && query.MoreDataAvailable)
+        {
+            MaxPage = null;
+        }
+
+        StateHasChanged();
     }
 
     async void ListButtonOnClickAsync(object sender, ButtonClickEventArgs args)
@@ -248,7 +317,7 @@ else
                 throw new ArgumentException($"Argument must be of type {typeof(ButtonViewModel)}.", nameof(sender));
             }
 
-            var command = await CollectionService.ProcessRelationActionAsync(Action, CollectionAlias, RelatedEntity, model.ButtonId, args.Data);
+            var command = await EditContextService.ProcessRelationActionAsync(GetUsageType(), CollectionAlias, RelatedEntity, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }
@@ -274,7 +343,7 @@ else
                 throw new InvalidOperationException("UI is null");
             }
 
-            var command = await CollectionService.ProcessRelationActionAsync(Action, CollectionAlias, RelatedEntity, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
+            var command = await EditContextService.ProcessRelationActionAsync(GetUsageType(), CollectionAlias, RelatedEntity, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }

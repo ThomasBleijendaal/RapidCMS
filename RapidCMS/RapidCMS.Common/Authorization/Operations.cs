@@ -60,5 +60,20 @@ namespace RapidCMS.Common.Authorization
                 _ => throw new InvalidOperationException($"Operation of type {type} is not supported.")
             };
         }
+
+        public static OperationAuthorizationRequirement GetOperationForUsageType(UsageType type)
+        {
+            return type switch
+            {
+                UsageType.Add => Add,
+                UsageType.Edit => Update,
+                UsageType.List => Read,
+                UsageType.New => Create,
+                UsageType.Node => Update,
+                UsageType.Pick => Add,
+                UsageType.View => Read,
+                _ => throw new InvalidOperationException($"Operation of type {type} is not supported.")
+            };
+        }
     }
 }

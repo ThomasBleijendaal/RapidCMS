@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using RapidCMS.Common;
+using RapidCMS.Common.Enums;
 using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Commands;
@@ -153,19 +155,18 @@ namespace RapidCMS.UI.Components.Pages
             return Task.CompletedTask;
         }
 
-        //protected ButtonContext<TContext> CreateButtonContext<TContext>(TContext context, ButtonUI button, Func<string, TContext, object?, Task> callback)
-        //{
-        //    return new ButtonContext<TContext>
-        //    {
-        //        ButtonId = button.ButtonId,
-        //        CallbackAsync = callback,
-        //        Context = context,
-        //        Icon = button.Icon,
-        //        Label = button.Label,
-        //        ShouldConfirm = button.ShouldConfirm,
-        //        IsPrimary = button.IsPrimary,
-        //        RequiresValidForm = button.RequiresValidForm
-        //    };
-        //}
+        protected UsageType GetUsageType()
+        {
+            return Action switch
+            {
+                Constants.Edit => UsageType.Edit,
+                Constants.New => UsageType.New,
+                Constants.Add => UsageType.Add,
+                Constants.View => UsageType.View,
+                Constants.List => UsageType.List,
+                Constants.Pick => UsageType.Pick,
+                _ => (UsageType)0
+            };
+        }
     }
 }

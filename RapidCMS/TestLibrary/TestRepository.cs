@@ -31,7 +31,7 @@ namespace TestLibrary
 
         protected abstract string Name { get; }
 
-        public override async Task<IEnumerable<TestEntity>> GetAllAsync(int? parentId)
+        public override async Task<IEnumerable<TestEntity>> GetAllAsync(int? parentId, IQuery query)
         {
             await Task.Delay(1);
 
@@ -45,7 +45,7 @@ namespace TestLibrary
             return GetData(parentId).FirstOrDefault(x => x._Id == id);
         }
 
-        public override async Task<TestEntity> InsertAsync(int? parentId, TestEntity entity, IRelationContainer relations)
+        public override async Task<TestEntity> InsertAsync(int? parentId, TestEntity entity, IRelationContainer? relations)
         {
             await Task.Delay(1);
 
@@ -56,7 +56,7 @@ namespace TestLibrary
             return entity;
         }
 
-        public override async Task UpdateAsync(int id, int? parentId, TestEntity entity, IRelationContainer relations)
+        public override async Task UpdateAsync(int id, int? parentId, TestEntity entity, IRelationContainer? relations)
         {
             await Task.Delay(1);
 
@@ -134,7 +134,7 @@ namespace TestLibrary
             return Task.CompletedTask;
         }
 
-        public override Task<IEnumerable<TestEntity>> GetAllAsync(int? parentId)
+        public override Task<IEnumerable<TestEntity>> GetAllAsync(int? parentId, IQuery query)
         {
             return Task.FromResult(_data.Where(x => x.ParentId == parentId));
         }
@@ -144,7 +144,7 @@ namespace TestLibrary
             return Task.FromResult(_data.FirstOrDefault(x => x._Id == id && x.ParentId == parentId));
         }
 
-        public override async Task<TestEntity> InsertAsync(int? parentId, TestEntity entity, IRelationContainer relations)
+        public override async Task<TestEntity> InsertAsync(int? parentId, TestEntity entity, IRelationContainer? relations)
         {
             await Task.Delay(1);
 
@@ -176,7 +176,7 @@ namespace TestLibrary
             }
         }
 
-        public override async Task UpdateAsync(int id, int? parentId, TestEntity entity, IRelationContainer relations)
+        public override async Task UpdateAsync(int id, int? parentId, TestEntity entity, IRelationContainer? relations)
         {
             await Task.Delay(1);
 

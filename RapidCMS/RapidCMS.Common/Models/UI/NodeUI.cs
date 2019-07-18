@@ -1,24 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Common.Forms;
 
 namespace RapidCMS.Common.Models.UI
 {
-    // TODO: move back to internal sets when weird Collection.razor NodeUI creation is no longer required
-
+    // TODO: this model is a bit weird
     public class NodeUI
     {
-        public NodeUI(EditContext editContext)
+        public NodeUI(Func<EditContext, Task<List<ButtonUI>?>> buttons, Func<EditContext, Task<List<SectionUI>?>> sections)
         {
-            EditContext = editContext ?? throw new ArgumentNullException(nameof(editContext));
+            Buttons = buttons ?? throw new ArgumentNullException(nameof(buttons));
+            Sections = sections ?? throw new ArgumentNullException(nameof(sections));
         }
 
-        public EditContext EditContext { get; set; }
+        internal Func<EditContext, Task<List<ButtonUI>?>> Buttons { get; set; }
+        internal Func<EditContext, Task<List<SectionUI>?>> Sections { get; set; }
 
-        [Obsolete("Remove me")]
-        public UISubject Subject { get; }
+        // TODO: convert to real functions
+        public async Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(EditContext editContext)
+        {
+            return await Buttons(editContext) ?? Enumerable.Empty<ButtonUI>();
+        }
 
-        public List<ButtonUI>? Buttons { get; set; }
-        public List<SectionUI>? Sections { get; set; }
+        public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(EditContext editContext)
+        {
+            return await Sections(editContext) ?? Enumerable.Empty<SectionUI>();
+        }
     }
 }

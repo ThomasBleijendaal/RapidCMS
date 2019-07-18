@@ -9,9 +9,9 @@ namespace RapidCMS.Common.Data
     public interface IRepository
     {
         Task<IEntity> InternalGetByIdAsync(string id, string? parentId);
-        Task<IEnumerable<IEntity>> InternalGetAllAsync(string? parentId);
-        Task<IEnumerable<IEntity>> InternalGetAllRelatedAsync(IEntity relatedEntity);
-        Task<IEnumerable<IEntity>> InternalGetAllNonRelatedAsync(IEntity relatedEntity);
+        Task<IEnumerable<IEntity>> InternalGetAllAsync(string? parentId, IQuery query);
+        Task<IEnumerable<IEntity>> InternalGetAllRelatedAsync(IEntity relatedEntity, IQuery query);
+        Task<IEnumerable<IEntity>> InternalGetAllNonRelatedAsync(IEntity relatedEntity, IQuery query);
 
         /// <summary>
         /// Create a new entity in-memory.
@@ -35,9 +35,9 @@ namespace RapidCMS.Common.Data
         where TParentKey : struct
     {
         Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
-        Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
-        Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity);
-        Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity);
+        Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery query);
+        Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery query);
+        Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery query);
 
         Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType);
         Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity, IRelationContainer? relations);
@@ -56,10 +56,10 @@ namespace RapidCMS.Common.Data
         where TParentKey : struct
     {
         public abstract Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
-        public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
-        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity)
+        public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery query);
+        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllRelatedAsync)} on the {GetType()}.");
-        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity)
+        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllNonRelatedAsync)} on the {GetType()}.");
 
         public abstract Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType = null);
@@ -89,13 +89,13 @@ namespace RapidCMS.Common.Data
             }
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllAsync(string? parentId)
+        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllAsync(string? parentId, IQuery query)
         {
             await Semaphore.SemaphoreSlim.WaitAsync();
 
             try
             {
-                return (await GetAllAsync(ParseParentKey(parentId))).Cast<IEntity>();
+                return (await GetAllAsync(ParseParentKey(parentId), query)).Cast<IEntity>();
             }
             finally
             {
@@ -103,13 +103,13 @@ namespace RapidCMS.Common.Data
             }
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllRelatedAsync(IEntity relatedEntity)
+        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllRelatedAsync(IEntity relatedEntity, IQuery query)
         {
             await Semaphore.SemaphoreSlim.WaitAsync();
 
             try
             {
-                return (await GetAllRelatedAsync(relatedEntity))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+                return (await GetAllRelatedAsync(relatedEntity, query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {
@@ -117,13 +117,13 @@ namespace RapidCMS.Common.Data
             }
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllNonRelatedAsync(IEntity relatedEntity)
+        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
         {
             await Semaphore.SemaphoreSlim.WaitAsync();
 
             try
             {
-                return (await GetAllNonRelatedAsync(relatedEntity))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+                return (await GetAllNonRelatedAsync(relatedEntity, query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {
@@ -221,9 +221,9 @@ namespace RapidCMS.Common.Data
     {
 
         Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
-        Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
-        Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity entity);
-        Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity entity);
+        Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery query);
+        Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity entity, IQuery query);
+        Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity entity, IQuery query);
 
         Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType);
         Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity, IRelationContainer? relations);
@@ -248,10 +248,10 @@ namespace RapidCMS.Common.Data
         where TParentKey : class
     {
         public abstract Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
-        public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId);
-        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity)
+        public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery query);
+        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllRelatedAsync)} on {GetType()}.");
-        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity)
+        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllNonRelatedAsync)} on {GetType()}.");
 
         public abstract Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType = null);
@@ -281,13 +281,13 @@ namespace RapidCMS.Common.Data
             }
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllAsync(string? parentId)
+        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllAsync(string? parentId, IQuery query)
         {
             await Semaphore.SemaphoreSlim.WaitAsync();
 
             try
             {
-                return (await GetAllAsync(ParseParentKey(parentId))).Cast<IEntity>();
+                return (await GetAllAsync(ParseParentKey(parentId), query)).Cast<IEntity>();
             }
             finally
             {
@@ -295,13 +295,13 @@ namespace RapidCMS.Common.Data
             }
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllRelatedAsync(IEntity relatedEntity)
+        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllRelatedAsync(IEntity relatedEntity, IQuery query)
         {
             await Semaphore.SemaphoreSlim.WaitAsync();
 
             try
             {
-                return (await GetAllRelatedAsync(relatedEntity))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+                return (await GetAllRelatedAsync(relatedEntity, query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {
@@ -309,13 +309,13 @@ namespace RapidCMS.Common.Data
             }
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllNonRelatedAsync(IEntity relatedEntity)
+        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
         {
             await Semaphore.SemaphoreSlim.WaitAsync();
 
             try
             {
-                return (await GetAllNonRelatedAsync(relatedEntity))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+                return (await GetAllNonRelatedAsync(relatedEntity, query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {

@@ -23,7 +23,7 @@ namespace TestLibrary.Repositories
 
         protected string Name => "Relation Repo";
 
-        public override async Task<IEnumerable<RelationEntity>> GetAllAsync(int? parentId)
+        public override async Task<IEnumerable<RelationEntity>> GetAllAsync(int? parentId, IQuery query)
         {
             await Task.Delay(1);
 
@@ -37,7 +37,7 @@ namespace TestLibrary.Repositories
             return _data.FirstOrDefault(x => x.RealId == id);
         }
 
-        public override async Task<RelationEntity> InsertAsync(int? parentId, RelationEntity entity, IRelationContainer relations)
+        public override async Task<RelationEntity> InsertAsync(int? parentId, RelationEntity entity, IRelationContainer? relations)
         {
             await Task.Delay(1);
 
@@ -51,7 +51,7 @@ namespace TestLibrary.Repositories
             return entity;
         }
 
-        public override async Task UpdateAsync(int id, int? parentId, RelationEntity entity, IRelationContainer relations)
+        public override async Task UpdateAsync(int id, int? parentId, RelationEntity entity, IRelationContainer? relations)
         {
             await Task.Delay(1);
 

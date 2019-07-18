@@ -25,25 +25,54 @@ namespace TestLibrary.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public override async Task<IEnumerable<CountryEntity>> GetAllAsync(int? parentId)
+        public override async Task<IEnumerable<CountryEntity>> GetAllAsync(int? parentId, IQuery query)
         {
-            return await _dbContext.Countries.AsNoTracking().ToListAsync();
+            var data = await _dbContext.Countries
+                .OrderBy(x => x._Id)
+                .Skip(query.Skip)
+                .Take(query.Take + 1)
+                .AsNoTracking()
+                .ToListAsync();
+
+            query.HasMoreData(data.Count > query.Take);
+
+            return data.Take(query.Take);
         }
 
-        public override async Task<IEnumerable<CountryEntity>?> GetAllRelatedAsync(IEntity relatedEntity)
+        public override async Task<IEnumerable<CountryEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery query)
         {
             if (relatedEntity is PersonEntity person)
             {
-                return await _dbContext.Countries.Where(x => x.Persons.Any(x => x.PersonId == person._Id)).AsNoTracking().ToListAsync();
+                var data = await _dbContext.Countries
+                    .Where(x => x.Persons.Any(x => x.PersonId == person._Id))
+                    .OrderBy(x => x._Id)
+                    .Skip(query.Skip)
+                    .Take(query.Take + 1)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                query.HasMoreData(data.Count > query.Take);
+
+                return data.Take(query.Take);
             }
 
             return null;
         }
-        public override async Task<IEnumerable<CountryEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity)
+        public override async Task<IEnumerable<CountryEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
         {
             if (relatedEntity is PersonEntity person)
             {
-                return await _dbContext.Countries.Where(x => !x.Persons.Any(x => x.PersonId == person._Id)).AsNoTracking().ToListAsync();
+                var data = await _dbContext.Countries
+                    .Where(x => !x.Persons.Any(x => x.PersonId == person._Id))
+                    .OrderBy(x => x._Id)
+                    .Skip(query.Skip)
+                    .Take(query.Take + 1)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                query.HasMoreData(data.Count > query.Take);
+
+                return data.Take(query.Take);
             }
 
             return null;
@@ -54,7 +83,7 @@ namespace TestLibrary.Repositories
             return await _dbContext.Countries.AsNoTracking().FirstOrDefaultAsync(x => x._Id == id);
         }
 
-        public override async Task<CountryEntity> InsertAsync(int? parentId, CountryEntity entity, IRelationContainer relations)
+        public override async Task<CountryEntity> InsertAsync(int? parentId, CountryEntity entity, IRelationContainer? relations)
         {
             var entry = _dbContext.Countries.Add(entity);
             await _dbContext.SaveChangesAsync();
@@ -62,7 +91,7 @@ namespace TestLibrary.Repositories
             return entry.Entity;
         }
 
-        public override Task<CountryEntity> NewAsync(int? parentId, Type variantType = null)
+        public override Task<CountryEntity> NewAsync(int? parentId, Type? variantType = null)
         {
             return Task.FromResult(new CountryEntity());
         }
@@ -72,7 +101,7 @@ namespace TestLibrary.Repositories
             return int.Parse(id);
         }
 
-        public override int? ParseParentKey(string parentId)
+        public override int? ParseParentKey(string? parentId)
         {
             return int.TryParse(parentId, out var id) ? id : default(int?);
         }
@@ -100,7 +129,7 @@ namespace TestLibrary.Repositories
             }
         }
 
-        public override async Task UpdateAsync(int id, int? parentId, CountryEntity entity, IRelationContainer relations)
+        public override async Task UpdateAsync(int id, int? parentId, CountryEntity entity, IRelationContainer? relations)
         {
             var dbEntity = await _dbContext.Countries.FirstOrDefaultAsync(x => x._Id == id);
 

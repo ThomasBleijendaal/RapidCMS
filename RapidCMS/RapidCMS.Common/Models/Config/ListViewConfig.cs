@@ -9,6 +9,7 @@ namespace RapidCMS.Common.Models.Config
 {
     public class ListViewConfig
     {
+        internal int? PageSize { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
         internal List<ListViewPaneConfig> ListViewPanes { get; set; } = new List<ListViewPaneConfig>();
     }
@@ -16,6 +17,13 @@ namespace RapidCMS.Common.Models.Config
     public class ListViewConfig<TEntity> : ListViewConfig
         where TEntity : IEntity
     {
+        public ListViewConfig<TEntity> SetPageSize(int pageSize)
+        {
+            PageSize = pageSize;
+
+            return this;
+        }
+
         public ListViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig
