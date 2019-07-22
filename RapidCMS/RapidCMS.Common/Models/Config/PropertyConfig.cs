@@ -1,4 +1,5 @@
-﻿using RapidCMS.Common.Data;
+﻿using System;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Models.Config
@@ -9,6 +10,7 @@ namespace RapidCMS.Common.Models.Config
 
         internal string Name { get; set; }
         internal string Description { get; set; }
+        internal Func<object, bool> IsVisible { get; set; } = (x) => true;
 
         internal IExpressionMetadata Property { get; set; }
     }
@@ -21,9 +23,17 @@ namespace RapidCMS.Common.Models.Config
             Name = name;
             return this;
         }
+
         public PropertyConfig<TEntity> SetDescription(string description)
         {
             Description = description;
+            return this;
+        }
+
+        public PropertyConfig<TEntity> VisibleWhen(Func<TEntity, bool> predicate)
+        {
+            IsVisible = (entity) => predicate.Invoke((TEntity)entity);
+
             return this;
         }
     }

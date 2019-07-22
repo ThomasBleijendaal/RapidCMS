@@ -178,7 +178,8 @@ namespace TestServer
                             list.AddDefaultButton(DefaultButtonType.New);
                             list.AddRow(pane =>
                             {
-                                pane.AddProperty(p => p.Name);
+                                pane.AddProperty(p => p.Name)
+                                    .VisibleWhen(f => f.Accept);
                                 pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                             });
@@ -200,6 +201,7 @@ namespace TestServer
                                 editor.AddField(f => f.Accept)
                                     .SetName("Accept this");
                                 editor.AddField(f => f.Textarea)
+                                    .VisibleWhen(f => f.Accept)
                                     .SetType(EditorType.TextArea);
                                 editor.AddField(f => f.Enum)
                                     .SetType(EditorType.Dropdown)
@@ -211,7 +213,8 @@ namespace TestServer
                             view.AddSection(pane =>
                             {
                                 pane.AddProperty(f => f.Name);
-                                pane.AddProperty(f => f.Dummy);
+                                pane.AddProperty(f => f.Dummy)
+                                    .VisibleWhen(f => f.Name == "Country123");
 
                                 pane.AddSubCollectionListView<CountryEntity>("country-collection");
                             });
@@ -231,7 +234,13 @@ namespace TestServer
                                 pane.AddField(f => f.Accept)
                                     .SetName("Accept this");
                                 pane.AddField(f => f.Textarea)
+                                    .VisibleWhen(f => f.Accept)
                                     .SetType(EditorType.TextArea);
+                            });
+                            editor.AddSection(pane =>
+                            {
+                                pane.VisibleWhen(x => x.Accept);
+
                                 pane.AddField(f => f.Enum)
                                     .SetType(EditorType.Select)
                                     .SetDataCollection<EnumDataProvider<TestEnum>>();
@@ -299,10 +308,10 @@ namespace TestServer
                                 pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                             });
-                            list.AddRow(pane =>
-                            {
-                                pane.AddProperty(p => p._Id.ToString());
-                            });
+                            //list.AddRow(pane =>
+                            //{
+                            //    pane.AddProperty(p => p._Id.ToString());
+                            //});
                             // list.AddRow(typeof(DashboardSection), config => { });
                         })
                         .SetListEditor(ListEditorType.Block, list =>

@@ -19,6 +19,8 @@ namespace RapidCMS.Common.Models.Config
 
         internal string? CustomAlias { get; set; }
 
+        internal Func<object, bool> IsVisible { get; set; } = (x) => true;
+
         internal Type VariantType { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
         internal List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
@@ -36,13 +38,13 @@ namespace RapidCMS.Common.Models.Config
             CustomAlias = customSectionType.FullName;
         }
 
-        public ListEditorPaneConfig<TEntity> AddDefaultButton(DefaultButtonType type, string label = null, string icon = null, bool isPrimary = false)
+        public ListEditorPaneConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig
             {
                 ButtonType = type,
-                Icon = icon ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Icon,
-                Label = label ?? type.GetCustomAttribute<DefaultIconLabelAttribute>().Label,
+                Icon = icon ?? type.GetCustomAttribute<DefaultIconLabelAttribute>()?.Icon,
+                Label = label ?? type.GetCustomAttribute<DefaultIconLabelAttribute>()?.Label,
                 IsPrimary = isPrimary
             };
 
@@ -51,7 +53,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ListEditorPaneConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string label = null, string icon = null)
+        public ListEditorPaneConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string? label = null, string? icon = null)
         {
             var button = new CustomButtonConfig(buttonType)
             {
@@ -66,7 +68,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ListEditorPaneConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string label = null, string icon = null)
+        public ListEditorPaneConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
         {
             var button = new CustomButtonConfig(buttonType)
             {
@@ -80,7 +82,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public FieldConfig<TEntity> AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<FieldConfig<TEntity>> configure = null)
+        public FieldConfig<TEntity> AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<FieldConfig<TEntity>>? configure = null)
         {
             var config = new FieldConfig<TEntity>()
             {
@@ -94,6 +96,13 @@ namespace RapidCMS.Common.Models.Config
             Fields.Add(config);
 
             return config;
+        }
+
+        public ListEditorPaneConfig<TEntity> VisibleWhen(Func<TEntity, bool> predicate)
+        {
+            IsVisible = (entity) => predicate.Invoke((TEntity)entity);
+
+            return this;
         }
     }
 }

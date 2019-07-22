@@ -16,6 +16,7 @@ namespace RapidCMS.Common.Models.Config
         internal string Description { get; set; }
 
         internal bool Readonly { get; set; }
+        internal Func<object, bool> IsVisible { get; set; } = (x) => true;
 
         internal IPropertyMetadata Property { get; set; }
         internal Type ValueMapperType { get; set; }
@@ -101,6 +102,13 @@ namespace RapidCMS.Common.Models.Config
             config.CollectionAlias = collectionAlias;
 
             Relation = config;
+
+            return this;
+        }
+
+        public FieldConfig<TEntity> VisibleWhen(Func<TEntity, bool> predicate)
+        {
+            IsVisible = (entity) => predicate.Invoke((TEntity)entity);
 
             return this;
         }

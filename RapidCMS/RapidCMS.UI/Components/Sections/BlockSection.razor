@@ -1,6 +1,6 @@
 ﻿@inherits BaseSection
 
-@if (Section != null && Section.Elements != null && Section.Elements.Any() && EditContext != null)
+@if (Section != null && Section.Elements != null && Section.Elements.Any() && EditContext != null && Section.IsVisible(EditContext.Entity))
 {
     <div class="content">
         @if (!string.IsNullOrWhiteSpace(Section.Label))
@@ -10,6 +10,11 @@
 
         @foreach (var element in Section.Elements)
         {
+            if (!element.IsVisible(EditContext.Entity))
+            {
+                continue;
+            }
+
             if (element is FieldUI field)
             {
                 <div class="form-row">

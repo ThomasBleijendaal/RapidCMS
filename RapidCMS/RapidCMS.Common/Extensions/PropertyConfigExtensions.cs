@@ -15,7 +15,8 @@ namespace RapidCMS.Common.Extensions
                 Name = property.Name,
                 Expression = property.Property,
 
-                Readonly = true
+                Readonly = true,
+                IsVisible = property.IsVisible
             };
         }
     }

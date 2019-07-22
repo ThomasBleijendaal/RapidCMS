@@ -50,7 +50,8 @@ namespace RapidCMS.Common.Extensions
             {
                 Description = field.Description,
                 Name = field.Name,
-                Type = field.DataType
+                Type = field.DataType,
+                IsVisible = field.IsVisible
             };
         }
 
@@ -60,7 +61,7 @@ namespace RapidCMS.Common.Extensions
             {
                 var ui = new ExpressionFieldUI
                 {
-                    Expression = expressionField.Expression
+                    Expression = expressionField.Expression,
                 };
 
                 PopulateProperties(ui, field);
@@ -98,6 +99,7 @@ namespace RapidCMS.Common.Extensions
             ui.Description = field.Description;
             ui.Name = field.Name;
             ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;
+            ui.IsVisible = field.IsVisible;
         }
 
         private static void PopulateProperties(PropertyFieldUI ui, PropertyField field, IServiceProvider serviceProvider, DataContext dataContext)
@@ -117,7 +119,9 @@ namespace RapidCMS.Common.Extensions
         {
             return new SubCollectionUI
             {
-                CollectionAlias = subCollection.CollectionAlias
+                CollectionAlias = subCollection.CollectionAlias,
+                // TODO:
+                IsVisible = x => true
             };
         }
 
@@ -125,7 +129,9 @@ namespace RapidCMS.Common.Extensions
         {
             return new RelatedCollectionUI
             {
-                CollectionAlias = relatedCollection.CollectionAlias
+                CollectionAlias = relatedCollection.CollectionAlias,
+                // TODO:
+                IsVisible = x => true
             };
         }
     }

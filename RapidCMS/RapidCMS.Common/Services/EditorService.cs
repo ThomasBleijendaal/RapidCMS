@@ -102,6 +102,7 @@ namespace RapidCMS.Common.Services
                         {
                             CustomAlias = pane.CustomAlias,
                             Label = pane.Label,
+                            IsVisible = pane.IsVisible,
 
                             Elements = EnumerableExtensions.ToList<(int Index, ElementUI element), ElementUI>(fields
                                 .Union<(int Index, ElementUI element)>(subCollections)
@@ -208,24 +209,24 @@ namespace RapidCMS.Common.Services
                     .Where(pane => pane.VariantType.IsSameTypeOrDerivedFrom(type))
                     .ToListAsync(async pane =>
                     {
-                        // TODO: view pane not yet capable of entity variants
                         var section = new SectionUI
                         {
                             CustomAlias = pane.CustomAlias,
+                            IsVisible = pane.IsVisible,
 
                             Buttons = await pane.Buttons
-                            .GetAllButtons()
-                            .Where(button => button.IsCompatibleWithForm(editContext))
-                            .WhereAsync(async button =>
-                            {
-                                var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                                    _httpContextAccessor.HttpContext.User,
-                                    editContext.Entity,
-                                    Operations.GetOperationForCrudType(button.GetCrudType()));
+                                .GetAllButtons()
+                                .Where(button => button.IsCompatibleWithForm(editContext))
+                                .WhereAsync(async button =>
+                                {
+                                    var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                                        _httpContextAccessor.HttpContext.User,
+                                        editContext.Entity,
+                                        Operations.GetOperationForCrudType(button.GetCrudType()));
 
-                                return authorizationChallenge.Succeeded;
-                            })
-                            .ToListAsync(button => button.ToUI()),
+                                    return authorizationChallenge.Succeeded;
+                                })
+                                .ToListAsync(button => button.ToUI()),
 
                             Elements = pane.Fields.ToList(field => (ElementUI)field.ToUI(editContext, dataContext))
                         };

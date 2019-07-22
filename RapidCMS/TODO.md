@@ -67,7 +67,7 @@ TODO:
     [] Remove collection-alias and move to some other system
 [] Different set of collections for different entity variant (probably not needed)
 [] IEntity.Id requirement is obstrusive
-[] Editor visibility based upon predicates of current IEntity or evaluation by some object
+[v] Editor visibility based upon predicates of current IEntity or evaluation by some object
 [] Sub collection buttons connected to collection to prevent numerous buttons on each sub collection row (like Update All)
 [] Extensible Dropdown (type ahead style insert of new elements + automatic update when used in list views)
 [] ValueMapper support in NodeView and ListView (instead of hard string cast)

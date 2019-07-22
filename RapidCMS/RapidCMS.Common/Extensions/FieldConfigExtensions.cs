@@ -20,6 +20,7 @@ namespace RapidCMS.Common.Extensions
                     Name = field.Name,
                     Property = field.Property,
                     Readonly = field.Readonly,
+                    IsVisible = field.IsVisible,
                     ValueMapperType = field.ValueMapperType ?? DefaultValueMapper.GetDefaultValueMapper(field.Property.PropertyType),
 
                     Relation = field.Relation?.ToRelation()
@@ -36,6 +37,7 @@ namespace RapidCMS.Common.Extensions
                     Name = field.Name,
                     Property = field.Property,
                     Readonly = field.Readonly,
+                    IsVisible = field.IsVisible,
                     ValueMapperType = field.ValueMapperType ?? DefaultValueMapper.GetDefaultValueMapper(field.Property.PropertyType),
 
                     Relation = field.Relation?.ToRelation()

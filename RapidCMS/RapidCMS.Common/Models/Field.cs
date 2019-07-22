@@ -1,4 +1,5 @@
-﻿using RapidCMS.Common.Enums;
+﻿using System;
+using RapidCMS.Common.Enums;
 
 
 namespace RapidCMS.Common.Models
@@ -11,6 +12,7 @@ namespace RapidCMS.Common.Models
         internal string Description { get; set; }
 
         internal bool Readonly { get; set; } = true;
+        internal Func<object, bool> IsVisible { get; set; }
 
         internal EditorType DataType { get; set; } = EditorType.Readonly;
     }

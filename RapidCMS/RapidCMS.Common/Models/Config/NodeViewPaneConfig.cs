@@ -20,6 +20,8 @@ namespace RapidCMS.Common.Models.Config
         internal string? CustomAlias { get; set; }
         internal string? Label { get; set; }
 
+        internal Func<object, bool> IsVisible { get; set; } = (x) => true;
+
         internal Type VariantType { get; set; }
 
         internal int FieldIndex { get; set; } = 0;
@@ -91,6 +93,13 @@ namespace RapidCMS.Common.Models.Config
             config.Index = FieldIndex++;
 
             RelatedCollectionLists.Add(config);
+
+            return this;
+        }
+
+        public NodeViewPaneConfig<TEntity> VisibleWhen(Func<TEntity, bool> predicate)
+        {
+            IsVisible = (entity) => predicate.Invoke((TEntity)entity);
 
             return this;
         }

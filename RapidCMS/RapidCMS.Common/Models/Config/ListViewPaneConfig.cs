@@ -19,6 +19,8 @@ namespace RapidCMS.Common.Models.Config
 
         internal string? CustomAlias { get; set; }
 
+        internal Func<object, bool> IsVisible { get; set; } = (x) => true;
+
         internal Type VariantType { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
 
@@ -95,6 +97,13 @@ namespace RapidCMS.Common.Models.Config
             Properties.Add(config);
 
             return config;
+        }
+
+        public ListViewPaneConfig<TEntity> VisibleWhen(Func<TEntity, bool> predicate)
+        {
+            IsVisible = (entity) => predicate.Invoke((TEntity)entity);
+
+            return this;
         }
     }
 }

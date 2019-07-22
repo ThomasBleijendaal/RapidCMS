@@ -118,6 +118,7 @@ namespace RapidCMS.Common.Extensions
                             return new Pane
                             {
                                 CustomAlias = view.CustomAlias,
+                                IsVisible = view.IsVisible,
                                 VariantType = view.VariantType,
                                 Buttons = view.Buttons.ToList(button => button switch
                                 {
@@ -151,6 +152,7 @@ namespace RapidCMS.Common.Extensions
                             return new Pane
                             {
                                 CustomAlias = editor.CustomAlias,
+                                IsVisible = editor.IsVisible,
                                 VariantType = editor.VariantType,
                                 Buttons = editor.Buttons.ToList(button => button switch
                                 {
@@ -183,6 +185,7 @@ namespace RapidCMS.Common.Extensions
                             var pane = new Pane
                             {
                                 CustomAlias = config.CustomAlias,
+                                IsVisible = config.IsVisible,
                                 Label = config.Label,
                                 VariantType = config.VariantType,
                                 Buttons = new List<Button>(),
@@ -214,6 +217,7 @@ namespace RapidCMS.Common.Extensions
                             var pane = new Pane
                             {
                                 CustomAlias = config.CustomAlias,
+                                IsVisible = config.IsVisible,
                                 Label = config.Label,
                                 VariantType = config.VariantType,
                                 Buttons = new List<Button>(),

@@ -73,6 +73,11 @@ else
                             <CascadingEditContext EditContext=@context>
                                 @foreach (var section in sections)
                                 {
+                                    if (!section.IsVisible(context.Entity))
+                                    {
+                                        continue;
+                                    }
+
                                     if (!string.IsNullOrEmpty(section.CustomAlias))
                                     {
                                         @CustomSections.GetCustomSection(section.CustomAlias, section);
@@ -112,12 +117,20 @@ else
 
                                                             if (field is ExpressionFieldUI expressionField)
                                                             {
-                                                                <td>@expressionField.Expression.StringGetter(context.Entity)</td>
+                                                                <td>
+                                                                    @if (expressionField.IsVisible(context.Entity))
+                                                                    {
+                                                                        @expressionField.Expression.StringGetter(context.Entity)
+                                                                    }
+                                                                </td>
                                                             }
                                                             else if (field is PropertyFieldUI propertyField)
                                                             {
                                                                 <td>
-                                                                    <UIEditor Field="field" Entity="@context.Entity" />
+                                                                    @if (propertyField.IsVisible(context.Entity))
+                                                                    {
+                                                                        <UIEditor Field="field" Entity="@context.Entity" />
+                                                                    }
                                                                 </td>
                                                             }
                                                         }
@@ -171,6 +184,11 @@ else
                         <CascadingEditContext EditContext=@context>
                             @foreach (var section in sections)
                             {
+                                if (!section.IsVisible(context.Entity))
+                                {
+                                    continue;
+                                }
+
                                 if (section.Buttons != null && section.Buttons.Any())
                                 {
                                     <div class="top-row">
@@ -238,6 +256,8 @@ else
             await LoadSectionsAsync();
 
             RootEditContext = rootEditContext;
+
+            Sections?.ForEach(x => x.editContext.OnFieldChanged += (s, a) => StateHasChanged());
 
             StateHasChanged();
         }

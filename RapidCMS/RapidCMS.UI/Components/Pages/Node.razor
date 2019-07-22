@@ -69,6 +69,8 @@ else
 
             EditContext = editContext;
 
+            EditContext.OnFieldChanged += (s, a) => StateHasChanged();
+
             StateHasChanged();
         }
         catch
