@@ -7,11 +7,6 @@ namespace RapidCMS.Common.Authorization
     public static class Operations
     {
         /// <summary>
-        /// Operation with no data action (refresh data, return to previous view, etc)
-        /// </summary>
-        public static OperationAuthorizationRequirement None = new OperationAuthorizationRequirement { Name = nameof(None) };
-
-        /// <summary>
         /// Read-only viewing of entity
         /// </summary>
         public static OperationAuthorizationRequirement Read = new OperationAuthorizationRequirement { Name = nameof(Read) };
@@ -41,11 +36,11 @@ namespace RapidCMS.Common.Authorization
         /// </summary>
         public static OperationAuthorizationRequirement Remove = new OperationAuthorizationRequirement { Name = nameof(Remove) };
         
-        public static OperationAuthorizationRequirement GetOperationForCrudType(CrudType type)
+        internal static OperationAuthorizationRequirement GetOperationForCrudType(CrudType type)
         {
             return type switch
             {
-                CrudType.None => None,
+                CrudType.None => Read,
                 CrudType.View => Read,
                 CrudType.Create => Create,
                 CrudType.Edit => Update,
@@ -55,13 +50,13 @@ namespace RapidCMS.Common.Authorization
                 CrudType.Add => Add,
                 CrudType.Remove => Remove,
                 CrudType.Pick => Add,
-                CrudType.Refresh => None,
-                CrudType.Return => None,
+                CrudType.Refresh => Read,
+                CrudType.Return => Read,
                 _ => throw new InvalidOperationException($"Operation of type {type} is not supported.")
             };
         }
 
-        public static OperationAuthorizationRequirement GetOperationForUsageType(UsageType type)
+        internal static OperationAuthorizationRequirement GetOperationForUsageType(UsageType type)
         {
             return type switch
             {
