@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EventAggregator.Blazor;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +13,7 @@ using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Forms;
 using RapidCMS.Common.Helpers;
+using RapidCMS.Common.Messages;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Commands;
 
@@ -23,17 +25,20 @@ namespace RapidCMS.Common.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationService _authorizationService;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IEventAggregator _eventAggregator;
 
         public EditContextService(
             Root root,
             IHttpContextAccessor httpContextAccessor,
             IAuthorizationService authorizationService,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            IEventAggregator eventAggregator)
         {
             _root = root;
             _httpContextAccessor = httpContextAccessor;
             _authorizationService = authorizationService;
             _serviceProvider = serviceProvider;
+            _eventAggregator = eventAggregator;
         }
 
         public async Task<List<EditContext>> GetEntitiesAsync(UsageType usageType, string collectionAlias, string? parentId, IQuery query)
@@ -126,14 +131,17 @@ namespace RapidCMS.Common.Services
 
                 case CrudType.Update:
                     await collection.Repository.InternalUpdateAsync(id ?? throw new InvalidOperationException(), parentId, updatedEntity, relationContainer);
+                    await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
                     return new ReloadCommand();
 
                 case CrudType.Insert:
                     var entity = await collection.Repository.InternalInsertAsync(parentId, updatedEntity, relationContainer);
+                    await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
                     return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, entity.Id) };
 
                 case CrudType.Delete:
                     await collection.Repository.InternalDeleteAsync(id ?? throw new InvalidOperationException(), parentId);
+                    await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
                     return new NavigateCommand { Uri = UriHelper.Collection(Constants.List, collectionAlias, parentId) };
 
                 case CrudType.None:
@@ -254,10 +262,12 @@ namespace RapidCMS.Common.Services
 
                 case CrudType.Update:
                     await collection.Repository.InternalUpdateAsync(id, parentId, updatedEntity, relationContainer);
+                    await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
                     return new ReloadCommand();
 
                 case CrudType.Insert:
                     updatedEntity = await collection.Repository.InternalInsertAsync(parentId, updatedEntity, relationContainer);
+                    await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
                     return new UpdateParameterCommand
                     {
                         Action = Constants.New,
@@ -270,6 +280,7 @@ namespace RapidCMS.Common.Services
                 case CrudType.Delete:
 
                     await collection.Repository.InternalDeleteAsync(id, parentId);
+                    await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
                     return new ReloadCommand();
 
                 case CrudType.None:
@@ -501,15 +512,15 @@ namespace RapidCMS.Common.Services
 
         private async Task EnsureAuthorizedUserAsync(OperationAuthorizationRequirement operation, IEntity entity)
         {
-            //var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-            //                _httpContextAccessor.HttpContext.User,
-            //                entity,
-            //                operation);
+            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+                _httpContextAccessor.HttpContext.User,
+                entity,
+                operation);
 
-            //if (!authorizationChallenge.Succeeded)
-            //{
-            //    throw new UnauthorizedAccessException();
-            //}
+            if (!authorizationChallenge.Succeeded)
+            {
+                throw new UnauthorizedAccessException();
+            }
         }
     }
 }
