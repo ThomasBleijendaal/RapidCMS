@@ -6,16 +6,16 @@
 
     <script>
         window.onload = function () {
-            var response = fetch("https://localhost:5001");
+            var response = fetch("https://localhost:44365/");
             response
                 .then(function (data) {
                     return data.text();
                 })
                 .then(function (html) {
                     document.body.innerHTML = html
-                        .replace(/base href="\//g, 'base href="https://localhost:5001/')
-                        .replace(/href="css/g, 'href="https://localhost:5001/css')
-                        .replace(/src="_/g, 'src="https://localhost:5001/_');
+                        .replace(/base href="\//g, 'base href="https://localhost:44365/')
+                        .replace(/href="css/g, 'href="https://localhost:44365/css')
+                        .replace(/src="_/g, 'src="https://localhost:44365/_');
 
                     nodeScriptReplace(document.body);
                 });

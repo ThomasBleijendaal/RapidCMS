@@ -6,7 +6,7 @@ namespace RapidCMS.Common.Enums
     {
         // Insert new Entity
         [DefaultIconLabel(Icon = "plus", Label = "New")]
-        [Actions(UsageType.List)]
+        [Actions(UsageType.List | UsageType.Add, UsageType.List | UsageType.Edit, UsageType.List | UsageType.View)]
         New = 1,
 
         [DefaultIconLabel(Icon = "hard-drive", Label = "Insert")]
@@ -46,7 +46,7 @@ namespace RapidCMS.Common.Enums
 
         // TODO: implement
         [DefaultIconLabel(Icon = "arrow-left", Label = "Return")]
-        [Actions(UsageType.Node, UsageType.List | UsageType.Add, UsageType.List | UsageType.Edit, UsageType.List | UsageType.New, UsageType.List | UsageType.Pick)]
+        [Actions(UsageType.Node, UsageType.List | UsageType.Add, UsageType.List | UsageType.New, UsageType.List | UsageType.Pick)]
         Return
     }
 }

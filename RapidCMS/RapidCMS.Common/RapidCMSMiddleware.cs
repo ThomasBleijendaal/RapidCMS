@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading;
+using EventAggregator.Blazor;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -60,6 +61,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // scoped semaphore for repositories
             services.AddScoped(serviceProvider => new SemaphoreSlim(1, 1));
+
+            services.AddSingleton<IEventAggregator, EventAggregator.Blazor.EventAggregator>();
 
             return services;
         }

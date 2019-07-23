@@ -187,6 +187,8 @@ namespace TestServer
                         .SetListEditor(ListEditorType.Table, listEditor =>
                         {
                             listEditor.AddDefaultButton(DefaultButtonType.New);
+                            listEditor.AddDefaultButton(DefaultButtonType.Return);
+
                             listEditor.AddSection(editor =>
                             {
                                 editor.AddDefaultButton(DefaultButtonType.View);

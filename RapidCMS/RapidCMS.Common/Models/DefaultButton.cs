@@ -50,7 +50,8 @@ namespace RapidCMS.Common.Models
         }
         internal override bool IsCompatibleWithForm(EditContext editContext)
         {
-            return DefaultButtonType.GetCustomAttribute<ActionsAttribute>()?.Usages?.Any(x => editContext.UsageType.HasFlag(x)) ?? false;
+            var usages = DefaultButtonType.GetCustomAttribute<ActionsAttribute>()?.Usages;
+            return usages?.Any(x => editContext.UsageType.HasFlag(x)) ?? false;
         }
     }
 }
