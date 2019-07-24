@@ -4,6 +4,12 @@ TODO:
 
 [] Documentation + Examples
 
+[] Auto-update DataCollection editors when collection indicates update
+
+[] bug: ListEditor ignores RootVariant section when using multiple EntityVariants
+[] bug: Only update affected EditContext in ListEditor to prevent loss of edits in other EditContexts
+[] bug: Better pagination to prevent loss of edits in EditContexts while paging away
+
 1.1
 
 [v] Dashboard
