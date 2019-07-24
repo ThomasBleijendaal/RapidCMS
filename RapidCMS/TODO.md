@@ -9,6 +9,7 @@ TODO:
 [] bug: ListEditor ignores RootVariant section when using multiple EntityVariants
 [] bug: Only update affected EditContext in ListEditor to prevent loss of edits in other EditContexts
 [] bug: Better pagination to prevent loss of edits in EditContexts while paging away
+[] bug: ListEditor with a lot of Dropdowns becomes very slow when clicking New
 
 1.1
 

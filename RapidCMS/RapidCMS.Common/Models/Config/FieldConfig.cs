@@ -75,7 +75,7 @@ namespace RapidCMS.Common.Models.Config
         public FieldConfig<TEntity> SetDataCollection<TDataCollection>()
             where TDataCollection : IDataCollection
         {
-            if (Type != EditorType.Custom && Type.GetCustomAttribute<RelationAttribute>().Type != RelationType.One)
+            if (Type != EditorType.Custom && Type.GetCustomAttribute<RelationAttribute>()?.Type != RelationType.One)
             {
                 throw new InvalidOperationException("Cannot add DataRelation to Editor with no support for RelationType.One");
             }
@@ -90,7 +90,7 @@ namespace RapidCMS.Common.Models.Config
         // TODO: perhaps add alias to differentiate between duplicate relations
         public FieldConfig<TEntity> SetCollectionRelation<TRelatedEntity>(string collectionAlias, Action<CollectionRelationConfig<TEntity, TRelatedEntity>> configure)
         {
-            if (Type != EditorType.Custom && !Type.GetCustomAttribute<RelationAttribute>().Type.In(RelationType.One, RelationType.Many))
+            if (Type != EditorType.Custom && !(Type.GetCustomAttribute<RelationAttribute>()?.Type.In(RelationType.One, RelationType.Many) ?? false))
             {
                 throw new InvalidOperationException("Cannot add CollectionRelation to Editor with no support for RelationType.Many");
             }
