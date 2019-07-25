@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using RapidCMS.Common.Data;
 using TestLibrary.Enums;
@@ -12,6 +13,9 @@ namespace TestLibrary.Entities
 
         [Required]
         public string Name { get; set; }
+
+        [Required]
+        public DateTime Date { get; set; }
 
         public string Dummy { get; set; }
 

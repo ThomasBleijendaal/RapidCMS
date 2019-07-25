@@ -1,0 +1,24 @@
+﻿@inherits BasePropertyEditor
+
+@using RapidCMS.UI.Helpers
+
+@{ 
+    DateTime date = (DateTime)GetValueAsObject();
+
+    if (date == DateTime.MinValue)
+    {
+        date = DateTime.UtcNow.Date;
+    }
+}
+
+<input value=@date.ToString("yyyy-MM-dd")
+       @onchange=@(args => SetValueFromString((string)args.Value))
+       class="form-control @(CssHelper.GetValidationClass(State))"
+       type="date" />
+
+@foreach (var message in GetValidationMessages())
+{
+    <div class="invalid-feedback">
+        @message
+    </div>
+}

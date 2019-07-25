@@ -228,6 +228,7 @@ namespace TestServer
                             editor.AddSection(pane =>
                             {
                                 pane.AddField(f => f.Name);
+                                pane.AddField(f => f.Date);
                                 pane.AddField(f => f.Dummy).SetType(typeof(UploadEditor));
                                 pane.AddField(f => f.NotRequired);
                                 pane.AddField(f => f.Range)

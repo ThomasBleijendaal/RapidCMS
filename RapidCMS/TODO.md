@@ -11,7 +11,7 @@ TODO:
 [] bug: Better pagination to prevent loss of edits in EditContexts while paging away
 [] bug: ListEditor with a lot of Dropdowns becomes very slow when clicking New (cache the fetch call)
 
-[] Date editor
+[v] Date editor
 
 1.1
 

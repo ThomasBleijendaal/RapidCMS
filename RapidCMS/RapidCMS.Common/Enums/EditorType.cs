@@ -1,4 +1,5 @@
-﻿using RapidCMS.Common.Attributes;
+﻿using System;
+using RapidCMS.Common.Attributes;
 
 namespace RapidCMS.Common.Enums
 {
@@ -16,6 +17,9 @@ namespace RapidCMS.Common.Enums
 
         [DefaultType(typeof(bool), typeof(bool?))]
         Checkbox,
+
+        [DefaultType(typeof(DateTime))]
+        Date,
 
         [Relation(RelationType.One)]
         Dropdown,
