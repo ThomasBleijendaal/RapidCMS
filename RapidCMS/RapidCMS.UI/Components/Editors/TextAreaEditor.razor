@@ -2,8 +2,8 @@
 
 @using RapidCMS.UI.Helpers
 
-<textarea value=@GetValue()
-          @onchange=@(args => SetValue(args.Value))
+<textarea value=@GetValueAsString()
+          @onchange=@(args => SetValueFromString((string)args.Value))
           class="form-control @(CssHelper.GetValidationClass(State))"></textarea>
 
 @foreach (var message in GetValidationMessages())

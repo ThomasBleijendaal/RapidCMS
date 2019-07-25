@@ -6,8 +6,8 @@
     <div class="input-group-prepend">
         <span class="input-group-text">#</span>
     </div>
-    <input value=@GetValue()
-           @onchange=@(args => SetValue(args.Value))
+    <input value=@GetValueAsString()
+           @onchange=@(args => SetValueFromString((string)args.Value))
            type="number"
            class="form-control @(CssHelper.GetValidationClass(State))" />
 

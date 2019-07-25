@@ -3,8 +3,8 @@
 @using RapidCMS.UI.Helpers
 
 <div class="form-check">
-    <input checked=@GetValue()
-           @onchange=@(args => SetValue(args.Value))
+    <input checked=@GetValueAsObject()
+           @onchange=@(args => SetValueFromObject((bool)args.Value))
            type="checkbox"
            class="form-check-input position-static @(CssHelper.GetValidationClass(State))" />
 

@@ -6,7 +6,6 @@ using RapidCMS.Common.Enums;
 using RapidCMS.Common.Forms;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
-using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.Common.Extensions
 {
@@ -55,7 +54,7 @@ namespace RapidCMS.Common.Extensions
             };
         }
 
-        internal static FieldUI ToUI(this Field field, IServiceProvider serviceProvider, DataContext dataContext)
+        internal static FieldUI ToUI(this Field field, DataContext dataContext)
         {
             if (field is ExpressionField expressionField)
             {
@@ -84,7 +83,7 @@ namespace RapidCMS.Common.Extensions
                     ui = new PropertyFieldUI();
                 }
 
-                PopulateProperties(ui, propertyField, serviceProvider, dataContext);
+                PopulateProperties(ui, propertyField, dataContext);
 
                 return ui;
             }
@@ -102,12 +101,11 @@ namespace RapidCMS.Common.Extensions
             ui.IsVisible = field.IsVisible;
         }
 
-        private static void PopulateProperties(PropertyFieldUI ui, PropertyField field, IServiceProvider serviceProvider, DataContext dataContext)
+        private static void PopulateProperties(PropertyFieldUI ui, PropertyField field, DataContext dataContext)
         {
             PopulateProperties((FieldUI)ui, (Field)field);
 
             ui.Property = field.Property;
-            ui.ValueMapper = field.ValueMapperType != null ? serviceProvider.GetService<IValueMapper>(field.ValueMapperType) : null;
             
             if (field.Relation != null)
             {

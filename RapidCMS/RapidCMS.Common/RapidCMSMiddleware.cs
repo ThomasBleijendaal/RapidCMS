@@ -11,7 +11,6 @@ using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.Services;
-using RapidCMS.Common.ValueMappers;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -36,20 +35,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<ITreeService, TreeService>();
 
             services.AddScoped<IExceptionHelper, ExceptionHelper>();
-
-            services.AddSingleton<DefaultValueMapper>();
-
-            services.AddSingleton<BoolValueMapper>();
-            services.AddSingleton<NullableBoolValueMapper>();
-            services.AddSingleton<IntValueMapper>();
-            services.AddSingleton<NullableIntValueMapper>();
-            services.AddSingleton<LongValueMapper>();
-            services.AddSingleton<NullableLongValueMapper>();
-            services.AddSingleton<FloatValueMapper>();
-            services.AddSingleton<NullableFloatValueMapper>();
-
-            services.AddSingleton(typeof(CollectionValueMapper<>), typeof(CollectionValueMapper<>));
-            services.AddSingleton(typeof(EnumValueMapper<>), typeof(EnumValueMapper<>));
 
             services.AddSingleton(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
 

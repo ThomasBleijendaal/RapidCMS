@@ -4,7 +4,6 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models.Metadata;
-using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.Common.Models.Config
 {
@@ -19,7 +18,6 @@ namespace RapidCMS.Common.Models.Config
         internal Func<object, bool> IsVisible { get; set; } = (x) => true;
 
         internal IPropertyMetadata Property { get; set; }
-        internal Type ValueMapperType { get; set; }
         internal RelationConfig? Relation { get; set; }
 
         internal EditorType Type { get; set; }
@@ -53,15 +51,6 @@ namespace RapidCMS.Common.Models.Config
         {
             Type = EditorType.Custom;
             CustomType = type;
-            return this;
-        }
-
-        // TODO: check for mapper compatibility with value type in NodeProperty
-        public FieldConfig<TEntity> SetValueMapper<TValueMapper>()
-            where TValueMapper : IValueMapper
-        {
-            ValueMapperType = typeof(TValueMapper);
-
             return this;
         }
 
