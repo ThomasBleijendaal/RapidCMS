@@ -9,15 +9,17 @@ TODO:
 [] bug: ListEditor ignores RootVariant section when using multiple EntityVariants
 [] bug: Only update affected EditContext in ListEditor to prevent loss of edits in other EditContexts
 [] bug: Better pagination to prevent loss of edits in EditContexts while paging away
-[] bug: ListEditor with a lot of Dropdowns becomes very slow when clicking New
+[] bug: ListEditor with a lot of Dropdowns becomes very slow when clicking New (cache the fetch call)
+
+[] Date editor
+
+[] Investigate replacing ValueMapper with TypeConverter
 
 1.1
 
 [v] Dashboard
 
 [] Merge 2 relation patterns into a single one (either via IRelationContainer or via IRepository methods)
-
-[] Date editor
 
 [v] Pagination 
     [] consistent during session
@@ -39,6 +41,8 @@ TODO:
     [] Fix further
 
 [] Remove UIEditor, and render editor directly
+
+[] Custom modal / form based on button click
 
 1.2
 

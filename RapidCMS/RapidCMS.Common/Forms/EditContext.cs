@@ -182,6 +182,11 @@ namespace RapidCMS.Common.Forms
 
             foreach (var result in results)
             {
+                if (!result.MemberNames.Any())
+                {
+                    throw new InvalidOperationException("Only validators which explicitly specify which member is invalid should be used.");
+                }
+
                 result.MemberNames.ForEach(name => GetFieldState(name)?.AddMessage(result.ErrorMessage));
             }
 
