@@ -105,7 +105,7 @@ namespace RapidCMS.Common.Helpers
                     }
                     while (true);
 
-                    if (getValueMethod == null || setValueMethod == null)
+                    if (getValueMethod == null || setValueMethod == null || parameterTPropertyType == null)
                     {
                         throw new Exception("Failed to process given LambdaExpression");
                     }

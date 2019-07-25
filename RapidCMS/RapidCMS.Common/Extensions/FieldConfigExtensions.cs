@@ -1,7 +1,6 @@
 ﻿using RapidCMS.Common.Enums;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
-using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.Common.Extensions
 {
@@ -21,7 +20,6 @@ namespace RapidCMS.Common.Extensions
                     Property = field.Property,
                     Readonly = field.Readonly,
                     IsVisible = field.IsVisible,
-                    ValueMapperType = field.ValueMapperType ?? DefaultValueMapper.GetDefaultValueMapper(field.Property.PropertyType),
 
                     Relation = field.Relation?.ToRelation()
                 };
@@ -38,7 +36,6 @@ namespace RapidCMS.Common.Extensions
                     Property = field.Property,
                     Readonly = field.Readonly,
                     IsVisible = field.IsVisible,
-                    ValueMapperType = field.ValueMapperType ?? DefaultValueMapper.GetDefaultValueMapper(field.Property.PropertyType),
 
                     Relation = field.Relation?.ToRelation()
                 };

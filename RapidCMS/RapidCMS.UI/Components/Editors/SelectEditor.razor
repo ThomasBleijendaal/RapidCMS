@@ -8,7 +8,7 @@
     var index = 0;
     var group = Guid.NewGuid().ToString();
 
-    var value = GetValue(false);
+    var value = GetValueAsObject();
 
     <div class="form-control form-control-select-list @(CssHelper.GetValidationClass(State))">
         @foreach (var option in Options)
@@ -25,7 +25,7 @@
                                    id="@group-option@(index)"
                                    name=@group
                                    checked=@(option.Id.Equals(value))
-                                   @onchange=@(async args=> SetValue(option.Id, false)) />
+                                   @onchange=@(async args=> SetValueFromObject(option.Id)) />
                             @option.Labels.First()
                         </label>
                     </div>

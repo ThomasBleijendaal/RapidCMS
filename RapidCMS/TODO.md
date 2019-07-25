@@ -13,9 +13,9 @@ TODO:
 
 [] Date editor
 
-[] Investigate replacing ValueMapper with TypeConverter
-
 1.1
+
+[] Fix nullability in PropertyMetadata
 
 [v] Dashboard
 
@@ -81,7 +81,6 @@ TODO:
 [v] Editor visibility based upon predicates of current IEntity or evaluation by some object
 [] Sub collection buttons connected to collection to prevent numerous buttons on each sub collection row (like Update All)
 [] Extensible Dropdown (type ahead style insert of new elements + automatic update when used in list views)
-[] ValueMapper support in NodeView and ListView (instead of hard string cast)
 [] Put library statics in library (css / icons / js)
 [] Investigate if GenericXConfig -> XConfig -> X can be reduces to GenericXConfig -> X (No more FieldConfig<> -> FieldConfig -> Field, but FieldConfig<> -> Field)
 [] GetRelationListViewAsync method evaluates authorization for all buttons to relatedEntity, while the processing functions will evaluate authorizaton sometimes to IEntity and sometimes to IRelatedEntity.

@@ -1,6 +1,7 @@
 ﻿using System;
-using RapidCMS.Common.Models.Metadata;
+using System.ComponentModel;
 using RapidCMS.Common.Forms;
+using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.UI.Components.Editors
 {
@@ -14,18 +15,16 @@ namespace RapidCMS.UI.Components.Editors
             }
         }
 
-        protected void SetValue(object value, bool useValueMapper = true)
+        protected void SetValueFromObject(object value)
         {
-            if (useValueMapper)
-            {
-                Property.Setter(Entity, ValueMapper.MapFromEditor(value));
-            }
-            else
-            {
-                Property.Setter(Entity, value);
-            }
-
+            Property.Setter(Entity, value);
             EditContext.NotifyPropertyChanged(Property);
+        }
+
+        protected void SetValueFromString(string value)
+        {
+            var obj = TypeDescriptor.GetConverter(Property.PropertyType).ConvertFromString(value);
+            SetValueFromObject(obj);
         }
     }
 }

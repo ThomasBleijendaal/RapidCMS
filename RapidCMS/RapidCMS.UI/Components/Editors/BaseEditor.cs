@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Forms;
 using RapidCMS.Common.Models.Metadata;
-using RapidCMS.Common.ValueMappers;
 
 namespace RapidCMS.UI.Components.Editors
 {
@@ -16,18 +16,14 @@ namespace RapidCMS.UI.Components.Editors
 
         [Parameter] internal protected IPropertyMetadata Property { get; private set; }
 
-        [Parameter] internal protected IValueMapper ValueMapper { get; private set; }
-
-        protected object GetValue(bool useValueMapper = true)
+        protected object GetValueAsObject()
         {
-            if (useValueMapper)
-            {
-                return ValueMapper.MapToEditor(Property.Getter(Entity));
-            }
-            else
-            {
-                return Property.Getter(Entity);
-            }
+            return Property.Getter(Entity);
+        }
+
+        protected string GetValueAsString()
+        {
+            return TypeDescriptor.GetConverter(Property.PropertyType).ConvertToString(GetValueAsObject());
         }
 
         protected IEnumerable<string> GetValidationMessages()

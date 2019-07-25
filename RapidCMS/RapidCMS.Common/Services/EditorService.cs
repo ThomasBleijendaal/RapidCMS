@@ -85,7 +85,7 @@ namespace RapidCMS.Common.Services
                     {
                         var fields = Enumerable.Select<Field, (int Index, ElementUI element)>(pane.Fields, field =>
                         {
-                            return (field.Index, element: (ElementUI)field.ToUI(editContext, dataContext));
+                            return (field.Index, element: (ElementUI)field.ToUI(dataContext));
                         });
 
                         var subCollections = Enumerable.Select<SubCollectionList, (int Index, ElementUI element)>(pane.SubCollectionLists, subCollection =>
@@ -228,7 +228,7 @@ namespace RapidCMS.Common.Services
                                 })
                                 .ToListAsync(button => button.ToUI()),
 
-                            Elements = pane.Fields.ToList(field => (ElementUI)field.ToUI(editContext, dataContext))
+                            Elements = pane.Fields.ToList(field => (ElementUI)field.ToUI(dataContext))
                         };
 
                         return section;

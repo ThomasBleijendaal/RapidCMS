@@ -36,7 +36,7 @@
         {
             IsNullable = Nullable.GetUnderlyingType(Property.PropertyType) != null;
 
-            var value = GetValue(false);
+            var value = GetValueAsObject();
 
             await DataCollection.SetEntityAsync(Entity);
             var data = await DataCollection.GetAvailableElementsAsync();
@@ -61,11 +61,11 @@
 
         if (index == -1)
         {
-            SetValue(null, false);
+            SetValueFromObject(default);
         }
         else
         {
-            SetValue(Options.ElementAt(index).Id, false);
+            SetValueFromObject(Options.ElementAt(index).Id);
         }
         
         // reset nullable when option is selected
