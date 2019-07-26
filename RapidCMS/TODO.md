@@ -23,6 +23,7 @@ TODO:
 
 [v] Pagination 
     [] consistent during session
+    [] Keep edit contexts in cache
 
 [] Order of collection form configuration is not maintained
   
