@@ -34,7 +34,7 @@ namespace TestLibrary
 
         protected abstract string Name { get; }
 
-        public override async Task<IEnumerable<TestEntity>> GetAllAsync(int? parentId, IQuery query)
+        public override async Task<IEnumerable<TestEntity>> GetAllAsync(int? parentId, IQuery<TestEntity> query)
         {
             await Task.Delay(1);
 
@@ -165,7 +165,7 @@ namespace TestLibrary
             return Task.CompletedTask;
         }
 
-        public override Task<IEnumerable<TestEntity>> GetAllAsync(int? parentId, IQuery query)
+        public override Task<IEnumerable<TestEntity>> GetAllAsync(int? parentId, IQuery<TestEntity> query)
         {
             return Task.FromResult(_data.Where(x => x.ParentId == parentId));
         }

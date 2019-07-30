@@ -1,0 +1,63 @@
+﻿@using System.Threading
+
+<ul class="nav nav-tabs">
+    @if (Tabs != null && Tabs.Any())
+    {
+        @foreach (var tab in Tabs)
+        {
+            <li class="nav-item">
+                <a class="nav-link @((tab.Id == activeTab) ? "active" : "")" @onclick="@(args => Tab(tab.Id))" href="javascript:;">@tab.Label</a>
+            </li>
+        }
+    }
+
+    <li class="nav-item search">
+        <input type="search" placeholder="Search.." class="form-control" @onchange="Search" />
+    </li>
+</ul>
+
+@code {
+    int? activeTab = null;
+    CancellationTokenSource cts = new CancellationTokenSource();
+
+    [Parameter] IEnumerable<TabUI>? Tabs { get; set; }
+    [Parameter] EventCallback<string?> OnSearch { get; set; }
+    [Parameter] EventCallback<int?> OnTabChange { get; set; }
+
+    protected override void OnInit()
+    {
+        if (activeTab == null)
+        {
+            activeTab = Tabs?.FirstOrDefault()?.Id;
+        }
+    }
+
+    async void Search(UIChangeEventArgs args)
+    {
+        var searchValue = (string)args.Value;
+
+        cts.Cancel();
+        cts = new CancellationTokenSource();
+
+        await Task.Delay(300);
+
+        if (!cts.IsCancellationRequested)
+        {
+            await OnSearch.InvokeAsync(
+                (string.IsNullOrWhiteSpace(searchValue))
+                ? null
+                : searchValue);
+        }
+    }
+
+    async void Tab(int? id)
+    {
+        activeTab = id;
+
+        var task = OnTabChange.InvokeAsync(id);
+
+        StateHasChanged();
+
+        await task;
+    }
+}

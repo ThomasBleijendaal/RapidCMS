@@ -44,7 +44,7 @@ namespace TestLibrary.Repositories
             await _table!.ExecuteAsync(op);
         }
 
-        public override async Task<IEnumerable<AzureTableStorageEntity>> GetAllAsync(string? parentId, IQuery query)
+        public override async Task<IEnumerable<AzureTableStorageEntity>> GetAllAsync(string? parentId, IQuery<AzureTableStorageEntity> query)
         {
             await _initTask;
 

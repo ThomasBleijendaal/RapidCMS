@@ -31,6 +31,7 @@ using TestServer.Components.CustomLogin;
 using TestServer.Components.CustomSections;
 using Blazor.FileReader;
 using TestServer.Components.CustomDashboard;
+using TestLibrary.DataViewBuilders;
 
 namespace TestServer
 {
@@ -146,6 +147,8 @@ namespace TestServer
             services.AddTransient<CreateButtonActionHandler>();
 
             services.AddTransient<DummyDataProvider>();
+
+            services.AddScoped<CountryDataViewBuilder>();
 
             services.AddSingleton<IAuthorizationHandler, CountryEntityAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, PersonEntityAuthorizationHandler>();
@@ -301,6 +304,9 @@ namespace TestServer
                     collection
                         .SetRepository<CountryRepository>()
                         .SetTreeView(entity => entity.Name)
+                        //.AddDataView("All", x => true)
+                        //.AddDataView("1234", x => x.Name.Contains("1234"))
+                        .SetDataViewBuilder<CountryDataViewBuilder>()
                         .SetListView(list =>
                         {
                             list.AddDefaultButton(DefaultButtonType.New);

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Extensions;
 using TestLibrary.Data;
 using TestLibrary.Entities;
 
@@ -26,9 +27,11 @@ namespace TestLibrary.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public override async Task<IEnumerable<CountryEntity>> GetAllAsync(int? parentId, IQuery query)
+        public override async Task<IEnumerable<CountryEntity>> GetAllAsync(int? parentId, IQuery<CountryEntity> query)
         {
             var data = await _dbContext.Countries
+                .WhereIfNotNull(query.DataViewExpression)
+                .WhereIfNotNull(query.SearchTerm, x => x.Name.Contains(query.SearchTerm!))
                 .OrderBy(x => x._Id)
                 .Skip(query.Skip)
                 .Take(query.Take + 1)
@@ -40,7 +43,7 @@ namespace TestLibrary.Repositories
             return data.Take(query.Take);
         }
 
-        public override async Task<IEnumerable<CountryEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery query)
+        public override async Task<IEnumerable<CountryEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery<CountryEntity> query)
         {
             if (relatedEntity is PersonEntity person)
             {
@@ -59,7 +62,7 @@ namespace TestLibrary.Repositories
 
             return null;
         }
-        public override async Task<IEnumerable<CountryEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
+        public override async Task<IEnumerable<CountryEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery<CountryEntity> query)
         {
             if (relatedEntity is PersonEntity person)
             {

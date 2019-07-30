@@ -26,7 +26,7 @@ namespace TestLibrary.Repositories
 
         protected string Name => "Relation Repo";
 
-        public override async Task<IEnumerable<RelationEntity>> GetAllAsync(int? parentId, IQuery query)
+        public override async Task<IEnumerable<RelationEntity>> GetAllAsync(int? parentId, IQuery<RelationEntity> query)
         {
             await Task.Delay(1);
 

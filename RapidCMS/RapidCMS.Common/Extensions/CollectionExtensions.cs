@@ -77,7 +77,12 @@ namespace RapidCMS.Common.Extensions
                     Type = configReceiver.EntityVariant.Type
                 };
 
-                var collection = new Collection(configReceiver.Name, configReceiver.Alias, variant, configReceiver.RepositoryType, configReceiver.Recursive);
+                var collection = new Collection(configReceiver.Name, configReceiver.Alias, variant, configReceiver.RepositoryType, configReceiver.Recursive)
+                {
+                    DataViews = configReceiver.DataViews,
+                    DataViewBuilder = configReceiver.DataViewBuilder,
+                    QueryBuilder = configReceiver.QueryBuilder
+                };
 
                 if (configReceiver.TreeView != null)
                 {

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Common.Data;
-
+using RapidCMS.Common.Extensions;
 
 namespace RapidCMS.Common.Models
 {
@@ -27,6 +28,10 @@ namespace RapidCMS.Common.Models
         internal List<EntityVariant>? SubEntityVariants { get; set; }
         internal EntityVariant EntityVariant { get; private set; }
 
+        internal List<IDataView> DataViews { get; set; }
+        internal Type? DataViewBuilder { get; set; }
+        internal Func<Query, IQuery> QueryBuilder { get; set; }
+
         internal EntityVariant GetEntityVariant(string? alias)
         {
             if (string.IsNullOrWhiteSpace(alias) || SubEntityVariants == null)
@@ -42,6 +47,38 @@ namespace RapidCMS.Common.Models
         {
             return SubEntityVariants?.FirstOrDefault(x => x.Type == entity.GetType())
                 ?? EntityVariant;
+        }
+
+        internal Task<IEnumerable<IDataView>> GetDataViewsAsync(IServiceProvider serviceProvider)
+        {
+            if (DataViewBuilder == null)
+            {
+                return Task.FromResult((IEnumerable<IDataView>)DataViews);
+            }
+            else
+            {
+                var builder = serviceProvider.GetService<IDataViewBuilder>(DataViewBuilder);
+                return builder.GetDataViewsAsync();
+            }
+        }
+
+        internal async Task<IQuery> ProcessDataViewAsync(Query query, IServiceProvider serviceProvider)
+        {
+            if (DataViewBuilder != null || DataViews.Count > 0)
+            {
+                var dataViews = await GetDataViewsAsync(serviceProvider);
+
+                var dataView = query.ActiveTab == null
+                    ? dataViews.FirstOrDefault()
+                    : dataViews.First(x => x.Id == query.ActiveTab);
+
+                if (dataView != null)
+                {
+                    query.SetDataViewExpression(dataView.QueryExpression);
+                }
+            }
+
+            return QueryBuilder.Invoke(query);
         }
 
         internal Type RepositoryType { get; private set; }

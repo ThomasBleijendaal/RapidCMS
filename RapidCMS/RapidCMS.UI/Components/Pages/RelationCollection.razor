@@ -9,7 +9,7 @@
 else
 {
     <CascadingEditContext EditContext=@RootEditContext>
-        @if (Buttons != null)
+        @if (Buttons != null && Buttons.Any())
         {
             <div class="top-row first">
                 @foreach (var button in Buttons)
@@ -234,7 +234,7 @@ else
 
     UsageType previousUsage;
 
-    protected override async Task LoadDataAsync()
+    protected override async Task LoadDataAsync(bool reload = false)
     {
         try
         {
@@ -280,7 +280,7 @@ else
             return;
         }
 
-        var query = Query.Create(UI.PageSize, CurrentPage);
+        var query = Query.Create(UI.PageSize, CurrentPage, null, null);
 
         var editContexts = await EditContextService.GetRelatedEntitiesAsync(GetUsageType(), CollectionAlias, RelatedEntity, query);
         Sections = await editContexts.ToListAsync(async editContext => (editContext, await UI.GetSectionsForEditContextAsync(editContext)));

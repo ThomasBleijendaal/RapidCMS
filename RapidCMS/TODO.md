@@ -10,6 +10,7 @@ TODO:
 [] bug: Only update affected EditContext in ListEditor to prevent loss of edits in other EditContexts
 [] bug: Better pagination to prevent loss of edits in EditContexts while paging away
 [] bug: ListEditor with a lot of Dropdowns becomes very slow when clicking New (cache the fetch call)
+[] issue: Applying invalid change to Entity will still update entity, and if attached, will result in db change when SaveChanges()
 
 [v] Date editor
 

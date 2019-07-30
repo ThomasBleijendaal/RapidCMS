@@ -26,7 +26,7 @@ namespace TestLibrary.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public override async Task<IEnumerable<PersonEntity>> GetAllAsync(int? parentId, IQuery query)
+        public override async Task<IEnumerable<PersonEntity>> GetAllAsync(int? parentId, IQuery<PersonEntity> query)
         {
             var persons = await _dbContext.Persons
                 .Include(x => x.Countries).ThenInclude(x => x.Country)

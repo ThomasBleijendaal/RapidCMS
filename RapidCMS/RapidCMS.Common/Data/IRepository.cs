@@ -36,9 +36,9 @@ namespace RapidCMS.Common.Data
         where TParentKey : struct
     {
         Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
-        Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery query);
-        Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery query);
-        Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery query);
+        Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery<TEntity> query);
+        Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query);
+        Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query);
 
         Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType);
         Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity, IRelationContainer? relations);
@@ -64,10 +64,10 @@ namespace RapidCMS.Common.Data
         }
 
         public abstract Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
-        public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery query);
-        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery query)
+        public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery<TEntity> query);
+        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllRelatedAsync)} on the {GetType()}.");
-        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
+        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllNonRelatedAsync)} on the {GetType()}.");
 
         public abstract Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType = null);
@@ -103,7 +103,7 @@ namespace RapidCMS.Common.Data
 
             try
             {
-                return (await GetAllAsync(ParseParentKey(parentId), query)).Cast<IEntity>();
+                return (await GetAllAsync(ParseParentKey(parentId), (IQuery<TEntity>)query)).Cast<IEntity>();
             }
             finally
             {
@@ -117,7 +117,7 @@ namespace RapidCMS.Common.Data
 
             try
             {
-                return (await GetAllRelatedAsync(relatedEntity, query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+                return (await GetAllRelatedAsync(relatedEntity, (IQuery<TEntity>)query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {
@@ -131,7 +131,7 @@ namespace RapidCMS.Common.Data
 
             try
             {
-                return (await GetAllNonRelatedAsync(relatedEntity, query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+                return (await GetAllNonRelatedAsync(relatedEntity, (IQuery<TEntity>)query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {
@@ -229,9 +229,9 @@ namespace RapidCMS.Common.Data
     {
 
         Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
-        Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery query);
-        Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity entity, IQuery query);
-        Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity entity, IQuery query);
+        Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery<TEntity> query);
+        Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity entity, IQuery<TEntity> query);
+        Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity entity, IQuery<TEntity> query);
 
         Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType);
         Task<TEntity> InsertAsync(TParentKey? parentId, TEntity entity, IRelationContainer? relations);
@@ -257,10 +257,10 @@ namespace RapidCMS.Common.Data
         }
 
         public abstract Task<TEntity> GetByIdAsync(TKey id, TParentKey? parentId);
-        public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery query);
-        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery query)
+        public abstract Task<IEnumerable<TEntity>> GetAllAsync(TParentKey? parentId, IQuery<TEntity> query);
+        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllRelatedAsync)} on {GetType()}.");
-        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
+        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllNonRelatedAsync)} on {GetType()}.");
 
         public abstract Task<TEntity> NewAsync(TParentKey? parentId, Type? variantType = null);
@@ -296,7 +296,7 @@ namespace RapidCMS.Common.Data
 
             try
             {
-                return (await GetAllAsync(ParseParentKey(parentId), query)).Cast<IEntity>();
+                return (await GetAllAsync(ParseParentKey(parentId), (IQuery<TEntity>)query)).Cast<IEntity>();
             }
             finally
             {
@@ -310,7 +310,7 @@ namespace RapidCMS.Common.Data
 
             try
             {
-                return (await GetAllRelatedAsync(relatedEntity, query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+                return (await GetAllRelatedAsync(relatedEntity, (IQuery<TEntity>)query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {
@@ -324,7 +324,7 @@ namespace RapidCMS.Common.Data
 
             try
             {
-                return (await GetAllNonRelatedAsync(relatedEntity, query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+                return (await GetAllNonRelatedAsync(relatedEntity, (IQuery<TEntity>)query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {

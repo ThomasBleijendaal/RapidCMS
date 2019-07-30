@@ -21,6 +21,10 @@ namespace RapidCMS.Common.Models.Config
         internal List<EntityVariantConfig> SubEntityVariants { get; set; } = new List<EntityVariantConfig>();
         internal EntityVariantConfig EntityVariant { get; set; }
 
+        internal List<IDataView> DataViews { get; set; } = new List<IDataView>();
+        internal Type? DataViewBuilder { get; set; }
+        internal Func<Query, IQuery> QueryBuilder { get; set; }
+
         internal TreeViewConfig TreeView { get; set; }
         internal ListViewConfig ListView { get; set; }
         internal ListEditorConfig ListEditor { get; set; }
@@ -36,6 +40,11 @@ namespace RapidCMS.Common.Models.Config
     public class CollectionConfig<TEntity> : CollectionConfig
         where TEntity : IEntity
     {
+        public CollectionConfig()
+        {
+            QueryBuilder = (Query query) => new TypedQuery<TEntity>(query);
+        }
+
         public CollectionConfig<TEntity> SetRepository<TRepository>()
            where TRepository : IRepository
         {
@@ -48,6 +57,21 @@ namespace RapidCMS.Common.Models.Config
             where TDerivedEntity : TEntity
         {
             SubEntityVariants.Add(new EntityVariantConfig(name, typeof(TDerivedEntity), icon));
+
+            return this;
+        }
+
+        public CollectionConfig<TEntity> AddDataView(string label, Expression<Func<TEntity, bool>> queryExpression)
+        {
+            DataViews.Add(new DataView<TEntity>(DataViews.Count, label, queryExpression));
+
+            return this;
+        }
+
+        public CollectionConfig<TEntity> SetDataViewBuilder<TDataViewBuilder>()
+            where TDataViewBuilder : DataViewBuilder<TEntity>
+        {
+            DataViewBuilder = typeof(TDataViewBuilder);
 
             return this;
         }

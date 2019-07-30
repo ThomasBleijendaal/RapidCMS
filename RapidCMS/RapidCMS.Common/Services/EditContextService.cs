@@ -41,24 +41,30 @@ namespace RapidCMS.Common.Services
             _eventAggregator = eventAggregator;
         }
 
-        public async Task<List<EditContext>> GetEntitiesAsync(UsageType usageType, string collectionAlias, string? parentId, IQuery query)
+        public async Task<List<EditContext>> GetEntitiesAsync(UsageType usageType, string collectionAlias, string? parentId, Query query)
         {
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, parentId);
 
             var collection = _root.GetCollection(collectionAlias);
-            var existingEntities = await collection.Repository.InternalGetAllAsync(parentId, query);
+
+            var repositoryQuery = await collection.ProcessDataViewAsync(query, _serviceProvider);
+
+            var existingEntities = await collection.Repository.InternalGetAllAsync(parentId, repositoryQuery);
 
             return ConvertEditContexts(usageType, collectionAlias, rootEditContext, existingEntities);
         }
 
-        public async Task<List<EditContext>> GetRelatedEntitiesAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, IQuery query)
+        public async Task<List<EditContext>> GetRelatedEntitiesAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, Query query)
         {
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, null);
 
             var collection = _root.GetCollection(collectionAlias);
+
+            var repositoryQuery = await collection.ProcessDataViewAsync(query, _serviceProvider);
+
             var existingEntities = usageType.HasFlag(UsageType.Add)
-                ? await collection.Repository.InternalGetAllNonRelatedAsync(relatedEntity, query)
-                : await collection.Repository.InternalGetAllRelatedAsync(relatedEntity, query);
+                ? await collection.Repository.InternalGetAllNonRelatedAsync(relatedEntity, repositoryQuery)
+                : await collection.Repository.InternalGetAllRelatedAsync(relatedEntity, repositoryQuery);
 
             return ConvertEditContexts(usageType, collectionAlias, rootEditContext, existingEntities);
         }
@@ -300,7 +306,7 @@ namespace RapidCMS.Common.Services
         public async Task<ViewCommand> ProcessRelationActionAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, string actionId, object? customData)
         {
             var collection = _root.GetCollection(collectionAlias);
-            
+
             var buttons = usageType.HasFlag(UsageType.List) || usageType.HasFlag(UsageType.Add)
                 ? collection.ListView?.Buttons
                 : collection.ListEditor?.Buttons;

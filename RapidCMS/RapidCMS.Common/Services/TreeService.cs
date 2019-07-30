@@ -18,12 +18,14 @@ namespace RapidCMS.Common.Services
     internal class TreeService : ITreeService
     {
         private readonly Root _root;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationService _authorizationService;
 
-        public TreeService(Root root, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
+        public TreeService(Root root, IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
         {
             _root = root;
+            _serviceProvider = serviceProvider;
             _httpContextAccessor = httpContextAccessor;
             _authorizationService = authorizationService;
         }
@@ -70,8 +72,10 @@ namespace RapidCMS.Common.Services
             var collection = _root.GetCollection(alias);
 
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
-            {
-                var entities = await collection.Repository.InternalGetAllAsync(parentId, Query.TakeElements(25)); // TODO: pagination
+            { 
+                // TODO: pagination
+                var repoQuery = await collection.ProcessDataViewAsync(Query.TakeElements(25), _serviceProvider);
+                var entities = await collection.Repository.InternalGetAllAsync(parentId, repoQuery);
 
                 return await entities.ToListAsync(async entity =>
                 {

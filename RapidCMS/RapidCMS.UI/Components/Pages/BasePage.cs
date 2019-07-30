@@ -104,7 +104,7 @@ namespace RapidCMS.UI.Components.Pages
                         break;
 
                     case ReloadCommand _:
-                        await LoadDataAsync();
+                        await LoadDataAsync(true);
 
                         break;
 
@@ -150,7 +150,7 @@ namespace RapidCMS.UI.Components.Pages
             }
         }
 
-        protected virtual Task LoadDataAsync()
+        protected virtual Task LoadDataAsync(bool reload = false)
         {
             return Task.CompletedTask;
         }

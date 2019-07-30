@@ -14,11 +14,11 @@ namespace RapidCMS.Common.Services
 
         Task<EditContext> GetRootAsync(UsageType usageType, string collectionAlias, string? parentId);
 
-        Task<List<EditContext>> GetEntitiesAsync(UsageType usageType, string collectionAlias, string? parentId, IQuery query);
+        Task<List<EditContext>> GetEntitiesAsync(UsageType usageType, string collectionAlias, string? parentId, Query query);
         Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, string? parentId, string actionId, object? customData);
         Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, string? parentId, string id, EditContext editContext, string actionId, object? customData);
 
-        Task<List<EditContext>> GetRelatedEntitiesAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, IQuery query);
+        Task<List<EditContext>> GetRelatedEntitiesAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, Query query);
         Task<ViewCommand> ProcessRelationActionAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, string actionId, object? customData);
         Task<ViewCommand> ProcessRelationActionAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, string id, EditContext editContext, string actionId, object? customData);
     }

@@ -5,7 +5,7 @@
 @page "/collection/{Action}/{CollectionAlias}"
 @page "/collection/{Action}/{CollectionAlias}/{ParentId}"
 
-@if (RootEditContext == null)
+@if (RootEditContext == null || UI == null)
 {
     <div class="content">
         <p>Loading..</p>
@@ -13,14 +13,19 @@
 }
 else
 {
-    <CascadingEditContext EditContext=@RootEditContext>
-        @if (Buttons != null)
+    <CascadingEditContext EditContext=@RootEditContext @key="RootEditContext">
+
+        @if (UI.TopBarVisibility == TopBarVisibility.Visible)
+        { 
+            <Tabbar Tabs="Tabs" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
+        }
+
+        @if (Buttons != null && Buttons.Any())
         {
             <div class="top-row first">
                 @foreach (var button in Buttons)
                 {
                     var model = button.ToViewModel();
-
                     model.OnClick += ListButtonOnClickAsync;
 
                     <UIButton Button="button" Model="model" />
@@ -234,30 +239,41 @@ else
 
     IEnumerable<ButtonUI>? Buttons;
     IEnumerable<(EditContext editContext, IEnumerable<SectionUI> sections)>? Sections;
+    IEnumerable<TabUI>? Tabs;
 
     ListUI? UI;
 
+    int? ActiveTab = null;
+    string? SearchTerm = null;
     int CurrentPage = 1;
     int? MaxPage = null;
 
-    protected override async Task LoadDataAsync()
+    protected override async Task LoadDataAsync(bool reload = false)
     {
         try
         {
-            var rootEditContext = await EditContextService.GetRootAsync(GetUsageType(), CollectionAlias, ParentId);
+            var rootEditContext = RootEditContext;
 
-            UI = await EditorService.GetListAsync(GetUsageType(), CollectionAlias);
+            if (reload == false)
+            {
+                rootEditContext = await EditContextService.GetRootAsync(GetUsageType(), CollectionAlias, ParentId);
 
-            Buttons = await UI.GetButtonsForEditContextAsync(rootEditContext);
+                UI = await EditorService.GetListAsync(GetUsageType(), CollectionAlias);
 
-            CurrentPage = 1;
-            MaxPage = null;
+                Buttons = await UI.GetButtonsForEditContextAsync(rootEditContext);
+                Tabs = await UI.GetTabsAsync(rootEditContext);
+
+                CurrentPage = 1;
+                MaxPage = null;
+            }
 
             await LoadSectionsAsync();
 
-            RootEditContext = rootEditContext;
-
-            Sections?.ForEach(x => x.editContext.OnFieldChanged += (s, a) => StateHasChanged());
+            if (reload == false)
+            {
+                RootEditContext = rootEditContext;
+                Sections?.ForEach(x => x.editContext.OnFieldChanged += (s, a) => StateHasChanged());
+            }
 
             StateHasChanged();
         }
@@ -277,6 +293,24 @@ else
         await LoadSectionsAsync();
     }
 
+    async void SearchAsync(string? search)
+    {
+        CurrentPage = 1;
+
+        SearchTerm = search;
+
+        await LoadSectionsAsync();
+    }
+
+    async void TabChangeAsync(int? tabId)
+    {
+        ActiveTab = tabId;
+
+        CurrentPage = 1;
+
+        await LoadSectionsAsync();
+    }
+
     async Task LoadSectionsAsync()
     {
         if (UI == null)
@@ -284,7 +318,7 @@ else
             return;
         }
 
-        var query = Query.Create(UI.PageSize, CurrentPage);
+        var query = Query.Create(UI.PageSize, CurrentPage, SearchTerm, ActiveTab);
 
         var editContexts = await EditContextService.GetEntitiesAsync(GetUsageType(), CollectionAlias, ParentId, query);
         Sections = await editContexts.ToListAsync(async editContext => (editContext, await UI.GetSectionsForEditContextAsync(editContext)));

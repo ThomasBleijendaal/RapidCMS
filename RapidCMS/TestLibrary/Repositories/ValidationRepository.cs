@@ -37,7 +37,7 @@ namespace TestLibrary.Repositories
             return Task.CompletedTask;
         }
 
-        public override Task<IEnumerable<ValidationEntity>> GetAllAsync(int? parentId, IQuery query)
+        public override Task<IEnumerable<ValidationEntity>> GetAllAsync(int? parentId, IQuery<ValidationEntity> query)
         {
             return Task.FromResult(_data.Select(x => x.Value));
         }

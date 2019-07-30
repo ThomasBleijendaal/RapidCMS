@@ -3,7 +3,7 @@
 html, body {
     /*font-family: 'Segoe UI';*/
     font-size: 15px;
-    background: #e8e8e8;
+    background: #e0e0e0;
 }
 
 .oi {
@@ -20,7 +20,10 @@ app {
     height: 3.5rem;
     display: flex;
     align-items: center;
-    padding: 0rem 1rem;
+    margin: 0rem 1rem;
+    padding: 0rem .5rem;
+    background: #efefef;
+    box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
 }
 
     .top-row.first {
@@ -37,8 +40,8 @@ app {
     top: 0;
     height: 100%;
     overflow-x: hidden;
-    border-right: 1px solid #ddd;
-    background-color: #e8e8e8;
+    border-right: 1px solid #c8c8c8;
+    background-color: #e0e0e0;
 }
 
     .sidebar .top-row {
@@ -88,8 +91,6 @@ app {
         display: flex;
         align-items: center;
         line-height: 2rem;
-        margin-left: -1rem;
-        padding-left: 2rem;
     }
 
         .nav-item a.disabled {
@@ -112,6 +113,44 @@ app {
             color: #070707;
         }
 
+.nav-tabs {
+    margin: 0 1rem;
+    border-bottom: 0;
+}
+
+.nav-tabs .nav-item {
+    margin: 0;
+}
+
+    .nav-tabs .nav-link {
+        border-radius: 0px !important;
+        padding: 0 1rem;
+        line-height: 3rem;
+        border: 0;
+    }
+    
+        .nav-tabs .nav-link.active {
+            background: #efefef;
+            border: 0;
+            margin: 0;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border: 0;
+            margin: 0;
+        }
+
+.nav-tabs .nav-item.search {
+    position: absolute;
+    right: 0px;
+    margin: 0.3rem 1rem;
+}
+
+.sidebar .nav-item a {
+    margin-left: -1rem;
+    padding-left: 2rem;
+}
+
 .content {
     background: #fff;
     padding: 1.1rem 1rem 1rem 1rem;
@@ -124,8 +163,9 @@ app {
 
     .content .nested-content {
         margin: 1.1rem -1rem -1rem -1rem;
-        padding-bottom: 2rem;
-        background: #efefef;
+        padding-top: 1rem;
+        padding-bottom: .5rem;
+        background: #e8e8e8;
     }
 
 .nested-content:first-of-type {
