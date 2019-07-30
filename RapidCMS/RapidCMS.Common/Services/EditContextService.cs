@@ -47,9 +47,9 @@ namespace RapidCMS.Common.Services
 
             var collection = _root.GetCollection(collectionAlias);
 
-            var repositoryQuery = await collection.ProcessDataViewAsync(query, _serviceProvider);
+            await collection.ProcessDataViewAsync(query, _serviceProvider);
 
-            var existingEntities = await collection.Repository.InternalGetAllAsync(parentId, repositoryQuery);
+            var existingEntities = await collection.Repository.InternalGetAllAsync(parentId, query);
 
             return ConvertEditContexts(usageType, collectionAlias, rootEditContext, existingEntities);
         }
@@ -60,11 +60,11 @@ namespace RapidCMS.Common.Services
 
             var collection = _root.GetCollection(collectionAlias);
 
-            var repositoryQuery = await collection.ProcessDataViewAsync(query, _serviceProvider);
+            await collection.ProcessDataViewAsync(query, _serviceProvider);
 
             var existingEntities = usageType.HasFlag(UsageType.Add)
-                ? await collection.Repository.InternalGetAllNonRelatedAsync(relatedEntity, repositoryQuery)
-                : await collection.Repository.InternalGetAllRelatedAsync(relatedEntity, repositoryQuery);
+                ? await collection.Repository.InternalGetAllNonRelatedAsync(relatedEntity, query)
+                : await collection.Repository.InternalGetAllRelatedAsync(relatedEntity, query);
 
             return ConvertEditContexts(usageType, collectionAlias, rootEditContext, existingEntities);
         }

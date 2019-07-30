@@ -80,8 +80,7 @@ namespace RapidCMS.Common.Extensions
                 var collection = new Collection(configReceiver.Name, configReceiver.Alias, variant, configReceiver.RepositoryType, configReceiver.Recursive)
                 {
                     DataViews = configReceiver.DataViews,
-                    DataViewBuilder = configReceiver.DataViewBuilder,
-                    QueryBuilder = configReceiver.QueryBuilder
+                    DataViewBuilder = configReceiver.DataViewBuilder
                 };
 
                 if (configReceiver.TreeView != null)

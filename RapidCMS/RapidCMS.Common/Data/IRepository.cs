@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 
 namespace RapidCMS.Common.Data
 {
@@ -103,7 +102,7 @@ namespace RapidCMS.Common.Data
 
             try
             {
-                return (await GetAllAsync(ParseParentKey(parentId), (IQuery<TEntity>)query)).Cast<IEntity>();
+                return (await GetAllAsync(ParseParentKey(parentId), TypedQuery<TEntity>.Convert(query))).Cast<IEntity>();
             }
             finally
             {
@@ -117,7 +116,7 @@ namespace RapidCMS.Common.Data
 
             try
             {
-                return (await GetAllRelatedAsync(relatedEntity, (IQuery<TEntity>)query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+                return (await GetAllRelatedAsync(relatedEntity, TypedQuery<TEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {
@@ -131,7 +130,7 @@ namespace RapidCMS.Common.Data
 
             try
             {
-                return (await GetAllNonRelatedAsync(relatedEntity, (IQuery<TEntity>)query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+                return (await GetAllNonRelatedAsync(relatedEntity, TypedQuery<TEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {
@@ -296,7 +295,7 @@ namespace RapidCMS.Common.Data
 
             try
             {
-                return (await GetAllAsync(ParseParentKey(parentId), (IQuery<TEntity>)query)).Cast<IEntity>();
+                return (await GetAllAsync(ParseParentKey(parentId), TypedQuery<TEntity>.Convert(query))).Cast<IEntity>();
             }
             finally
             {
@@ -310,7 +309,7 @@ namespace RapidCMS.Common.Data
 
             try
             {
-                return (await GetAllRelatedAsync(relatedEntity, (IQuery<TEntity>)query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+                return (await GetAllRelatedAsync(relatedEntity, TypedQuery<TEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {
@@ -324,7 +323,7 @@ namespace RapidCMS.Common.Data
 
             try
             {
-                return (await GetAllNonRelatedAsync(relatedEntity, (IQuery<TEntity>)query))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+                return (await GetAllNonRelatedAsync(relatedEntity, TypedQuery<TEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
             }
             finally
             {

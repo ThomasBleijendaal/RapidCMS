@@ -48,6 +48,8 @@ namespace TestLibrary.Repositories
             if (relatedEntity is PersonEntity person)
             {
                 var data = await _dbContext.Countries
+                    .WhereIfNotNull(query.DataViewExpression)
+                    .WhereIfNotNull(query.SearchTerm, x => x.Name.Contains(query.SearchTerm!))
                     .Where(x => x.Persons.Any(x => x.PersonId == person._Id))
                     .OrderBy(x => x._Id)
                     .Skip(query.Skip)
@@ -67,6 +69,8 @@ namespace TestLibrary.Repositories
             if (relatedEntity is PersonEntity person)
             {
                 var data = await _dbContext.Countries
+                    .WhereIfNotNull(query.DataViewExpression)
+                    .WhereIfNotNull(query.SearchTerm, x => x.Name.Contains(query.SearchTerm!))
                     .Where(x => !x.Persons.Any(x => x.PersonId == person._Id))
                     .OrderBy(x => x._Id)
                     .Skip(query.Skip)

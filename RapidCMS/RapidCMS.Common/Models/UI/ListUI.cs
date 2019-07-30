@@ -21,7 +21,6 @@ namespace RapidCMS.Common.Models.UI
 
         public ListType ListType { get; internal set; }
         public EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; internal set; }
-        public TopBarVisibility TopBarVisibility { get; internal set; }
 
         internal Func<EditContext, Task<List<ButtonUI>?>> Buttons { get; set; }
 

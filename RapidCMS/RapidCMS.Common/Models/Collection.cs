@@ -30,7 +30,6 @@ namespace RapidCMS.Common.Models
 
         internal List<IDataView> DataViews { get; set; }
         internal Type? DataViewBuilder { get; set; }
-        internal Func<Query, IQuery> QueryBuilder { get; set; }
 
         internal EntityVariant GetEntityVariant(string? alias)
         {
@@ -62,23 +61,20 @@ namespace RapidCMS.Common.Models
             }
         }
 
-        internal async Task<IQuery> ProcessDataViewAsync(Query query, IServiceProvider serviceProvider)
+        internal async Task ProcessDataViewAsync(Query query, IServiceProvider serviceProvider)
         {
             if (DataViewBuilder != null || DataViews.Count > 0)
             {
                 var dataViews = await GetDataViewsAsync(serviceProvider);
 
-                var dataView = query.ActiveTab == null
-                    ? dataViews.FirstOrDefault()
-                    : dataViews.First(x => x.Id == query.ActiveTab);
+                var dataView = dataViews.FirstOrDefault(x => x.Id == query.ActiveTab) 
+                    ?? dataViews.FirstOrDefault();
 
                 if (dataView != null)
                 {
                     query.SetDataViewExpression(dataView.QueryExpression);
                 }
             }
-
-            return QueryBuilder.Invoke(query);
         }
 
         internal Type RepositoryType { get; private set; }

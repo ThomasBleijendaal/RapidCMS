@@ -23,7 +23,6 @@ namespace RapidCMS.Common.Models.Config
 
         internal List<IDataView> DataViews { get; set; } = new List<IDataView>();
         internal Type? DataViewBuilder { get; set; }
-        internal Func<Query, IQuery> QueryBuilder { get; set; }
 
         internal TreeViewConfig TreeView { get; set; }
         internal ListViewConfig ListView { get; set; }
@@ -40,11 +39,6 @@ namespace RapidCMS.Common.Models.Config
     public class CollectionConfig<TEntity> : CollectionConfig
         where TEntity : IEntity
     {
-        public CollectionConfig()
-        {
-            QueryBuilder = (Query query) => new TypedQuery<TEntity>(query);
-        }
-
         public CollectionConfig<TEntity> SetRepository<TRepository>()
            where TRepository : IRepository
         {

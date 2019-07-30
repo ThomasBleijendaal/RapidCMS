@@ -8,7 +8,9 @@
 }
 else
 {
+    <Tabbar Tabs="Tabs" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
     <CascadingEditContext EditContext=@RootEditContext>
+
         @if (Buttons != null && Buttons.Any())
         {
             <div class="top-row first">
@@ -226,9 +228,12 @@ else
 
     IEnumerable<ButtonUI>? Buttons;
     IEnumerable<(EditContext editContext, IEnumerable<SectionUI> sections)>? Sections;
+    IEnumerable<TabUI>? Tabs;
 
     ListUI? UI;
 
+    int? ActiveTab = null;
+    string? SearchTerm = null;
     int CurrentPage = 1;
     int? MaxPage = null;
 
@@ -243,11 +248,14 @@ else
             UI = await EditorService.GetListAsync(GetUsageType(), CollectionAlias);
 
             Buttons = await UI.GetButtonsForEditContextAsync(rootEditContext);
+            Tabs = await UI.GetTabsAsync(rootEditContext);
 
             if (previousUsage != GetUsageType())
             {
                 CurrentPage = 1;
                 MaxPage = null;
+                ActiveTab = null;
+                SearchTerm = null;
 
                 previousUsage = GetUsageType();
             }
@@ -273,6 +281,24 @@ else
         await LoadSectionsAsync();
     }
 
+    async void SearchAsync(string? search)
+    {
+        CurrentPage = 1;
+
+        SearchTerm = search;
+
+        await LoadSectionsAsync();
+    }
+
+    async void TabChangeAsync(int? tabId)
+    {
+        ActiveTab = tabId;
+
+        CurrentPage = 1;
+
+        await LoadSectionsAsync();
+    }
+
     async Task LoadSectionsAsync()
     {
         if (UI == null)
@@ -280,7 +306,7 @@ else
             return;
         }
 
-        var query = Query.Create(UI.PageSize, CurrentPage, null, null);
+        var query = Query.Create(UI.PageSize, CurrentPage, SearchTerm, ActiveTab);
 
         var editContexts = await EditContextService.GetRelatedEntitiesAsync(GetUsageType(), CollectionAlias, RelatedEntity, query);
         Sections = await editContexts.ToListAsync(async editContext => (editContext, await UI.GetSectionsForEditContextAsync(editContext)));

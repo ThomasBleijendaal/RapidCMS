@@ -13,13 +13,9 @@
 }
 else
 {
-    <CascadingEditContext EditContext=@RootEditContext @key="RootEditContext">
+    <Tabbar Tabs="Tabs" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
 
-        @if (UI.TopBarVisibility == TopBarVisibility.Visible)
-        { 
-            <Tabbar Tabs="Tabs" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
-        }
-
+    <CascadingEditContext EditContext=@RootEditContext>
         @if (Buttons != null && Buttons.Any())
         {
             <div class="top-row first">
@@ -265,6 +261,8 @@ else
 
                 CurrentPage = 1;
                 MaxPage = null;
+                ActiveTab = null;
+                SearchTerm = null;
             }
 
             await LoadSectionsAsync();

@@ -72,10 +72,11 @@ namespace RapidCMS.Common.Services
             var collection = _root.GetCollection(alias);
 
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
-            { 
+            {
                 // TODO: pagination
-                var repoQuery = await collection.ProcessDataViewAsync(Query.TakeElements(25), _serviceProvider);
-                var entities = await collection.Repository.InternalGetAllAsync(parentId, repoQuery);
+                var query = Query.TakeElements(25);
+                await collection.ProcessDataViewAsync(query, _serviceProvider);
+                var entities = await collection.Repository.InternalGetAllAsync(parentId, query);
 
                 return await entities.ToListAsync(async entity =>
                 {

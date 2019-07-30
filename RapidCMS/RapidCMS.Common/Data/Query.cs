@@ -5,7 +5,6 @@ namespace RapidCMS.Common.Data
 {
     public class Query : IQuery
     {
-        private int? _activeTab;
         internal LambdaExpression? QueryExpression;
 
         public static Query Default()
@@ -33,7 +32,7 @@ namespace RapidCMS.Common.Data
                 Skip = pageSize * (pageNumber - 1),
                 Take = pageSize,
                 SearchTerm = searchTerm,
-                _activeTab = activeTab
+                ActiveTab = activeTab
             };
         }
 
@@ -47,7 +46,7 @@ namespace RapidCMS.Common.Data
             QueryExpression = expression;
         }
 
-        public int? ActiveTab { get => _activeTab; }
+        public int? ActiveTab { get; private set; }
 
         public int Skip { get; private set; }
         public int Take { get; private set; }
@@ -61,6 +60,22 @@ namespace RapidCMS.Common.Data
         where TEntity : IEntity
     {
         private readonly Query _query;
+
+        public static IQuery<TEntity> Convert(IQuery query)
+        {
+            if (query is Query q1)
+            {
+                return new TypedQuery<TEntity>(q1);
+            }
+            else if (query is TypedQuery<TEntity> q2)
+            {
+                return q2;
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+        }
 
         public TypedQuery(Query query)
         {

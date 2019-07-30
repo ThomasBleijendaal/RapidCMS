@@ -162,8 +162,6 @@ namespace RapidCMS.Common.Services
             var list = new ListUI(ButtonCallAsync, ListCallAsync, TabCallAsync)
             {
                 ListType = ListType.TableView,
-                // TODO
-                TopBarVisibility = TopBarVisibility.Visible,
                 SectionsHaveButtons = sectionsHaveButtons,
                 PageSize = pageSize ?? 1000 // TODO: config setting?
             };

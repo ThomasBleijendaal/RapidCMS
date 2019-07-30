@@ -270,6 +270,8 @@ namespace TestServer
                 {
                     collection
                         .SetRepository<CountryRepository>()
+                        .AddDataView("All", x => true)
+                        .AddDataView("1234", x => x.Name.Contains("1234"))
                         .SetListView(list =>
                         {
                             list.SetPageSize(3);
@@ -304,8 +306,6 @@ namespace TestServer
                     collection
                         .SetRepository<CountryRepository>()
                         .SetTreeView(entity => entity.Name)
-                        //.AddDataView("All", x => true)
-                        //.AddDataView("1234", x => x.Name.Contains("1234"))
                         .SetDataViewBuilder<CountryDataViewBuilder>()
                         .SetListView(list =>
                         {
