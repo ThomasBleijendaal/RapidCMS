@@ -43,6 +43,8 @@ namespace RapidCMS.Common.Services
 
         public async Task<List<EditContext>> GetEntitiesAsync(UsageType usageType, string collectionAlias, string? parentId, Query query)
         {
+            // TODO: this method does not check authorization
+
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, parentId);
 
             var collection = _root.GetCollection(collectionAlias);
@@ -56,6 +58,8 @@ namespace RapidCMS.Common.Services
 
         public async Task<List<EditContext>> GetRelatedEntitiesAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, Query query)
         {
+            // TODO: this method does not check authorization
+
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, null);
 
             var collection = _root.GetCollection(collectionAlias);

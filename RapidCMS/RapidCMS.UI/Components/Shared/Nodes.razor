@@ -30,7 +30,7 @@
 
 @functions {
 
-        List<TreeNodeUI>? UI;
+    List<TreeNodeUI>? UI;
 
     protected override async Task OnInitAsync()
     {
@@ -45,6 +45,8 @@
 
     public override async Task HandleAsync(CollectionUpdatedMessage message)
     {
+        // TODO: this casues UIThread issues in some cases
+
         if (message.CollectionAlias == CollectionAlias)
         {
             await OnInitAsync();
