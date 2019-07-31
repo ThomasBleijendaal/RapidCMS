@@ -8,22 +8,9 @@
 }
 else
 {
-    <Tabbar Tabs="Tabs" SearchBarVisible="UI.SearchBarVisible" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
     <CascadingEditContext EditContext=@RootEditContext>
-
-        @if (Buttons != null && Buttons.Any())
-        {
-            <div class="top-row first">
-                @foreach (var button in Buttons)
-                {
-                    var model = button.ToViewModel();
-
-                    model.OnClick += ListButtonOnClickAsync;
-
-                    <UIButton Button="button" Model="model" />
-                }
-            </div>
-        }
+        <Tabbar Tabs="Tabs" SearchBarVisible="UI.SearchBarVisible" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
+        <Buttonbar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
     </CascadingEditContext>
 
     @if (Sections != null && Sections.Any())
@@ -110,12 +97,20 @@ else
 
                                                             if (field is ExpressionFieldUI expressionField)
                                                             {
-                                                                <td>@expressionField.Expression.StringGetter(context.Entity)</td>
+                                                                <td>
+                                                                    @if (expressionField.IsVisible(context.Entity))
+                                                                    {
+                                                                        @expressionField.Expression.StringGetter(context.Entity)
+                                                                    }
+                                                                </td>
                                                             }
                                                             else if (field is PropertyFieldUI propertyField)
                                                             {
                                                                 <td>
-                                                                    <UIEditor Field="field" Entity="@context.Entity" />
+                                                                    @if (propertyField.IsVisible(context.Entity))
+                                                                    {
+                                                                        <UIEditor Field="field" Entity="@context.Entity" />
+                                                                    }
                                                                 </td>
                                                             }
                                                         }
@@ -127,19 +122,7 @@ else
                                                     }
                                                     if (UI.SectionsHaveButtons)
                                                     {
-                                                        <td class="button-cell">
-                                                            @if (section.Buttons != null && section.Buttons.Any())
-                                                            {
-                                                                @foreach (var button in section.Buttons)
-                                                                {
-                                                                    var model = button.ToViewModel();
-
-                                                                    model.OnClick += NodeButtonOnClickAsync;
-
-                                                                    <UIButton Button="button" Model="model" />
-                                                                }
-                                                            }
-                                                        </td>
+                                                        <Buttoncell Buttons="section.Buttons" OnButtonClick="NodeButtonOnClickAsync" />
                                                     }
                                                 }
                                             </tr>
@@ -166,19 +149,12 @@ else
 
                             @foreach (var section in sections)
                             {
-                                if (section.Buttons != null)
+                                if (!section.IsVisible(context.Entity))
                                 {
-                                    <div class="top-row">
-                                        @foreach (var button in section.Buttons)
-                                        {
-                                            var model = button.ToViewModel();
-
-                                            model.OnClick += NodeButtonOnClickAsync;
-
-                                            <UIButton Button="button" Model="model" />
-                                        }
-                                    </div>
+                                    continue;
                                 }
+
+                                <Buttonbar Buttons="section.Buttons" OnButtonClick="NodeButtonOnClickAsync" />
 
                                 if (!string.IsNullOrEmpty(section.CustomAlias))
                                 {
@@ -329,7 +305,7 @@ else
         StateHasChanged();
     }
 
-    async void ListButtonOnClickAsync(object sender, ButtonClickEventArgs args)
+    async void ListButtonOnClickAsync(object? sender, ButtonClickEventArgs args)
     {
         var model = sender as ButtonViewModel;
 
@@ -350,7 +326,7 @@ else
         }
     }
 
-    async void NodeButtonOnClickAsync(object sender, ButtonClickEventArgs args)
+    async void NodeButtonOnClickAsync(object? sender, ButtonClickEventArgs args)
     {
         var model = sender as ButtonViewModel;
 

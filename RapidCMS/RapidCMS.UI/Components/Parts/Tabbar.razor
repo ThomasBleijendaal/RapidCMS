@@ -30,10 +30,7 @@
 
     protected override void OnInit()
     {
-        if (activeTab == null)
-        {
-            activeTab = Tabs?.FirstOrDefault()?.Id;
-        }
+        activeTab = Tabs?.FirstOrDefault()?.Id;
     }
 
     async void Search(UIChangeEventArgs args)

@@ -13,21 +13,9 @@
 }
 else
 {
-    <Tabbar Tabs="Tabs" SearchBarVisible="UI.SearchBarVisible" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
-
     <CascadingEditContext EditContext=@RootEditContext>
-        @if (Buttons != null && Buttons.Any())
-        {
-            <div class="top-row first">
-                @foreach (var button in Buttons)
-                {
-                    var model = button.ToViewModel();
-                    model.OnClick += ListButtonOnClickAsync;
-
-                    <UIButton Button="button" Model="model" />
-                }
-            </div>
-        }
+        <Tabbar Tabs="Tabs" SearchBarVisible="UI.SearchBarVisible" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
+        <Buttonbar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
     </CascadingEditContext>
 
     @if (Sections != null)
@@ -147,19 +135,7 @@ else
                                                     }
                                                     if (UI.SectionsHaveButtons)
                                                     {
-                                                        <td class="button-cell">
-                                                            @if (section.Buttons != null && section.Buttons.Any())
-                                                            {
-                                                                @foreach (var button in section.Buttons)
-                                                                {
-                                                                    var model = button.ToViewModel();
-
-                                                                    model.OnClick += NodeButtonOnClickAsync;
-
-                                                                    <UIButton Button="button" Model="model" />
-                                                                }
-                                                            }
-                                                        </td>
+                                                        <Buttoncell Buttons="section.Buttons" OnButtonClick="NodeButtonOnClickAsync" />
                                                     }
                                                 }
                                             </tr>
@@ -190,21 +166,9 @@ else
                                     continue;
                                 }
 
-                                if (section.Buttons != null && section.Buttons.Any())
-                                {
-                                    <div class="top-row">
-                                        @foreach (var button in section.Buttons)
-                                        {
-                                            var model = button.ToViewModel();
+                                <Buttonbar Buttons="section.Buttons" OnButtonClick="NodeButtonOnClickAsync" />
 
-                                            model.OnClick += NodeButtonOnClickAsync;
-
-                                            <UIButton Button="button" Model="model" />
-                                        }
-                                    </div>
-                                }
-
-                                if (!string.IsNullOrEmpty(section.CustomAlias))
+                                @if (!string.IsNullOrEmpty(section.CustomAlias))
                                 {
                                     @CustomSections.GetCustomSection(section.CustomAlias, section);
                                 }
@@ -329,7 +293,7 @@ else
         StateHasChanged();
     }
 
-    async void ListButtonOnClickAsync(object sender, ButtonClickEventArgs args)
+    async void ListButtonOnClickAsync(object? sender, ButtonClickEventArgs args)
     {
         var model = sender as ButtonViewModel;
 
@@ -350,7 +314,7 @@ else
         }
     }
 
-    async void NodeButtonOnClickAsync(object sender, ButtonClickEventArgs args)
+    async void NodeButtonOnClickAsync(object? sender, ButtonClickEventArgs args)
     {
         var model = sender as ButtonViewModel;
 

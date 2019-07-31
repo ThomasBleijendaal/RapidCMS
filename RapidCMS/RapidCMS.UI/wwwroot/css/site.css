@@ -26,9 +26,6 @@ app {
     box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
 }
 
-    .top-row.first {
-    }
-
 .main {
     flex: 1;
     margin-left: 450px;

@@ -1,0 +1,18 @@
+﻿<td class="button-cell">
+    @if (Buttons != null && Buttons.Any())
+    {
+        @foreach (var button in Buttons)
+        {
+            var model = button.ToViewModel();
+
+            model.OnClick += OnButtonClick;
+
+            <UIButton Button="button" Model="model" />
+        }
+    }
+</td>
+
+@code {
+    [Parameter] IEnumerable<ButtonUI>? Buttons { get; set; }
+    [Parameter] EventHandler<ButtonClickEventArgs> OnButtonClick { get; set; }
+}

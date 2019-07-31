@@ -1,0 +1,18 @@
+﻿    @if (Buttons != null && Buttons.Any())
+    {
+        <div class="top-row">
+            @foreach (var button in Buttons)
+            {
+                var model = button.ToViewModel();
+                model.OnClick += OnButtonClick;
+
+                <UIButton Button="button" Model="model" />
+            }
+        </div>
+    }
+
+
+@code {
+    [Parameter] IEnumerable<ButtonUI>? Buttons { get; set; }
+    [Parameter] EventHandler<ButtonClickEventArgs> OnButtonClick { get; set; }
+}

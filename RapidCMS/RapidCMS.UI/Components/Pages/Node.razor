@@ -16,21 +16,7 @@
 else
 {
     <CascadingEditContext EditContext=@EditContext>
-        @if (Buttons != null)
-        {
-            <div class="top-row first">
-                @{
-                    @foreach (var button in Buttons)
-                    {
-                        var model = button.ToViewModel();
-
-                        model.OnClick += ButtonOnClickAsync;
-
-                        <UIButton Button="button" Model="model" />
-                    }
-                }
-            </div>
-        }
+        <Buttonbar Buttons="Buttons" OnButtonClick="ButtonOnClickAsync" />
 
         @if (Sections != null)
         {
@@ -81,7 +67,7 @@ else
         }
     }
 
-    async void ButtonOnClickAsync(object sender, ButtonClickEventArgs args)
+    async void ButtonOnClickAsync(object? sender, ButtonClickEventArgs args)
     {
         var model = sender as ButtonViewModel;
 
