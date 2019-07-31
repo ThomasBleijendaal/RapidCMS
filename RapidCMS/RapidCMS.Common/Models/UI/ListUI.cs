@@ -34,6 +34,7 @@ namespace RapidCMS.Common.Models.UI
         public bool SectionsHaveButtons { get; internal set; }
 
         public int PageSize { get; internal set; }
+        public bool SearchBarVisible { get; internal set; }
 
         // TODO: convert to real functions
         public async Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(EditContext editContext)

@@ -11,6 +11,7 @@ namespace RapidCMS.Common.Models.Config
     public class ListViewConfig
     {
         internal int? PageSize { get; set; }
+        internal bool? SearchBarVisible { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
         internal List<ListViewPaneConfig> ListViewPanes { get; set; } = new List<ListViewPaneConfig>();
     }
@@ -21,6 +22,13 @@ namespace RapidCMS.Common.Models.Config
         public ListViewConfig<TEntity> SetPageSize(int pageSize)
         {
             PageSize = pageSize;
+
+            return this;
+        }
+
+        public ListViewConfig<TEntity> SetSearchBarVisibility(bool visible)
+        {
+            SearchBarVisible = visible;
 
             return this;
         }

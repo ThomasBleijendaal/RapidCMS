@@ -177,6 +177,8 @@ namespace TestServer
                         .SetTreeView(e => e.Name)
                         .SetListView(list =>
                         {
+                            list.SetSearchBarVisibility(false);
+
                             list.AddDefaultButton(DefaultButtonType.New);
                             list.AddRow(pane =>
                             {
@@ -188,6 +190,8 @@ namespace TestServer
                         })
                         .SetListEditor(ListEditorType.Table, listEditor =>
                         {
+                            listEditor.SetSearchBarVisibility(false);
+
                             listEditor.AddDefaultButton(DefaultButtonType.New);
                             listEditor.AddDefaultButton(DefaultButtonType.Return);
 

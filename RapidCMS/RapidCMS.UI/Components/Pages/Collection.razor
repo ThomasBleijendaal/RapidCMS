@@ -13,7 +13,7 @@
 }
 else
 {
-    <Tabbar Tabs="Tabs" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
+    <Tabbar Tabs="Tabs" SearchBarVisible="UI.SearchBarVisible" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
 
     <CascadingEditContext EditContext=@RootEditContext>
         @if (Buttons != null && Buttons.Any())

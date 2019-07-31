@@ -10,6 +10,7 @@ namespace RapidCMS.Common.Models.Config
     public class ListEditorConfig
     {
         internal int? PageSize { get; set; }
+        internal bool? SearchBarVisible { get; set; }
         internal ListEditorType ListEditorType { get; set; }
         internal EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
@@ -23,6 +24,13 @@ namespace RapidCMS.Common.Models.Config
         public ListEditorConfig<TEntity> SetPageSize(int pageSize)
         {
             PageSize = pageSize;
+
+            return this;
+        }
+
+        public ListEditorConfig<TEntity> SetSearchBarVisibility(bool visible)
+        {
+            SearchBarVisible = visible;
 
             return this;
         }

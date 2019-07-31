@@ -121,6 +121,7 @@ namespace RapidCMS.Common.Services
             List<Button>? buttons;
             List<Pane>? panes;
             int? pageSize;
+            bool? searchBarVisible;
 
             if (usageType == UsageType.List || usageType.HasFlag(UsageType.Add))
             {
@@ -133,6 +134,7 @@ namespace RapidCMS.Common.Services
                 panes = listView.ViewPanes;
                 buttons = listView.Buttons;
                 pageSize = listView.PageSize;
+                searchBarVisible = listView.SearchBarVisible;
             }
             else
             {
@@ -145,6 +147,7 @@ namespace RapidCMS.Common.Services
                 panes = editView.EditorPanes;
                 buttons = editView.Buttons;
                 pageSize = editView.PageSize;
+                searchBarVisible = editView.SearchBarVisible;
             }
 
             // TODO: this thing naively assumes only one fieldset per type
@@ -163,7 +166,8 @@ namespace RapidCMS.Common.Services
             {
                 ListType = ListType.TableView,
                 SectionsHaveButtons = sectionsHaveButtons,
-                PageSize = pageSize ?? 1000 // TODO: config setting?
+                PageSize = pageSize ?? 1000, // TODO: config setting?
+                SearchBarVisible = searchBarVisible ?? true
             };
 
             if (fieldsPerType.Any())

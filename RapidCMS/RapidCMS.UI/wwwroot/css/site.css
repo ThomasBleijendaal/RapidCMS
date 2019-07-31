@@ -118,9 +118,9 @@ app {
     border-bottom: 0;
 }
 
-.nav-tabs .nav-item {
-    margin: 0;
-}
+    .nav-tabs .nav-item {
+        margin: 0;
+    }
 
     .nav-tabs .nav-link {
         border-radius: 0px !important;
@@ -128,7 +128,7 @@ app {
         line-height: 3rem;
         border: 0;
     }
-    
+
         .nav-tabs .nav-link.active {
             background: #efefef;
             border: 0;
@@ -140,11 +140,10 @@ app {
             margin: 0;
         }
 
-.nav-tabs .nav-item.search {
-    position: absolute;
-    right: 0px;
-    margin: 0.3rem 1rem;
-}
+    .nav-tabs .nav-item.search {
+        display: block;
+        margin: 0.3rem 0 0.3rem auto;
+    }
 
 .sidebar .nav-item a {
     margin-left: -1rem;
