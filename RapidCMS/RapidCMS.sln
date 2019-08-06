@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestLibrary", "TestLibrary\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D1C57F34-48F6-4704-839B-4B158CE3C7EE}"
 	ProjectSection(SolutionItems) = preProject
+		..\LICENSE.md = ..\LICENSE.md
 		..\README.md = ..\README.md
 		TODO.md = TODO.md
 	EndProjectSection
@@ -21,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Common.Tests", "Ra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Repositories", "RapidCMS.Repositories\RapidCMS.Repositories.csproj", "{363844EB-078E-4065-B90D-F590EFACAB15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidCMS.Example", "RapidCMS.Example\RapidCMS.Example.csproj", "{981A79E1-2E76-4F65-97EA-7596A98A49DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example", "RapidCMS.Example\RapidCMS.Example.csproj", "{981A79E1-2E76-4F65-97EA-7596A98A49DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
