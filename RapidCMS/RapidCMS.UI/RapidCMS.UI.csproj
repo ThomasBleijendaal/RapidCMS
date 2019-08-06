@@ -6,13 +6,15 @@
     <Nullable>enable</Nullable>
     <Authors>Thomas Bleijendaal</Authors>
     <Company>Thomas Bleijendaal</Company>
-    <Version>0.0.1</Version>
+    <Version>0.0.1-preview</Version>
     <Description>RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS
 purely from code.</Description>
     <Copyright>2019</Copyright>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/ThomasBleijendaal/RapidCMS</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageTags>Blazor, CMS</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +26,13 @@ purely from code.</Description>
 
   <ItemGroup>
     <ProjectReference Include="..\RapidCMS.Common\RapidCMS.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
