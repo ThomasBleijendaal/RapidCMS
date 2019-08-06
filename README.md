@@ -1,1 +1,572 @@
-RapidCMS
+# RapidCMS
+
+RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS
+purely from code. It provides a basic set of editors and controls, and is fully customisable.
+
+## TL:DR;
+
+1. Create a new ASP.NET Core Blazor Server-App project.
+2. Install NuGet-package: `RapidCMS.UI`.
+3. Add `services.AddRapidCMS(config => {})` to `ConfigureServices` in `Startup.cs`.
+4. Replace the `<Router>` in `App.razor` with `<RapidCMS.UI.Components.Router.RapidCmsRouter />`.
+5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `_Host.cshtml` with `<link href="_content/rapidcms.ui/css/site.css" rel="stylesheet" />`.
+6. Hit `F5`: you're now running a completely empty RapidCMS instance. 
+7. Start building your CMS using by expanding `config => {}`.
+
+## Here be dragons
+
+Since blazor is not completely out of preview, and RapidCMS is not completely finished, some parts
+of this documentation are vague, missing, or already out-dated, so please be aware of that. I try to keep
+this documentation updated and current, but it is on best-effort basis.
+
+## Simple collection
+
+Let's imagine that you have the following entity, and you want to build a simple CMS for it:
+
+```c#
+public class Person
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public string Bio { get; set; }
+}
+```
+
+First, every entity must be derived from `IEntity`, which uses RapidCMS as base for every 
+entity in the system, so the `Person` class is updated to something like this:
+
+```c#
+public class Person : IEntity
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public string Bio { get; set; }
+
+    string IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value); }
+}
+```
+
+The `IEntity` interface expects an `Id` of type `string`, and by implementing it explicitly,
+it does not interfere with the rest of the entity.
+
+In order to start specifying how the UI for this entity, head to your `Startup.cs` and add
+`using RapidCMS.Common.Extensions;` at the top of the file, and put the following code in the
+`ConfigureServices` method.
+
+```c#
+services.AddScoped<InMemoryRepository<Person>>();
+services.AddRapidCMS(config =>
+{
+    config.AllowAnonymousUser();
+
+    config.AddCollection<Person>("person", "Person", collection =>
+    {
+        collection
+            .SetTreeView(x => x.Name)
+            .SetRepository<InMemoryRepository<Person>>()
+            .SetListView(view =>
+            {
+                view.AddRow(row =>
+                {
+                    row.AddProperty(p => p.Id.ToString());
+                    row.AddProperty(p => p.Name);
+                });
+            });
+    });
+});
+```
+
+Okay, lots of things happen here. First, include the `RapidCMS.Repositories` NuGet package
+in your project, since that project contains the `InMemoryRepository` example repository which
+we will use for now. This respository also expects that the `Person` implements `ICloneable`,
+so let's go ahead and do that:
+
+```c#
+public class Person : IEntity, ICloneable
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public string Bio { get; set; }
+
+    string IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value); }
+
+    public object Clone()
+    {
+        return new Person
+        {
+            Bio = Bio,
+            Email = Email,
+            Id = Id,
+            Name = Name
+        };
+    }
+}
+```
+
+After that change, the project should be able to build, and if we hit `F5` the following
+UI should appear:
+
+![CMS](docs/images/docs1.png)
+
+Okay, it's something, but a lot of stuff is still missing. But let's go over what the current code
+is doing, and then continue on making the CMS work correctly.
+
+### Repositories
+
+In RapidCMS, you are responsible for implementing the data layer, and that's why the `InMemoryRepository` 
+is added to the `IServiceCollection` as a seperate instruction:
+
+```c#
+services.AddScoped<InMemoryRepository<Person>>();
+```
+
+There is no abstraction magic, or default repository implementation, so you need to create your own
+repositories which implement `IRepository` (or one of the derived abstract classes).
+
+### Authorization
+
+Just as repositories, authorization in RapidCMS must be configured by including the correct
+`AuthorizationHandler`s in the `IServiceCollection`. To make your live easier when starting developing
+with RapidCMS, `config.AllowAnonymousUser();` adds a very permissive `AthorizationHandler` to the service
+collection, and allows everybody to do anything.
+
+The `AuthorizationHandler` is part of the [ASP.NET Core Authorization Infrastructure](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/resourcebased?view=aspnetcore-2.2).
+
+### Collections
+
+A core concept in RapidCMS is the collection. This is an container which holds a list entities and contains
+all the configuration for the different UIs the CMS supports. In this example, a simple list view is
+configured, display the `Id` and `Name`.
+
+### Tree
+
+The tree is used for navigating around in RapidCMS, and collections which have a set `TreeView`, will become
+visible in the tree. For this example, the `Name` property of `Person` is used to display in the tree. Any
+valid expression which returns a string will be valid to be used in the tree.
+
+### Interactions
+
+As you can see, the UI is missing a lot of buttons. A paginator is present, but there is no way of creating,
+updating or deleting any `Person`. That is because RapidCMS does not assume what buttons should be displayed. You
+have to specifiy them yourself.
+
+So let's add some buttons, and get this CMS fully working:
+
+```c#
+config.AddCollection<Person>("person", "Person", collection =>
+{
+    collection
+        .SetTreeView(x => x.Name)
+        .SetRepository<InMemoryRepository<Person>>()
+        .SetListView(view =>
+        {
+            view.AddDefaultButton(DefaultButtonType.New);
+
+            view.AddRow(row =>
+            {
+                row.AddProperty(p => p.Id.ToString()).SetName("ID");
+                row.AddProperty(p => p.Name);
+
+                row.AddDefaultButton(DefaultButtonType.Edit);
+            });
+        })
+        .SetNodeEditor(editor =>
+        {
+            editor.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+            editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
+
+            editor.AddDefaultButton(DefaultButtonType.Delete);
+
+            editor.AddSection(section =>
+            {
+                section.AddField(x => x.Id).SetReadonly();
+                section.AddField(x => x.Name);
+                section.AddField(x => x.Email);
+            });
+
+            editor.AddSection(section =>
+            {
+                section.AddField(x => x.Bio).SetType(EditorType.TextArea);
+            });
+        });
+});
+```
+
+Much better:
+
+![CMS](docs/images/docs2.png)
+
+As you can see, I have taken the liberty to add a `NodeEditor`, so you there is a proper
+editor set up for editing an entity:
+
+![CMS](docs/images/docs3.png)
+
+### Buttons
+
+The default buttons in RapidCMS will provide the bulk of the operations you will need when
+creating UIs, but there is some behaviour to take into account. Let's review what default buttons
+are available, and what they do.
+
+#### New
+
+Clicking this button will direct the user to an empty editor so a new entity can be created. This button
+can be placed on a `ListView` or a `ListEditor`.
+
+#### SaveNew, SaveExisting
+
+These buttons will trigger saving an entity, either inserting or updating the entity in the database.
+These are seperate, so it's possible to have a different text on the insert button than the update button,
+or to dissallow updating existing entities, but still allow the user to create new ones.
+
+#### Delete
+
+Clicking this button will delete the entity it is bound to, and can be used on any view.
+
+#### Edit
+
+This button will take the user to the editor for the entity it is bound to, so the user can edit the entity.
+
+#### View
+
+This button is similair to Edito, but will take the user to the `NodeView`, where the user cannot edit
+the entity.
+
+#### Add, Remove, Pick, Return
+
+These buttons are for handling many-to-many relations in more advanced scenarios, and will be discussed later on.
+
+### Views and Editors
+
+In RapidCMS there are 4 types of UI, `ListView` and `ListEditor`, and `NodeView` and `NodeEditor`. These are
+the primary screens which can be used to create your own CMS with. 
+
+#### ListView
+
+![CMS](docs/images/listview.png)
+
+#### ListEditor
+
+![CMS](docs/images/listeditor.png)
+
+#### NodeView
+
+![CMS](docs/images/nodeview.png)
+
+#### NodeEditor
+
+![CMS](docs/images/nodeeditor.png)
+
+---
+
+## Collections + sub collections
+
+Collections are the building blocks with which you build your CMS. They allow you to build the main navigation
+tree, and since it is a tree, it is possible to nest collections. Every collection can be seen as a root for another
+set of collections underneath it:
+
+```c#
+config.AddCollection<Entity>("some-collection", "Some Collection", collection => {
+    // [..]
+
+    collection.AddCollection<SubEntity>("some-sub-collection", "Sub Collection", subCollection => {
+        // [..]
+
+        // you can add another layer here
+    });
+});
+```
+
+If a `SubEntity` is being edited in the example from above, the `id` of its corresponding parent entity is given as `parentId` 
+to each of the methods of the repository. This allows you to make more specific queries to the database, and simplyfies the logic
+inside the repository.
+
+If you have a collection that is recursive (for example folders which can contain folders, which can contain folders, etc), you
+can specify that it is an recursive collection:
+
+```c#
+config.AddCollection<Entity>("some-collection", "Some Collection", collection => {
+    // [..]
+
+    collection.AddSelfAsRecursiveCollection();
+});
+```
+
+This allows for infinite nesting of `Entities` and at every level of entities the `id` of parent entity above it is passed in as `parentId`.
+
+The tree view follows the collection configuration, allowing the user to traverse the tree by folding open collection and reveiling
+entities underneath each collection and sub collection.
+
+There is no restriction to how many collection you want to add, or which repositories they use. Its totally possible to add multiple
+collection which all use the same repository. Only the `collectionAlias` of each collection must be unique.
+
+## ListView features
+
+![CMS](docs/images/listview.png)
+
+A `ListView` is a table, by which you can specify what the columns of the table should be, what buttons should be usable at the
+top of the table, and at each row. Furthermore, it is possible to specify whether the search bar should be visible, and what kind of
+data views should be used. 
+
+## ListEditor features
+
+![CMS](docs/images/listeditor.png)
+
+A `ListEditor` is quite similar to a `ListView`, but in the list editor each column of the table is a form field, so its easy to
+edit multiple entities at once.
+
+## NodeEditor / NodeView features
+
+![CMS](docs/images/nodeeditor.png)
+
+A `NodeEditor` is a page which displays a form for editing a entity. A node editor can consist of mulitple sections, so you can
+logically group related entities, or have specific specialisations for various entity subtypes. Using `.VisibleWhen` on sections or
+editors, it's possible to show or hide editors or sections based what the user inputs.
+
+![CMS](docs/images/nodeview.png)
+
+A `NodeView` is similar to its editor counterpart, but in the view everything is readonly and cannot be edited.
+
+### Embedding a list in a node
+
+To allow for easy editing and navigating, it is possible to incorporate a `ListView` or `ListEditor` in a node editor. A `NodeEditor` 
+will always display a `ListEditor`, and a `NodeView` will always display a `ListView`. Using the following code allows you to add
+a list in a node:
+
+```c#
+    // [..]
+    .SetNodeEditor(editor => {
+        editor.AddSection(section => {
+            section.AddSubCollectionListEditor<SubEntity>("sub-collection");
+        });
+    });
+    // [..]
+```
+
+Using the `collectionAlias`, you can specify which collection must be used (in this case, `"sub-collection"`). You must also specify
+what kind of entity the sub collection uses. The configuration of the `ListEditor` of the sub collection, which you specified when you 
+defined the collection, is to render the list. 
+
+## Relations
+
+RapidCMS support one-to-many and many-to-many relations between collections, although it requires somewhat more configuration.
+
+### One-to-many
+
+In RapidCMS it is possible to create a dropdown which contains all the entities from a specific collection, and have the
+user pick one of the entities. When this entity is saved, the id the picked entity is saved in the property which backed the
+dropdown. For example:
+
+```     c#
+editor.AddField(f => f.CountryId)
+    .SetType(EditorType.Select)
+    .SetCollectionRelation<CountryEntity>("country-collection", relation =>
+    {
+        relation
+            .SetElementIdProperty(x => x.Id)
+            .SetElementDisplayProperties(x => x.Name, x => x.Description)
+            .SetRepositoryParentIdProperty(x => x.Id);
+
+    });
+```
+
+The `CountryId` property in this example is the property which contains the id of the related country. The `"country-collection"` collection
+is referenced as source of entities from which can be picked. Using `.SetElementIdProperty` you can specify which property must
+be used as `id`, and which gets stored in `CountryId`. `.SetElementDisplayProperties` allows you to specify multiple properties 
+which are used in the UI, so the user can clearly make their choice. `SetPropertyParentIdProperty` allows you to pass in the id of
+the current entity, this id is passed in as `parentId` into the repository of `"country-collection"`. If you do no use this property, `null` 
+is passed in as `parentId`. Having the id passed in allows you to limit the choices in the editor, which can be useful in some cases.
+
+#### DataCollection
+
+Instead of using `SetCollectionRelation` it's also possible to use `SetDataCollection`, and pass in a `IDataCollection`. This allows
+you to add dropdowns or select boxes with data coming from a `IDataCollection`. This data collection can get its data from any source,
+and the build-in `EnumDataProvider` uses a `Enum` to generate a list of options:
+
+```c#
+ pane.AddField(f => f.State)
+    .SetType(EditorType.Dropdown)
+    .SetDataCollection<EnumDataProvider<StateEnum>>();
+```
+
+### Many-to-many
+
+There are two stategies for supporting many-to-many relations in RapidCMS. One is via a somewhat more complex editor, and one is
+via a dedicated sub collection editor. Both methods are fine, but have some implications on how the relation is saved.
+
+#### Sub collection editor
+
+The sub collection editor is by far the more easy option for supporting many-to-many relations, and can be added to a `NodeEditor`
+via the following code:
+
+```c#
+editor.AddSection(pane =>
+{
+    pane.AddRelatedCollectionListEditor<CountryEntity>("related-country-collection");
+});
+```
+
+Just as `AddSubCollectionListView`, the configuration for this list is fetched from the `"related-country-collection"` collection. Next
+to that, you are also required to implement `GetAllRelatedAsync`, `GetAllNonRelatedAsync`, `AddAsync`, and `RemoveAsync` methods on
+the *related* repository, so in this case it is the repository of `"related-country-collection"`. Further more, the related collection
+must have a `ListView` *and* a `ListEditor`, by which the list view is used for picking entities, and the list editor for listing the
+related entities. Do not forget to add a `DefaultButtonType.Pick` button on each row in the `ListView`, a `DefaultButtonType.Add` on the
+`ListEditor`, and a `DefaultButtonType.Remove` on each row in the `ListEditor`, to support adding and picking unrelated entities and removing
+related entities.
+
+The related collection editor is just another list editor, so it's possible to edit the related entities from the node editor which
+implemented the related collection editor. And if that is not allowed, use readonly editors, or use the Editor variant for the many-to-many
+relation.
+
+#### Editor
+
+The editor variant of the many-to-many relation is somewhat more tricky. To add such an editor to a `NodeEditor`, use the following
+code:
+
+```c#
+editor.AddEditor(editor =>
+{
+    editor.AddField(f => f.Countries.Select(x => x.CountryId))
+        .SetName("Countries")
+        .SetType(EditorType.MultiSelect)
+        .SetCollectionRelation<CountryEntity>("country-collection", relation =>
+        {
+            relation
+                .SetElementIdProperty(x => x.Id)
+                .SetElementDisplayProperties(x => x.Name, x => x.Description);
+
+            relation
+                .ValidateRelation((person, related) =>
+                {
+                    if (!related.Count().In(2, 3))
+                    {
+                        return new[] { "Person must have 2 or 3 countries." };
+                    }
+
+                    return default;
+                });
+        });
+});
+```
+
+This adds a `MultiSelect` editor to the `NodeEditor`, which is like multi-line dropdown, but with a better UX. `SetCollectionRelation` is
+also set for this editor, just as in the one-to-many case. Via `ValidateRelation` is even possible to specify when this editor is valid,
+in this case, when two or three countries are selected.
+
+But, in contrast to the one-to-many case, the backing field is an expression which only gets a value, but does not allow setting. 
+`f.Countries.Select(x => x.CountryId)` returns an `IEnumerable<int>` from the join or junction table (`Person.Countries`). In order
+to make it possible to save which entities are selected, the `IRelationContainer` in the `InsertAsync` or `UpdateAsync` methods on
+the `IRepository` contain the selected entities. An example of how this container can be used can be seen in the following code:
+
+```c#
+public class PersonRepository
+{
+    // [..]
+
+    public override async Task UpdateAsync(int id, int? parentId, PersonEntity entity, IRelationContainer? relations)
+    {
+        // this example uses ef core
+        var dbEntity = await _dbContext.Persons.Include(x => x.Countries).FirstOrDefaultAsync(x => x.Id == id);
+
+        // get the related entities from the editor by using the type of the related entites, and the type of its id
+        var newCountries = relations.GetRelatedElementIdsFor<CountryEntity, int>();
+
+        // remove entities which were related, but deselected by the user
+        foreach (var country in dbEntity.Countries.Where(x => !newCountries.Contains(x.CountryId.Value)).ToList())
+        {
+            dbEntity.Countries.Remove(country);
+        }
+
+        // add entities which are now selected
+        foreach (var countryId in newCountries.Where(id => !dbEntity.Countries.Select(x => x.CountryId.Value).Contains(id)).ToList())
+        {
+            dbEntity.Countries.Add(new PersonCountryEntity { CountryId = countryId });
+        }
+
+        _dbContext.Persons.Update(dbEntity);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    // [..]
+}
+```
+
+## Data views
+
+You can add data views to a collection, which results in tabs at the top of the list view and editor, and allow you to
+create multiple views to your collection, so the user can find an entity more easily. You add them by calling `.AddDataView` on
+your collection:
+
+```
+collection
+    .AddDataView("All", x => true)
+    .AddDataView("Even IDs", x => x.Id % 2 == 0)
+    .AddDataView("Uneven IDs", x => x.Id % 2 == 1)
+```
+
+The query expression of the selected data view is given to your `IRepository` in the `IQuery<T>` parameter of the `GetAllAsync` method
+(and `GetAllRelatedAsync` and `GetAllNonRelatedAsync` as well).
+
+## Search
+
+Just as data views, the users search term is passed into your `IRepository` via the `IQuery<T>` parameter of the `GetAllAsync` method.
+The `SearchTerm` is a nullable string, so first check whether the users is searching for something, and then implement your own search
+algorithm. 
+
+## Implementing a repository
+
+TODO: documentation
+
+TL;DR:
+
+If your entity uses string as Id:
+
+1. Create a class and have it inherit `BaseClassRepository<TKey, TParentKey, TEntity>` and jump through all the hoops (implement all abstract methods).
+2. Attach it to a collection using `collection.SetRepository<YourRepo>()`.
+
+If your entity uses a struct as Id:
+
+1. Create a class and have it inherit `BaseStructRepository<TKey, TParentKey, TEntity>` and jump through all the hoops (implement all abstract methods).
+2. Attach it to a collection using `collection.SetRepository<YourRepo>()`.
+
+When you want to support Relations, override these four virtual methods: `GetAllRelatedAsync`, `GetAllNonRelatedAsync`, `AddAsync`, and `RemoveAsync`.
+
+### Some best practices (not exhaustive)
+
+- *Always* return entities from entity framework DbSet with `.AsNoTracking()`.
+- *Always* support all the features from `IQuery<T>`; that is supporting `Skip` and `Take` for paginating, calling `MoreDataAvailable` and pass in
+a `true` when there is more, and a `false` when there is not. Furthermore, support searching by checking `SearchTerm` and always use the `DataViewExpression` 
+when it is set.
+
+## Creating custom editors
+
+TODO: documentation
+
+TL;DR:
+
+1. Create a custom editor and have it `@inherit BaseEditor`.
+2. Add it to the cms using `.AddCustomEditor(typeof(YourCustomEditor))`.
+3. Have a field use your editor by calling `editor.AddField(x => x.Prop).SetType(typeof(YourCustomEditor))`.
+
+## Creating custom buttons
+
+TODO: documentation 
+
+TL;DR:
+
+1. Create a custom button an have it `@inherit BaseButton`.
+2. Add it to the cms using `.AddCustomButton(typeof(YourCustomButton))`.
+3. Have a editor use your button by calling `editor.AddCustomButton(typeof(YourCustomButton), CrudType, () => { /* button action */ })` or 
+`editor.AddCustomButton<YourCustomActionHandler>(typeof(YourCustomButton))` and create a `YourCustomActionHandler` which implements `IActionHandler`.
+
+## Creating custom sections
+
+TODO: documentation
+
+TL;DR:
+
+1. Create a custom section and have it `@inherit BaseSection`.
+2. Add it to the cms using `.AddCustomSection(typeof(YourCustomSection))`.
+3. Have a view or editor use your section by calling `list.AddRow(typeof(YourCustomSection))` or `editor.AddSection(typeof(YourCustomSection))`.
