@@ -39,7 +39,7 @@ namespace TestLibrary.Repositories
 
         public override Task<IEnumerable<ValidationEntity>> GetAllAsync(int? parentId, IQuery<ValidationEntity> query)
         {
-            return Task.FromResult(_data.Select(x => x.Value));
+            return Task.FromResult(_data.Where(x => x.Value.ParentId == parentId).Select(x => x.Value));
         }
 
         public override Task<ValidationEntity> GetByIdAsync(int id, int? parentId)
@@ -50,6 +50,7 @@ namespace TestLibrary.Repositories
         public override Task<ValidationEntity> InsertAsync(int? parentId, ValidationEntity entity, IRelationContainer? relations)
         {
             entity.Id = (_data.Count + 1).ToString();
+            entity.ParentId = parentId;
 
             _data[_data.Count + 1] = entity;
 
@@ -58,7 +59,7 @@ namespace TestLibrary.Repositories
 
         public override Task<ValidationEntity> NewAsync(int? parentId, Type? variantType = null)
         {
-            return Task.FromResult(new ValidationEntity { Id = "" });
+            return Task.FromResult(new ValidationEntity { Id = "", ParentId = parentId });
         }
 
         public override int ParseKey(string id)
@@ -73,6 +74,7 @@ namespace TestLibrary.Repositories
 
         public override Task UpdateAsync(int id, int? parentId, ValidationEntity entity, IRelationContainer? relations)
         {
+            entity.ParentId = parentId;
             _data[id] = entity;
 
             return Task.CompletedTask;

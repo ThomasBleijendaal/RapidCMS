@@ -75,7 +75,6 @@ namespace RapidCMS.Common.Services
             {
                 // TODO: pagination
                 var query = Query.TakeElements(25);
-                await collection.ProcessDataViewAsync(query, _serviceProvider);
                 var entities = await collection.Repository.InternalGetAllAsync(parentId, query);
 
                 return await entities.ToListAsync(async entity =>

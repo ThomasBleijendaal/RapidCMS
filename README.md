@@ -19,6 +19,13 @@ Since blazor is not completely out of preview, and RapidCMS is not completely fi
 of this documentation are vague, missing, or already out-dated, so please be aware of that. I try to keep
 this documentation updated and current, but it is on best-effort basis.
 
+## Screenshots
+
+Since it is a bit hard to demonstrate a CMS on the internet without having the publicly accessible
+CMS be absolutely vandalised, [on this page there are some screenshots of the features that are currently supported](SCREENSHOTS.md).
+
+---
+
 ## Simple collection
 
 Let's imagine that you have the following entity, and you want to build a simple CMS for it:
@@ -134,6 +141,13 @@ with RapidCMS, `config.AllowAnonymousUser();` adds a very permissive `Athorizati
 collection, and allows everybody to do anything.
 
 The `AuthorizationHandler` is part of the [ASP.NET Core Authorization Infrastructure](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/resourcebased?view=aspnetcore-2.2).
+
+### Authentication
+
+There is no standard authentication support out of the box, so you have to do everything to have your
+uses sign in. But there are already some great resources [for adding Azure AD support to blazor](https://devblogs.microsoft.com/aspnet/configuring-a-server-side-blazor-app-with-azure-app-configuration/),
+so it's easy to get it working. In the [TestServer project](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/RapidCMS/TestServer)
+it's also setup by adding some `Microsoft.AspNetCore.Authentication.*` packages and providing some configuration.
 
 ### Collections
 

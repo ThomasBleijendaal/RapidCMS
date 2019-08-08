@@ -275,7 +275,7 @@ namespace TestServer
                     collection
                         .SetRepository<CountryRepository>()
                         .AddDataView("All", x => true)
-                        .AddDataView("1234", x => x.Name.Contains("1234"))
+                        .AddDataView("Countries with 1234 in their name", x => x.Name.Contains("1234"))
                         .SetListView(list =>
                         {
                             list.SetPageSize(3);

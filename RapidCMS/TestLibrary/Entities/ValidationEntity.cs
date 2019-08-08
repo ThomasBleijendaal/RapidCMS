@@ -10,6 +10,7 @@ namespace TestLibrary.Entities
     public class ValidationEntity : IEntity
     {
         public string Id { get; set; }
+        public int? ParentId { get; set; }
 
         [Required]
         public string Name { get; set; }
