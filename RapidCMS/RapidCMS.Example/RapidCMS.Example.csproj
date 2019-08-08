@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="RapidCMS.Repositories" Version="0.0.1-preview" />
-    <PackageReference Include="RapidCMS.UI" Version="0.0.1-preview" />
+    <ProjectReference Include="..\RapidCMS.Repositories\RapidCMS.Repositories.csproj" />
+    <ProjectReference Include="..\RapidCMS.UI\RapidCMS.UI.csproj" />
   </ItemGroup>
 
 </Project>
