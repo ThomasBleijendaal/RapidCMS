@@ -122,6 +122,7 @@ namespace RapidCMS.Common.Services
             List<Pane>? panes;
             int? pageSize;
             bool? searchBarVisible;
+            ListType listType;
 
             if (usageType == UsageType.List || usageType.HasFlag(UsageType.Add))
             {
@@ -135,19 +136,21 @@ namespace RapidCMS.Common.Services
                 buttons = listView.Buttons;
                 pageSize = listView.PageSize;
                 searchBarVisible = listView.SearchBarVisible;
+                listType = ListType.TableView;
             }
             else
             {
-                var editView = collection.ListEditor;
-                if (editView == null)
+                var listEditor = collection.ListEditor;
+                if (listEditor == null)
                 {
                     throw new InvalidOperationException($"Failed to get UI configuration from collection {collectionAlias} for action {usageType}");
                 }
 
-                panes = editView.EditorPanes;
-                buttons = editView.Buttons;
-                pageSize = editView.PageSize;
-                searchBarVisible = editView.SearchBarVisible;
+                panes = listEditor.EditorPanes;
+                buttons = listEditor.Buttons;
+                pageSize = listEditor.PageSize;
+                searchBarVisible = listEditor.SearchBarVisible;
+                listType = listEditor.ListEditorType == ListEditorType.Block ? ListType.BlockEditor : ListType.TableEditor;
             }
 
             // TODO: this thing naively assumes only one fieldset per type
@@ -164,7 +167,7 @@ namespace RapidCMS.Common.Services
 
             var list = new ListUI(ButtonCallAsync, ListCallAsync, TabCallAsync)
             {
-                ListType = ListType.TableView,
+                ListType = listType,
                 SectionsHaveButtons = sectionsHaveButtons,
                 PageSize = pageSize ?? 1000, // TODO: config setting?
                 SearchBarVisible = searchBarVisible ?? true

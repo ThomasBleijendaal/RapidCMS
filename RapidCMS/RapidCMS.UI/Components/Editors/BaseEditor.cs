@@ -33,22 +33,31 @@ namespace RapidCMS.UI.Components.Editors
 
         private void ValidationStateChangeHandler(object sender, ValidationStateChangedEventArgs eventArgs)
         {
-            if (EditContext.WasValidated(Property))
+            var state = ValidationState.None;
+
+            if (!EditContext.WasValidated(Property))
             {
-                if (EditContext.IsValid(Property))
-                {
-                    State = ValidationState.Valid;
-                }
-                else
-                {
-                    State = ValidationState.Invalid;
-                }
+                state |= ValidationState.NotValidated;
             }
             else
             {
-                State = ValidationState.NotValidated;
+                if (EditContext.IsValid(Property))
+                {
+                    state |= ValidationState.Valid;
+                }
+                else
+                {
+                    state |= ValidationState.Invalid;
+                }
             }
 
+            if (EditContext.IsModified())
+            {
+                state |= ValidationState.Modified;
+            }
+
+            State = state;
+            
             StateHasChanged();
         }
 

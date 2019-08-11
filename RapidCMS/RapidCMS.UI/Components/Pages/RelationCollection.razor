@@ -215,35 +215,40 @@ else
 
     UsageType previousUsage;
 
-    protected override async Task LoadDataAsync(bool reload = false)
+    protected override async Task LoadDataAsync(IEnumerable<string>? reloadEntityIds = null)
     {
         try
         {
-            var rootEditContext = await EditContextService.GetRootAsync(GetUsageType(), CollectionAlias, ParentId);
-
-            UI = await EditorService.GetListAsync(GetUsageType(), CollectionAlias);
-
-            Buttons = await UI.GetButtonsForEditContextAsync(rootEditContext);
-            Tabs = await UI.GetTabsAsync(rootEditContext);
-
-            if (previousUsage != GetUsageType())
+            if (reloadEntityIds == null)
             {
+                var rootEditContext = await EditContextService.GetRootAsync(GetUsageType(), CollectionAlias, ParentId);
+
+                UI = await EditorService.GetListAsync(GetUsageType(), CollectionAlias);
+
+                Buttons = await UI.GetButtonsForEditContextAsync(rootEditContext);
+                Tabs = await UI.GetTabsAsync(rootEditContext);
+
                 CurrentPage = 1;
                 MaxPage = null;
                 ActiveTab = null;
                 SearchTerm = null;
 
-                previousUsage = GetUsageType();
+                await LoadSectionsAsync();
+
+                RootEditContext = rootEditContext;
+                Sections?.ForEach(x => x.editContext.OnFieldChanged += (s, a) => StateHasChanged());
             }
-
-            await LoadSectionsAsync();
-
-            RootEditContext = rootEditContext;
+            else
+            {
+                await ReloadSectionsAsync(reloadEntityIds);
+            }
 
             StateHasChanged();
         }
         catch
         {
+            RootEditContext = null;
+            Sections = null;
             UI = null;
 
             throw;
@@ -255,6 +260,7 @@ else
         CurrentPage = page;
 
         await LoadSectionsAsync();
+        StateHasChanged();
     }
 
     async void SearchAsync(string? search)
@@ -264,6 +270,7 @@ else
         SearchTerm = search;
 
         await LoadSectionsAsync();
+        StateHasChanged();
     }
 
     async void TabChangeAsync(int? tabId)
@@ -273,6 +280,7 @@ else
         CurrentPage = 1;
 
         await LoadSectionsAsync();
+        StateHasChanged();
     }
 
     async Task LoadSectionsAsync()
@@ -301,8 +309,29 @@ else
         {
             MaxPage = null;
         }
+    }
 
-        StateHasChanged();
+    async Task ReloadSectionsAsync(IEnumerable<string> reloadEntityIds)
+    {
+        if (UI == null || Sections == null)
+        {
+            return;
+        }
+
+        var newSections = await Sections.ToListAsync(async x =>
+        {
+            if (reloadEntityIds.Contains(x.editContext.Entity.Id))
+            {
+                var reloadedEditContext = await EditContextService.GetEntityAsync(GetUsageType(), CollectionAlias, null, null, x.editContext.Entity.Id);
+                return (reloadedEditContext, await UI.GetSectionsForEditContextAsync(reloadedEditContext));
+            }
+            else
+            {
+                return x;
+            }
+        });
+
+        Sections = newSections;
     }
 
     async void ListButtonOnClickAsync(object? sender, ButtonClickEventArgs args)
@@ -316,7 +345,7 @@ else
                 throw new ArgumentException($"Argument must be of type {typeof(ButtonViewModel)}.", nameof(sender));
             }
 
-            var command = await EditContextService.ProcessRelationActionAsync(GetUsageType(), CollectionAlias, RelatedEntity, model.ButtonId, args.Data);
+            var command = await EditContextService.ProcessRelationActionAsync(GetUsageType(), CollectionAlias, RelatedEntity, Sections.Select(x => x.editContext), model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }

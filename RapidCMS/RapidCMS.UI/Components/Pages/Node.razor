@@ -43,7 +43,7 @@ else
     IEnumerable<ButtonUI>? Buttons;
     IEnumerable<SectionUI>? Sections;
 
-    protected override async Task LoadDataAsync(bool reload = false)
+    protected override async Task LoadDataAsync(IEnumerable<string>? reloadEntityIds = null)
     {
         try
         {
