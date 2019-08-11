@@ -28,19 +28,6 @@ namespace RapidCMS.Common.Forms
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        //internal EditContext(
-        //    IEntity entity,
-        //    UsageType usageType,
-        //    ListEditor config,
-        //    IServiceProvider serviceProvider)
-        //{
-        //    Entity = entity ?? throw new ArgumentNullException(nameof(entity));
-        //    UsageType = usageType;
-        //    _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-
-        //    //DataContext = new DataContext(config ?? throw new ArgumentNullException(nameof(config)), _serviceProvider);
-        //}
-
         public IEntity Entity { get; private set; }
         public UsageType UsageType { get; private set; }
 
@@ -178,7 +165,10 @@ namespace RapidCMS.Common.Forms
                     $"The {kv.Key.PropertyName} field indicates it is performing an asynchronous task which must be awaited.",
                     new[] { kv.Key.PropertyName })));
 
-            results.AddRange(DataContext.ValidateRelations(Entity));
+            if (DataContext != null)
+            {
+                results.AddRange(DataContext.ValidateRelations(Entity));
+            }
 
             foreach (var result in results)
             {

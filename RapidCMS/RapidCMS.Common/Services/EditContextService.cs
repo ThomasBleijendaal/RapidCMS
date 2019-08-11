@@ -43,7 +43,7 @@ namespace RapidCMS.Common.Services
 
         public async Task<List<EditContext>> GetEntitiesAsync(UsageType usageType, string collectionAlias, string? parentId, Query query)
         {
-            // TODO: this method does not check authorization
+            // NOTE: this method does not check authorization
 
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, parentId);
 
@@ -58,7 +58,7 @@ namespace RapidCMS.Common.Services
 
         public async Task<List<EditContext>> GetRelatedEntitiesAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, Query query)
         {
-            // TODO: this method does not check authorization
+            // NOTE: this method does not check authorization
 
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, null);
 
@@ -73,7 +73,7 @@ namespace RapidCMS.Common.Services
             return ConvertEditContexts(usageType, collectionAlias, rootEditContext, existingEntities);
         }
 
-        public async Task<EditContext> GetEntityAsync(UsageType usageType, string collectionAlias, string variantAlias, string? parentId, string? id)
+        public async Task<EditContext> GetEntityAsync(UsageType usageType, string collectionAlias, string? variantAlias, string? parentId, string? id)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -142,7 +142,7 @@ namespace RapidCMS.Common.Services
                 case CrudType.Update:
                     await collection.Repository.InternalUpdateAsync(id ?? throw new InvalidOperationException(), parentId, updatedEntity, relationContainer);
                     await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
-                    return new ReloadCommand();
+                    return new ReloadCommand(id);
 
                 case CrudType.Insert:
                     var entity = await collection.Repository.InternalInsertAsync(parentId, updatedEntity, relationContainer);
@@ -168,7 +168,7 @@ namespace RapidCMS.Common.Services
             }
         }
 
-        public async Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, string? parentId, string actionId, object? customData)
+        public async Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, string? parentId, IEnumerable<EditContext> editContexts, string actionId, object? customData)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -216,6 +216,39 @@ namespace RapidCMS.Common.Services
                             Id = null
                         };
                     }
+
+                case CrudType.Update:
+
+                    var contextsToProcess = (button.RequiresValidForm)
+                        ? editContexts.Where(x => x.IsValid() && x.IsModified())
+                        : editContexts.Where(x => x.IsModified());
+
+                    var affectedEntities = new List<IEntity>();
+
+                    foreach (var editContext in contextsToProcess)
+                    {
+                        try
+                        {
+                            var updatedEntity = editContext.Entity;
+
+                            await EnsureAuthorizedUserAsync(buttonCrudType, updatedEntity);
+                            EnsureValidEditContext(editContext, button);
+
+                            var relationContainer = editContext.DataContext.GenerateRelationContainer();
+
+                            await collection.Repository.InternalUpdateAsync(updatedEntity.Id, parentId, updatedEntity, relationContainer);
+
+                            affectedEntities.Add(updatedEntity);
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                    }
+
+                    await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
+
+                    return new ReloadCommand(affectedEntities.Select(x => x.Id));
 
                 case CrudType.None:
                     return new NoOperationCommand();
@@ -273,7 +306,7 @@ namespace RapidCMS.Common.Services
                 case CrudType.Update:
                     await collection.Repository.InternalUpdateAsync(id, parentId, updatedEntity, relationContainer);
                     await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
-                    return new ReloadCommand();
+                    return new ReloadCommand(id);
 
                 case CrudType.Insert:
                     updatedEntity = await collection.Repository.InternalInsertAsync(parentId, updatedEntity, relationContainer);
@@ -307,7 +340,7 @@ namespace RapidCMS.Common.Services
             }
         }
 
-        public async Task<ViewCommand> ProcessRelationActionAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, string actionId, object? customData)
+        public async Task<ViewCommand> ProcessRelationActionAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, IEnumerable<EditContext> editContexts, string actionId, object? customData)
         {
             var collection = _root.GetCollection(collectionAlias);
 
@@ -355,6 +388,39 @@ namespace RapidCMS.Common.Services
                             Id = null
                         };
                     }
+
+                case CrudType.Update:
+
+                    var contextsToProcess = (button.RequiresValidForm)
+                        ? editContexts.Where(x => x.IsModified() && x.IsValid())
+                        : editContexts.Where(x => x.IsModified());
+
+                    var affectedEntities = new List<IEntity>();
+
+                    foreach (var editContext in contextsToProcess)
+                    {
+                        try
+                        {
+                            var updatedEntity = editContext.Entity;
+
+                            await EnsureAuthorizedUserAsync(buttonCrudType, updatedEntity);
+                            EnsureValidEditContext(editContext, button);
+
+                            var relationContainer = editContext.DataContext.GenerateRelationContainer();
+
+                            await collection.Repository.InternalUpdateAsync(updatedEntity.Id, null, updatedEntity, relationContainer);
+
+                            affectedEntities.Add(updatedEntity);
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                    }
+
+                    await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
+
+                    return new ReloadCommand(affectedEntities.Select(x => x.Id));
 
                 case CrudType.Add:
                     return new UpdateParameterCommand
@@ -422,11 +488,13 @@ namespace RapidCMS.Common.Services
 
                 case CrudType.Update:
                     await collection.Repository.InternalUpdateAsync(id, null, updatedEntity, relationContainer);
-                    return new ReloadCommand();
+                    await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
+                    return new ReloadCommand(id);
 
                 case CrudType.Insert:
                     updatedEntity = await collection.Repository.InternalInsertAsync(null, updatedEntity, relationContainer);
                     await collection.Repository.InternalAddAsync(relatedEntity, updatedEntity.Id);
+                    await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
                     return new UpdateParameterCommand
                     {
                         Action = Constants.New,

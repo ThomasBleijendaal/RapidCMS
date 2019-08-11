@@ -293,10 +293,11 @@ namespace TestServer
 
                             list.AddDefaultButton(DefaultButtonType.New);
                             list.AddDefaultButton(DefaultButtonType.Add);
+
+                            list.AddDefaultButton(DefaultButtonType.SaveExisting);
                             list.AddSection(pane =>
                             {
                                 pane.AddField(p => p.Name);
-                                pane.AddDefaultButton(DefaultButtonType.SaveExisting);
                                 pane.AddDefaultButton(DefaultButtonType.SaveNew);
 
                                 pane.AddDefaultButton(DefaultButtonType.Delete);
@@ -310,7 +311,7 @@ namespace TestServer
                     collection
                         .SetRepository<CountryRepository>()
                         .SetTreeView(entity => entity.Name)
-                        .SetDataViewBuilder<CountryDataViewBuilder>()
+                        //.SetDataViewBuilder<CountryDataViewBuilder>()
                         .SetListView(list =>
                         {
                             list.AddDefaultButton(DefaultButtonType.New);
@@ -326,13 +327,15 @@ namespace TestServer
                             //});
                             // list.AddRow(typeof(DashboardSection), config => { });
                         })
-                        .SetListEditor(ListEditorType.Block, list =>
+                        .SetListEditor(ListEditorType.Table, list =>
                         {
                             list.AddDefaultButton(DefaultButtonType.New);
+                            list.AddDefaultButton(DefaultButtonType.SaveExisting, "Update all");
+
                             list.AddSection(pane =>
                             {
                                 pane.AddField(p => p.Name);
-                                pane.AddDefaultButton(DefaultButtonType.SaveExisting);
+                                //pane.AddDefaultButton(DefaultButtonType.SaveExisting);
                                 pane.AddDefaultButton(DefaultButtonType.SaveNew);
                             });
                             // list.AddSection(typeof(BlockSection), config => { });

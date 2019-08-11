@@ -14,7 +14,7 @@ namespace RapidCMS.Common.Enums
         SaveNew,
 
         [DefaultIconLabel(Icon = "hard-drive", Label = "Update")]
-        [Actions(UsageType.Edit | UsageType.Node)]
+        [Actions(UsageType.Edit | UsageType.Node, UsageType.Edit | UsageType.List)]
         SaveExisting,
 
         [DefaultIconLabel(Icon = "trash", Label = "Delete")]
