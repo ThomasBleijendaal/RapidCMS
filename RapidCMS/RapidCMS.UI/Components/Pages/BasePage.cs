@@ -97,8 +97,6 @@ namespace RapidCMS.UI.Components.Pages
                         }
 
                         var update = ParameterCollection.FromDictionary(data);
-
-                        // TODO: this sets invalid parameters..
                         await SetParametersAsync(update);
 
                         break;

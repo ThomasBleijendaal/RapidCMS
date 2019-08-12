@@ -28,6 +28,7 @@ namespace RapidCMS.Common.Models
             Collections = cmsConfig.ProcessCollections(serviceProvider);
 
             SiteName = cmsConfig.SiteName;
+            IsDevelopment = cmsConfig.IsDevelopment;
 
             FindRepositoryForCollections(_serviceProvider, Collections);
         }
@@ -42,7 +43,8 @@ namespace RapidCMS.Common.Models
 
         public List<Collection> Collections { get; set; }
 
-        public string SiteName { get; set; }
+        public string SiteName { get; private set; }
+        public bool IsDevelopment { get; private set; }
 
         internal Collection GetCollection(string alias)
         {

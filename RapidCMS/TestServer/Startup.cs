@@ -990,7 +990,7 @@ namespace TestServer
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseRapidCMS();
+            app.UseRapidCMS(isDevelopment: env.IsDevelopment());
 
             if (env.IsDevelopment())
             {

@@ -3,7 +3,6 @@ using RapidCMS.Common.Models;
 
 namespace RapidCMS.UI.Extensions
 {
-    // TODO: extend with attributes (wait for blazor update to pass dictionay as attributes in)
     public static class CustomRegistrationRenderFragmentExtensions
     {
         public static RenderFragment? ToRenderFragment(this CustomTypeRegistration? registration)

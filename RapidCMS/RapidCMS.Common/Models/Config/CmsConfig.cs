@@ -9,6 +9,7 @@ namespace RapidCMS.Common.Models.Config
     public class CmsConfig : ICollectionRoot
     {
         internal string SiteName { get; set; } = "RapidCMS";
+        internal bool IsDevelopment { get; set; }
         internal bool AllowAnonymousUsage { get; set; } = false;
 
         public List<CollectionConfig> Collections { get; set; } = new List<CollectionConfig>();

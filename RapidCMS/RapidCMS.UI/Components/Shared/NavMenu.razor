@@ -43,37 +43,6 @@
 
     private async void LocationChanged(object sender, LocationChangedEventArgs args)
     {
-        //var uri = new Uri(e);
-
-        //currentUrl = uri.AbsolutePath?.Substring(1);
-
-        //if (!FindUrl(RootEntity.Collections, currentUrl))
-        //{
-        //    //await GetCollectionsAsync();
-        //}
-
         StateHasChanged();
     }
-
-    // TODO: find solution for this
-
-    //private bool FindUrl(IEnumerable<CollectionTreeCollectionDTO> collections, string url)
-    //{
-    //    if (!(collections?.Any() ?? false))
-    //    {
-    //        return false;
-    //    }
-    //    else if (collections.Any(x => x.Path.Any(x => x.Path == url)))
-    //    {
-    //        return true;
-    //    }
-    //    else if (collections.Where(x => x.Nodes != null).SelectMany(x => x.Nodes).Any(x => x.Path == url))
-    //    {
-    //        return true;
-    //    }
-    //    else
-    //    {
-    //        return FindUrl(collections.Where(x => x.Nodes != null).SelectMany(x => x.Nodes.SelectMany(y => y.Collections)), url);
-    //    }
-    //}
 }

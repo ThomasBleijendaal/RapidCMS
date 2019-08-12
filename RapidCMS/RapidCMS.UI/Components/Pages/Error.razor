@@ -2,9 +2,8 @@
 
 @layout MainLayout
 
-@using RapidCMS.Common.Helpers
-
 @inject IExceptionHelper ExceptionHelper
+@inject Root Root
 
 <div class="content">
     <p>An errror occured when your request was made.</p>
@@ -12,27 +11,35 @@
 </div>
 
 @{
-    // TODO: when IWebHostEnvironement becomes available, check for IsDevelopment
+    if (Root.IsDevelopment)
+    {
+        var ex = ExceptionHelper.GetLatestException();
 
-    var ex = ExceptionHelper.GetLatestException();
+        if (ex != null)
+        {
+            <div class="content">
+                <p><code>@ex.Message</code></p>
 
-    if (ex != null)
+                <pre>@ex.StackTrace</pre>
+
+                @{
+                    var innerException = ex.InnerException;
+
+                    while (innerException != null)
+                    {
+                        <p><code>@innerException.Message</code></p>
+
+                        innerException = innerException.InnerException;
+                    }
+                }
+            </div>
+        }
+    }
+    else
     {
         <div class="content">
-            <p><code>@ex.Message</code></p>
-
-            <pre>@ex.StackTrace</pre>
-
-            @{
-                var innerException = ex.InnerException;
-
-                while (innerException != null)
-                {
-                    <p><code>@innerException.Message</code></p>
-
-                    innerException = innerException.InnerException;
-                }
-            }
+            <p>To enable exception view, set <code>isDevelopment</code>:</p>
+            <pre>app.UseRapidCMS(isDevelopment: env.IsDevelopment());</pre>
         </div>
     }
 }
