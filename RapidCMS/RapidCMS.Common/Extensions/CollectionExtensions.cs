@@ -193,7 +193,7 @@ namespace RapidCMS.Common.Extensions
                                 Label = config.Label,
                                 VariantType = config.VariantType,
                                 Buttons = new List<Button>(),
-                                Fields = config.Properties.ToList(x => x.ToField()),
+                                Fields = config.Fields.ToList(x => x.ToField()),
                                 SubCollectionLists = config.SubCollectionLists.ToList(x => x.ToSubCollectionList()),
                                 RelatedCollectionLists = config.RelatedCollectionLists.ToList(x => x.ToRelatedCollectionList())
                             };

@@ -220,11 +220,11 @@ namespace TestServer
                         {
                             view.AddSection(pane =>
                             {
-                                pane.AddProperty(f => f.Name);
-                                pane.AddProperty(f => f.Dummy)
+                                pane.AddField(f => f.Name);
+                                pane.AddField(f => f.Dummy)
                                     .VisibleWhen(f => f.Name == "Country123");
 
-                                pane.AddSubCollectionListView<CountryEntity>("country-collection");
+                                pane.AddSubCollectionList<CountryEntity>("country-collection");
                             });
                         })
                         .SetNodeEditor(editor =>
@@ -347,7 +347,7 @@ namespace TestServer
                             editor.AddDefaultButton(DefaultButtonType.Delete);
                             editor.AddSection(pane =>
                             {
-                                pane.AddProperty(f => f.Name);
+                                pane.AddField(f => f.Name);
                             });
                             // editor.AddSection(typeof(BlockSection), config => { });
                         })
@@ -423,9 +423,9 @@ namespace TestServer
                             editor.AddDefaultButton(DefaultButtonType.Delete);
                             editor.AddSection(pane =>
                             {
-                                pane.AddProperty(f => f.Name);
+                                pane.AddField(f => f.Name);
 
-                                pane.AddRelatedCollectionListView<CountryEntity>("related-country-collection");
+                                pane.AddRelatedCollectionList<CountryEntity>("related-country-collection");
                             });
                         })
                         .SetNodeEditor(editor =>
@@ -439,7 +439,7 @@ namespace TestServer
                             });
                             editor.AddSection(pane =>
                             {
-                                pane.AddRelatedCollectionListEditor<CountryEntity>("related-country-collection");
+                                pane.AddRelatedCollectionList<CountryEntity>("related-country-collection");
 
                                 //pane.AddField(f => f.Countries.Select(x => x.CountryId))
                                 //    .SetName("Countries")
@@ -780,12 +780,12 @@ namespace TestServer
 
                     .AddSection(pane =>
                     {
-                        pane.AddSubCollectionListEditor<TestEntity>("sub-collection-1");
+                        pane.AddSubCollectionList<TestEntity>("sub-collection-1");
                     })
 
                     .AddSection(pane =>
                     {
-                        pane.AddSubCollectionListEditor<TestEntity>("sub-collection-2");
+                        pane.AddSubCollectionList<TestEntity>("sub-collection-2");
                     });
             }
 
@@ -815,7 +815,7 @@ namespace TestServer
 
                     .AddSection(pane =>
                     {
-                        pane.AddSubCollectionListEditor<TestEntity>("sub-collection-3");
+                        pane.AddSubCollectionList<TestEntity>("sub-collection-3");
                     });
             }
 

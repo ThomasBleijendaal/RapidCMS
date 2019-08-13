@@ -222,7 +222,7 @@ namespace RapidCMS.Common.Services
                     break;
 
                 case CrudType.Update:
-                    var contextsToProcess = editContexts.Where(x => button.RequiresValidForm(x) ? x.IsValid() && x.IsModified() : x.IsModified());
+                    var contextsToProcess = editContexts.Where(x => x.IsModified()).Where(x => button.RequiresValidForm(x) ? x.IsValid() : true);
                     var affectedEntities = new List<IEntity>();
                     foreach (var editContext in contextsToProcess)
                     {
@@ -394,7 +394,7 @@ namespace RapidCMS.Common.Services
                     break;
 
                 case CrudType.Update:
-                    var contextsToProcess = editContexts.Where(x => button.RequiresValidForm(x) ? x.IsValid() && x.IsModified() : x.IsModified());
+                    var contextsToProcess = editContexts.Where(x => x.IsModified()).Where(x => button.RequiresValidForm(x) ? x.IsValid() : true);
                     var affectedEntities = new List<IEntity>();
                     foreach (var editContext in contextsToProcess)
                     {

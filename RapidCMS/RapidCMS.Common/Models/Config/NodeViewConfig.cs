@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
-using RapidCMS.Common.Extensions;
 
 namespace RapidCMS.Common.Models.Config
 {
@@ -16,7 +14,7 @@ namespace RapidCMS.Common.Models.Config
 
         internal Type BaseType { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
-        internal List<NodeViewPaneConfig> ViewPanes { get; set; } = new List<NodeViewPaneConfig>();
+        internal List<PaneConfig> ViewPanes { get; set; } = new List<PaneConfig>();
     }
 
     public class NodeViewConfig<TEntity> : NodeViewConfig
@@ -54,28 +52,28 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeViewConfig<TEntity> AddSection(Action<NodeViewPaneConfig<TEntity>> configure)
+        public NodeViewConfig<TEntity> AddSection(Action<PaneConfig<TEntity, IReadonlyFieldConfig<TEntity>>> configure)
         {
             return AddSection<TEntity>(configure);
         }
 
-        public NodeViewConfig<TEntity> AddSection(Type customSectionType, Action<NodeViewPaneConfig<TEntity>>? configure = null)
+        public NodeViewConfig<TEntity> AddSection(Type customSectionType, Action<PaneConfig<TEntity, IReadonlyFieldConfig<TEntity>>>? configure = null)
         {
             return AddSection<TEntity>(customSectionType, configure);
         }
 
-        public NodeViewConfig<TEntity> AddSection<TDerivedEntity>(Action<NodeViewPaneConfig<TDerivedEntity>> configure)
+        public NodeViewConfig<TEntity> AddSection<TDerivedEntity>(Action<PaneConfig<TDerivedEntity, IReadonlyFieldConfig<TDerivedEntity>>> configure)
             where TDerivedEntity : TEntity
         {
             return AddSection(null, configure);
         }
 
-        private NodeViewConfig<TEntity> AddSection<TDerivedEntity>(Type? customSectionType, Action<NodeViewPaneConfig<TDerivedEntity>>? configure)
+        private NodeViewConfig<TEntity> AddSection<TDerivedEntity>(Type? customSectionType, Action<PaneConfig<TDerivedEntity, IReadonlyFieldConfig<TDerivedEntity>>>? configure)
             where TDerivedEntity : TEntity
         {
-            var config = customSectionType == null 
-                ? new NodeViewPaneConfig<TDerivedEntity>(typeof(TDerivedEntity)) 
-                : new NodeViewPaneConfig<TDerivedEntity>(typeof(TDerivedEntity), customSectionType);
+            var config = customSectionType == null
+                ? new PaneConfig<TDerivedEntity, IReadonlyFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity))
+                : new PaneConfig<TDerivedEntity, IReadonlyFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity), customSectionType);
 
             configure?.Invoke(config);
 

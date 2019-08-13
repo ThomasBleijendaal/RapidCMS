@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
-using RapidCMS.Common.Extensions;
 
 namespace RapidCMS.Common.Models.Config
 {
@@ -16,7 +14,7 @@ namespace RapidCMS.Common.Models.Config
 
         internal Type BaseType { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
-        internal List<NodeEditorPaneConfig> EditorPanes { get; set; } = new List<NodeEditorPaneConfig>();
+        internal List<PaneConfig> EditorPanes { get; set; } = new List<PaneConfig>();
     }
 
     public class NodeEditorConfig<TEntity> : NodeEditorConfig
@@ -54,28 +52,28 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeEditorConfig<TEntity> AddSection(Action<NodeEditorPaneConfig<TEntity>> configure)
+        public NodeEditorConfig<TEntity> AddSection(Action<PaneConfig<TEntity, IFullFieldConfig<TEntity>>>? configure)
         {
             return AddSection<TEntity>(configure);
         }
 
-        public NodeEditorConfig<TEntity> AddSection(Type customSectionType, Action<NodeEditorPaneConfig<TEntity>>? configure = null)
+        public NodeEditorConfig<TEntity> AddSection(Type customSectionType, Action<PaneConfig<TEntity, IFullFieldConfig<TEntity>>>? configure = null)
         {
             return AddSection<TEntity>(customSectionType, configure);
         }
 
-        public NodeEditorConfig<TEntity> AddSection<TDerivedEntity>(Action<NodeEditorPaneConfig<TDerivedEntity>> configure)
+        public NodeEditorConfig<TEntity> AddSection<TDerivedEntity>(Action<PaneConfig<TDerivedEntity, IFullFieldConfig<TDerivedEntity>>>? configure)
             where TDerivedEntity : TEntity
         {
             return AddSection(null, configure);
         }
 
-        private NodeEditorConfig<TEntity> AddSection<TDerivedEntity>(Type? customSectionType, Action<NodeEditorPaneConfig<TDerivedEntity>>? configure)
+        private NodeEditorConfig<TEntity> AddSection<TDerivedEntity>(Type? customSectionType, Action<PaneConfig<TDerivedEntity, IFullFieldConfig<TDerivedEntity>>>? configure)
             where TDerivedEntity : TEntity
         {
-            var config = customSectionType == null 
-                ? new NodeEditorPaneConfig<TDerivedEntity>(typeof(TDerivedEntity)) 
-                : new NodeEditorPaneConfig<TDerivedEntity>(typeof(TDerivedEntity), customSectionType);
+            var config = customSectionType == null
+                ? new PaneConfig<TDerivedEntity, IFullFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity))
+                : new PaneConfig<TDerivedEntity, IFullFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity), customSectionType);
 
             configure?.Invoke(config);
 

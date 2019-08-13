@@ -17,14 +17,44 @@ namespace RapidCMS.Common.Models.Config
         internal bool Readonly { get; set; }
         internal Func<object, bool> IsVisible { get; set; } = (x) => true;
 
-        internal IPropertyMetadata Property { get; set; }
+        internal IExpressionMetadata? Expression { get; set; }
+        internal IPropertyMetadata? Property { get; set; }
+
         internal RelationConfig? Relation { get; set; }
 
         internal EditorType Type { get; set; }
         internal Type CustomType { get; set; }
     }
 
-    public class FieldConfig<TEntity> : FieldConfig
+    public interface IFieldConfig<TEntity>
+        where TEntity : IEntity
+    {
+
+    }
+
+    public interface IReadonlyFieldConfig<TEntity> : IFieldConfig<TEntity>
+        where TEntity : IEntity
+    {
+        IReadonlyFieldConfig<TEntity> SetName(string name);
+        IReadonlyFieldConfig<TEntity> SetDescription(string description);
+        IReadonlyFieldConfig<TEntity> VisibleWhen(Func<TEntity, bool> predicate);
+    }
+
+    public interface IFullFieldConfig<TEntity> : IFieldConfig<TEntity>
+        where TEntity : IEntity
+    {
+        IFullFieldConfig<TEntity> SetName(string name);
+        IFullFieldConfig<TEntity> SetDescription(string description);
+        IFullFieldConfig<TEntity> SetType(EditorType type);
+        IFullFieldConfig<TEntity> SetType(Type type);
+        IFullFieldConfig<TEntity> SetReadonly(bool @readonly = true);
+        IFullFieldConfig<TEntity> SetDataCollection<TDataCollection>()
+            where TDataCollection : IDataCollection;
+        IFullFieldConfig<TEntity> SetCollectionRelation<TRelatedEntity>(string collectionAlias, Action<CollectionRelationConfig<TEntity, TRelatedEntity>> configure);
+        IFullFieldConfig<TEntity> VisibleWhen(Func<TEntity, bool> predicate);
+    }
+
+    public class FieldConfig<TEntity> : FieldConfig, IFieldConfig<TEntity>, IReadonlyFieldConfig<TEntity>, IFullFieldConfig<TEntity>
         where TEntity : IEntity
     {
         public FieldConfig<TEntity> SetName(string name)
@@ -99,6 +129,72 @@ namespace RapidCMS.Common.Models.Config
         {
             IsVisible = (entity) => predicate.Invoke((TEntity)entity);
 
+            return this;
+        }
+
+        IReadonlyFieldConfig<TEntity> IReadonlyFieldConfig<TEntity>.SetName(string name)
+        {
+            SetName(name);
+            return this;
+        }
+
+        IReadonlyFieldConfig<TEntity> IReadonlyFieldConfig<TEntity>.SetDescription(string description)
+        {
+            SetDescription(description);
+            return this;
+        }
+
+        IReadonlyFieldConfig<TEntity> IReadonlyFieldConfig<TEntity>.VisibleWhen(Func<TEntity, bool> predicate)
+        {
+            VisibleWhen(predicate);
+            return this;
+        }
+
+        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetName(string name)
+        {
+            SetName(name);
+            return this;
+        }
+
+        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetDescription(string description)
+        {
+            SetDescription(description);
+            return this;
+        }
+
+        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetType(EditorType type)
+        {
+            SetType(type);
+            return this;
+        }
+
+        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetType(Type type)
+        {
+            SetType(type);
+            return this;
+        }
+
+        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetReadonly(bool @readonly)
+        {
+            SetReadonly(@readonly);
+            return this;
+        }
+
+        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetDataCollection<TDataCollection>()
+        {
+            SetDataCollection<TDataCollection>();
+            return this;
+        }
+
+        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetCollectionRelation<TRelatedEntity>(string collectionAlias, Action<CollectionRelationConfig<TEntity, TRelatedEntity>> configure)
+        {
+            SetCollectionRelation(collectionAlias, configure);
+            return this;
+        }
+
+        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.VisibleWhen(Func<TEntity, bool> predicate)
+        {
+            VisibleWhen(predicate);
             return this;
         }
     }
