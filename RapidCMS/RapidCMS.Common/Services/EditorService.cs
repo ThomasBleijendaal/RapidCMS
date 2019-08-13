@@ -54,17 +54,17 @@ namespace RapidCMS.Common.Services
 
                 return await node.Buttons
                     .GetAllButtons()
-                    .Where(button => button.IsCompatibleWithForm(editContext))
+                    .Where(button => button.IsCompatible(editContext))
                     .WhereAsync(async button =>
                     {
                         var authorizationChallenge = await _authorizationService.AuthorizeAsync(
                             _httpContextAccessor.HttpContext.User,
                             editContext.Entity,
-                            Operations.GetOperationForCrudType(button.GetCrudType()));
+                            button.GetOperation(editContext));
 
                         return authorizationChallenge.Succeeded;
                     })
-                    .ToListAsync(button => button.ToUI());
+                    .ToListAsync(button => button.ToUI(editContext));
             }
             async Task<List<SectionUI>?> ListCallAsync(EditContext editContext)
             {
@@ -191,17 +191,17 @@ namespace RapidCMS.Common.Services
 
                 return await buttons
                     .GetAllButtons()
-                    .Where(button => button.IsCompatibleWithForm(editContext))
+                    .Where(button => button.IsCompatible(editContext))
                     .WhereAsync(async button =>
                     {
                         var authorizationChallenge = await _authorizationService.AuthorizeAsync(
                             _httpContextAccessor.HttpContext.User,
                             editContext.Entity,
-                            Operations.GetOperationForCrudType(button.GetCrudType()));
+                            button.GetOperation(editContext));
 
                         return authorizationChallenge.Succeeded;
                     })
-                    .ToListAsync(button => button.ToUI());
+                    .ToListAsync(button => button.ToUI(editContext));
             }
 
             async Task<List<SectionUI>?> ListCallAsync(EditContext editContext)
@@ -223,17 +223,17 @@ namespace RapidCMS.Common.Services
 
                             Buttons = await pane.Buttons
                                 .GetAllButtons()
-                                .Where(button => button.IsCompatibleWithForm(editContext))
+                                .Where(button => button.IsCompatible(editContext))
                                 .WhereAsync(async button =>
                                 {
                                     var authorizationChallenge = await _authorizationService.AuthorizeAsync(
                                         _httpContextAccessor.HttpContext.User,
                                         editContext.Entity,
-                                        Operations.GetOperationForCrudType(button.GetCrudType()));
+                                        button.GetOperation(editContext));
 
                                     return authorizationChallenge.Succeeded;
                                 })
-                                .ToListAsync(button => button.ToUI()),
+                                .ToListAsync(button => button.ToUI(editContext)),
 
                             Elements = pane.Fields.ToList(field => (ElementUI)field.ToUI(dataContext))
                         };

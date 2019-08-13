@@ -62,8 +62,7 @@ namespace RapidCMS.Common.Extensions
             return root;
         }
 
-        // TODO: lose the serviceProvider
-        public static List<Collection> ProcessCollections(this ICollectionRoot root, IServiceProvider serviceProvider)
+        public static List<Collection> ProcessCollections(this ICollectionRoot root)
         {
             var list = new List<Collection>();
 
@@ -115,7 +114,7 @@ namespace RapidCMS.Common.Extensions
                         Buttons = configReceiver.ListView.Buttons.ToList(button => button switch
                         {
                             DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
-                            CustomButtonConfig customButton => customButton.ToCustomButton(serviceProvider),
+                            CustomButtonConfig customButton => customButton.ToCustomButton(),
                             _ => throw new InvalidOperationException("Invalid ListView Button")
                         }),
                         ViewPanes = views.ToList(view =>
@@ -128,7 +127,7 @@ namespace RapidCMS.Common.Extensions
                                 Buttons = view.Buttons.ToList(button => button switch
                                 {
                                     DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
-                                    CustomButtonConfig customButton => customButton.ToCustomButton(serviceProvider),
+                                    CustomButtonConfig customButton => customButton.ToCustomButton(),
                                     _ => throw new InvalidOperationException("Invalid ListView ViewPane Button")
                                 }),
                                 Fields = view.Properties.ToList(x => x.ToField())
@@ -150,7 +149,7 @@ namespace RapidCMS.Common.Extensions
                         Buttons = configReceiver.ListEditor.Buttons.ToList(button => button switch
                         {
                             DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
-                            CustomButtonConfig customButton => customButton.ToCustomButton(serviceProvider),
+                            CustomButtonConfig customButton => customButton.ToCustomButton(),
                             _ => throw new InvalidOperationException("Invalid ListEditor Button")
                         }),
                         EditorPanes = editors.ToList(editor =>
@@ -163,7 +162,7 @@ namespace RapidCMS.Common.Extensions
                                 Buttons = editor.Buttons.ToList(button => button switch
                                 {
                                     DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
-                                    CustomButtonConfig customButton => customButton.ToCustomButton(serviceProvider),
+                                    CustomButtonConfig customButton => customButton.ToCustomButton(),
                                     _ => throw new InvalidOperationException("Invalid ListEditor EditorPanes Button")
                                 }),
                                 Fields = editor.Fields.ToList(field => field.ToField())
@@ -179,7 +178,7 @@ namespace RapidCMS.Common.Extensions
                         Buttons = configReceiver.NodeView.Buttons.ToList(button => button switch
                         {
                             DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
-                            CustomButtonConfig customButton => customButton.ToCustomButton(serviceProvider),
+                            CustomButtonConfig customButton => customButton.ToCustomButton(),
                             _ => throw new InvalidOperationException("Invalid NodeEditor Button")
                         }),
 
@@ -187,7 +186,6 @@ namespace RapidCMS.Common.Extensions
 
                         EditorPanes = configReceiver.NodeView.ViewPanes.ToList(config =>
                         {
-                            // TODO: put this new into Extension Method
                             var pane = new Pane
                             {
                                 CustomAlias = config.CustomAlias,
@@ -212,7 +210,7 @@ namespace RapidCMS.Common.Extensions
                         Buttons = configReceiver.NodeEditor.Buttons.ToList(button => button switch
                         {
                             DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(collection.SubEntityVariants, collection.EntityVariant),
-                            CustomButtonConfig customButton => customButton.ToCustomButton(serviceProvider),
+                            CustomButtonConfig customButton => customButton.ToCustomButton(),
                             _ => throw new InvalidOperationException("Invalid NodeEditor Button")
                         }),
 
@@ -237,7 +235,7 @@ namespace RapidCMS.Common.Extensions
                     };
                 }
 
-                collection.Collections = configReceiver.ProcessCollections(serviceProvider);
+                collection.Collections = configReceiver.ProcessCollections();
 
                 list.Add(collection);
             }

@@ -29,17 +29,17 @@ namespace RapidCMS.Common.Extensions
                 });
         }
 
-        internal static ButtonUI ToUI(this Button button)
+        internal static ButtonUI ToUI(this Button button, EditContext editContext)
         {
             return new ButtonUI
             {
                 Icon = button.Icon,
                 ButtonId = button.ButtonId,
                 Label = button.Label,
-                ShouldConfirm = button.ShouldConfirm,
+                ShouldConfirm = button.ShouldAskForConfirmation(editContext),
                 IsPrimary = button.IsPrimary,
-                RequiresValidForm = button.RequiresValidForm,
-                CustomAlias = (button is CustomButton customButton) ? customButton.Alias : null
+                RequiresValidForm = button.RequiresValidForm(editContext),
+                CustomAlias = button.Alias
             };
         }
 

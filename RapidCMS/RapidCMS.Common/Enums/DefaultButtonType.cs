@@ -11,14 +11,17 @@ namespace RapidCMS.Common.Enums
 
         [DefaultIconLabel(Icon = "hard-drive", Label = "Insert")]
         [Actions(UsageType.New)]
+        [ValidForm]
         SaveNew,
 
         [DefaultIconLabel(Icon = "hard-drive", Label = "Update")]
         [Actions(UsageType.Edit | UsageType.Node, UsageType.Edit | UsageType.List)]
+        [ValidForm]
         SaveExisting,
 
         [DefaultIconLabel(Icon = "trash", Label = "Delete")]
         [Actions(UsageType.Edit | UsageType.Node, UsageType.View | UsageType.Node)]
+        [Confirm]
         Delete,
 
         [DefaultIconLabel(Icon = "pencil", Label = "Edit")]

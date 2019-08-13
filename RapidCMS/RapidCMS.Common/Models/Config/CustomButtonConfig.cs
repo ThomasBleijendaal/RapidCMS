@@ -1,19 +1,16 @@
-﻿using RapidCMS.Common.Enums;
-using System;
-
+﻿using System;
 
 namespace RapidCMS.Common.Models.Config
 {
     public class CustomButtonConfig : ButtonConfig
     {
-        public CustomButtonConfig(Type customButtonType)
+        public CustomButtonConfig(Type customButtonType, Type actionHandler)
         {
             Alias = customButtonType?.FullName ?? throw new ArgumentNullException(nameof(customButtonType));
+            ActionHandler = actionHandler ?? throw new ArgumentNullException(nameof(actionHandler));
         }
 
         internal string Alias { get; set; }
-        internal CrudType CrudType { get; set; }
-        internal Action? Action { get; set; } = null;
-        internal Type? ActionHandler { get; set; } = null;
+        internal Type ActionHandler { get; set; }
     }
 }

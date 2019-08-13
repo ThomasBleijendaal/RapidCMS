@@ -7,6 +7,7 @@ using RapidCMS.Common.Models.Commands;
 
 namespace RapidCMS.Common.Services
 {
+    // TODO: limit the parameters more
     public interface IEditContextService
     {
         Task<EditContext> GetEntityAsync(UsageType usageType, string collectionAlias, string? variantAlias, string? parentId, string? id);

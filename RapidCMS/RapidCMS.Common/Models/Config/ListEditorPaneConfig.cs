@@ -43,24 +43,9 @@ namespace RapidCMS.Common.Models.Config
             var button = new DefaultButtonConfig
             {
                 ButtonType = type,
-                Icon = icon ?? type.GetCustomAttribute<DefaultIconLabelAttribute>()?.Icon,
-                Label = label ?? type.GetCustomAttribute<DefaultIconLabelAttribute>()?.Label,
-                IsPrimary = isPrimary
-            };
-
-            Buttons.Add(button);
-
-            return this;
-        }
-
-        public ListEditorPaneConfig<TEntity> AddCustomButton(Type buttonType, CrudType crudType, Action action, string? label = null, string? icon = null)
-        {
-            var button = new CustomButtonConfig(buttonType)
-            {
-                Action = action,
-                CrudType = crudType,
                 Icon = icon,
-                Label = label
+                Label = label,
+                IsPrimary = isPrimary
             };
 
             Buttons.Add(button);
@@ -70,9 +55,8 @@ namespace RapidCMS.Common.Models.Config
 
         public ListEditorPaneConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
         {
-            var button = new CustomButtonConfig(buttonType)
+            var button = new CustomButtonConfig(buttonType, typeof(TActionHandler))
             {
-                ActionHandler = typeof(TActionHandler),
                 Icon = icon,
                 Label = label
             };

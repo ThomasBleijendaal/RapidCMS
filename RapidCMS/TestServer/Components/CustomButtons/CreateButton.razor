@@ -3,9 +3,9 @@
 @using RapidCMS.UI.Components.Buttons
 
 <div class="input-group col-3">
-    <input bind="@NumberOfItems" type="text" class="form-control" />
+    <input @bind="NumberOfItems" type="text" class="form-control" />
     <div class="input-group-append">
-        <button type="button" class="btn btn-outline-primary" onclick="@CreateAsync">
+        <button type="button" class="btn btn-outline-primary" @onclick="CreateAsync">
             <i class="oi oi-@(Model.Icon ?? "puzzle-piece")"></i> @Model.Label
         </button>
     </div>

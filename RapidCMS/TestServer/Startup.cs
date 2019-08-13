@@ -474,7 +474,7 @@ namespace TestServer
                 //        {
                 //            config.AddDefaultButton(DefaultButtonType.New);
 
-                //            config.SetListPane(listPaneConfig =>
+                //            config.AddRow(listPaneConfig =>
                 //            {
                 //                listPaneConfig.AddProperty(x => x.Id);
                 //                listPaneConfig.AddProperty(x => x.Name);
@@ -493,7 +493,7 @@ namespace TestServer
                 //            config.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                 //            config.AddDefaultButton(DefaultButtonType.Delete);
 
-                //            config.AddEditorPane(editorPaneConfig =>
+                //            config.AddSection(editorPaneConfig =>
                 //            {
                 //                editorPaneConfig.AddField(x => x.Name);
 
@@ -508,7 +508,7 @@ namespace TestServer
                 //                    {
                 //                        relation
                 //                            .SetElementIdProperty(x => x.Id)
-                //                            .SetElementDisplayProperty(x => x.Description);
+                //                            .SetElementDisplayProperties(x => x.Description);
                 //                    });
 
                 //                editorPaneConfig.AddField(x => x.AzureTableStorageEntityIds)
@@ -524,23 +524,23 @@ namespace TestServer
                 //        });
                 //});
 
-                //config.AddCollection<AzureTableStorageEntity>("collection-10", "Azure Table Storage Collection", collection =>
-                //{
-                //    collection
-                //        .SetRepository<AzureTableStorageRepository>()
-                //        .SetTreeView(EntityVisibilty.Visible, entity => entity.Title)
-                //        .SetListView(AzureTableStorageListView)
-                //        .SetNodeEditor(AzureTableStorageEditor)
+                config.AddCollection<AzureTableStorageEntity>("collection-10", "Azure Table Storage Collection", collection =>
+                {
+                    collection
+                        .SetRepository<AzureTableStorageRepository>()
+                        .SetTreeView(EntityVisibilty.Visible, entity => entity.Title)
+                        .SetListView(AzureTableStorageListView)
+                        .SetNodeEditor(AzureTableStorageEditor)
 
-                //        .AddCollection<AzureTableStorageEntity>("collection-10-a", "Sub collection", subCollection =>
-                //        {
-                //            subCollection
-                //                .SetRepository<AzureTableStorageRepository>()
-                //                .SetTreeView(EntityVisibilty.Visible, entity => entity.Title)
-                //                .SetListView(AzureTableStorageListView)
-                //                .SetNodeEditor(AzureTableStorageEditor);
-                //        });
-                //});
+                        .AddCollection<AzureTableStorageEntity>("collection-10-a", "Sub collection", subCollection =>
+                        {
+                            subCollection
+                                .SetRepository<AzureTableStorageRepository>()
+                                .SetTreeView(EntityVisibilty.Visible, entity => entity.Title)
+                                .SetListView(AzureTableStorageListView)
+                                .SetNodeEditor(AzureTableStorageEditor);
+                        });
+                });
 
                 //config.AddCollection<TestEntity>("collection-6", "Variant collection as blocks", collection =>
                 //{

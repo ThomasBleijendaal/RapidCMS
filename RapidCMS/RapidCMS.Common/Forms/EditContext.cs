@@ -5,7 +5,6 @@ using System.Linq;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Forms
@@ -18,10 +17,7 @@ namespace RapidCMS.Common.Forms
         private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();
         private readonly IServiceProvider _serviceProvider;
 
-        internal EditContext(
-            IEntity entity,
-            UsageType usageType,
-            IServiceProvider serviceProvider)
+        internal EditContext(IEntity entity, UsageType usageType, IServiceProvider serviceProvider)
         {
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             UsageType = usageType;
@@ -30,6 +26,11 @@ namespace RapidCMS.Common.Forms
 
         public IEntity Entity { get; private set; }
         public UsageType UsageType { get; private set; }
+
+        internal void SwapEntity(IEntity entity)
+        {
+            Entity = entity;
+        }
 
         // TODO: this thing here is weird
         internal DataContext DataContext { get; set; }

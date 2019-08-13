@@ -117,55 +117,62 @@ namespace RapidCMS.Common.Services
                 throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
             }
 
-            var buttonCrudType = button.GetCrudType();
-
-            var updatedEntity = editContext.Entity;
-
-            await EnsureAuthorizedUserAsync(buttonCrudType, updatedEntity);
+            await EnsureAuthorizedUserAsync(editContext, button);
             EnsureValidEditContext(editContext, button);
 
             var relationContainer = editContext.DataContext.GenerateRelationContainer();
 
-            if (button is CustomButton customButton)
-            {
-                buttonCrudType = await customButton.HandleActionAsync(parentId, id, customData) ?? buttonCrudType;
-            }
+            ViewCommand viewCommand;
 
-            switch (buttonCrudType)
+            var context = new ButtonContext(parentId, customData);
+            switch (await button.ButtonClickBeforeRepositoryActionAsync(editContext, context))
             {
                 case CrudType.View:
-                    return new NavigateCommand { Uri = UriHelper.Node(Constants.View, collectionAlias, entityVariant, parentId, id) };
+                    viewCommand = new NavigateCommand { Uri = UriHelper.Node(Constants.View, collectionAlias, entityVariant, parentId, id) };
+                    break;
 
                 case CrudType.Edit:
-                    return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
+                    viewCommand = new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
+                    break;
 
                 case CrudType.Update:
-                    await collection.Repository.InternalUpdateAsync(id ?? throw new InvalidOperationException(), parentId, updatedEntity, relationContainer);
+                    await collection.Repository.InternalUpdateAsync(id ?? throw new InvalidOperationException(), parentId, editContext.Entity, relationContainer);
                     await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
-                    return new ReloadCommand(id);
+                    viewCommand = new ReloadCommand(id);
+                    break;
 
                 case CrudType.Insert:
-                    var entity = await collection.Repository.InternalInsertAsync(parentId, updatedEntity, relationContainer);
+                    var entity = await collection.Repository.InternalInsertAsync(parentId, editContext.Entity, relationContainer);
+                    editContext.SwapEntity(entity);
                     await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
-                    return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, entity.Id) };
+                    viewCommand = new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, editContext.Entity.Id) };
+                    break;
 
                 case CrudType.Delete:
                     await collection.Repository.InternalDeleteAsync(id ?? throw new InvalidOperationException(), parentId);
                     await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
-                    return new NavigateCommand { Uri = UriHelper.Collection(Constants.List, collectionAlias, parentId) };
+                    viewCommand = new NavigateCommand { Uri = UriHelper.Collection(Constants.List, collectionAlias, parentId) };
+                    break;
 
                 case CrudType.None:
-                    return new NoOperationCommand();
+                    viewCommand = new NoOperationCommand();
+                    break;
 
                 case CrudType.Refresh:
-                    return new ReloadCommand();
+                    viewCommand = new ReloadCommand();
+                    break;
 
                 case CrudType.Return:
-                    return new ReturnCommand();
+                    viewCommand = new ReturnCommand();
+                    break;
 
                 default:
                     throw new InvalidOperationException();
             }
+
+            await button.ButtonClickAfterRepositoryActionAsync(editContext, context);
+
+            return viewCommand;
         }
 
         public async Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, string? parentId, IEnumerable<EditContext> editContexts, string actionId, object? customData)
@@ -182,86 +189,79 @@ namespace RapidCMS.Common.Services
                 throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
             }
 
+            var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, parentId);
             var entity = await collection.Repository.InternalNewAsync(parentId, collection.EntityVariant.Type);
 
-            var buttonCrudType = button.GetCrudType();
+            await EnsureAuthorizedUserAsync(rootEditContext, button);
 
-            await EnsureAuthorizedUserAsync(buttonCrudType, entity);
+            ViewCommand viewCommand;
 
-            if (button is CustomButton customButton)
-            {
-                buttonCrudType = await customButton.HandleActionAsync(parentId, null, customData) ?? buttonCrudType;
-            }
-
-            switch (buttonCrudType)
+            var context = new ButtonContext(parentId, customData);
+            switch (await button.ButtonClickBeforeRepositoryActionAsync(rootEditContext, context))
             {
                 case CrudType.Create:
-                    if (!(button.Metadata is EntityVariant entityVariant))
+                    if (button.EntityVariant == null)
                     {
-                        throw new InvalidOperationException();
+                        throw new InvalidOperationException($"Button of type {CrudType.Create} must an {nameof(button.EntityVariant)}.");
                     }
-
                     if (usageType.HasFlag(UsageType.List))
                     {
-                        return new NavigateCommand { Uri = UriHelper.Node(Constants.New, collectionAlias, entityVariant, parentId, null) };
+                        viewCommand = new NavigateCommand { Uri = UriHelper.Node(Constants.New, collectionAlias, button.EntityVariant, parentId, null) };
                     }
                     else
                     {
-                        return new UpdateParameterCommand
+                        viewCommand = new UpdateParameterCommand
                         {
                             Action = Constants.New,
                             CollectionAlias = collectionAlias,
-                            VariantAlias = entityVariant.Alias,
+                            VariantAlias = button.EntityVariant.Alias,
                             ParentId = parentId,
                             Id = null
                         };
                     }
+                    break;
 
                 case CrudType.Update:
-
-                    var contextsToProcess = (button.RequiresValidForm)
-                        ? editContexts.Where(x => x.IsValid() && x.IsModified())
-                        : editContexts.Where(x => x.IsModified());
-
+                    var contextsToProcess = editContexts.Where(x => button.RequiresValidForm(x) ? x.IsValid() && x.IsModified() : x.IsModified());
                     var affectedEntities = new List<IEntity>();
-
                     foreach (var editContext in contextsToProcess)
                     {
                         try
                         {
-                            var updatedEntity = editContext.Entity;
-
-                            await EnsureAuthorizedUserAsync(buttonCrudType, updatedEntity);
+                            await EnsureAuthorizedUserAsync(editContext, button);
                             EnsureValidEditContext(editContext, button);
-
                             var relationContainer = editContext.DataContext.GenerateRelationContainer();
-
-                            await collection.Repository.InternalUpdateAsync(updatedEntity.Id, parentId, updatedEntity, relationContainer);
-
-                            affectedEntities.Add(updatedEntity);
+                            await collection.Repository.InternalUpdateAsync(editContext.Entity.Id, parentId, editContext.Entity, relationContainer);
+                            affectedEntities.Add(editContext.Entity);
                         }
                         catch (Exception)
                         {
-
+                            // do not care about any exception in this case
                         }
                     }
-
                     await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
-
-                    return new ReloadCommand(affectedEntities.Select(x => x.Id));
+                    viewCommand = new ReloadCommand(affectedEntities.Select(x => x.Id));
+                    break;
 
                 case CrudType.None:
-                    return new NoOperationCommand();
+                    viewCommand = new NoOperationCommand();
+                    break;
 
                 case CrudType.Refresh:
-                    return new ReloadCommand();
+                    viewCommand = new ReloadCommand();
+                    break;
 
                 case CrudType.Return:
-                    return new ReturnCommand();
+                    viewCommand = new ReturnCommand();
+                    break;
 
                 default:
                     throw new InvalidOperationException();
             }
+
+            await button.ButtonClickAfterRepositoryActionAsync(rootEditContext, context);
+
+            return viewCommand;
         }
 
         public async Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, string? parentId, string id, EditContext editContext, string actionId, object? customData)
@@ -278,66 +278,72 @@ namespace RapidCMS.Common.Services
                 throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
             }
 
-            var buttonCrudType = button.GetCrudType();
-
-            var updatedEntity = editContext.Entity;
-
-            await EnsureAuthorizedUserAsync(buttonCrudType, updatedEntity);
+            await EnsureAuthorizedUserAsync(editContext, button);
             EnsureValidEditContext(editContext, button);
 
             var relationContainer = editContext.DataContext.GenerateRelationContainer();
 
             // since the id is known, get the entity variant from the entity
-            var entityVariant = collection.GetEntityVariant(updatedEntity);
+            var entityVariant = collection.GetEntityVariant(editContext.Entity);
 
-            if (button is CustomButton customButton)
-            {
-                buttonCrudType = await customButton.HandleActionAsync(parentId, id, customData) ?? buttonCrudType;
-            }
+            ViewCommand viewCommand;
 
-            switch (buttonCrudType)
+            var context = new ButtonContext(parentId, customData);
+            switch (await button.ButtonClickBeforeRepositoryActionAsync(editContext, context))
             {
                 case CrudType.View:
-                    return new NavigateCommand { Uri = UriHelper.Node(Constants.View, collectionAlias, entityVariant, parentId, id) };
+                    viewCommand = new NavigateCommand { Uri = UriHelper.Node(Constants.View, collectionAlias, entityVariant, parentId, id) };
+                    break;
 
                 case CrudType.Edit:
-                    return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
+                    viewCommand = new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, id) };
+                    break;
 
                 case CrudType.Update:
-                    await collection.Repository.InternalUpdateAsync(id, parentId, updatedEntity, relationContainer);
+                    await collection.Repository.InternalUpdateAsync(id, parentId, editContext.Entity, relationContainer);
                     await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
-                    return new ReloadCommand(id);
+                    viewCommand = new ReloadCommand(id);
+                    break;
 
                 case CrudType.Insert:
-                    updatedEntity = await collection.Repository.InternalInsertAsync(parentId, updatedEntity, relationContainer);
+                    var insertedEntity = await collection.Repository.InternalInsertAsync(parentId, editContext.Entity, relationContainer);
+                    editContext.SwapEntity(insertedEntity);
                     await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
-                    return new UpdateParameterCommand
+                    viewCommand = new UpdateParameterCommand
                     {
                         Action = Constants.New,
                         CollectionAlias = collectionAlias,
                         VariantAlias = entityVariant.Alias,
                         ParentId = parentId,
-                        Id = updatedEntity.Id
+                        Id = editContext.Entity.Id
                     };
+                    break;
 
                 case CrudType.Delete:
-
                     await collection.Repository.InternalDeleteAsync(id, parentId);
                     await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
-                    return new ReloadCommand();
+                    viewCommand = new ReloadCommand();
+                    break;
 
                 case CrudType.None:
-                    return new NoOperationCommand();
+                    viewCommand = new NoOperationCommand();
+                    break;
 
                 case CrudType.Refresh:
-                    return new ReloadCommand();
+                    viewCommand = new ReloadCommand();
+                    break;
 
                 case CrudType.Return:
-                    return new ReturnCommand();
+                    viewCommand = new ReturnCommand();
+                    break;
 
                 default:
                     throw new InvalidOperationException();
             }
+
+            await button.ButtonClickAfterRepositoryActionAsync(editContext, context);
+
+            return viewCommand;
         }
 
         public async Task<ViewCommand> ProcessRelationActionAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, IEnumerable<EditContext> editContexts, string actionId, object? customData)
@@ -354,76 +360,64 @@ namespace RapidCMS.Common.Services
                 throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
             }
 
+            var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, null);
             var newEntity = await collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type);
 
-            var buttonCrudType = button.GetCrudType();
+            await EnsureAuthorizedUserAsync(rootEditContext, button);
 
-            await EnsureAuthorizedUserAsync(buttonCrudType, newEntity);
+            ViewCommand viewCommand;
 
-            if (button is CustomButton customButton)
-            {
-                buttonCrudType = await customButton.HandleActionAsync(null, null, customData) ?? buttonCrudType;
-            }
-
-            switch (buttonCrudType)
+            var context = new ButtonContext(null, customData);
+            switch (await button.ButtonClickBeforeRepositoryActionAsync(rootEditContext, context))
             {
                 case CrudType.Create:
-                    if (!(button.Metadata is EntityVariant entityVariant))
+                    if (button.EntityVariant == null)
                     {
                         throw new InvalidOperationException();
                     }
 
                     if (usageType.HasFlag(UsageType.List))
                     {
-                        return new NavigateCommand { Uri = UriHelper.Node(Constants.New, collectionAlias, entityVariant, null, null) };
+                        viewCommand = new NavigateCommand { Uri = UriHelper.Node(Constants.New, collectionAlias, button.EntityVariant, null, null) };
                     }
                     else
                     {
-                        return new UpdateParameterCommand
+                        viewCommand = new UpdateParameterCommand
                         {
                             Action = Constants.New,
                             CollectionAlias = collectionAlias,
-                            VariantAlias = entityVariant.Alias,
+                            VariantAlias = button.EntityVariant.Alias,
                             ParentId = null,
                             Id = null
                         };
                     }
+                    break;
 
                 case CrudType.Update:
-
-                    var contextsToProcess = (button.RequiresValidForm)
-                        ? editContexts.Where(x => x.IsModified() && x.IsValid())
-                        : editContexts.Where(x => x.IsModified());
-
+                    var contextsToProcess = editContexts.Where(x => button.RequiresValidForm(x) ? x.IsValid() && x.IsModified() : x.IsModified());
                     var affectedEntities = new List<IEntity>();
-
                     foreach (var editContext in contextsToProcess)
                     {
                         try
                         {
                             var updatedEntity = editContext.Entity;
-
-                            await EnsureAuthorizedUserAsync(buttonCrudType, updatedEntity);
+                            await EnsureAuthorizedUserAsync(editContext, button);
                             EnsureValidEditContext(editContext, button);
-
                             var relationContainer = editContext.DataContext.GenerateRelationContainer();
-
                             await collection.Repository.InternalUpdateAsync(updatedEntity.Id, null, updatedEntity, relationContainer);
-
                             affectedEntities.Add(updatedEntity);
                         }
                         catch (Exception)
                         {
-
+                            // do not care about exceptions here
                         }
                     }
-
                     await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
-
-                    return new ReloadCommand(affectedEntities.Select(x => x.Id));
+                    viewCommand = new ReloadCommand(affectedEntities.Select(x => x.Id));
+                    break;
 
                 case CrudType.Add:
-                    return new UpdateParameterCommand
+                    viewCommand = new UpdateParameterCommand
                     {
                         Action = Constants.Add,
                         CollectionAlias = collectionAlias,
@@ -431,19 +425,27 @@ namespace RapidCMS.Common.Services
                         ParentId = null,
                         Id = null
                     };
+                    break;
 
                 case CrudType.None:
-                    return new NoOperationCommand();
+                    viewCommand = new NoOperationCommand();
+                    break;
 
                 case CrudType.Refresh:
-                    return new ReloadCommand();
+                    viewCommand = new ReloadCommand();
+                    break;
 
                 case CrudType.Return:
-                    return new ReturnCommand();
+                    viewCommand = new ReturnCommand();
+                    break;
 
                 default:
                     throw new InvalidOperationException();
             }
+
+            await button.ButtonClickAfterRepositoryActionAsync(rootEditContext, context);
+
+            return viewCommand;
         }
 
         public async Task<ViewCommand> ProcessRelationActionAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, string id, EditContext editContext, string actionId, object? customData)
@@ -460,74 +462,82 @@ namespace RapidCMS.Common.Services
                 throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
             }
 
-            var buttonCrudType = button.GetCrudType();
-
-            var updatedEntity = editContext.Entity;
-
-            await EnsureAuthorizedUserAsync(buttonCrudType, updatedEntity);
+            await EnsureAuthorizedUserAsync(editContext, button);
 
             EnsureValidEditContext(editContext, button);
 
             var relationContainer = editContext.DataContext.GenerateRelationContainer();
 
             // since the id is known, get the entity variant from the entity
-            var entityVariant = collection.GetEntityVariant(updatedEntity);
+            var entityVariant = collection.GetEntityVariant(editContext.Entity);
 
-            if (button is CustomButton customButton)
-            {
-                buttonCrudType = await customButton.HandleActionAsync(null, id, customData) ?? buttonCrudType;
-            }
+            ViewCommand viewCommand;
 
-            switch (buttonCrudType)
+            var context = new ButtonContext(null, customData);
+            switch (await button.ButtonClickBeforeRepositoryActionAsync(editContext, context))
             {
                 case CrudType.View:
-                    return new NavigateCommand { Uri = UriHelper.Node(Constants.View, collectionAlias, entityVariant, null, id) };
+                    viewCommand = new NavigateCommand { Uri = UriHelper.Node(Constants.View, collectionAlias, entityVariant, null, id) };
+                    break;
 
                 case CrudType.Edit:
-                    return new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, null, id) };
+                    viewCommand = new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, null, id) };
+                    break;
 
                 case CrudType.Update:
-                    await collection.Repository.InternalUpdateAsync(id, null, updatedEntity, relationContainer);
+                    await collection.Repository.InternalUpdateAsync(id, null, editContext.Entity, relationContainer);
                     await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
-                    return new ReloadCommand(id);
+                    viewCommand = new ReloadCommand(id);
+                    break;
 
                 case CrudType.Insert:
-                    updatedEntity = await collection.Repository.InternalInsertAsync(null, updatedEntity, relationContainer);
-                    await collection.Repository.InternalAddAsync(relatedEntity, updatedEntity.Id);
+                    var insertedEntity = await collection.Repository.InternalInsertAsync(null, editContext.Entity, relationContainer);
+                    editContext.SwapEntity(insertedEntity);
+                    await collection.Repository.InternalAddAsync(relatedEntity, editContext.Entity.Id);
                     await _eventAggregator.PublishAsync(new CollectionUpdatedMessage(collectionAlias));
-                    return new UpdateParameterCommand
+                    viewCommand = new UpdateParameterCommand
                     {
                         Action = Constants.New,
                         CollectionAlias = collectionAlias,
                         VariantAlias = entityVariant.Alias,
                         ParentId = null,
-                        Id = updatedEntity.Id
+                        Id = editContext.Entity.Id
                     };
+                    break;
 
                 case CrudType.Delete:
 
                     await collection.Repository.InternalDeleteAsync(id, null);
-                    return new ReloadCommand();
+                    viewCommand = new ReloadCommand();
+                    break;
 
                 case CrudType.Pick:
 
                     await collection.Repository.InternalAddAsync(relatedEntity, id);
-                    return new ReloadCommand();
+                    viewCommand = new ReloadCommand();
+                    break;
 
                 case CrudType.Remove:
 
                     await collection.Repository.InternalRemoveAsync(relatedEntity, id);
-                    return new ReloadCommand();
+                    viewCommand = new ReloadCommand();
+                    break;
 
                 case CrudType.None:
-                    return new NoOperationCommand();
+                    viewCommand = new NoOperationCommand();
+                    break;
 
                 case CrudType.Refresh:
-                    return new ReloadCommand();
+                    viewCommand = new ReloadCommand();
+                    break;
 
                 default:
                     throw new InvalidOperationException();
             }
+
+            await button.ButtonClickAfterRepositoryActionAsync(editContext, context);
+
+            return viewCommand;
         }
 
         private List<EditContext> ConvertEditContexts(UsageType usageType, string collectionAlias, EditContext rootEditContext, IEnumerable<IEntity> existingEntities)
@@ -572,15 +582,15 @@ namespace RapidCMS.Common.Services
 
         private static void EnsureValidEditContext(EditContext editContext, Button button)
         {
-            if (button.RequiresValidForm && !editContext.IsValid())
+            if (button.RequiresValidForm(editContext) && !editContext.IsValid())
             {
                 throw new InvalidEntityException();
             }
         }
 
-        private Task EnsureAuthorizedUserAsync(CrudType crudType, IEntity entity)
+        private Task EnsureAuthorizedUserAsync(EditContext editContext, Button button)
         {
-            return EnsureAuthorizedUserAsync(Operations.GetOperationForCrudType(crudType), entity);
+            return EnsureAuthorizedUserAsync(button.GetOperation(editContext), editContext.Entity);
         }
 
         private Task EnsureAuthorizedUserAsync(UsageType usageType, IEntity entity)

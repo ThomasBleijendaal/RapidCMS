@@ -5,6 +5,7 @@ using EventAggregator.Blazor;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using RapidCMS.Common.ActionHandlers;
 using RapidCMS.Common.Authorization;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Helpers;
@@ -33,6 +34,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IEditContextService, EditContextService>();
             services.AddTransient<IEditorService, EditorService>();
             services.AddTransient<ITreeService, TreeService>();
+
+            services.AddTransient<DefaultButtonActionHandler>();
 
             services.AddScoped<IExceptionHelper, ExceptionHelper>();
 

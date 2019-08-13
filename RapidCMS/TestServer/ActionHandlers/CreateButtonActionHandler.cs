@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using RapidCMS.Common.ActionHandlers;
+using RapidCMS.Common.Authorization;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Forms;
+using RapidCMS.Common.Models;
 using TestLibrary.Entities;
 using TestLibrary.Repositories;
 
@@ -19,19 +22,19 @@ namespace TestServer.ActionHandlers
             _repository = repository;
         }
 
-        public CrudType GetCrudType()
+        public Task ButtonClickAfterRepositoryActionAsync(Button button, EditContext editContext, ButtonContext context)
         {
-            return CrudType.Refresh;
+            return Task.CompletedTask;
         }
 
-        public async Task<CrudType?> InvokeAsync(string? parentId, string? id, object? customData)
+        public async Task<CrudType> ButtonClickBeforeRepositoryActionAsync(Button button, EditContext editContext, ButtonContext context)
         {
             var i = 0;
-            var max = Convert.ToInt64(customData);
+            var max = Convert.ToInt64(context.CustomData);
 
             do
             {
-                await _repository.InsertAsync(parentId, new AzureTableStorageEntity()
+                await _repository.InsertAsync(context.ParentId, new AzureTableStorageEntity()
                 {
                     Description = $"New New New {i}",
                     Title = $"Item {i}"
@@ -39,20 +42,25 @@ namespace TestServer.ActionHandlers
             }
             while (++i < max);
 
-            return default;
+            return CrudType.Refresh;
         }
 
-        public bool IsCompatibleWithForm(EditContext editContext)
+        public OperationAuthorizationRequirement GetOperation(Button button, EditContext editContext)
+        {
+            return Operations.Create;
+        }
+
+        public bool IsCompatible(Button button, EditContext editContext)
         {
             return editContext.UsageType.HasFlag(UsageType.List);
         }
 
-        public bool RequiresValidForm()
+        public bool RequiresValidForm(Button button, EditContext editContext)
         {
             return false;
         }
 
-        public bool ShouldConfirm()
+        public bool ShouldAskForConfirmation(Button button, EditContext editContext)
         {
             return true;
         }

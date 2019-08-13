@@ -25,7 +25,7 @@ namespace RapidCMS.Common.Models
             CustomDashboardSectionRegistrations = cmsConfig.CustomDashboardSectionRegistrations.ToList();
             CustomLoginRegistration = cmsConfig.CustomLoginRegistration;
 
-            Collections = cmsConfig.ProcessCollections(serviceProvider);
+            Collections = cmsConfig.ProcessCollections();
 
             SiteName = cmsConfig.SiteName;
             IsDevelopment = cmsConfig.IsDevelopment;
