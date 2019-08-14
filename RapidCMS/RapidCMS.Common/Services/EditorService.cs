@@ -121,11 +121,11 @@ namespace RapidCMS.Common.Services
                     throw new InvalidOperationException($"Failed to get UI configuration from collection {collectionAlias} for action {usageType}");
                 }
 
-                panes = listView.ViewPanes;
+                panes = listView.Panes;
                 buttons = listView.Buttons;
                 pageSize = listView.PageSize;
                 searchBarVisible = listView.SearchBarVisible;
-                listType = ListType.TableView;
+                listType = listView.ListType;
             }
             else
             {
@@ -135,11 +135,11 @@ namespace RapidCMS.Common.Services
                     throw new InvalidOperationException($"Failed to get UI configuration from collection {collectionAlias} for action {usageType}");
                 }
 
-                panes = listEditor.EditorPanes;
+                panes = listEditor.Panes;
                 buttons = listEditor.Buttons;
                 pageSize = listEditor.PageSize;
                 searchBarVisible = listEditor.SearchBarVisible;
-                listType = listEditor.ListEditorType == ListEditorType.Block ? ListType.BlockEditor : ListType.TableEditor;
+                listType = listEditor.ListType;
             }
 
             // TODO: this thing naively assumes only one fieldset per type

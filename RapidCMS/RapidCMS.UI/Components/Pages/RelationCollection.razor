@@ -15,7 +15,7 @@ else
 
     @if (Sections != null && Sections.Any())
     {
-        @if (UI.ListType.In(ListType.TableView, ListType.TableEditor))
+        @if (UI.ListType == ListType.Table)
         {
             var collapseEmptyCells = UI.EmptyVariantColumnVisibility == EmptyVariantColumnVisibility.Collapse;
 
@@ -139,7 +139,7 @@ else
                            OnPageChanged="@PageChangedAsync" />
             </div>
         }
-        else if (UI.ListType == ListType.BlockEditor)
+        else if (UI.ListType == ListType.Block)
         {
             @foreach (var (context, sections) in Sections)
             {

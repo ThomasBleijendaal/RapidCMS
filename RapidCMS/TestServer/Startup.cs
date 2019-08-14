@@ -184,13 +184,13 @@ namespace TestServer
                             list.AddDefaultButton(DefaultButtonType.New);
                             list.AddRow(pane =>
                             {
-                                pane.AddProperty(p => p.Name)
+                                pane.AddField(p => p.Name)
                                     .VisibleWhen(f => f.Accept);
                                 pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                             });
                         })
-                        .SetListEditor(ListEditorType.Table, listEditor =>
+                        .SetListEditor(ListType.Table, listEditor =>
                         {
                             listEditor.SetSearchBarVisibility(false);
 
@@ -295,11 +295,11 @@ namespace TestServer
                             list.AddDefaultButton(DefaultButtonType.Return);
                             list.AddRow(pane =>
                             {
-                                pane.AddProperty(p => p.Name);
+                                pane.AddField(p => p.Name);
                                 pane.AddDefaultButton(DefaultButtonType.Pick);
                             });
                         })
-                        .SetListEditor(ListEditorType.Table, list =>
+                        .SetListEditor(ListType.Table, list =>
                         {
                             list.SetPageSize(3);
 
@@ -329,7 +329,7 @@ namespace TestServer
                             list.AddDefaultButton(DefaultButtonType.New);
                             list.AddRow(pane =>
                             {
-                                pane.AddProperty(p => p.Name);
+                                pane.AddField(p => p.Name);
                                 pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                             });
@@ -339,7 +339,7 @@ namespace TestServer
                             //});
                             // list.AddRow(typeof(DashboardSection), config => { });
                         })
-                        .SetListEditor(ListEditorType.Table, list =>
+                        .SetListEditor(ListType.Table, list =>
                         {
                             list.AddDefaultButton(DefaultButtonType.New);
                             list.AddDefaultButton(DefaultButtonType.SaveExisting, "Update all");
@@ -421,7 +421,7 @@ namespace TestServer
                             view.AddDefaultButton(DefaultButtonType.New);
                             view.AddRow(pane =>
                             {
-                                pane.AddProperty(p => p.Name);
+                                pane.AddField(p => p.Name);
                                 
                                 pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
@@ -660,9 +660,9 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
                     .AddRow(pane =>
                     {
-                        pane.AddProperty(x => x._Id.ToString()).SetName("Id");
-                        pane.AddProperty(x => x.Name).SetDescription("This is a name");
-                        pane.AddProperty(x => x.Description).SetDescription("This is a description");
+                        pane.AddField(x => x._Id.ToString()).SetName("Id");
+                        pane.AddField(x => x.Name).SetDescription("This is a name");
+                        pane.AddField(x => x.Description).SetDescription("This is a description");
                         pane.AddDefaultButton(DefaultButtonType.View, string.Empty);
                         pane.AddDefaultButton(DefaultButtonType.Edit, string.Empty);
 
@@ -675,9 +675,9 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
                     .AddRow(pane =>
                     {
-                        pane.AddProperty(x => x._Id.ToString()).SetName("Id");
-                        pane.AddProperty(x => x.Name).SetDescription("This is a name");
-                        pane.AddProperty(x => x.Description).SetDescription("This is a description");
+                        pane.AddField(x => x._Id.ToString()).SetName("Id");
+                        pane.AddField(x => x.Name).SetDescription("This is a name");
+                        pane.AddField(x => x.Description).SetDescription("This is a description");
                         pane.AddDefaultButton(DefaultButtonType.View, string.Empty);
                         pane.AddDefaultButton(DefaultButtonType.Edit, string.Empty);
 
@@ -967,11 +967,11 @@ namespace TestServer
 
                 config.AddRow(listPaneConfig =>
                 {
-                    listPaneConfig.AddProperty(x => x.Id);
-                    listPaneConfig.AddProperty(x => x.Title);
-                    listPaneConfig.AddProperty(x => x.Description);
-                    listPaneConfig.AddProperty(x => x.Password);
-                    listPaneConfig.AddProperty(x => x.Destroy == true ? "True" : x.Destroy == false ? "False" : "Null")
+                    listPaneConfig.AddField(x => x.Id);
+                    listPaneConfig.AddField(x => x.Title);
+                    listPaneConfig.AddField(x => x.Description);
+                    listPaneConfig.AddField(x => x.Password);
+                    listPaneConfig.AddField(x => x.Destroy == true ? "True" : x.Destroy == false ? "False" : "Null")
                         .SetName("Destroy");
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);

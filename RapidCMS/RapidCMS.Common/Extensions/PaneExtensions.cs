@@ -14,9 +14,9 @@ namespace RapidCMS.Common.Extensions
             return GetDataCollections(node.EditorPanes, serviceProvider);
         }
 
-        internal static IEnumerable<(IPropertyMetadata property, IDataCollection relation, IRelationValidator? validator)> GetDataCollections(this ListEditor listEditor, IServiceProvider serviceProvider)
+        internal static IEnumerable<(IPropertyMetadata property, IDataCollection relation, IRelationValidator? validator)> GetDataCollections(this List listEditor, IServiceProvider serviceProvider)
         {
-            return GetDataCollections(listEditor.EditorPanes, serviceProvider);
+            return GetDataCollections(listEditor.Panes, serviceProvider);
         }
 
         internal static IEnumerable<(IPropertyMetadata property, IDataCollection relation, IRelationValidator? validator)> GetDataCollections(this List<Pane>? panes, IServiceProvider serviceProvider)

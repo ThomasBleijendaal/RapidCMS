@@ -82,8 +82,8 @@ namespace RapidCMS.Common.Models
 
         internal TreeView? TreeView { get; set; }
 
-        internal ListView? ListView { get; set; }
-        internal ListEditor? ListEditor { get; set; }
+        internal List? ListView { get; set; }
+        internal List? ListEditor { get; set; }
 
         internal Node? NodeView { get; set; }
         internal Node? NodeEditor { get; set; }

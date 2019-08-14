@@ -25,8 +25,8 @@ namespace RapidCMS.Common.Models.Config
         internal Type? DataViewBuilder { get; set; }
 
         internal TreeViewConfig TreeView { get; set; }
-        internal ListViewConfig ListView { get; set; }
-        internal ListEditorConfig ListEditor { get; set; }
+        internal ListConfig ListView { get; set; }
+        internal ListConfig ListEditor { get; set; }
         internal NodeConfig NodeView { get; set; }
         internal NodeConfig NodeEditor { get; set; }
 
@@ -108,12 +108,12 @@ namespace RapidCMS.Common.Models.Config
             return SetListEditor(default, default, configure);
         }
 
-        public CollectionConfig<TEntity> SetListEditor(ListEditorType listEditorType, Action<ListEditorConfig<TEntity>> configure)
+        public CollectionConfig<TEntity> SetListEditor(ListType listEditorType, Action<ListEditorConfig<TEntity>> configure)
         {
             return SetListEditor(listEditorType, default, configure);
         }
 
-        public CollectionConfig<TEntity> SetListEditor(ListEditorType listEditorType, EmptyVariantColumnVisibility emptyVariantColumnVisibility, Action<ListEditorConfig<TEntity>> configure)
+        public CollectionConfig<TEntity> SetListEditor(ListType listEditorType, EmptyVariantColumnVisibility emptyVariantColumnVisibility, Action<ListEditorConfig<TEntity>> configure)
         {
             var config = new ListEditorConfig<TEntity>();
 

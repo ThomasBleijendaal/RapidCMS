@@ -32,7 +32,7 @@
                     <div class="col-10">
                         @if (field is ExpressionFieldUI expressionField)
                         {
-                            @expressionField.Expression.StringGetter(EditContext.Entity)
+                            <label class="col-form-label">@expressionField.Expression.StringGetter(EditContext.Entity)</label>
                         }
                         else if (field is PropertyFieldUI propertyField)
                         {

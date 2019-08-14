@@ -271,8 +271,8 @@ namespace RapidCMS.Common.Services
 
             // TODO: convert to FindButton
             var buttons = usageType.HasFlag(UsageType.List)
-                ? collection.ListView?.ViewPanes?.SelectMany(pane => pane.Buttons)
-                : collection.ListEditor?.EditorPanes?.SelectMany(pane => pane.Buttons);
+                ? collection.ListView?.Panes?.SelectMany(pane => pane.Buttons)
+                : collection.ListEditor?.Panes?.SelectMany(pane => pane.Buttons);
             var button = buttons?.GetAllButtons().FirstOrDefault(x => x.ButtonId == actionId);
 
             if (button == null)
@@ -457,8 +457,8 @@ namespace RapidCMS.Common.Services
 
             // TODO: convert to FindButton
             var buttons = usageType.HasFlag(UsageType.List) || usageType.HasFlag(UsageType.Add)
-                ? collection.ListView?.ViewPanes?.SelectMany(pane => pane.Buttons)
-                : collection.ListEditor?.EditorPanes?.SelectMany(pane => pane.Buttons);
+                ? collection.ListView?.Panes?.SelectMany(pane => pane.Buttons)
+                : collection.ListEditor?.Panes?.SelectMany(pane => pane.Buttons);
             var button = buttons?.GetAllButtons().FirstOrDefault(x => x.ButtonId == actionId);
 
             if (button == null)

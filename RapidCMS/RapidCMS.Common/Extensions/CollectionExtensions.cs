@@ -67,6 +67,7 @@ namespace RapidCMS.Common.Extensions
 
             foreach (var configReceiver in root.Collections)
             {
+                // TODO: todo
                 var variant = new EntityVariant
                 {
                     Alias = configReceiver.EntityVariant.Type.FullName.ToUrlFriendlyString(),
@@ -102,73 +103,11 @@ namespace RapidCMS.Common.Extensions
                     });
                 }
 
-                if (configReceiver.ListView != null)
-                {
-                    var views = configReceiver.ListView.ListViewPanes;
-
-                    collection.ListView = new ListView
-                    {
-                        PageSize = configReceiver.ListView.PageSize,
-                        SearchBarVisible = configReceiver.ListView.SearchBarVisible,
-                        Buttons = configReceiver.ListView.Buttons.ToList(button => button.ToButton(collection.SubEntityVariants, collection.EntityVariant)),
-                        ViewPanes = views.ToList(view =>
-                        {
-                            return new Pane
-                            {
-                                CustomAlias = view.CustomAlias,
-                                IsVisible = view.IsVisible,
-                                VariantType = view.VariantType,
-                                Buttons = view.Buttons.ToList(button => button.ToButton(collection.SubEntityVariants, collection.EntityVariant)),
-                                Fields = view.Properties.ToList(x => x.ToField())
-                            };
-                        })
-                    };
-                }
-
-                if (configReceiver.ListEditor != null)
-                {
-                    var editors = configReceiver.ListEditor.ListEditors;
-
-                    collection.ListEditor = new ListEditor
-                    {
-                        PageSize = configReceiver.ListEditor.PageSize,
-                        SearchBarVisible = configReceiver.ListEditor.SearchBarVisible,
-                        ListEditorType = configReceiver.ListEditor.ListEditorType,
-                        EmptyVariantColumnVisibility = configReceiver.ListEditor.EmptyVariantColumnVisibility,
-                        Buttons = configReceiver.ListEditor.Buttons.ToList(button => button.ToButton(collection.SubEntityVariants, collection.EntityVariant)),
-                        EditorPanes = editors.ToList(editor =>
-                        {
-                            return new Pane
-                            {
-                                CustomAlias = editor.CustomAlias,
-                                IsVisible = editor.IsVisible,
-                                VariantType = editor.VariantType,
-                                Buttons = editor.Buttons.ToList(button => button.ToButton(collection.SubEntityVariants, collection.EntityVariant)),
-                                Fields = editor.Fields.ToList(field => field.ToField())
-                            };
-                        })
-                    };
-                }
-
-                if (configReceiver.NodeView != null)
-                {
-                    collection.NodeView = new Node
-                    {
-                        Buttons = configReceiver.NodeView.Buttons.ToList(button => button.ToButton(collection.SubEntityVariants, collection.EntityVariant)),
-                        BaseType = configReceiver.NodeView.BaseType,
-                        EditorPanes = configReceiver.NodeView.Panes.ToList(config => config.ToPane())
-                    };
-                }
-
-                if (configReceiver.NodeEditor != null)
-                {
-                    collection.NodeEditor = new Node
-                    {
-                        Buttons = configReceiver.NodeEditor.Buttons.ToList(button => button.ToButton(collection.SubEntityVariants, collection.EntityVariant)),
-                        BaseType = configReceiver.NodeEditor.BaseType,
-                        EditorPanes = configReceiver.NodeEditor.Panes.ToList(config => config.ToPane())
-                    };
-                }
+                // done
+                collection.ListView = configReceiver.ListView?.ToList(collection);
+                collection.ListEditor = configReceiver.ListEditor?.ToList(collection);
+                collection.NodeView = configReceiver.NodeView?.ToNode(collection);
+                collection.NodeEditor = configReceiver.NodeEditor?.ToNode(collection);
 
                 collection.Collections = configReceiver.ProcessCollections();
 

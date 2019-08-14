@@ -1,24 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
-using RapidCMS.Common.Extensions;
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class ListEditorConfig
-    {
-        internal int? PageSize { get; set; }
-        internal bool? SearchBarVisible { get; set; }
-        internal ListEditorType ListEditorType { get; set; }
-        internal EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; set; }
-        internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
-        internal List<ListEditorPaneConfig> ListEditors { get; set; } = new List<ListEditorPaneConfig>();
-
-    }
-
-    public class ListEditorConfig<TEntity> : ListEditorConfig
+    public class ListEditorConfig<TEntity> : ListConfig, IHasButtons<ListEditorConfig<TEntity>>
         where TEntity : IEntity
     {
         public ListEditorConfig<TEntity> SetPageSize(int pageSize)
@@ -63,33 +49,33 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ListEditorConfig<TEntity> AddSection(Action<ListEditorPaneConfig<TEntity>> configure)
+        public ListEditorConfig<TEntity> AddSection(Action<IEditorPaneConfig<TEntity>> configure)
         {
             return AddSection<TEntity>(configure);
         }
 
-        public ListEditorConfig<TEntity> AddSection(Type customSectionType, Action<ListEditorPaneConfig<TEntity>> configure)
+        public ListEditorConfig<TEntity> AddSection(Type customSectionType, Action<IEditorPaneConfig<TEntity>> configure)
         {
             return AddSection<TEntity>(customSectionType, configure);
         }
 
-        public ListEditorConfig<TEntity> AddSection<TDerivedEntity>(Action<ListEditorPaneConfig<TDerivedEntity>> configure)
+        public ListEditorConfig<TEntity> AddSection<TDerivedEntity>(Action<IEditorPaneConfig<TDerivedEntity>> configure)
             where TDerivedEntity : TEntity
         {
             return AddSection(null, configure);
         }
 
 
-        public ListEditorConfig<TEntity> AddSection<TDerivedEntity>(Type? customSectionType, Action<ListEditorPaneConfig<TDerivedEntity>> configure)
+        public ListEditorConfig<TEntity> AddSection<TDerivedEntity>(Type? customSectionType, Action<IEditorPaneConfig<TDerivedEntity>> configure)
             where TDerivedEntity : TEntity
         {
             var config = customSectionType == null
-                ? new ListEditorPaneConfig<TDerivedEntity>(typeof(TDerivedEntity))
-                : new ListEditorPaneConfig<TDerivedEntity>(typeof(TDerivedEntity), customSectionType);
+                ? new PaneConfig<TDerivedEntity, IEditorFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity))
+                : new PaneConfig<TDerivedEntity, IEditorFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity), customSectionType);
 
             configure.Invoke(config);
 
-            ListEditors.Add(config);
+            Panes.Add(config);
 
             return this;
         }
