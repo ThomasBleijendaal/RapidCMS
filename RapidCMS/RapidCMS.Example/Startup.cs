@@ -97,14 +97,14 @@ namespace RapidCMS.Example
 
                             view.AddSection(section =>
                             {
-                                section.AddProperty(x => x.Id.ToString()).SetName("ID");
-                                section.AddProperty(x => x.Name);
-                                section.AddProperty(x => x.Email);
+                                section.AddField(x => x.Id.ToString()).SetName("ID");
+                                section.AddField(x => x.Name);
+                                section.AddField(x => x.Email);
                             });
 
                             view.AddSection(section =>
                             {
-                                section.AddProperty(x => x.Bio);
+                                section.AddField(x => x.Bio);
                             });
                         });
                 });

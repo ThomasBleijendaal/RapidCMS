@@ -27,8 +27,8 @@ namespace RapidCMS.Common.Models.Config
         internal TreeViewConfig TreeView { get; set; }
         internal ListViewConfig ListView { get; set; }
         internal ListEditorConfig ListEditor { get; set; }
-        internal NodeViewConfig NodeView { get; set; }
-        internal NodeEditorConfig NodeEditor { get; set; }
+        internal NodeConfig NodeView { get; set; }
+        internal NodeConfig NodeEditor { get; set; }
 
         public bool IsUnique(string alias)
         {

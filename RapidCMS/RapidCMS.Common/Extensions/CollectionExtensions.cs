@@ -184,22 +184,7 @@ namespace RapidCMS.Common.Extensions
 
                         BaseType = configReceiver.NodeView.BaseType,
 
-                        EditorPanes = configReceiver.NodeView.ViewPanes.ToList(config =>
-                        {
-                            var pane = new Pane
-                            {
-                                CustomAlias = config.CustomAlias,
-                                IsVisible = config.IsVisible,
-                                Label = config.Label,
-                                VariantType = config.VariantType,
-                                Buttons = new List<Button>(),
-                                Fields = config.Fields.ToList(x => x.ToField()),
-                                SubCollectionLists = config.SubCollectionLists.ToList(x => x.ToSubCollectionList()),
-                                RelatedCollectionLists = config.RelatedCollectionLists.ToList(x => x.ToRelatedCollectionList())
-                            };
-
-                            return pane;
-                        })
+                        EditorPanes = configReceiver.NodeView.Panes.ToList(config => config.ToPane())
                     };
                 }
 
@@ -216,22 +201,7 @@ namespace RapidCMS.Common.Extensions
 
                         BaseType = configReceiver.NodeEditor.BaseType,
 
-                        EditorPanes = configReceiver.NodeEditor.EditorPanes.ToList(config =>
-                        {
-                            var pane = new Pane
-                            {
-                                CustomAlias = config.CustomAlias,
-                                IsVisible = config.IsVisible,
-                                Label = config.Label,
-                                VariantType = config.VariantType,
-                                Buttons = new List<Button>(),
-                                Fields = config.Fields.ToList(x => x.ToField()),
-                                SubCollectionLists = config.SubCollectionLists.ToList(x => x.ToSubCollectionList()),
-                                RelatedCollectionLists = config.RelatedCollectionLists.ToList(x => x.ToRelatedCollectionList())
-                            };
-
-                            return pane;
-                        })
+                        EditorPanes = configReceiver.NodeEditor.Panes.ToList(config => config.ToPane())
                     };
                 }
 

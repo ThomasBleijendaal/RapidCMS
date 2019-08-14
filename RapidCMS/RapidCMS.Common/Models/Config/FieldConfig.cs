@@ -26,35 +26,7 @@ namespace RapidCMS.Common.Models.Config
         internal Type CustomType { get; set; }
     }
 
-    public interface IFieldConfig<TEntity>
-        where TEntity : IEntity
-    {
-
-    }
-
-    public interface IReadonlyFieldConfig<TEntity> : IFieldConfig<TEntity>
-        where TEntity : IEntity
-    {
-        IReadonlyFieldConfig<TEntity> SetName(string name);
-        IReadonlyFieldConfig<TEntity> SetDescription(string description);
-        IReadonlyFieldConfig<TEntity> VisibleWhen(Func<TEntity, bool> predicate);
-    }
-
-    public interface IFullFieldConfig<TEntity> : IFieldConfig<TEntity>
-        where TEntity : IEntity
-    {
-        IFullFieldConfig<TEntity> SetName(string name);
-        IFullFieldConfig<TEntity> SetDescription(string description);
-        IFullFieldConfig<TEntity> SetType(EditorType type);
-        IFullFieldConfig<TEntity> SetType(Type type);
-        IFullFieldConfig<TEntity> SetReadonly(bool @readonly = true);
-        IFullFieldConfig<TEntity> SetDataCollection<TDataCollection>()
-            where TDataCollection : IDataCollection;
-        IFullFieldConfig<TEntity> SetCollectionRelation<TRelatedEntity>(string collectionAlias, Action<CollectionRelationConfig<TEntity, TRelatedEntity>> configure);
-        IFullFieldConfig<TEntity> VisibleWhen(Func<TEntity, bool> predicate);
-    }
-
-    public class FieldConfig<TEntity> : FieldConfig, IFieldConfig<TEntity>, IReadonlyFieldConfig<TEntity>, IFullFieldConfig<TEntity>
+    public class FieldConfig<TEntity> : FieldConfig, IFieldConfig<TEntity>, IDisplayFieldConfig<TEntity>, IEditorFieldConfig<TEntity>
         where TEntity : IEntity
     {
         public FieldConfig<TEntity> SetName(string name)
@@ -132,67 +104,67 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        IReadonlyFieldConfig<TEntity> IReadonlyFieldConfig<TEntity>.SetName(string name)
+        IDisplayFieldConfig<TEntity> IDisplayFieldConfig<TEntity>.SetName(string name)
         {
             SetName(name);
             return this;
         }
 
-        IReadonlyFieldConfig<TEntity> IReadonlyFieldConfig<TEntity>.SetDescription(string description)
+        IDisplayFieldConfig<TEntity> IDisplayFieldConfig<TEntity>.SetDescription(string description)
         {
             SetDescription(description);
             return this;
         }
 
-        IReadonlyFieldConfig<TEntity> IReadonlyFieldConfig<TEntity>.VisibleWhen(Func<TEntity, bool> predicate)
+        IDisplayFieldConfig<TEntity> IDisplayFieldConfig<TEntity>.VisibleWhen(Func<TEntity, bool> predicate)
         {
             VisibleWhen(predicate);
             return this;
         }
 
-        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetName(string name)
+        IEditorFieldConfig<TEntity> IEditorFieldConfig<TEntity>.SetName(string name)
         {
             SetName(name);
             return this;
         }
 
-        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetDescription(string description)
+        IEditorFieldConfig<TEntity> IEditorFieldConfig<TEntity>.SetDescription(string description)
         {
             SetDescription(description);
             return this;
         }
 
-        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetType(EditorType type)
+        IEditorFieldConfig<TEntity> IEditorFieldConfig<TEntity>.SetType(EditorType type)
         {
             SetType(type);
             return this;
         }
 
-        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetType(Type type)
+        IEditorFieldConfig<TEntity> IEditorFieldConfig<TEntity>.SetType(Type type)
         {
             SetType(type);
             return this;
         }
 
-        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetReadonly(bool @readonly)
+        IEditorFieldConfig<TEntity> IEditorFieldConfig<TEntity>.SetReadonly(bool @readonly)
         {
             SetReadonly(@readonly);
             return this;
         }
 
-        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetDataCollection<TDataCollection>()
+        IEditorFieldConfig<TEntity> IEditorFieldConfig<TEntity>.SetDataCollection<TDataCollection>()
         {
             SetDataCollection<TDataCollection>();
             return this;
         }
 
-        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.SetCollectionRelation<TRelatedEntity>(string collectionAlias, Action<CollectionRelationConfig<TEntity, TRelatedEntity>> configure)
+        IEditorFieldConfig<TEntity> IEditorFieldConfig<TEntity>.SetCollectionRelation<TRelatedEntity>(string collectionAlias, Action<CollectionRelationConfig<TEntity, TRelatedEntity>> configure)
         {
             SetCollectionRelation(collectionAlias, configure);
             return this;
         }
 
-        IFullFieldConfig<TEntity> IFullFieldConfig<TEntity>.VisibleWhen(Func<TEntity, bool> predicate)
+        IEditorFieldConfig<TEntity> IEditorFieldConfig<TEntity>.VisibleWhen(Func<TEntity, bool> predicate)
         {
             VisibleWhen(predicate);
             return this;
