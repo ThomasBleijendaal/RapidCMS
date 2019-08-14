@@ -10,9 +10,29 @@ namespace RapidCMS.Common.Extensions
 {
     internal static class ButtonConfigExtensions
     {
-        private static IEnumerable<Button> _emptySubButtons = Enumerable.Empty<Button>();
+        private static readonly IEnumerable<Button> EmptySubButtons = Enumerable.Empty<Button>();
 
-        public static Button ToDefaultButton(this DefaultButtonConfig button, IEnumerable<EntityVariant>? entityVariants, EntityVariant baseEntityVariant)
+        public static Button ToButton(this ButtonConfig button, IEnumerable<EntityVariant>? entityVariants, EntityVariant baseEntityVariant)
+        {
+            return button switch
+            {
+                DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(entityVariants, baseEntityVariant),
+                CustomButtonConfig customButton => customButton.ToCustomButton(),
+                _ => throw new InvalidOperationException()
+            };
+        }
+
+        public static Button ToButton(this ButtonConfig button)
+        {
+            return button switch
+            {
+                DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(null, null),
+                CustomButtonConfig customButton => customButton.ToCustomButton(),
+                _ => throw new InvalidOperationException()
+            };
+        }
+
+        public static Button ToDefaultButton(this DefaultButtonConfig button, IEnumerable<EntityVariant>? entityVariants, EntityVariant? baseEntityVariant)
         {
             var subButtons = button.ButtonType == DefaultButtonType.New && entityVariants != null
                 ? entityVariants.ToList(variant => new Button(
@@ -21,10 +41,10 @@ namespace RapidCMS.Common.Extensions
                     string.Format(button.Label ?? variant.Name, variant.Name), 
                     variant.Icon, 
                     button.IsPrimary, 
-                    _emptySubButtons, 
+                    EmptySubButtons, 
                     typeof(DefaultButtonActionHandler), 
                     entityVariant: variant))
-                : _emptySubButtons;
+                : EmptySubButtons;
 
             return new Button(
                 Guid.NewGuid().ToString(), 
@@ -45,7 +65,7 @@ namespace RapidCMS.Common.Extensions
                 button.Label,
                 button.Icon,
                 button.IsPrimary,
-                _emptySubButtons,
+                EmptySubButtons,
                 button.ActionHandler,
                 alias: button.Alias);
         }

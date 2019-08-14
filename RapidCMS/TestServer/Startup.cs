@@ -145,6 +145,7 @@ namespace TestServer
             services.AddScoped<AzureTableStorageRepository>();
 
             services.AddTransient<CreateButtonActionHandler>();
+            services.AddTransient<TogglePropertyButtonActionHandler>();
 
             services.AddTransient<DummyDataProvider>();
 
@@ -158,6 +159,7 @@ namespace TestServer
                 config.AllowAnonymousUser();
 
                 config.AddCustomButton(typeof(CreateButton));
+                config.AddCustomButton(typeof(DoItButton));
                 config.AddCustomEditor(typeof(PasswordEditor));
                 config.AddCustomEditor(typeof(UploadEditor));
                 config.AddCustomSection(typeof(DashboardSection));
@@ -220,6 +222,10 @@ namespace TestServer
                         {
                             view.AddSection(pane =>
                             {
+                                pane.SetLabel("THIS IS A LABEL");
+
+                                pane.AddDefaultButton(DefaultButtonType.Delete);
+
                                 pane.AddField(f => f.Name);
                                 pane.AddField(f => f.Dummy)
                                     .VisibleWhen(f => f.Name == "Country123");
@@ -234,6 +240,8 @@ namespace TestServer
                             editor.AddDefaultButton(DefaultButtonType.Delete);
                             editor.AddSection(pane =>
                             {
+                                pane.AddCustomButton<TogglePropertyButtonActionHandler>(typeof(DoItButton));
+
                                 pane.AddField(f => f.Name);
                                 pane.AddField(f => f.Date);
                                 pane.AddField(f => f.Dummy).SetType(typeof(UploadEditor));
@@ -248,6 +256,10 @@ namespace TestServer
                             });
                             editor.AddSection(pane =>
                             {
+                                pane.SetLabel("THIS IS A LABEL");
+
+                                pane.AddDefaultButton(DefaultButtonType.Delete);
+
                                 pane.VisibleWhen(x => x.Accept);
 
                                 pane.AddField(f => f.Enum)

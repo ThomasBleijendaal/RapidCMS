@@ -108,6 +108,9 @@ namespace RapidCMS.UI.Components.Pages
 
                     case NoOperationCommand _:
                     default:
+
+                        StateHasChanged();
+
                         break;
                 }
             }

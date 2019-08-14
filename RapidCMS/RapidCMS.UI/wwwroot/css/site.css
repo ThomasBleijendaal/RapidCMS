@@ -164,6 +164,15 @@ app {
         background: #e8e8e8;
     }
 
+    .content .nested-buttons {
+        margin: -1rem -1rem 1rem -1rem;
+    }
+
+    .content .nested-buttons .top-row {
+        margin: 0;
+        box-shadow: none;
+    }
+
 .nested-content:first-of-type {
     margin-top: -1.1rem;
 }

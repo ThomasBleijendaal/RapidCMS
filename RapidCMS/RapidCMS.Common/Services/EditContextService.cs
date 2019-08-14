@@ -111,7 +111,7 @@ namespace RapidCMS.Common.Services
             var entityVariant = collection.GetEntityVariant(editContext.Entity);
 
             var nodeEditor = collection.NodeEditor;
-            var button = nodeEditor?.Buttons?.GetAllButtons().FirstOrDefault(x => x.ButtonId == actionId);
+            var button = nodeEditor?.FindButton(actionId);
             if (button == null)
             {
                 throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
@@ -179,6 +179,7 @@ namespace RapidCMS.Common.Services
         {
             var collection = _root.GetCollection(collectionAlias);
 
+            // TODO: convert to FindButton
             var buttons = usageType.HasFlag(UsageType.List)
                 ? collection.ListView?.Buttons
                 : collection.ListEditor?.Buttons;
@@ -268,6 +269,7 @@ namespace RapidCMS.Common.Services
         {
             var collection = _root.GetCollection(collectionAlias);
 
+            // TODO: convert to FindButton
             var buttons = usageType.HasFlag(UsageType.List)
                 ? collection.ListView?.ViewPanes?.SelectMany(pane => pane.Buttons)
                 : collection.ListEditor?.EditorPanes?.SelectMany(pane => pane.Buttons);
@@ -350,6 +352,7 @@ namespace RapidCMS.Common.Services
         {
             var collection = _root.GetCollection(collectionAlias);
 
+            // TODO: convert to FindButton
             var buttons = usageType.HasFlag(UsageType.List) || usageType.HasFlag(UsageType.Add)
                 ? collection.ListView?.Buttons
                 : collection.ListEditor?.Buttons;
@@ -452,6 +455,7 @@ namespace RapidCMS.Common.Services
         {
             var collection = _root.GetCollection(collectionAlias);
 
+            // TODO: convert to FindButton
             var buttons = usageType.HasFlag(UsageType.List) || usageType.HasFlag(UsageType.Add)
                 ? collection.ListView?.ViewPanes?.SelectMany(pane => pane.Buttons)
                 : collection.ListEditor?.EditorPanes?.SelectMany(pane => pane.Buttons);
