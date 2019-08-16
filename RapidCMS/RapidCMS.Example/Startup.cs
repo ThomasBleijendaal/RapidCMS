@@ -48,8 +48,8 @@ namespace RapidCMS.Example
 
                             view.AddRow(row =>
                             {
-                                row.AddProperty(p => p.Id.ToString()).SetName("ID");
-                                row.AddProperty(p => p.Name);
+                                row.AddField(p => p.Id.ToString()).SetName("ID");
+                                row.AddField(p => p.Name);
 
                                 row.AddDefaultButton(DefaultButtonType.Edit);
                             });

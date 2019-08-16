@@ -8,16 +8,20 @@ TODO:
 
 [] bug: ListEditor ignores RootVariant section when using multiple EntityVariants
 [] bug: Only update affected EditContext in ListEditor to prevent loss of edits in other EditContexts
-[] bug: Better pagination to prevent loss of edits in EditContexts while paging away
 [] bug: ListEditor with a lot of Dropdowns becomes very slow when clicking New (cache the fetch call)
 [] issue: Applying invalid change to Entity will still update entity, and if attached, will result in db change when SaveChanges()
 [] issue: Tabbar resets view when New / Add button is clicked
+
+[] Move relation validation to Attribute
+    - Require a property to be given in AddField for relations
+    - Get validation attribute of that property
+    - No more validation function in startup
 
 [v] Date editor
 
 1.1
 
-[] Fix nullability in PropertyMetadata
+[v] Fix nullability in PropertyMetadata
 
 [v] Dashboard
 

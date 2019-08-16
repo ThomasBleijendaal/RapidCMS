@@ -81,23 +81,23 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string>> nameExpression)
+        public CollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string>> entityNameExpression)
         {
-            return SetTreeView(default, default, nameExpression);
+            return SetTreeView(default, default, entityNameExpression);
         }
 
-        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, Expression<Func<TEntity, string>> nameExpression)
+        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, Expression<Func<TEntity, string>>? entityNameExpression = null)
         {
-            return SetTreeView(entityVisibility, default, nameExpression);
+            return SetTreeView(entityVisibility, default, entityNameExpression);
         }
 
-        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string>>? nameExpression)
+        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string>>? entityNameExpression)
         {
             TreeView = new TreeViewConfig
             {
                 EntityVisibilty = entityVisibility,
                 RootVisibility = rootVisibility,
-                Name = nameExpression == null ? null : PropertyMetadataHelper.GetExpressionMetadata(nameExpression) ?? throw new InvalidExpressionException(nameof(nameExpression))
+                Name = entityNameExpression == null ? null : PropertyMetadataHelper.GetExpressionMetadata(entityNameExpression) ?? throw new InvalidExpressionException(nameof(entityNameExpression))
             };
 
             return this;

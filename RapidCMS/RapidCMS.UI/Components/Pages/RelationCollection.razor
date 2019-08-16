@@ -141,9 +141,9 @@ else
         }
         else if (UI.ListType == ListType.Block)
         {
-            @foreach (var (context, sections) in Sections)
-            {
-                <div class="content">
+            <div class="content">
+                @foreach (var (context, sections) in Sections)
+                {
                     <div class="nested-content">
                         <CascadingEditContext EditContext=@context>
 
@@ -154,26 +154,24 @@ else
                                     continue;
                                 }
 
-                                <Buttonbar Buttons="section.Buttons" OnButtonClick="NodeButtonOnClickAsync" />
-
                                 if (!string.IsNullOrEmpty(section.CustomAlias))
                                 {
                                     @CustomSections.GetCustomSection(section.CustomAlias, section);
                                 }
                                 else
                                 {
-                                    <BlockSection Section="section" />
+                                    <BlockSection Section="section" OnButtonClick="NodeButtonOnClickAsync" />
                                 }
                             }
                         </CascadingEditContext>
                     </div>
-                </div>
-            }
+                }
 
-            <div class="content">
-                <Paginator CurrentPage="@CurrentPage"
-                           MaxPage="@MaxPage"
-                           OnPageChanged="@PageChangedAsync" />
+                <div class="content">
+                    <Paginator CurrentPage="@CurrentPage"
+                               MaxPage="@MaxPage"
+                               OnPageChanged="@PageChangedAsync" />
+                </div>
             </div>
         }
     }

@@ -120,7 +120,7 @@ namespace RapidCMS.Common.Services
             await EnsureAuthorizedUserAsync(editContext, button);
             EnsureValidEditContext(editContext, button);
 
-            var relationContainer = editContext.DataContext.GenerateRelationContainer();
+            var relationContainer = editContext.GenerateRelationContainer();
 
             ViewCommand viewCommand;
 
@@ -231,7 +231,7 @@ namespace RapidCMS.Common.Services
                         {
                             await EnsureAuthorizedUserAsync(editContext, button);
                             EnsureValidEditContext(editContext, button);
-                            var relationContainer = editContext.DataContext.GenerateRelationContainer();
+                            var relationContainer = editContext.GenerateRelationContainer();
                             await collection.Repository.InternalUpdateAsync(editContext.Entity.Id, parentId, editContext.Entity, relationContainer);
                             affectedEntities.Add(editContext.Entity);
                         }
@@ -283,7 +283,7 @@ namespace RapidCMS.Common.Services
             await EnsureAuthorizedUserAsync(editContext, button);
             EnsureValidEditContext(editContext, button);
 
-            var relationContainer = editContext.DataContext.GenerateRelationContainer();
+            var relationContainer = editContext.GenerateRelationContainer();
 
             // since the id is known, get the entity variant from the entity
             var entityVariant = collection.GetEntityVariant(editContext.Entity);
@@ -406,7 +406,7 @@ namespace RapidCMS.Common.Services
                             var updatedEntity = editContext.Entity;
                             await EnsureAuthorizedUserAsync(editContext, button);
                             EnsureValidEditContext(editContext, button);
-                            var relationContainer = editContext.DataContext.GenerateRelationContainer();
+                            var relationContainer = editContext.GenerateRelationContainer();
                             await collection.Repository.InternalUpdateAsync(updatedEntity.Id, null, updatedEntity, relationContainer);
                             affectedEntities.Add(updatedEntity);
                         }
@@ -470,7 +470,7 @@ namespace RapidCMS.Common.Services
 
             EnsureValidEditContext(editContext, button);
 
-            var relationContainer = editContext.DataContext.GenerateRelationContainer();
+            var relationContainer = editContext.GenerateRelationContainer();
 
             // since the id is known, get the entity variant from the entity
             var entityVariant = collection.GetEntityVariant(editContext.Entity);

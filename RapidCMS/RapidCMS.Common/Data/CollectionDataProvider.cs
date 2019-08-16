@@ -9,7 +9,6 @@ using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Data
 {
-
     internal class CollectionDataProvider : IRelationDataCollection
     {
         private readonly IRepository _repository;
@@ -93,13 +92,13 @@ namespace RapidCMS.Common.Data
             return Task.FromResult(_elements ?? Enumerable.Empty<IElement>());
         }
 
-        public Task<IEnumerable<IElement>> GetRelatedElementsAsync()
+        public Task<IReadOnlyList<IElement>> GetRelatedElementsAsync()
         {
             var relatedElements = (_relatedIds != null && _elements != null)
-                ? _elements.Where(x => _relatedIds.Contains(x.Id))
-                : Enumerable.Empty<IElement>();
+                ? _elements.Where(x => _relatedIds.Contains(x.Id)).ToList()
+                : new List<IElement>();
 
-            return Task.FromResult(relatedElements);
+            return Task.FromResult(relatedElements as IReadOnlyList<IElement>);
         }
 
         public Task AddElementAsync(IElement option)
@@ -121,9 +120,9 @@ namespace RapidCMS.Common.Data
             return Task.CompletedTask;
         }
 
-        public IEnumerable<IElement> GetCurrentRelatedElements()
+        public IReadOnlyList<IElement> GetCurrentRelatedElements()
         {
-            return _relatedElements ?? Enumerable.Empty<IElement>();
+            return _relatedElements ?? new List<IElement>();
         }
 
         public Type GetRelatedEntityType()

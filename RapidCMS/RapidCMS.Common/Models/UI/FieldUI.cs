@@ -20,7 +20,7 @@ namespace RapidCMS.Common.Models.UI
     public class PropertyFieldUI : FieldUI
     {
         public IPropertyMetadata Property { get; internal set; }
-        public IDataCollection DataCollection { get; internal set; }
+        public IDataCollection? DataCollection { get; internal set; }
     }
 
     public class CustomPropertyFieldUI : PropertyFieldUI

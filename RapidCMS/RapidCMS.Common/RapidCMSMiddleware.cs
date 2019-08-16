@@ -31,6 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddScoped<Root>();
 
+            services.AddTransient<IDataProviderService, DataProviderService>();
             services.AddTransient<IEditContextService, EditContextService>();
             services.AddTransient<IEditorService, EditorService>();
             services.AddTransient<ITreeService, TreeService>();

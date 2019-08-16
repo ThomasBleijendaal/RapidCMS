@@ -15,18 +15,6 @@ namespace RapidCMS.Common.Extensions
                 EmptyVariantColumnVisibility = list.EmptyVariantColumnVisibility,
                 Buttons = list.Buttons.ToList(button => button.ToButton(collection.SubEntityVariants, collection.EntityVariant)),
                 Panes = list.Panes.ToList(pane => pane.ToPane())
-
-                // TODO: test if sub collections work in collections
-                //{
-                //    return new Pane
-                //    {
-                //        CustomAlias = pane.CustomAlias,
-                //        IsVisible = pane.IsVisible,
-                //        VariantType = pane.VariantType,
-                //        Buttons = pane.Buttons.ToList(button => button.ToButton(collection.SubEntityVariants, collection.EntityVariant)),
-                //        Fields = pane.Fields.ToList(field => field.ToField())
-                //    };
-                //})
             };
         }
     }

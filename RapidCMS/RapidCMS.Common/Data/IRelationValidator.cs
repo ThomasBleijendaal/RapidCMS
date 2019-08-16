@@ -5,6 +5,6 @@ namespace RapidCMS.Common.Data
 {
     public interface IRelationValidator
     {
-        public IEnumerable<ValidationResult> Validate(IEntity entity, IEnumerable<IRelatedElement> relatedElements);
+        public IEnumerable<ValidationResult> Validate(IEntity entity, IEnumerable<IElement> relatedElements);
     }
 }

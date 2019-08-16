@@ -14,6 +14,6 @@ namespace RapidCMS.Common.Models
         internal IPropertyMetadata IdProperty { get; set; }
         internal List<IExpressionMetadata> DisplayProperties { get; set; }
 
-        internal Func<IEntity, IEnumerable<IRelatedElement>, IEnumerable<string>?>? ValidationFunction { get; set; }
+        internal Func<IEntity, IEnumerable<IElement>, IEnumerable<string>?>? ValidationFunction { get; set; }
     }
 }

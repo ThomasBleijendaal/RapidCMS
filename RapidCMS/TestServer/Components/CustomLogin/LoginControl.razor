@@ -37,7 +37,7 @@
             }
             else
             {
-                GivenName = User.Identity.Name;
+                GivenName = User.Identity.Name ?? "No name";
             }
             // Need to determine where we are to set the RedirectUri
             RedirectUri = _httpContextAccessor.HttpContext.Request.Host.Value;

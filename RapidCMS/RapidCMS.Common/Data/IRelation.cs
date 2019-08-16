@@ -8,7 +8,7 @@ namespace RapidCMS.Common.Data
     {
         Type RelatedEntity { get; }
         IPropertyMetadata Property { get; }
-        IEnumerable<IRelatedElement> RelatedElements { get; }
-        IEnumerable<T> RelatedElementIdsAs<T>();
+        IReadOnlyList<IElement> RelatedElements { get; }
+        IReadOnlyList<T> RelatedElementIdsAs<T>();
     }
 }

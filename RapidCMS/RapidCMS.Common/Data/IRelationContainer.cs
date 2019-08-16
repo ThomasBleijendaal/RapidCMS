@@ -8,18 +8,16 @@ namespace RapidCMS.Common.Data
     {
         IEnumerable<IRelation> Relations { get; }
 
-        // TODO: convert to IReadOnlyList
-        IEnumerable<IRelatedElement> GetRelatedElementsFor<TEntity, TValue>(Expression<Func<TEntity, TValue>> propertyExpression)
+        IReadOnlyList<IElement> GetRelatedElementsFor<TEntity, TValue>(Expression<Func<TEntity, TValue>> propertyExpression)
             where TEntity : IEntity;
 
-        // TODO: convert to IReadOnlyList
-        IEnumerable<TId> GetRelatedElementIdsFor<TEntity, TValue, TId>(Expression<Func<TEntity, TValue>> propertyExpression)
+        IReadOnlyList<TId> GetRelatedElementIdsFor<TEntity, TValue, TId>(Expression<Func<TEntity, TValue>> propertyExpression)
             where TEntity : IEntity;
 
-        IEnumerable<IRelatedElement> GetRelatedElementsFor<TRelatedEntity>()
+        IReadOnlyList<IElement> GetRelatedElementsFor<TRelatedEntity>()
             where TRelatedEntity : IEntity;
 
-        IEnumerable<TId> GetRelatedElementIdsFor<TRelatedEntity, TId>()
+        IReadOnlyList<TId> GetRelatedElementIdsFor<TRelatedEntity, TId>()
             where TRelatedEntity : IEntity;
     }
 }

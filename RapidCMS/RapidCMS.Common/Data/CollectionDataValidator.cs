@@ -9,15 +9,15 @@ namespace RapidCMS.Common.Data
     internal class CollectionDataValidator : IRelationValidator
     {
         private readonly IPropertyMetadata _property;
-        private readonly Func<IEntity, IEnumerable<IRelatedElement>, IEnumerable<string>?> _validationFunction;
+        private readonly Func<IEntity, IEnumerable<IElement>, IEnumerable<string>?> _validationFunction;
 
-        public CollectionDataValidator(IPropertyMetadata property, Func<IEntity, IEnumerable<IRelatedElement>, IEnumerable<string>?> validationFunction)
+        public CollectionDataValidator(IPropertyMetadata property, Func<IEntity, IEnumerable<IElement>, IEnumerable<string>?> validationFunction)
         {
             _property = property;
             _validationFunction = validationFunction ?? throw new ArgumentNullException(nameof(validationFunction));
         }
 
-        public IEnumerable<ValidationResult> Validate(IEntity entity, IEnumerable<IRelatedElement> relatedElements)
+        public IEnumerable<ValidationResult> Validate(IEntity entity, IEnumerable<IElement> relatedElements)
         {
             return _validationFunction.Invoke(entity, relatedElements)?
                 .Select(validationMessage => new ValidationResult(validationMessage, new[] { _property.PropertyName }))

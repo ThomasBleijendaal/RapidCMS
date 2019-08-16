@@ -17,7 +17,7 @@ namespace RapidCMS.Common.Models.Config
         internal IPropertyMetadata IdProperty { get; set; }
         internal List<IExpressionMetadata> DisplayProperties { get; set; }
 
-        internal Func<IEntity, IEnumerable<IRelatedElement>, IEnumerable<string>?>? ValidationFunction { get; set; }
+        internal Func<IEntity, IEnumerable<IElement>, IEnumerable<string>?>? ValidationFunction { get; set; }
     }
 
     public class CollectionRelationConfig<TEntity, TRelatedEntity> : CollectionRelationConfig
@@ -51,7 +51,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionRelationConfig<TEntity, TRelatedEntity> ValidateRelation(Func<TEntity, IEnumerable<IRelatedElement>, IEnumerable<string>?> validationFunction)
+        public CollectionRelationConfig<TEntity, TRelatedEntity> ValidateRelation(Func<TEntity, IEnumerable<IElement>, IEnumerable<string>?> validationFunction)
         {
             ValidationFunction = (entity, relations) => (entity is TEntity correctEntity)
                 ? validationFunction.Invoke(correctEntity, relations)

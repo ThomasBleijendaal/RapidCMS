@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Forms;
@@ -11,24 +12,6 @@ namespace RapidCMS.Common.Extensions
 {
     public static class UIExtensions
     {
-        public static IEnumerable<IRelation> GetRelations(this SectionUI section)
-        {
-            return section.Elements
-                .Select(element => element as PropertyFieldUI)
-                .Where(field => field != null)
-                .Where(field => field?.DataCollection is IRelationDataCollection)
-                .Select(field =>
-                {
-                    var collection = field.DataCollection as IRelationDataCollection;
-                    var relatedElements = collection.GetCurrentRelatedElements();
-
-                    return new Data.Relation(
-                        collection.GetRelatedEntityType(),
-                        field.Property, 
-                        relatedElements.Select(x => new RelatedElement { Id = x.Id }));;
-                });
-        }
-
         internal static ButtonUI ToUI(this Button button, EditContext editContext)
         {
             return new ButtonUI
@@ -54,7 +37,7 @@ namespace RapidCMS.Common.Extensions
             };
         }
 
-        internal static FieldUI ToUI(this Field field, DataContext dataContext)
+        internal static FieldUI ToUI(this Field field, DataProvider? dataProvider)
         {
             if (field is ExpressionField expressionField)
             {
@@ -69,21 +52,14 @@ namespace RapidCMS.Common.Extensions
             }
             else if (field is PropertyField propertyField)
             {
-                PropertyFieldUI ui;
-
-                if (field is CustomField customPropertyField)
-                {
-                    ui = new CustomPropertyFieldUI
+                var ui = (field is CustomField customPropertyField)
+                    ? new CustomPropertyFieldUI
                     {
                         CustomAlias = customPropertyField.Alias
-                    };
-                }
-                else
-                {
-                    ui = new PropertyFieldUI();
-                }
+                    } 
+                    : new PropertyFieldUI();
 
-                PopulateProperties(ui, propertyField, dataContext);
+                PopulateProperties(ui, propertyField, dataProvider);
 
                 return ui;
             }
@@ -101,16 +77,12 @@ namespace RapidCMS.Common.Extensions
             ui.IsVisible = field.IsVisible;
         }
 
-        private static void PopulateProperties(PropertyFieldUI ui, PropertyField field, DataContext dataContext)
+        private static void PopulateProperties(PropertyFieldUI ui, PropertyField field, DataProvider? dataProvider)
         {
-            PopulateProperties((FieldUI)ui, (Field)field);
+            PopulateProperties(ui, field);
 
             ui.Property = field.Property;
-            
-            if (field.Relation != null)
-            {
-                ui.DataCollection = dataContext.GetDataCollection(field.Property);
-            }
+            ui.DataCollection = dataProvider?.Collection;
         }
 
         internal static SubCollectionUI ToUI(this SubCollectionList subCollection)

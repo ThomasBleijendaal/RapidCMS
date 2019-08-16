@@ -10,8 +10,6 @@ using RapidCMS.Common.Models.Metadata;
 namespace RapidCMS.Common.Forms
 {
     // TODO: fix memory leak due to events
-    // TODO: make EditContext expose serviceProvider via interface
-    // TODO: remove DataContext from EditContext
     public sealed class EditContext : IServiceProvider
     {
         private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();
@@ -32,8 +30,7 @@ namespace RapidCMS.Common.Forms
             Entity = entity;
         }
 
-        // TODO: this thing here is weird
-        internal DataContext DataContext { get; set; }
+        internal List<DataProvider> DataProviders = new List<DataProvider>();
 
         public event EventHandler<FieldChangedEventArgs> OnFieldChanged;
 
@@ -84,6 +81,12 @@ namespace RapidCMS.Common.Forms
         public bool WasValidated(IPropertyMetadata property)
         {
             return GetPropertyState(property).WasValidated;
+        }
+
+        internal IRelationContainer GenerateRelationContainer()
+        {
+            return new RelationContainer(
+                DataProviders.Select(x => x.GenerateRelation()).WhereAs(x => x as IRelation));
         }
 
         public IEnumerable<string> GetValidationMessages()
@@ -166,9 +169,9 @@ namespace RapidCMS.Common.Forms
                     $"The {kv.Key.PropertyName} field indicates it is performing an asynchronous task which must be awaited.",
                     new[] { kv.Key.PropertyName })));
 
-            if (DataContext != null)
+            foreach (var result in DataProviders.SelectMany(p => p.Validate(Entity)))
             {
-                results.AddRange(DataContext.ValidateRelations(Entity));
+                results.Add(result);
             }
 
             foreach (var result in results)
@@ -204,7 +207,10 @@ namespace RapidCMS.Common.Forms
 
             }
 
-            results.AddRange(DataContext.ValidateRelation(Entity, property));
+            foreach (var result in DataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(Entity)))
+            {
+                results.Add(result);
+            }
 
             var state = GetPropertyState(property);
             state.ClearMessages();

@@ -477,6 +477,29 @@ namespace TestServer
                         });
                 });
 
+                config.AddCollection<PersonEntity>("person-nested-editor-collection", "Persons (list)", collection =>
+                {
+                    collection
+                        .SetRepository<PersonRepository>()
+                        .SetTreeView(EntityVisibilty.Hidden)
+                        .SetListEditor(ListType.Block, editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.New);
+
+                            editor.AddSection(pane =>
+                            {
+                                pane.AddDefaultButton(DefaultButtonType.Delete);
+                                pane.AddDefaultButton(DefaultButtonType.SaveNew);
+                                pane.AddDefaultButton(DefaultButtonType.SaveExisting);
+
+                                pane.AddField(p => p.Name);
+                            
+                                pane.AddRelatedCollectionList<CountryEntity>("related-country-collection");
+
+                            });
+                        });
+                });
+
                 //config.AddCollection<RelationEntity>("collection-11", "Azure Table Storage Collecation with relations", collection =>
                 //{
                 //    collection
