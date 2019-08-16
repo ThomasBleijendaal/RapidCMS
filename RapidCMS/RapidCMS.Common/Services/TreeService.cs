@@ -12,20 +12,17 @@ using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
 
-
 namespace RapidCMS.Common.Services
 {
     internal class TreeService : ITreeService
     {
         private readonly Root _root;
-        private readonly IServiceProvider _serviceProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationService _authorizationService;
 
-        public TreeService(Root root, IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
+        public TreeService(Root root, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
         {
             _root = root;
-            _serviceProvider = serviceProvider;
             _httpContextAccessor = httpContextAccessor;
             _authorizationService = authorizationService;
         }

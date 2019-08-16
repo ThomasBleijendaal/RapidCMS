@@ -65,8 +65,8 @@ namespace RapidCMS.Common.Helpers
                         if (x is MemberExpression memberExpression)
                         {
                             var propertyInfo = memberExpression.Member as PropertyInfo;
-
-                            if (propertyInfo == null)
+                            
+                            if (propertyInfo == null || propertyInfo.GetGetMethod() == null)
                             {
                                 throw new Exception("Failed to get PropertyInfo from Member.");
                             }
@@ -85,7 +85,7 @@ namespace RapidCMS.Common.Helpers
                             }
                             else
                             {
-                                getNestedObjectMethods.Insert(0, propertyInfo.GetGetMethod());
+                                getNestedObjectMethods.Insert(0, propertyInfo.GetGetMethod()!);
                                 names.Insert(0, propertyInfo.Name);
 
                                 x = memberExpression.Expression;

@@ -68,7 +68,10 @@ namespace RapidCMS.Common.Data
                 var list = new List<object>();
                 foreach (var element in enumerable)
                 {
-                    list.Add(element);
+                    if (element != null)
+                    {
+                        list.Add(element);
+                    }
                 }
                 _relatedIds = list;
             }

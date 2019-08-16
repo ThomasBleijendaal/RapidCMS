@@ -39,6 +39,7 @@ namespace RapidCMS.Common.Extensions
         }
 
         public static IEnumerable<TValue> GetCommonValues<TKey, TValue>(this IDictionary<TKey, IEnumerable<TValue>> dictionary, IEqualityComparer<TValue> equalityComparer)
+            where TKey : notnull
         {
             return dictionary.SelectMany(x => x.Value).Where(x => dictionary.Values.All(v => v.Contains(x, equalityComparer))).Distinct(equalityComparer);
         }

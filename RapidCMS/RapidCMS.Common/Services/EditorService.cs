@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using RapidCMS.Common.Authorization;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.EqualityComparers;
@@ -22,10 +20,7 @@ namespace RapidCMS.Common.Services
         private readonly IAuthorizationService _authorizationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public EditorService(
-            Root root,
-            IAuthorizationService authorizationService,
-            IHttpContextAccessor httpContextAccessor)
+        public EditorService(Root root, IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor)
         {
             _root = root;
             _authorizationService = authorizationService;
