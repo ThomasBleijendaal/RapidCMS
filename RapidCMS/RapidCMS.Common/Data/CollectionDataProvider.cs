@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Primitives;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models.DTOs;
 using RapidCMS.Common.Models.Metadata;
@@ -16,20 +18,27 @@ namespace RapidCMS.Common.Data
         private readonly IPropertyMetadata? _repositoryParentIdProperty;
         private readonly IPropertyMetadata _idProperty;
         private readonly IEnumerable<IExpressionMetadata> _labelProperties;
-
+        private readonly IMemoryCache _memoryCache;
         private IEntity? _entity;
 
         private List<IElement>? _elements;
         private List<IElement>? _relatedElements;
         private ICollection<object>? _relatedIds;
 
-        public CollectionDataProvider(IRepository repository, Type relatedEntityType, IPropertyMetadata? repositoryParentIdProperty, IPropertyMetadata idProperty, IEnumerable<IExpressionMetadata> labelProperties)
+        public CollectionDataProvider(
+            IRepository repository, 
+            Type relatedEntityType, 
+            IPropertyMetadata? repositoryParentIdProperty, 
+            IPropertyMetadata idProperty, 
+            IEnumerable<IExpressionMetadata> labelProperties,
+            IMemoryCache memoryCache)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _relatedEntityType = relatedEntityType ?? throw new ArgumentNullException(nameof(relatedEntityType));
             _repositoryParentIdProperty = repositoryParentIdProperty;
             _idProperty = idProperty ?? throw new ArgumentNullException(nameof(idProperty));
             _labelProperties = labelProperties ?? throw new ArgumentNullException(nameof(labelProperties));
+            _memoryCache = memoryCache;
         }
 
         public async Task SetEntityAsync(IEntity entity)
@@ -37,7 +46,17 @@ namespace RapidCMS.Common.Data
             _entity = entity;
 
             var parentId = _repositoryParentIdProperty?.Getter.Invoke(_entity) as string;
-            var entities = await _repository.InternalGetAllAsync(parentId, Query.Default());
+
+            IChangeToken test;
+
+            test.
+
+            var entities = await _memoryCache.GetOrCreateAsync(_repository, (entry) =>
+            {
+                entry.
+
+                return _repository.InternalGetAllAsync(parentId, Query.Default());
+            });
 
             _elements = entities
                 .Select(entity => (IElement)new ElementDTO

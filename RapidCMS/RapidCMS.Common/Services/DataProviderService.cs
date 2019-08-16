@@ -1,23 +1,21 @@
 ﻿using System;
+using Microsoft.Extensions.Caching.Memory;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models;
 
 namespace RapidCMS.Common.Services
 {
-    internal interface IDataProviderService
-    {
-        DataProvider? GetDataProvider(Field field);
-    }
-
     internal class DataProviderService : IDataProviderService
     {
         private readonly Root _root;
+        private readonly IMemoryCache _memoryCache;
         private readonly IServiceProvider _serviceProvider;
 
-        public DataProviderService(Root root, IServiceProvider serviceProvider)
+        public DataProviderService(Root root, IMemoryCache memoryCache, IServiceProvider serviceProvider)
         {
             _root = root;
+            _memoryCache = memoryCache;
             _serviceProvider = serviceProvider;
         }
 
@@ -43,7 +41,8 @@ namespace RapidCMS.Common.Services
                         collectionRelation.RelatedEntityType,
                         collectionRelation.RepositoryParentIdProperty,
                         collectionRelation.IdProperty,
-                        collectionRelation.DisplayProperties);
+                        collectionRelation.DisplayProperties,
+                        _memoryCache);
 
                     var validator = collectionRelation.ValidationFunction != null
                         ? new CollectionDataValidator(propertyField.Property, collectionRelation.ValidationFunction)
@@ -60,6 +59,4 @@ namespace RapidCMS.Common.Services
             };
         }
     }
-
-
 }
