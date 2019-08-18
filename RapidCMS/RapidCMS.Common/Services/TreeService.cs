@@ -64,7 +64,7 @@ namespace RapidCMS.Common.Services
             return tree;
         }
 
-        public async Task<List<TreeNodeUI>> GetNodesAsync(string alias, string? parentId)
+        public async Task<List<TreeNodeUI>> GetNodesAsync(string alias, string? parentId, Action? onNodesUpdated = null)
         {
             var collection = _root.GetCollection(alias);
 
@@ -73,6 +73,12 @@ namespace RapidCMS.Common.Services
                 // TODO: pagination
                 var query = Query.TakeElements(25);
                 var entities = await collection.Repository.InternalGetAllAsync(parentId, query);
+
+                if (onNodesUpdated != null)
+                {
+                    // TODO: update this to return Idisposable to the registerer (Nodes.razor)
+                    collection.Repository.ChangeToken.RegisterChangeCallback((x) => onNodesUpdated.Invoke(), null);
+                }
 
                 return await entities.ToListAsync(async entity =>
                 {

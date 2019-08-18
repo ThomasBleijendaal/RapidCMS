@@ -34,7 +34,7 @@
 
     protected override async Task OnInitAsync()
     {
-        UI = await TreeService.GetNodesAsync(CollectionAlias, ParentId);
+        UI = await TreeService.GetNodesAsync(CollectionAlias, ParentId, OnNodesUpdate);
     }
 
     [Parameter]
@@ -42,6 +42,11 @@
 
     [Parameter]
     private string? ParentId { get; set; } = null;
+
+    private void OnNodesUpdate()
+    {
+
+    }
 
     public override async Task HandleAsync(CollectionUpdatedMessage message)
     {

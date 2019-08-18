@@ -47,13 +47,9 @@ namespace RapidCMS.Common.Data
 
             var parentId = _repositoryParentIdProperty?.Getter.Invoke(_entity) as string;
 
-            IChangeToken test;
-
-            test.
-
             var entities = await _memoryCache.GetOrCreateAsync(_repository, (entry) =>
             {
-                entry.
+                entry.AddExpirationToken(_repository.ChangeToken);
 
                 return _repository.InternalGetAllAsync(parentId, Query.Default());
             });

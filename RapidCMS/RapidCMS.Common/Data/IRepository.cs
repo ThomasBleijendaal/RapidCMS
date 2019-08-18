@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Primitives;
 
 namespace RapidCMS.Common.Data
 {
@@ -26,6 +27,8 @@ namespace RapidCMS.Common.Data
 
         Task InternalAddAsync(IEntity relatedEntity, string id);
         Task InternalRemoveAsync(IEntity relatedEntity, string id);
+
+        IChangeToken ChangeToken { get; }
     }
 
     // TODO: merge Struct and Class Repos (do it via IEntity instead of TParentKey)
@@ -81,6 +84,15 @@ namespace RapidCMS.Common.Data
 
         public abstract TKey ParseKey(string id);
         public abstract TParentKey? ParseParentKey(string? parentId);
+
+        protected internal RepositoryChangeToken _repositoryChangeToken = new RepositoryChangeToken();
+
+        public IChangeToken ChangeToken => _repositoryChangeToken;
+        protected internal void NotifyUpdate()
+        {
+            _repositoryChangeToken.HasChanged = true;
+            _repositoryChangeToken = new RepositoryChangeToken();
+        }
 
         async Task<IEntity> IRepository.InternalGetByIdAsync(string id, string? parentId)
         {
@@ -162,6 +174,7 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
+                NotifyUpdate();
                 Semaphore.Release();
             }
         }
@@ -176,6 +189,7 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
+                NotifyUpdate();
                 Semaphore.Release();
             }
         }
@@ -190,6 +204,7 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
+                NotifyUpdate();
                 Semaphore.Release();
             }
         }
@@ -275,6 +290,15 @@ namespace RapidCMS.Common.Data
         public abstract TKey ParseKey(string id);
         public abstract TParentKey? ParseParentKey(string? parentId);
 
+        protected internal RepositoryChangeToken _repositoryChangeToken = new RepositoryChangeToken();
+
+        public IChangeToken ChangeToken => _repositoryChangeToken;
+        protected internal void NotifyUpdate()
+        {
+            _repositoryChangeToken.HasChanged = true;
+            _repositoryChangeToken = new RepositoryChangeToken();
+        }
+
         async Task<IEntity> IRepository.InternalGetByIdAsync(string id, string? parentId)
         {
             await Semaphore.WaitAsync();
@@ -355,6 +379,7 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
+                NotifyUpdate();
                 Semaphore.Release();
             }
         }
@@ -369,6 +394,7 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
+                NotifyUpdate();
                 Semaphore.Release();
             }
         }
@@ -383,6 +409,7 @@ namespace RapidCMS.Common.Data
             }
             finally
             {
+                NotifyUpdate();
                 Semaphore.Release();
             }
         }
