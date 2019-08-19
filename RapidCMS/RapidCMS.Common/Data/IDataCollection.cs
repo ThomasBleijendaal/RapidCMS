@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace RapidCMS.Common.Data
@@ -9,5 +10,7 @@ namespace RapidCMS.Common.Data
     {
         Task SetEntityAsync(IEntity entity);
         Task<IEnumerable<IElement>> GetAvailableElementsAsync();
+
+        event EventHandler OnDataChange;
     }
 }

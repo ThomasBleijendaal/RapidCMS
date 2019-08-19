@@ -34,14 +34,16 @@
     {
         if (DataCollection != null)
         {
+            DataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
+
             IsNullable = Nullable.GetUnderlyingType(Property.PropertyType) != null;
 
             var value = GetValueAsObject();
 
             await DataCollection.SetEntityAsync(Entity);
-            var data = await DataCollection.GetAvailableElementsAsync();
+            await UpdateOptionsAsync();
 
-            var list = data?.ToList();
+            var list = Options?.ToList();
 
             SelectedIndex = list?.FindIndex(option => option.Id.Equals(value)) ?? -1;
 
@@ -50,9 +52,18 @@
                 // make dropdown nullable for current non-selection
                 IsNullable = true;
             }
-
-            Options = list;
         }
+    }
+
+    private async Task UpdateOptionsAsync()
+    {
+        if (DataCollection == null)
+        {
+            return;
+        }
+
+        Options = await DataCollection.GetAvailableElementsAsync();
+        StateHasChanged();
     }
 
     private void OnChange(UIChangeEventArgs args)

@@ -208,14 +208,16 @@ namespace TestServer
                                 editor.AddField(f => f.NotRequired);
                                 editor.AddField(f => f.Range)
                                     .SetName("Range Setting");
-                                editor.AddField(f => f.Accept)
-                                    .SetName("Accept this");
-                                editor.AddField(f => f.Textarea)
-                                    .VisibleWhen(f => f.Accept)
-                                    .SetType(EditorType.TextArea);
-                                editor.AddField(f => f.Enum)
-                                    .SetType(EditorType.Dropdown)
-                                    .SetDataCollection<EnumDataProvider<TestEnum>>();
+
+                                editor.AddField(f => f.CountryId)
+                                    .SetType(EditorType.Select)
+                                    .SetCollectionRelation<CountryEntity>("country-collection", relation =>
+                                    {
+                                        relation
+                                            .SetElementIdProperty(x => x._Id)
+                                            .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
+
+                                    });
                             });
                         })
                         .SetNodeView(view =>
@@ -276,6 +278,8 @@ namespace TestServer
                                             .SetRepositoryParentIdProperty(x => x.Id);
 
                                     });
+
+                                pane.AddSubCollectionList<CountryEntity>("country-collection");
                             });
                         })
                         .AddSelfAsRecursiveCollection();

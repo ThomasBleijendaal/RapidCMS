@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Primitives;
 
 namespace RapidCMS.Common.Data
@@ -19,7 +20,8 @@ namespace RapidCMS.Common.Data
                 {
                     _hasChanged = true;
 
-                    _callbacks.ForEach(x => x.Invoke().Dispose());
+                    // get a local copy since invoking these callbacks will change the enumerable
+                    _callbacks.ToList().ForEach(x => x.Invoke().Dispose());
                     _callbacks.Clear();
                 }
             }
@@ -37,13 +39,13 @@ namespace RapidCMS.Common.Data
 
         private class RepositoryChangeTokenCallback : IDisposable
         {
-            private Action<object> _callback;
-            private object _state;
+            private Action<object>? _callback;
+            private object? _state;
 
             public RepositoryChangeTokenCallback(Action<object> callback, object? state)
             {
                 _callback = callback ?? throw new ArgumentNullException(nameof(callback));
-                _state = state!;
+                _state = state;
             }
 
             public void Dispose()
@@ -54,7 +56,7 @@ namespace RapidCMS.Common.Data
 
             public RepositoryChangeTokenCallback Invoke()
             {
-                _callback.Invoke(_state);
+                _callback?.Invoke(_state!);
 
                 return this;
             }

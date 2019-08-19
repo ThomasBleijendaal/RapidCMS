@@ -48,7 +48,8 @@ namespace TestLibrary.Repositories
 
         public override async Task<PersonEntity> InsertAsync(int? parentId, PersonEntity entity, IRelationContainer? relations)
         {
-            entity.Countries = relations.GetRelatedElementIdsFor<CountryEntity, int>().Select(id => new PersonCountryEntity { CountryId = id }).ToList();
+            entity.Countries = relations?.GetRelatedElementIdsFor<CountryEntity, int>()?.Select(id => new PersonCountryEntity { CountryId = id }).ToList() ?? new List<PersonCountryEntity>();
+
             var entry = _dbContext.Persons.Add(entity);
             await _dbContext.SaveChangesAsync();
 
@@ -76,15 +77,18 @@ namespace TestLibrary.Repositories
 
             dbEntity.Name = entity.Name;
 
-            var newCountries = relations.GetRelatedElementIdsFor<CountryEntity, int>();
+            var newCountries = relations?.GetRelatedElementIdsFor<CountryEntity, int>();
 
-            foreach (var country in dbEntity.Countries.Where(x => !newCountries.Contains(x.CountryId.Value)).ToList())
+            if (newCountries != null)
             {
-                dbEntity.Countries.Remove(country);
-            }
-            foreach (var countryId in newCountries.Where(id => !dbEntity.Countries.Select(x => x.CountryId.Value).Contains(id)).ToList())
-            {
-                dbEntity.Countries.Add(new PersonCountryEntity { CountryId = countryId });
+                foreach (var country in dbEntity.Countries.Where(x => !newCountries.Contains(x.CountryId.Value)).ToList())
+                {
+                    dbEntity.Countries.Remove(country);
+                }
+                foreach (var countryId in newCountries.Where(id => !dbEntity.Countries.Select(x => x.CountryId.Value).Contains(id)).ToList())
+                {
+                    dbEntity.Countries.Add(new PersonCountryEntity { CountryId = countryId });
+                }
             }
 
             _dbContext.Persons.Update(dbEntity);

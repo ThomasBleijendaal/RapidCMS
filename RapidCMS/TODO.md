@@ -7,8 +7,6 @@ TODO:
 [] Auto-update DataCollection editors when collection indicates update
 
 [] bug: ListEditor ignores RootVariant section when using multiple EntityVariants
-[] bug: ListEditor with a lot of Dropdowns becomes very slow when clicking New (cache the fetch call)
-[] bug: When page is refreshed and a Update event from a collection is triggered, EventAggregator breaks blazor by triggering Thread which is not controlling the UI thread anymore
 
 [] Move relation validation to Attribute
     - Require a property to be given in AddField for relations

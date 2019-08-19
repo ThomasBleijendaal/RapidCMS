@@ -15,28 +15,28 @@ namespace RapidCMS.Common.Data
 
         public IEnumerable<IRelation> Relations { get; private set; }
 
-        public IReadOnlyList<TId> GetRelatedElementIdsFor<TEntity, TValue, TId>(Expression<Func<TEntity, TValue>> propertyExpression) where TEntity : IEntity
+        public IReadOnlyList<TId>? GetRelatedElementIdsFor<TEntity, TValue, TId>(Expression<Func<TEntity, TValue>> propertyExpression) where TEntity : IEntity
         {
             var property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression);
 
-            return Relations.FirstOrDefault(x => x.Property.Fingerprint == property?.Fingerprint)?.RelatedElementIdsAs<TId>() ?? new List<TId>();
+            return Relations.FirstOrDefault(x => x.Property.Fingerprint == property?.Fingerprint)?.RelatedElementIdsAs<TId>() ?? default;
         }
 
-        public IReadOnlyList<IElement> GetRelatedElementsFor<TEntity, TValue>(Expression<Func<TEntity, TValue>> propertyExpression) where TEntity : IEntity
+        public IReadOnlyList<IElement>? GetRelatedElementsFor<TEntity, TValue>(Expression<Func<TEntity, TValue>> propertyExpression) where TEntity : IEntity
         {
             var property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression);
 
-            return Relations.FirstOrDefault(x => x.Property.Fingerprint == property?.Fingerprint)?.RelatedElements ?? new List<IElement>();
+            return Relations.FirstOrDefault(x => x.Property.Fingerprint == property?.Fingerprint)?.RelatedElements ?? default;
         }
 
-        public IReadOnlyList<IElement> GetRelatedElementsFor<TRelatedEntity>() where TRelatedEntity : IEntity
+        public IReadOnlyList<IElement>? GetRelatedElementsFor<TRelatedEntity>() where TRelatedEntity : IEntity
         {
-            return Relations.FirstOrDefault(x => x.RelatedEntity == typeof(TRelatedEntity))?.RelatedElements ?? new List<IElement>();
+            return Relations.FirstOrDefault(x => x.RelatedEntity == typeof(TRelatedEntity))?.RelatedElements ?? default;
         }
 
-        public IReadOnlyList<TId> GetRelatedElementIdsFor<TRelatedEntity, TId>() where TRelatedEntity : IEntity
+        public IReadOnlyList<TId>? GetRelatedElementIdsFor<TRelatedEntity, TId>() where TRelatedEntity : IEntity
         {
-            return Relations.FirstOrDefault(x => x.RelatedEntity == typeof(TRelatedEntity))?.RelatedElementIdsAs<TId>() ?? new List<TId>();
+            return Relations.FirstOrDefault(x => x.RelatedEntity == typeof(TRelatedEntity))?.RelatedElementIdsAs<TId>() ?? default;
         }
     }
 }

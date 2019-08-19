@@ -4,14 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Primitives;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models.DTOs;
 using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Data
 {
-    internal class CollectionDataProvider : IRelationDataCollection
+    internal class CollectionDataProvider : IRelationDataCollection, IDisposable
     {
         private readonly IRepository _repository;
         private readonly Type _relatedEntityType;
@@ -20,6 +19,8 @@ namespace RapidCMS.Common.Data
         private readonly IEnumerable<IExpressionMetadata> _labelProperties;
         private readonly IMemoryCache _memoryCache;
         private IEntity? _entity;
+
+        private IDisposable? _eventHandle;
 
         private List<IElement>? _elements;
         private List<IElement>? _relatedElements;
@@ -41,13 +42,33 @@ namespace RapidCMS.Common.Data
             _memoryCache = memoryCache;
         }
 
+        public event EventHandler OnDataChange;
+
         public async Task SetEntityAsync(IEntity entity)
         {
             _entity = entity;
 
-            var parentId = _repositoryParentIdProperty?.Getter.Invoke(_entity) as string;
+            await SetElementsAsync();
+        }
 
-            var entities = await _memoryCache.GetOrCreateAsync(_repository, (entry) =>
+        private async Task SetElementsAsync()
+        {
+            if (_entity == null)
+            {
+                return;
+            }
+
+            _eventHandle?.Dispose();
+            _eventHandle = _repository.ChangeToken.RegisterChangeCallback(async x =>
+            {
+                await SetElementsAsync();
+
+                OnDataChange?.Invoke(this, new EventArgs());
+
+            }, null);
+
+            var parentId = _repositoryParentIdProperty?.Getter.Invoke(_entity) as string;
+            var entities = await _memoryCache.GetOrCreateAsync(new { _repository, parentId }, (entry) =>
             {
                 entry.AddExpirationToken(_repository.ChangeToken);
 
@@ -143,6 +164,11 @@ namespace RapidCMS.Common.Data
         public Type GetRelatedEntityType()
         {
             return _relatedEntityType ?? typeof(object);
+        }
+
+        public void Dispose()
+        {
+            _eventHandle?.Dispose();
         }
     }
 }

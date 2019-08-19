@@ -303,7 +303,7 @@ else
         {
             if (reloadEntityIds.Contains(x.editContext.Entity.Id))
             {
-                var reloadedEditContext = await EditContextService.GetEntityAsync(GetUsageType(), CollectionAlias, null, ParentId, x.editContext.Entity.Id);
+                var reloadedEditContext = await EditContextService.GetEntityAsync(x.editContext.UsageType, CollectionAlias, null, ParentId, x.editContext.Entity.Id);
                 return (reloadedEditContext, await UI.GetSectionsForEditContextAsync(reloadedEditContext));
             }
             else
@@ -347,7 +347,7 @@ else
                 throw new ArgumentException($"Argument must be of type {typeof(ButtonViewModel)}.", nameof(sender));
             }
 
-            var command = await EditContextService.ProcessListActionAsync(GetUsageType(), CollectionAlias, ParentId, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
+            var command = await EditContextService.ProcessListActionAsync(args.EditContext.UsageType, CollectionAlias, ParentId, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }

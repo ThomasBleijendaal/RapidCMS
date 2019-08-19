@@ -1,26 +1,43 @@
 ﻿using System;
 using System.Threading.Tasks;
-using EventAggregator.Blazor;
 using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Messages;
+using RapidCMS.Common.Services;
 
 namespace RapidCMS.UI.Components.Shared
 {
-    public abstract class NodesBase : ComponentBase, IHandle<CollectionUpdatedMessage>, IDisposable
+    public abstract class NodesBase : ComponentBase, IDisposable
     {
+        private IDisposable? _eventHandle;
+
         [Inject]
-        private IEventAggregator _eventAggregator { get; set; }
+        protected ITreeService TreeService { get; set; }
+
+        [Parameter]
+        protected string CollectionAlias { get; set; }
+
+        [Parameter]
+        protected string? ParentId { get; set; } = null;
 
         protected override void OnInit()
         {
-            _eventAggregator.Subscribe(this);
+            OnNodesUpdate();
         }
 
-        public abstract Task HandleAsync(CollectionUpdatedMessage message);
+        private void OnNodesUpdate()
+        {
+            _eventHandle?.Dispose();
+            _eventHandle = TreeService.SubscribeToUpdates(CollectionAlias, async () =>
+            {
+                await OnNodesUpdateAsync();
+                OnNodesUpdate();
+            });
+        }
+
+        protected abstract Task OnNodesUpdateAsync();
 
         public void Dispose()
         {
-            _eventAggregator.Unsubscribe(this);
+            _eventHandle?.Dispose();
         }
     }
 }

@@ -64,7 +64,7 @@ namespace RapidCMS.Common.Services
             return tree;
         }
 
-        public async Task<List<TreeNodeUI>> GetNodesAsync(string alias, string? parentId, Action? onNodesUpdated = null)
+        public async Task<List<TreeNodeUI>> GetNodesAsync(string alias, string? parentId)
         {
             var collection = _root.GetCollection(alias);
 
@@ -73,12 +73,6 @@ namespace RapidCMS.Common.Services
                 // TODO: pagination
                 var query = Query.TakeElements(25);
                 var entities = await collection.Repository.InternalGetAllAsync(parentId, query);
-
-                if (onNodesUpdated != null)
-                {
-                    // TODO: update this to return Idisposable to the registerer (Nodes.razor)
-                    collection.Repository.ChangeToken.RegisterChangeCallback((x) => onNodesUpdated.Invoke(), null);
-                }
 
                 return await entities.ToListAsync(async entity =>
                 {
@@ -101,7 +95,7 @@ namespace RapidCMS.Common.Services
                         node.Path = UriHelper.Node(Constants.Edit, collection.Alias, entityVariant, parentId, entity.Id);
                     }
                     else
-                    { 
+                    {
                         var viewAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
                             _httpContextAccessor.HttpContext.User,
                             entity,
@@ -120,6 +114,12 @@ namespace RapidCMS.Common.Services
             {
                 return new List<TreeNodeUI>();
             }
+        }
+
+        public IDisposable SubscribeToUpdates(string alias, Func<Task> asyncCallback)
+        {
+            var collection = _root.GetCollection(alias);
+            return collection.Repository.ChangeToken.RegisterChangeCallback((x) => asyncCallback.Invoke(), null);
         }
 
         public TreeRootUI GetRoot()

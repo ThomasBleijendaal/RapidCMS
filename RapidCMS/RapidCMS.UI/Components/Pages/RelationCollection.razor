@@ -320,7 +320,7 @@ else
         {
             if (reloadEntityIds.Contains(x.editContext.Entity.Id))
             {
-                var reloadedEditContext = await EditContextService.GetEntityAsync(GetUsageType(), CollectionAlias, null, null, x.editContext.Entity.Id);
+                var reloadedEditContext = await EditContextService.GetEntityAsync(x.editContext.UsageType, CollectionAlias, null, null, x.editContext.Entity.Id);
                 return (reloadedEditContext, await UI.GetSectionsForEditContextAsync(reloadedEditContext));
             }
             else
@@ -369,7 +369,7 @@ else
                 throw new InvalidOperationException("UI is null");
             }
 
-            var command = await EditContextService.ProcessRelationActionAsync(GetUsageType(), CollectionAlias, RelatedEntity, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
+            var command = await EditContextService.ProcessRelationActionAsync(args.EditContext.UsageType, CollectionAlias, RelatedEntity, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }

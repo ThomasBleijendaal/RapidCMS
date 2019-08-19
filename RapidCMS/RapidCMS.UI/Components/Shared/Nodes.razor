@@ -1,7 +1,5 @@
 ﻿@inherits NodesBase
 
-@inject ITreeService TreeService
-
 @if (UI != null)
 {
     <ul class="nav flex-column">
@@ -34,27 +32,12 @@
 
     protected override async Task OnInitAsync()
     {
-        UI = await TreeService.GetNodesAsync(CollectionAlias, ParentId, OnNodesUpdate);
+        UI = await TreeService.GetNodesAsync(CollectionAlias, ParentId);
     }
 
-    [Parameter]
-    private string CollectionAlias { get; set; }
-
-    [Parameter]
-    private string? ParentId { get; set; } = null;
-
-    private void OnNodesUpdate()
+    protected override async Task OnNodesUpdateAsync()
     {
-
-    }
-
-    public override async Task HandleAsync(CollectionUpdatedMessage message)
-    {
-        // TODO: this causes UIThread issues in some cases
-
-        if (message.CollectionAlias == CollectionAlias)
-        {
-            await OnInitAsync();
-        }
+        await OnInitAsync();
+        StateHasChanged();
     }
 }
