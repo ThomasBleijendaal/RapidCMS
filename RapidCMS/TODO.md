@@ -4,9 +4,11 @@ TODO:
 
 [] Documentation + Examples
 
-[] Auto-update DataCollection editors when collection indicates update
+[v] Auto-update DataCollection editors when collection indicates update
 
 [] bug: ListEditor ignores RootVariant section when using multiple EntityVariants
+[] bug: Editors SetParameters is invoked too many times
+    - MultiSelectEditor gets initialized multiple times due to setting of parameters multiple times
 
 [] Move relation validation to Attribute
     - Require a property to be given in AddField for relations

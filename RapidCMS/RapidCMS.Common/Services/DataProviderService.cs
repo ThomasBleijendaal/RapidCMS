@@ -39,16 +39,22 @@ namespace RapidCMS.Common.Services
                     var provider = new CollectionDataProvider(
                         repo,
                         collectionRelation.RelatedEntityType,
+
+                        propertyField.Property,
+                        collectionRelation.RelatedElementsGetter,
+
                         collectionRelation.RepositoryParentIdProperty,
                         collectionRelation.IdProperty,
                         collectionRelation.DisplayProperties,
+
                         _memoryCache);
 
-                    var validator = collectionRelation.ValidationFunction != null
-                        ? new CollectionDataValidator(propertyField.Property, collectionRelation.ValidationFunction)
-                        : default;
+                    var validator = new CollectionDataValidator(propertyField.Property);
 
-                    return new DataProvider(propertyField.Property, provider, validator);
+                    return new DataProvider(
+                        propertyField.Property,
+                        provider,
+                        validator);
 
                 case DataProviderRelation dataProviderRelation:
 

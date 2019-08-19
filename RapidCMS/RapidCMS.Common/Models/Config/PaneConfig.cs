@@ -28,6 +28,7 @@ namespace RapidCMS.Common.Models.Config
         internal List<RelatedCollectionListConfig> RelatedCollectionLists { get; set; } = new List<RelatedCollectionListConfig>();
     }
 
+    // TODO: is TFieldConfig required?
     public class PaneConfig<TEntity, TFieldConfig> : PaneConfig, IDisplayPaneConfig<TEntity>, IEditorPaneConfig<TEntity>
         where TEntity : IEntity
         where TFieldConfig : class, IFieldConfig<TEntity>
@@ -113,9 +114,9 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        IDisplayFieldConfig<TEntity> IDisplayPaneConfig<TEntity>.AddField(Expression<Func<TEntity, string>> displayExpression, Action<IDisplayFieldConfig<TEntity>>? configure)
+        IDisplayFieldConfig<TEntity, string> IDisplayPaneConfig<TEntity>.AddField(Expression<Func<TEntity, string>> displayExpression, Action<IDisplayFieldConfig<TEntity, string>>? configure)
         {
-            var config = new FieldConfig<TEntity>()
+            var config = new FieldConfig<TEntity, string>()
             {
                 Expression = PropertyMetadataHelper.GetExpressionMetadata(displayExpression) ?? throw new InvalidPropertyExpressionException(nameof(displayExpression)),
             };
@@ -161,9 +162,9 @@ namespace RapidCMS.Common.Models.Config
             return VisibleWhen(predicate);
         }
 
-        IEditorFieldConfig<TEntity> IEditorPaneConfig<TEntity>.AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<IEditorFieldConfig<TEntity>>? configure)
+        IEditorFieldConfig<TEntity, TValue> IEditorPaneConfig<TEntity>.AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<IEditorFieldConfig<TEntity, TValue>>? configure)
         {
-            var config = new FieldConfig<TEntity>()
+            var config = new FieldConfig<TEntity, TValue>()
             {
                 Property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression) ?? throw new InvalidPropertyExpressionException(nameof(propertyExpression)),
             };

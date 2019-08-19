@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Data;
 
-
 namespace RapidCMS.UI.Components.Editors
 {
     public class BaseRelationEditor : BaseEditor

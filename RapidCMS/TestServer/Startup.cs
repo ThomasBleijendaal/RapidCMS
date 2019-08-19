@@ -455,28 +455,31 @@ namespace TestServer
                             });
                             editor.AddSection(pane =>
                             {
-                                pane.AddRelatedCollectionList<CountryEntity>("related-country-collection");
+                                //pane.AddRelatedCollectionList<CountryEntity>("related-country-collection");
 
-                                //pane.AddField(f => f.Countries.Select(x => x.CountryId))
-                                //    .SetName("Countries")
-                                //    .SetType(EditorType.MultiSelect)
-                                //    .SetCollectionRelation<CountryEntity>("related-country-collection", relation =>
-                                //    {
-                                //        relation
-                                //            .SetElementIdProperty(x => x._Id)
-                                //            .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
+                                pane.AddField(f => f.Countries)
+                                    .SetName("Countries")
+                                    .SetType(EditorType.MultiSelect)
+                                    .SetCollectionRelation<CountryEntity, int?>(
+                                        countries => countries.Select(x => x.CountryId),
+                                        "related-country-collection", 
+                                        relation =>
+                                        {
+                                            relation
+                                                .SetElementIdProperty(x => x._Id)
+                                                .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
 
-                                //        relation
-                                //            .ValidateRelation((person, related) =>
-                                //            {
-                                //                if (!related.Count().In(2, 3))
-                                //                {
-                                //                    return new[] { "Person must have 2 or 3 countries." };
-                                //                }
+                                            //relation
+                                            //    .ValidateRelation((person, related) =>
+                                            //    {
+                                            //        if (!related.Count().In(2, 3))
+                                            //        {
+                                            //            return new[] { "Person must have 2 or 3 countries." };
+                                            //        }
 
-                                //                return default;
-                                //            });
-                                //    });
+                                            //        return default;
+                                            //    });
+                                        });
                             });
                         });
                 });

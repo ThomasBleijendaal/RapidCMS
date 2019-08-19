@@ -60,12 +60,16 @@
     {
         if (RelationDataCollection != null)
         {
-            RelationDataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
+            // TODO: this should not be needed
+            if (SelectedOptions == null)
+            {
+                RelationDataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
 
-            await RelationDataCollection.SetRelationMetadataAsync(Entity, Property);
-            await UpdateOptionsAsync();
+                await RelationDataCollection.SetEntityAsync(Entity);
+                await UpdateOptionsAsync();
 
-            SelectedOptions = await RelationDataCollection.GetRelatedElementsAsync();
+                SelectedOptions = await RelationDataCollection.GetRelatedElementsAsync();
+            }
         }
     }
 

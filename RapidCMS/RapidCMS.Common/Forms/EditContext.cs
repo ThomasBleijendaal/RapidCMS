@@ -169,7 +169,7 @@ namespace RapidCMS.Common.Forms
                     $"The {kv.Key.PropertyName} field indicates it is performing an asynchronous task which must be awaited.",
                     new[] { kv.Key.PropertyName })));
 
-            foreach (var result in DataProviders.SelectMany(p => p.Validate(Entity)))
+            foreach (var result in DataProviders.SelectMany(p => p.Validate(Entity, _serviceProvider)))
             {
                 results.Add(result);
             }
@@ -207,7 +207,7 @@ namespace RapidCMS.Common.Forms
 
             }
 
-            foreach (var result in DataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(Entity)))
+            foreach (var result in DataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(Entity, _serviceProvider)))
             {
                 results.Add(result);
             }

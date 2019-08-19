@@ -19,11 +19,11 @@ namespace RapidCMS.Common.Data
         public IDataCollection Collection { get; private set; }
         private IRelationValidator? Validator { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(IEntity entity)
+        public IEnumerable<ValidationResult> Validate(IEntity entity, IServiceProvider serviceProvider)
         {
             if (Validator != null && Collection is IRelationDataCollection relationDataCollection)
             {
-                return Validator.Validate(entity, relationDataCollection.GetCurrentRelatedElements());
+                return Validator.Validate(entity, relationDataCollection.GetCurrentRelatedElements(), serviceProvider);
             }
             else
             {

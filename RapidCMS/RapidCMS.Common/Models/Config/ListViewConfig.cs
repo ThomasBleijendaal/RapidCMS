@@ -69,8 +69,8 @@ namespace RapidCMS.Common.Models.Config
             where TDerivedEntity : TEntity
         {
             var config = customSectionType == null
-                ? new PaneConfig<TDerivedEntity, IDisplayFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity))
-                : new PaneConfig<TDerivedEntity, IDisplayFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity), customSectionType);
+                ? new PaneConfig<TDerivedEntity, IFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity))
+                : new PaneConfig<TDerivedEntity, IFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity), customSectionType);
 
             configure?.Invoke(config);
 
