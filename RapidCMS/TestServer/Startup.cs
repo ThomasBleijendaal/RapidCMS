@@ -310,7 +310,7 @@ namespace TestServer
                             list.AddDefaultButton(DefaultButtonType.New);
                             list.AddDefaultButton(DefaultButtonType.Add);
 
-                            list.AddDefaultButton(DefaultButtonType.SaveExisting);
+                            list.AddDefaultButton(DefaultButtonType.SaveExisting, "Update all");
                             list.AddSection(pane =>
                             {
                                 pane.AddField(p => p.Name);
@@ -456,8 +456,6 @@ namespace TestServer
                             });
                             editor.AddSection(pane =>
                             {
-                                //pane.AddRelatedCollectionList<CountryEntity>("related-country-collection");
-
                                 pane.AddField(f => f.Countries)
                                     .SetName("Countries")
                                     .SetType(EditorType.MultiSelect)
@@ -469,17 +467,6 @@ namespace TestServer
                                             relation
                                                 .SetElementIdProperty(x => x._Id)
                                                 .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
-
-                                            //relation
-                                            //    .ValidateRelation((person, related) =>
-                                            //    {
-                                            //        if (!related.Count().In(2, 3))
-                                            //        {
-                                            //            return new[] { "Person must have 2 or 3 countries." };
-                                            //        }
-
-                                            //        return default;
-                                            //    });
                                         });
                             });
                         });
