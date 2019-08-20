@@ -8,6 +8,13 @@
             <h2 class="block-header">@Section.Label</h2>
         }
 
+        @if (Section.Buttons != null && Section.Buttons.Any())
+        {
+            <div class="nested-buttons">
+                <ButtonBar Buttons="Section.Buttons" OnButtonClick="@OnButtonClick" />
+            </div>
+        }
+
         @foreach (var element in Section.Elements)
         {
             if (!element.IsVisible(EditContext.Entity))
@@ -25,7 +32,7 @@
                     <div class="col-10">
                         @if (field is ExpressionFieldUI expressionField)
                         {
-                            @expressionField.Expression.StringGetter(EditContext.Entity)
+                            <label class="col-form-label">@expressionField.Expression.StringGetter(EditContext.Entity)</label>
                         }
                         else if (field is PropertyFieldUI propertyField)
                         {
@@ -39,8 +46,8 @@
                 <div class="nested-content">
                     @* TODO: change to something which is not a page *@
                     <RapidCMS.UI.Components.Pages.Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
-                                CollectionAlias=@subCollection.CollectionAlias
-                                ParentId=@EditContext.Entity.Id />
+                                                             CollectionAlias=@subCollection.CollectionAlias
+                                                             ParentId=@EditContext.Entity.Id />
                 </div>
             }
             else if (element is RelatedCollectionUI relatedCollection)
@@ -49,11 +56,15 @@
                 {
                     <div class="nested-content">
                         <RelationCollection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
-                                    CollectionAlias=@relatedCollection.CollectionAlias
-                                    RelatedEntity=@EditContext.Entity />
+                                            CollectionAlias=@relatedCollection.CollectionAlias
+                                            RelatedEntity=@EditContext.Entity />
                     </div>
                 }
             }
         }
     </div>
+}
+
+@code {
+    [Parameter] public EventHandler<ButtonClickEventArgs> OnButtonClick { get; set; }
 }

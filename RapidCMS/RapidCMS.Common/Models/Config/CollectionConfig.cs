@@ -11,11 +11,18 @@ namespace RapidCMS.Common.Models.Config
 {
     public class CollectionConfig : ICollectionRoot
     {
+        internal CollectionConfig(string alias, string name, EntityVariantConfig entityVariant)
+        {
+            Alias = alias ?? throw new ArgumentNullException(nameof(alias));
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
+        }
+
         internal bool Recursive { get; set; }
         internal string Alias { get; set; }
         internal string Name { get; set; }
 
-        internal Type RepositoryType { get; set; }
+        internal Type? RepositoryType { get; set; }
 
         public List<CollectionConfig> Collections { get; set; } = new List<CollectionConfig>();
         internal List<EntityVariantConfig> SubEntityVariants { get; set; } = new List<EntityVariantConfig>();
@@ -24,11 +31,11 @@ namespace RapidCMS.Common.Models.Config
         internal List<IDataView> DataViews { get; set; } = new List<IDataView>();
         internal Type? DataViewBuilder { get; set; }
 
-        internal TreeViewConfig TreeView { get; set; }
-        internal ListViewConfig ListView { get; set; }
-        internal ListEditorConfig ListEditor { get; set; }
-        internal NodeViewConfig NodeView { get; set; }
-        internal NodeEditorConfig NodeEditor { get; set; }
+        internal TreeViewConfig? TreeView { get; set; }
+        internal ListConfig? ListView { get; set; }
+        internal ListConfig? ListEditor { get; set; }
+        internal NodeConfig? NodeView { get; set; }
+        internal NodeConfig? NodeEditor { get; set; }
 
         public bool IsUnique(string alias)
         {
@@ -39,6 +46,10 @@ namespace RapidCMS.Common.Models.Config
     public class CollectionConfig<TEntity> : CollectionConfig
         where TEntity : IEntity
     {
+        internal CollectionConfig(string alias, string name, EntityVariantConfig entityVariant) : base(alias, name, entityVariant)
+        {
+        }
+
         public CollectionConfig<TEntity> SetRepository<TRepository>()
            where TRepository : IRepository
         {
@@ -70,23 +81,23 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string>> nameExpression)
+        public CollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string>> entityNameExpression)
         {
-            return SetTreeView(default, default, nameExpression);
+            return SetTreeView(default, default, entityNameExpression);
         }
 
-        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, Expression<Func<TEntity, string>> nameExpression)
+        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, Expression<Func<TEntity, string>>? entityNameExpression = null)
         {
-            return SetTreeView(entityVisibility, default, nameExpression);
+            return SetTreeView(entityVisibility, default, entityNameExpression);
         }
 
-        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string>>? nameExpression)
+        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string>>? entityNameExpression)
         {
             TreeView = new TreeViewConfig
             {
                 EntityVisibilty = entityVisibility,
                 RootVisibility = rootVisibility,
-                Name = nameExpression == null ? null : PropertyMetadataHelper.GetExpressionMetadata(nameExpression) ?? throw new InvalidExpressionException(nameof(nameExpression))
+                Name = entityNameExpression == null ? null : PropertyMetadataHelper.GetExpressionMetadata(entityNameExpression) ?? throw new InvalidExpressionException(nameof(entityNameExpression))
             };
 
             return this;
@@ -108,12 +119,12 @@ namespace RapidCMS.Common.Models.Config
             return SetListEditor(default, default, configure);
         }
 
-        public CollectionConfig<TEntity> SetListEditor(ListEditorType listEditorType, Action<ListEditorConfig<TEntity>> configure)
+        public CollectionConfig<TEntity> SetListEditor(ListType listEditorType, Action<ListEditorConfig<TEntity>> configure)
         {
             return SetListEditor(listEditorType, default, configure);
         }
 
-        public CollectionConfig<TEntity> SetListEditor(ListEditorType listEditorType, EmptyVariantColumnVisibility emptyVariantColumnVisibility, Action<ListEditorConfig<TEntity>> configure)
+        public CollectionConfig<TEntity> SetListEditor(ListType listEditorType, EmptyVariantColumnVisibility emptyVariantColumnVisibility, Action<ListEditorConfig<TEntity>> configure)
         {
             var config = new ListEditorConfig<TEntity>();
 

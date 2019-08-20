@@ -42,6 +42,7 @@ namespace RapidCMS.Common.Extensions
         }
 
         public static async Task<Dictionary<TKey, TValue>> ToDictionaryAsync<TSource, TKey, TValue>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TValue>> asyncValueSelector)
+            where TKey: notnull
         {
             var result = new Dictionary<TKey, TValue>();
 

@@ -11,6 +11,8 @@ namespace RapidCMS.Common.Data
     public class EnumDataProvider<TEnum> : IDataCollection
         where TEnum : Enum
     {
+        public event EventHandler OnDataChange;
+
         public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
         {
             var values = Enum.GetValues(typeof(TEnum)).Cast<TEnum>();

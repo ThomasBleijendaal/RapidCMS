@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Common.Data;
@@ -9,6 +10,8 @@ namespace TestLibrary.DataProvider
 {
     public class DummyDataProvider : IDataCollection
     {
+        public event EventHandler OnDataChange;
+
         public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
         {
             IEnumerable<IElement> data = new List<Data> {

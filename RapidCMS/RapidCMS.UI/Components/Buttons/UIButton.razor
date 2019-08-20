@@ -10,10 +10,10 @@ else
     <DefaultButton Model="Model" />
 }
 
-@functions {
+@code {
     [CascadingParameter(Name = "CustomButtons")] protected CustomButtonContainer CustomButtons { get; set; }
 
-    [Parameter] private ButtonUI Button { get; set; }
+    [Parameter] public ButtonUI Button { get; set; }
 
-    [Parameter] private ButtonViewModel Model { get; set; }
+    [Parameter] public ButtonViewModel Model { get; set; }
 }

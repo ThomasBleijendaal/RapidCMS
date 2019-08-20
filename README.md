@@ -77,8 +77,8 @@ services.AddRapidCMS(config =>
             {
                 view.AddRow(row =>
                 {
-                    row.AddProperty(p => p.Id.ToString());
-                    row.AddProperty(p => p.Name);
+                    row.AddField(p => p.Id.ToString());
+                    row.AddField(p => p.Name);
                 });
             });
     });
@@ -181,8 +181,8 @@ config.AddCollection<Person>("person", "Person", collection =>
 
             view.AddRow(row =>
             {
-                row.AddProperty(p => p.Id.ToString()).SetName("ID");
-                row.AddProperty(p => p.Name);
+                row.AddField(p => p.Id.ToString()).SetName("ID");
+                row.AddField(p => p.Name);
 
                 row.AddDefaultButton(DefaultButtonType.Edit);
             });
@@ -365,7 +365,41 @@ defined the collection, is to render the list.
 
 ## Relations
 
-RapidCMS support one-to-many and many-to-many relations between collections, although it requires somewhat more configuration.
+RapidCMS support one-to-many and many-to-many relations between collections, although it requires somewhat more configuration. Let's assume
+the database entities are as follows:
+
+```c#
+public class Person : IEntity
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public string Bio { get; set; }
+
+    string IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value); }
+
+    public ICollection<PersonCountry> Countries { get; set; }
+}
+
+public class PersonCountry
+{
+    public int? CountryId { get; set; }
+    public Country Country { get; set; }
+
+    public int? PersonId { get; set; }
+    public Person Person { get; set; }
+}
+
+public class Country : IEntity
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    
+    string IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value); }
+
+    public ICollection<PersonCountry> Persons { get; set; }
+}
+```
 
 ### One-to-many
 
@@ -373,7 +407,7 @@ In RapidCMS it is possible to create a dropdown which contains all the entities 
 user pick one of the entities. When this entity is saved, the id the picked entity is saved in the property which backed the
 dropdown. For example:
 
-```     c#
+```c#
 editor.AddField(f => f.CountryId)
     .SetType(EditorType.Select)
     .SetCollectionRelation<CountryEntity>("country-collection", relation =>
@@ -424,8 +458,8 @@ editor.AddSection(pane =>
 
 Just as `AddSubCollectionListView`, the configuration for this list is fetched from the `"related-country-collection"` collection. Next
 to that, you are also required to implement `GetAllRelatedAsync`, `GetAllNonRelatedAsync`, `AddAsync`, and `RemoveAsync` methods on
-the *related* repository, so in this case it is the repository of `"related-country-collection"`. Further more, the related collection
-must have a `ListView` *and* a `ListEditor`, by which the list view is used for picking entities, and the list editor for listing the
+the _related_ repository, so in this case it is the repository of `"related-country-collection"`. Further more, the related collection
+must have a `ListView` _and_ a `ListEditor`, by which the list view is used for picking entities, and the list editor for listing the
 related entities. Do not forget to add a `DefaultButtonType.Pick` button on each row in the `ListView`, a `DefaultButtonType.Add` on the
 `ListEditor`, and a `DefaultButtonType.Remove` on each row in the `ListEditor`, to support adding and picking unrelated entities and removing
 related entities.
@@ -442,36 +476,31 @@ code:
 ```c#
 editor.AddEditor(editor =>
 {
-    editor.AddField(f => f.Countries.Select(x => x.CountryId))
+    editor.AddField(f => f.Countries)
         .SetName("Countries")
         .SetType(EditorType.MultiSelect)
-        .SetCollectionRelation<CountryEntity>("country-collection", relation =>
-        {
-            relation
-                .SetElementIdProperty(x => x.Id)
-                .SetElementDisplayProperties(x => x.Name, x => x.Description);
-
-            relation
-                .ValidateRelation((person, related) =>
-                {
-                    if (!related.Count().In(2, 3))
-                    {
-                        return new[] { "Person must have 2 or 3 countries." };
-                    }
-
-                    return default;
-                });
-        });
+        .SetCollectionRelation<CountryEntity, int?>(
+            countries => countries.Select(x => x.CountryId),
+            "country-collection", 
+            relation =>
+            {
+                relation
+                    .SetElementIdProperty(x => x.Id)
+                    .SetElementDisplayProperties(x => x.Name, x => x.Description);
+            });
 });
 ```
 
-This adds a `MultiSelect` editor to the `NodeEditor`, which is like multi-line dropdown, but with a better UX. `SetCollectionRelation` is
-also set for this editor, just as in the one-to-many case. Via `ValidateRelation` is even possible to specify when this editor is valid,
-in this case, when two or three countries are selected.
+This adds a `MultiSelect` editor to the `NodeEditor`, which is like multi-line dropdown, but with a better UX. It is bound to the `Countries` 
+property on `Person`. This allows you to add validation attributes derived from `RelationValidationAttribute` to this property to validate it.
 
-But, in contrast to the one-to-many case, the backing field is an expression which only gets a value, but does not allow setting. 
-`f.Countries.Select(x => x.CountryId)` returns an `IEnumerable<int>` from the join or junction table (`Person.Countries`). In order
-to make it possible to save which entities are selected, the `IRelationContainer` in the `InsertAsync` or `UpdateAsync` methods on
+`SetCollectionRelation` is must be set for this editor, just as in the one-to-many case. This method has three arguments, the first one is another 
+expression for getting the ids of the related elements, so the editor knows which elements are selected. The next argument accepts an alias for
+the collection which provides the related entities, in this case the country collection. The third argument is a lambda which allows you to specify
+how the related elements should be displayed in the editor. 
+
+In contrast to the one-to-many case, the backing field is an expression which only gets a value, but does not allow to set the value.
+In order to make it possible to save which entities are selected, the `IRelationContainer` in the `InsertAsync` or `UpdateAsync` methods on
 the `IRepository` contain the selected entities. An example of how this container can be used can be seen in the following code:
 
 ```c#
@@ -487,16 +516,20 @@ public class PersonRepository
         // get the related entities from the editor by using the type of the related entites, and the type of its id
         var newCountries = relations.GetRelatedElementIdsFor<CountryEntity, int>();
 
-        // remove entities which were related, but deselected by the user
-        foreach (var country in dbEntity.Countries.Where(x => !newCountries.Contains(x.CountryId.Value)).ToList())
+        // check if existed on the editor
+        if (newCountries != null) 
         {
-            dbEntity.Countries.Remove(country);
-        }
+            // remove entities which were related, but deselected by the user
+            foreach (var country in dbEntity.Countries.Where(x => !newCountries.Contains(x.CountryId.Value)).ToList())
+            {
+                dbEntity.Countries.Remove(country);
+            }
 
-        // add entities which are now selected
-        foreach (var countryId in newCountries.Where(id => !dbEntity.Countries.Select(x => x.CountryId.Value).Contains(id)).ToList())
-        {
-            dbEntity.Countries.Add(new PersonCountryEntity { CountryId = countryId });
+            // add entities which are now selected
+            foreach (var countryId in newCountries.Where(id => !dbEntity.Countries.Select(x => x.CountryId.Value).Contains(id)).ToList())
+            {
+                dbEntity.Countries.Add(new PersonCountryEntity { CountryId = countryId });
+            }
         }
 
         _dbContext.Persons.Update(dbEntity);

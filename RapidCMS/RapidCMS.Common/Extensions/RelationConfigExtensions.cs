@@ -17,8 +17,7 @@ namespace RapidCMS.Common.Extensions
                     DisplayProperties = collectionConfig.DisplayProperties,
                     IdProperty = collectionConfig.IdProperty,
                     RepositoryParentIdProperty = collectionConfig.RepositoryParentIdProperty,
-
-                    ValidationFunction = collectionConfig.ValidationFunction
+                    RelatedElementsGetter = collectionConfig.RelatedElementsGetter
                 },
                 DataProviderRelationConfig dataProviderConfig => new DataProviderRelation
                 {

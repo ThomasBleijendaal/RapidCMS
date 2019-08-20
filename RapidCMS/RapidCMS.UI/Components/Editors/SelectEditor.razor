@@ -49,17 +49,29 @@
         </div>
     }
 }
-@functions {
+@code {
 
-    private IEnumerable<IElement>
-    ? Options;
+    private IEnumerable<IElement>? Options;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         if (DataCollection != null)
         {
+            DataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
+
             await DataCollection.SetEntityAsync(Entity);
-            Options = await DataCollection.GetAvailableElementsAsync();
+            await UpdateOptionsAsync();
         }
+    }
+
+    private async Task UpdateOptionsAsync()
+    {
+        if (DataCollection == null)
+        {
+            return;
+        }
+
+        Options = await DataCollection.GetAvailableElementsAsync();
+        StateHasChanged();
     }
 }

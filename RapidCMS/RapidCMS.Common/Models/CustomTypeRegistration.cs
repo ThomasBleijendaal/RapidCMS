@@ -8,7 +8,8 @@ namespace RapidCMS.Common.Models
         internal CustomTypeRegistration(Type type, Dictionary<string, string>? parameters = null)
         {
             Type = type ?? throw new ArgumentNullException(nameof(type));
-            Alias = type.FullName;
+            Alias = type.FullName ?? throw new InvalidOperationException($"The given type ({type}) must have a FullName");
+            ;
             Parameters = parameters;
         }
 

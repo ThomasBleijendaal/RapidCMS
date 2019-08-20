@@ -1,11 +1,11 @@
 ﻿using System;
-
+using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Models
 {
     internal class CustomField : PropertyField
     {
-        internal CustomField(Type customFieldType)
+        public CustomField(IPropertyMetadata property, Type customFieldType) : base(property)
         {
             Alias = customFieldType?.FullName ?? throw new ArgumentNullException(nameof(customFieldType));
         }

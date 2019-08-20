@@ -7,7 +7,7 @@ namespace RapidCMS.Common.Data
 {
     internal class Relation : IRelation
     {
-        public Relation(Type relatedEntity, IPropertyMetadata property, IEnumerable<IRelatedElement> relatedElements)
+        public Relation(Type relatedEntity, IPropertyMetadata property, IReadOnlyList<IElement> relatedElements)
         {
             RelatedEntity = relatedEntity ?? throw new ArgumentNullException(nameof(relatedEntity));
             Property = property ?? throw new ArgumentNullException(nameof(property));
@@ -18,13 +18,11 @@ namespace RapidCMS.Common.Data
 
         public IPropertyMetadata Property { get; private set; }
 
-        // TODO: convert to IReadOnlyList
-        public IEnumerable<IRelatedElement> RelatedElements { get; private set; }
+        public IReadOnlyList<IElement> RelatedElements { get; private set; }
 
-        // TODO: convert to IReadOnlyList
-        public IEnumerable<T> RelatedElementIdsAs<T>()
+        public IReadOnlyList<T> RelatedElementIdsAs<T>()
         {
-            return RelatedElements.Select(x => x.Id).Cast<T>();
+            return RelatedElements.Select(x => x.Id).Cast<T>().ToList();
         }
     }
 }

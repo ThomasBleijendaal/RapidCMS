@@ -10,12 +10,12 @@ else
 {
     <CascadingEditContext EditContext=@RootEditContext>
         <Tabbar Tabs="Tabs" SearchBarVisible="UI.SearchBarVisible" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
-        <Buttonbar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
+        <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
     </CascadingEditContext>
 
     @if (Sections != null && Sections.Any())
     {
-        @if (UI.ListType.In(ListType.TableView, ListType.TableEditor))
+        @if (UI.ListType == ListType.Table)
         {
             var collapseEmptyCells = UI.EmptyVariantColumnVisibility == EmptyVariantColumnVisibility.Collapse;
 
@@ -122,7 +122,7 @@ else
                                                     }
                                                     if (UI.SectionsHaveButtons)
                                                     {
-                                                        <Buttoncell Buttons="section.Buttons" OnButtonClick="NodeButtonOnClickAsync" />
+                                                        <ButtonCell Buttons="section.Buttons" OnButtonClick="NodeButtonOnClickAsync" />
                                                     }
                                                 }
                                             </tr>
@@ -139,11 +139,11 @@ else
                            OnPageChanged="@PageChangedAsync" />
             </div>
         }
-        else if (UI.ListType == ListType.BlockEditor)
+        else if (UI.ListType == ListType.Block)
         {
-            @foreach (var (context, sections) in Sections)
-            {
-                <div class="content">
+            <div class="content">
+                @foreach (var (context, sections) in Sections)
+                {
                     <div class="nested-content">
                         <CascadingEditContext EditContext=@context>
 
@@ -154,26 +154,24 @@ else
                                     continue;
                                 }
 
-                                <Buttonbar Buttons="section.Buttons" OnButtonClick="NodeButtonOnClickAsync" />
-
                                 if (!string.IsNullOrEmpty(section.CustomAlias))
                                 {
                                     @CustomSections.GetCustomSection(section.CustomAlias, section);
                                 }
                                 else
                                 {
-                                    <BlockSection Section="section" />
+                                    <BlockSection Section="section" OnButtonClick="NodeButtonOnClickAsync" />
                                 }
                             }
                         </CascadingEditContext>
                     </div>
-                </div>
-            }
+                }
 
-            <div class="content">
-                <Paginator CurrentPage="@CurrentPage"
-                           MaxPage="@MaxPage"
-                           OnPageChanged="@PageChangedAsync" />
+                <div class="content">
+                    <Paginator CurrentPage="@CurrentPage"
+                               MaxPage="@MaxPage"
+                               OnPageChanged="@PageChangedAsync" />
+                </div>
             </div>
         }
     }
@@ -195,7 +193,7 @@ else
 }
 @code {
 
-    [Parameter] private IEntity RelatedEntity { get; set; }
+    [Parameter] public IEntity RelatedEntity { get; set; }
 
     [Inject] private IEditContextService EditContextService { get; set; }
     [Inject] private IEditorService EditorService { get; set; }
@@ -322,7 +320,7 @@ else
         {
             if (reloadEntityIds.Contains(x.editContext.Entity.Id))
             {
-                var reloadedEditContext = await EditContextService.GetEntityAsync(GetUsageType(), CollectionAlias, null, null, x.editContext.Entity.Id);
+                var reloadedEditContext = await EditContextService.GetEntityAsync(x.editContext.UsageType, CollectionAlias, null, null, x.editContext.Entity.Id);
                 return (reloadedEditContext, await UI.GetSectionsForEditContextAsync(reloadedEditContext));
             }
             else
@@ -371,7 +369,7 @@ else
                 throw new InvalidOperationException("UI is null");
             }
 
-            var command = await EditContextService.ProcessRelationActionAsync(GetUsageType(), CollectionAlias, RelatedEntity, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
+            var command = await EditContextService.ProcessRelationActionAsync(args.EditContext.UsageType, CollectionAlias, RelatedEntity, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }

@@ -42,6 +42,7 @@ namespace RapidCMS.Common.Authorization
             {
                 UsageType.Add => Add,
                 UsageType.Edit => Update,
+                UsageType.Edit | UsageType.Node => Update,
                 UsageType.List => Read,
                 UsageType.New => Create,
                 UsageType.Node => Update,

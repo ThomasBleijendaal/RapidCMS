@@ -2,8 +2,7 @@
 {
     public enum ListType
     {
-        TableView = 0,
-        TableEditor = 1,
-        BlockEditor = 2
+        Table = 0,
+        Block = 1
     }
 }

@@ -22,11 +22,11 @@ namespace RapidCMS.UI.Components.Pages
 
         [CascadingParameter(Name = "CustomSections")] protected CustomSectionContainer CustomSections { get; set; }
 
-        [Parameter] protected string Action { get; set; }
-        [Parameter] protected string CollectionAlias { get; set; }
-        [Parameter] protected string VariantAlias { get; set; }
-        [Parameter] protected string? ParentId { get; set; } = null;
-        [Parameter] protected string? Id { get; set; } = null;
+        [Parameter] public string Action { get; set; }
+        [Parameter] public string CollectionAlias { get; set; }
+        [Parameter] public string VariantAlias { get; set; }
+        [Parameter] public string? ParentId { get; set; } = null;
+        [Parameter] public string? Id { get; set; } = null;
 
         protected async Task HandleViewCommandAsync(ViewCommand command)
         {
@@ -96,7 +96,7 @@ namespace RapidCMS.UI.Components.Pages
                             data.Add("ParentId", parameterCommand.ParentId);
                         }
 
-                        var update = ParameterCollection.FromDictionary(data);
+                        var update = ParameterView.FromDictionary(data);
                         await SetParametersAsync(update);
 
                         break;
@@ -108,6 +108,9 @@ namespace RapidCMS.UI.Components.Pages
 
                     case NoOperationCommand _:
                     default:
+
+                        StateHasChanged();
+
                         break;
                 }
             }

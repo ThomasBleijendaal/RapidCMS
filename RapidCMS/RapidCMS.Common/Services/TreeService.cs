@@ -12,20 +12,17 @@ using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
 
-
 namespace RapidCMS.Common.Services
 {
     internal class TreeService : ITreeService
     {
         private readonly Root _root;
-        private readonly IServiceProvider _serviceProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationService _authorizationService;
 
-        public TreeService(Root root, IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
+        public TreeService(Root root, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
         {
             _root = root;
-            _serviceProvider = serviceProvider;
             _httpContextAccessor = httpContextAccessor;
             _authorizationService = authorizationService;
         }
@@ -98,7 +95,7 @@ namespace RapidCMS.Common.Services
                         node.Path = UriHelper.Node(Constants.Edit, collection.Alias, entityVariant, parentId, entity.Id);
                     }
                     else
-                    { 
+                    {
                         var viewAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
                             _httpContextAccessor.HttpContext.User,
                             entity,
@@ -117,6 +114,12 @@ namespace RapidCMS.Common.Services
             {
                 return new List<TreeNodeUI>();
             }
+        }
+
+        public IDisposable SubscribeToUpdates(string alias, Func<Task> asyncCallback)
+        {
+            var collection = _root.GetCollection(alias);
+            return collection.Repository.ChangeToken.RegisterChangeCallback((x) => asyncCallback.Invoke(), null);
         }
 
         public TreeRootUI GetRoot()

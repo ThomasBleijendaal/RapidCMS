@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using RapidCMS.Common.Attributes;
+using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Data
@@ -9,19 +11,23 @@ namespace RapidCMS.Common.Data
     internal class CollectionDataValidator : IRelationValidator
     {
         private readonly IPropertyMetadata _property;
-        private readonly Func<IEntity, IEnumerable<IRelatedElement>, IEnumerable<string>?> _validationFunction;
 
-        public CollectionDataValidator(IPropertyMetadata property, Func<IEntity, IEnumerable<IRelatedElement>, IEnumerable<string>?> validationFunction)
+        public CollectionDataValidator(IPropertyMetadata property)
         {
             _property = property;
-            _validationFunction = validationFunction ?? throw new ArgumentNullException(nameof(validationFunction));
         }
 
-        public IEnumerable<ValidationResult> Validate(IEntity entity, IEnumerable<IRelatedElement> relatedElements)
+        public IEnumerable<ValidationResult> Validate(IEntity entity, IEnumerable<IElement> relatedElements, IServiceProvider serviceProvider)
         {
-            return _validationFunction.Invoke(entity, relatedElements)?
-                .Select(validationMessage => new ValidationResult(validationMessage, new[] { _property.PropertyName }))
-                ?? Enumerable.Empty<ValidationResult>();
+            var validationAttributes = _property.GetAttributes<RelationValidationAttribute>();
+            var validationContext = new ValidationContext(entity, serviceProvider, default)
+            {
+                MemberName = _property.PropertyName
+            };
+
+            return validationAttributes
+                .Select(attr => attr.IsValid(entity, relatedElements, validationContext))
+                .WhereAs(result => result as ValidationResult);
         }
     }
 }

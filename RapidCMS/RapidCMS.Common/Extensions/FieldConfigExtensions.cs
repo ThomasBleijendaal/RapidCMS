@@ -1,4 +1,5 @@
-﻿using RapidCMS.Common.Enums;
+﻿using System;
+using RapidCMS.Common.Enums;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 
@@ -10,14 +11,13 @@ namespace RapidCMS.Common.Extensions
         {
             if (field.Type == EditorType.Custom)
             {
-                return new CustomField(field.CustomType)
+                return new CustomField(field.Property!, field.CustomType)
                 {
                     Index = field.Index,
 
                     DataType = field.Type,
                     Description = field.Description,
                     Name = field.Name,
-                    Property = field.Property,
                     Readonly = field.Readonly,
                     IsVisible = field.IsVisible,
 
@@ -26,19 +26,38 @@ namespace RapidCMS.Common.Extensions
             }
             else
             {
-                return new PropertyField
+                if (field.Property != null)
                 {
-                    Index = field.Index,
+                    return new PropertyField(field.Property)
+                    {
+                        Index = field.Index,
 
-                    DataType = field.Type,
-                    Description = field.Description,
-                    Name = field.Name,
-                    Property = field.Property,
-                    Readonly = field.Readonly,
-                    IsVisible = field.IsVisible,
+                        DataType = field.Type,
+                        Description = field.Description,
+                        Name = field.Name,
+                        Readonly = field.Readonly,
+                        IsVisible = field.IsVisible,
 
-                    Relation = field.Relation?.ToRelation()
-                };
+                        Relation = field.Relation?.ToRelation()
+                    };
+                }
+                else if (field.Expression != null)
+                {
+                    return new ExpressionField(field.Expression)
+                    {
+                        Index = field.Index,
+
+                        Description = field.Description,
+                        Name = field.Name,
+
+                        Readonly = true,
+                        IsVisible = field.IsVisible
+                    };
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
             }
         }
     }

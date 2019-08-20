@@ -16,7 +16,7 @@
 else
 {
     <CascadingEditContext EditContext=@EditContext>
-        <Buttonbar Buttons="Buttons" OnButtonClick="ButtonOnClickAsync" />
+        <ButtonBar Buttons="Buttons" OnButtonClick="ButtonOnClickAsync" />
 
         @if (Sections != null)
         {
@@ -28,7 +28,7 @@ else
                 }
                 else
                 {
-                    <BlockSection Section="section" />
+                    <BlockSection Section="section" OnButtonClick="ButtonOnClickAsync" />
                 }
             }
         }

@@ -9,12 +9,14 @@ namespace RapidCMS.Common.Models
 {
     public class Collection
     {
-        public Collection(string name, string alias, EntityVariant entityVariant, Type repositoryType, bool isRecursive = false)
+        private IRepository? _repository;
+
+        public Collection(string name, string alias, EntityVariant entityVariant, Type? repositoryType, bool isRecursive = false)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
             EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
-            RepositoryType = repositoryType ?? throw new ArgumentNullException(nameof(repositoryType));
+            RepositoryType = repositoryType;
 
             Recursive = isRecursive;
         }
@@ -28,10 +30,10 @@ namespace RapidCMS.Common.Models
         internal List<EntityVariant>? SubEntityVariants { get; set; }
         internal EntityVariant EntityVariant { get; private set; }
 
-        internal List<IDataView> DataViews { get; set; }
+        internal List<IDataView>? DataViews { get; set; }
         internal Type? DataViewBuilder { get; set; }
 
-        internal EntityVariant GetEntityVariant(string? alias)
+        internal EntityVariant GetEntityVariant(string alias)
         {
             if (string.IsNullOrWhiteSpace(alias) || SubEntityVariants == null)
             {
@@ -52,7 +54,7 @@ namespace RapidCMS.Common.Models
         {
             if (DataViewBuilder == null)
             {
-                return Task.FromResult((IEnumerable<IDataView>)DataViews);
+                return Task.FromResult(DataViews ?? Enumerable.Empty<IDataView>());
             }
             else
             {
@@ -63,11 +65,11 @@ namespace RapidCMS.Common.Models
 
         internal async Task ProcessDataViewAsync(Query query, IServiceProvider serviceProvider)
         {
-            if (DataViewBuilder != null || DataViews.Count > 0)
+            if (DataViewBuilder != null || DataViews?.Count > 0)
             {
                 var dataViews = await GetDataViewsAsync(serviceProvider);
 
-                var dataView = dataViews.FirstOrDefault(x => x.Id == query.ActiveTab) 
+                var dataView = dataViews.FirstOrDefault(x => x.Id == query.ActiveTab)
                     ?? dataViews.FirstOrDefault();
 
                 if (dataView != null)
@@ -77,15 +79,29 @@ namespace RapidCMS.Common.Models
             }
         }
 
-        internal Type RepositoryType { get; private set; }
-        internal IRepository Repository { get; set; }
+        internal Type? RepositoryType { get; private set; }
+        internal IRepository Repository
+        {
+            get => _repository ?? throw new InvalidOperationException($"The collection {Name} ({Alias}) requires a Repository. Use SetRepository before using the collection.");
+            set => _repository = value;
+        }
 
         internal TreeView? TreeView { get; set; }
 
-        internal ListView? ListView { get; set; }
-        internal ListEditor? ListEditor { get; set; }
+        internal List? ListView { get; set; }
+        internal List? ListEditor { get; set; }
 
         internal Node? NodeView { get; set; }
         internal Node? NodeEditor { get; set; }
+
+        internal Button? FindButton(string buttonId)
+        {
+            return ListView?.GetAllButtons()
+                .MergeAll(
+                    ListEditor?.GetAllButtons(),
+                    NodeView?.GetAllButtons(),
+                    NodeEditor?.GetAllButtons())
+                .FirstOrDefault(x => x.ButtonId == buttonId);
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
 namespace RapidCMS.Common.Models
 {
     internal class Pane

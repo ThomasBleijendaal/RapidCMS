@@ -31,7 +31,7 @@
                         </label>
                     </div>
                     @foreach (var label in option.Labels.Skip(1))
-                            {
+                    {
                         <div class="col">
                             <label class="form-check-label" for="@group-option@(index)">
                                 @label
@@ -51,20 +51,33 @@
         </div>
     }
 }
-@functions {
+@code {
 
     private IEnumerable<IElement>? Options;
     private IEnumerable<IElement>? SelectedOptions;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         if (RelationDataCollection != null)
         {
-            await RelationDataCollection.SetRelationMetadataAsync(Entity, Property);
+            RelationDataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
 
-            Options = await RelationDataCollection.GetAvailableElementsAsync();
+            await RelationDataCollection.SetEntityAsync(Entity);
+            await UpdateOptionsAsync();
+
             SelectedOptions = await RelationDataCollection.GetRelatedElementsAsync();
         }
+    }
+
+    private async Task UpdateOptionsAsync()
+    {
+        if (RelationDataCollection == null)
+        {
+            return;
+        }
+
+        Options = await RelationDataCollection.GetAvailableElementsAsync();
+        StateHasChanged();
     }
 
     private async Task OnChangeAsync(UIChangeEventArgs e, object value)

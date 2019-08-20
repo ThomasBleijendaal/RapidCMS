@@ -33,12 +33,13 @@ namespace RapidCMS.Common.Extensions
         public static void ForEach<TSource>(this IEnumerable<TSource> source, Action<TSource> action)
         {
             foreach (var element in source)
-            { 
+            {
                 action.Invoke(element);
             }
         }
 
         public static IEnumerable<TValue> GetCommonValues<TKey, TValue>(this IDictionary<TKey, IEnumerable<TValue>> dictionary, IEqualityComparer<TValue> equalityComparer)
+            where TKey : notnull
         {
             return dictionary.SelectMany(x => x.Value).Where(x => dictionary.Values.All(v => v.Contains(x, equalityComparer))).Distinct(equalityComparer);
         }
@@ -53,6 +54,14 @@ namespace RapidCMS.Common.Extensions
                     yield return result;
                 }
             }
+        }
+
+        public static IEnumerable<T> MergeAll<T>(this IEnumerable<T>? source, params IEnumerable<T>?[] sources)
+            where T : class
+        {
+            return sources
+                .Where(x => x != null)
+                .Aggregate(source ?? Enumerable.Empty<T>(), (x, s) => x.Union(s));
         }
 
         public class Group<TKey, TElement> : IGrouping<TKey, TElement>

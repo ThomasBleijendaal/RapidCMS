@@ -145,6 +145,7 @@ namespace TestServer
             services.AddScoped<AzureTableStorageRepository>();
 
             services.AddTransient<CreateButtonActionHandler>();
+            services.AddTransient<TogglePropertyButtonActionHandler>();
 
             services.AddTransient<DummyDataProvider>();
 
@@ -158,6 +159,7 @@ namespace TestServer
                 config.AllowAnonymousUser();
 
                 config.AddCustomButton(typeof(CreateButton));
+                config.AddCustomButton(typeof(DoItButton));
                 config.AddCustomEditor(typeof(PasswordEditor));
                 config.AddCustomEditor(typeof(UploadEditor));
                 config.AddCustomSection(typeof(DashboardSection));
@@ -182,13 +184,13 @@ namespace TestServer
                             list.AddDefaultButton(DefaultButtonType.New);
                             list.AddRow(pane =>
                             {
-                                pane.AddProperty(p => p.Name)
+                                pane.AddField(p => p.Name)
                                     .VisibleWhen(f => f.Accept);
                                 pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                             });
                         })
-                        .SetListEditor(ListEditorType.Table, listEditor =>
+                        .SetListEditor(ListType.Table, listEditor =>
                         {
                             listEditor.SetSearchBarVisibility(false);
 
@@ -202,29 +204,35 @@ namespace TestServer
                                 editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                                 editor.AddDefaultButton(DefaultButtonType.Delete);
 
-                                editor.AddField(f => f.Name);
-                                editor.AddField(f => f.NotRequired);
-                                editor.AddField(f => f.Range)
-                                    .SetName("Range Setting");
-                                editor.AddField(f => f.Accept)
-                                    .SetName("Accept this");
-                                editor.AddField(f => f.Textarea)
-                                    .VisibleWhen(f => f.Accept)
-                                    .SetType(EditorType.TextArea);
-                                editor.AddField(f => f.Enum)
-                                    .SetType(EditorType.Dropdown)
-                                    .SetDataCollection<EnumDataProvider<TestEnum>>();
+                                //editor.AddField(f => f.Name);
+                                //editor.AddField(f => f.NotRequired);
+                                //editor.AddField(f => f.Range)
+                                //    .SetName("Range Setting");
+
+                                editor.AddField(f => f.CountryId)
+                                    .SetType(EditorType.Select)
+                                    .SetCollectionRelation<CountryEntity>("country-collection", relation =>
+                                    {
+                                        relation
+                                            .SetElementIdProperty(x => x._Id)
+                                            .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
+
+                                    });
                             });
                         })
                         .SetNodeView(view =>
                         {
                             view.AddSection(pane =>
                             {
-                                pane.AddProperty(f => f.Name);
-                                pane.AddProperty(f => f.Dummy)
+                                pane.SetLabel("THIS IS A LABEL");
+
+                                pane.AddDefaultButton(DefaultButtonType.Delete);
+
+                                pane.AddField(f => f.Name);
+                                pane.AddField(f => f.Dummy)
                                     .VisibleWhen(f => f.Name == "Country123");
 
-                                pane.AddSubCollectionListView<CountryEntity>("country-collection");
+                                pane.AddSubCollectionList<CountryEntity>("country-collection");
                             });
                         })
                         .SetNodeEditor(editor =>
@@ -234,6 +242,8 @@ namespace TestServer
                             editor.AddDefaultButton(DefaultButtonType.Delete);
                             editor.AddSection(pane =>
                             {
+                                pane.AddCustomButton<TogglePropertyButtonActionHandler>(typeof(DoItButton));
+
                                 pane.AddField(f => f.Name);
                                 pane.AddField(f => f.Date);
                                 pane.AddField(f => f.Dummy).SetType(typeof(UploadEditor));
@@ -248,6 +258,10 @@ namespace TestServer
                             });
                             editor.AddSection(pane =>
                             {
+                                pane.SetLabel("THIS IS A LABEL");
+
+                                pane.AddDefaultButton(DefaultButtonType.Delete);
+
                                 pane.VisibleWhen(x => x.Accept);
 
                                 pane.AddField(f => f.Enum)
@@ -264,6 +278,8 @@ namespace TestServer
                                             .SetRepositoryParentIdProperty(x => x.Id);
 
                                     });
+
+                                pane.AddSubCollectionList<CountryEntity>("country-collection");
                             });
                         })
                         .AddSelfAsRecursiveCollection();
@@ -283,11 +299,11 @@ namespace TestServer
                             list.AddDefaultButton(DefaultButtonType.Return);
                             list.AddRow(pane =>
                             {
-                                pane.AddProperty(p => p.Name);
+                                pane.AddField(p => p.Name);
                                 pane.AddDefaultButton(DefaultButtonType.Pick);
                             });
                         })
-                        .SetListEditor(ListEditorType.Table, list =>
+                        .SetListEditor(ListType.Table, list =>
                         {
                             list.SetPageSize(3);
 
@@ -317,7 +333,7 @@ namespace TestServer
                             list.AddDefaultButton(DefaultButtonType.New);
                             list.AddRow(pane =>
                             {
-                                pane.AddProperty(p => p.Name);
+                                pane.AddField(p => p.Name);
                                 pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                             });
@@ -327,7 +343,7 @@ namespace TestServer
                             //});
                             // list.AddRow(typeof(DashboardSection), config => { });
                         })
-                        .SetListEditor(ListEditorType.Table, list =>
+                        .SetListEditor(ListType.Table, list =>
                         {
                             list.AddDefaultButton(DefaultButtonType.New);
                             list.AddDefaultButton(DefaultButtonType.SaveExisting, "Update all");
@@ -347,7 +363,7 @@ namespace TestServer
                             editor.AddDefaultButton(DefaultButtonType.Delete);
                             editor.AddSection(pane =>
                             {
-                                pane.AddProperty(f => f.Name);
+                                pane.AddField(f => f.Name);
                             });
                             // editor.AddSection(typeof(BlockSection), config => { });
                         })
@@ -409,7 +425,7 @@ namespace TestServer
                             view.AddDefaultButton(DefaultButtonType.New);
                             view.AddRow(pane =>
                             {
-                                pane.AddProperty(p => p.Name);
+                                pane.AddField(p => p.Name);
                                 
                                 pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
@@ -423,9 +439,9 @@ namespace TestServer
                             editor.AddDefaultButton(DefaultButtonType.Delete);
                             editor.AddSection(pane =>
                             {
-                                pane.AddProperty(f => f.Name);
+                                pane.AddField(f => f.Name);
 
-                                pane.AddRelatedCollectionListView<CountryEntity>("related-country-collection");
+                                pane.AddRelatedCollectionList<CountryEntity>("related-country-collection");
                             });
                         })
                         .SetNodeEditor(editor =>
@@ -439,28 +455,54 @@ namespace TestServer
                             });
                             editor.AddSection(pane =>
                             {
-                                pane.AddRelatedCollectionListEditor<CountryEntity>("related-country-collection");
+                                //pane.AddRelatedCollectionList<CountryEntity>("related-country-collection");
 
-                                //pane.AddField(f => f.Countries.Select(x => x.CountryId))
-                                //    .SetName("Countries")
-                                //    .SetType(EditorType.MultiSelect)
-                                //    .SetCollectionRelation<CountryEntity>("related-country-collection", relation =>
-                                //    {
-                                //        relation
-                                //            .SetElementIdProperty(x => x._Id)
-                                //            .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
+                                pane.AddField(f => f.Countries)
+                                    .SetName("Countries")
+                                    .SetType(EditorType.MultiSelect)
+                                    .SetCollectionRelation<CountryEntity, int?>(
+                                        countries => countries.Select(x => x.CountryId),
+                                        "related-country-collection", 
+                                        relation =>
+                                        {
+                                            relation
+                                                .SetElementIdProperty(x => x._Id)
+                                                .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
 
-                                //        relation
-                                //            .ValidateRelation((person, related) =>
-                                //            {
-                                //                if (!related.Count().In(2, 3))
-                                //                {
-                                //                    return new[] { "Person must have 2 or 3 countries." };
-                                //                }
+                                            //relation
+                                            //    .ValidateRelation((person, related) =>
+                                            //    {
+                                            //        if (!related.Count().In(2, 3))
+                                            //        {
+                                            //            return new[] { "Person must have 2 or 3 countries." };
+                                            //        }
 
-                                //                return default;
-                                //            });
-                                //    });
+                                            //        return default;
+                                            //    });
+                                        });
+                            });
+                        });
+                });
+
+                config.AddCollection<PersonEntity>("person-nested-editor-collection", "Persons (list)", collection =>
+                {
+                    collection
+                        .SetRepository<PersonRepository>()
+                        .SetTreeView(EntityVisibilty.Hidden)
+                        .SetListEditor(ListType.Block, editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.New);
+
+                            editor.AddSection(pane =>
+                            {
+                                pane.AddDefaultButton(DefaultButtonType.Delete);
+                                pane.AddDefaultButton(DefaultButtonType.SaveNew);
+                                pane.AddDefaultButton(DefaultButtonType.SaveExisting);
+
+                                pane.AddField(p => p.Name);
+                            
+                                pane.AddRelatedCollectionList<CountryEntity>("related-country-collection");
+
                             });
                         });
                 });
@@ -648,9 +690,9 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
                     .AddRow(pane =>
                     {
-                        pane.AddProperty(x => x._Id.ToString()).SetName("Id");
-                        pane.AddProperty(x => x.Name).SetDescription("This is a name");
-                        pane.AddProperty(x => x.Description).SetDescription("This is a description");
+                        pane.AddField(x => x._Id.ToString()).SetName("Id");
+                        pane.AddField(x => x.Name).SetDescription("This is a name");
+                        pane.AddField(x => x.Description).SetDescription("This is a description");
                         pane.AddDefaultButton(DefaultButtonType.View, string.Empty);
                         pane.AddDefaultButton(DefaultButtonType.Edit, string.Empty);
 
@@ -663,9 +705,9 @@ namespace TestServer
                     .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
                     .AddRow(pane =>
                     {
-                        pane.AddProperty(x => x._Id.ToString()).SetName("Id");
-                        pane.AddProperty(x => x.Name).SetDescription("This is a name");
-                        pane.AddProperty(x => x.Description).SetDescription("This is a description");
+                        pane.AddField(x => x._Id.ToString()).SetName("Id");
+                        pane.AddField(x => x.Name).SetDescription("This is a name");
+                        pane.AddField(x => x.Description).SetDescription("This is a description");
                         pane.AddDefaultButton(DefaultButtonType.View, string.Empty);
                         pane.AddDefaultButton(DefaultButtonType.Edit, string.Empty);
 
@@ -780,12 +822,12 @@ namespace TestServer
 
                     .AddSection(pane =>
                     {
-                        pane.AddSubCollectionListEditor<TestEntity>("sub-collection-1");
+                        pane.AddSubCollectionList<TestEntity>("sub-collection-1");
                     })
 
                     .AddSection(pane =>
                     {
-                        pane.AddSubCollectionListEditor<TestEntity>("sub-collection-2");
+                        pane.AddSubCollectionList<TestEntity>("sub-collection-2");
                     });
             }
 
@@ -815,7 +857,7 @@ namespace TestServer
 
                     .AddSection(pane =>
                     {
-                        pane.AddSubCollectionListEditor<TestEntity>("sub-collection-3");
+                        pane.AddSubCollectionList<TestEntity>("sub-collection-3");
                     });
             }
 
@@ -955,11 +997,11 @@ namespace TestServer
 
                 config.AddRow(listPaneConfig =>
                 {
-                    listPaneConfig.AddProperty(x => x.Id);
-                    listPaneConfig.AddProperty(x => x.Title);
-                    listPaneConfig.AddProperty(x => x.Description);
-                    listPaneConfig.AddProperty(x => x.Password);
-                    listPaneConfig.AddProperty(x => x.Destroy == true ? "True" : x.Destroy == false ? "False" : "Null")
+                    listPaneConfig.AddField(x => x.Id);
+                    listPaneConfig.AddField(x => x.Title);
+                    listPaneConfig.AddField(x => x.Description);
+                    listPaneConfig.AddField(x => x.Password);
+                    listPaneConfig.AddField(x => x.Destroy == true ? "True" : x.Destroy == false ? "False" : "Null")
                         .SetName("Destroy");
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);

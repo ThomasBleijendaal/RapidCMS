@@ -11,7 +11,7 @@
     </div>
 </div>
 
-@functions {
+@code {
     private int NumberOfItems { get; set; } = 1;
 
     private async void CreateAsync()
@@ -19,10 +19,5 @@
         await ButtonClickAsync(NumberOfItems);
 
         NumberOfItems = 1;
-    }
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
     }
 }

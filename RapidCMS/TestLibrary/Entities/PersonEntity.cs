@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using RapidCMS.Common.Data;
+using TestLibrary.Validation;
 
 namespace TestLibrary.Entities
 {
@@ -18,6 +17,7 @@ namespace TestLibrary.Entities
         [MaxLength(20)]
         public string Name { get; set; }
 
+        [PersonCountryValiation]
         public ICollection<PersonCountryEntity> Countries { get; set; }
 
         [NotMapped]

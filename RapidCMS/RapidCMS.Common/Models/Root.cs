@@ -9,8 +9,7 @@ using RapidCMS.Common.Models.Config;
 namespace RapidCMS.Common.Models
 {
     // TODO: not really a model
-    // TODO: fix nullables
-
+    
     public class Root
     {
         private readonly IServiceProvider _serviceProvider;
@@ -63,7 +62,10 @@ namespace RapidCMS.Common.Models
                     throw new InvalidOperationException($"Duplicate collection alias '{collection.Alias}' not allowed.");
                 }
 
-                collection.Repository = (IRepository)serviceProvider.GetRequiredService(collection.RepositoryType);
+                if (collection.RepositoryType != null)
+                {
+                    collection.Repository = (IRepository)serviceProvider.GetRequiredService(collection.RepositoryType);
+                }
 
                 FindRepositoryForCollections(serviceProvider, collection.Collections);
             }
