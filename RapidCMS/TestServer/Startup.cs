@@ -425,6 +425,7 @@ namespace TestServer
                             view.AddDefaultButton(DefaultButtonType.New);
                             view.AddRow(pane =>
                             {
+                                pane.AddDefaultButton(DefaultButtonType.New);
                                 pane.AddField(p => p.Name);
                                 
                                 pane.AddDefaultButton(DefaultButtonType.View);

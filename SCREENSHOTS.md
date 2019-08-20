@@ -36,3 +36,11 @@ possible to have authentication based on Identity, or use something like Azure A
 
 Data views can be generated dynamically, so next to having fixed, hard-coded data views, 
 generate the required tabs using a `DataViewBuilder`.
+
+## We heard you like lists
+
+![WCC](docs/images/screen6.png)
+
+So its possible to put lists inside your list, and if you want, go even deeper than that.
+This screenshots displays a ListEditor, table style, incorporated inside a ListEditor block style.
+It does tend to become a bit crowded, but determining how far you want to go is totally up to you.
