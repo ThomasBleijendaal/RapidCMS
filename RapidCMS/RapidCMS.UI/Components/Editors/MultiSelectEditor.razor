@@ -51,25 +51,21 @@
         </div>
     }
 }
-@functions {
+@code {
 
     private IEnumerable<IElement>? Options;
     private IEnumerable<IElement>? SelectedOptions;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         if (RelationDataCollection != null)
         {
-            // TODO: this should not be needed
-            if (SelectedOptions == null)
-            {
-                RelationDataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
+            RelationDataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
 
-                await RelationDataCollection.SetEntityAsync(Entity);
-                await UpdateOptionsAsync();
+            await RelationDataCollection.SetEntityAsync(Entity);
+            await UpdateOptionsAsync();
 
-                SelectedOptions = await RelationDataCollection.GetRelatedElementsAsync();
-            }
+            SelectedOptions = await RelationDataCollection.GetRelatedElementsAsync();
         }
     }
 

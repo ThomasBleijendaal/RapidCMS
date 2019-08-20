@@ -11,7 +11,7 @@
         @if (Section.Buttons != null && Section.Buttons.Any())
         {
             <div class="nested-buttons">
-                <Buttonbar Buttons="Section.Buttons" OnButtonClick="@OnButtonClick" />
+                <ButtonBar Buttons="Section.Buttons" OnButtonClick="@OnButtonClick" />
             </div>
         }
 
@@ -66,5 +66,5 @@
 }
 
 @code {
-    [Parameter] EventHandler<ButtonClickEventArgs> OnButtonClick { get; set; }
+    [Parameter] public EventHandler<ButtonClickEventArgs> OnButtonClick { get; set; }
 }

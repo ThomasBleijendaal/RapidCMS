@@ -13,6 +13,6 @@
 
 
 @code {
-    [Parameter] IEnumerable<ButtonUI>? Buttons { get; set; }
-    [Parameter] EventHandler<ButtonClickEventArgs> OnButtonClick { get; set; }
+    [Parameter] public IEnumerable<ButtonUI>? Buttons { get; set; }
+    [Parameter] public EventHandler<ButtonClickEventArgs> OnButtonClick { get; set; }
 }

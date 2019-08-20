@@ -19,7 +19,7 @@
 </nav>
 
 @code  {
-    [Parameter] private int CurrentPage { get; set; }
-    [Parameter] private int? MaxPage { get; set; }
-    [Parameter] private EventCallback<int> OnPageChanged { get; set; }
+    [Parameter] public int CurrentPage { get; set; }
+    [Parameter] public int? MaxPage { get; set; }
+    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
 }

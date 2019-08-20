@@ -33,7 +33,7 @@ namespace RapidCMS.Common.Models
         internal List<IDataView>? DataViews { get; set; }
         internal Type? DataViewBuilder { get; set; }
 
-        internal EntityVariant GetEntityVariant(string? alias)
+        internal EntityVariant GetEntityVariant(string alias)
         {
             if (string.IsNullOrWhiteSpace(alias) || SubEntityVariants == null)
             {
@@ -93,5 +93,15 @@ namespace RapidCMS.Common.Models
 
         internal Node? NodeView { get; set; }
         internal Node? NodeEditor { get; set; }
+
+        internal Button? FindButton(string buttonId)
+        {
+            return ListView?.GetAllButtons()
+                .MergeAll(
+                    ListEditor?.GetAllButtons(),
+                    NodeView?.GetAllButtons(),
+                    NodeEditor?.GetAllButtons())
+                .FirstOrDefault(x => x.ButtonId == buttonId);
+        }
     }
 }

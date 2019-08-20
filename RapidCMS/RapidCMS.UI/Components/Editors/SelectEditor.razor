@@ -49,12 +49,11 @@
         </div>
     }
 }
-@functions {
+@code {
 
-    private IEnumerable<IElement>
-    ? Options;
+    private IEnumerable<IElement>? Options;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         if (DataCollection != null)
         {

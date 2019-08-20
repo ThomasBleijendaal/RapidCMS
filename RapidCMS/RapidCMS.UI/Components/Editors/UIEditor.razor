@@ -72,21 +72,19 @@
     }
 }
 
-@functions {
+@code {
     [CascadingParameter(Name = "CustomEditors")]
     protected CustomEditorContainer CustomEditors { get; set; }
 
-    [Parameter]
-    private FieldUI? Field { get; set; }
+    [Parameter] public FieldUI? Field { get; set; }
 
     private CustomPropertyFieldUI CustomField => (CustomPropertyFieldUI)Field;
     private PropertyFieldUI PropertyField => (PropertyFieldUI)Field;
 
-    [Parameter]
-    private IEntity? Entity { get; set; }
+    [Parameter] public IEntity? Entity { get; set; }
 
-    protected override void OnInit()
+    protected override void OnInitialized()
     {
-        base.OnInit();
+        base.OnInitialized();
     }
 }

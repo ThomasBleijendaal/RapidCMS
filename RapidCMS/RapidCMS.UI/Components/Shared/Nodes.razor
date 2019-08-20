@@ -26,18 +26,18 @@
     </ul>
 }
 
-@functions {
+@code {
 
     List<TreeNodeUI>? UI;
 
-    protected override async Task OnInitAsync()
+    protected override async Task OnInitializedAsync()
     {
         UI = await TreeService.GetNodesAsync(CollectionAlias, ParentId);
     }
 
     protected override async Task OnNodesUpdateAsync()
     {
-        await OnInitAsync();
+        await OnInitializedAsync();
         StateHasChanged();
     }
 }

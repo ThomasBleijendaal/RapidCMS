@@ -25,17 +25,15 @@
     </ul>
 </div>
 
-@functions {
+@code {
 
     TreeRootUI? TreeRoot;
 
     [CascadingParameter(Name = "CustomLogin")]
     private RenderFragment? CustomLogin { get; set; }
 
-    protected override void OnInit()
+    protected override void OnInitialized()
     {
-        base.OnInit();
-
         UriHelper.OnLocationChanged += LocationChanged;
         
         TreeRoot = TreeService.GetRoot();

@@ -58,7 +58,6 @@ namespace RapidCMS.Common.Data
 
             if (_relatedElementsGetter != null)
             {
-
                 var data = _relatedElementsGetter.Getter(_property.Getter(entity));
 
                 if (data is ICollection<IEntity> entityCollection)

@@ -10,7 +10,7 @@ namespace RapidCMS.UI.Components
         [CascadingParameter(Name = "EditContext")] private EditContext CascadedEditContext { get; set; }
         protected EditContext EditContext { get; set; }
 
-        public override Task SetParametersAsync(ParameterCollection parameters)
+        public override Task SetParametersAsync(ParameterView parameters)
         {
             parameters.SetParameterProperties(this);
 
@@ -34,7 +34,7 @@ namespace RapidCMS.UI.Components
                 AttachValidationStateChangedListener();
             }
 
-            return base.SetParametersAsync(ParameterCollection.Empty);
+            return base.SetParametersAsync(ParameterView.Empty);
         }
 
         protected abstract void AttachValidationStateChangedListener();

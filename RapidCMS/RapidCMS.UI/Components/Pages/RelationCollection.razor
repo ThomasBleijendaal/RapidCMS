@@ -10,7 +10,7 @@ else
 {
     <CascadingEditContext EditContext=@RootEditContext>
         <Tabbar Tabs="Tabs" SearchBarVisible="UI.SearchBarVisible" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
-        <Buttonbar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
+        <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
     </CascadingEditContext>
 
     @if (Sections != null && Sections.Any())
@@ -122,7 +122,7 @@ else
                                                     }
                                                     if (UI.SectionsHaveButtons)
                                                     {
-                                                        <Buttoncell Buttons="section.Buttons" OnButtonClick="NodeButtonOnClickAsync" />
+                                                        <ButtonCell Buttons="section.Buttons" OnButtonClick="NodeButtonOnClickAsync" />
                                                     }
                                                 }
                                             </tr>
@@ -193,7 +193,7 @@ else
 }
 @code {
 
-    [Parameter] private IEntity RelatedEntity { get; set; }
+    [Parameter] public IEntity RelatedEntity { get; set; }
 
     [Inject] private IEditContextService EditContextService { get; set; }
     [Inject] private IEditorService EditorService { get; set; }

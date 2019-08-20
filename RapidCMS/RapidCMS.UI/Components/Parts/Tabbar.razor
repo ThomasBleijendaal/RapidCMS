@@ -23,12 +23,12 @@
     int? activeTab = null;
     CancellationTokenSource cts = new CancellationTokenSource();
 
-    [Parameter] IEnumerable<TabUI>? Tabs { get; set; }
-    [Parameter] bool SearchBarVisible { get; set; }
-    [Parameter] EventCallback<string?> OnSearch { get; set; }
-    [Parameter] EventCallback<int?> OnTabChange { get; set; }
+    [Parameter] public IEnumerable<TabUI>? Tabs { get; set; }
+    [Parameter] public bool SearchBarVisible { get; set; }
+    [Parameter] public EventCallback<string?> OnSearch { get; set; }
+    [Parameter] public EventCallback<int?> OnTabChange { get; set; }
 
-    protected override void OnInit()
+    protected override void OnInitialized()
     {
         activeTab = Tabs?.FirstOrDefault()?.Id;
     }

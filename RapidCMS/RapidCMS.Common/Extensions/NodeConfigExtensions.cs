@@ -11,7 +11,7 @@ namespace RapidCMS.Common.Extensions
             {
                 Buttons = node.Buttons.ToList(button => button.ToButton(collection.SubEntityVariants, collection.EntityVariant)),
                 BaseType = node.BaseType,
-                EditorPanes = node.Panes.ToList(config => config.ToPane())
+                Panes = node.Panes.ToList(config => config.ToPane())
             };
         }
     }

@@ -18,13 +18,14 @@
     }
 </div>
 
-@functions {
+@code {
     private ClaimsPrincipal User;
     private string RedirectUri;
     private string GivenName;
-    protected override void OnInit()
+
+    protected override void OnInitialized()
     {
-        base.OnInit();
+        base.OnInitialized();
         try
         {
             // Set the user to determine if they are logged in

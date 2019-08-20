@@ -204,10 +204,10 @@ namespace TestServer
                                 editor.AddDefaultButton(DefaultButtonType.SaveExisting);
                                 editor.AddDefaultButton(DefaultButtonType.Delete);
 
-                                editor.AddField(f => f.Name);
-                                editor.AddField(f => f.NotRequired);
-                                editor.AddField(f => f.Range)
-                                    .SetName("Range Setting");
+                                //editor.AddField(f => f.Name);
+                                //editor.AddField(f => f.NotRequired);
+                                //editor.AddField(f => f.Range)
+                                //    .SetName("Range Setting");
 
                                 editor.AddField(f => f.CountryId)
                                     .SetType(EditorType.Select)

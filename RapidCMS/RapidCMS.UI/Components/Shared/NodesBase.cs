@@ -9,16 +9,13 @@ namespace RapidCMS.UI.Components.Shared
     {
         private IDisposable? _eventHandle;
 
-        [Inject]
-        protected ITreeService TreeService { get; set; }
+        [Inject] protected ITreeService TreeService { get; set; }
 
-        [Parameter]
-        protected string CollectionAlias { get; set; }
+        [Parameter] public string CollectionAlias { get; set; }
 
-        [Parameter]
-        protected string? ParentId { get; set; } = null;
+        [Parameter] public string? ParentId { get; set; } = null;
 
-        protected override void OnInit()
+        protected override void OnInitialized()
         {
             OnNodesUpdate();
         }

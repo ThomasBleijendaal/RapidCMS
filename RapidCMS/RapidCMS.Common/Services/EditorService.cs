@@ -53,14 +53,14 @@ namespace RapidCMS.Common.Services
             }
             async Task<List<SectionUI>?> ListCallAsync(EditContext editContext)
             {
-                if (node.EditorPanes == null)
+                if (node.Panes == null)
                 {
                     return null;
                 }
 
                 var type = editContext.Entity.GetType();
 
-                return await node.EditorPanes
+                return await node.Panes
                     .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(type))
                     .ToListAsync(pane => GetSectionUIAsync(pane, editContext));
             }

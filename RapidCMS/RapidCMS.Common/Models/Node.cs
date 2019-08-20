@@ -8,14 +8,14 @@ namespace RapidCMS.Common.Models
     internal class Node
     {
         internal Type BaseType { get; set; }
-        internal List<Pane> EditorPanes { get; set; }
+        internal List<Pane> Panes { get; set; }
         internal List<Button> Buttons { get; set; }
 
-        public Button? FindButton(string buttonId)
+        internal Button? FindButton(string buttonId)
         {
-            return GetAllButtons().FirstOrDefault(x => x.ButtonId == buttonId);
+            return GetAllButtons()?.FirstOrDefault(x => x.ButtonId == buttonId);
         }
-        private IEnumerable<Button>? GetAllButtons()
+        internal IEnumerable<Button>? GetAllButtons()
         {
             if (Buttons != null)
             {
@@ -24,9 +24,9 @@ namespace RapidCMS.Common.Models
                     yield return button;
                 }
             }
-            if (EditorPanes != null)
+            if (Panes != null)
             {
-                foreach (var button in EditorPanes.SelectMany(pane => pane.Buttons.GetAllButtons()))
+                foreach (var button in Panes.SelectMany(pane => pane.Buttons.GetAllButtons()))
                 {
                     yield return button;
                 }
