@@ -7,14 +7,9 @@ TODO:
 [v] Auto-update DataCollection editors when collection indicates update
 
 [] bug: ListEditor ignores RootVariant section when using multiple EntityVariants
-[] bug: Editors SetParameters is invoked too many times
-    - MultiSelectEditor gets initialized multiple times due to setting of parameters multiple times
 
-[] Move relation validation to Attribute
-    - Require a property to be given in AddField for relations
-    - Get validation attribute of that property
-    - No more validation function in startup
-
+[v] Move relation validation to Attribute
+  
 [v] Date editor
 
 1.1
@@ -23,8 +18,6 @@ TODO:
 
 [v] Dashboard
 
-[] Merge 2 relation patterns into a single one (either via IRelationContainer or via IRepository methods)
-
 [v] Pagination 
 
 [] Order of collection form configuration is not maintained
@@ -32,7 +25,7 @@ TODO:
 [] Redirect after deletion + consistent pagination / Return to parent button action
 [] Redirect after insertions + no update authorization goes to 403 page
 
-[v] Property, Field, etc naming not totally consistent -> Refactor all names and methods
+[v] Property, Field, etc naming not totally consistent
 
 [] Refresh data / relation collections upon save
     [] More events from EditContext and bind nested EditContext to root
