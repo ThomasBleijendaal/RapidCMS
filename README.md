@@ -365,6 +365,8 @@ defined the collection, is to render the list.
 
 ## Relations
 
+### One-to-many
+
 RapidCMS support one-to-many and many-to-many relations between collections, although it requires somewhat more configuration. Let's assume
 the database entities are as follows:
 
@@ -378,16 +380,8 @@ public class Person : IEntity
 
     string IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value); }
 
-    public ICollection<PersonCountry> Countries { get; set; }
-}
-
-public class PersonCountry
-{
-    public int? CountryId { get; set; }
     public Country Country { get; set; }
-
-    public int? PersonId { get; set; }
-    public Person Person { get; set; }
+    public int? CountryId { get; set; }
 }
 
 public class Country : IEntity
@@ -400,8 +394,6 @@ public class Country : IEntity
     public ICollection<PersonCountry> Persons { get; set; }
 }
 ```
-
-### One-to-many
 
 In RapidCMS it is possible to create a dropdown which contains all the entities from a specific collection, and have the
 user pick one of the entities. When this entity is saved, the id the picked entity is saved in the property which backed the
@@ -440,6 +432,41 @@ and the build-in `EnumDataProvider` uses a `Enum` to generate a list of options:
 ```
 
 ### Many-to-many
+
+Let's assume the entities look as follows for the many-to-many example:
+
+```c#
+public class Person : IEntity
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public string Bio { get; set; }
+
+    string IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value); }
+
+    public ICollection<PersonCountry> Countries { get; set; }
+}
+
+public class PersonCountry
+{
+    public int? CountryId { get; set; }
+    public Country Country { get; set; }
+
+    public int? PersonId { get; set; }
+    public Person Person { get; set; }
+}
+
+public class Country : IEntity
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    
+    string IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value); }
+
+    public ICollection<PersonCountry> Persons { get; set; }
+}
+```
 
 There are two stategies for supporting many-to-many relations in RapidCMS. One is via a somewhat more complex editor, and one is
 via a dedicated sub collection editor. Both methods are fine, but have some implications on how the relation is saved.

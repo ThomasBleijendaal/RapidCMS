@@ -3,6 +3,7 @@ TODO:
 1.0
 
 [] Documentation + Examples
+    - Improve entity examples for relations (now many-to-many entities is used for one-to-many)
 
 [v] Auto-update DataCollection editors when collection indicates update
 
@@ -11,6 +12,8 @@ TODO:
 [v] Move relation validation to Attribute
   
 [v] Date editor
+
+[] Allow for messaging (saved successfully etc)
 
 1.1
 
@@ -39,6 +42,8 @@ TODO:
 [] Remove UIEditor, and render editor directly
 
 [] Custom modal / form based on button click
+    - Make it as 'delayed'-button (once modal closes, the crud type is determined)
+    - Everything inside modal is custom
 
 1.2
 
