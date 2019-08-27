@@ -38,6 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<DefaultButtonActionHandler>();
 
             services.AddScoped<IExceptionHelper, ExceptionHelper>();
+            services.AddScoped<IMessageService, MessageService>();
 
             services.AddSingleton(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
 

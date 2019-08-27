@@ -1,0 +1,33 @@
+﻿<div class="messages" @onclick="RemoveMessages">
+    <div class="message-list">
+        @foreach (var message in MessageService.Messages)
+        {
+            <div class="@CssHelper.GetMessageClass(message.Type)" role="alert">
+                @message.Message
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Inject] private IMessageService MessageService { get; set; }
+
+    protected override void OnInitialized()
+    {
+        MessageService.OnNewMessage += async (s, a) =>
+        {
+            StateHasChanged();
+
+            if (MessageService.Messages.Any())
+            {
+                await Task.Delay(3000);
+                RemoveMessages();
+            }
+        };
+    }
+
+    void RemoveMessages()
+    {
+        MessageService.ClearMessages();
+    }
+}

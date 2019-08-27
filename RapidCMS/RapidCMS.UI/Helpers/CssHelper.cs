@@ -10,5 +10,17 @@ namespace RapidCMS.UI.Helpers
                 $"{(state.HasFlag(ValidationState.Invalid) ? "is-invalid " : "")}" +
                 $"{(state.HasFlag(ValidationState.Modified) ? "is-modified " : "")}";
         }
+
+        public static string GetMessageClass(MessageType type)
+        {
+            return "alert " + type switch
+            {
+                MessageType.Error => "alert-danger",
+                MessageType.Information => "alert-info",
+                MessageType.Success => "alert-success",
+                MessageType.Warning => "alert-warning",
+                _ => ""
+            };
+        }
     }
 }

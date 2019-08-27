@@ -31,6 +31,19 @@ app {
     margin-left: 450px;
 }
 
+    .main .messages {
+        min-width: 300px;
+        max-width: 700px;
+        margin: 0px auto;
+        position: relative;
+    }
+
+        .main .messages .message-list {
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+
 .sidebar {
     width: 450px;
     position: fixed;
@@ -169,10 +182,10 @@ app {
         margin: -1rem -1rem 1rem -1rem;
     }
 
-    .content .nested-buttons .top-row {
-        margin: 0;
-        box-shadow: none;
-    }
+        .content .nested-buttons .top-row {
+            margin: 0;
+            box-shadow: none;
+        }
 
 .nested-content:first-of-type {
     margin-top: -1.1rem;
