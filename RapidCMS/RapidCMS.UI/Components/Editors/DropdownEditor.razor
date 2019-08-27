@@ -1,8 +1,5 @@
 ﻿@inherits BaseDataEditor
 
-@using RapidCMS.Common.Data
-@using RapidCMS.UI.Helpers
-
 @if (Options != null)
 {
     <select class="form-control @(CssHelper.GetValidationClass(State))" @onchange=@OnChange value="@SelectedIndex">

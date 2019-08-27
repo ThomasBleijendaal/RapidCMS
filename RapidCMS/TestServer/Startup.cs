@@ -1003,7 +1003,7 @@ namespace TestServer
                 config.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
                 config.AddDefaultButton(DefaultButtonType.Delete);
 
-                config.AddSection(typeof(DashboardSection));
+                config.AddSection(typeof(BlockSection));
 
                 config.AddSection(editorPaneConfig =>
                 {

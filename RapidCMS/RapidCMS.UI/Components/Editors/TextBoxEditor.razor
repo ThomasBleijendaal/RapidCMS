@@ -1,7 +1,5 @@
 ﻿@inherits BasePropertyEditor
 
-@using RapidCMS.UI.Helpers
-
 <input value=@GetValueAsString()
        @onchange=@(args => SetValueFromString((string)args.Value))
        class="form-control @(CssHelper.GetValidationClass(State))" />
