@@ -1,0 +1,40 @@
+﻿@inherits BaseSection
+
+<div class="content">
+    @foreach (var (context, sections) in Sections)
+    {
+        <div class="nested-content">
+            <CascadingEditContext EditContext=@context>
+                @foreach (var section in sections)
+                {
+                    if (!section.IsVisible(context.Entity))
+                    {
+                        continue;
+                    }
+
+                    @if (!string.IsNullOrEmpty(section.CustomAlias))
+                    {
+                        @CustomSections.GetCustomSection(section.CustomAlias, section);
+                    }
+                    else
+                    {
+                        <BlockSection Section="section" OnButtonClick="OnButtonClick" />
+                    }
+                }
+            </CascadingEditContext>
+        </div>
+    }
+
+    <Paginator CurrentPage="@CurrentPage"
+               MaxPage="@MaxPage"
+               OnPageChanged="@OnPageChanged" />
+</div>
+
+@code {
+    [Parameter] public IEnumerable<(EditContext editContext, IEnumerable<SectionUI> sections)> Sections { get; set; }
+    [Parameter] public EventHandler<ButtonClickEventArgs> OnButtonClick { get; set; }
+    
+    [Parameter] public int CurrentPage { get; set; }
+    [Parameter] public int? MaxPage { get; set; }
+    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+}

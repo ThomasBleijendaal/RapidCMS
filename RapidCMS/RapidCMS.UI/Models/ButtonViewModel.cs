@@ -1,12 +1,11 @@
 ﻿using System;
-using RapidCMS.Common.Data;
 using RapidCMS.Common.Forms;
 
 namespace RapidCMS.UI.Models
 {
     public class ButtonViewModel
     {
-        public event EventHandler<ButtonClickEventArgs> OnClick;
+        public event EventHandler<ButtonClickEventArgs>? OnClick;
 
         public void NotifyClick(EditContext editContext, object? customData)
         {
@@ -24,11 +23,5 @@ namespace RapidCMS.UI.Models
         public bool ShouldConfirm { get; set; }
         public bool IsPrimary { get; set; }
         public bool RequiresValidForm { get; set; }
-    }
-
-    public class ButtonClickEventArgs
-    {
-        public EditContext EditContext { get; set; }
-        public object? Data { get; set; }
     }
 }
