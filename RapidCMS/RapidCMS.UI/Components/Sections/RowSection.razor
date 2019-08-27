@@ -1,79 +1,74 @@
-@inherits BaseSection
+@inherits BaseEditContextSection
 
-@using RapidCMS.Common.Models.UI
-@using RapidCMS.Common
-@using RapidCMS.Common.Enums
-@using RapidCMS.UI.Extensions
-
-@if (Section != null && Section.Elements != null && Section.Elements.Any() && EditContext != null)
+@if (Section != null && Section.IsVisible(EditContext.Entity))
 {
-    var collapseEmptyCells = UI.EmptyVariantColumnVisibility == EmptyVariantColumnVisibility.Collapse;
-    var index = 0;
+    @if (!string.IsNullOrEmpty(Section.CustomAlias))
+    {
+        @CustomSections.GetCustomSection(Section.CustomAlias, Section);
+    }
+    else
+    {
+        var index = 0;
 
-    <tr>
-        @{
-            foreach (var element in Section.Elements)
-            {
-                if (element is FieldUI field)
-                {
-                    var name = (field as ExpressionFieldUI)?.Expression.PropertyName ?? (field as PropertyFieldUI)?.Property.PropertyName;
-                    if (name == null)
+        @if (Section.Elements != null)
+        {
+            <tr>
+                @{
+                    foreach (var element in Section.Elements)
                     {
-                        continue;
-                    }
-
-                    if (!collapseEmptyCells)
-                    {
-                        var position = UI.UniqueFields?.FindIndex(x => x.Name == field.Name) ?? UI.MaxUniqueFieldsInSingleEntity;
-
-                        // fill in the gaps (when dealing with multiple entity variants)
-                        if (position > index)
+                        if (element is FieldUI field)
                         {
-                            <td colspan=@(position - index)>&nbsp;</td>
+                            var name = (field as ExpressionFieldUI)?.Expression.PropertyName ?? (field as PropertyFieldUI)?.Property.PropertyName;
+                            if (name == null)
+                            {
+                                continue;
+                            }
 
-                            index = position;
+                            if (!CollapseEmptyCells)
+                            {
+                                var position = UI.UniqueFields?.FindIndex(x => x.Name == field.Name) ?? UI.MaxUniqueFieldsInSingleEntity;
+
+                                // fill in the gaps (when dealing with multiple entity variants)
+                                if (position > index)
+                                {
+                                    <td colspan=@(position - index)>&nbsp;</td>
+
+                                    index = position;
+                                }
+                            }
+
+                            index++;
+
+                            <td>
+                                @if (field.IsVisible(EditContext.Entity))
+                                {
+                                    @Editors.GetEditor(field, EditContext.Entity)
+                                }
+                            </td>
                         }
                     }
-
-                    index++;
-
-                    if (field is ExpressionFieldUI expressionField)
+                    // fill in the gaps (when dealing with multiple entity variants)
+                    if (!CollapseEmptyCells && UI.UniqueFields?.Count > index)
                     {
-                        <td>@expressionField.Expression.StringGetter(EditContext.Entity)</td>
+                        <td colspan=@(UI.UniqueFields.Count - index)>&nbsp;</td>
                     }
-                    else if (field is PropertyFieldUI propertyField)
+                    else if (UI.MaxUniqueFieldsInSingleEntity > index)
                     {
-                        <td>
-                            <UIEditor Field="field" Entity="@EditContext.Entity" />
-                        </td>
+                        <td colspan=@(UI.MaxUniqueFieldsInSingleEntity - index)>&nbsp;</td>
+                    }
+                    if (UI.SectionsHaveButtons)
+                    {
+                        <ButtonCell Buttons="Section.Buttons" OnButtonClick="OnButtonClick" />
                     }
                 }
-            }
-            // fill in the gaps (when dealing with multiple entity variants)
-            if (!collapseEmptyCells && UI.UniqueFields?.Count > index)
-            {
-                <td colspan=@(UI.UniqueFields.Count - index)>&nbsp;</td>
-            }
-            if (UI.SectionsHaveButtons)
-            {
-                <td class="button-cell">
-                    @if (Section.Buttons != null && Section.Buttons.Any())
-                    {
-                        @foreach (var button in Section.Buttons)
-                        {
-                            var model = button.ToViewModel();
-
-                            // model.OnClick += NodeButtonOnClickAsync;
-
-                            <UIButton Button="button" Model="model" />
-                        }
-                    }
-                </td>
-            }
+            </tr>
         }
-    </tr>
+    }
 }
 
 @code {
-    [Parameter] public ListUI UI { get; private set; }
+    private bool CollapseEmptyCells => UI.EmptyVariantColumnVisibility == EmptyVariantColumnVisibility.Collapse;
+
+    [Parameter] public ListUI UI { get; set; }
+    [Parameter] public EventHandler<ButtonClickEventArgs> OnButtonClick { get; set; }
 }

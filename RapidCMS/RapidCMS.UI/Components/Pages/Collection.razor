@@ -22,169 +22,20 @@ else
     {
         @if (UI.ListType == ListType.Table)
         {
-            var collapseEmptyCells = UI.EmptyVariantColumnVisibility == EmptyVariantColumnVisibility.Collapse;
-
-            <div class="content">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            @{
-                                if (collapseEmptyCells && UI.CommonFields != null)
-                                {
-                                    foreach (var field in UI.CommonFields)
-                                    {
-                                        <td>@field.Name<br /><small>@field.Description</small></td>
-                                    }
-
-                                    if (UI.MaxUniqueFieldsInSingleEntity - UI.CommonFields.Count > 0)
-                                    {
-                                        <td colspan=@(UI.MaxUniqueFieldsInSingleEntity - UI.CommonFields.Count)></td>
-                                    }
-                                }
-                                else if (UI.UniqueFields != null)
-                                {
-                                    foreach (var field in UI.UniqueFields)
-                                    {
-                                        <td>@field.Name<br /><small>@field.Description</small></td>
-                                    }
-                                }
-
-                                if (UI.SectionsHaveButtons)
-                                {
-                                    <td class="button-cell"></td>
-                                }
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var (context, sections) in Sections)
-                        {
-                            <CascadingEditContext EditContext=@context>
-                                @foreach (var section in sections)
-                                {
-                                    if (!section.IsVisible(context.Entity))
-                                    {
-                                        continue;
-                                    }
-
-                                    if (!string.IsNullOrEmpty(section.CustomAlias))
-                                    {
-                                        @CustomSections.GetCustomSection(section.CustomAlias, section);
-                                    }
-                                    else
-                                    {
-                                        var index = 0;
-
-                                        @if (section.Elements != null)
-                                        {
-                                            <tr>
-                                                @{
-                                                    foreach (var element in section.Elements)
-                                                    {
-                                                        if (element is FieldUI field)
-                                                        {
-                                                            var name = (field as ExpressionFieldUI)?.Expression.PropertyName ?? (field as PropertyFieldUI)?.Property.PropertyName;
-                                                            if (name == null)
-                                                            {
-                                                                continue;
-                                                            }
-
-                                                            if (!collapseEmptyCells)
-                                                            {
-                                                                var position = UI.UniqueFields?.FindIndex(x => x.Name == field.Name) ?? UI.MaxUniqueFieldsInSingleEntity;
-
-                                                                // fill in the gaps (when dealing with multiple entity variants)
-                                                                if (position > index)
-                                                                {
-                                                                    <td colspan=@(position - index)>&nbsp;</td>
-
-                                                                    index = position;
-                                                                }
-                                                            }
-
-                                                            index++;
-
-                                                            if (field is ExpressionFieldUI expressionField)
-                                                            {
-                                                                <td>
-                                                                    @if (expressionField.IsVisible(context.Entity))
-                                                                    {
-                                                                        @expressionField.Expression.StringGetter(context.Entity)
-                                                                    }
-                                                                </td>
-                                                            }
-                                                            else if (field is PropertyFieldUI propertyField)
-                                                            {
-                                                                <td>
-                                                                    @if (propertyField.IsVisible(context.Entity))
-                                                                    {
-                                                                        <UIEditor Field="field" Entity="@context.Entity" />
-                                                                    }
-                                                                </td>
-                                                            }
-                                                        }
-                                                    }
-                                                    // fill in the gaps (when dealing with multiple entity variants)
-                                                    if (!collapseEmptyCells && UI.UniqueFields?.Count > index)
-                                                    {
-                                                        <td colspan=@(UI.UniqueFields.Count - index)>&nbsp;</td>
-                                                    }
-                                                    else if (UI.MaxUniqueFieldsInSingleEntity > index)
-                                                    {
-                                                        <td colspan=@(UI.MaxUniqueFieldsInSingleEntity - index)>&nbsp;</td>
-                                                    }
-                                                    if (UI.SectionsHaveButtons)
-                                                    {
-                                                        <ButtonCell Buttons="section.Buttons" OnButtonClick="NodeButtonOnClickAsync" />
-                                                    }
-                                                }
-                                            </tr>
-                                        }
-                                    }
-                                }
-                            </CascadingEditContext>
-                        }
-                    </tbody>
-                </table>
-
-                <Paginator CurrentPage="@CurrentPage"
-                           MaxPage="@MaxPage"
-                           OnPageChanged="@PageChangedAsync" />
-            </div>
+            <TableSection UI="UI"
+                          Sections="Sections"
+                          CurrentPage="CurrentPage"
+                          MaxPage="MaxPage"
+                          OnButtonClick="NodeButtonOnClickAsync"
+                          OnPageChanged="PageChangedAsync" />
         }
         else if (UI.ListType == ListType.Block)
         {
-            <div class="content">
-                @foreach (var (context, sections) in Sections)
-                {
-                    <div class="nested-content">
-                        <CascadingEditContext EditContext=@context>
-                            @foreach (var section in sections)
-                            {
-                                if (!section.IsVisible(context.Entity))
-                                {
-                                    continue;
-                                }
-
-                                @if (!string.IsNullOrEmpty(section.CustomAlias))
-                                {
-                                    @CustomSections.GetCustomSection(section.CustomAlias, section);
-                                }
-                                else
-                                {
-                                    <BlockSection Section="section" OnButtonClick="NodeButtonOnClickAsync" />
-                                }
-                            }
-                        </CascadingEditContext>
-                    </div>
-                }
-
-                <Paginator CurrentPage="@CurrentPage"
-                           MaxPage="@MaxPage"
-                           OnPageChanged="@PageChangedAsync" />
-
-
-            </div>
+            <BlocksSection Sections="Sections"
+                           CurrentPage="CurrentPage"
+                           MaxPage="MaxPage"
+                           OnButtonClick="NodeButtonOnClickAsync"
+                           OnPageChanged="PageChangedAsync" />
         }
     }
 }

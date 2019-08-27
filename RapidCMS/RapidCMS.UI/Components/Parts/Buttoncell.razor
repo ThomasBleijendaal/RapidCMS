@@ -7,7 +7,7 @@
 
             model.OnClick += OnButtonClick;
 
-            <UIButton Button="button" Model="model" />
+            @_buttons.GetButton(button.CustomAlias, model);
         }
     }
 </td>
@@ -15,4 +15,5 @@
 @code {
     [Parameter] public IEnumerable<ButtonUI>? Buttons { get; set; }
     [Parameter] public EventHandler<ButtonClickEventArgs> OnButtonClick { get; set; }
+    [CascadingParameter(Name = "Buttons")] protected ButtonRenderFragmentContainer _buttons { get; set; }
 }

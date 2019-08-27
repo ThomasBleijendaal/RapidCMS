@@ -1,7 +1,5 @@
 ﻿@inherits BasePropertyEditor
 
-@using RapidCMS.UI.Helpers
-
 <textarea value=@GetValueAsString()
           @onchange=@(args => SetValueFromString((string)args.Value))
           class="form-control @(CssHelper.GetValidationClass(State))"></textarea>

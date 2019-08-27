@@ -1,6 +1,6 @@
-﻿<CascadingValue Value="@CustomButtonContainer" Name="CustomButtons">
-    <CascadingValue Value="@CustomEditorContainer" Name="CustomEditors">
-        <CascadingValue Value="@CustomSectionContainer" Name="CustomSections">
+﻿<CascadingValue Value="@ButtonRenderFragmentContainer" Name="Buttons">
+    <CascadingValue Value="@EditorRenderFragmentContainer" Name="Editors">
+        <CascadingValue Value="@CustomSectionRenderFragmentContainer" Name="CustomSections">
             <CascadingValue Value="@CustomLogin" Name="CustomLogin">
                 <Router AppAssembly="typeof(RapidCmsRouter).Assembly" />
             </CascadingValue>
@@ -11,9 +11,9 @@
 
 @code {
 
-    private CustomButtonContainer CustomButtonContainer { get; set; } = new CustomButtonContainer(null);
-    private CustomEditorContainer CustomEditorContainer { get; set; } = new CustomEditorContainer(null);
-    private CustomSectionContainer CustomSectionContainer { get; set; } = new CustomSectionContainer(null);
+    private ButtonRenderFragmentContainer ButtonRenderFragmentContainer { get; set; } = new ButtonRenderFragmentContainer(null);
+    private EditorRenderFragmentContainer EditorRenderFragmentContainer { get; set; } = new EditorRenderFragmentContainer(null);
+    private CustomSectionRenderFragmentContainer CustomSectionRenderFragmentContainer { get; set; } = new CustomSectionRenderFragmentContainer(null);
 
     private RenderFragment? CustomLogin { get; set; }
 
@@ -22,9 +22,9 @@
 
     protected override Task OnParametersSetAsync()
     {
-        CustomButtonContainer = new CustomButtonContainer(Root.CustomButtonRegistrations);
-        CustomEditorContainer = new CustomEditorContainer(Root.CustomEditorRegistrations);
-        CustomSectionContainer = new CustomSectionContainer(Root.CustomSectionRegistrations);
+        ButtonRenderFragmentContainer = new ButtonRenderFragmentContainer(Root.CustomButtonRegistrations);
+        EditorRenderFragmentContainer = new EditorRenderFragmentContainer(Root.CustomEditorRegistrations);
+        CustomSectionRenderFragmentContainer = new CustomSectionRenderFragmentContainer(Root.CustomSectionRegistrations);
 
         CustomLogin = Root.CustomLoginRegistration.ToRenderFragment();
 

@@ -1,0 +1,65 @@
+@inherits BaseSection
+
+<div class="content">
+    <table class="table">
+        <thead>
+            <tr>
+                @{
+                    if (CollapseEmptyCells && UI.CommonFields != null)
+                    {
+                        foreach (var field in UI.CommonFields)
+                        {
+                            <td>@field.Name<br /><small>@field.Description</small></td>
+                        }
+
+                        if (UI.MaxUniqueFieldsInSingleEntity - UI.CommonFields.Count > 0)
+                        {
+                            <td colspan=@(UI.MaxUniqueFieldsInSingleEntity - UI.CommonFields.Count)></td>
+                        }
+                    }
+                    else if (UI.UniqueFields != null)
+                    {
+                        foreach (var field in UI.UniqueFields)
+                        {
+                            <td>@field.Name<br /><small>@field.Description</small></td>
+                        }
+                    }
+
+                    if (UI.SectionsHaveButtons)
+                    {
+                        <td class="button-cell"></td>
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var (context, sections) in Sections)
+            {
+                <CascadingEditContext EditContext=@context>
+                    @foreach (var section in sections)
+                    {
+                        <RowSection Section="section"
+                                    UI="UI"
+                                    OnButtonClick="OnButtonClick" />
+                    }
+                </CascadingEditContext>
+            }
+        </tbody>
+    </table>
+
+    <Paginator CurrentPage="@CurrentPage"
+               MaxPage="@MaxPage"
+               OnPageChanged="@OnPageChanged" />
+</div>
+
+@code {
+    private bool CollapseEmptyCells => UI.EmptyVariantColumnVisibility == EmptyVariantColumnVisibility.Collapse;
+
+    [Parameter] public IEnumerable<(EditContext editContext, IEnumerable<SectionUI> sections)> Sections { get; set; }
+    [Parameter] public ListUI UI { get; set; }
+    [Parameter] public EventHandler<ButtonClickEventArgs> OnButtonClick { get; set; }
+
+    [Parameter] public int CurrentPage { get; set; }
+    [Parameter] public int? MaxPage { get; set; }
+    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+}

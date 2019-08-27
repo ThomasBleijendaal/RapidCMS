@@ -6,24 +6,17 @@ TODO:
 
 [v] Auto-update DataCollection editors when collection indicates update
 
-[] bug: ListEditor ignores RootVariant section when using multiple EntityVariants
-[] bug: Editors SetParameters is invoked too many times
-    - MultiSelectEditor gets initialized multiple times due to setting of parameters multiple times
-
-[] Move relation validation to Attribute
-    - Require a property to be given in AddField for relations
-    - Get validation attribute of that property
-    - No more validation function in startup
-
+[v] Move relation validation to Attribute
+  
 [v] Date editor
+
+[] Allow for messaging (saved successfully etc)
 
 1.1
 
 [v] Fix nullability in PropertyMetadata
 
 [v] Dashboard
-
-[] Merge 2 relation patterns into a single one (either via IRelationContainer or via IRepository methods)
 
 [v] Pagination 
 
@@ -32,20 +25,21 @@ TODO:
 [] Redirect after deletion + consistent pagination / Return to parent button action
 [] Redirect after insertions + no update authorization goes to 403 page
 
-[v] Property, Field, etc naming not totally consistent -> Refactor all names and methods
+[v] Property, Field, etc naming not totally consistent
 
-[] Refresh data / relation collections upon save
-    [] More events from EditContext and bind nested EditContext to root
+[v] Refresh data / relation collections upon save
+    [v] More events from EditContext and bind nested EditContext to root
     [v] Make side bar tree react to collection actions (CRUD)
         [] Make possible to open sub collections with hidden root element
     [] OnBeforeUnload EditContext IsModified check
 
-[] Custom Section support in Collection.razor (lists) (RowSection)
-    [] Fix further
+[x] Custom Section support in Collection.razor (lists) (RowSection)
 
-[] Remove UIEditor, and render editor directly
+[x] Remove UIEditor, and render editor directly
 
 [] Custom modal / form based on button click
+    - Make it as 'delayed'-button (once modal closes, the crud type is determined)
+    - Everything inside modal is custom
 
 1.2
 
@@ -75,6 +69,7 @@ TODO:
 2.0
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)
     [] ParentId must be IEntity to support different types of nesting of repos
+    [] Merge RelationCollection + Collection (RelatedEntity + ParentEntity (instead of parentId))
     [] Repository compatibility must be checked when using these nestings
     [] Buttons must be able to point to editors in other collections (view in collection-a, but edit in collection-b)
     [] Remove collection-alias and move to some other system

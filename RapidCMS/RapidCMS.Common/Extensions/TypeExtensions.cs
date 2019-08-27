@@ -6,12 +6,12 @@ namespace RapidCMS.Common.Extensions
     {
         public static bool IsSameTypeOrBaseTypeOf(this Type typeToTest, Type sameTypeOrSubClass)
         {
-            return typeToTest == sameTypeOrSubClass || typeToTest == sameTypeOrSubClass.BaseType;
+            return typeToTest == sameTypeOrSubClass || sameTypeOrSubClass.IsSubclassOf(typeToTest);
         }
 
         public static bool IsSameTypeOrDerivedFrom(this Type typeToTest, Type sameTypeOrSuperClass)
         {
-            return typeToTest == sameTypeOrSuperClass || typeToTest.BaseType == sameTypeOrSuperClass;
+            return typeToTest == sameTypeOrSuperClass || typeToTest.IsSubclassOf(sameTypeOrSuperClass);
         }
     }
 }

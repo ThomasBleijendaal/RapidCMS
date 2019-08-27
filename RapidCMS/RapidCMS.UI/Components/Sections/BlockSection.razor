@@ -1,4 +1,4 @@
-﻿@inherits BaseSection
+﻿@inherits BaseEditContextSection
 
 @if (Section != null && Section.Elements != null && Section.Elements.Any() && EditContext != null && Section.IsVisible(EditContext.Entity))
 {
@@ -32,11 +32,13 @@
                     <div class="col-10">
                         @if (field is ExpressionFieldUI expressionField)
                         {
-                            <label class="col-form-label">@expressionField.Expression.StringGetter(EditContext.Entity)</label>
+                            <label class="col-form-label">
+                                @Editors.GetEditor(field, EditContext.Entity)
+                            </label>
                         }
                         else if (field is PropertyFieldUI propertyField)
                         {
-                            <UIEditor Field="field" Entity="@EditContext.Entity" />
+                            @Editors.GetEditor(field, EditContext.Entity)
                         }
                     </div>
                 </div>
@@ -44,10 +46,9 @@
             else if (element is SubCollectionUI subCollection)
             {
                 <div class="nested-content">
-                    @* TODO: change to something which is not a page *@
-                    <RapidCMS.UI.Components.Pages.Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
-                                                             CollectionAlias=@subCollection.CollectionAlias
-                                                             ParentId=@EditContext.Entity.Id />
+                    <Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                                CollectionAlias=@subCollection.CollectionAlias
+                                ParentId=@EditContext.Entity.Id />
                 </div>
             }
             else if (element is RelatedCollectionUI relatedCollection)

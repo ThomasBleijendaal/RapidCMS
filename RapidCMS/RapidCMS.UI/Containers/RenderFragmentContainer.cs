@@ -4,11 +4,11 @@ using RapidCMS.Common.Models;
 
 namespace RapidCMS.UI.Containers
 {
-    public abstract class CustomContainer
+    public abstract class RenderFragmentContainer
     {
         protected Dictionary<string, CustomTypeRegistration>? _customRegistrations;
 
-        public CustomContainer(IEnumerable<CustomTypeRegistration>? registrations)
+        public RenderFragmentContainer(IEnumerable<CustomTypeRegistration>? registrations)
         {
             if (registrations != null)
             {

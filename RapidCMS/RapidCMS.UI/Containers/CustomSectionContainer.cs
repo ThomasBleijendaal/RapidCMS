@@ -5,11 +5,11 @@ using RapidCMS.Common.Models.UI;
 using RapidCMS.UI.Components.Sections;
 using RapidCMS.UI.Containers;
 
-namespace RapidCMS.UI.Models
+namespace RapidCMS.UI.Containers
 {
-    public class CustomSectionContainer : CustomContainer
+    public class CustomSectionRenderFragmentContainer : RenderFragmentContainer
     {
-        public CustomSectionContainer(IEnumerable<CustomTypeRegistration> registrations) : base(registrations)
+        public CustomSectionRenderFragmentContainer(IEnumerable<CustomTypeRegistration> registrations) : base(registrations)
         {
         }
 
