@@ -9,27 +9,28 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
-using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
 
 namespace RapidCMS.Common.Services
 {
     internal class TreeService : ITreeService
     {
-        private readonly Root _root;
+        private readonly ICollectionProvider _collectionProvider;
+        private readonly IMetadataProvider _metadataProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationService _authorizationService;
 
-        public TreeService(Root root, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
+        public TreeService(ICollectionProvider collectionProvider, IMetadataProvider metadataProvider, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
         {
-            _root = root;
+            _collectionProvider = collectionProvider;
+            _metadataProvider = metadataProvider;
             _httpContextAccessor = httpContextAccessor;
             _authorizationService = authorizationService;
         }
 
         public async Task<TreeUI?> GetTreeAsync(string alias, string? parentId)
         {
-            var collection = _root.GetCollection(alias);
+            var collection = _collectionProvider.GetCollection(alias);
             var testEntity = await collection.Repository.InternalNewAsync(parentId, collection.EntityVariant.Type);
 
             var viewAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
@@ -66,7 +67,7 @@ namespace RapidCMS.Common.Services
 
         public async Task<List<TreeNodeUI>> GetNodesAsync(string alias, string? parentId)
         {
-            var collection = _root.GetCollection(alias);
+            var collection = _collectionProvider.GetCollection(alias);
 
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
             {
@@ -118,18 +119,18 @@ namespace RapidCMS.Common.Services
 
         public IDisposable SubscribeToUpdates(string alias, Func<Task> asyncCallback)
         {
-            var collection = _root.GetCollection(alias);
+            var collection = _collectionProvider.GetCollection(alias);
             return collection.Repository.ChangeToken.RegisterChangeCallback((x) => asyncCallback.Invoke(), null);
         }
 
         public TreeRootUI GetRoot()
         {
-            var collections = _root.Collections.Select(x => x.Alias).ToList();
+            var collections = _collectionProvider.GetAllCollections().Select(x => x.Alias).ToList();
 
             return new TreeRootUI
             {
                 Collections = collections,
-                Name = _root.SiteName
+                Name = _metadataProvider.SiteName
             };
         }
     }

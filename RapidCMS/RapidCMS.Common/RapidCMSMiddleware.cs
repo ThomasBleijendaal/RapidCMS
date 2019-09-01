@@ -11,6 +11,7 @@ using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.Services;
+using RapidCMS.Common.Services.SidePane;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -28,27 +29,37 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton(rootConfig);
 
+            // Root object containing all collections
             services.AddScoped<Root>();
 
+            //  UI + Repository services
             services.AddTransient<IDataProviderService, DataProviderService>();
             services.AddTransient<IEditContextService, EditContextService>();
             services.AddTransient<IEditorService, EditorService>();
             services.AddTransient<ITreeService, TreeService>();
 
-            services.AddTransient<DefaultButtonActionHandler>();
-
-            services.AddScoped<IExceptionHelper, ExceptionHelper>();
+            // Data exchange services
+            services.AddScoped<ISidePaneService, SidePaneService>();
             services.AddScoped<IMessageService, MessageService>();
 
+            // Button handlers
+            services.AddTransient<DefaultButtonActionHandler>();
+            services.AddTransient(typeof(OpenPaneButtonActionHandler<>));
+
+            // Debug helpers
+            services.AddScoped<IExceptionHelper, ExceptionHelper>();
+
+            // Stock data providers
             services.AddSingleton(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
 
+            // UI requirements
             services.AddHttpContextAccessor();
             services.AddScoped<HttpContextAccessor>();
 
             services.AddHttpClient();
             services.AddScoped<HttpClient>();
 
-            // scoped semaphore for repositories
+            // Scoped semaphore for repositories
             services.AddScoped(serviceProvider => new SemaphoreSlim(1, 1));
 
             services.AddMemoryCache();

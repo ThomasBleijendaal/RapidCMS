@@ -32,6 +32,7 @@ using TestServer.Components.CustomSections;
 using Blazor.FileReader;
 using TestServer.Components.CustomDashboard;
 using TestLibrary.DataViewBuilders;
+using TestServer.Components.CustomSidePane;
 
 namespace TestServer
 {
@@ -182,6 +183,7 @@ namespace TestServer
                             list.SetSearchBarVisibility(false);
 
                             list.AddDefaultButton(DefaultButtonType.New);
+                            list.AddPaneButton(typeof(SidePaneTest), "Create new elements", "plus", CrudType.Create);
                             list.AddRow(pane =>
                             {
                                 pane.AddField(p => p.Name)
@@ -190,36 +192,36 @@ namespace TestServer
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                             });
                         })
-                        .SetListEditor(ListType.Table, listEditor =>
-                        {
-                            listEditor.SetSearchBarVisibility(false);
+                        //.SetListEditor(ListType.Table, listEditor =>
+                        //{
+                        //    listEditor.SetSearchBarVisibility(false);
 
-                            listEditor.AddDefaultButton(DefaultButtonType.New);
-                            listEditor.AddDefaultButton(DefaultButtonType.Return);
+                        //    listEditor.AddDefaultButton(DefaultButtonType.New);
+                        //    listEditor.AddDefaultButton(DefaultButtonType.Return);
 
-                            listEditor.AddSection(editor =>
-                            {
-                                editor.AddDefaultButton(DefaultButtonType.View);
-                                editor.AddDefaultButton(DefaultButtonType.SaveNew);
-                                editor.AddDefaultButton(DefaultButtonType.SaveExisting);
-                                editor.AddDefaultButton(DefaultButtonType.Delete);
+                        //    listEditor.AddSection(editor =>
+                        //    {
+                        //        editor.AddDefaultButton(DefaultButtonType.View);
+                        //        editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                        //        editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                        //        editor.AddDefaultButton(DefaultButtonType.Delete);
 
-                                //editor.AddField(f => f.Name);
-                                //editor.AddField(f => f.NotRequired);
-                                //editor.AddField(f => f.Range)
-                                //    .SetName("Range Setting");
+                        //        //editor.AddField(f => f.Name);
+                        //        //editor.AddField(f => f.NotRequired);
+                        //        //editor.AddField(f => f.Range)
+                        //        //    .SetName("Range Setting");
 
-                                editor.AddField(f => f.CountryId)
-                                    .SetType(EditorType.Select)
-                                    .SetCollectionRelation<CountryEntity>("country-collection", relation =>
-                                    {
-                                        relation
-                                            .SetElementIdProperty(x => x._Id)
-                                            .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
+                        //        editor.AddField(f => f.CountryId)
+                        //            .SetType(EditorType.Select)
+                        //            .SetCollectionRelation<CountryEntity>("country-collection", relation =>
+                        //            {
+                        //                relation
+                        //                    .SetElementIdProperty(x => x._Id)
+                        //                    .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name);
 
-                                    });
-                            });
-                        })
+                        //            });
+                        //    });
+                        //})
                         .SetNodeView(view =>
                         {
                             view.AddSection(pane =>

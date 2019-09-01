@@ -7,8 +7,6 @@ namespace RapidCMS.Common.Services
 {
     internal class MessageService : IMessageService
     {
-        private int _messageNr = 0;
-
         private readonly List<MessageUI> _messages = new List<MessageUI>();
 
         public IEnumerable<MessageUI> Messages => _messages;

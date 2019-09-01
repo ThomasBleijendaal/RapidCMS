@@ -1,0 +1,16 @@
+﻿@inherits BaseSidePane
+
+<h1>Hi</h1>
+
+<p>@EditContext.Entity.Id</p>
+
+<p>@ButtonContext.ParentId</p>
+
+<button @onclick="ButtonClick" class="btn btn-primary">Click me</button>
+
+@code {
+    void ButtonClick()
+    {
+        ButtonClicked(DefaultCrudType ?? CrudType.None);
+    }
+}

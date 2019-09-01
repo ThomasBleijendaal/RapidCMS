@@ -47,9 +47,13 @@ namespace RapidCMS.Common.Enums
         [Actions(UsageType.Node | UsageType.Pick)]
         Pick,
 
-        // TODO: implement
+        // TODO: fully implement
         [DefaultIconLabel(Icon = "arrow-left", Label = "Return")]
         [Actions(UsageType.Node, UsageType.List | UsageType.Add, UsageType.List | UsageType.New, UsageType.List | UsageType.Pick)]
-        Return
+        Return,
+
+        [DefaultIconLabel(Icon = "ellipsis", Label = "[open pane]")]
+        [Actions(UsageType.Node, UsageType.List)]
+        OpenPane = 9990
     }
 }

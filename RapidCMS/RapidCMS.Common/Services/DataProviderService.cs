@@ -8,13 +8,13 @@ namespace RapidCMS.Common.Services
 {
     internal class DataProviderService : IDataProviderService
     {
-        private readonly Root _root;
+        private readonly IRepositoryProvider _repositoryProvider;
         private readonly IMemoryCache _memoryCache;
         private readonly IServiceProvider _serviceProvider;
 
-        public DataProviderService(Root root, IMemoryCache memoryCache, IServiceProvider serviceProvider)
+        public DataProviderService(IRepositoryProvider repositoryProvider, IMemoryCache memoryCache, IServiceProvider serviceProvider)
         {
-            _root = root;
+            _repositoryProvider = repositoryProvider;
             _memoryCache = memoryCache;
             _serviceProvider = serviceProvider;
         }
@@ -30,7 +30,7 @@ namespace RapidCMS.Common.Services
             {
                 case CollectionRelation collectionRelation:
 
-                    var repo = _root.GetRepository(collectionRelation.CollectionAlias);
+                    var repo = _repositoryProvider.GetRepository(collectionRelation.CollectionAlias);
                     if (repo == null)
                     {
                         throw new InvalidOperationException($"Field {propertyField.Property.PropertyName} has incorrectly configure relation, cannot find repository for collection alias {collectionRelation.CollectionAlias}.");

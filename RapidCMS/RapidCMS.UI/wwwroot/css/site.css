@@ -48,7 +48,7 @@ app {
     width: 450px;
     position: fixed;
     top: 0;
-    height: 100%;
+    height: 100vh;
     overflow-x: hidden;
     border-right: 1px solid #c8c8c8;
     background-color: #e0e0e0;
@@ -73,6 +73,19 @@ app {
         margin: 0 0 0 0;
         padding: 0 0 0 1rem;
     }
+
+.sidepane {
+    width: 450px;
+    height: 100vh;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: #000000;
+    border-left: 1px solid #b8b8b8;
+    background-color: #fff;
+    padding-left: 1rem;
+    box-shadow: rgba(0,0,0,0.4) -2px -2px 10px;
+}
 
 .nav-item {
     font-size: 0.8666666667rem;

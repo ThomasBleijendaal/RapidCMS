@@ -8,9 +8,7 @@ using RapidCMS.Common.Models.Config;
 
 namespace RapidCMS.Common.Models
 {
-    // TODO: not really a model
-    
-    public class Root
+    internal class Root : ICollectionProvider, IRepositoryProvider, IMetadataProvider
     {
         private readonly IServiceProvider _serviceProvider;
 
@@ -45,11 +43,15 @@ namespace RapidCMS.Common.Models
         public string SiteName { get; private set; }
         public bool IsDevelopment { get; private set; }
 
-        internal Collection GetCollection(string alias)
+        public Collection GetCollection(string alias)
         {
             return _collectionMap.TryGetValue(alias, out var collection)
                 ? collection
                 : throw new KeyNotFoundException($"Cannot find collection with alias {alias}");
+        }
+        public IEnumerable<Collection> GetAllCollections()
+        {
+            return Collections;
         }
 
         private void FindRepositoryForCollections(IServiceProvider serviceProvider, IEnumerable<Collection> collections)

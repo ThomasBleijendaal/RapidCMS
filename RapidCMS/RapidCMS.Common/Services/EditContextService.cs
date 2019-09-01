@@ -19,18 +19,18 @@ namespace RapidCMS.Common.Services
 {
     internal class EditContextService : IEditContextService
     {
-        private readonly Root _root;
+        private readonly ICollectionProvider _collectionProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationService _authorizationService;
         private readonly IServiceProvider _serviceProvider;
 
         public EditContextService(
-            Root root,
+            ICollectionProvider collectionProvider,
             IHttpContextAccessor httpContextAccessor,
             IAuthorizationService authorizationService,
             IServiceProvider serviceProvider)
         {
-            _root = root;
+            _collectionProvider = collectionProvider;
             _httpContextAccessor = httpContextAccessor;
             _authorizationService = authorizationService;
             _serviceProvider = serviceProvider;
@@ -42,7 +42,7 @@ namespace RapidCMS.Common.Services
 
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, parentId);
 
-            var collection = _root.GetCollection(collectionAlias);
+            var collection = _collectionProvider.GetCollection(collectionAlias);
 
             await collection.ProcessDataViewAsync(query, _serviceProvider);
 
@@ -57,7 +57,7 @@ namespace RapidCMS.Common.Services
 
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, null);
 
-            var collection = _root.GetCollection(collectionAlias);
+            var collection = _collectionProvider.GetCollection(collectionAlias);
 
             await collection.ProcessDataViewAsync(query, _serviceProvider);
 
@@ -70,7 +70,7 @@ namespace RapidCMS.Common.Services
 
         public async Task<EditContext> GetEntityAsync(UsageType usageType, string collectionAlias, string? variantAlias, string? parentId, string? id)
         {
-            var collection = _root.GetCollection(collectionAlias);
+            var collection = _collectionProvider.GetCollection(collectionAlias);
 
             var entity = (usageType & ~UsageType.Node) switch
             {
@@ -101,7 +101,7 @@ namespace RapidCMS.Common.Services
 
         public async Task<ViewCommand> ProcessEntityActionAsync(UsageType usageType, string collectionAlias, string? parentId, string? id, EditContext editContext, string actionId, object? customData)
         {
-            var collection = _root.GetCollection(collectionAlias);
+            var collection = _collectionProvider.GetCollection(collectionAlias);
 
             var entityVariant = collection.GetEntityVariant(editContext.Entity);
 
@@ -168,7 +168,7 @@ namespace RapidCMS.Common.Services
 
         public async Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, string? parentId, IEnumerable<EditContext> editContexts, string actionId, object? customData)
         {
-            var collection = _root.GetCollection(collectionAlias);
+            var collection = _collectionProvider.GetCollection(collectionAlias);
 
             var button = collection.FindButton(actionId);
             if (button == null)
@@ -252,7 +252,7 @@ namespace RapidCMS.Common.Services
 
         public async Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, string? parentId, string id, EditContext editContext, string actionId, object? customData)
         {
-            var collection = _root.GetCollection(collectionAlias);
+            var collection = _collectionProvider.GetCollection(collectionAlias);
 
             var button = collection.FindButton(actionId);
             if (button == null)
@@ -327,7 +327,7 @@ namespace RapidCMS.Common.Services
 
         public async Task<ViewCommand> ProcessRelationActionAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, IEnumerable<EditContext> editContexts, string actionId, object? customData)
         {
-            var collection = _root.GetCollection(collectionAlias);
+            var collection = _collectionProvider.GetCollection(collectionAlias);
 
             var button = collection.FindButton(actionId);
             if (button == null)
@@ -424,7 +424,7 @@ namespace RapidCMS.Common.Services
 
         public async Task<ViewCommand> ProcessRelationActionAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, string id, EditContext editContext, string actionId, object? customData)
         {
-            var collection = _root.GetCollection(collectionAlias);
+            var collection = _collectionProvider.GetCollection(collectionAlias);
 
             var button = collection.FindButton(actionId);
             if (button == null)
@@ -543,7 +543,7 @@ namespace RapidCMS.Common.Services
 
         private async Task<EditContext> GetRootEditContextAsync(UsageType usageType, string collectionAlias, string? parentId)
         {
-            var collection = _root.GetCollection(collectionAlias);
+            var collection = _collectionProvider.GetCollection(collectionAlias);
             var newEntity = await collection.Repository.InternalNewAsync(parentId, collection.EntityVariant.Type);
             return new EditContext(newEntity, usageType | UsageType.List, _serviceProvider);
         }

@@ -18,6 +18,7 @@ namespace RapidCMS.Common.Extensions
             {
                 DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(entityVariants, baseEntityVariant),
                 CustomButtonConfig customButton => customButton.ToCustomButton(),
+                PaneButtonConfig paneButton => paneButton.ToPaneButton(baseEntityVariant),
                 _ => throw new InvalidOperationException()
             };
         }
@@ -34,25 +35,30 @@ namespace RapidCMS.Common.Extensions
 
         public static Button ToDefaultButton(this DefaultButtonConfig button, IEnumerable<EntityVariant>? entityVariants, EntityVariant? baseEntityVariant)
         {
+            if (button.ButtonType == DefaultButtonType.OpenPane)
+            {
+                throw new InvalidOperationException($"An {DefaultButtonType.OpenPane} button is not allowed to be used by DefaultButton");
+            }
+
             var subButtons = button.ButtonType == DefaultButtonType.New && entityVariants != null
                 ? entityVariants.ToList(variant => new Button(
-                    Guid.NewGuid().ToString(), 
-                    DefaultButtonType.New, 
-                    string.Format(button.Label ?? variant.Name, variant.Name), 
-                    variant.Icon, 
-                    button.IsPrimary, 
-                    EmptySubButtons, 
-                    typeof(DefaultButtonActionHandler), 
+                    Guid.NewGuid().ToString(),
+                    DefaultButtonType.New,
+                    string.Format(button.Label ?? variant.Name, variant.Name),
+                    variant.Icon,
+                    button.IsPrimary,
+                    EmptySubButtons,
+                    typeof(DefaultButtonActionHandler),
                     entityVariant: variant))
                 : EmptySubButtons;
 
             return new Button(
-                Guid.NewGuid().ToString(), 
-                button.ButtonType, 
-                button.Label, 
-                button.Icon, 
-                button.IsPrimary, 
-                subButtons, 
+                Guid.NewGuid().ToString(),
+                button.ButtonType,
+                button.Label,
+                button.Icon,
+                button.IsPrimary,
+                subButtons,
                 typeof(DefaultButtonActionHandler),
                 entityVariant: baseEntityVariant);
         }
@@ -68,6 +74,20 @@ namespace RapidCMS.Common.Extensions
                 EmptySubButtons,
                 button.ActionHandler,
                 alias: button.Alias);
+        }
+
+        public static Button ToPaneButton(this PaneButtonConfig button, EntityVariant? baseEntityVariant)
+        {
+            return new Button(
+                Guid.NewGuid().ToString(),
+                DefaultButtonType.OpenPane,
+                button.Label,
+                button.Icon,
+                button.IsPrimary,
+                EmptySubButtons,
+                typeof(OpenPaneButtonActionHandler<>).MakeGenericType(button.PaneType),
+                entityVariant: baseEntityVariant,
+                defaultCrudType: button.CrudType);
         }
     }
 }

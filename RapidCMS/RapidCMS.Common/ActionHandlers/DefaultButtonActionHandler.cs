@@ -17,7 +17,7 @@ namespace RapidCMS.Common.ActionHandlers
             return Task.CompletedTask;
         }
 
-        public Task<CrudType> ButtonClickBeforeRepositoryActionAsync(Button button, EditContext editContext, ButtonContext context)
+        public virtual Task<CrudType> ButtonClickBeforeRepositoryActionAsync(Button button, EditContext editContext, ButtonContext context)
         {
             switch (button.DefaultButtonType)
             {
