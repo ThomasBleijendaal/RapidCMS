@@ -96,8 +96,9 @@ namespace RapidCMS.Common.Models
 
         internal Button? FindButton(string buttonId)
         {
-            return ListView?.GetAllButtons()
+            return EnumerableExtensions
                 .MergeAll(
+                    ListView?.GetAllButtons(),
                     ListEditor?.GetAllButtons(),
                     NodeView?.GetAllButtons(),
                     NodeEditor?.GetAllButtons())

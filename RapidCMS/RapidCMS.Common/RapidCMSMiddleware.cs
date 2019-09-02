@@ -10,6 +10,7 @@ using RapidCMS.Common.Data;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
+using RapidCMS.Common.Providers;
 using RapidCMS.Common.Services;
 using RapidCMS.Common.Services.SidePane;
 
@@ -29,8 +30,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton(rootConfig);
 
-            // Root object containing all collections
-            services.AddScoped<Root>();
+            // providers for delivering config objects
+            services.AddScoped<ICustomRegistrationProvider, CustomRegistrationProvider>();
+            services.AddScoped<ICollectionProvider, CollectionProvider>();
+            services.AddScoped<IMetadataProvider, MetadataProvider>();
 
             //  UI + Repository services
             services.AddTransient<IDataProviderService, DataProviderService>();

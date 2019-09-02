@@ -56,12 +56,10 @@ namespace RapidCMS.Common.Extensions
             }
         }
 
-        public static IEnumerable<T> MergeAll<T>(this IEnumerable<T>? source, params IEnumerable<T>?[] sources)
+        public static IEnumerable<T> MergeAll<T>(params IEnumerable<T>?[] sources)
             where T : class
         {
-            return sources
-                .Where(x => x != null)
-                .Aggregate(source ?? Enumerable.Empty<T>(), (x, s) => x.Union(s));
+            return sources.Where(x => x != null).SelectMany(x => x);
         }
 
         public class Group<TKey, TElement> : IGrouping<TKey, TElement>

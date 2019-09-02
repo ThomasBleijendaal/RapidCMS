@@ -7,5 +7,6 @@ namespace RapidCMS.Common.Data
     {
         Collection GetCollection(string alias);
         IEnumerable<Collection> GetAllCollections();
+        IRepository? GetRepository(string collectionAlias);
     }
 }

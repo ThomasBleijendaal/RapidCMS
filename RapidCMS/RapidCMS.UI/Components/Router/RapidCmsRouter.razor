@@ -18,15 +18,15 @@
     private RenderFragment? CustomLogin { get; set; }
 
     [Inject]
-    private Root Root { get; set; }
+    private ICustomRegistrationProvider Registrations { get; set; }
 
     protected override Task OnParametersSetAsync()
     {
-        ButtonRenderFragmentContainer = new ButtonRenderFragmentContainer(Root.CustomButtonRegistrations);
-        EditorRenderFragmentContainer = new EditorRenderFragmentContainer(Root.CustomEditorRegistrations);
-        CustomSectionRenderFragmentContainer = new CustomSectionRenderFragmentContainer(Root.CustomSectionRegistrations);
+        ButtonRenderFragmentContainer = new ButtonRenderFragmentContainer(Registrations.CustomButtonRegistrations);
+        EditorRenderFragmentContainer = new EditorRenderFragmentContainer(Registrations.CustomEditorRegistrations);
+        CustomSectionRenderFragmentContainer = new CustomSectionRenderFragmentContainer(Registrations.CustomSectionRegistrations);
 
-        CustomLogin = Root.CustomLoginRegistration.ToRenderFragment();
+        CustomLogin = Registrations.CustomLoginRegistration.ToRenderFragment();
 
         return base.OnParametersSetAsync();
     }

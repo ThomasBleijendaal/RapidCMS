@@ -1,4 +1,4 @@
-﻿namespace RapidCMS.Common.Data
+﻿namespace RapidCMS.Common.Providers
 {
     public interface IMetadataProvider
     {
