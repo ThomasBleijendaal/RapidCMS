@@ -1,47 +1,26 @@
 TODO:
 
-1.0
-
 [] Documentation + Examples
-
-[v] Auto-update DataCollection editors when collection indicates update
-
-[v] Move relation validation to Attribute
-  
-[v] Date editor
 
 [] Allow for messaging (saved successfully etc)
 
-1.1
-
-[v] Fix nullability in PropertyMetadata
-
-[v] Dashboard
-
-[v] Pagination 
+[] Allow for side panes
+[] Custom modal / form based on button click
+    - Make it as 'delayed'-button (once modal closes, the crud type is determined)
+    - Everything inside modal is custom
 
 [] Order of collection form configuration is not maintained
   
+[] Pull all externally inheritable UI elements into RapidCMS.UI.Common
+
 [] Redirect after deletion + consistent pagination / Return to parent button action
 [] Redirect after insertions + no update authorization goes to 403 page
-
-[v] Property, Field, etc naming not totally consistent
 
 [v] Refresh data / relation collections upon save
     [v] More events from EditContext and bind nested EditContext to root
     [v] Make side bar tree react to collection actions (CRUD)
         [] Make possible to open sub collections with hidden root element
     [] OnBeforeUnload EditContext IsModified check
-
-[x] Custom Section support in Collection.razor (lists) (RowSection)
-
-[x] Remove UIEditor, and render editor directly
-
-[] Custom modal / form based on button click
-    - Make it as 'delayed'-button (once modal closes, the crud type is determined)
-    - Everything inside modal is custom
-
-1.2
 
 [] Implement Return everywhere + fallback to javascript:history.back();
 
@@ -53,8 +32,6 @@ TODO:
 
 [] Merge NodeViewPane and NodeEditorPaneConfig
 
-1.3
-
 [v] Button support everywhere (no more new List<Button>)
     [] ButtonActionHandler as generic parameter to CustomButton
     [] Bind CustomButton and ActionHandler more together
@@ -62,11 +39,8 @@ TODO:
 [] Top button bar should be side bar with meta
 [] Navigation command during pre-render (server side rendering) fails
 
-1.4
-
-[] Add more than one view to page (to allow for ListView + CustomBlock)
-
 2.0
+[] Add more than one view to page (to allow for ListView + CustomBlock)
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)
     [] ParentId must be IEntity to support different types of nesting of repos
     [] Merge RelationCollection + Collection (RelatedEntity + ParentEntity (instead of parentId))

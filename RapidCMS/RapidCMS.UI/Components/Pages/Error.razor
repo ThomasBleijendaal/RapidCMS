@@ -3,7 +3,7 @@
 @layout MainLayout
 
 @inject IExceptionHelper ExceptionHelper
-@inject Root Root
+@inject IMetadataProvider Metadata
 
 <div class="content">
     <p>An errror occured when your request was made.</p>
@@ -11,7 +11,7 @@
 </div>
 
 @{
-    if (Root.IsDevelopment)
+    if (Metadata.IsDevelopment)
     {
         var ex = ExceptionHelper.GetLatestException();
 

@@ -1,4 +1,6 @@
-﻿using RapidCMS.Common.Models.UI;
+﻿using Microsoft.AspNetCore.Components;
+using RapidCMS.Common.Models.UI;
+using RapidCMS.UI.Components.Buttons;
 using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Extensions
@@ -15,6 +17,16 @@ namespace RapidCMS.UI.Extensions
                 ShouldConfirm = button.ShouldConfirm,
                 IsPrimary = button.IsPrimary,
                 RequiresValidForm = button.RequiresValidForm
+            };
+        }
+
+        public static RenderFragment ToRenderFragment(this ButtonUI button, ButtonViewModel model)
+        {
+            return builder =>
+            {
+                builder.OpenComponent(0, button.CustomType ?? typeof(DefaultButton));
+                builder.AddAttribute(1, nameof(DefaultButton.Model), model);
+                builder.CloseComponent();
             };
         }
     }

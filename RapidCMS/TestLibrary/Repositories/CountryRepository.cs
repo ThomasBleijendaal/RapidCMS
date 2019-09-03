@@ -5,7 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
+using RapidCMS.Common.Services;
 using TestLibrary.Data;
 using TestLibrary.Entities;
 
@@ -14,10 +16,12 @@ namespace TestLibrary.Repositories
     public class CountryRepository : BaseStructRepository<int, int, CountryEntity>
     {
         private readonly TestDbContext _dbContext;
+        private readonly IMessageService _messageService;
 
-        public CountryRepository(TestDbContext dbContext, SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
+        public CountryRepository(TestDbContext dbContext, IMessageService messageService, SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
         {
             _dbContext = dbContext;
+            _messageService = messageService;
         }
 
         public override async Task DeleteAsync(int id, int? parentId)
@@ -139,6 +143,8 @@ namespace TestLibrary.Repositories
 
         public override async Task UpdateAsync(int id, int? parentId, CountryEntity entity, IRelationContainer? relations)
         {
+            _messageService.AddMessage(MessageType.Success, $"Country '{entity.Name}' saved.");
+
             var dbEntity = await _dbContext.Countries.FirstOrDefaultAsync(x => x._Id == id);
 
             dbEntity.Name = entity.Name;

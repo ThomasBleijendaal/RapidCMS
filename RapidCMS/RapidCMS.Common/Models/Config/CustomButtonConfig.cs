@@ -6,11 +6,11 @@ namespace RapidCMS.Common.Models.Config
     {
         public CustomButtonConfig(Type customButtonType, Type actionHandler)
         {
-            Alias = customButtonType?.FullName ?? throw new ArgumentNullException(nameof(customButtonType));
+            CustomType = customButtonType ?? throw new ArgumentNullException(nameof(customButtonType));
             ActionHandler = actionHandler ?? throw new ArgumentNullException(nameof(actionHandler));
         }
 
-        internal string Alias { get; set; }
+        internal Type CustomType { get; set; }
         internal Type ActionHandler { get; set; }
     }
 }

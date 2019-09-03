@@ -16,14 +16,18 @@ namespace RapidCMS.Common.Services
 {
     internal class EditorService : IEditorService
     {
-        private readonly Root _root;
+        private readonly ICollectionProvider _collectionProvider;
         private readonly IDataProviderService _dataProviderService;
         private readonly IAuthorizationService _authorizationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public EditorService(Root root, IDataProviderService dataProviderService, IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor)
+        public EditorService(
+            ICollectionProvider collectionProvider,
+            IDataProviderService dataProviderService, 
+            IAuthorizationService authorizationService, 
+            IHttpContextAccessor httpContextAccessor)
         {
-            _root = root;
+            _collectionProvider = collectionProvider;
             _dataProviderService = dataProviderService;
             _authorizationService = authorizationService;
             _httpContextAccessor = httpContextAccessor;
@@ -31,7 +35,7 @@ namespace RapidCMS.Common.Services
 
         public Task<NodeUI> GetNodeAsync(UsageType usageType, string collectionAlias)
         {
-            var collection = _root.GetCollection(collectionAlias);
+            var collection = _collectionProvider.GetCollection(collectionAlias);
             var node = usageType.HasFlag(UsageType.View) ? collection.NodeView : collection.NodeEditor;
             if (node == null)
             {
@@ -68,7 +72,7 @@ namespace RapidCMS.Common.Services
 
         public Task<ListUI> GetListAsync(UsageType usageType, string collectionAlias)
         {
-            var collection = _root.GetCollection(collectionAlias);
+            var collection = _collectionProvider.GetCollection(collectionAlias);
 
             List<Button>? buttons;
             List<Pane>? panes;
@@ -184,7 +188,7 @@ namespace RapidCMS.Common.Services
                 return (index: relatedCollection.Index, element: (ElementUI)relatedCollection.ToUI());
             });
 
-            return new SectionUI(pane.CustomAlias, pane.Label, pane.IsVisible)
+            return new SectionUI(pane.CustomType, pane.Label, pane.IsVisible)
             {
                 Buttons = await GetButtonsAsync(pane.Buttons, editContext),
 

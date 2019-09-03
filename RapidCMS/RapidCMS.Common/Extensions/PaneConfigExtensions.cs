@@ -9,7 +9,7 @@ namespace RapidCMS.Common.Extensions
         {
             return new Pane
             {
-                CustomAlias = pane.CustomAlias,
+                CustomType = pane.CustomType,
                 IsVisible = pane.IsVisible,
                 Label = pane.Label,
                 VariantType = pane.VariantType,

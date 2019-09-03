@@ -2,9 +2,9 @@
 
 @layout MainLayout
 
-@inject Root root
+@inject ICustomRegistrationProvider Registrations
 
-@foreach (var section in root.CustomDashboardSectionRegistrations)
+@foreach (var section in Registrations.CustomDashboardSectionRegistrations)
 {
     @RenderType(section);
 }

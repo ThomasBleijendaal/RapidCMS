@@ -1,4 +1,6 @@
-﻿namespace RapidCMS.Common.Models.UI
+﻿using System;
+
+namespace RapidCMS.Common.Models.UI
 {
     public class ButtonUI
     {
@@ -9,6 +11,6 @@
         public bool IsPrimary { get; internal set; }
         public bool RequiresValidForm { get; internal set; }
 
-        public string? CustomAlias { get; internal set; }
+        public Type? CustomType { get; internal set; }
     }
 }

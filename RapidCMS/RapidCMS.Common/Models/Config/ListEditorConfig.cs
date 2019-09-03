@@ -49,6 +49,19 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
+        public ListEditorConfig<TEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null, CrudType? defaultCrudType = null)
+        {
+            var button = new PaneButtonConfig(paneType, defaultCrudType)
+            {
+                Icon = icon,
+                Label = label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
+
         public ListEditorConfig<TEntity> AddSection(Action<IEditorPaneConfig<TEntity>> configure)
         {
             return AddSection<TEntity>(configure);

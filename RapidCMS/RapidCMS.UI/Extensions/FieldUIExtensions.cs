@@ -1,20 +1,14 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
-using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
 using RapidCMS.UI.Components.Editors;
 
-namespace RapidCMS.UI.Containers
+namespace RapidCMS.UI.Extensions
 {
-    public class EditorRenderFragmentContainer : RenderFragmentContainer
+    public static class FieldUIExtensions
     {
-        public EditorRenderFragmentContainer(IEnumerable<CustomTypeRegistration> registrations) : base(registrations)
-        {
-        }
-
-        public RenderFragment? GetEditor(FieldUI field, IEntity entity)
+        public static RenderFragment? ToRenderFragment(this FieldUI field, IEntity entity)
         {
             if (field is ExpressionFieldUI expressionField)
             {
@@ -25,14 +19,9 @@ namespace RapidCMS.UI.Containers
             }
             else if (field is CustomPropertyFieldUI customField)
             {
-                if (_customRegistrations == null || !_customRegistrations.TryGetValue(customField.CustomAlias, out var registration))
-                {
-                    return null;
-                }
-
                 return builder =>
                 {
-                    var editorType = registration.Type;
+                    var editorType = customField.CustomType;
 
                     builder.OpenComponent(0, editorType);
 

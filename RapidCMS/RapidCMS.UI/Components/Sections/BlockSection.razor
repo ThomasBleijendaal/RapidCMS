@@ -33,12 +33,12 @@
                         @if (field is ExpressionFieldUI expressionField)
                         {
                             <label class="col-form-label">
-                                @Editors.GetEditor(field, EditContext.Entity)
+                                @field.ToRenderFragment(EditContext.Entity)
                             </label>
                         }
                         else if (field is PropertyFieldUI propertyField)
                         {
-                            @Editors.GetEditor(field, EditContext.Entity)
+                            @field.ToRenderFragment(EditContext.Entity)
                         }
                     </div>
                 </div>
@@ -46,7 +46,7 @@
             else if (element is SubCollectionUI subCollection)
             {
                 <div class="nested-content">
-                    <Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                    <RapidCMS.UI.Components.Pages.Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
                                 CollectionAlias=@subCollection.CollectionAlias
                                 ParentId=@EditContext.Entity.Id />
                 </div>
@@ -56,7 +56,7 @@
                 if (!EditContext.UsageType.HasFlag(UsageType.New))
                 {
                     <div class="nested-content">
-                        <RelationCollection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                        <RapidCMS.UI.Components.Pages.RelationCollection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
                                             CollectionAlias=@relatedCollection.CollectionAlias
                                             RelatedEntity=@EditContext.Entity />
                     </div>
