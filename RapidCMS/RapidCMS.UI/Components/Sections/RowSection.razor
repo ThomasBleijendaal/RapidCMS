@@ -2,9 +2,11 @@
 
 @if (Section != null && Section.IsVisible(EditContext.Entity))
 {
-    @if (!string.IsNullOrEmpty(Section.CustomAlias))
+    var renderFragment = Section.ToRenderFragment();
+
+    if (renderFragment != null)
     {
-        @CustomSections.GetCustomSection(Section.CustomAlias, Section);
+        @renderFragment
     }
     else
     {
@@ -42,7 +44,7 @@
                             <td>
                                 @if (field.IsVisible(EditContext.Entity))
                                 {
-                                    @Editors.GetEditor(field, EditContext.Entity)
+                                    @field.ToRenderFragment(EditContext.Entity)
                                 }
                             </td>
                         }

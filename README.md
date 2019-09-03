@@ -621,8 +621,7 @@ TODO: documentation
 TL;DR:
 
 1. Create a custom editor and have it `@inherit BaseEditor`.
-2. Add it to the cms using `.AddCustomEditor(typeof(YourCustomEditor))`.
-3. Have a field use your editor by calling `editor.AddField(x => x.Prop).SetType(typeof(YourCustomEditor))`.
+2. Have a field use your editor by calling `editor.AddField(x => x.Prop).SetType(typeof(YourCustomEditor))`.
 
 ## Creating custom buttons
 
@@ -631,8 +630,7 @@ TODO: documentation
 TL;DR:
 
 1. Create a custom button an have it `@inherit BaseButton`.
-2. Add it to the cms using `.AddCustomButton(typeof(YourCustomButton))`.
-3. Have a editor use your button by calling `editor.AddCustomButton<YourCustomActionHandler>(typeof(YourCustomButton))` 
+2. Have a editor use your button by calling `editor.AddCustomButton<YourCustomActionHandler>(typeof(YourCustomButton))` 
 and create a `YourCustomActionHandler` which implements `IButtonActionHandler`.
 
 ## Creating custom sections
@@ -642,5 +640,4 @@ TODO: documentation
 TL;DR:
 
 1. Create a custom section and have it `@inherit BaseSection` (or `@inherit BaseEditContextSection` if you want access to `EditContext`).
-2. Add it to the cms using `.AddCustomSection(typeof(YourCustomSection))`.
-3. Have a view or editor use your section by calling `list.AddRow(typeof(YourCustomSection))` or `editor.AddSection(typeof(YourCustomSection))`.
+2. Have a view or editor use your section by calling `list.AddRow(typeof(YourCustomSection))` or `editor.AddSection(typeof(YourCustomSection))`.

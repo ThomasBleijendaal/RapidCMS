@@ -188,7 +188,7 @@ namespace RapidCMS.Common.Services
                 return (index: relatedCollection.Index, element: (ElementUI)relatedCollection.ToUI());
             });
 
-            return new SectionUI(pane.CustomAlias, pane.Label, pane.IsVisible)
+            return new SectionUI(pane.CustomType, pane.Label, pane.IsVisible)
             {
                 Buttons = await GetButtonsAsync(pane.Buttons, editContext),
 

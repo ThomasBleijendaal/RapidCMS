@@ -13,7 +13,7 @@ namespace RapidCMS.Common.Services.SidePane
             ReturnTask = returnTask ?? throw new ArgumentNullException(nameof(returnTask));
             EditContext = editContext ?? throw new ArgumentNullException(nameof(editContext));
             ButtonContext = buttonContext ?? throw new ArgumentNullException(nameof(buttonContext));
-            DefaultCrudType = defaultCrudType ?? throw new ArgumentNullException(nameof(defaultCrudType));
+            DefaultCrudType = defaultCrudType;
         }
 
         public Type PaneType { get; set; }

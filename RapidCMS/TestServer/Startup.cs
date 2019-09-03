@@ -159,13 +159,6 @@ namespace TestServer
             {
                 config.AllowAnonymousUser();
 
-                config.AddCustomButton(typeof(CreateButton));
-                config.AddCustomButton(typeof(DoItButton));
-                config.AddCustomEditor(typeof(PasswordEditor));
-                config.AddCustomEditor(typeof(UploadEditor));
-                config.AddCustomSection(typeof(DashboardSection));
-                config.AddCustomSection(typeof(BlockSection));
-
                 config.SetCustomLogin(typeof(LoginControl));
 
                 config.SetSiteName("Test Client");

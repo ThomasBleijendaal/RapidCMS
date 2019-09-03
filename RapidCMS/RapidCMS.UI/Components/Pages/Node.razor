@@ -22,9 +22,11 @@ else
         {
             @foreach (var section in Sections)
             {
-                if (!string.IsNullOrEmpty(section.CustomAlias))
+                var renderFragment = section.ToRenderFragment();
+
+                if (renderFragment != null)
                 {
-                    @CustomSections.GetCustomSection(section.CustomAlias, section);
+                    @renderFragment
                 }
                 else
                 {

@@ -73,7 +73,7 @@ namespace RapidCMS.Common.Extensions
                 button.IsPrimary,
                 EmptySubButtons,
                 button.ActionHandler,
-                alias: button.Alias);
+                customType: button.CustomType);
         }
 
         public static Button ToPaneButton(this PaneButtonConfig button, EntityVariant? baseEntityVariant)

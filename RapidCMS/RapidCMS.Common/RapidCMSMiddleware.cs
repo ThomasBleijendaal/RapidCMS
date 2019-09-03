@@ -63,7 +63,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<HttpClient>();
 
             // Scoped semaphore for repositories
-            services.AddScoped(serviceProvider => new SemaphoreSlim(1, 1));
+            services.AddScoped(serviceProvider => new SemaphoreSlim(rootConfig.SemaphoreMaxCount, rootConfig.SemaphoreMaxCount));
 
             services.AddMemoryCache();
 

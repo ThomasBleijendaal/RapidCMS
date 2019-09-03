@@ -22,7 +22,7 @@ namespace RapidCMS.Common.Extensions
                 ShouldConfirm = button.ShouldAskForConfirmation(editContext),
                 IsPrimary = button.IsPrimary,
                 RequiresValidForm = button.RequiresValidForm(editContext),
-                CustomAlias = button.Alias
+                CustomType = button.CustomType
             };
         }
 
@@ -55,7 +55,7 @@ namespace RapidCMS.Common.Extensions
                 var ui = (field is CustomField customPropertyField)
                     ? new CustomPropertyFieldUI
                     {
-                        CustomAlias = customPropertyField.Alias
+                        CustomType = customPropertyField.CustomType
                     } 
                     : new PropertyFieldUI();
 

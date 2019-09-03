@@ -12,33 +12,11 @@ namespace RapidCMS.Common.Models.Config
         internal bool IsDevelopment { get; set; }
         internal bool AllowAnonymousUsage { get; set; } = false;
 
+        internal int SemaphoreMaxCount { get; set; } = 1;
+
         public List<CollectionConfig> Collections { get; set; } = new List<CollectionConfig>();
-        internal List<CustomTypeRegistration> CustomButtonRegistrations { get; set; } = new List<CustomTypeRegistration>();
-        internal List<CustomTypeRegistration> CustomEditorRegistrations { get; set; } = new List<CustomTypeRegistration>();
-        internal List<CustomTypeRegistration> CustomSectionRegistrations { get; set; } = new List<CustomTypeRegistration>();
         internal List<CustomTypeRegistration> CustomDashboardSectionRegistrations { get; set; } = new List<CustomTypeRegistration>();
         internal CustomTypeRegistration? CustomLoginRegistration { get; set; }
-
-        public CmsConfig AddCustomButton(Type buttonType)
-        {
-            CustomButtonRegistrations.Add(new CustomTypeRegistration(buttonType));
-
-            return this;
-        }
-
-        public CmsConfig AddCustomEditor(Type editorType)
-        {
-            CustomEditorRegistrations.Add(new CustomTypeRegistration(editorType));
-
-            return this;
-        }
-
-        public CmsConfig AddCustomSection(Type sectionType)
-        {
-            CustomSectionRegistrations.Add(new CustomTypeRegistration(sectionType));
-
-            return this;
-        }
 
         public CmsConfig SetCustomLogin(Type loginType)
         {
@@ -73,6 +51,18 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
+        /// <summary>
+        /// Sets the number of concurrent IRepository actions. Will lead to deadlocks when used incorrectly.
+        /// </summary>
+        /// <param name="maxCount">Max number of concurrent IRepository actions.</param>
+        /// <returns></returns>
+        public CmsConfig DangerouslyFiddleWithSemaphoreSettings(int maxCount)
+        {
+            SemaphoreMaxCount = maxCount;
+
+            return this;
+        }
+        
         // TODO: this should throw if collection does not implement its edit or list view
         public CmsConfig AddDashboardSection(string collectionAlias, bool edit = false)
         {

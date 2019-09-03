@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
+using RapidCMS.Example.Components;
 using RapidCMS.Example.Data;
 using RapidCMS.Repositories;
 
@@ -32,11 +33,15 @@ namespace RapidCMS.Example
             services.AddServerSideBlazor();
 
             services.AddScoped<InMemoryRepository<Person>>();
+            services.AddScoped<InMemoryRepository<Country>>();
+            services.AddScoped<InMemoryRepository<User>>();
+
 
             services.AddRapidCMS(config =>
             {
                 config.AllowAnonymousUser();
 
+                // CRUD editor for simple POCO.
                 config.AddCollection<Person>("person", "Person", collection =>
                 {
                     collection
@@ -108,6 +113,80 @@ namespace RapidCMS.Example
                             });
                         });
                 });
+
+                // CRUD editor with support for one-to-many relation + validation
+                config.AddCollection<Country>("country", "Country", collection =>
+                {
+                    collection
+                        .SetTreeView(x => x.Name)
+                        .SetRepository<InMemoryRepository<Country>>()
+                        .SetListView(view =>
+                        {
+                            view.AddDefaultButton(DefaultButtonType.New);
+
+                            view
+                                .AddRow(row =>
+                                {
+                                    row.AddField(p => p.Id.ToString()).SetName("ID");
+                                    row.AddField(p => p.Name);
+
+                                    row.AddDefaultButton(DefaultButtonType.Edit);
+                                });
+                        })
+                        .SetNodeEditor(editor =>
+                        {
+                            editor
+                                .AddDefaultButton(DefaultButtonType.SaveExisting)
+                                .AddDefaultButton(DefaultButtonType.SaveNew);
+
+                            editor.AddSection(section =>
+                            {
+                                section.AddField(x => x.Name);
+
+                                // basic One-To-Many editor
+                                section.AddField(x => x.People)
+                                    .SetType(EditorType.MultiSelect)
+                                    .SetCollectionRelation<Person, int>(
+                                        people => people.Select(p => p.Id),
+                                        "person",
+                                        relation =>
+                                        {
+                                            relation
+                                                .SetElementIdProperty(x => x.Id)
+                                                .SetElementDisplayProperties(x => x.Name, x => x.Email);
+                                        });
+                            });
+                        });
+                });
+
+                // CURD editor with validation attributes, custom editor and custom button panes
+                config.AddCollection<User>("user", "User", collection =>
+                {
+                    collection
+                        .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
+                        .SetRepository<InMemoryRepository<User>>()
+                        .SetListEditor(editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.Return);
+                            editor.AddDefaultButton(DefaultButtonType.New);
+                            editor.AddPaneButton(typeof(ResetAllPane), "Reset all passwords", "trash");
+
+                            editor
+                                .AddSection(section =>
+                                {
+                                    section.AddField(x => x.Name);
+                                    section.AddField(x => x.Password).SetType(typeof(PasswordEditor));
+
+                                    section.AddDefaultButton(DefaultButtonType.SaveExisting);
+                                    section.AddDefaultButton(DefaultButtonType.SaveNew);
+                                });
+                        });
+                });
+
+                // Do not touch this setting if you do not know what you are doing :)
+                // Due to InMemoryRepository uses other InMemoryRepositories while saving, this limit must be increased, otherwise the repos will deadlock during save.
+                // Please do not use this setting unless you run into issues with repo-repo deadlocking.
+                config.DangerouslyFiddleWithSemaphoreSettings(2);
             });
         }
 

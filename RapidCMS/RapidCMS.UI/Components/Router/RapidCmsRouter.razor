@@ -1,19 +1,8 @@
-﻿<CascadingValue Value="@ButtonRenderFragmentContainer" Name="Buttons">
-    <CascadingValue Value="@EditorRenderFragmentContainer" Name="Editors">
-        <CascadingValue Value="@CustomSectionRenderFragmentContainer" Name="CustomSections">
-            <CascadingValue Value="@CustomLogin" Name="CustomLogin">
-                <Router AppAssembly="typeof(RapidCmsRouter).Assembly" />
-            </CascadingValue>
-        </CascadingValue>
-    </CascadingValue>
+﻿<CascadingValue Value="@CustomLogin" Name="CustomLogin">
+    <Router AppAssembly="typeof(RapidCmsRouter).Assembly" />
 </CascadingValue>
 
-
 @code {
-
-    private ButtonRenderFragmentContainer ButtonRenderFragmentContainer { get; set; } = new ButtonRenderFragmentContainer(null);
-    private EditorRenderFragmentContainer EditorRenderFragmentContainer { get; set; } = new EditorRenderFragmentContainer(null);
-    private CustomSectionRenderFragmentContainer CustomSectionRenderFragmentContainer { get; set; } = new CustomSectionRenderFragmentContainer(null);
 
     private RenderFragment? CustomLogin { get; set; }
 
@@ -22,10 +11,6 @@
 
     protected override Task OnParametersSetAsync()
     {
-        ButtonRenderFragmentContainer = new ButtonRenderFragmentContainer(Registrations.CustomButtonRegistrations);
-        EditorRenderFragmentContainer = new EditorRenderFragmentContainer(Registrations.CustomEditorRegistrations);
-        CustomSectionRenderFragmentContainer = new CustomSectionRenderFragmentContainer(Registrations.CustomSectionRegistrations);
-
         CustomLogin = Registrations.CustomLoginRegistration.ToRenderFragment();
 
         return base.OnParametersSetAsync();

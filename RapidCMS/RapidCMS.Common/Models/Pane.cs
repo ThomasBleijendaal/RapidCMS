@@ -5,7 +5,7 @@ namespace RapidCMS.Common.Models
 {
     internal class Pane
     {
-        internal string? CustomAlias { get; set; }
+        internal Type? CustomType { get; set; }
         internal string? Label { get; set; }
         internal Func<object, bool> IsVisible { get; set; }
         internal Type VariantType { get; set; }

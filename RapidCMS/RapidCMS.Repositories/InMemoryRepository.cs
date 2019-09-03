@@ -1,20 +1,29 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
+using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Repositories
 {
+    /// <summary>
+    /// This generic repository saves TEntities in memory and has some basic support for one-to-many relations.
+    /// Use *only* List<TRelatedEntity> properties for relations.
+    /// </summary>
+    /// <typeparam name="TEntity">Entity to store</typeparam>
     public class InMemoryRepository<TEntity> : BaseClassRepository<string, string, TEntity>
         where TEntity : IEntity, ICloneable, new()
     {
         private readonly Dictionary<string, List<TEntity>> _data = new Dictionary<string, List<TEntity>>();
+        private readonly IServiceProvider _serviceProvider;
 
-        public InMemoryRepository(SemaphoreSlim semaphore) : base(semaphore)
+        public InMemoryRepository(SemaphoreSlim semaphore, IServiceProvider serviceProvider) : base(semaphore)
         {
+            _serviceProvider = serviceProvider;
         }
 
         private List<TEntity> GetListForParent(string? parentId)
@@ -40,7 +49,7 @@ namespace RapidCMS.Repositories
         {
             var dataQuery = GetListForParent(parentId).AsEnumerable();
 
-            if(query.DataViewExpression != null)
+            if (query.DataViewExpression != null)
             {
                 dataQuery = dataQuery.Where(query.DataViewExpression.Compile());
             }
@@ -66,13 +75,15 @@ namespace RapidCMS.Repositories
             return Task.FromResult((TEntity)GetListForParent(parentId).FirstOrDefault(x => x.Id == id).Clone());
         }
 
-        public override Task<TEntity> InsertAsync(string? parentId, TEntity entity, IRelationContainer? relations)
+        public override async Task<TEntity> InsertAsync(string? parentId, TEntity entity, IRelationContainer? relations)
         {
             entity.Id = new Random().Next(0, int.MaxValue).ToString();
 
+            await HandleRelationsAsync(entity, relations);
+
             GetListForParent(parentId).Add(entity);
 
-            return Task.FromResult((TEntity)entity.Clone());
+            return (TEntity)entity.Clone();
         }
 
         public override Task<TEntity> NewAsync(string? parentId, Type? variantType = null)
@@ -90,16 +101,65 @@ namespace RapidCMS.Repositories
             return parentId;
         }
 
-        public override Task UpdateAsync(string id, string? parentId, TEntity entity, IRelationContainer? relations)
+        public override async Task UpdateAsync(string id, string? parentId, TEntity entity, IRelationContainer? relations)
         {
             var list = GetListForParent(parentId);
 
             var index = list.FindIndex(x => x.Id == id);
 
-            list.Insert(index, (TEntity)entity.Clone());
-            list.RemoveAt(index + 1);
+            var newEntity = (TEntity)entity.Clone();
 
-            return Task.CompletedTask;
+            await HandleRelationsAsync(newEntity, relations);
+
+            list.Insert(index, newEntity);
+            list.RemoveAt(index + 1);
+        }
+
+        private async Task HandleRelationsAsync(TEntity entity, IRelationContainer? relations)
+        {
+            // this is some generic code to handle relations very genericly
+            // please do not use in production
+
+            if (relations != null)
+            {
+                foreach (var r in relations.Relations)
+                {
+                    try
+                    {
+                        if (r.Property is IFullPropertyMetadata fp)
+                        {
+                            if (_serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(r.RelatedEntity)) is IRepository repo)
+                            {
+                                var relatedEntities = await r.RelatedElements
+                                    .Select(x => x.Id.ToString())
+                                    .ToListAsync(async id =>
+                                    {
+                                        var entity = await repo.InternalGetByIdAsync(id, null);
+                                        return entity;
+                                    });
+
+                                var orignalList = fp.Getter(entity);
+
+                                if (orignalList is IList list)
+                                {
+                                    list.Clear();
+
+                                    foreach (var relatedEntity in relatedEntities)
+                                    {
+                                        list.Add(relatedEntity);
+                                    }
+
+                                    fp.Setter(entity, list);
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // do not care
+                    }
+                }
+            }
         }
     }
 }

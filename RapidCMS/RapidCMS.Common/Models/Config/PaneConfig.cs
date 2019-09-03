@@ -15,7 +15,7 @@ namespace RapidCMS.Common.Models.Config
             VariantType = variantType ?? throw new ArgumentNullException(nameof(variantType));
         }
 
-        internal string? CustomAlias { get; set; }
+        internal Type? CustomType { get; set; }
         internal string? Label { get; set; }
 
         internal Func<object, bool> IsVisible { get; set; } = (x) => true;
@@ -41,7 +41,7 @@ namespace RapidCMS.Common.Models.Config
 
         public PaneConfig(Type variantType, Type customSectionType) : base(variantType)
         {
-            CustomAlias = customSectionType.FullName;
+            CustomType = customSectionType;
         }
 
         private PaneConfig<TEntity, TFieldConfig> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
@@ -62,6 +62,19 @@ namespace RapidCMS.Common.Models.Config
         private PaneConfig<TEntity, TFieldConfig> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
         {
             var button = new CustomButtonConfig(buttonType, typeof(TActionHandler))
+            {
+                Icon = icon,
+                Label = label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
+
+        public PaneConfig<TEntity, TFieldConfig> AddPaneButton(Type paneType, string? label = null, string? icon = null, CrudType? defaultCrudType = null)
+        {
+            var button = new PaneButtonConfig(paneType, defaultCrudType)
             {
                 Icon = icon,
                 Label = label
@@ -142,6 +155,11 @@ namespace RapidCMS.Common.Models.Config
             return AddCustomButton<TActionHandler>(buttonType, label, icon);
         }
 
+        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddPaneButton(Type paneType, string? label, string? icon, CrudType? defaultCrudType)
+        {
+            return AddPaneButton(paneType, label, icon, defaultCrudType);
+        }
+
         IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddSubCollectionList<TSubEntity>(string collectionAlias, Action<SubCollectionListConfig<TSubEntity>>? configure)
         {
             return AddSubCollectionList<TSubEntity>(collectionAlias, configure);
@@ -188,6 +206,11 @@ namespace RapidCMS.Common.Models.Config
         IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddCustomButton<TActionHandler>(Type buttonType, string? label, string? icon)
         {
             return AddCustomButton<TActionHandler>(buttonType, label, icon);
+        }
+
+        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddPaneButton(Type paneType, string? label, string? icon, CrudType? defaultCrudType)
+        {
+            return AddPaneButton(paneType, label, icon, defaultCrudType);
         }
 
         IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddSubCollectionList<TSubEntity>(string collectionAlias, Action<SubCollectionListConfig<TSubEntity>>? configure)

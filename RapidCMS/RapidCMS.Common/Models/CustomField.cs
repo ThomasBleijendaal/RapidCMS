@@ -7,9 +7,9 @@ namespace RapidCMS.Common.Models
     {
         public CustomField(IPropertyMetadata property, Type customFieldType) : base(property)
         {
-            Alias = customFieldType?.FullName ?? throw new ArgumentNullException(nameof(customFieldType));
+            CustomType = customFieldType ?? throw new ArgumentNullException(nameof(customFieldType));
         }
 
-        internal string Alias { get; set; }
+        internal Type CustomType { get; set; }
     }
 }

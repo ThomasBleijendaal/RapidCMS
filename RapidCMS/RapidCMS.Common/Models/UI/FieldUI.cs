@@ -1,4 +1,5 @@
-﻿using RapidCMS.Common.Data;
+﻿using System;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Models.Metadata;
 
@@ -25,6 +26,6 @@ namespace RapidCMS.Common.Models.UI
 
     public class CustomPropertyFieldUI : PropertyFieldUI
     {
-        public string CustomAlias { get; internal set; }
+        public Type CustomType { get; internal set; }
     }
 }

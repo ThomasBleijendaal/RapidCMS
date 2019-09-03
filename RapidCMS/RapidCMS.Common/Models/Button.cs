@@ -23,13 +23,13 @@ namespace RapidCMS.Common.Models
             IEnumerable<Button> buttons, 
             Type buttonHandler, 
             EntityVariant? entityVariant = null, 
-            string? alias = null,
+            Type? customType = null,
             CrudType? defaultCrudType = null)
         {
             var def = defaultButtonType.GetCustomAttribute<DefaultIconLabelAttribute>();
 
             ButtonId = buttonId ?? throw new ArgumentNullException(nameof(buttonId));
-            Alias = alias;
+            CustomType = customType;
 
             DefaultButtonType = defaultButtonType;
             DefaultCrudType = defaultCrudType;
@@ -47,7 +47,7 @@ namespace RapidCMS.Common.Models
         internal CrudType? DefaultCrudType { get; private set; }
 
         internal string ButtonId { get; private set; }
-        internal string? Alias { get; private set; }
+        internal Type? CustomType { get; private set; }
 
         internal string Label { get; private set; }
         internal string Icon { get; private set; }

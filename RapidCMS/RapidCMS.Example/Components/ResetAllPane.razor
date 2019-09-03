@@ -1,0 +1,44 @@
+﻿@inherits BaseSidePane
+
+@using RapidCMS.Common.Data
+@using RapidCMS.UI.Components.Panes
+@using RapidCMS.Common.Enums
+@using RapidCMS.Repositories
+@using RapidCMS.Example.Data
+
+<h3>Are you sure you want to reset all passwords?</h3>
+
+<div class="buttonbar">
+    <button class="btn btn-danger" @onclick=@((UIMouseEventArgs args) => ResetPasswordsAsync())>Yes</button>
+    <button class="btn btn-dark" @onclick=@((UIMouseEventArgs args) => Cancel())>No</button>
+</div>
+
+@code {
+    // This is only an example.
+    // Please do not use Repositories in your components.
+    [Inject] private InMemoryRepository<User> Repository { get; set; }
+
+    async Task ResetPasswordsAsync()
+    {
+        var repo = Repository as IRepository;
+
+        var users = await repo.InternalGetAllAsync(null, Query.Default());
+
+        foreach (var user in users)
+        {
+            var typedUser = (User)user;
+            typedUser.Password = "Reset";
+
+            await repo.InternalUpdateAsync(user.Id, null, user, null);
+        }
+
+        // CrudType Refresh refreshes the data in the view
+        ButtonClicked(CrudType.Refresh);
+    }
+
+    void Cancel()
+    {
+        // CrudType None does nothing
+        ButtonClicked(CrudType.None);
+    }
+}

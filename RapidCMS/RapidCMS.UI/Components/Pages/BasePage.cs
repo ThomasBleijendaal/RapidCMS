@@ -8,7 +8,6 @@ using RapidCMS.Common.Enums;
 using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Commands;
-using RapidCMS.UI.Containers;
 
 namespace RapidCMS.UI.Components.Pages
 {
@@ -19,8 +18,6 @@ namespace RapidCMS.UI.Components.Pages
         [Inject] private IUriHelper UriHelper { get; set; }
         [Inject] private IExceptionHelper ExceptionHelper { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
-
-        [CascadingParameter(Name = "CustomSections")] protected CustomSectionRenderFragmentContainer CustomSections { get; set; }
 
         [Parameter] public string Action { get; set; }
         [Parameter] public string CollectionAlias { get; set; }
