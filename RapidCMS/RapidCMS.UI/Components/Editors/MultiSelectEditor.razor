@@ -22,7 +22,7 @@
                                    id="@group-option@(index)"
                                    name=@group
                                    checked=@check
-                                   @onchange=@((UIChangeEventArgs __e) => OnChangeAsync(__e, option.Id)) />
+                                   @onchange=@((ChangeEventArgs __e) => OnChangeAsync(__e, option.Id)) />
 
                             @option.Labels.First()
                         </label>
@@ -77,7 +77,7 @@
         StateHasChanged();
     }
 
-    private async Task OnChangeAsync(UIChangeEventArgs e, object value)
+    private async Task OnChangeAsync(ChangeEventArgs e, object value)
     {
         var element = Options.First(x => x.Id.Equals(value));
 

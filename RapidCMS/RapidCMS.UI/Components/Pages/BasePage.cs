@@ -15,7 +15,7 @@ namespace RapidCMS.UI.Components.Pages
     {
         private UpdateParameterCommand? _previousParameterCommand = null;
 
-        [Inject] private IUriHelper UriHelper { get; set; }
+        [Inject] private NavigationManager NavigationManager { get; set; }
         [Inject] private IExceptionHelper ExceptionHelper { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
 
@@ -50,7 +50,7 @@ namespace RapidCMS.UI.Components.Pages
                 {
                     case NavigateCommand navigateCommand:
 
-                        UriHelper.NavigateTo(navigateCommand.Uri);
+                        NavigationManager.NavigateTo(navigateCommand.Uri);
 
                         break;
 
@@ -133,7 +133,7 @@ namespace RapidCMS.UI.Components.Pages
         {
             if (ex is UnauthorizedAccessException)
             {
-                UriHelper.NavigateTo("/unauthorized");
+                NavigationManager.NavigateTo("/unauthorized");
             }
             else if (ex is InvalidEntityException)
             {
@@ -144,7 +144,7 @@ namespace RapidCMS.UI.Components.Pages
             {
                 ExceptionHelper.StoreException(ex);
 
-                UriHelper.NavigateTo("/error");
+                NavigationManager.NavigateTo("/error");
             }
         }
 

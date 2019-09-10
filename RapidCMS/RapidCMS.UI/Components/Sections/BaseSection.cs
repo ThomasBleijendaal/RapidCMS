@@ -5,6 +5,6 @@ namespace RapidCMS.UI.Components.Sections
 {
     public class BaseSection : ComponentBase
     {
-        [Parameter] public SectionUI? Section { get; private set; }
+        [Parameter] public SectionUI? Section { get; set; }
     }
 }

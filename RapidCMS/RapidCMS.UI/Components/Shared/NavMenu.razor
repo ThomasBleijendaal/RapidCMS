@@ -1,5 +1,5 @@
 ﻿@inject ITreeService TreeService
-@inject IUriHelper UriHelper
+@inject NavigationManager NavigationManager
 
 <div class="top-row navbar navbar-dark">
     @if (TreeRoot != null)
@@ -34,7 +34,7 @@
 
     protected override void OnInitialized()
     {
-        UriHelper.OnLocationChanged += LocationChanged;
+        NavigationManager.LocationChanged += LocationChanged;
         
         TreeRoot = TreeService.GetRoot();
     }

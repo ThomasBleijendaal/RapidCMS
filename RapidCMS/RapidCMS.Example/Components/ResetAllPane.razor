@@ -1,16 +1,10 @@
 ﻿@inherits BaseSidePane
 
-@using RapidCMS.Common.Data
-@using RapidCMS.UI.Components.Panes
-@using RapidCMS.Common.Enums
-@using RapidCMS.Repositories
-@using RapidCMS.Example.Data
-
 <h3>Are you sure you want to reset all passwords?</h3>
 
 <div class="buttonbar">
-    <button class="btn btn-danger" @onclick=@((UIMouseEventArgs args) => ResetPasswordsAsync())>Yes</button>
-    <button class="btn btn-dark" @onclick=@((UIMouseEventArgs args) => Cancel())>No</button>
+    <button class="btn btn-danger" @onclick=ResetPasswordsAsync>Yes</button>
+    <button class="btn btn-dark" @onclick=Cancel>No</button>
 </div>
 
 @code {

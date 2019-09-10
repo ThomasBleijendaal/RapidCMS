@@ -1,9 +1,5 @@
 @inherits BasePropertyEditor
 
-@using RapidCMS.UI.Components.Editors
-@using RapidCMS.UI.Helpers
-@using Microsoft.WindowsAzure.Storage
-@using Microsoft.AspNetCore.Components
 @using Blazor.FileReader
 
 <div class="input-group">
@@ -33,17 +29,19 @@
 </div>
 
 @code {
+    ElementReference FileUpload;
+
     [Inject] CloudStorageAccount Account { get; set; }
     [Inject] IFileReaderService FileReaderService { get; set; }
 
     private bool waiting = false;
 
-    private async Task ResetValidation(UIChangeEventArgs args)
+    private async Task ResetValidation(ChangeEventArgs args)
     {
         EditContext.NotifyPropertyChanged(Property);
     }
 
-    private async Task UploadAsync(UIMouseEventArgs args)
+    private async Task UploadAsync(MouseEventArgs args)
     {
         EditContext.NotifyPropertyBusy(Property);
         waiting = true;

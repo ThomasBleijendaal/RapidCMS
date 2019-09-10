@@ -1,5 +1,15 @@
 ﻿<CascadingValue Value="@CustomLogin" Name="CustomLogin">
-    <Router AppAssembly="typeof(RapidCmsRouter).Assembly" />
+    <Router AppAssembly="typeof(RapidCmsRouter).Assembly">
+        <Found Context="routeData">
+            <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="typeof(MainLayout)">
+                <h1>Page not found</h1>
+                <p>Sorry, but there's nothing here!</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
 </CascadingValue>
 
 @code {

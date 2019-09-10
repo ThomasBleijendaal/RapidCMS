@@ -5,7 +5,7 @@ namespace RapidCMS.UI.Components.Sections
 {
     public class BaseEditContextSection : EditContextComponentBase
     {
-        [Parameter] public SectionUI? Section { get; private set; }
+        [Parameter] public SectionUI? Section { get; set; }
 
         protected override void AttachValidationStateChangedListener()
         {
