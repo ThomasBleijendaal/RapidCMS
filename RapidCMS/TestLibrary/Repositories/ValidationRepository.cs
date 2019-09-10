@@ -20,7 +20,82 @@ namespace TestLibrary.Repositories
                     1,
                     new ValidationEntity {
                         Id = "1",
-                        Name = "Name",
+                        Name = "Name 1",
+                        NotRequired = "A-ok",
+                        Range = 10,
+                        Accept = false,
+                        Textarea = "Some text some text"
+                    }
+                },
+
+                {
+                    2,
+                    new ValidationEntity {
+                        Id = "2",
+                        ParentId = 1,
+                        Name = "Name 2",
+                        NotRequired = "A-ok",
+                        Range = 10,
+                        Accept = false,
+                        Textarea = "Some text some text"
+                    }
+                },
+                {
+                    3,
+                    new ValidationEntity {
+                        Id = "3",
+                        ParentId = 1,
+                        Name = "Name 3",
+                        NotRequired = "A-ok",
+                        Range = 10,
+                        Accept = false,
+                        Textarea = "Some text some text"
+                    }
+                },
+
+                {
+                    4,
+                    new ValidationEntity {
+                        Id = "4",
+                        ParentId = 2,
+                        Name = "Name 4",
+                        NotRequired = "A-ok",
+                        Range = 10,
+                        Accept = false,
+                        Textarea = "Some text some text"
+                    }
+                },
+                {
+                    5,
+                    new ValidationEntity {
+                        Id = "5",
+                        ParentId = 2,
+                        Name = "Name 5",
+                        NotRequired = "A-ok",
+                        Range = 10,
+                        Accept = false,
+                        Textarea = "Some text some text"
+                    }
+                },
+
+                {
+                    6,
+                    new ValidationEntity {
+                        Id = "6",
+                        ParentId = 3,
+                        Name = "Name 6",
+                        NotRequired = "A-ok",
+                        Range = 10,
+                        Accept = false,
+                        Textarea = "Some text some text"
+                    }
+                },
+                {
+                    7,
+                    new ValidationEntity {
+                        Id = "7",
+                        ParentId = 3,
+                        Name = "Name 7",
                         NotRequired = "A-ok",
                         Range = 10,
                         Accept = false,

@@ -12,28 +12,28 @@ else if (UI.RootVisible)
             <button @onclick="@((MouseEventArgs e) => NodesVisible = !NodesVisible)" class="toggle">
                 @if (NodesVisible)
                 {
-                    <i class="oi oi-chevron-bottom"></i>
+                    <i class="icon ion-md-arrow-dropdown"></i>
                 }
                 else
                 {
-                    <i class="oi oi-chevron-right"></i>
+                    <i class="icon ion-md-arrow-dropright"></i>
                 }
             </button>
         }
         else
         {
             <button class="toggle" disabled>
-                <i class="oi oi-minus"></i>
+                <i class="icon"></i>
             </button>
         }
 
         @if (UI.Path != null)
         {
-            <NavLink href=@UI.Path><i class="oi oi-@UI.Icon"></i> @UI.Name</NavLink>
+            <NavLink href=@UI.Path><i class="icon ion-md-@UI.Icon"></i> @UI.Name</NavLink>
         }
         else
         {
-            <a href="#" class="disabled"><i class="oi oi-lock-locked"></i> @UI.Name</a>
+            <a href="#" class="disabled"><i class="icon ion-md-lock"></i> @UI.Name</a>
         }
         @if (NodesVisible)
         {

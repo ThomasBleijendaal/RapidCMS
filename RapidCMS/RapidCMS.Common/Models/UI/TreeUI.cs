@@ -20,6 +20,7 @@ namespace RapidCMS.Common.Models.UI
         public string Id { get; set; }
         public string Name { get; set; }
         public string Path { get; set; }
+        public bool RootVisibleOfCollections { get; set; }
         public List<string> Collections { get; set; }
     }
     public class TreeRootUI : TreeNodeUI

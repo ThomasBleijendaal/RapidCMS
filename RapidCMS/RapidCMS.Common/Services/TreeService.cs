@@ -49,17 +49,16 @@ namespace RapidCMS.Common.Services
                 Alias = collection.Alias,
                 Name = collection.Name,
                 EntitiesVisible = collection.TreeView?.EntityVisibility == EntityVisibilty.Visible,
-                RootVisible = collection.TreeView?.RootVisibility == CollectionRootVisibility.Visible
+                RootVisible = collection.TreeView?.RootVisibility == CollectionRootVisibility.Visible,
+                Icon = "list"
             };
 
             if (collection.ListEditor != null && editAuthorizationChallenge.Succeeded)
             {
-                tree.Icon = "list-rich";
                 tree.Path = UriHelper.Collection(Constants.Edit, collection.Alias, parentId);
             }
             else if (collection.ListView != null && viewAuthorizationChallenge.Succeeded)
             {
-                tree.Icon = "list";
                 tree.Path = UriHelper.Collection(Constants.List, collection.Alias, parentId);
             }
 
@@ -84,6 +83,7 @@ namespace RapidCMS.Common.Services
                     {
                         Id = entity.Id,
                         Name = collection.TreeView.Name!.StringGetter.Invoke(entity),
+                        RootVisibleOfCollections = collection.Collections.All(subCollection => subCollection.TreeView?.RootVisibility == CollectionRootVisibility.Visible),
                         Collections = collection.Collections.ToList(subCollection => subCollection.Alias)
                     };
 

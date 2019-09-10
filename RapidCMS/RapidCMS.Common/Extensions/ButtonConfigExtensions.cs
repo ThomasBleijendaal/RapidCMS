@@ -29,6 +29,7 @@ namespace RapidCMS.Common.Extensions
             {
                 DefaultButtonConfig defaultButton => defaultButton.ToDefaultButton(null, null),
                 CustomButtonConfig customButton => customButton.ToCustomButton(),
+                PaneButtonConfig paneButton => paneButton.ToPaneButton(null),
                 _ => throw new InvalidOperationException()
             };
         }

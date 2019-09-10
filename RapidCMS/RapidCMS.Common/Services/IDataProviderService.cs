@@ -7,6 +7,4 @@ namespace RapidCMS.Common.Services
     {
         DataProvider? GetDataProvider(Field field);
     }
-
-
 }

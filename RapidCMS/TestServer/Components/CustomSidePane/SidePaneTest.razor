@@ -4,13 +4,20 @@
 
 <p>@EditContext.Entity.Id</p>
 
-<p>@ButtonContext.ParentId</p>
+<p>Hi, this is a custom sidepane which allows you to delay the processing the button action, and even allows you to cancel the button action all together.</p>
 
-<button @onclick="ButtonClick" class="btn btn-primary">Click me</button>
+<pre>@Newtonsoft.Json.JsonConvert.SerializeObject(ButtonContext, Newtonsoft.Json.Formatting.Indented)</pre>
+
+<button @onclick="ButtonClick" class="btn btn-primary">Continue</button>
+<button @onclick="ButtonCancel" class="btn btn-danger">Cancel</button>
 
 @code {
     void ButtonClick()
     {
         ButtonClicked(DefaultCrudType ?? CrudType.None);
+    }
+    void ButtonCancel()
+    {
+        ButtonClicked(CrudType.None);
     }
 }

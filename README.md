@@ -9,7 +9,7 @@ purely from code. It provides a basic set of editors and controls, and is fully 
 2. Install NuGet-package: `RapidCMS.UI`.
 3. Add `services.AddRapidCMS(config => {})` to `ConfigureServices` in `Startup.cs`.
 4. Replace the `<Router>` in `App.razor` with `<RapidCMS.UI.Components.Router.RapidCmsRouter />`.
-5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `_Host.cshtml` with `<link href="_content/rapidcms.ui/css/site.css" rel="stylesheet" />`.
+5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `_Host.cshtml` with `<link href="_content/rapidcms.ui/css/site.css" rel="stylesheet" />` and remove any other css.
 6. Hit `F5`: you're now running a completely empty RapidCMS instance. 
 7. Start building your CMS using by expanding `config => {}`.
 
@@ -613,6 +613,7 @@ When you want to support Relations, override these four virtual methods: `GetAll
 - *Always* support all the features from `IQuery<T>`; that is supporting `Skip` and `Take` for paginating, calling `MoreDataAvailable` and pass in
 a `true` when there is more, and a `false` when there is not. Furthermore, support searching by checking `SearchTerm` and always use the `DataViewExpression` 
 when it is set.
+- Use `IMessageService` to send messages to the user when an entity has been saved etc.
 
 ## Creating custom editors
 
@@ -630,8 +631,20 @@ TODO: documentation
 TL;DR:
 
 1. Create a custom button an have it `@inherit BaseButton`.
-2. Have a editor use your button by calling `editor.AddCustomButton<YourCustomActionHandler>(typeof(YourCustomButton))` 
+2. Have an editor use your button by calling `editor.AddCustomButton<YourCustomActionHandler>(typeof(YourCustomButton))` 
 and create a `YourCustomActionHandler` which implements `IButtonActionHandler`.
+
+## Creating custom modals
+
+TODO: documentation
+
+TL;DR:
+
+1. Create a custom pane and have it `@inherit BaseSidePane`, this base class gives you access to `EditContext` that allows you
+    to modify the Entity.
+2. Add any type of custom logic on your pane, and even `@inject` extra services 
+2. Have your custom pane call `ButtonClicked` when the user clicks a button on your pane.
+3. Have an editor invoke your pane by calling `list.AddPaneButton(typeof(YourCustomPane), "Button text", "icon", CrudType.DEFAULTCRUDTYPE)`.
 
 ## Creating custom sections
 

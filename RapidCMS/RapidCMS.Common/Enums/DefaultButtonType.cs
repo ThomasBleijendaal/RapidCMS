@@ -5,16 +5,16 @@ namespace RapidCMS.Common.Enums
     public enum DefaultButtonType
     {
         // Insert new Entity
-        [DefaultIconLabel(Icon = "plus", Label = "New")]
+        [DefaultIconLabel(Icon = "add", Label = "New")]
         [Actions(UsageType.List)]
         New = 1,
 
-        [DefaultIconLabel(Icon = "hard-drive", Label = "Insert")]
+        [DefaultIconLabel(Icon = "save", Label = "Insert")]
         [Actions(UsageType.New)]
         [ValidForm]
         SaveNew,
 
-        [DefaultIconLabel(Icon = "hard-drive", Label = "Update")]
+        [DefaultIconLabel(Icon = "save", Label = "Update")]
         [Actions(UsageType.Edit | UsageType.Node, UsageType.Edit | UsageType.List)]
         [ValidForm]
         SaveExisting,
@@ -24,35 +24,35 @@ namespace RapidCMS.Common.Enums
         [Confirm]
         Delete,
 
-        [DefaultIconLabel(Icon = "pencil", Label = "Edit")]
+        [DefaultIconLabel(Icon = "create", Label = "Edit")]
         [Actions(UsageType.List, UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.View)]
         Edit,
 
-        [DefaultIconLabel(Icon = "magnifying-glass", Label = "View")]
+        [DefaultIconLabel(Icon = "search", Label = "View")]
         [Actions(UsageType.List, UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.View)]
         View,
 
         // Add existing Entity
-        [DefaultIconLabel(Icon = "plus", Label = "Add")]
+        [DefaultIconLabel(Icon = "add", Label = "Add")]
         [Actions(UsageType.List)]
         Add,
 
         // Remove existing Entity
-        [DefaultIconLabel(Icon = "circle-x", Label = "Remove")]
+        [DefaultIconLabel(Icon = "close", Label = "Remove")]
         [Actions(UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.View)]
         Remove,
 
         // Pick existing Entity to Add
-        [DefaultIconLabel(Icon = "plus", Label = "Pick")]
+        [DefaultIconLabel(Icon = "add", Label = "Pick")]
         [Actions(UsageType.Node | UsageType.Pick)]
         Pick,
 
         // TODO: fully implement
-        [DefaultIconLabel(Icon = "arrow-left", Label = "Return")]
+        [DefaultIconLabel(Icon = "arrow-back", Label = "Return")]
         [Actions(UsageType.Node, UsageType.List | UsageType.Add, UsageType.List | UsageType.New, UsageType.List | UsageType.Pick)]
         Return,
 
-        [DefaultIconLabel(Icon = "ellipsis", Label = "[open pane]")]
+        [DefaultIconLabel(Icon = "open", Label = "[open pane]")]
         [Actions(UsageType.Node, UsageType.List)]
         OpenPane = 9990
     }

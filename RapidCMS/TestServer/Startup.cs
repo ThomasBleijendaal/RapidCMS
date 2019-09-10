@@ -176,13 +176,14 @@ namespace TestServer
                             list.SetSearchBarVisibility(false);
 
                             list.AddDefaultButton(DefaultButtonType.New);
-                            list.AddPaneButton(typeof(SidePaneTest), "Create new elements", "plus", CrudType.Create);
+                            list.AddPaneButton(typeof(SidePaneTest), "Create new elements", "add", CrudType.Create);
                             list.AddRow(pane =>
                             {
                                 pane.AddField(p => p.Name)
                                     .VisibleWhen(f => f.Accept);
                                 pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
+                                pane.AddPaneButton(typeof(SidePaneTest), "Delete element", "trash", CrudType.Delete);
                             });
                         })
                         //.SetListEditor(ListType.Table, listEditor =>
@@ -277,7 +278,75 @@ namespace TestServer
                                 pane.AddSubCollectionList<CountryEntity>("country-collection");
                             });
                         })
-                        .AddSelfAsRecursiveCollection();
+                        .AddCollection<ValidationEntity>("validation-collection-nested", "Validation entities", subCollection =>
+                        {
+                            subCollection
+                                .SetRepository<ValidationRepository>()
+                                .SetTreeView(EntityVisibilty.Visible, CollectionRootVisibility.Hidden, e => e.Name)
+                                .SetListView(list =>
+                                {
+                                    list.SetSearchBarVisibility(false);
+
+                                    list.AddDefaultButton(DefaultButtonType.New);
+                                    list.AddPaneButton(typeof(SidePaneTest), "Create new elements", "plus", CrudType.Create);
+                                    list.AddRow(pane =>
+                                    {
+                                        pane.AddField(p => p.Name)
+                                            .VisibleWhen(f => f.Accept);
+                                        pane.AddDefaultButton(DefaultButtonType.View);
+                                        pane.AddDefaultButton(DefaultButtonType.Edit);
+                                        pane.AddPaneButton(typeof(SidePaneTest), "Delete element", "trash", CrudType.Delete);
+                                    });
+                                })
+                                .SetNodeEditor(editor =>
+                                {
+                                    editor.AddDefaultButton(DefaultButtonType.SaveNew);
+                                    editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                                    editor.AddDefaultButton(DefaultButtonType.Delete);
+                                    editor.AddSection(pane =>
+                                    {
+                                        pane.AddCustomButton<TogglePropertyButtonActionHandler>(typeof(DoItButton));
+
+                                        pane.AddField(f => f.Name);
+                                        pane.AddField(f => f.Date);
+                                        pane.AddField(f => f.Dummy).SetType(typeof(UploadEditor));
+                                        pane.AddField(f => f.NotRequired);
+                                        pane.AddField(f => f.Range)
+                                            .SetName("Range Setting");
+                                        pane.AddField(f => f.Accept)
+                                            .SetName("Accept this");
+                                        pane.AddField(f => f.Textarea)
+                                            .VisibleWhen(f => f.Accept)
+                                            .SetType(EditorType.TextArea);
+                                    });
+                                    editor.AddSection(pane =>
+                                    {
+                                        pane.SetLabel("THIS IS A LABEL");
+
+                                        pane.AddDefaultButton(DefaultButtonType.Delete);
+
+                                        pane.VisibleWhen(x => x.Accept);
+
+                                        pane.AddField(f => f.Enum)
+                                            .SetType(EditorType.Select)
+                                            .SetDataCollection<EnumDataProvider<TestEnum>>();
+
+                                        pane.AddField(f => f.CountryId)
+                                            .SetType(EditorType.Select)
+                                            .SetCollectionRelation<CountryEntity>("country-collection", relation =>
+                                            {
+                                                relation
+                                                    .SetElementIdProperty(x => x._Id)
+                                                    .SetElementDisplayProperties(x => x._Id.ToString(), x => x.Name)
+                                                    .SetRepositoryParentIdProperty(x => x.Id);
+
+                                            });
+
+                                        pane.AddSubCollectionList<CountryEntity>("country-collection");
+                                    });
+                                })
+                                .AddSelfAsRecursiveCollection();
+                        });
 
                 });
 

@@ -1,4 +1,5 @@
-﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+﻿@import url('bootstrap/bootstrap.min.css');
+@import url('https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css');
 
 html, body {
     font-family: 'Segoe UI';
@@ -6,8 +7,8 @@ html, body {
     background: #e0e0e0;
 }
 
-.oi {
-    font-size: 15px !important;
+.icon {
+    font-size: 16px !important;
 }
 
 app {
@@ -100,17 +101,16 @@ app {
     .nav-item .toggle {
         border: 0;
         background: none;
-        margin: 1rem -2rem 0 -1rem;
+        margin: .7rem -2rem 0 -1rem;
         padding: 0;
         float: left;
         width: 1.5rem;
     }
 
-    .nav-item .oi {
+    .nav-item .icon {
         width: 2rem;
         font-size: 1.1rem;
-        vertical-align: text-top;
-        top: -2px;
+        vertical-align: middle;
     }
 
     .nav-item a {
@@ -255,6 +255,10 @@ a.current-page {
     border-radius: 0;
 }
 
+.btn .icon {
+    margin-right: .5rem;
+}
+
 .form-row {
     padding-top: .1rem;
     padding-bottom: .1rem;
@@ -309,6 +313,16 @@ table td {
     table td.button-cell {
         white-space: nowrap;
         text-align: right;
+    }
+
+    table td.draghandle {
+        cursor: grab;
+        width: 10px;
+        background: repeating-linear-gradient( -45deg, #ced4da, #ced4da 2px, #fff 2px, #fff 4px );
+    }
+
+    table tr.dragover td {
+        border-top: 3px solid red;
     }
 
 pre {

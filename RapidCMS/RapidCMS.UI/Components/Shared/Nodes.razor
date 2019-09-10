@@ -1,24 +1,47 @@
 ﻿@inherits NodesBase
 
-@if (UI != null)
+@if (UI != null && NodesVisible != null)
 {
     <ul class="nav flex-column">
         @foreach (var node in UI)
         {
             <li class="nav-item">
-                @if (node.Path != null)
+                @if (!node.RootVisibleOfCollections)
                 {
-                    <NavLink href=@node.Path><i class="oi oi-minus"></i> @node.Name</NavLink>
+                    <button @onclick="@((MouseEventArgs e) => NodesVisible[node] = !NodesVisible[node])" class="toggle">
+                        @if (NodesVisible[node])
+                        {
+                            <i class="icon ion-md-arrow-dropdown"></i>
+                        }
+                        else
+                        {
+                            <i class="icon ion-md-arrow-dropright"></i>
+                        }
+                    </button>
                 }
                 else
                 {
-                    <a href="#" class="disabled"><i class="oi oi-lock-locked"></i> @node.Name</a>
+                    <button class="toggle" disabled>
+                        <i class="icon"></i>
+                    </button>
+                }
+
+                @if (node.Path != null)
+                {
+                    <NavLink href=@node.Path>@node.Name</NavLink>
+                }
+                else
+                {
+                    <a href="#" class="disabled">@node.Name</a>
                 }
 
                 <ul class="nav flex-column">
-                    @foreach (var subCollection in node.Collections)
+                    @if (NodesVisible[node])
                     {
-                        <Tree CollectionAlias=@subCollection ParentId=@node.Id />
+                        @foreach (var subCollection in node.Collections)
+                        {
+                            <Tree CollectionAlias=@subCollection ParentId=@node.Id />
+                        }
                     }
                 </ul>
             </li>
@@ -28,11 +51,13 @@
 
 @code {
 
+    Dictionary<TreeNodeUI, bool>? NodesVisible;
     List<TreeNodeUI>? UI;
 
     protected override async Task OnInitializedAsync()
     {
         UI = await TreeService.GetNodesAsync(CollectionAlias, ParentId);
+        NodesVisible = UI.ToDictionary(x => x, x => x.RootVisibleOfCollections);
     }
 
     protected override async Task OnNodesUpdateAsync()

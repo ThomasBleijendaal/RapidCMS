@@ -2,10 +2,10 @@ TODO:
 
 [] Documentation + Examples
 
-[] Allow for messaging (saved successfully etc)
+[v] Allow for messaging (saved successfully etc)
 
-[] Allow for side panes
-[] Custom modal / form based on button click
+[v] Allow for side panes
+[v] Custom modal / form based on button click
     - Make it as 'delayed'-button (once modal closes, the crud type is determined)
     - Everything inside modal is custom
 
@@ -13,30 +13,16 @@ TODO:
   
 [] Pull all externally inheritable UI elements into RapidCMS.UI.Common
 
-[] Redirect after deletion + consistent pagination / Return to parent button action
-[] Redirect after insertions + no update authorization goes to 403 page
-
 [v] Refresh data / relation collections upon save
     [v] More events from EditContext and bind nested EditContext to root
     [v] Make side bar tree react to collection actions (CRUD)
-        [] Make possible to open sub collections with hidden root element
+        [v] Make possible to open sub collections with hidden root element
     [] OnBeforeUnload EditContext IsModified check
 
 [] Implement Return everywhere + fallback to javascript:history.back();
 
-[] Reordering
-    [] New IRepository methods
-        -> {unknown}
-    [] Update to Blazor preview 6 to support @key on EditContext
-        [] In listview: After updating entity 2 the EditContext of entity 1 is reset
-
-[] Merge NodeViewPane and NodeEditorPaneConfig
-
 [v] Button support everywhere (no more new List<Button>)
-    [] ButtonActionHandler as generic parameter to CustomButton
-    [] Bind CustomButton and ActionHandler more together
 
-[] Top button bar should be side bar with meta
 [] Navigation command during pre-render (server side rendering) fails
 
 2.0
@@ -56,6 +42,7 @@ TODO:
 [] Investigate if GenericXConfig -> XConfig -> X can be reduces to GenericXConfig -> X (No more FieldConfig<> -> FieldConfig -> Field, but FieldConfig<> -> Field)
 [] GetRelationListViewAsync method evaluates authorization for all buttons to relatedEntity, while the processing functions will evaluate authorizaton sometimes to IEntity and sometimes to IRelatedEntity.
 [] Hide sections of the tree when user is unauthorized
+[] Reordering
 
 x.x
 [] All config checked during startup
