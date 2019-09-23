@@ -2,26 +2,9 @@ TODO:
 
 [] Documentation + Examples
 
-[v] Allow for messaging (saved successfully etc)
-
-[v] Allow for side panes
-[v] Custom modal / form based on button click
-    - Make it as 'delayed'-button (once modal closes, the crud type is determined)
-    - Everything inside modal is custom
-
 [] Order of collection form configuration is not maintained
-  
-[] Pull all externally inheritable UI elements into RapidCMS.UI.Common
-
-[v] Refresh data / relation collections upon save
-    [v] More events from EditContext and bind nested EditContext to root
-    [v] Make side bar tree react to collection actions (CRUD)
-        [v] Make possible to open sub collections with hidden root element
-    [] OnBeforeUnload EditContext IsModified check
 
 [] Implement Return everywhere + fallback to javascript:history.back();
-
-[v] Button support everywhere (no more new List<Button>)
 
 [] Navigation command during pre-render (server side rendering) fails
 
@@ -35,7 +18,6 @@ TODO:
     [] Remove collection-alias and move to some other system
 [] Different set of collections for different entity variant (probably not needed)
 [] IEntity.Id requirement is obstrusive
-[v] Editor visibility based upon predicates of current IEntity or evaluation by some object
 [] Sub collection buttons connected to collection to prevent numerous buttons on each sub collection row (like Update All)
 [] Extensible Dropdown (type ahead style insert of new elements + automatic update when used in list views)
 [] Put library statics in library (css / icons / js)

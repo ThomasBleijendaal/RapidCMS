@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RapidCMS.Common\RapidCMS.Common.csproj" />
-    <ProjectReference Include="..\RapidCMS.UI\RapidCMS.UI.csproj" />
+    <ProjectReference Include="..\..\src\RapidCMS.Common\RapidCMS.Common.csproj" />
+    <ProjectReference Include="..\..\src\RapidCMS.UI\RapidCMS.UI.csproj" />
     <ProjectReference Include="..\TestLibrary\TestLibrary.csproj" />
   </ItemGroup>
 

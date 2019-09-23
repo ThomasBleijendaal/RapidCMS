@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RapidCMS.Repositories\RapidCMS.Repositories.csproj" />
-    <ProjectReference Include="..\RapidCMS.UI\RapidCMS.UI.csproj" />
+    <ProjectReference Include="..\..\src\RapidCMS.Repositories\RapidCMS.Repositories.csproj" />
+    <ProjectReference Include="..\..\src\RapidCMS.UI\RapidCMS.UI.csproj" />
   </ItemGroup>
 
 </Project>

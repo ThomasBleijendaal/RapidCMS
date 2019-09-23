@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RapidCMS.Common\RapidCMS.Common.csproj" />
+    <ProjectReference Include="..\..\src\RapidCMS.Common\RapidCMS.Common.csproj" />
   </ItemGroup>
 
 </Project>
