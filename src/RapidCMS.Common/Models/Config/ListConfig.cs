@@ -3,7 +3,7 @@ using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class ListConfig
+    internal class ListConfig
     {
         internal int? PageSize { get; set; }
         internal bool? SearchBarVisible { get; set; }

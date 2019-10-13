@@ -1,0 +1,54 @@
+﻿using System;
+
+namespace RapidCMS.Common.Models.Config
+{
+    public interface ICmsConfig : ICollectionConfig
+    {
+        /// <summary>
+        /// Adds a section to the list of components to draw on the dashboard, the homepage of the CMS.
+        /// Use the edit flag to indicate whether this should be the editor or the view variant of the collection.
+        /// </summary>
+        /// <param name="collectionAlias">Alias of a collection</param>
+        /// <param name="edit">Set to true to use the ListEditor, otherwise the ListView is used</param>
+        /// <returns></returns>
+        ICmsConfig AddDashboardSection(string collectionAlias, bool edit = false);
+
+        /// <summary>
+        /// Adds a razor component to the list of components to draw on the dashboard, the homepage of the CMS. 
+        /// </summary>
+        /// <param name="customDashboardSectionType">Type of the razor component to draw.</param>
+        /// <returns></returns>
+        ICmsConfig AddDashboardSection(Type customDashboardSectionType);
+
+        /// <summary>
+        /// Use this to allow anonymous users to fully use your CMS. This adds a very permissive AuthorizationHandler that allows everything by anyone. 
+        /// 
+        /// Do not use in production.
+        /// </summary>
+        /// <returns></returns>
+        ICmsConfig AllowAnonymousUser();
+
+        /// <summary>
+        /// Sets the number of concurrent IRepository actions. Will lead to deadlocks when used incorrectly.
+        /// 
+        /// Set it to anything other than 1 if you do not use Entity Framework Core, or have repositories reference each other.
+        /// </summary>
+        /// <param name="maxCount">Max number of concurrent IRepository actions.</param>
+        /// <returns></returns>
+        ICmsConfig DangerouslyFiddleWithSemaphoreSettings(int maxCount);
+
+        /// <summary>
+        /// Draws the given razor component in the top left bar of the CMS. Use this to create your Sign in and Sign out buttons.
+        /// </summary>
+        /// <param name="loginType">Type of razor component.</param>
+        /// <returns></returns>
+        ICmsConfig SetCustomLogin(Type loginType);
+
+        /// <summary>
+        /// Sets the name of title in the top left bar of the CMS. Defaults to RapidCMS.
+        /// </summary>
+        /// <param name="siteName">Name of your CMS</param>
+        /// <returns></returns>
+        ICmsConfig SetSiteName(string siteName);
+    }
+}

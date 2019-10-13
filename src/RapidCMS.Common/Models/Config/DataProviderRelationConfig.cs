@@ -2,9 +2,9 @@
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class DataProviderRelationConfig : RelationConfig
+    internal class DataProviderRelationConfig : RelationConfig
     {
-        public DataProviderRelationConfig(Type dataCollectionType)
+        internal DataProviderRelationConfig(Type dataCollectionType)
         {
             DataCollectionType = dataCollectionType ?? throw new ArgumentNullException(nameof(dataCollectionType));
         }

@@ -3,9 +3,9 @@ using RapidCMS.Common.Data;
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class RelatedCollectionListConfig
+    internal class RelatedCollectionListConfig
     {
-        public RelatedCollectionListConfig(string collectionAlias)
+        protected RelatedCollectionListConfig(string collectionAlias)
         {
             CollectionAlias = collectionAlias ?? throw new ArgumentNullException(nameof(collectionAlias));
         }
@@ -15,11 +15,11 @@ namespace RapidCMS.Common.Models.Config
         internal string CollectionAlias { get; set; }
     }
 
-    public class RelatedCollectionListConfig<TEntity, TRelatedEntity> : RelatedCollectionListConfig
+    internal class RelatedCollectionListConfig<TEntity, TRelatedEntity> : RelatedCollectionListConfig, IRelatedCollectionListConfig<TEntity, TRelatedEntity>
         where TRelatedEntity : IEntity
         where TEntity : IEntity
     {
-        public RelatedCollectionListConfig(string collectionAlias) : base(collectionAlias)
+        internal RelatedCollectionListConfig(string collectionAlias) : base(collectionAlias)
         {
         }
     }

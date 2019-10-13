@@ -1,27 +1,29 @@
 ﻿using System;
+using RapidCMS.Common.ActionHandlers;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class ListViewConfig<TEntity> : ListConfig, IHasButtons<ListViewConfig<TEntity>>
+    internal class ListViewConfig<TEntity> : ListConfig, 
+        IListViewConfig<TEntity>
         where TEntity : IEntity
     {
-        public ListViewConfig<TEntity> SetPageSize(int pageSize)
+        public IListViewConfig<TEntity> SetPageSize(int pageSize)
         {
             PageSize = pageSize;
 
             return this;
         }
 
-        public ListViewConfig<TEntity> SetSearchBarVisibility(bool visible)
+        public IListViewConfig<TEntity> SetSearchBarVisibility(bool visible)
         {
             SearchBarVisible = visible;
 
             return this;
         }
 
-        public ListViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
+        public IListViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig
             {
@@ -36,7 +38,8 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ListViewConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
+        public IListViewConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
+            where TActionHandler : IButtonActionHandler
         {
             var button = new CustomButtonConfig(buttonType, typeof(TActionHandler))
             {
@@ -49,7 +52,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ListViewConfig<TEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null, CrudType? defaultCrudType = null)
+        public IListViewConfig<TEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null, CrudType? defaultCrudType = null)
         {
             var button = new PaneButtonConfig(paneType, defaultCrudType)
             {
@@ -62,28 +65,28 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ListViewConfig<TEntity> AddRow(Action<IDisplayPaneConfig<TEntity>> configure)
+        public IListViewConfig<TEntity> AddRow(Action<IDisplayPaneConfig<TEntity>> configure)
         {
             return AddRow<TEntity>(configure);
         }
 
-        public ListViewConfig<TEntity> AddRow(Type customSectionType, Action<IDisplayPaneConfig<TEntity>> configure)
+        public IListViewConfig<TEntity> AddRow(Type customSectionType, Action<IDisplayPaneConfig<TEntity>> configure)
         {
             return AddRow<TEntity>(customSectionType, configure);
         }
 
-        public ListViewConfig<TEntity> AddRow<TDerivedEntity>(Action<IDisplayPaneConfig<TDerivedEntity>> configure)
+        public IListViewConfig<TEntity> AddRow<TDerivedEntity>(Action<IDisplayPaneConfig<TDerivedEntity>> configure)
             where TDerivedEntity : TEntity
         {
             return AddRow(null, configure);
         }
 
-        private ListViewConfig<TEntity> AddRow<TDerivedEntity>(Type? customSectionType, Action<IDisplayPaneConfig<TDerivedEntity>> configure)
+        public IListViewConfig<TEntity> AddRow<TDerivedEntity>(Type? customSectionType, Action<IDisplayPaneConfig<TDerivedEntity>> configure)
             where TDerivedEntity : TEntity
         {
             var config = customSectionType == null
-                ? new PaneConfig<TDerivedEntity, IFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity))
-                : new PaneConfig<TDerivedEntity, IFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity), customSectionType);
+                ? new PaneConfig<TDerivedEntity>(typeof(TDerivedEntity))
+                : new PaneConfig<TDerivedEntity>(typeof(TDerivedEntity), customSectionType);
 
             configure?.Invoke(config);
 

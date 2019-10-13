@@ -2,7 +2,7 @@
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class DefaultButtonConfig : ButtonConfig
+    internal class DefaultButtonConfig : ButtonConfig
     {
         internal DefaultButtonType ButtonType { get; set; }
     }

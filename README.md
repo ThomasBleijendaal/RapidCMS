@@ -13,18 +13,17 @@ purely from code. It provides a basic set of editors and controls, and is fully 
 4. Replace the `<Router>` in `App.razor` with `<RapidCMS.UI.Components.Router.RapidCmsRouter />`.
 5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `_Host.cshtml` with `<link href="_content/rapidcms.ui/css/site.css" rel="stylesheet" />` and remove any other css.
 6. Hit `F5`: you're now running a completely empty RapidCMS instance. 
-7. Start building your CMS using by expanding `config => {}`.
-
-## Here be dragons
-
-Since blazor is not completely out of preview, and RapidCMS is not completely finished, some parts
-of this documentation are vague, missing, or already out-dated, so please be aware of that. I try to keep
-this documentation updated and current, but it is on best-effort basis.
+7. Start building your CMS using by expanding `config => {}`. Read the introduction below to get a sense of what is possible,
+or browse the [Configuration API](ConfigAPI.md) to see all the options.
 
 ## Screenshots
 
 Since it is a bit hard to demonstrate a CMS on the internet without having the publicly accessible
 CMS be absolutely vandalised, [on this page there are some screenshots of the features that are currently supported](SCREENSHOTS.md).
+
+## Configuration API
+
+[The configuration API page](ConfigAPI.md) lists all the options that you have to configure RapidCMS.
 
 ---
 

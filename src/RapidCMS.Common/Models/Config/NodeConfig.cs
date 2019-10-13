@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class NodeConfig
+    internal class NodeConfig
     {
-        public NodeConfig(Type baseType)
+        internal NodeConfig(Type baseType)
         {
             BaseType = baseType ?? throw new ArgumentNullException(nameof(baseType));
         }

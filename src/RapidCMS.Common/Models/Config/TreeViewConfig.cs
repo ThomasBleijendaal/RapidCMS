@@ -3,7 +3,7 @@ using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class TreeViewConfig
+    internal class TreeViewConfig
     {
         internal EntityVisibilty EntityVisibilty { get; set; }
         internal CollectionRootVisibility RootVisibility { get; set; }

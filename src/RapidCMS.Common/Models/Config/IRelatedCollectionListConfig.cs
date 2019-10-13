@@ -2,7 +2,8 @@
 
 namespace RapidCMS.Common.Models.Config
 {
-    public interface IFieldConfig<TEntity>
+    public interface IRelatedCollectionListConfig<TEntity, TRelatedEntity>
+        where TRelatedEntity : IEntity
         where TEntity : IEntity
     {
 

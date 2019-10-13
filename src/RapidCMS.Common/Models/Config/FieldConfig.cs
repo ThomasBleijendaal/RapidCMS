@@ -11,12 +11,12 @@ using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class FieldConfig
+    internal class FieldConfig
     {
         internal int Index { get; set; }
 
-        internal string Name { get; set; }
-        internal string Description { get; set; }
+        internal string? Name { get; set; }
+        internal string? Description { get; set; }
 
         internal bool Readonly { get; set; }
         internal Func<object, bool> IsVisible { get; set; } = (x) => true;
@@ -27,23 +27,23 @@ namespace RapidCMS.Common.Models.Config
         internal RelationConfig? Relation { get; set; }
 
         internal EditorType Type { get; set; }
-        internal Type CustomType { get; set; }
+        internal Type? CustomType { get; set; }
     }
 
-    public class FieldConfig<TEntity, TValue> : FieldConfig, IFieldConfig<TEntity>, IDisplayFieldConfig<TEntity, TValue>, IEditorFieldConfig<TEntity, TValue>
+    internal class FieldConfig<TEntity, TValue> : FieldConfig, IDisplayFieldConfig<TEntity, TValue>, IEditorFieldConfig<TEntity, TValue>
         where TEntity : IEntity
     {
-        public FieldConfig<TEntity, TValue> SetName(string name)
+        private FieldConfig<TEntity, TValue> SetName(string name)
         {
             Name = name;
             return this;
         }
-        public FieldConfig<TEntity, TValue> SetDescription(string description)
+        private FieldConfig<TEntity, TValue> SetDescription(string description)
         {
             Description = description;
             return this;
         }
-        public FieldConfig<TEntity, TValue> SetType(EditorType type)
+        private FieldConfig<TEntity, TValue> SetType(EditorType type)
         {
             if (type == EditorType.Readonly)
             {
@@ -53,21 +53,21 @@ namespace RapidCMS.Common.Models.Config
             Type = type;
             return this;
         }
-        public FieldConfig<TEntity, TValue> SetType(Type type)
+        private FieldConfig<TEntity, TValue> SetType(Type type)
         {
             Type = EditorType.Custom;
             CustomType = type;
             return this;
         }
 
-        public FieldConfig<TEntity, TValue> SetReadonly(bool @readonly = true)
+        private FieldConfig<TEntity, TValue> SetReadonly(bool @readonly = true)
         {
             Readonly = @readonly;
 
             return this;
         }
 
-        public FieldConfig<TEntity, TValue> SetDataCollection<TDataCollection>()
+        private FieldConfig<TEntity, TValue> SetDataCollection<TDataCollection>()
             where TDataCollection : IDataCollection
         {
             if (Type != EditorType.Custom && Type.GetCustomAttribute<RelationAttribute>()?.Type != RelationType.One)
@@ -82,8 +82,8 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public FieldConfig<TEntity, TValue> SetCollectionRelation<TRelatedEntity>(
-            string collectionAlias, Action<CollectionRelationConfig<TEntity, TRelatedEntity>> configure)
+        private FieldConfig<TEntity, TValue> SetCollectionRelation<TRelatedEntity>(
+            string collectionAlias, Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure)
         {
             if (Type != EditorType.Custom && !(Type.GetCustomAttribute<RelationAttribute>()?.Type.In(RelationType.One, RelationType.Many) ?? false))
             {
@@ -101,10 +101,10 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public FieldConfig<TEntity, TValue> SetCollectionRelation<TRelatedEntity, TKey>(
+        private FieldConfig<TEntity, TValue> SetCollectionRelation<TRelatedEntity, TKey>(
             Expression<Func<TValue, IEnumerable<TKey>>> relatedElements, 
             string collectionAlias, 
-            Action<CollectionRelationConfig<TEntity, TRelatedEntity>> configure)
+            Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure)
         {
             if (Type != EditorType.Custom && !(Type.GetCustomAttribute<RelationAttribute>()?.Type.In(RelationType.Many) ?? false))
             {
@@ -123,7 +123,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public FieldConfig<TEntity, TValue> VisibleWhen(Func<TEntity, bool> predicate)
+        private FieldConfig<TEntity, TValue> VisibleWhen(Func<TEntity, bool> predicate)
         {
             IsVisible = (entity) => predicate.Invoke((TEntity)entity);
 
@@ -185,13 +185,14 @@ namespace RapidCMS.Common.Models.Config
         }
 
         IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetCollectionRelation<TRelatedEntity>(
-            string collectionAlias, Action<CollectionRelationConfig<TEntity, TRelatedEntity>> configure)
+            string collectionAlias, Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure)
         {
             SetCollectionRelation(collectionAlias, configure);
             return this;
         }
+
         IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetCollectionRelation<TRelatedEntity, TKey>(
-            Expression<Func<TValue, IEnumerable<TKey>>> relatedElements, string collectionAlias, Action<CollectionRelationConfig<TEntity, TRelatedEntity>> configure)
+            Expression<Func<TValue, IEnumerable<TKey>>> relatedElements, string collectionAlias, Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure)
         {
             SetCollectionRelation(relatedElements, collectionAlias, configure);
             return this;

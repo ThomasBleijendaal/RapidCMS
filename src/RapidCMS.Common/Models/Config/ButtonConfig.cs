@@ -1,6 +1,6 @@
 ﻿namespace RapidCMS.Common.Models.Config
 {
-    public class ButtonConfig
+    internal class ButtonConfig
     {
         internal string? Label { get; set; }
         internal string? Icon { get; set; }

@@ -9,7 +9,7 @@ using RapidCMS.Common.Helpers;
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class CollectionConfig : ICollectionRoot
+    internal class CollectionConfig : ICollectionConfig
     {
         internal CollectionConfig(string alias, string name, EntityVariantConfig entityVariant)
         {
@@ -19,12 +19,12 @@ namespace RapidCMS.Common.Models.Config
         }
 
         internal bool Recursive { get; set; }
-        internal string Alias { get; set; }
+        public string Alias { get; internal set; }
         internal string Name { get; set; }
 
         internal Type? RepositoryType { get; set; }
 
-        public List<CollectionConfig> Collections { get; set; } = new List<CollectionConfig>();
+        public List<ICollectionConfig> Collections { get; set; } = new List<ICollectionConfig>();
         internal List<EntityVariantConfig> SubEntityVariants { get; set; } = new List<EntityVariantConfig>();
         internal EntityVariantConfig EntityVariant { get; set; }
 
@@ -37,20 +37,20 @@ namespace RapidCMS.Common.Models.Config
         internal NodeConfig? NodeView { get; set; }
         internal NodeConfig? NodeEditor { get; set; }
 
-        public bool IsUnique(string alias)
+        bool ICollectionConfig.IsUnique(string alias)
         {
             return !Collections.Any(col => col.Alias == alias);
         }
     }
 
-    public class CollectionConfig<TEntity> : CollectionConfig
+    internal class CollectionConfig<TEntity> : CollectionConfig, ICollectionConfig<TEntity> 
         where TEntity : IEntity
     {
         internal CollectionConfig(string alias, string name, EntityVariantConfig entityVariant) : base(alias, name, entityVariant)
         {
         }
 
-        public CollectionConfig<TEntity> SetRepository<TRepository>()
+        public ICollectionConfig<TEntity> SetRepository<TRepository>()
            where TRepository : IRepository
         {
             RepositoryType = typeof(TRepository);
@@ -58,7 +58,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionConfig<TEntity> AddEntityVariant<TDerivedEntity>(string name, string icon)
+        public ICollectionConfig<TEntity> AddEntityVariant<TDerivedEntity>(string name, string icon)
             where TDerivedEntity : TEntity
         {
             SubEntityVariants.Add(new EntityVariantConfig(name, typeof(TDerivedEntity), icon));
@@ -66,14 +66,14 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionConfig<TEntity> AddDataView(string label, Expression<Func<TEntity, bool>> queryExpression)
+        public ICollectionConfig<TEntity> AddDataView(string label, Expression<Func<TEntity, bool>> queryExpression)
         {
             DataViews.Add(new DataView<TEntity>(DataViews.Count, label, queryExpression));
 
             return this;
         }
 
-        public CollectionConfig<TEntity> SetDataViewBuilder<TDataViewBuilder>()
+        public ICollectionConfig<TEntity> SetDataViewBuilder<TDataViewBuilder>()
             where TDataViewBuilder : DataViewBuilder<TEntity>
         {
             DataViewBuilder = typeof(TDataViewBuilder);
@@ -81,17 +81,17 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string>> entityNameExpression)
+        public ICollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string>> entityNameExpression)
         {
             return SetTreeView(default, default, entityNameExpression);
         }
 
-        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, Expression<Func<TEntity, string>>? entityNameExpression = null)
+        public ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, Expression<Func<TEntity, string>>? entityNameExpression = null)
         {
             return SetTreeView(entityVisibility, default, entityNameExpression);
         }
 
-        public CollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string>>? entityNameExpression)
+        public ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string>>? entityNameExpression)
         {
             TreeView = new TreeViewConfig
             {
@@ -103,7 +103,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionConfig<TEntity> SetListView(Action<ListViewConfig<TEntity>> configure)
+        public ICollectionConfig<TEntity> SetListView(Action<IListViewConfig<TEntity>> configure)
         {
             var config = new ListViewConfig<TEntity>();
 
@@ -114,17 +114,17 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionConfig<TEntity> SetListEditor(Action<ListEditorConfig<TEntity>> configure)
+        public ICollectionConfig<TEntity> SetListEditor(Action<IListEditorConfig<TEntity>> configure)
         {
             return SetListEditor(default, default, configure);
         }
 
-        public CollectionConfig<TEntity> SetListEditor(ListType listEditorType, Action<ListEditorConfig<TEntity>> configure)
+        public ICollectionConfig<TEntity> SetListEditor(ListType listEditorType, Action<IListEditorConfig<TEntity>> configure)
         {
             return SetListEditor(listEditorType, default, configure);
         }
 
-        public CollectionConfig<TEntity> SetListEditor(ListType listEditorType, EmptyVariantColumnVisibility emptyVariantColumnVisibility, Action<ListEditorConfig<TEntity>> configure)
+        public ICollectionConfig<TEntity> SetListEditor(ListType listEditorType, EmptyVariantColumnVisibility emptyVariantColumnVisibility, Action<IListEditorConfig<TEntity>> configure)
         {
             var config = new ListEditorConfig<TEntity>();
 
@@ -138,7 +138,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionConfig<TEntity> SetNodeView(Action<NodeViewConfig<TEntity>> configure)
+        public ICollectionConfig<TEntity> SetNodeView(Action<INodeViewConfig<TEntity>> configure)
         {
             var config = new NodeViewConfig<TEntity>();
 
@@ -149,7 +149,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public CollectionConfig<TEntity> SetNodeEditor(Action<NodeEditorConfig<TEntity>> configure)
+        public ICollectionConfig<TEntity> SetNodeEditor(Action<INodeEditorConfig<TEntity>> configure)
         {
             var config = new NodeEditorConfig<TEntity>();
 

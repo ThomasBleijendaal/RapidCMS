@@ -18,7 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class RapidCMSMiddleware
     {
-        public static IServiceCollection AddRapidCMS(this IServiceCollection services, Action<CmsConfig>? config = null)
+        public static IServiceCollection AddRapidCMS(this IServiceCollection services, Action<ICmsConfig>? config = null)
         {
             var rootConfig = new CmsConfig();
             config?.Invoke(rootConfig);

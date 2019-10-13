@@ -8,9 +8,9 @@ using RapidCMS.Common.Models.Config;
 
 namespace RapidCMS.Common.Extensions
 {
-    public static class ICollectionRootExtensions
+    public static class ICollectionConfigExtensions
     {
-        public static ICollectionRoot AddCollection<TEntity>(this ICollectionRoot root, string alias, string name, Action<CollectionConfig<TEntity>> configure)
+        public static ICollectionConfig AddCollection<TEntity>(this ICollectionConfig root, string alias, string name, Action<ICollectionConfig<TEntity>> configure)
             where TEntity : IEntity
         {
             if (configure == null)
@@ -36,26 +36,29 @@ namespace RapidCMS.Common.Extensions
             return root;
         }
 
-        public static ICollectionRoot AddSelfAsRecursiveCollection<TEntity>(this CollectionConfig<TEntity> root)
+        public static ICollectionConfig<TEntity> AddSelfAsRecursiveCollection<TEntity>(this ICollectionConfig<TEntity> root)
             where TEntity : IEntity
         {
-            var configReceiver = new CollectionConfig<TEntity>(root.Alias, root.Name, root.EntityVariant)
+            var collectionConfig = (CollectionConfig)root;
+            var collectionRoot = (ICollectionConfig)root;
+
+            var configReceiver = new CollectionConfig<TEntity>(collectionConfig.Alias, collectionConfig.Name, collectionConfig.EntityVariant)
             {
                 Recursive = true
             };
 
-            configReceiver.RepositoryType = root.RepositoryType ?? throw new InvalidOperationException("Cannot add self without a Repository, use SetRepository first.");
+            configReceiver.RepositoryType = collectionConfig.RepositoryType ?? throw new InvalidOperationException("Cannot add self without a Repository, use SetRepository first.");
 
-            root.Collections.Add(configReceiver);
+            collectionRoot.Collections.Add(configReceiver);
 
             return root;
         }
 
-        public static List<Collection> ProcessCollections(this ICollectionRoot root)
+        internal static List<Collection> ProcessCollections(this ICollectionConfig root)
         {
             var list = new List<Collection>();
 
-            foreach (var configReceiver in root.Collections)
+            foreach (var configReceiver in root.Collections.Cast<CollectionConfig>())
             {
                 var collection = new Collection(
                     configReceiver.Name,

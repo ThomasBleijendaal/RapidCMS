@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RapidCMS.Common.Extensions;
+using Microsoft.AspNetCore.Components;
 
 namespace RapidCMS.Common.Models.Config
 {
-    // TODO: validate incoming parameters
-
-    public class CmsConfig : ICollectionRoot
+    internal class CmsConfig : ICmsConfig
     {
         internal string SiteName { get; set; } = "RapidCMS";
         internal bool IsDevelopment { get; set; }
@@ -14,57 +14,56 @@ namespace RapidCMS.Common.Models.Config
 
         internal int SemaphoreMaxCount { get; set; } = 1;
 
-        public List<CollectionConfig> Collections { get; set; } = new List<CollectionConfig>();
+        public string Alias => "__root";
+
+        public List<ICollectionConfig> Collections { get; set; } = new List<ICollectionConfig>();
         internal List<CustomTypeRegistration> CustomDashboardSectionRegistrations { get; set; } = new List<CustomTypeRegistration>();
         internal CustomTypeRegistration? CustomLoginRegistration { get; set; }
 
-        public CmsConfig SetCustomLogin(Type loginType)
+        public ICmsConfig SetCustomLogin(Type loginType)
         {
+            if (!loginType.IsSameTypeOrDerivedFrom(typeof(ComponentBase)))
+            {
+                throw new InvalidOperationException($"{nameof(loginType)} must be derived of {nameof(ComponentBase)}.");
+            }
+
             CustomLoginRegistration = new CustomTypeRegistration(loginType);
 
             return this;
         }
 
-        public CmsConfig SetSiteName(string siteName)
+        public ICmsConfig SetSiteName(string siteName)
         {
             SiteName = siteName;
 
             return this;
         }
 
-        public CmsConfig AllowAnonymousUser()
+        public ICmsConfig AllowAnonymousUser()
         {
             AllowAnonymousUsage = true;
 
             return this;
         }
 
-        public bool IsUnique(string alias)
+        bool ICollectionConfig.IsUnique(string alias)
         {
             return !Collections.Any(col => col.Alias == alias);
         }
 
-        public CmsConfig AddDashboardSection(Type customDashboardSectionType)
+        public ICmsConfig AddDashboardSection(Type customDashboardSectionType)
         {
+            if (!customDashboardSectionType.IsSameTypeOrDerivedFrom(typeof(ComponentBase)))
+            {
+                throw new InvalidOperationException($"{nameof(customDashboardSectionType)} must be derived of {nameof(ComponentBase)}.");
+            }
+
             CustomDashboardSectionRegistrations.Add(new CustomTypeRegistration(customDashboardSectionType));
 
             return this;
         }
 
-        /// <summary>
-        /// Sets the number of concurrent IRepository actions. Will lead to deadlocks when used incorrectly.
-        /// </summary>
-        /// <param name="maxCount">Max number of concurrent IRepository actions.</param>
-        /// <returns></returns>
-        public CmsConfig DangerouslyFiddleWithSemaphoreSettings(int maxCount)
-        {
-            SemaphoreMaxCount = maxCount;
-
-            return this;
-        }
-        
-        // TODO: this should throw if collection does not implement its edit or list view
-        public CmsConfig AddDashboardSection(string collectionAlias, bool edit = false)
+        public ICmsConfig AddDashboardSection(string collectionAlias, bool edit = false)
         {
             CustomDashboardSectionRegistrations.Add(
                 new CustomTypeRegistration(
@@ -72,6 +71,13 @@ namespace RapidCMS.Common.Models.Config
                     new Dictionary<string, string> {
                         { "Action", edit ? Constants.Edit : Constants.List },
                         { "CollectionAlias", collectionAlias } }));
+
+            return this;
+        }
+
+        public ICmsConfig DangerouslyFiddleWithSemaphoreSettings(int maxCount)
+        {
+            SemaphoreMaxCount = maxCount;
 
             return this;
         }

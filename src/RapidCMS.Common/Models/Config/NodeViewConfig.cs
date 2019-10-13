@@ -1,17 +1,18 @@
 ﻿using System;
+using RapidCMS.Common.ActionHandlers;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class NodeViewConfig<TEntity> : NodeConfig, IHasButtons<NodeViewConfig<TEntity>>
+    internal class NodeViewConfig<TEntity> : NodeConfig, INodeViewConfig<TEntity>
         where TEntity : IEntity
     {
         public NodeViewConfig() : base(typeof(TEntity))
         {
         }
 
-        public NodeViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
+        public INodeViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig
             {
@@ -26,7 +27,8 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeViewConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
+        public INodeViewConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
+            where TActionHandler : IButtonActionHandler
         {
             var button = new CustomButtonConfig(buttonType, typeof(TActionHandler))
             {
@@ -39,7 +41,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeViewConfig<TEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null, CrudType? defaultCrudType = null)
+        public INodeViewConfig<TEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null, CrudType? defaultCrudType = null)
         {
             var button = new PaneButtonConfig(paneType, defaultCrudType)
             {
@@ -52,28 +54,28 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public NodeViewConfig<TEntity> AddSection(Action<IDisplayPaneConfig<TEntity>> configure)
+        public INodeViewConfig<TEntity> AddSection(Action<IDisplayPaneConfig<TEntity>> configure)
         {
             return AddSection<TEntity>(configure);
         }
 
-        public NodeViewConfig<TEntity> AddSection(Type customSectionType, Action<IDisplayPaneConfig<TEntity>>? configure = null)
+        public INodeViewConfig<TEntity> AddSection(Type customSectionType, Action<IDisplayPaneConfig<TEntity>>? configure = null)
         {
             return AddSection<TEntity>(customSectionType, configure);
         }
 
-        public NodeViewConfig<TEntity> AddSection<TDerivedEntity>(Action<IDisplayPaneConfig<TDerivedEntity>> configure)
+        public INodeViewConfig<TEntity> AddSection<TDerivedEntity>(Action<IDisplayPaneConfig<TDerivedEntity>> configure)
             where TDerivedEntity : TEntity
         {
             return AddSection(null, configure);
         }
 
-        private NodeViewConfig<TEntity> AddSection<TDerivedEntity>(Type? customSectionType, Action<IDisplayPaneConfig<TDerivedEntity>>? configure)
+        public INodeViewConfig<TEntity> AddSection<TDerivedEntity>(Type? customSectionType, Action<IDisplayPaneConfig<TDerivedEntity>>? configure)
             where TDerivedEntity : TEntity
         {
             var config = customSectionType == null
-                ? new PaneConfig<TDerivedEntity, IFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity))
-                : new PaneConfig<TDerivedEntity, IFieldConfig<TDerivedEntity>>(typeof(TDerivedEntity), customSectionType);
+                ? new PaneConfig<TDerivedEntity>(typeof(TDerivedEntity))
+                : new PaneConfig<TDerivedEntity>(typeof(TDerivedEntity), customSectionType);
 
             configure?.Invoke(config);
 

@@ -3,9 +3,9 @@ using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models.Config
 {
-    public class PaneButtonConfig : ButtonConfig
+    internal class PaneButtonConfig : ButtonConfig
     {
-        public PaneButtonConfig(Type paneType, CrudType? crudType)
+        internal PaneButtonConfig(Type paneType, CrudType? crudType)
         {
             PaneType = paneType ?? throw new ArgumentNullException(nameof(paneType));
             CrudType = crudType;

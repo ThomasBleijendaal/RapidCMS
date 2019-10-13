@@ -736,7 +736,7 @@ namespace TestServer
 
             #region Editors
 
-            void listView(ListViewConfig<TestEntity> listViewConfig)
+            void listView(IListViewConfig<TestEntity> listViewConfig)
             {
                 listViewConfig
                     .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
@@ -751,7 +751,7 @@ namespace TestServer
                     });
             }
 
-            void listViewWithPolymorphism(ListViewConfig<TestEntity> listViewConfig)
+            void listViewWithPolymorphism(IListViewConfig<TestEntity> listViewConfig)
             {
                 listViewConfig
                     .AddDefaultButton(DefaultButtonType.New, "New", isPrimary: true)
@@ -766,7 +766,7 @@ namespace TestServer
                     });
             }
 
-            void nodeEditor(NodeEditorConfig<TestEntity> nodeEditorConfig)
+            void nodeEditor(INodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
                     .AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true)
@@ -792,7 +792,7 @@ namespace TestServer
                     });
             }
 
-            void listNodeEditor(ListEditorConfig<TestEntity> listEditorConfig)
+            void listNodeEditor(IListEditorConfig<TestEntity> listEditorConfig)
             {
                 listEditorConfig.AddDefaultButton(DefaultButtonType.New);
                 listEditorConfig.AddSection(editor =>
@@ -820,7 +820,7 @@ namespace TestServer
                 });
             }
 
-            void subListNodeEditor(ListEditorConfig<TestEntity> listEditorConfig)
+            void subListNodeEditor(IListEditorConfig<TestEntity> listEditorConfig)
             {
                 listEditorConfig.AddDefaultButton(DefaultButtonType.New);
                 listEditorConfig.AddSection(editor =>
@@ -848,7 +848,7 @@ namespace TestServer
                 });
             }
 
-            void nodeEditorWithSubCollection(NodeEditorConfig<TestEntity> nodeEditorConfig)
+            void nodeEditorWithSubCollection(INodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
                     .AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true)
@@ -883,7 +883,7 @@ namespace TestServer
                     });
             }
 
-            void nodeEditorWithPolymorphicSubCollection(NodeEditorConfig<TestEntity> nodeEditorConfig)
+            void nodeEditorWithPolymorphicSubCollection(INodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
                     .AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true)
@@ -913,7 +913,7 @@ namespace TestServer
                     });
             }
 
-            void nodeEditorWithPolymorphism(NodeEditorConfig<TestEntity> nodeEditorConfig)
+            void nodeEditorWithPolymorphism(INodeEditorConfig<TestEntity> nodeEditorConfig)
             {
                 nodeEditorConfig
                     .AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true)
@@ -956,7 +956,7 @@ namespace TestServer
                     });
             }
 
-            void listNodeEditorWithPolymorphism(ListEditorConfig<TestEntity> listEditorConfig)
+            void listNodeEditorWithPolymorphism(IListEditorConfig<TestEntity> listEditorConfig)
             {
                 listEditorConfig.AddDefaultButton(DefaultButtonType.New, isPrimary: true);
                 listEditorConfig.AddSection<TestEntityVariantA>(editor =>
@@ -1041,7 +1041,7 @@ namespace TestServer
                 });
             }
 
-            void AzureTableStorageListView(ListViewConfig<AzureTableStorageEntity> config)
+            void AzureTableStorageListView(IListViewConfig<AzureTableStorageEntity> config)
             {
                 config
                     .AddDefaultButton(DefaultButtonType.New, isPrimary: true)
@@ -1061,7 +1061,7 @@ namespace TestServer
                 });
             }
 
-            void AzureTableStorageEditor(NodeEditorConfig<AzureTableStorageEntity> config)
+            void AzureTableStorageEditor(INodeEditorConfig<AzureTableStorageEntity> config)
             {
                 config.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
                 config.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
