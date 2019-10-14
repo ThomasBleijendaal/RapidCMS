@@ -3,7 +3,13 @@
 [![#](https://img.shields.io/nuget/vpre/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
 
 RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS
-purely from code. It provides a basic set of editors and controls, and is fully customisable.
+purely from code. It provides a basic set of editors and controls, next to allowing building your own blazor components
+for every editor, button, pane, and dashboard section. If you provide the repositories for data and the configuration for
+the UI, RapidCMS renders a complete CMS according to your specification.
+
+Since RapidCMS runs as an element within your ASP.NET Core application, you have full control of the DI container, data repositories,
+authentication, authorization, additional endpoints like Api controllers, Mvc controllers, and Razor pages. You can even
+fully replace the default UI libary and only use the core of RapidCMS.
 
 ## TL:DR;
 
@@ -14,7 +20,7 @@ purely from code. It provides a basic set of editors and controls, and is fully 
 5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `_Host.cshtml` with `<link href="_content/rapidcms.ui/css/site.css" rel="stylesheet" />` and remove any other css.
 6. Hit `F5`: you're now running a completely empty RapidCMS instance. 
 7. Start building your CMS using by expanding `config => {}`. Read the introduction below to get a sense of what is possible,
-or browse the [Configuration API](ConfigAPI.md) to see all the options.
+or browse the [Configuration API](https://github.com/ThomasBleijendaal/RapidCMS/wiki/Configuration-API) to see all the options.
 
 ## Screenshots
 
@@ -23,7 +29,7 @@ CMS be absolutely vandalised, [on this page there are some screenshots of the fe
 
 ## Configuration API
 
-[The configuration API page](ConfigAPI.md) lists all the options that you have to configure RapidCMS.
+[The configuration API page](https://github.com/ThomasBleijendaal/RapidCMS/wiki/Configuration-API) lists all the options that you have to configure RapidCMS.
 
 ---
 
