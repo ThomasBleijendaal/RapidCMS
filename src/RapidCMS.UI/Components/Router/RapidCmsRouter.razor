@@ -1,7 +1,14 @@
 ﻿<CascadingValue Value="@CustomLogin" Name="CustomLogin">
     <Router AppAssembly="typeof(RapidCmsRouter).Assembly">
         <Found Context="routeData">
-            <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
+            @if (!IsAuthenticated)
+            {
+                <LayoutView Layout="typeof(LoginLayout)" />
+            }
+            else
+            {
+                <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
+            }
         </Found>
         <NotFound>
             <LayoutView Layout="typeof(MainLayout)">
@@ -13,16 +20,21 @@
 </CascadingValue>
 
 @code {
-
     private RenderFragment? CustomLogin { get; set; }
+    private bool IsAuthenticated { get; set; }
 
     [Inject]
     private ICustomRegistrationProvider Registrations { get; set; }
 
-    protected override Task OnParametersSetAsync()
+    [Inject]
+    private IAuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+    protected override async Task OnParametersSetAsync()
     {
         CustomLogin = Registrations.CustomLoginRegistration.ToRenderFragment();
 
-        return base.OnParametersSetAsync();
+        IsAuthenticated = await AuthenticationStateProvider.UserIsAuthenticatedAsync();
+
+        await base.OnParametersSetAsync();
     }
 }

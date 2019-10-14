@@ -34,6 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<ICustomRegistrationProvider, CustomRegistrationProvider>();
             services.AddScoped<ICollectionProvider, CollectionProvider>();
             services.AddScoped<IMetadataProvider, MetadataProvider>();
+            services.AddTransient<IAuthenticationStateProvider, AuthenticationStateProvider>();
 
             //  UI + Repository services
             services.AddTransient<IDataProviderService, DataProviderService>();

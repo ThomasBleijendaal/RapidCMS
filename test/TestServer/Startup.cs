@@ -157,7 +157,7 @@ namespace TestServer
 
             services.AddRapidCMS(config =>
             {
-                config.AllowAnonymousUser();
+                // config.AllowAnonymousUser();
 
                 config.SetCustomLogin(typeof(LoginControl));
 
@@ -1101,6 +1101,7 @@ namespace TestServer
 
             //app.UseCookiePolicy();
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseRouting();
 

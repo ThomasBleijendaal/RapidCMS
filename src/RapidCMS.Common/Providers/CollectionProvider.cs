@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
+using RapidCMS.Common.Providers;
 
 namespace RapidCMS.Common.Data
 {

@@ -14,6 +14,7 @@ using RapidCMS.Common.Forms;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Commands;
+using RapidCMS.Common.Providers;
 
 namespace RapidCMS.Common.Services
 {
@@ -38,26 +39,26 @@ namespace RapidCMS.Common.Services
 
         public async Task<List<EditContext>> GetEntitiesAsync(UsageType usageType, string collectionAlias, string? parentId, Query query)
         {
-            // NOTE: this method does not check authorization
-
-            var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, parentId);
-
             var collection = _collectionProvider.GetCollection(collectionAlias);
+
+            var dummyEntity = await collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type);
+            await EnsureAuthorizedUserAsync(usageType, dummyEntity);
 
             await collection.ProcessDataViewAsync(query, _serviceProvider);
 
             var existingEntities = await collection.Repository.InternalGetAllAsync(parentId, query);
+            
+            var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, parentId);
 
             return ConvertEditContexts(usageType, collectionAlias, rootEditContext, existingEntities);
         }
 
         public async Task<List<EditContext>> GetRelatedEntitiesAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, Query query)
         {
-            // NOTE: this method does not check authorization
-
-            var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, null);
-
             var collection = _collectionProvider.GetCollection(collectionAlias);
+
+            var dummyEntity = await collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type);
+            await EnsureAuthorizedUserAsync(usageType, dummyEntity);
 
             await collection.ProcessDataViewAsync(query, _serviceProvider);
 
@@ -65,6 +66,8 @@ namespace RapidCMS.Common.Services
                 ? await collection.Repository.InternalGetAllNonRelatedAsync(relatedEntity, query)
                 : await collection.Repository.InternalGetAllRelatedAsync(relatedEntity, query);
 
+            var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, null);
+            
             return ConvertEditContexts(usageType, collectionAlias, rootEditContext, existingEntities);
         }
 
@@ -545,6 +548,9 @@ namespace RapidCMS.Common.Services
         {
             var collection = _collectionProvider.GetCollection(collectionAlias);
             var newEntity = await collection.Repository.InternalNewAsync(parentId, collection.EntityVariant.Type);
+            
+            await EnsureAuthorizedUserAsync(usageType, newEntity);
+
             return new EditContext(newEntity, usageType | UsageType.List, _serviceProvider);
         }
 

@@ -234,6 +234,12 @@ app {
     flex-direction: row;
 }
 
+.login {
+    width: 300px;
+    margin: 200px auto;
+    background: #fff;
+    padding: 30px;
+}
 
 .navroot {
 }

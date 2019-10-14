@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Models;
 
-namespace RapidCMS.Common.Data
+namespace RapidCMS.Common.Providers
 {
     public interface ICollectionProvider
     {

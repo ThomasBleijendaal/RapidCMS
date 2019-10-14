@@ -1,0 +1,19 @@
+﻿@inherits Microsoft.AspNetCore.Components.LayoutComponentBase
+
+<div class="login">
+    <h4>Please log in</h4>
+    
+    @Body
+
+    <hr />
+
+    @if (CustomLogin != null)
+    {
+        @CustomLogin
+    }
+</div>
+
+@code  {
+    [CascadingParameter(Name = "CustomLogin")]
+    private RenderFragment? CustomLogin { get; set; }
+}

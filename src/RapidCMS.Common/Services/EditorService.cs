@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.EqualityComparers;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Forms;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
+using RapidCMS.Common.Providers;
 
 namespace RapidCMS.Common.Services
 {

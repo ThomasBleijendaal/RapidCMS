@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models;
+using RapidCMS.Common.Providers;
 
 namespace RapidCMS.Common.Services
 {
