@@ -6,9 +6,9 @@ using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Data
 {
-    public class DataProvider
+    internal class DataProvider
     {
-        public DataProvider(IPropertyMetadata property, IDataCollection collection, IRelationValidator? validator)
+        internal DataProvider(IPropertyMetadata property, IDataCollection collection, IRelationValidator? validator)
         {
             Property = property ?? throw new ArgumentNullException(nameof(property));
             Collection = collection ?? throw new ArgumentNullException(nameof(collection));

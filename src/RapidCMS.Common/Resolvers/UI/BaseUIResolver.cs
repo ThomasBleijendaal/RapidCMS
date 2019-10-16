@@ -5,19 +5,21 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Forms;
+using RapidCMS.Common.Models;
+using RapidCMS.Common.Models.UI;
 using RapidCMS.Common.Services;
 
-namespace RapidCMS.Common.Models.UI
+namespace RapidCMS.Common.Resolvers.UI
 {
-    public abstract class BaseUI
+    internal class BaseUIResolver
     {
         protected readonly IDataProviderService _dataProviderService;
         protected readonly IAuthorizationService _authorizationService;
         protected readonly IHttpContextAccessor _httpContextAccessor;
 
-        protected BaseUI(
-            IDataProviderService dataProviderService, 
-            IAuthorizationService authorizationService, 
+        protected BaseUIResolver(
+            IDataProviderService dataProviderService,
+            IAuthorizationService authorizationService,
             IHttpContextAccessor httpContextAccessor)
         {
             _dataProviderService = dataProviderService;

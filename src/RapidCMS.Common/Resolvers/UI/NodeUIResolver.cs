@@ -1,20 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Forms;
+using RapidCMS.Common.Models;
+using RapidCMS.Common.Models.UI;
 using RapidCMS.Common.Services;
 
-namespace RapidCMS.Common.Models.UI
+namespace RapidCMS.Common.Resolvers.UI
 {
-    public class NodeUI : BaseUI
+    internal class NodeUIResolver : BaseUIResolver, INodeUIResolver
     {
         private readonly Node _node;
 
-        public NodeUI(Node node, IDataProviderService dataProviderService, IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor) : base(dataProviderService, authorizationService, httpContextAccessor)
+        public NodeUIResolver(
+            Node node, 
+            IDataProviderService dataProviderService, 
+            IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor) : base(dataProviderService, authorizationService, httpContextAccessor)
         {
             _node = node;
         }

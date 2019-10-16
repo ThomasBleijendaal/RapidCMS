@@ -50,10 +50,10 @@ else
         try
         {
             var editContext = await EditContextService.GetEntityAsync(GetUsageType(), CollectionAlias, VariantAlias, ParentId, Id);
-            var view = await EditorService.GetNodeAsync(GetUsageType(), CollectionAlias);
+            var resolver = await EditorService.GetNodeUIResolverAsync(GetUsageType(), CollectionAlias);
 
-            Buttons = await view.GetButtonsForEditContextAsync(editContext);
-            Sections = await view.GetSectionsForEditContextAsync(editContext);
+            Buttons = await resolver.GetButtonsForEditContextAsync(editContext);
+            Sections = await resolver.GetSectionsForEditContextAsync(editContext);
 
             EditContext = editContext;
 

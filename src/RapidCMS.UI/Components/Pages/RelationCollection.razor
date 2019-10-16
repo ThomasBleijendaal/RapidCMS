@@ -1,6 +1,6 @@
 @inherits BasePage
 
-@if (RootEditContext == null || UI == null)
+@if (RootEditContext == null || ListUI == null)
 {
     <div class="content">
         <p>Loading..</p>
@@ -9,22 +9,22 @@
 else
 {
     <CascadingEditContext EditContext=@RootEditContext>
-        <Tabbar Tabs="Tabs" SearchBarVisible="UI.SearchBarVisible" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
+        <Tabbar Tabs="Tabs" SearchBarVisible="ListUI.SearchBarVisible" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
         <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
     </CascadingEditContext>
 
     @if (Sections != null)
     {
-        @if (UI.ListType == ListType.Table)
+        @if (ListUI.ListType == ListType.Table)
         {
-            <TableSection UI="UI"
+            <TableSection UI="ListUI"
                           Sections="Sections"
                           CurrentPage="CurrentPage"
                           MaxPage="MaxPage"
                           OnButtonClick="NodeButtonOnClickAsync"
                           OnPageChanged="PageChangedAsync" />
         }
-        else if (UI.ListType == ListType.Block)
+        else if (ListUI.ListType == ListType.Block)
         {
             <BlocksSection Sections="Sections"
                            CurrentPage="CurrentPage"
@@ -61,8 +61,9 @@ else
     IEnumerable<ButtonUI>? Buttons;
     IEnumerable<(EditContext editContext, IEnumerable<SectionUI> sections)>? Sections;
     IEnumerable<TabUI>? Tabs;
-
-    ListUI? UI;
+    
+    IListUIResolver? UIResolver;
+    ListUI? ListUI;
 
     int? ActiveTab = null;
     string? SearchTerm = null;
@@ -79,10 +80,10 @@ else
             {
                 var rootEditContext = await EditContextService.GetRootAsync(GetUsageType(), CollectionAlias, ParentId);
 
-                UI = await EditorService.GetListAsync(GetUsageType(), CollectionAlias);
+                UIResolver = await EditorService.GetListUIResolverAsync(GetUsageType(), CollectionAlias);
 
-                Buttons = await UI.GetButtonsForEditContextAsync(rootEditContext);
-                Tabs = await UI.GetTabsAsync(rootEditContext);
+                Buttons = await UIResolver.GetButtonsForEditContextAsync(rootEditContext);
+                Tabs = await UIResolver.GetTabsAsync(rootEditContext);
 
                 CurrentPage = 1;
                 MaxPage = null;
@@ -105,7 +106,7 @@ else
         {
             RootEditContext = null;
             Sections = null;
-            UI = null;
+            ListUI = null;
 
             throw;
         }
@@ -141,15 +142,17 @@ else
 
     async Task LoadSectionsAsync()
     {
-        if (UI == null)
+        if (UIResolver == null)
         {
             return;
         }
+        
+        ListUI = UIResolver.GetListDetails();
 
-        var query = Query.Create(UI.PageSize, CurrentPage, SearchTerm, ActiveTab);
+        var query = Query.Create(ListUI.PageSize, CurrentPage, SearchTerm, ActiveTab);
 
         var editContexts = await EditContextService.GetRelatedEntitiesAsync(GetUsageType(), CollectionAlias, RelatedEntity, query);
-        Sections = await editContexts.ToListAsync(async editContext => (editContext, await UI.GetSectionsForEditContextAsync(editContext)));
+        Sections = await editContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
 
         if (!query.MoreDataAvailable)
         {
@@ -169,7 +172,7 @@ else
 
     async Task ReloadSectionsAsync(IEnumerable<string> reloadEntityIds)
     {
-        if (UI == null || Sections == null)
+        if (ListUI == null || Sections == null)
         {
             return;
         }
@@ -179,7 +182,7 @@ else
             if (reloadEntityIds.Contains(x.editContext.Entity.Id))
             {
                 var reloadedEditContext = await EditContextService.GetEntityAsync(x.editContext.UsageType, CollectionAlias, null, null, x.editContext.Entity.Id);
-                return (reloadedEditContext, await UI.GetSectionsForEditContextAsync(reloadedEditContext));
+                return (reloadedEditContext, await UIResolver.GetSectionsForEditContextAsync(reloadedEditContext));
             }
             else
             {
@@ -220,11 +223,6 @@ else
             if (model == null)
             {
                 throw new ArgumentException($"Argument must be of type {typeof(ButtonViewModel)}.", nameof(sender));
-            }
-
-            if (UI == null)
-            {
-                throw new InvalidOperationException("UI is null");
             }
 
             var command = await EditContextService.ProcessRelationActionAsync(args.EditContext.UsageType, CollectionAlias, RelatedEntity, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);

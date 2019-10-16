@@ -5,6 +5,8 @@ TODO:
 [] Implement Return everywhere + fallback to javascript:history.back();
     [] Escape from New
 
+[] Look for memory leaks due to not removing event handlers from components
+
 2.0
 [] Add more than one view to page (to allow for ListView + CustomBlock)
 [] Repository parenId is brittle (is the parent the same entity type, or completely something different? must include parent entity type somehow)

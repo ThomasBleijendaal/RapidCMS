@@ -3,7 +3,7 @@ using RapidCMS.Common.Models;
 
 namespace RapidCMS.Common.Services
 {
-    public interface IDataProviderService
+    internal interface IDataProviderService
     {
         DataProvider? GetDataProvider(Field field);
     }
