@@ -5,7 +5,7 @@ using RapidCMS.Common.Extensions;
 
 namespace RapidCMS.Common.Models
 {
-    internal class Node
+    public sealed class Node
     {
         internal Type BaseType { get; set; }
         internal List<Pane> Panes { get; set; }

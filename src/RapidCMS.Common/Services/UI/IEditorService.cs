@@ -2,7 +2,7 @@
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Models.UI;
 
-namespace RapidCMS.Common.Services
+namespace RapidCMS.Common.Services.UI
 {
     public interface IEditorService
     {

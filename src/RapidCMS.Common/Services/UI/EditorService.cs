@@ -12,7 +12,7 @@ using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
 using RapidCMS.Common.Providers;
 
-namespace RapidCMS.Common.Services
+namespace RapidCMS.Common.Services.UI
 {
     internal class EditorService : IEditorService
     {
@@ -42,32 +42,9 @@ namespace RapidCMS.Common.Services
                 throw new InvalidOperationException($"Failed to get UI configuration from collection {collectionAlias} for action {usageType}");
             }
 
-            var nodeUI = new NodeUI(ButtonCallAsync, ListCallAsync);
+            var nodeUI = new NodeUI(node, _dataProviderService, _authorizationService, _httpContextAccessor);
 
             return Task.FromResult(nodeUI);
-
-            async Task<List<ButtonUI>?> ButtonCallAsync(EditContext editContext)
-            {
-                if (node.Buttons == null)
-                {
-                    return null;
-                }
-
-                return await GetButtonsAsync(node.Buttons, editContext);
-            }
-            async Task<List<SectionUI>?> ListCallAsync(EditContext editContext)
-            {
-                if (node.Panes == null)
-                {
-                    return null;
-                }
-
-                var type = editContext.Entity.GetType();
-
-                return await node.Panes
-                    .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(type))
-                    .ToListAsync(pane => GetSectionUIAsync(pane, editContext));
-            }
         }
 
         public Task<ListUI> GetListAsync(UsageType usageType, string collectionAlias)

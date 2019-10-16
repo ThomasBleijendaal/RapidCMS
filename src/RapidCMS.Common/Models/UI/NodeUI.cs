@@ -2,31 +2,45 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Forms;
+using RapidCMS.Common.Services;
 
 namespace RapidCMS.Common.Models.UI
 {
-    // TODO: this model is a bit weird
-    public class NodeUI
+    public class NodeUI : BaseUI
     {
-        public NodeUI(Func<EditContext, Task<List<ButtonUI>?>> buttons, Func<EditContext, Task<List<SectionUI>?>> sections)
+        private readonly Node _node;
+
+        public NodeUI(Node node, IDataProviderService dataProviderService, IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor) : base(dataProviderService, authorizationService, httpContextAccessor)
         {
-            Buttons = buttons ?? throw new ArgumentNullException(nameof(buttons));
-            Sections = sections ?? throw new ArgumentNullException(nameof(sections));
+            _node = node;
         }
 
-        internal Func<EditContext, Task<List<ButtonUI>?>> Buttons { get; set; }
-        internal Func<EditContext, Task<List<SectionUI>?>> Sections { get; set; }
-
-        // TODO: convert to real functions
         public async Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(EditContext editContext)
         {
-            return await Buttons(editContext) ?? Enumerable.Empty<ButtonUI>();
+            if (_node.Buttons == null)
+            {
+                return Enumerable.Empty<ButtonUI>();
+            }
+
+            return await GetButtonsAsync(_node.Buttons, editContext);
         }
 
         public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(EditContext editContext)
         {
-            return await Sections(editContext) ?? Enumerable.Empty<SectionUI>();
+            if (_node.Panes == null)
+            {
+                return Enumerable.Empty<SectionUI>();
+            }
+
+            var type = editContext.Entity.GetType();
+
+            return await _node.Panes
+                .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(type))
+                .ToListAsync(pane => GetSectionUIAsync(pane, editContext));
         }
     }
 }

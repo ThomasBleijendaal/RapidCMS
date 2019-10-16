@@ -4,7 +4,7 @@ using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models
 {
-    internal class Pane
+    public sealed class Pane
     {
         internal Type? CustomType { get; set; }
         internal string? Label { get; set; }

@@ -12,6 +12,7 @@ using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.Providers;
 using RapidCMS.Common.Services;
 using RapidCMS.Common.Services.SidePane;
+using RapidCMS.Common.Services.UI;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
