@@ -15,7 +15,7 @@ fully replace the default UI libary and only use the core of RapidCMS.
 
 1. Create a new ASP.NET Core Blazor Server-App project.
 2. Install NuGet-package: `RapidCMS.UI`.
-3. Add `services.AddRapidCMS(config => {})` to `ConfigureServices` in `Startup.cs`.
+3. Add `services.AddRapidCMS(config => { config.AllowAnonymousUser(); })` to `ConfigureServices` in `Startup.cs`.
 4. Replace the `<Router>` in `App.razor` with `<RapidCMS.UI.Components.Router.RapidCmsRouter />`.
 5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `_Host.cshtml` with `<link href="_content/rapidcms.ui/css/site.css" rel="stylesheet" />` and remove any other css.
 6. Hit `F5`: you're now running a completely empty RapidCMS instance. 
