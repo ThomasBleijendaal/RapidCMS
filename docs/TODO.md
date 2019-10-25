@@ -1,10 +1,17 @@
 TODO:
 
+[] DisabledWhen
+[] DisabledWhen(Entity.IsNew), DisabledWhen(Entity.IsExisiting)
+[] VisibleWhen(Entity.IsNew), VisibleWhen(Entity.IsExisiting)
+[] Nullability of models returned by repositories
+[] Alignment checkboxes..
+[] CustomLogins: Landing screen + Login state
+[] DataProvider able to provide context for the entity (like tenant-id)
+[] Escape from New
+
 [] Order of collection form configuration is not maintained
 
 [] Implement Return everywhere + fallback to javascript:history.back();
-
-[] Navigation command during pre-render (server side rendering) fails
 
 2.0
 [] Add more than one view to page (to allow for ListView + CustomBlock)

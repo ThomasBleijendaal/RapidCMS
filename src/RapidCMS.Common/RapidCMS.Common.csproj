@@ -21,7 +21,7 @@ RapidCMS is a Blazor framework which allows you to build a responsive and flexib
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>D:\Projects\RapidCMS\src\RapidCMS.Common\RapidCMS.Common.xml</DocumentationFile>
+    <DocumentationFile>.\RapidCMS.Common.xml</DocumentationFile>
     <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
 
