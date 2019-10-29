@@ -85,10 +85,10 @@ app {
 
 .sidepane {
     width: 450px;
-    height: 100vh;
+    height: calc(100vh - 3.5rem);
     position: absolute;
     right: 0;
-    top: 0;
+    top: 3.5rem;
     background: #000000;
     border-left: 1px solid #b8b8b8;
     background-color: #f8f8f8;
