@@ -1,5 +1,6 @@
 ﻿using System;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models.Config
 {
@@ -19,12 +20,12 @@ namespace RapidCMS.Common.Models.Config
         /// <param name="description"></param>
         /// <returns></returns>
         IDisplayFieldConfig<TEntity, TValue> SetDescription(string description);
-
+        
         /// <summary>
         /// Sets an expression which determines whether this field should be visible.
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        IDisplayFieldConfig<TEntity, TValue> VisibleWhen(Func<TEntity, bool> predicate);
+        IDisplayFieldConfig<TEntity, TValue> VisibleWhen(Func<TEntity, EntityState, bool> predicate);
     }
 }

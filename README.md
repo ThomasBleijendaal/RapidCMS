@@ -140,6 +140,14 @@ services.AddScoped<InMemoryRepository<Person>>();
 There is no abstraction magic, or default repository implementation, so you need to create your own
 repositories which implement `IRepository` (or one of the derived abstract classes).
 
+#### Entity Framework Core Repositories
+
+Be aware that EF Core based repositories must be added with an `Transient` lifetime scope, as well as
+the corresponding `DbContext`. Due to the current UI setup, multiple queries towards the same `DbContext` 
+can be fired simultaniously from multiple threads, which will result in DbContext threading issues. By 
+setting the lifetime scope to `Transient`, every user of these repositories will have their own instance, 
+fixing the multiple threads issue. 
+
 ### Authorization
 
 Just as repositories, authorization in RapidCMS must be configured by including the correct

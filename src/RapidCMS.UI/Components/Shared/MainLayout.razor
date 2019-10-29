@@ -1,10 +1,15 @@
 ﻿@inherits Microsoft.AspNetCore.Components.LayoutComponentBase
 
+<div class="top">
+    <TopBar />
+</div>
+
 <div class="sidebar">
     <NavMenu />
 </div>
 
 <div class="main">
+
     <MessageBox />
 
     @Body

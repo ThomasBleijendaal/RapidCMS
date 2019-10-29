@@ -1,6 +1,6 @@
 ﻿@inherits BaseEditContextSection
 
-@if (Section != null && Section.Elements != null && Section.Elements.Any() && EditContext != null && Section.IsVisible(EditContext.Entity))
+@if (Section != null && Section.Elements != null && Section.Elements.Any() && EditContext != null && Section.IsVisible(EditContext.Entity, EditContext.EntityState))
 {
     <div class="content">
         @if (!string.IsNullOrWhiteSpace(Section.Label))
@@ -17,7 +17,7 @@
 
         @foreach (var element in Section.Elements)
         {
-            if (!element.IsVisible(EditContext.Entity))
+            if (!element.IsVisible(EditContext.Entity, EditContext.EntityState))
             {
                 continue;
             }
@@ -33,12 +33,12 @@
                         @if (field is ExpressionFieldUI expressionField)
                         {
                             <label class="col-form-label">
-                                @field.ToRenderFragment(EditContext.Entity)
+                                @field.ToRenderFragment(EditContext)
                             </label>
                         }
                         else if (field is PropertyFieldUI propertyField)
                         {
-                            @field.ToRenderFragment(EditContext.Entity)
+                            @field.ToRenderFragment(EditContext)
                         }
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                 <div class="nested-content">
                     <RapidCMS.UI.Components.Pages.Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
                                 CollectionAlias=@subCollection.CollectionAlias
-                                ParentId=@EditContext.Entity.Id />
+                                ParentId=@EditContext.Entity.Id/>
                 </div>
             }
             else if (element is RelatedCollectionUI relatedCollection)

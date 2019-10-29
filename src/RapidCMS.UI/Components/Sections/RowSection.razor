@@ -1,6 +1,6 @@
 @inherits BaseEditContextSection
 
-@if (Section != null && Section.IsVisible(EditContext.Entity))
+@if (Section != null && Section.IsVisible(EditContext.Entity, EditContext.EntityState))
 {
     var renderFragment = Section.ToRenderFragment();
 
@@ -42,9 +42,9 @@
                             index++;
 
                             <td>
-                                @if (field.IsVisible(EditContext.Entity))
+                                @if (field.IsVisible(EditContext.Entity, EditContext.EntityState))
                                 {
-                                    @field.ToRenderFragment(EditContext.Entity)
+                                    @field.ToRenderFragment(EditContext)
                                 }
                             </td>
                         }

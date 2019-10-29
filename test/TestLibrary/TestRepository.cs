@@ -11,10 +11,6 @@ namespace TestLibrary
     {
         private readonly Dictionary<int, List<TestEntity>> _data = new Dictionary<int, List<TestEntity>>();
 
-        public TestRepository(SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
-        {
-        }
-
         private List<TestEntity> GetData(int? parentId)
         {
             if (!_data.ContainsKey(parentId ?? 0))
@@ -97,50 +93,26 @@ namespace TestLibrary
 
     public class RepositoryA : TestRepository
     {
-        public RepositoryA(SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
-        {
-        }
-
         protected override string Name => nameof(RepositoryA);
     }
     public class RepositoryB : TestRepository
     {
-        public RepositoryB(SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
-        {
-        }
-
         protected override string Name => nameof(RepositoryB);
     }
     public class RepositoryC : TestRepository
     {
-        public RepositoryC(SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
-        {
-        }
-
         protected override string Name => nameof(RepositoryC);
     }
     public class RepositoryD : TestRepository
     {
-        public RepositoryD(SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
-        {
-        }
-
         protected override string Name => nameof(RepositoryD);
     }
     public class RepositoryE : TestRepository
     {
-        public RepositoryE(SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
-        {
-        }
-
         protected override string Name => nameof(RepositoryE);
     }
     public class RepositoryF : TestRepository
     {
-        public RepositoryF(SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
-        {
-        }
-
         protected override string Name => nameof(RepositoryF);
     }
     public class VariantRepository : BaseStructRepository<int, int, TestEntity>
@@ -151,10 +123,6 @@ namespace TestLibrary
             new TestEntityVariantB { _Id = 2, ParentId = null, Description = "Variant B", Name = "B", Number = 2, Image = "This is the image" },
             new TestEntityVariantC { _Id = 3, ParentId = null, Description = "Variant C", Name = "C", Number = 3, Quote = "This is the quote" },
         };
-
-        public VariantRepository(SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
-        {
-        }
 
         public override Task DeleteAsync(int id, int? parentId)
         {

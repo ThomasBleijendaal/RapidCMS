@@ -18,7 +18,7 @@ namespace RapidCMS.Common.Models.Config
         internal Type? CustomType { get; set; }
         internal string? Label { get; set; }
 
-        internal Func<object, bool> IsVisible { get; set; } = (x) => true;
+        internal Func<object, EntityState, bool> IsVisible { get; set; } = (x, y) => true;
 
         internal Type VariantType { get; set; }
 
@@ -118,9 +118,9 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        private PaneConfig<TEntity> VisibleWhen(Func<TEntity, bool> predicate)
+        private PaneConfig<TEntity> VisibleWhen(Func<TEntity, EntityState, bool> predicate)
         {
-            IsVisible = (entity) => predicate.Invoke((TEntity)entity);
+            IsVisible = (entity, state) => predicate.Invoke((TEntity)entity, state);
 
             return this;
         }
@@ -173,7 +173,7 @@ namespace RapidCMS.Common.Models.Config
             return SetLabel(label);
         }
 
-        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.VisibleWhen(Func<TEntity, bool> predicate)
+        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.VisibleWhen(Func<TEntity, EntityState, bool> predicate)
         {
             return VisibleWhen(predicate);
         }
@@ -226,7 +226,7 @@ namespace RapidCMS.Common.Models.Config
             return SetLabel(label);
         }
 
-        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.VisibleWhen(Func<TEntity, bool> predicate)
+        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.VisibleWhen(Func<TEntity, EntityState, bool> predicate)
         {
             return VisibleWhen(predicate);
         }

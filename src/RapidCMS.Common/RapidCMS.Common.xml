@@ -34,6 +34,35 @@
             Removing an existing relation to an existing entity
             </summary>
         </member>
+        <member name="M:RapidCMS.Common.Data.DataViewBuilder`1.GetDataViewsAsync">
+            <summary>
+            This method is called when the list view / editor want to get all data views for the list.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:RapidCMS.Common.Data.IDataCollection.SetEntityAsync(RapidCMS.Common.Data.IEntity)">
+            <summary>
+            Use this method to receive the Entity for which this data collection is used. This allows for making the available elements contextual to the entity.
+            </summary>
+            <param name="entity">Entity for which this data collection is used.</param>
+            <returns></returns>
+        </member>
+        <member name="M:RapidCMS.Common.Data.IDataCollection.GetAvailableElementsAsync">
+            <summary>
+            This method is called when the editor which this data collection requests elements to display.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="E:RapidCMS.Common.Data.IDataCollection.OnDataChange">
+            <summary>
+            The editor using this data colleciton will refresh its UI when this event is invoked. Use this to refresh the UI when the available elements changes.
+            </summary>
+        </member>
+        <member name="P:RapidCMS.Common.Data.IQuery`1.DataViewExpression">
+            <summary>
+            Expression corresponding to the selected data view. Can be directly inserted into IQueryable.Where.
+            </summary>
+        </member>
         <member name="M:RapidCMS.Common.Data.IRepository.InternalNewAsync(System.String,System.Type)">
             <summary>
             Create a new entity in-memory.
@@ -93,18 +122,16 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:RapidCMS.Common.Models.Config.ICmsConfig.DangerouslyFiddleWithSemaphoreSettings(System.Int32)">
+        <member name="M:RapidCMS.Common.Models.Config.ICmsConfig.SetCustomLoginScreen(System.Type)">
             <summary>
-            Sets the number of concurrent IRepository actions. Will lead to deadlocks when used incorrectly.
-            
-            Set it to anything other than 1 if you do not use Entity Framework Core, or have repositories reference each other.
+            Draws the given razor component as login screen.
             </summary>
-            <param name="maxCount">Max number of concurrent IRepository actions.</param>
+            <param name="loginType">Type of razor component.</param>
             <returns></returns>
         </member>
-        <member name="M:RapidCMS.Common.Models.Config.ICmsConfig.SetCustomLogin(System.Type)">
+        <member name="M:RapidCMS.Common.Models.Config.ICmsConfig.SetCustomLoginStatus(System.Type)">
             <summary>
-            Draws the given razor component in the top left bar of the CMS. Use this to create your Sign in and Sign out buttons.
+            Draws the given razor component in the top bar of the CMS. Use this to display the status of the currently signed in user, and the possibility to sign out.
             </summary>
             <param name="loginType">Type of razor component.</param>
             <returns></returns>
@@ -267,7 +294,7 @@
             <param name="description"></param>
             <returns></returns>
         </member>
-        <member name="M:RapidCMS.Common.Models.Config.IDisplayFieldConfig`2.VisibleWhen(System.Func{`0,System.Boolean})">
+        <member name="M:RapidCMS.Common.Models.Config.IDisplayFieldConfig`2.VisibleWhen(System.Func{`0,RapidCMS.Common.Enums.EntityState,System.Boolean})">
             <summary>
             Sets an expression which determines whether this field should be visible.
             </summary>
@@ -308,9 +335,9 @@
             <param name="label">Text to display in the label</param>
             <returns></returns>
         </member>
-        <member name="M:RapidCMS.Common.Models.Config.IDisplayPaneConfig`1.VisibleWhen(System.Func{`0,System.Boolean})">
+        <member name="M:RapidCMS.Common.Models.Config.IDisplayPaneConfig`1.VisibleWhen(System.Func{`0,RapidCMS.Common.Enums.EntityState,System.Boolean})">
             <summary>
-            Expression which determines whether this pane should be visible
+            Expression which determines whether this pane should be visible.
             </summary>
             <param name="predicate"></param>
             <returns></returns>
@@ -381,9 +408,16 @@
             <param name="configure">Action to configure relation.</param>
             <returns></returns>
         </member>
-        <member name="M:RapidCMS.Common.Models.Config.IEditorFieldConfig`2.VisibleWhen(System.Func{`0,System.Boolean})">
+        <member name="M:RapidCMS.Common.Models.Config.IEditorFieldConfig`2.VisibleWhen(System.Func{`0,RapidCMS.Common.Enums.EntityState,System.Boolean})">
             <summary>
             Sets an expression which determines whether this field should be visible.
+            </summary>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RapidCMS.Common.Models.Config.IEditorFieldConfig`2.DisableWhen(System.Func{`0,RapidCMS.Common.Enums.EntityState,System.Boolean})">
+            <summary>
+            Sets an expression which determine whether this field should be disabled.
             </summary>
             <param name="predicate"></param>
             <returns></returns>
@@ -422,9 +456,9 @@
             <param name="label">Text to display in the label</param>
             <returns></returns>
         </member>
-        <member name="M:RapidCMS.Common.Models.Config.IEditorPaneConfig`1.VisibleWhen(System.Func{`0,System.Boolean})">
+        <member name="M:RapidCMS.Common.Models.Config.IEditorPaneConfig`1.VisibleWhen(System.Func{`0,RapidCMS.Common.Enums.EntityState,System.Boolean})">
             <summary>
-            Expression which determines whether this pane should be visible
+            Expression which determines whether this pane should be visible.
             </summary>
             <param name="predicate"></param>
             <returns></returns>

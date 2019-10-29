@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models.Config
 {
@@ -42,12 +43,12 @@ namespace RapidCMS.Common.Models.Config
         /// <param name="label">Text to display in the label</param>
         /// <returns></returns>
         IEditorPaneConfig<TEntity> SetLabel(string label);
-
+        
         /// <summary>
-        /// Expression which determines whether this pane should be visible
+        /// Expression which determines whether this pane should be visible.
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        IEditorPaneConfig<TEntity> VisibleWhen(Func<TEntity, bool> predicate);
+        IEditorPaneConfig<TEntity> VisibleWhen(Func<TEntity, EntityState, bool> predicate);
     }
 }

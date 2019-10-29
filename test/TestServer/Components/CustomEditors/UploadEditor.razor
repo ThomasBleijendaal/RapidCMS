@@ -51,36 +51,35 @@
         var blobContainer = blobClient.GetContainerReference("blazor-uploads");
         await blobContainer.CreateIfNotExistsAsync();
 
-        throw new Exception("ElementRef no worky worky");
-        //var fileUploadRef = FileReaderService.CreateReference(FileUpload);
+        var fileUploadRef = FileReaderService.CreateReference(FileUpload);
 
-        //foreach (var file in await fileUploadRef.EnumerateFilesAsync())
-        //{
-        //    var fileInfo = await file.ReadFileInfoAsync();
+        foreach (var file in await fileUploadRef.EnumerateFilesAsync())
+        {
+            var fileInfo = await file.ReadFileInfoAsync();
 
-        //    if (fileInfo.Size > 10 * 1024 * 1024)
-        //    {
-        //        EditContext.AddValidationMessage(Property, "File is too big. Max 10 MB");
+            if (fileInfo.Size > 10 * 1024 * 1024)
+            {
+                EditContext.AddValidationMessage(Property, "File is too big. Max 10 MB");
 
-        //        continue;
-        //    }
+                continue;
+            }
 
-        //    try
-        //    {
-        //        var blob = blobContainer.GetBlockBlobReference(Guid.NewGuid().ToString());
+            try
+            {
+                var blob = blobContainer.GetBlockBlobReference(Guid.NewGuid().ToString());
 
-        //        var stream = await file.CreateMemoryStreamAsync(8192);
+                var stream = await file.CreateMemoryStreamAsync(8192);
 
-        //        await blob.UploadFromStreamAsync(stream);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        EditContext.AddValidationMessage(Property, $"Failed to upload file: {ex.Message}");
-        //    }
-        //}
+                await blob.UploadFromStreamAsync(stream);
+            }
+            catch (Exception ex)
+            {
+                EditContext.AddValidationMessage(Property, $"Failed to upload file: {ex.Message}");
+            }
+        }
 
-        //EditContext.NotifyPropertyFinished(Property);
-        //waiting = false;
-        //StateHasChanged();
+        EditContext.NotifyPropertyFinished(Property);
+        waiting = false;
+        StateHasChanged();
     }
 }

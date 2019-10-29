@@ -54,15 +54,15 @@
     Dictionary<TreeNodeUI, bool>? NodesVisible;
     List<TreeNodeUI>? UI;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        UI = await TreeService.GetNodesAsync(CollectionAlias, ParentId);
-        NodesVisible = UI.ToDictionary(x => x, x => x.RootVisibleOfCollections);
+        await OnNodesUpdateAsync();
     }
 
     protected override async Task OnNodesUpdateAsync()
     {
-        await OnInitializedAsync();
+        UI = await TreeService.GetNodesAsync(CollectionAlias, ParentId);
+        NodesVisible = UI.ToDictionary(x => x, x => x.RootVisibleOfCollections);
         StateHasChanged();
     }
 }

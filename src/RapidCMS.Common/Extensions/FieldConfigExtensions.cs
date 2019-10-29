@@ -20,6 +20,7 @@ namespace RapidCMS.Common.Extensions
                     Name = field.Name,
                     Readonly = field.Readonly,
                     IsVisible = field.IsVisible,
+                    IsDisabled = field.IsDisabled,
 
                     Relation = field.Relation?.ToRelation()
                 };
@@ -37,6 +38,7 @@ namespace RapidCMS.Common.Extensions
                         Name = field.Name,
                         Readonly = field.Readonly,
                         IsVisible = field.IsVisible,
+                        IsDisabled = field.IsDisabled,
 
                         Relation = field.Relation?.ToRelation()
                     };
@@ -51,7 +53,8 @@ namespace RapidCMS.Common.Extensions
                         Name = field.Name,
 
                         Readonly = true,
-                        IsVisible = field.IsVisible
+                        IsVisible = field.IsVisible,
+                        IsDisabled = field.IsDisabled
                     };
                 }
                 else

@@ -6,6 +6,7 @@ namespace RapidCMS.Common.Providers
     public interface ICustomRegistrationProvider
     {
         IEnumerable<CustomTypeRegistration> CustomDashboardSectionRegistrations { get; }
-        CustomTypeRegistration? CustomLoginRegistration { get; }
+        CustomTypeRegistration? CustomLoginScreenRegistration { get; }
+        CustomTypeRegistration? CustomLoginStatusRegistration { get; }
     }
 }

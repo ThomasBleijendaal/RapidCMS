@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
@@ -24,29 +26,32 @@ namespace RapidCMS.Common.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationService _authorizationService;
         private readonly IServiceProvider _serviceProvider;
+        private readonly SemaphoreSlim _semaphore;
 
         public EditContextService(
             ICollectionProvider collectionProvider,
             IHttpContextAccessor httpContextAccessor,
             IAuthorizationService authorizationService,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            SemaphoreSlim semaphore)
         {
             _collectionProvider = collectionProvider;
             _httpContextAccessor = httpContextAccessor;
             _authorizationService = authorizationService;
             _serviceProvider = serviceProvider;
+            _semaphore = semaphore;
         }
 
         public async Task<List<EditContext>> GetEntitiesAsync(UsageType usageType, string collectionAlias, string? parentId, Query query)
         {
             var collection = _collectionProvider.GetCollection(collectionAlias);
 
-            var dummyEntity = await collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type);
+            var dummyEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type));
             await EnsureAuthorizedUserAsync(usageType, dummyEntity);
 
             await collection.ProcessDataViewAsync(query, _serviceProvider);
 
-            var existingEntities = await collection.Repository.InternalGetAllAsync(parentId, query);
+            var existingEntities = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalGetAllAsync(parentId, query));
             
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, parentId);
 
@@ -57,14 +62,14 @@ namespace RapidCMS.Common.Services
         {
             var collection = _collectionProvider.GetCollection(collectionAlias);
 
-            var dummyEntity = await collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type);
+            var dummyEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type));
             await EnsureAuthorizedUserAsync(usageType, dummyEntity);
 
             await collection.ProcessDataViewAsync(query, _serviceProvider);
 
             var existingEntities = usageType.HasFlag(UsageType.Add)
-                ? await collection.Repository.InternalGetAllNonRelatedAsync(relatedEntity, query)
-                : await collection.Repository.InternalGetAllRelatedAsync(relatedEntity, query);
+                ? await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalGetAllNonRelatedAsync(relatedEntity, query))
+                : await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalGetAllRelatedAsync(relatedEntity, query));
 
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, null);
             
@@ -77,9 +82,9 @@ namespace RapidCMS.Common.Services
 
             var entity = (usageType & ~UsageType.Node) switch
             {
-                UsageType.View => await collection.Repository.InternalGetByIdAsync(id ?? throw new InvalidOperationException($"Cannot View Node when {id} is null"), parentId),
-                UsageType.Edit => await collection.Repository.InternalGetByIdAsync(id ?? throw new InvalidOperationException($"Cannot Edit Node when {id} is null"), parentId),
-                UsageType.New => await collection.Repository.InternalNewAsync(parentId, collection.GetEntityVariant(variantAlias).Type),
+                UsageType.View => await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalGetByIdAsync(id ?? throw new InvalidOperationException($"Cannot View Node when {id} is null"), parentId)),
+                UsageType.Edit => await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalGetByIdAsync(id ?? throw new InvalidOperationException($"Cannot Edit Node when {id} is null"), parentId)),
+                UsageType.New => await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalNewAsync(parentId, collection.GetEntityVariant(variantAlias).Type)),
                 _ => throw new InvalidOperationException($"UsageType {usageType} is invalid for this method")
             };
 
@@ -133,18 +138,22 @@ namespace RapidCMS.Common.Services
                     break;
 
                 case CrudType.Update:
-                    await collection.Repository.InternalUpdateAsync(id ?? throw new InvalidOperationException(), parentId, editContext.Entity, relationContainer);
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalUpdateAsync(id ?? throw new InvalidOperationException(), parentId, editContext.Entity, relationContainer));
                     viewCommand = new ReloadCommand(id);
                     break;
 
                 case CrudType.Insert:
-                    var entity = await collection.Repository.InternalInsertAsync(parentId, editContext.Entity, relationContainer);
+                    var entity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalInsertAsync(parentId, editContext.Entity, relationContainer));
+                    if (entity == null)
+                    {
+                        throw new Exception("Inserting the new entity failed.");
+                    }
                     editContext.SwapEntity(entity);
                     viewCommand = new NavigateCommand { Uri = UriHelper.Node(Constants.Edit, collectionAlias, entityVariant, parentId, editContext.Entity.Id) };
                     break;
 
                 case CrudType.Delete:
-                    await collection.Repository.InternalDeleteAsync(id ?? throw new InvalidOperationException(), parentId);
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalDeleteAsync(id ?? throw new InvalidOperationException(), parentId));
                     viewCommand = new NavigateCommand { Uri = UriHelper.Collection(Constants.List, collectionAlias, parentId) };
                     break;
 
@@ -180,7 +189,7 @@ namespace RapidCMS.Common.Services
             }
 
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, parentId);
-            var entity = await collection.Repository.InternalNewAsync(parentId, collection.EntityVariant.Type);
+            var entity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalNewAsync(parentId, collection.EntityVariant.Type));
 
             await EnsureAuthorizedUserAsync(rootEditContext, button);
 
@@ -221,7 +230,7 @@ namespace RapidCMS.Common.Services
                             await EnsureAuthorizedUserAsync(editContext, button);
                             EnsureValidEditContext(editContext, button);
                             var relationContainer = editContext.GenerateRelationContainer();
-                            await collection.Repository.InternalUpdateAsync(editContext.Entity.Id, parentId, editContext.Entity, relationContainer);
+                            await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalUpdateAsync(editContext.Entity.Id, parentId, editContext.Entity, relationContainer));
                             affectedEntities.Add(editContext.Entity);
                         }
                         catch (Exception)
@@ -285,12 +294,16 @@ namespace RapidCMS.Common.Services
                     break;
 
                 case CrudType.Update:
-                    await collection.Repository.InternalUpdateAsync(id, parentId, editContext.Entity, relationContainer);
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalUpdateAsync(id, parentId, editContext.Entity, relationContainer));
                     viewCommand = new ReloadCommand(id);
                     break;
 
                 case CrudType.Insert:
-                    var insertedEntity = await collection.Repository.InternalInsertAsync(parentId, editContext.Entity, relationContainer);
+                    var insertedEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalInsertAsync(parentId, editContext.Entity, relationContainer));
+                    if (insertedEntity == null)
+                    {
+                        throw new Exception("Inserting the new entity failed.");
+                    }
                     editContext.SwapEntity(insertedEntity);
                     viewCommand = new UpdateParameterCommand
                     {
@@ -303,7 +316,7 @@ namespace RapidCMS.Common.Services
                     break;
 
                 case CrudType.Delete:
-                    await collection.Repository.InternalDeleteAsync(id, parentId);
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalDeleteAsync(id, parentId));
                     viewCommand = new ReloadCommand();
                     break;
 
@@ -339,7 +352,7 @@ namespace RapidCMS.Common.Services
             }
 
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, null);
-            var newEntity = await collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type);
+            var newEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type));
 
             await EnsureAuthorizedUserAsync(rootEditContext, button);
 
@@ -382,7 +395,7 @@ namespace RapidCMS.Common.Services
                             await EnsureAuthorizedUserAsync(editContext, button);
                             EnsureValidEditContext(editContext, button);
                             var relationContainer = editContext.GenerateRelationContainer();
-                            await collection.Repository.InternalUpdateAsync(updatedEntity.Id, null, updatedEntity, relationContainer);
+                            await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalUpdateAsync(updatedEntity.Id, null, updatedEntity, relationContainer));
                             affectedEntities.Add(updatedEntity);
                         }
                         catch (Exception)
@@ -458,14 +471,18 @@ namespace RapidCMS.Common.Services
                     break;
 
                 case CrudType.Update:
-                    await collection.Repository.InternalUpdateAsync(id, null, editContext.Entity, relationContainer);
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalUpdateAsync(id, null, editContext.Entity, relationContainer));
                     viewCommand = new ReloadCommand(id);
                     break;
 
                 case CrudType.Insert:
-                    var insertedEntity = await collection.Repository.InternalInsertAsync(null, editContext.Entity, relationContainer);
+                    var insertedEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalInsertAsync(null, editContext.Entity, relationContainer));
+                    if (insertedEntity == null)
+                    {
+                        throw new Exception("Inserting the new entity failed.");
+                    }
                     editContext.SwapEntity(insertedEntity);
-                    await collection.Repository.InternalAddAsync(relatedEntity, editContext.Entity.Id);
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalAddAsync(relatedEntity, editContext.Entity.Id));
                     viewCommand = new UpdateParameterCommand
                     {
                         Action = Constants.New,
@@ -478,19 +495,19 @@ namespace RapidCMS.Common.Services
 
                 case CrudType.Delete:
 
-                    await collection.Repository.InternalDeleteAsync(id, null);
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalDeleteAsync(id, null));
                     viewCommand = new ReloadCommand();
                     break;
 
                 case CrudType.Pick:
 
-                    await collection.Repository.InternalAddAsync(relatedEntity, id);
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalAddAsync(relatedEntity, id));
                     viewCommand = new ReloadCommand();
                     break;
 
                 case CrudType.Remove:
 
-                    await collection.Repository.InternalRemoveAsync(relatedEntity, id);
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalRemoveAsync(relatedEntity, id));
                     viewCommand = new ReloadCommand();
                     break;
 
@@ -547,7 +564,7 @@ namespace RapidCMS.Common.Services
         private async Task<EditContext> GetRootEditContextAsync(UsageType usageType, string collectionAlias, string? parentId)
         {
             var collection = _collectionProvider.GetCollection(collectionAlias);
-            var newEntity = await collection.Repository.InternalNewAsync(parentId, collection.EntityVariant.Type);
+            var newEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalNewAsync(parentId, collection.EntityVariant.Type));
             
             await EnsureAuthorizedUserAsync(usageType, newEntity);
 
@@ -582,6 +599,36 @@ namespace RapidCMS.Common.Services
             if (!authorizationChallenge.Succeeded)
             {
                 throw new UnauthorizedAccessException();
+            }
+        }
+
+        // TODO: these methods do not solve the underlying problem
+        private async Task EnsureCorrectConcurrencyAsync(Func<Task> function)
+        {
+            await _semaphore.WaitAsync();
+            
+            try
+            {
+                await function.Invoke();
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        }
+
+        // TODO: these methods do not solve the underlying problem
+        private async Task<T> EnsureCorrectConcurrencyAsync<T>(Func<Task<T>> function)
+        {
+            await _semaphore.WaitAsync();
+            
+            try
+            {
+                return await function.Invoke();
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
     }

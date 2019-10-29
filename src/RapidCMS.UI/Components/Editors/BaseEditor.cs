@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Common.Data;
@@ -14,7 +15,13 @@ namespace RapidCMS.UI.Components.Editors
 
         [Parameter] public IEntity Entity { get; set; }
 
+        [Parameter] public EntityState EntityState { get; set; }
+
         [Parameter] public IPropertyMetadata Property { get; set; }
+
+        [Parameter] public Func<object, EntityState, bool>? IsDisabledFunc { get; set; }
+
+        protected bool IsDisabled => IsDisabledFunc?.Invoke(Entity, EntityState) ?? false; 
 
         protected object GetValueAsObject()
         {

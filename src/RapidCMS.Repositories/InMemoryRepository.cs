@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
@@ -16,12 +15,12 @@ namespace RapidCMS.Repositories
     /// </summary>
     /// <typeparam name="TEntity">Entity to store</typeparam>
     public class InMemoryRepository<TEntity> : BaseClassRepository<string, string, TEntity>
-        where TEntity : IEntity, ICloneable, new()
+        where TEntity : class, IEntity, ICloneable, new()
     {
         private readonly Dictionary<string, List<TEntity>> _data = new Dictionary<string, List<TEntity>>();
         private readonly IServiceProvider _serviceProvider;
 
-        public InMemoryRepository(SemaphoreSlim semaphore, IServiceProvider serviceProvider) : base(semaphore)
+        public InMemoryRepository(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
@@ -70,12 +69,12 @@ namespace RapidCMS.Repositories
             return Task.FromResult(data);
         }
 
-        public override Task<TEntity> GetByIdAsync(string id, string? parentId)
+        public override Task<TEntity?> GetByIdAsync(string id, string? parentId)
         {
-            return Task.FromResult((TEntity)GetListForParent(parentId).FirstOrDefault(x => x.Id == id).Clone());
+            return Task.FromResult((TEntity?)GetListForParent(parentId).FirstOrDefault(x => x.Id == id).Clone());
         }
 
-        public override async Task<TEntity> InsertAsync(string? parentId, TEntity entity, IRelationContainer? relations)
+        public override async Task<TEntity?> InsertAsync(string? parentId, TEntity entity, IRelationContainer? relations)
         {
             entity.Id = new Random().Next(0, int.MaxValue).ToString();
 

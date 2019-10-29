@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RapidCMS.Common.Data;
@@ -18,7 +17,7 @@ namespace TestLibrary.Repositories
         private readonly TestDbContext _dbContext;
         private readonly IMessageService _messageService;
 
-        public CountryRepository(TestDbContext dbContext, IMessageService messageService, SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
+        public CountryRepository(TestDbContext dbContext, IMessageService messageService)
         {
             _dbContext = dbContext;
             _messageService = messageService;
@@ -90,12 +89,12 @@ namespace TestLibrary.Repositories
             return null;
         }
 
-        public override async Task<CountryEntity> GetByIdAsync(int id, int? parentId)
+        public override async Task<CountryEntity?> GetByIdAsync(int id, int? parentId)
         {
             return await _dbContext.Countries.AsNoTracking().FirstOrDefaultAsync(x => x._Id == id);
         }
 
-        public override async Task<CountryEntity> InsertAsync(int? parentId, CountryEntity entity, IRelationContainer? relations)
+        public override async Task<CountryEntity?> InsertAsync(int? parentId, CountryEntity entity, IRelationContainer? relations)
         {
             var entry = _dbContext.Countries.Add(entity);
             await _dbContext.SaveChangesAsync();

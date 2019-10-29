@@ -18,16 +18,29 @@ namespace RapidCMS.Common.Models.Config
 
         public List<ICollectionConfig> Collections { get; set; } = new List<ICollectionConfig>();
         internal List<CustomTypeRegistration> CustomDashboardSectionRegistrations { get; set; } = new List<CustomTypeRegistration>();
-        internal CustomTypeRegistration? CustomLoginRegistration { get; set; }
+        internal CustomTypeRegistration? CustomLoginScreenRegistration { get; set; }
+        internal CustomTypeRegistration? CustomLoginStatusRegistration { get; set; }
 
-        public ICmsConfig SetCustomLogin(Type loginType)
+        public ICmsConfig SetCustomLoginScreen(Type loginType)
         {
             if (!loginType.IsSameTypeOrDerivedFrom(typeof(ComponentBase)))
             {
                 throw new InvalidOperationException($"{nameof(loginType)} must be derived of {nameof(ComponentBase)}.");
             }
 
-            CustomLoginRegistration = new CustomTypeRegistration(loginType);
+            CustomLoginScreenRegistration = new CustomTypeRegistration(loginType);
+
+            return this;
+        }
+
+        public ICmsConfig SetCustomLoginStatus(Type loginType)
+        {
+            if (!loginType.IsSameTypeOrDerivedFrom(typeof(ComponentBase)))
+            {
+                throw new InvalidOperationException($"{nameof(loginType)} must be derived of {nameof(ComponentBase)}.");
+            }
+
+            CustomLoginStatusRegistration = new CustomTypeRegistration(loginType);
 
             return this;
         }

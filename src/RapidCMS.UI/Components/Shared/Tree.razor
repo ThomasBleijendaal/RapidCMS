@@ -35,6 +35,7 @@ else if (UI.RootVisible)
         {
             <a href="#" class="disabled"><i class="icon ion-md-lock"></i> @UI.Name</a>
         }
+
         @if (NodesVisible)
         {
             <Nodes CollectionAlias=@CollectionAlias ParentId=@ParentId />
@@ -52,7 +53,7 @@ else
 
     TreeUI? UI;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         UI = await TreeService.GetTreeAsync(CollectionAlias, ParentId);
     }

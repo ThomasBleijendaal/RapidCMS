@@ -33,6 +33,7 @@ using Blazor.FileReader;
 using TestServer.Components.CustomDashboard;
 using TestLibrary.DataViewBuilders;
 using TestServer.Components.CustomSidePane;
+using EntityState = RapidCMS.Common.Enums.EntityState;
 
 namespace TestServer
 {
@@ -124,7 +125,7 @@ namespace TestServer
             services.AddDbContext<TestDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString"));
-            });
+            }, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
             services.AddFileReaderService(options => options.InitializeOnFirstCall = true);
 
@@ -137,10 +138,10 @@ namespace TestServer
             services.AddScoped<VariantRepository>();
             services.AddScoped<ValidationRepository>();
 
-            services.AddScoped<RelationRepository>();
+            services.AddTransient<RelationRepository>();
 
-            services.AddScoped<CountryRepository>();
-            services.AddScoped<PersonRepository>();
+            services.AddTransient<CountryRepository>();
+            services.AddTransient<PersonRepository>();
 
             services.AddSingleton(CloudStorageAccount.DevelopmentStorageAccount);
             services.AddScoped<AzureTableStorageRepository>();
@@ -157,13 +158,17 @@ namespace TestServer
 
             services.AddRapidCMS(config =>
             {
-                // config.AllowAnonymousUser();
+                config.AllowAnonymousUser();
 
-                config.SetCustomLogin(typeof(LoginControl));
+                config.SetCustomLoginScreen(typeof(LoginScreen));
+                config.SetCustomLoginStatus(typeof(LoginControl));
 
                 config.SetSiteName("Test Client");
 
                 config.AddDashboardSection(typeof(CustomDashboard));
+
+                config.AddDashboardSection("collection-10", edit: true);
+
                 config.AddDashboardSection("person-collection", edit: false);
 
                 config.AddCollection<ValidationEntity>("validation-collection", "Validation entities", collection =>
@@ -180,7 +185,7 @@ namespace TestServer
                             list.AddRow(pane =>
                             {
                                 pane.AddField(p => p.Name)
-                                    .VisibleWhen(f => f.Accept);
+                                    .VisibleWhen((f, state) => f.Accept);
                                 pane.AddDefaultButton(DefaultButtonType.View);
                                 pane.AddDefaultButton(DefaultButtonType.Edit);
                                 pane.AddPaneButton(typeof(SidePaneTest), "Delete element", "trash", CrudType.Delete);
@@ -226,7 +231,7 @@ namespace TestServer
 
                                 pane.AddField(f => f.Name);
                                 pane.AddField(f => f.Dummy)
-                                    .VisibleWhen(f => f.Name == "Country123");
+                                    .VisibleWhen((f, state) => f.Name == "Country123");
 
                                 pane.AddSubCollectionList<CountryEntity>("country-collection");
                             });
@@ -240,16 +245,17 @@ namespace TestServer
                             {
                                 pane.AddCustomButton<TogglePropertyButtonActionHandler>(typeof(DoItButton));
 
-                                pane.AddField(f => f.Name);
+                                pane.AddField(f => f.Name).DisableWhen((x, state) => !x.Accept);
                                 pane.AddField(f => f.Date);
                                 pane.AddField(f => f.Dummy).SetType(typeof(UploadEditor));
-                                pane.AddField(f => f.NotRequired);
+                                pane.AddField(f => f.NotRequired).DisableWhen((x, state) => state == EntityState.IsNew);
                                 pane.AddField(f => f.Range)
                                     .SetName("Range Setting");
                                 pane.AddField(f => f.Accept)
+                                    .DisableWhen((x, state)=> x.Name == "test")
                                     .SetName("Accept this");
                                 pane.AddField(f => f.Textarea)
-                                    .VisibleWhen(f => f.Accept)
+                                    .VisibleWhen((f, state) => f.Accept)
                                     .SetType(EditorType.TextArea);
                             });
                             editor.AddSection(pane =>
@@ -258,7 +264,7 @@ namespace TestServer
 
                                 pane.AddDefaultButton(DefaultButtonType.Delete);
 
-                                pane.VisibleWhen(x => x.Accept);
+                                pane.VisibleWhen((x, state) => x.Accept);
 
                                 pane.AddField(f => f.Enum)
                                     .SetType(EditorType.Select)
@@ -292,7 +298,7 @@ namespace TestServer
                                     list.AddRow(pane =>
                                     {
                                         pane.AddField(p => p.Name)
-                                            .VisibleWhen(f => f.Accept);
+                                            .VisibleWhen((f, state) => f.Accept);
                                         pane.AddDefaultButton(DefaultButtonType.View);
                                         pane.AddDefaultButton(DefaultButtonType.Edit);
                                         pane.AddPaneButton(typeof(SidePaneTest), "Delete element", "trash", CrudType.Delete);
@@ -316,7 +322,7 @@ namespace TestServer
                                         pane.AddField(f => f.Accept)
                                             .SetName("Accept this");
                                         pane.AddField(f => f.Textarea)
-                                            .VisibleWhen(f => f.Accept)
+                                            .VisibleWhen((f, state) => f.Accept)
                                             .SetType(EditorType.TextArea);
                                     });
                                     editor.AddSection(pane =>
@@ -325,7 +331,7 @@ namespace TestServer
 
                                         pane.AddDefaultButton(DefaultButtonType.Delete);
 
-                                        pane.VisibleWhen(x => x.Accept);
+                                        pane.VisibleWhen((x, state) => x.Accept);
 
                                         pane.AddField(f => f.Enum)
                                             .SetType(EditorType.Select)
@@ -622,18 +628,27 @@ namespace TestServer
                 {
                     collection
                         .SetRepository<AzureTableStorageRepository>()
-                        .SetTreeView(EntityVisibilty.Visible, entity => entity.Title)
+                        .SetTreeView( EntityVisibilty.Visible, CollectionRootVisibility.Visible, entity => entity.Id)
                         .SetListView(AzureTableStorageListView)
+                        .SetListEditor(AzureTableStorageListEditor)
                         .SetNodeEditor(AzureTableStorageEditor)
 
-                        .AddCollection<AzureTableStorageEntity>("collection-10-a", "Sub collection", subCollection =>
+                        .AddCollection<AzureTableStorageEntity>("collection-10-a", "Sub collection 1", subCollection =>
                         {
                             subCollection
                                 .SetRepository<AzureTableStorageRepository>()
-                                .SetTreeView(EntityVisibilty.Visible, entity => entity.Title)
+                                .SetTreeView(EntityVisibilty.Hidden, CollectionRootVisibility.Visible, entity => entity.Title)
                                 .SetListView(AzureTableStorageListView)
                                 .SetNodeEditor(AzureTableStorageEditor);
-                        });
+                        })
+                        .AddCollection<AzureTableStorageEntity>("collection-10-b", "Sub collection 2", subCollection =>
+                        {
+                            subCollection
+                                .SetRepository<AzureTableStorageRepository>()
+                                .SetTreeView(EntityVisibilty.Hidden, CollectionRootVisibility.Visible, entity => entity.Title)
+                                .SetListView(AzureTableStorageListView)
+                                .SetNodeEditor(AzureTableStorageEditor);
+                        });;
                 });
 
                 //config.AddCollection<TestEntity>("collection-6", "Variant collection as blocks", collection =>
@@ -1057,6 +1072,27 @@ namespace TestServer
                         .SetName("Destroy");
 
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Edit, isPrimary: true);
+                    listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
+                });
+            }
+
+            void AzureTableStorageListEditor(IListEditorConfig<AzureTableStorageEntity> config)
+            {
+                config
+                    .AddDefaultButton(DefaultButtonType.New, isPrimary: true)
+                    .AddCustomButton<CreateButtonActionHandler>(typeof(CreateButton), "Custom create!");
+
+                config.AddSection(listPaneConfig =>
+                {
+                    listPaneConfig.AddField(x => x.Id);
+                    listPaneConfig.AddField(x => x.Title);
+                    listPaneConfig.AddField(x => x.Description);
+                    listPaneConfig.AddField(x => x.Password);
+                    listPaneConfig.AddField(x => x.Destroy == true ? "True" : x.Destroy == false ? "False" : "Null")
+                        .SetName("Destroy");
+
+                    listPaneConfig.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
+                    listPaneConfig.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
                     listPaneConfig.AddDefaultButton(DefaultButtonType.Delete);
                 });
             }

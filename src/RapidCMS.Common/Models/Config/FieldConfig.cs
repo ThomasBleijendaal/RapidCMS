@@ -19,7 +19,8 @@ namespace RapidCMS.Common.Models.Config
         internal string? Description { get; set; }
 
         internal bool Readonly { get; set; }
-        internal Func<object, bool> IsVisible { get; set; } = (x) => true;
+        internal Func<object, EntityState, bool> IsVisible { get; set; } = (x, y) => true;
+        internal Func<object, EntityState, bool> IsDisabled { get; set; } = (x, y) => false;
 
         internal IExpressionMetadata? Expression { get; set; }
         internal IPropertyMetadata? Property { get; set; }
@@ -102,8 +103,8 @@ namespace RapidCMS.Common.Models.Config
         }
 
         private FieldConfig<TEntity, TValue> SetCollectionRelation<TRelatedEntity, TKey>(
-            Expression<Func<TValue, IEnumerable<TKey>>> relatedElements, 
-            string collectionAlias, 
+            Expression<Func<TValue, IEnumerable<TKey>>> relatedElements,
+            string collectionAlias,
             Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure)
         {
             if (Type != EditorType.Custom && !(Type.GetCustomAttribute<RelationAttribute>()?.Type.In(RelationType.Many) ?? false))
@@ -123,9 +124,16 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        private FieldConfig<TEntity, TValue> VisibleWhen(Func<TEntity, bool> predicate)
+        private FieldConfig<TEntity, TValue> VisibleWhen(Func<TEntity, EntityState, bool>? predicate = null)
         {
-            IsVisible = (entity) => predicate.Invoke((TEntity)entity);
+            IsVisible = (entity, state) => predicate.Invoke((TEntity)entity, state);
+
+            return this;
+        }
+
+        private FieldConfig<TEntity, TValue> DisableWhen(Func<TEntity, EntityState, bool> predicate)
+        {
+            IsDisabled = (entity, state) => predicate.Invoke((TEntity)entity, state);
 
             return this;
         }
@@ -142,7 +150,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        IDisplayFieldConfig<TEntity, TValue> IDisplayFieldConfig<TEntity, TValue>.VisibleWhen(Func<TEntity, bool> predicate)
+        IDisplayFieldConfig<TEntity, TValue> IDisplayFieldConfig<TEntity, TValue>.VisibleWhen(Func<TEntity, EntityState, bool> predicate)
         {
             VisibleWhen(predicate);
             return this;
@@ -198,9 +206,15 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.VisibleWhen(Func<TEntity, bool> predicate)
+        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.VisibleWhen(Func<TEntity, EntityState, bool> predicate)
         {
             VisibleWhen(predicate);
+            return this;
+        }
+
+        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.DisableWhen(Func<TEntity, EntityState, bool> predicate)
+        {
+            DisableWhen(predicate);
             return this;
         }
     }

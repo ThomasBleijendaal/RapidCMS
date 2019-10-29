@@ -1,10 +1,9 @@
-﻿using Microsoft.WindowsAzure.Storage;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using RapidCMS.Common.Data;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using TestLibrary.Entities;
 
 
@@ -19,7 +18,7 @@ namespace TestLibrary.Repositories
         private Task _initTask;
         private CloudTable? _table = null;
 
-        public AzureTableStorageRepository(CloudStorageAccount cloudStorageAccount, SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
+        public AzureTableStorageRepository(CloudStorageAccount cloudStorageAccount)
         {
             _initTask = Task.Run(async () =>
             {
@@ -55,7 +54,7 @@ namespace TestLibrary.Repositories
             return data.Results;
         }
 
-        public override async Task<AzureTableStorageEntity> GetByIdAsync(string id, string? parentId)
+        public override async Task<AzureTableStorageEntity?> GetByIdAsync(string id, string? parentId)
         {
             await _initTask;
 
@@ -72,7 +71,7 @@ namespace TestLibrary.Repositories
             }
         }
 
-        public override async Task<AzureTableStorageEntity> InsertAsync(string? parentId, AzureTableStorageEntity entity, IRelationContainer? relations)
+        public override async Task<AzureTableStorageEntity?> InsertAsync(string? parentId, AzureTableStorageEntity entity, IRelationContainer? relations)
         {
             await _initTask;
 

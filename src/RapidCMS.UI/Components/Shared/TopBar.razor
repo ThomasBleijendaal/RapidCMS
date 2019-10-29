@@ -1,0 +1,25 @@
+﻿@inject ITreeService TreeService
+
+<div class="top-row navbar navbar-dark">
+    @if (TreeRoot != null)
+    {
+        <a class="navbar-brand" href="">@TreeRoot.Name</a>
+    }
+
+    @if (CustomLoginStatus != null)
+    {
+        @CustomLoginStatus
+    }
+</div>
+
+@code {
+    TreeRootUI? TreeRoot;
+
+    [CascadingParameter(Name = "CustomLoginStatus")]
+    private RenderFragment? CustomLoginStatus { get; set; }
+
+    protected override void OnInitialized()
+    {
+        TreeRoot = TreeService.GetRoot();
+    }
+}

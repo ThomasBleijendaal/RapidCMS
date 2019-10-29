@@ -24,6 +24,7 @@ namespace RapidCMS.Common.Forms
 
         public IEntity Entity { get; private set; }
         public UsageType UsageType { get; private set; }
+        public EntityState EntityState => UsageType.HasFlag(UsageType.New) ? EntityState.IsNew : EntityState.IsExisting;
 
         internal void SwapEntity(IEntity entity)
         {
@@ -226,7 +227,14 @@ namespace RapidCMS.Common.Forms
 
         public object GetService(Type serviceType)
         {
-            return _serviceProvider.GetService(serviceType);
+            try
+            {
+                return _serviceProvider.GetService(serviceType);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

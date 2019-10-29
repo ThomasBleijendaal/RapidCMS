@@ -17,6 +17,9 @@ namespace RapidCMS.Common.Data
     public interface IQuery<TEntity> : IQuery
         where TEntity : IEntity
     {
+        /// <summary>
+        /// Expression corresponding to the selected data view. Can be directly inserted into IQueryable.Where.
+        /// </summary>
         Expression<Func<TEntity, bool>>? DataViewExpression { get; }
     }
 }

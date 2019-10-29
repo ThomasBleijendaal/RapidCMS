@@ -182,11 +182,6 @@ namespace RapidCMS.Example
                                 });
                         });
                 });
-
-                // Do not touch this setting if you do not know what you are doing :)
-                // Due to InMemoryRepository uses other InMemoryRepositories while saving, this limit must be increased, otherwise the repos will deadlock during save.
-                // Please do not use this setting unless you run into issues with repo-repo deadlocking.
-                config.DangerouslyFiddleWithSemaphoreSettings(2);
             });
         }
 

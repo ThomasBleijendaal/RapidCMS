@@ -12,7 +12,7 @@ namespace TestLibrary.Repositories
     {
         private readonly Dictionary<int, ValidationEntity> _data;
 
-        public ValidationRepository(SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
+        public ValidationRepository()
         {
             _data = new Dictionary<int, ValidationEntity>
             {
@@ -117,12 +117,12 @@ namespace TestLibrary.Repositories
             return Task.FromResult(_data.Where(x => x.Value.ParentId == parentId).Select(x => x.Value));
         }
 
-        public override Task<ValidationEntity> GetByIdAsync(int id, int? parentId)
+        public override Task<ValidationEntity?> GetByIdAsync(int id, int? parentId)
         {
             return Task.FromResult(_data[id]);
         }
 
-        public override Task<ValidationEntity> InsertAsync(int? parentId, ValidationEntity entity, IRelationContainer? relations)
+        public override Task<ValidationEntity?> InsertAsync(int? parentId, ValidationEntity entity, IRelationContainer? relations)
         {
             entity.Id = (_data.Count + 1).ToString();
             entity.ParentId = parentId;

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Forms;
@@ -33,7 +30,8 @@ namespace RapidCMS.Common.Extensions
                 Description = field.Description,
                 Name = field.Name,
                 Type = field.DataType,
-                IsVisible = field.IsVisible
+                IsVisible = field.IsVisible,
+                IsDisabled = field.IsDisabled
             };
         }
 
@@ -75,6 +73,7 @@ namespace RapidCMS.Common.Extensions
             ui.Name = field.Name;
             ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;
             ui.IsVisible = field.IsVisible;
+            ui.IsDisabled = field.IsDisabled;
         }
 
         private static void PopulateProperties(PropertyFieldUI ui, PropertyField field, DataProvider? dataProvider)
@@ -91,7 +90,7 @@ namespace RapidCMS.Common.Extensions
             {
                 CollectionAlias = subCollection.CollectionAlias,
                 // TODO:
-                IsVisible = x => true
+                IsVisible = (x, y) => true
             };
         }
 
@@ -101,7 +100,7 @@ namespace RapidCMS.Common.Extensions
             {
                 CollectionAlias = relatedCollection.CollectionAlias,
                 // TODO:
-                IsVisible = x => true
+                IsVisible = (x, y) => true
             };
         }
     }

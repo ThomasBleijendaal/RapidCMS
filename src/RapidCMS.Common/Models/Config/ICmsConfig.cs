@@ -28,21 +28,28 @@ namespace RapidCMS.Common.Models.Config
         /// <returns></returns>
         ICmsConfig AllowAnonymousUser();
 
-        /// <summary>
-        /// Sets the number of concurrent IRepository actions. Will lead to deadlocks when used incorrectly.
-        /// 
-        /// Set it to anything other than 1 if you do not use Entity Framework Core, or have repositories reference each other.
-        /// </summary>
-        /// <param name="maxCount">Max number of concurrent IRepository actions.</param>
-        /// <returns></returns>
-        ICmsConfig DangerouslyFiddleWithSemaphoreSettings(int maxCount);
+        ///// <summary>
+        ///// Sets the number of concurrent IRepository actions. Will lead to deadlocks when used incorrectly.
+        ///// 
+        ///// Set it to anything other than 1 if you do not use Entity Framework Core, or have repositories reference each other.
+        ///// </summary>
+        ///// <param name="maxCount">Max number of concurrent IRepository actions.</param>
+        ///// <returns></returns>
+        //// ICmsConfig DangerouslyFiddleWithSemaphoreSettings(int maxCount);
 
         /// <summary>
-        /// Draws the given razor component in the top left bar of the CMS. Use this to create your Sign in and Sign out buttons.
+        /// Draws the given razor component as login screen.
         /// </summary>
         /// <param name="loginType">Type of razor component.</param>
         /// <returns></returns>
-        ICmsConfig SetCustomLogin(Type loginType);
+        ICmsConfig SetCustomLoginScreen(Type loginType);
+        
+        /// <summary>
+        /// Draws the given razor component in the top bar of the CMS. Use this to display the status of the currently signed in user, and the possibility to sign out.
+        /// </summary>
+        /// <param name="loginType">Type of razor component.</param>
+        /// <returns></returns>
+        ICmsConfig SetCustomLoginStatus(Type loginType);
 
         /// <summary>
         /// Sets the name of title in the top left bar of the CMS. Defaults to RapidCMS.

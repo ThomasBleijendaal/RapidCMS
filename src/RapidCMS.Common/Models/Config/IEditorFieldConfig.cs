@@ -86,6 +86,13 @@ namespace RapidCMS.Common.Models.Config
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        IEditorFieldConfig<TEntity, TValue> VisibleWhen(Func<TEntity, bool> predicate);
+        IEditorFieldConfig<TEntity, TValue> VisibleWhen(Func<TEntity, EntityState, bool> predicate);
+        
+        /// <summary>
+        /// Sets an expression which determine whether this field should be disabled.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        IEditorFieldConfig<TEntity, TValue> DisableWhen(Func<TEntity, EntityState, bool> predicate);
     }
 }

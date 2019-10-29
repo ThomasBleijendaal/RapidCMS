@@ -7,16 +7,15 @@ namespace RapidCMS.Common.Providers
 {
     internal class CustomRegistrationProvider : ICustomRegistrationProvider
     {
+        private readonly CmsConfig _cmsConfig;
+
         public CustomRegistrationProvider(CmsConfig cmsConfig)
         {
-            CustomDashboardSectionRegistrations = cmsConfig.CustomDashboardSectionRegistrations.ToList();
-            CustomLoginRegistration = cmsConfig.CustomLoginRegistration;
+            _cmsConfig = cmsConfig;
         }
 
-        private List<CustomTypeRegistration> CustomDashboardSectionRegistrations { get; set; }
-        private CustomTypeRegistration? CustomLoginRegistration { get; set; }
-
-        IEnumerable<CustomTypeRegistration> ICustomRegistrationProvider.CustomDashboardSectionRegistrations => CustomDashboardSectionRegistrations;
-        CustomTypeRegistration? ICustomRegistrationProvider.CustomLoginRegistration => CustomLoginRegistration;
+        IEnumerable<CustomTypeRegistration> ICustomRegistrationProvider.CustomDashboardSectionRegistrations => _cmsConfig.CustomDashboardSectionRegistrations.ToList();
+        CustomTypeRegistration? ICustomRegistrationProvider.CustomLoginScreenRegistration => _cmsConfig.CustomLoginScreenRegistration;
+        CustomTypeRegistration? ICustomRegistrationProvider.CustomLoginStatusRegistration => _cmsConfig.CustomLoginStatusRegistration;
     }
 }

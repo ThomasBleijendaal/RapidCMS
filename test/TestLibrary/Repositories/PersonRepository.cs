@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RapidCMS.Common.Data;
@@ -14,7 +13,7 @@ namespace TestLibrary.Repositories
     {
         private readonly TestDbContext _dbContext;
 
-        public PersonRepository(TestDbContext dbContext, SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
+        public PersonRepository(TestDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -41,12 +40,12 @@ namespace TestLibrary.Repositories
             return persons.Take(query.Take);
         }
 
-        public override async Task<PersonEntity> GetByIdAsync(int id, int? parentId)
+        public override async Task<PersonEntity?> GetByIdAsync(int id, int? parentId)
         {
             return await _dbContext.Persons.Include(x => x.Countries).ThenInclude(x => x.Country).AsNoTracking().FirstOrDefaultAsync(x => x._Id == id);
         }
 
-        public override async Task<PersonEntity> InsertAsync(int? parentId, PersonEntity entity, IRelationContainer? relations)
+        public override async Task<PersonEntity?> InsertAsync(int? parentId, PersonEntity entity, IRelationContainer? relations)
         {
             entity.Countries = relations?.GetRelatedElementIdsFor<CountryEntity, int>()?.Select(id => new PersonCountryEntity { CountryId = id }).ToList() ?? new List<PersonCountryEntity>();
 

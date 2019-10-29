@@ -4,6 +4,7 @@
     <input checked=@GetValueAsObject()
            @onchange=@(args => SetValueFromObject((bool)args.Value))
            type="checkbox"
+           disabled=@IsDisabled
            class="form-check-input position-static @(CssHelper.GetValidationClass(State))" />
 
     <label class="form-check-label">&nbsp;</label>

@@ -22,6 +22,7 @@
                                    id="@group-option@(index)"
                                    name=@group
                                    checked=@(option.Id.Equals(value))
+                                   disabled=@IsDisabled
                                    @onchange=@(async args=> SetValueFromObject(option.Id)) />
                             @option.Labels.First()
                         </label>

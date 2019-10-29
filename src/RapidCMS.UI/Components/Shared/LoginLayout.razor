@@ -1,19 +1,19 @@
 ﻿@inherits Microsoft.AspNetCore.Components.LayoutComponentBase
 
 <div class="login">
-    <h4>Please log in</h4>
-    
-    @Body
-
-    <hr />
-
-    @if (CustomLogin != null)
+    @if (CustomLoginScreen != null)
     {
-        @CustomLogin
+        @CustomLoginScreen
+    }
+    else
+    {
+        <h4>User login required</h4>
+        <p>Configure a login component using <code>config.SetCustomLoginScreen(typeof(YourLoginControl))</code>, or 
+            use <code>config.AllowAnonymousUser()</code> to allow any user.</p>
     }
 </div>
 
 @code  {
-    [CascadingParameter(Name = "CustomLogin")]
-    private RenderFragment? CustomLogin { get; set; }
+    [CascadingParameter(Name = "CustomLoginScreen")]
+    private RenderFragment? CustomLoginScreen { get; set; }
 }

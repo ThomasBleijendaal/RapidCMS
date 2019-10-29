@@ -1,18 +1,6 @@
 ﻿@inject ITreeService TreeService
 @inject NavigationManager NavigationManager
 
-<div class="top-row navbar navbar-dark">
-    @if (TreeRoot != null)
-    {
-        <a class="navbar-brand" href="">@TreeRoot.Name</a>
-    }
-
-    @if (CustomLogin != null)
-    {
-        @CustomLogin
-    }
-</div>
-
 <div class="navroot">
     <ul class="nav flex-column">
         @if (TreeRoot != null)
@@ -26,11 +14,7 @@
 </div>
 
 @code {
-
     TreeRootUI? TreeRoot;
-
-    [CascadingParameter(Name = "CustomLogin")]
-    private RenderFragment? CustomLogin { get; set; }
 
     protected override void OnInitialized()
     {

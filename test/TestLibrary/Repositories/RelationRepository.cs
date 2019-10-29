@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
@@ -20,10 +19,6 @@ namespace TestLibrary.Repositories
             }
         };
 
-        public RelationRepository(SemaphoreSlim semaphoreSlim) : base(semaphoreSlim)
-        {
-        }
-
         protected string Name => "Relation Repo";
 
         public override async Task<IEnumerable<RelationEntity>> GetAllAsync(int? parentId, IQuery<RelationEntity> query)
@@ -33,14 +28,14 @@ namespace TestLibrary.Repositories
             return _data;
         }
 
-        public override async Task<RelationEntity> GetByIdAsync(int id, int? parentId)
+        public override async Task<RelationEntity?> GetByIdAsync(int id, int? parentId)
         {
             await Task.Delay(1);
 
             return _data.FirstOrDefault(x => x.RealId == id);
         }
 
-        public override async Task<RelationEntity> InsertAsync(int? parentId, RelationEntity entity, IRelationContainer? relations)
+        public override async Task<RelationEntity?> InsertAsync(int? parentId, RelationEntity entity, IRelationContainer? relations)
         {
             await Task.Delay(1);
 

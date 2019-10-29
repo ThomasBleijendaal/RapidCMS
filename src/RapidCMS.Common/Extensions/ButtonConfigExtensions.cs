@@ -43,7 +43,7 @@ namespace RapidCMS.Common.Extensions
 
             var subButtons = button.ButtonType == DefaultButtonType.New && entityVariants != null
                 ? entityVariants.ToList(variant => new Button(
-                    Guid.NewGuid().ToString(),
+                    $"{button.Id}-{variant.Alias}",
                     DefaultButtonType.New,
                     string.Format(button.Label ?? variant.Name, variant.Name),
                     variant.Icon,
@@ -54,7 +54,7 @@ namespace RapidCMS.Common.Extensions
                 : EmptySubButtons;
 
             return new Button(
-                Guid.NewGuid().ToString(),
+                button.Id,
                 button.ButtonType,
                 button.Label,
                 button.Icon,
@@ -67,7 +67,7 @@ namespace RapidCMS.Common.Extensions
         public static Button ToCustomButton(this CustomButtonConfig button)
         {
             return new Button(
-                Guid.NewGuid().ToString(),
+                button.Id,
                 0,
                 button.Label,
                 button.Icon,
@@ -80,7 +80,7 @@ namespace RapidCMS.Common.Extensions
         public static Button ToPaneButton(this PaneButtonConfig button, EntityVariant? baseEntityVariant)
         {
             return new Button(
-                Guid.NewGuid().ToString(),
+                button.Id,
                 DefaultButtonType.OpenPane,
                 button.Label,
                 button.Icon,

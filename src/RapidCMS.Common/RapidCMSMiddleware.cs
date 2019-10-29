@@ -8,7 +8,6 @@ using RapidCMS.Common.ActionHandlers;
 using RapidCMS.Common.Authorization;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Helpers;
-using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.Config;
 using RapidCMS.Common.Providers;
 using RapidCMS.Common.Services;
@@ -31,14 +30,14 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton(rootConfig);
 
             // providers for delivering config objects
-            services.AddScoped<ICustomRegistrationProvider, CustomRegistrationProvider>();
-            services.AddScoped<ICollectionProvider, CollectionProvider>();
-            services.AddScoped<IMetadataProvider, MetadataProvider>();
+            services.AddTransient<ICustomRegistrationProvider, CustomRegistrationProvider>();
+            services.AddTransient<ICollectionProvider, CollectionProvider>();
+            services.AddTransient<IMetadataProvider, MetadataProvider>();
             services.AddTransient<IAuthenticationStateProvider, AuthenticationStateProvider>();
 
             //  UI + Repository services
             services.AddTransient<IDataProviderService, DataProviderService>();
-            services.AddTransient<IEditContextService, EditContextService>();
+            services.AddScoped<IEditContextService, EditContextService>();
             services.AddTransient<IEditorService, EditorService>();
             services.AddTransient<ITreeService, TreeService>();
 
@@ -47,14 +46,14 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IMessageService, MessageService>();
 
             // Button handlers
-            services.AddTransient<DefaultButtonActionHandler>();
-            services.AddTransient(typeof(OpenPaneButtonActionHandler<>));
+            services.AddScoped<DefaultButtonActionHandler>();
+            services.AddScoped(typeof(OpenPaneButtonActionHandler<>));
 
             // Debug helpers
             services.AddScoped<IExceptionHelper, ExceptionHelper>();
 
             // Stock data providers
-            services.AddSingleton(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
+            services.AddScoped(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
 
             // UI requirements
             services.AddHttpContextAccessor();

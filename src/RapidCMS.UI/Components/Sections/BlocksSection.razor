@@ -7,7 +7,7 @@
             <CascadingEditContext EditContext=@context>
                 @foreach (var section in sections)
                 {
-                    if (!section.IsVisible(context.Entity))
+                    if (!section.IsVisible(context.Entity, context.EntityState))
                     {
                         continue;
                     }
