@@ -101,7 +101,7 @@ namespace RapidCMS.Common.Services
 
             await EnsureAuthorizedUserAsync(usageType, entity);
 
-            return new EditContext(entity, parent, usageType | UsageType.Node, _serviceProvider);
+            return new EditContext(collectionAlias, entity, parent, usageType | UsageType.Node, _serviceProvider);
         }
 
         public async Task<EditContext> GetRootAsync(UsageType usageType, string collectionAlias, ParentPath? parentPath)
@@ -226,7 +226,7 @@ namespace RapidCMS.Common.Services
                             Action = Constants.New,
                             CollectionAlias = collectionAlias,
                             VariantAlias = button.EntityVariant.Alias,
-                            ParentPath = parentPath?.ToPath(),
+                            ParentPath = parentPath?.ToPathString(),
                             Id = null
                         };
                     }
@@ -324,7 +324,7 @@ namespace RapidCMS.Common.Services
                         Action = Constants.New,
                         CollectionAlias = collectionAlias,
                         VariantAlias = entityVariant.Alias,
-                        ParentPath = parentPath?.ToPath(),
+                        ParentPath = parentPath?.ToPathString(),
                         Id = editContext.Entity.Id
                     };
                     break;
@@ -547,24 +547,24 @@ namespace RapidCMS.Common.Services
             if (usageType == UsageType.List)
             {
                 return existingEntities
-                    .Select(ent => new EditContext(ent, parent, UsageType.Node | UsageType.Edit, _serviceProvider))
+                    .Select(ent => new EditContext(collectionAlias, ent, parent, UsageType.Node | UsageType.Edit, _serviceProvider))
                     .ToList();
             }
             else if (usageType.HasFlag(UsageType.Add))
             {
                 return existingEntities
-                    .Select(ent => new EditContext(ent, parent, UsageType.Node | UsageType.Pick, _serviceProvider))
+                    .Select(ent => new EditContext(collectionAlias, ent, parent, UsageType.Node | UsageType.Pick, _serviceProvider))
                     .ToList();
             }
             else if (usageType.HasFlag(UsageType.Edit) || usageType.HasFlag(UsageType.New))
             {
                 var entities = existingEntities
-                    .Select(ent => new EditContext(ent, parent, UsageType.Node | UsageType.Edit, _serviceProvider))
+                    .Select(ent => new EditContext(collectionAlias, ent, parent, UsageType.Node | UsageType.Edit, _serviceProvider))
                     .ToList();
 
                 if (usageType.HasFlag(UsageType.New))
                 {
-                    entities.Insert(0, new EditContext(rootEditContext.Entity, parent, UsageType.Node | UsageType.New, _serviceProvider));
+                    entities.Insert(0, new EditContext(collectionAlias, rootEditContext.Entity, parent, UsageType.Node | UsageType.New, _serviceProvider));
                 }
 
                 return entities;
@@ -582,7 +582,7 @@ namespace RapidCMS.Common.Services
 
             await EnsureAuthorizedUserAsync(usageType, newEntity);
 
-            return new EditContext(newEntity, parent, usageType | UsageType.List, _serviceProvider);
+            return new EditContext(collectionAlias, newEntity, parent, usageType | UsageType.List, _serviceProvider);
         }
 
         private static void EnsureValidEditContext(EditContext editContext, Button button)

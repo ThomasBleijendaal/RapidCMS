@@ -1,0 +1,68 @@
+﻿using RapidCMS.Common.Enums;
+using RapidCMS.Common.Extensions;
+using RapidCMS.Common.Models.Config;
+using RapidCMS.Example.Data;
+using RapidCMS.Repositories;
+
+namespace RapidCMS.Example.Collections
+{
+    public static class TagCollection
+    {
+        public static void AddTagCollection(this ICmsConfig config)
+        {
+            config.AddCollection<TagGroup>("taggroup", "Tag groups", collection =>
+            {
+                collection
+                    .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
+                    .SetRepository<JsonRepository<TagGroup>>()
+                    .SetListEditor(ListType.Block, editor =>
+                    {
+                        editor.SetSearchBarVisibility(false);
+
+                        editor.AddDefaultButton(DefaultButtonType.Return);
+                        editor.AddDefaultButton(DefaultButtonType.New);
+
+                        editor
+                            .AddSection(section =>
+                            {
+                                section.AddDefaultButton(DefaultButtonType.SaveExisting);
+                                section.AddDefaultButton(DefaultButtonType.SaveNew);
+
+                                section.AddField(x => x.Name);
+
+                                // it is possible to view or edit an subcollection from the parent
+                                // when adding a subcollection in an Editor will render the ListEditor while
+                                // adding a subcollection in a View will render the ListView.
+
+                                // the entity of this editor will be passed in as IParent in the repository of the 
+                                // sub collection, making it possible to access the parents properties in the childrens repository
+
+                                section.AddSubCollectionList<Tag>("tag");
+                            });
+                    });
+
+                collection
+                    .AddCollection<Tag>("tag", "Tags", subCollection =>
+                    {
+                        subCollection
+                            .SetRepository<JsonRepository<Tag>>()
+                            .SetListEditor(ListType.Table, editor =>
+                            {
+                                editor.SetSearchBarVisibility(false);
+
+                                editor.AddDefaultButton(DefaultButtonType.Return);
+                                editor.AddDefaultButton(DefaultButtonType.New);
+
+                                editor.AddSection(section =>
+                                {
+                                    section.AddDefaultButton(DefaultButtonType.SaveExisting);
+                                    section.AddDefaultButton(DefaultButtonType.SaveNew);
+
+                                    section.AddField(x => x.Name);
+                                });
+                            });
+                    });
+            });
+        }
+    }
+}

@@ -4,5 +4,7 @@
     {
         IParent? Parent { get; }
         IEntity Entity { get; }
+
+        ParentPath? GetParentPath();
     }
 }

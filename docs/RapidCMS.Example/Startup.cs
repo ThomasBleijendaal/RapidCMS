@@ -28,6 +28,8 @@ namespace RapidCMS.Example
             services.AddSingleton<JsonRepository<Person>>();
             services.AddSingleton<JsonRepository<Country>>();
             services.AddSingleton<JsonRepository<User>>();
+            services.AddSingleton<JsonRepository<TagGroup>>();
+            services.AddSingleton<JsonRepository<Tag>>();
 
             services.AddRapidCMS(config =>
             {
@@ -41,9 +43,13 @@ namespace RapidCMS.Example
                 // --> see Collections/CountryCollection for one-to-many relation with validation
                 config.AddCountryCollection();
 
-                // CURD editor with validation attributes, custom editor and custom button panes
+                // CRUD editor with validation attributes, custom editor and custom button panes
                 // --> see Collections/UserCollection 
                 config.AddUserCollection();
+
+                // CRUD editor with nested collection
+                // --> see Collections/TagCollection
+                config.AddTagCollection();
             });
         }
 

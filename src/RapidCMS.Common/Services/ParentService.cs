@@ -17,7 +17,7 @@ namespace RapidCMS.Common.Services
         {
             // TODO: heavily cache this. traversing the collection tree per call is very expensive
 
-            IParent? parent = default(ParentEntity);
+            var parent = default(ParentEntity);
 
             if (parentPath == null)
             {
@@ -34,7 +34,7 @@ namespace RapidCMS.Common.Services
                     break;
                 }
 
-                parent = new ParentEntity(parent, entity);
+                parent = new ParentEntity(parent, entity, collectionAlias);
             }
 
             return parent;

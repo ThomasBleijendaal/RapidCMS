@@ -11,7 +11,6 @@ namespace RapidCMS.Common.Models
         internal string Name { get; set; }
         internal string Description { get; set; }
 
-        internal bool Readonly { get; set; } = true;
         internal Func<object, EntityState, bool> IsVisible { get; set; }
         internal Func<object, EntityState, bool> IsDisabled { get; set; }
 

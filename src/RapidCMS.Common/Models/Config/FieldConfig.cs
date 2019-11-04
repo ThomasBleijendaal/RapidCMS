@@ -18,7 +18,6 @@ namespace RapidCMS.Common.Models.Config
         internal string? Name { get; set; }
         internal string? Description { get; set; }
 
-        internal bool Readonly { get; set; }
         internal Func<object, EntityState, bool> IsVisible { get; set; } = (x, y) => true;
         internal Func<object, EntityState, bool> IsDisabled { get; set; } = (x, y) => false;
 
@@ -46,11 +45,6 @@ namespace RapidCMS.Common.Models.Config
         }
         private FieldConfig<TEntity, TValue> SetType(EditorType type)
         {
-            if (type == EditorType.Readonly)
-            {
-                Readonly = true;
-            }
-
             Type = type;
             return this;
         }
@@ -58,13 +52,6 @@ namespace RapidCMS.Common.Models.Config
         {
             Type = EditorType.Custom;
             CustomType = type;
-            return this;
-        }
-
-        private FieldConfig<TEntity, TValue> SetReadonly(bool @readonly = true)
-        {
-            Readonly = @readonly;
-
             return this;
         }
 
@@ -91,11 +78,12 @@ namespace RapidCMS.Common.Models.Config
                 throw new InvalidOperationException("Cannot add CollectionRelation to Editor with no support for RelationType.One / RelationType.Many");
             }
 
-            var config = new CollectionRelationConfig<TEntity, TRelatedEntity>();
+            var config = new CollectionRelationConfig<TEntity, TRelatedEntity>
+            {
+                CollectionAlias = collectionAlias
+            };
 
             configure.Invoke(config);
-
-            config.CollectionAlias = collectionAlias;
 
             Relation = config;
 
@@ -177,12 +165,6 @@ namespace RapidCMS.Common.Models.Config
         IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetType(Type type)
         {
             SetType(type);
-            return this;
-        }
-
-        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetReadonly(bool @readonly)
-        {
-            SetReadonly(@readonly);
             return this;
         }
 

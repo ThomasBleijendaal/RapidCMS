@@ -38,13 +38,6 @@ namespace RapidCMS.Common.Models.Config
         IEditorFieldConfig<TEntity, TValue> SetType(Type type);
         
         /// <summary>
-        /// Disables the editor of this field when set to true.
-        /// </summary>
-        /// <param name="readonly"></param>
-        /// <returns></returns>
-        IEditorFieldConfig<TEntity, TValue> SetReadonly(bool @readonly = true);
-        
-        /// <summary>
         /// Binds a DataCollection to this field. This data collection is used by dropdowns and selects to display options.
         /// </summary>
         /// <typeparam name="TDataCollection"></typeparam>

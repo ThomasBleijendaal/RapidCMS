@@ -7,14 +7,14 @@ namespace RapidCMS.Common.Helpers
     {
         public static string Node(string action, string collectionAlias, EntityVariant entityVariant, ParentPath? parentPath, string? id)
         {
-            var path = parentPath?.ToPath();
+            var path = parentPath?.ToPathString();
 
             return $"/{action}{path.ToUriPart()}/{collectionAlias}/entity/{entityVariant.Alias}{id.ToUriPart()}";
         }
 
         public static string Collection(string action, string collectionAlias, ParentPath? parentPath)
         {
-            var path = parentPath?.ToPath();
+            var path = parentPath?.ToPathString();
 
             return $"/{action}{path.ToUriPart()}/{collectionAlias}";
         }

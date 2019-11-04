@@ -58,7 +58,12 @@ namespace RapidCMS.Common.Models.Config
 
         public ICollectionRelationConfig<TEntity, TRelatedEntity> SetEntityAsParent()
         {
-            Expression<Func<(IParent? parent, IEntity entity), IParent>> expression = ((IParent? parent, IEntity entity) combined) => new ParentEntity(combined.parent, combined.entity);
+            if (string.IsNullOrEmpty(CollectionAlias))
+            {
+                throw new Exception("Set collection alias first");
+            }
+
+            Expression<Func<(IParent? parent, IEntity entity), IParent>> expression = ((IParent? parent, IEntity entity) combined) => new ParentEntity(combined.parent, combined.entity, CollectionAlias);
 
             RepositoryParentProperty = PropertyMetadataHelper.GetPropertyMetadata(expression);
 

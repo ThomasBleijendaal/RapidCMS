@@ -18,7 +18,6 @@ namespace RapidCMS.Common.Extensions
                     DataType = field.Type,
                     Description = field.Description,
                     Name = field.Name,
-                    Readonly = field.Readonly,
                     IsVisible = field.IsVisible,
                     IsDisabled = field.IsDisabled,
 
@@ -36,7 +35,6 @@ namespace RapidCMS.Common.Extensions
                         DataType = field.Type,
                         Description = field.Description,
                         Name = field.Name,
-                        Readonly = field.Readonly,
                         IsVisible = field.IsVisible,
                         IsDisabled = field.IsDisabled,
 
@@ -51,8 +49,6 @@ namespace RapidCMS.Common.Extensions
 
                         Description = field.Description,
                         Name = field.Name,
-
-                        Readonly = true,
                         IsVisible = field.IsVisible,
                         IsDisabled = field.IsDisabled
                     };

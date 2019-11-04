@@ -71,7 +71,7 @@ namespace RapidCMS.Repositories
 
         public override Task<TEntity?> GetByIdAsync(string id, IParent? parent)
         {
-            return Task.FromResult((TEntity?)GetListForParent(parent).FirstOrDefault(x => x.Id == id).Clone());
+            return Task.FromResult((TEntity?)GetListForParent(parent).FirstOrDefault(x => x.Id == id)?.Clone());
         }
 
         public override async Task<TEntity?> InsertAsync(IParent? parent, TEntity entity, IRelationContainer? relations)

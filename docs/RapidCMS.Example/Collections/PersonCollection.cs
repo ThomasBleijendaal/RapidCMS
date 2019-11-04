@@ -38,6 +38,7 @@ namespace RapidCMS.Example.Collections
                         });
                     })
                     // a list editor is similair to a list view, but every column contains an editor so multiple entities can be edited in one go
+                    // a list editor takes precedence over a list view, so when navigating to the Person collection, this view will be displayed
                     .SetListEditor(editor =>
                     {
                         // in a list editor a New allows the user to add entities, within the list editor
@@ -47,7 +48,7 @@ namespace RapidCMS.Example.Collections
                         editor.AddSection(row =>
                         {
                             // these fields will be the editors
-                            row.AddField(p => p.Id);
+                            row.AddField(p => p.Id).SetType(EditorType.Readonly);
                             row.AddField(p => p.Name);
 
                             // the SaveExisting button is only displayed when an entity is edited
@@ -74,7 +75,9 @@ namespace RapidCMS.Example.Collections
                         // an node editor can have multiple sections, which are displayed as seperte blocks
                         editor.AddSection(section =>
                         {
-                            section.AddField(x => x.Id).SetReadonly();
+                            // the DisableWhen expression is evaluated everytime any property of the entity is updated
+                            // so this allows you to make response forms which show or hide parts based upon the entity and its state
+                            section.AddField(x => x.Id).DisableWhen((person, state) => true);
                             section.AddField(x => x.Name);
                             section.AddField(x => x.Email);
                         });

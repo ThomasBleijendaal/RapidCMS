@@ -15,14 +15,16 @@ namespace RapidCMS.Common.Forms
         private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();
         private readonly IServiceProvider _serviceProvider;
 
-        internal EditContext(IEntity entity, IParent? parent, UsageType usageType, IServiceProvider serviceProvider)
+        internal EditContext(string collectionAlias, IEntity entity, IParent? parent, UsageType usageType, IServiceProvider serviceProvider)
         {
+            CollectionAlias = collectionAlias;
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             Parent = parent;
             UsageType = usageType;
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
+        public string CollectionAlias { get; }
         public IEntity Entity { get; private set; }
         public IParent? Parent { get; private set; }
         public UsageType UsageType { get; private set; }
@@ -35,9 +37,9 @@ namespace RapidCMS.Common.Forms
 
         internal List<DataProvider> DataProviders = new List<DataProvider>();
 
-        public event EventHandler<FieldChangedEventArgs> OnFieldChanged;
+        public event EventHandler<FieldChangedEventArgs>? OnFieldChanged;
 
-        public event EventHandler<ValidationStateChangedEventArgs> OnValidationStateChanged;
+        public event EventHandler<ValidationStateChangedEventArgs>? OnValidationStateChanged;
 
         public void NotifyPropertyStartedListening(IPropertyMetadata property)
         {

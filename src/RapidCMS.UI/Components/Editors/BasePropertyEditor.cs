@@ -17,7 +17,11 @@ namespace RapidCMS.UI.Components.Editors
 
         protected void SetValueFromObject(object value)
         {
-            Property.Setter(Entity, value);
+            if (!IsDisabled)
+            {
+                Property.Setter(Entity, value);
+            }
+
             EditContext.NotifyPropertyChanged(Property);
         }
 

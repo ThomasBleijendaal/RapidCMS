@@ -71,7 +71,7 @@ namespace RapidCMS.Common.Extensions
         {
             ui.Description = field.Description;
             ui.Name = field.Name;
-            ui.Type = field.Readonly ? EditorType.Readonly : field.DataType;
+            ui.Type = field.DataType;
             ui.IsVisible = field.IsVisible;
             ui.IsDisabled = field.IsDisabled;
         }

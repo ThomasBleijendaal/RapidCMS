@@ -20,16 +20,12 @@ fully replace the default UI libary and only use the core of RapidCMS.
 5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `_Host.cshtml` with `<link href="_content/rapidcms.ui/css/site.css" rel="stylesheet" />` and remove any other css.
 6. Hit `F5`: you're now running a completely empty RapidCMS instance. 
 7. Start building your CMS using by expanding `config => {}`. Read the introduction below to get a sense of what is possible,
-or browse the [Configuration API](https://github.com/ThomasBleijendaal/RapidCMS/wiki/Configuration-API) to see all the options.
+or browse the [Example Project](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/docs/RapidCMS.Example) to see all the options.
 
 ## Screenshots
 
 Since it is a bit hard to demonstrate a CMS on the internet without having the publicly accessible
 CMS be absolutely vandalised, [on this page there are some screenshots of the features that are currently supported](SCREENSHOTS.md).
-
-## Configuration API
-
-[The configuration API page](https://github.com/ThomasBleijendaal/RapidCMS/wiki/Configuration-API) lists all the options that you have to configure RapidCMS.
 
 ---
 
@@ -211,7 +207,7 @@ config.AddCollection<Person>("person", "Person", collection =>
 
             editor.AddSection(section =>
             {
-                section.AddField(x => x.Id).SetReadonly();
+                section.AddField(x => x.Id).SetType(EditorType.Readonly);
                 section.AddField(x => x.Name);
                 section.AddField(x => x.Email);
             });

@@ -37,7 +37,7 @@ namespace RapidCMS.Common.Data
 
         public static ParentPath AddLevel(ParentPath? currentPath, string collection, string id)
         {
-            var path = currentPath?.ToPath();
+            var path = currentPath?.ToPathString();
 
             var newPath = TryParse(path) ?? new ParentPath(new List<(string collection, string id)>());
 
@@ -46,7 +46,7 @@ namespace RapidCMS.Common.Data
             return newPath;
         }
 
-        public string ToPath()
+        public string ToPathString()
         {
             return string.Join(";", _path.Select(x => $"{x.collection}:{x.id}"));
         }
