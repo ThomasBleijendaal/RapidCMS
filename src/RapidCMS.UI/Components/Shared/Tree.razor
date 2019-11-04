@@ -29,7 +29,7 @@ else if (UI.RootVisible)
 
         @if (UI.Path != null)
         {
-            <NavLink href=@UI.Path><i class="icon ion-md-@UI.Icon"></i> @UI.Name</NavLink>
+            <NavLink href=@UI.Path Match="NavLinkMatch.All"><i class="icon ion-md-@UI.Icon"></i> @UI.Name</NavLink>
         }
         else
         {
@@ -38,13 +38,13 @@ else if (UI.RootVisible)
 
         @if (NodesVisible)
         {
-            <Nodes CollectionAlias=@CollectionAlias ParentId=@ParentId />
+            <Nodes CollectionAlias=@CollectionAlias ParentPath=@ParentPath />
         }
     </li>
 }
 else
 {
-    <Nodes CollectionAlias=@CollectionAlias ParentId=@ParentId />
+    <Nodes CollectionAlias=@CollectionAlias ParentPath=@ParentPath />
 }
 
 @code {
@@ -55,10 +55,10 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        UI = await TreeService.GetTreeAsync(CollectionAlias, ParentId);
+        UI = await TreeService.GetTreeAsync(CollectionAlias, ParentPath);
     }
 
     [Parameter] public string CollectionAlias { get; set; }
 
-    [Parameter] public string? ParentId { get; set; } = null;
+    [Parameter] public ParentPath? ParentPath { get; set; } = null;
 }

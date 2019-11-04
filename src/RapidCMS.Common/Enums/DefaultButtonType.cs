@@ -47,7 +47,6 @@ namespace RapidCMS.Common.Enums
         [Actions(UsageType.Node | UsageType.Pick)]
         Pick,
 
-        // TODO: fully implement
         [DefaultIconLabel(Icon = "arrow-back", Label = "Return")]
         [Actions(UsageType.Node, UsageType.List | UsageType.Add, UsageType.List | UsageType.New, UsageType.List | UsageType.Pick)]
         Return,

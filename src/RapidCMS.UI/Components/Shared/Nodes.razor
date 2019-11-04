@@ -8,8 +8,8 @@
             <li class="nav-item">
                 @if (!node.RootVisibleOfCollections)
                 {
-                    <button @onclick="@((MouseEventArgs e) => NodesVisible[node] = !NodesVisible[node])" class="toggle">
-                        @if (NodesVisible[node])
+                    <button @onclick="@((MouseEventArgs e) => NodesVisible[node.Id] = !NodesVisible[node.Id])" class="toggle">
+                        @if (NodesVisible[node.Id])
                         {
                             <i class="icon ion-md-arrow-dropdown"></i>
                         }
@@ -28,7 +28,7 @@
 
                 @if (node.Path != null)
                 {
-                    <NavLink href=@node.Path>@node.Name</NavLink>
+                    <NavLink href=@node.Path Match="NavLinkMatch.All">@node.Name</NavLink>
                 }
                 else
                 {
@@ -36,11 +36,11 @@
                 }
 
                 <ul class="nav flex-column">
-                    @if (NodesVisible[node])
+                    @if (NodesVisible[node.Id])
                     {
                         @foreach (var subCollection in node.Collections)
                         {
-                            <Tree CollectionAlias=@subCollection ParentId=@node.Id />
+                            <Tree CollectionAlias=@subCollection ParentPath=@(ParentPath.AddLevel(ParentPath, subCollection, node.Id)) />
                         }
                     }
                 </ul>
@@ -51,7 +51,7 @@
 
 @code {
 
-    Dictionary<TreeNodeUI, bool>? NodesVisible;
+    Dictionary<string, bool>? NodesVisible;
     List<TreeNodeUI>? UI;
 
     protected override async Task OnParametersSetAsync()
@@ -61,8 +61,23 @@
 
     protected override async Task OnNodesUpdateAsync()
     {
-        UI = await TreeService.GetNodesAsync(CollectionAlias, ParentId);
-        NodesVisible = UI.ToDictionary(x => x, x => x.RootVisibleOfCollections);
+        var oldNodesVisible = NodesVisible;
+
+        UI = await TreeService.GetNodesAsync(CollectionAlias, ParentPath);
+        NodesVisible = UI.ToDictionary(x => x.Id, x => x.RootVisibleOfCollections);
+
+        // restore the view state with the new nodes
+        if (oldNodesVisible != null)
+        {
+            foreach (var node in oldNodesVisible.Where(x => x.Value))
+            {
+                if ( NodesVisible.ContainsKey(node.Key))
+                {
+                    NodesVisible[node.Key] = true;
+                }
+            }
+        }
+
         StateHasChanged();
     }
 }

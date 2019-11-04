@@ -16,7 +16,7 @@ namespace RapidCMS.Common.Extensions
                     RelatedEntityType = collectionConfig.RelatedEntityType,
                     DisplayProperties = collectionConfig.DisplayProperties,
                     IdProperty = collectionConfig.IdProperty,
-                    RepositoryParentIdProperty = collectionConfig.RepositoryParentIdProperty,
+                    RepositoryParentSelector = collectionConfig.RepositoryParentProperty,
                     RelatedElementsGetter = collectionConfig.RelatedElementsGetter
                 },
                 DataProviderRelationConfig dataProviderConfig => new DataProviderRelation

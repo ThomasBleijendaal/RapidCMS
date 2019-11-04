@@ -11,7 +11,7 @@ namespace RapidCMS.Common.Data
     public class EnumDataProvider<TEnum> : IDataCollection
         where TEnum : Enum
     {
-        public event EventHandler OnDataChange;
+        public event EventHandler? OnDataChange;
 
         public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
         {
@@ -44,7 +44,7 @@ namespace RapidCMS.Common.Data
             return Task.FromResult(list.AsEnumerable());
         }
 
-        public Task SetEntityAsync(IEntity entity)
+        public Task SetEntityAsync(IEntity entity, IParent? parent)
         {
             return Task.CompletedTask;
         }

@@ -16,11 +16,12 @@ namespace RapidCMS.Common.Data
         private readonly Type _relatedEntityType;
         private readonly IPropertyMetadata _property;
         private readonly IPropertyMetadata? _relatedElementsGetter;
-        private readonly IPropertyMetadata? _repositoryParentIdProperty;
+        private readonly IPropertyMetadata? _repositoryParentSelector;
         private readonly IPropertyMetadata _idProperty;
         private readonly IEnumerable<IExpressionMetadata> _labelProperties;
         private readonly IMemoryCache _memoryCache;
         private IEntity? _entity;
+        private IParent? _parent;
 
         private IDisposable? _eventHandle;
 
@@ -33,7 +34,7 @@ namespace RapidCMS.Common.Data
             Type relatedEntityType, 
             IPropertyMetadata property,
             IPropertyMetadata? relatedElementsGetter,
-            IPropertyMetadata? repositoryParentIdProperty, 
+            IPropertyMetadata? repositoryParentSelector, 
             IPropertyMetadata idProperty, 
             IEnumerable<IExpressionMetadata> labelProperties,
             IMemoryCache memoryCache)
@@ -42,17 +43,18 @@ namespace RapidCMS.Common.Data
             _relatedEntityType = relatedEntityType ?? throw new ArgumentNullException(nameof(relatedEntityType));
             _property = property ?? throw new ArgumentNullException(nameof(property));
             _relatedElementsGetter = relatedElementsGetter;
-            _repositoryParentIdProperty = repositoryParentIdProperty;
+            _repositoryParentSelector = repositoryParentSelector;
             _idProperty = idProperty ?? throw new ArgumentNullException(nameof(idProperty));
             _labelProperties = labelProperties ?? throw new ArgumentNullException(nameof(labelProperties));
             _memoryCache = memoryCache;
         }
 
-        public event EventHandler OnDataChange;
+        public event EventHandler? OnDataChange;
 
-        public async Task SetEntityAsync(IEntity entity)
+        public async Task SetEntityAsync(IEntity entity, IParent? parent)
         {
             _entity = entity;
+            _parent = parent;
 
             await SetElementsAsync();
 
@@ -105,12 +107,25 @@ namespace RapidCMS.Common.Data
 
             }, null);
 
-            var parentId = _repositoryParentIdProperty?.Getter.Invoke(_entity) as string;
-            var entities = await _memoryCache.GetOrCreateAsync(new { _repository, parentId }, (entry) =>
+            var parent = default(IParent?);
+
+            if (_repositoryParentSelector != null)
+            {
+                // a bit weird (see CollectionRelationConfig)
+                if (_repositoryParentSelector.ObjectType == typeof(ValueTuple<IParent?, IEntity>))
+                {
+                    parent = _repositoryParentSelector.Getter.Invoke((_parent, _entity)) as IParent;
+                }
+                else if (_parent != null)
+                {
+                    parent = _repositoryParentSelector.Getter.Invoke(_parent) as IParent;
+                }
+            }
+            var entities = await _memoryCache.GetOrCreateAsync(new { _repository, parent }, (entry) =>
             {
                 entry.AddExpirationToken(_repository.ChangeToken);
 
-                return _repository.InternalGetAllAsync(parentId, Query.Default());
+                return _repository.InternalGetAllAsync(parent, Query.Default()); 
             });
 
             _elements = entities

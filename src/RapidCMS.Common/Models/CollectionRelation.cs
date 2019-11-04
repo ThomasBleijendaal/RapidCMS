@@ -9,7 +9,7 @@ namespace RapidCMS.Common.Models
         internal string CollectionAlias { get; set; }
         internal Type RelatedEntityType { get; set; }
         internal IPropertyMetadata? RelatedElementsGetter { get; set; }
-        internal IPropertyMetadata? RepositoryParentIdProperty { get; set; }
+        internal IPropertyMetadata? RepositoryParentSelector { get; set; }
         internal IPropertyMetadata IdProperty { get; set; }
         internal List<IExpressionMetadata> DisplayProperties { get; set; }
     }

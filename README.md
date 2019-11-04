@@ -94,8 +94,8 @@ services.AddRapidCMS(config =>
 
 Okay, lots of things happen here. First, include the `RapidCMS.Repositories` NuGet package
 in your project, since that project contains the `InMemoryRepository` example repository which
-we will use for now. This respository also expects that the `Person` implements `ICloneable`,
-so let's go ahead and do that:
+we will use for now (you can also switch to `JsonRepository` if you want persistent storage). 
+This respository also expects that the `Person` implements `ICloneable`, so let's go ahead and do that:
 
 ```c#
 public class Person : IEntity, ICloneable
@@ -308,7 +308,7 @@ config.AddCollection<Entity>("some-collection", "Some Collection", collection =>
 });
 ```
 
-If a `SubEntity` is being edited in the example from above, the `id` of its corresponding parent entity is given as `parentId` 
+If a `SubEntity` is being edited in the example from above, the `id` of its corresponding parent entity is given as `parent` 
 to each of the methods of the repository. This allows you to make more specific queries to the database, and simplyfies the logic
 inside the repository.
 
@@ -323,7 +323,7 @@ config.AddCollection<Entity>("some-collection", "Some Collection", collection =>
 });
 ```
 
-This allows for infinite nesting of `Entities` and at every level of entities the `id` of parent entity above it is passed in as `parentId`.
+This allows for infinite nesting of `Entities`.
 
 The tree view follows the collection configuration, allowing the user to traverse the tree by folding open collection and reveiling
 entities underneath each collection and sub collection.
@@ -421,8 +421,7 @@ editor.AddField(f => f.CountryId)
     {
         relation
             .SetElementIdProperty(x => x.Id)
-            .SetElementDisplayProperties(x => x.Name, x => x.Description)
-            .SetRepositoryParentIdProperty(x => x.Id);
+            .SetElementDisplayProperties(x => x.Name, x => x.Description);
 
     });
 ```
@@ -430,9 +429,12 @@ editor.AddField(f => f.CountryId)
 The `CountryId` property in this example is the property which contains the id of the related country. The `"country-collection"` collection
 is referenced as source of entities from which can be picked. Using `.SetElementIdProperty` you can specify which property must
 be used as `id`, and which gets stored in `CountryId`. `.SetElementDisplayProperties` allows you to specify multiple properties 
-which are used in the UI, so the user can clearly make their choice. `SetPropertyParentIdProperty` allows you to pass in the id of
-the current entity, this id is passed in as `parentId` into the repository of `"country-collection"`. If you do no use this property, `null` 
-is passed in as `parentId`. Having the id passed in allows you to limit the choices in the editor, which can be useful in some cases.
+which are used in the UI, so the user can clearly make their choice. 
+
+There are several additional methods available for controlling how the related collection fetches its data. By using `SetEntityAsParent` or
+`SetRepositoryParent`, you can control what the repository of the related collection uses as parent. The `PersonCollection` in the `RapidCMS.Example`
+project demonstrates how this works.
+
 
 #### DataCollection
 
@@ -550,7 +552,7 @@ public class PersonRepository
 {
     // [..]
 
-    public override async Task UpdateAsync(int id, int? parentId, PersonEntity entity, IRelationContainer? relations)
+    public override async Task UpdateAsync(int id, IParent? parent, PersonEntity entity, IRelationContainer? relations)
     {
         // this example uses ef core
         var dbEntity = await _dbContext.Persons.Include(x => x.Countries).FirstOrDefaultAsync(x => x.Id == id);
@@ -610,14 +612,7 @@ TODO: documentation
 
 TL;DR:
 
-If your entity uses string as Id:
-
-1. Create a class and have it inherit `BaseClassRepository<TKey, TParentKey, TEntity>` and jump through all the hoops (implement all abstract methods).
-2. Attach it to a collection using `collection.SetRepository<YourRepo>()`.
-
-If your entity uses a struct as Id:
-
-1. Create a class and have it inherit `BaseStructRepository<TKey, TParentKey, TEntity>` and jump through all the hoops (implement all abstract methods).
+1. Create a class and have it inherit `BaseRepository<TKey, TEntity>` and jump through all the hoops (implement all abstract methods).
 2. Attach it to a collection using `collection.SetRepository<YourRepo>()`.
 
 When you want to support Relations, override these four virtual methods: `GetAllRelatedAsync`, `GetAllNonRelatedAsync`, `AddAsync`, and `RemoveAsync`.

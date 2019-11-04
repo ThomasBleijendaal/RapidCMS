@@ -316,7 +316,6 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
             Assert.AreNotEqual(data1.Fingerprint, data2.Fingerprint);
         }
 
-
         [Test]
         public void PropertyFingerprintEquality3()
         {
@@ -331,15 +330,65 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
             Assert.AreNotEqual(data1.Fingerprint, data2.Fingerprint);
         }
 
+        [Test]
+        public void SelfAsProperty()
+        {
+            var instance = new RecursiveClass { Name = "Self" };
+
+            Expression<Func<RecursiveClass, RecursiveClass>> func = x => x;
+            var data = PropertyMetadataHelper.GetPropertyMetadata(func);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual("Self", ((RecursiveClass)data.Getter(instance)).Name);
+        }
+
+        [Test]
+        public void ParentAsProperty()
+        {
+            var instance = new RecursiveClass { Name = "Self", Parent = new RecursiveClass { Name = "Parent" } };
+
+            Expression<Func<RecursiveClass, RecursiveClass>> func = x => x.Parent;
+            var data = PropertyMetadataHelper.GetPropertyMetadata(func);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual("Parent", ((RecursiveClass)data.Getter(instance)).Name);
+        }
+
+        [Test]
+        public void ParentAsPropertyViaInterface()
+        {
+            IRecursiveClass instance = new RecursiveClass { Name = "Self", Parent = new RecursiveClass { Name = "Parent" } };
+
+            Expression<Func<IRecursiveClass, IRecursiveClass>> func = x => x.Parent;
+            var data = PropertyMetadataHelper.GetPropertyMetadata(func);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual("Parent", ((RecursiveClass)data.Getter(instance)).Name);
+        }
+
         class BasicClass
         {
             public string Test { get; set; }
             public int Id { get; set; }
         }
 
+        
         class ParentClass
         {
             public BasicClass Basic { get; set; }
+        }
+
+        interface IRecursiveClass
+        {
+            public IRecursiveClass? Parent { get; }
+        }
+
+        class RecursiveClass : IRecursiveClass
+        {
+            public RecursiveClass? Parent { get; set; }
+            public string Name { get; set; }
+
+            IRecursiveClass IRecursiveClass.Parent => Parent;
         }
 
         class ParentCollectionClass

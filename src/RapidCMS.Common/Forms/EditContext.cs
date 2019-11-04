@@ -15,14 +15,16 @@ namespace RapidCMS.Common.Forms
         private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();
         private readonly IServiceProvider _serviceProvider;
 
-        internal EditContext(IEntity entity, UsageType usageType, IServiceProvider serviceProvider)
+        internal EditContext(IEntity entity, IParent? parent, UsageType usageType, IServiceProvider serviceProvider)
         {
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
+            Parent = parent;
             UsageType = usageType;
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
         public IEntity Entity { get; private set; }
+        public IParent? Parent { get; private set; }
         public UsageType UsageType { get; private set; }
         public EntityState EntityState => UsageType.HasFlag(UsageType.New) ? EntityState.IsNew : EntityState.IsExisting;
 

@@ -10,6 +10,8 @@ namespace RapidCMS.Example.Data
         public string Email { get; set; }
         public string Bio { get; set; }
 
+        public int FavouriteChildId { get; set; }
+
         string IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value); }
 
         public object Clone()
@@ -19,7 +21,8 @@ namespace RapidCMS.Example.Data
                 Bio = Bio,
                 Email = Email,
                 Id = Id,
-                Name = Name
+                Name = Name,
+                FavouriteChildId = FavouriteChildId
             };
         }
     }

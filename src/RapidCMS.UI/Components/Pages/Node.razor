@@ -2,10 +2,10 @@
 
 @layout MainLayout
 
-@page "/node/{Action}/{CollectionAlias}/entity/{VariantAlias}"
-@page "/node/{Action}/{CollectionAlias}/entity/{VariantAlias}/{Id}"
-@page "/node/{Action}/{ParentId}/{CollectionAlias}/entity/{VariantAlias}"
-@page "/node/{Action}/{ParentId}/{CollectionAlias}/entity/{VariantAlias}/{Id}"
+@page "/{Action}/{CollectionAlias}/entity/{VariantAlias}"
+@page "/{Action}/{CollectionAlias}/entity/{VariantAlias}/{Id}"
+@page "/{Action}/{Path}/{CollectionAlias}/entity/{VariantAlias}"
+@page "/{Action}/{Path}/{CollectionAlias}/entity/{VariantAlias}/{Id}"
 
 @if (EditContext == null)
 {
@@ -49,7 +49,7 @@ else
     {
         try
         {
-            var editContext = await EditContextService.GetEntityAsync(GetUsageType(), CollectionAlias, VariantAlias, ParentId, Id);
+            var editContext = await EditContextService.GetEntityAsync(GetUsageType(), CollectionAlias, VariantAlias, GetParentPath(), Id);
             var resolver = await EditorService.GetNodeUIResolverAsync(GetUsageType(), CollectionAlias);
 
             Buttons = await resolver.GetButtonsForEditContextAsync(editContext);
@@ -80,7 +80,7 @@ else
                 throw new ArgumentException($"Argument must be of type {typeof(ButtonViewModel)}.", nameof(sender));
             }
 
-            var command = await EditContextService.ProcessEntityActionAsync(GetUsageType(), CollectionAlias, ParentId, Id, args.EditContext, model.ButtonId, args.Data);
+            var command = await EditContextService.ProcessEntityActionAsync(GetUsageType(), CollectionAlias, GetParentPath(), Id, args.EditContext, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }

@@ -2,8 +2,8 @@
 
 @layout MainLayout
 
-@page "/collection/{Action}/{CollectionAlias}"
-@page "/collection/{Action}/{CollectionAlias}/{ParentId}"
+@page "/{Action}/{CollectionAlias}"
+@page "/{Action}/{Path}/{CollectionAlias}"
 
 @if (RootEditContext == null || ListUI == null)
 {
@@ -64,7 +64,7 @@ else
         {
             if (reloadEntityIds == null)
             {
-                var rootEditContext = await EditContextService.GetRootAsync(GetUsageType(), CollectionAlias, ParentId);
+                var rootEditContext = await EditContextService.GetRootAsync(GetUsageType(), CollectionAlias, GetParentPath());
 
                 UIResolver = await EditorService.GetListUIResolverAsync(GetUsageType(), CollectionAlias);
 
@@ -137,7 +137,7 @@ else
 
         var query = Query.Create(ListUI.PageSize, CurrentPage, SearchTerm, ActiveTab);
 
-        var editContexts = await EditContextService.GetEntitiesAsync(GetUsageType(), CollectionAlias, ParentId, query);
+        var editContexts = await EditContextService.GetEntitiesAsync(GetUsageType(), CollectionAlias, GetParentPath(), query);
         Sections = await editContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
 
         if (!query.MoreDataAvailable)
@@ -157,7 +157,7 @@ else
         {
             if (reloadEntityIds.Contains(x.editContext.Entity.Id))
             {
-                var reloadedEditContext = await EditContextService.GetEntityAsync(x.editContext.UsageType, CollectionAlias, null, ParentId, x.editContext.Entity.Id);
+                var reloadedEditContext = await EditContextService.GetEntityAsync(x.editContext.UsageType, CollectionAlias, null, GetParentPath(), x.editContext.Entity.Id);
                 return (reloadedEditContext, await UIResolver.GetSectionsForEditContextAsync(reloadedEditContext));
             }
             else
@@ -180,7 +180,7 @@ else
                 throw new ArgumentException($"Argument must be of type {typeof(ButtonViewModel)}.", nameof(sender));
             }
 
-            var command = await EditContextService.ProcessListActionAsync(GetUsageType(), CollectionAlias, ParentId, Sections.Select(x => x.editContext), model.ButtonId, args.Data);
+            var command = await EditContextService.ProcessListActionAsync(GetUsageType(), CollectionAlias, GetParentPath(), Sections.Select(x => x.editContext), model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }
@@ -201,7 +201,7 @@ else
                 throw new ArgumentException($"Argument must be of type {typeof(ButtonViewModel)}.", nameof(sender));
             }
 
-            var command = await EditContextService.ProcessListActionAsync(args.EditContext.UsageType, CollectionAlias, ParentId, args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
+            var command = await EditContextService.ProcessListActionAsync(args.EditContext.UsageType, CollectionAlias, GetParentPath(), args.EditContext.Entity.Id, args.EditContext, model.ButtonId, args.Data);
 
             await HandleViewCommandAsync(command);
         }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Forms;
 using RapidCMS.Common.Models.UI;
@@ -28,12 +27,13 @@ namespace RapidCMS.UI.Extensions
 
                     builder.AddAttribute(1, nameof(BaseEditor.Entity), editContext.Entity);
                     builder.AddAttribute(2, nameof(BaseEditor.EntityState), editContext.EntityState);
-                    builder.AddAttribute(3, nameof(BaseEditor.Property), customField.Property);
-                    builder.AddAttribute(4, nameof(BaseEditor.IsDisabledFunc), customField.IsDisabled);
+                    builder.AddAttribute(3, nameof(BaseEditor.Parent), editContext.Parent);
+                    builder.AddAttribute(4, nameof(BaseEditor.Property), customField.Property);
+                    builder.AddAttribute(5, nameof(BaseEditor.IsDisabledFunc), customField.IsDisabled);
 
                     if (editorType.IsSubclassOf(typeof(BaseDataEditor)))
                     {
-                        builder.AddAttribute(5, nameof(BaseDataEditor.DataCollection), customField.DataCollection);
+                        builder.AddAttribute(6, nameof(BaseDataEditor.DataCollection), customField.DataCollection);
                     }
 
                     builder.CloseComponent();
@@ -64,18 +64,19 @@ namespace RapidCMS.UI.Extensions
                     builder.OpenComponent(0, editorType);
                     builder.AddAttribute(1, nameof(BaseEditor.Entity), editContext.Entity);
                     builder.AddAttribute(2, nameof(BaseEditor.EntityState), editContext.EntityState);
+                    builder.AddAttribute(3, nameof(BaseEditor.Parent), editContext.Parent);
                     if (field is PropertyFieldUI propertyField)
                     {
-                        builder.AddAttribute(3, nameof(BaseEditor.Property), propertyField.Property);
-                        builder.AddAttribute(4, nameof(BaseEditor.IsDisabledFunc), propertyField.IsDisabled);
+                        builder.AddAttribute(4, nameof(BaseEditor.Property), propertyField.Property);
+                        builder.AddAttribute(5, nameof(BaseEditor.IsDisabledFunc), propertyField.IsDisabled);
 
                         if (editorType.IsSubclassOf(typeof(BaseDataEditor)))
                         {
-                            builder.AddAttribute(5, nameof(BaseDataEditor.DataCollection), propertyField.DataCollection);
+                            builder.AddAttribute(6, nameof(BaseDataEditor.DataCollection), propertyField.DataCollection);
                         }
                         if (editorType.IsSubclassOf(typeof(BaseRelationEditor)))
                         {
-                            builder.AddAttribute(6, nameof(BaseRelationEditor.DataCollection), propertyField.DataCollection);
+                            builder.AddAttribute(7, nameof(BaseRelationEditor.DataCollection), propertyField.DataCollection);
                         }
                     }
                     builder.CloseComponent();

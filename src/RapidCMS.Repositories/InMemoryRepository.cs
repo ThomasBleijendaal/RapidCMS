@@ -14,10 +14,10 @@ namespace RapidCMS.Repositories
     /// Use *only* List<TRelatedEntity> properties for relations.
     /// </summary>
     /// <typeparam name="TEntity">Entity to store</typeparam>
-    public class InMemoryRepository<TEntity> : BaseClassRepository<string, string, TEntity>
+    public class InMemoryRepository<TEntity> : BaseRepository<string, TEntity>
         where TEntity : class, IEntity, ICloneable, new()
     {
-        private readonly Dictionary<string, List<TEntity>> _data = new Dictionary<string, List<TEntity>>();
+        protected Dictionary<string, List<TEntity>> _data = new Dictionary<string, List<TEntity>>();
         private readonly IServiceProvider _serviceProvider;
 
         public InMemoryRepository(IServiceProvider serviceProvider)
@@ -25,9 +25,9 @@ namespace RapidCMS.Repositories
             _serviceProvider = serviceProvider;
         }
 
-        private List<TEntity> GetListForParent(string? parentId)
+        private List<TEntity> GetListForParent(IParent? parent)
         {
-            var pId = parentId ?? string.Empty;
+            var pId = parent?.Entity.Id ?? string.Empty;
 
             if (!_data.ContainsKey(pId))
             {
@@ -37,16 +37,16 @@ namespace RapidCMS.Repositories
             return _data[pId];
         }
 
-        public override Task DeleteAsync(string id, string? parentId)
+        public override Task DeleteAsync(string id, IParent? parent)
         {
-            GetListForParent(parentId).RemoveAll(x => x.Id == id);
+            GetListForParent(parent).RemoveAll(x => x.Id == id);
 
             return Task.CompletedTask;
         }
 
-        public override Task<IEnumerable<TEntity>> GetAllAsync(string? parentId, IQuery<TEntity> query)
+        public override Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query)
         {
-            var dataQuery = GetListForParent(parentId).AsEnumerable();
+            var dataQuery = GetListForParent(parent).AsEnumerable();
 
             if (query.DataViewExpression != null)
             {
@@ -64,28 +64,28 @@ namespace RapidCMS.Repositories
                 .Take(query.Take)
                 .Select(x => (TEntity)x.Clone());
 
-            query.HasMoreData(GetListForParent(parentId).Count > (query.Skip + query.Take));
+            query.HasMoreData(GetListForParent(parent).Count > (query.Skip + query.Take));
 
             return Task.FromResult(data);
         }
 
-        public override Task<TEntity?> GetByIdAsync(string id, string? parentId)
+        public override Task<TEntity?> GetByIdAsync(string id, IParent? parent)
         {
-            return Task.FromResult((TEntity?)GetListForParent(parentId).FirstOrDefault(x => x.Id == id).Clone());
+            return Task.FromResult((TEntity?)GetListForParent(parent).FirstOrDefault(x => x.Id == id).Clone());
         }
 
-        public override async Task<TEntity?> InsertAsync(string? parentId, TEntity entity, IRelationContainer? relations)
+        public override async Task<TEntity?> InsertAsync(IParent? parent, TEntity entity, IRelationContainer? relations)
         {
             entity.Id = new Random().Next(0, int.MaxValue).ToString();
 
             await HandleRelationsAsync(entity, relations);
 
-            GetListForParent(parentId).Add(entity);
+            GetListForParent(parent).Add(entity);
 
             return (TEntity)entity.Clone();
         }
 
-        public override Task<TEntity> NewAsync(string? parentId, Type? variantType = null)
+        public override Task<TEntity> NewAsync(IParent? parent, Type? variantType = null)
         {
             return Task.FromResult(new TEntity());
         }
@@ -95,14 +95,9 @@ namespace RapidCMS.Repositories
             return id;
         }
 
-        public override string? ParseParentKey(string? parentId)
+        public override async Task UpdateAsync(string id, IParent? parent, TEntity entity, IRelationContainer? relations)
         {
-            return parentId;
-        }
-
-        public override async Task UpdateAsync(string id, string? parentId, TEntity entity, IRelationContainer? relations)
-        {
-            var list = GetListForParent(parentId);
+            var list = GetListForParent(parent);
 
             var index = list.FindIndex(x => x.Id == id);
 
@@ -121,6 +116,9 @@ namespace RapidCMS.Repositories
 
             if (relations != null)
             {
+                // use relations to process one-to-many relations between collections / tables
+                // it contains a list of selected Ids, which should be used to update the relations
+
                 foreach (var r in relations.Relations)
                 {
                     try

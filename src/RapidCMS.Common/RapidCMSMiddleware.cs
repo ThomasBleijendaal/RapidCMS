@@ -42,6 +42,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IEditorService, EditorService>();
             services.AddTransient<ITreeService, TreeService>();
 
+            services.AddTransient<IParentService, ParentService>();
+
             // Data exchange services
             services.AddScoped<ISidePaneService, SidePaneService>();
             services.AddScoped<IMessageService, MessageService>();

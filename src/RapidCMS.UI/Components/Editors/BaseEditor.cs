@@ -14,6 +14,7 @@ namespace RapidCMS.UI.Components.Editors
         protected ValidationState State { get; private set; }
 
         [Parameter] public IEntity Entity { get; set; }
+        [Parameter] public IParent? Parent { get; set; }
 
         [Parameter] public EntityState EntityState { get; set; }
 

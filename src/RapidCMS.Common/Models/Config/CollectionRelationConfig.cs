@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Metadata;
@@ -13,12 +14,13 @@ namespace RapidCMS.Common.Models.Config
         internal string? CollectionAlias { get; set; }
         internal Type? RelatedEntityType { get; set; }
         internal IPropertyMetadata? RelatedElementsGetter { get; set; }
-        internal IPropertyMetadata? RepositoryParentIdProperty { get; set; }
+        internal IPropertyMetadata? RepositoryParentProperty { get; set; }
         internal IPropertyMetadata? IdProperty { get; set; }
         internal List<IExpressionMetadata>? DisplayProperties { get; set; }
     }
 
     internal class CollectionRelationConfig<TEntity, TRelatedEntity> : CollectionRelationConfig, ICollectionRelationConfig<TEntity, TRelatedEntity>
+        where TEntity : IEntity
     {
         public CollectionRelationConfig()
         {
@@ -47,9 +49,18 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ICollectionRelationConfig<TEntity, TRelatedEntity> SetRepositoryParentIdProperty(Expression<Func<TEntity, string>> propertyExpression)
+        public ICollectionRelationConfig<TEntity, TRelatedEntity> SetRepositoryParent(Expression<Func<IParent, IParent?>> propertyExpression)
         {
-            RepositoryParentIdProperty = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression) ?? throw new InvalidPropertyExpressionException(nameof(propertyExpression));
+            RepositoryParentProperty = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression) ?? throw new InvalidPropertyExpressionException(nameof(propertyExpression));
+
+            return this;
+        }
+
+        public ICollectionRelationConfig<TEntity, TRelatedEntity> SetEntityAsParent()
+        {
+            Expression<Func<(IParent? parent, IEntity entity), IParent>> expression = ((IParent? parent, IEntity entity) combined) => new ParentEntity(combined.parent, combined.entity);
+
+            RepositoryParentProperty = PropertyMetadataHelper.GetPropertyMetadata(expression);
 
             return this;
         }

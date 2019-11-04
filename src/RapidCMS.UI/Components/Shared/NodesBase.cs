@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Services;
 
 namespace RapidCMS.UI.Components.Shared
@@ -13,7 +14,7 @@ namespace RapidCMS.UI.Components.Shared
 
         [Parameter] public string CollectionAlias { get; set; }
 
-        [Parameter] public string? ParentId { get; set; } = null;
+        [Parameter] public ParentPath? ParentPath { get; set; } = null;
 
         protected override void OnInitialized()
         {

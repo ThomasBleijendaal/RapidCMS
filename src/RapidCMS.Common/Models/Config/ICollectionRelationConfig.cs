@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using RapidCMS.Common.Data;
 
 namespace RapidCMS.Common.Models.Config
 {
@@ -21,11 +22,16 @@ namespace RapidCMS.Common.Models.Config
         ICollectionRelationConfig<TEntity, TRelatedEntity> SetElementIdProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression);
         
         /// <summary>
-        /// Sets the property that will be used as parentId for the related collection.
+        /// Sets the parent for the related collection.
         /// </summary>
-        /// <param name="propertyExpression">Expression selectiong the parentId</param>
+        /// <param name="propertyExpression">Expression selectiong the parent</param>
         /// <returns></returns>
-        // HACK: hardcoded IEntity.Id type (string)
-        ICollectionRelationConfig<TEntity, TRelatedEntity> SetRepositoryParentIdProperty(Expression<Func<TEntity, string>> propertyExpression);
+        ICollectionRelationConfig<TEntity, TRelatedEntity> SetRepositoryParent(Expression<Func<IParent, IParent?>> propertyExpression);
+
+        /// <summary>
+        /// Sets the entity that will be used as parent for the related collection.
+        /// </summary>
+        /// <returns></returns>
+        ICollectionRelationConfig<TEntity, TRelatedEntity> SetEntityAsParent();
     }
 }

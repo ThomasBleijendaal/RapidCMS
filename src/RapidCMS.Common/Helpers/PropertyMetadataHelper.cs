@@ -7,7 +7,6 @@ using System.Security.Cryptography;
 using System.Text;
 using RapidCMS.Common.Models.Metadata;
 
-
 namespace RapidCMS.Common.Helpers
 {
     internal static class PropertyMetadataHelper
@@ -23,7 +22,8 @@ namespace RapidCMS.Common.Helpers
         /// name: CompanyOwnerName
         /// </summary>
         /// <param name="lambdaExpression">The LambdaExpression to be converted</param>
-        /// <returns>GetterAndSetter object when successful, null when not.</returns>
+        /// <returns>IPropertyMetadata when successful, IFullPropertyMetadata if setter is available</returns>\
+        /// <exception cref="Exception">Thrown when expression is not convertable.</exception>
         public static IPropertyMetadata? GetPropertyMetadata(LambdaExpression lambdaExpression)
         {
             try
@@ -65,7 +65,7 @@ namespace RapidCMS.Common.Helpers
                         if (x is MemberExpression memberExpression)
                         {
                             var propertyInfo = memberExpression.Member as PropertyInfo;
-                            
+
                             if (propertyInfo == null || propertyInfo.GetGetMethod() == null)
                             {
                                 throw new Exception("Failed to get PropertyInfo from Member.");
@@ -95,6 +95,20 @@ namespace RapidCMS.Common.Helpers
                         {
                             parameterTType = x.Type;
 
+                            // expression is x => x
+                            if (getValueMethod == null && parameterExpression == lambdaExpression.Body)
+                            {
+                                return new PropertyMetadata
+                                {
+                                    ObjectType = parameterTType,
+                                    Getter = x => x,
+                                    PropertyName = "Self",
+                                    PropertyType = parameterTType,
+
+                                    Fingerprint = GetFingerprint(lambdaExpression)
+                                };
+                            }
+
                             // done, arrived at root
                             break;
                         }
@@ -105,7 +119,7 @@ namespace RapidCMS.Common.Helpers
                     }
                     while (true);
 
-                    if (getValueMethod == null || setValueMethod == null || parameterTPropertyType == null)
+                    if (getValueMethod == null || parameterTPropertyType == null)
                     {
                         throw new Exception("Failed to process given LambdaExpression");
                     }
@@ -120,20 +134,36 @@ namespace RapidCMS.Common.Helpers
                             parameterTAsType,
                             (parameter, method) => Expression.Call(parameter, method));
 
-                    var setter = ConvertToSetter(parameterT, parameterTProperty, setValueMethod, valueToType, instanceExpression);
                     var getter = ConvertToGetterViaMethod(parameterT, getValueMethod, instanceExpression);
                     var name = string.Join("", names);
 
-                    return new FullPropertyMetadata
+                    if (setValueMethod == null)
                     {
-                        ObjectType = parameterTType,
-                        Getter = getter,
-                        Setter = setter,
-                        PropertyName = name,
-                        PropertyType = parameterTPropertyType,
+                        return new PropertyMetadata
+                        {
+                            ObjectType = parameterTType,
+                            Getter = getter,
+                            PropertyName = name,
+                            PropertyType = parameterTPropertyType,
 
-                        Fingerprint = GetFingerprint(lambdaExpression)
-                    };
+                            Fingerprint = GetFingerprint(lambdaExpression)
+                        };
+                    }
+                    else
+                    {
+                        var setter = ConvertToSetter(parameterT, parameterTProperty, setValueMethod, valueToType, instanceExpression);
+
+                        return new FullPropertyMetadata
+                        {
+                            ObjectType = parameterTType,
+                            Getter = getter,
+                            Setter = setter,
+                            PropertyName = name,
+                            PropertyType = parameterTPropertyType,
+
+                            Fingerprint = GetFingerprint(lambdaExpression)
+                        };
+                    }
                 }
             }
             catch

@@ -10,8 +10,7 @@ namespace RapidCMS.Common.Extensions
         {
             return new EntityVariant
             {
-                // TODO: is this guid going to work properly?
-                Alias = variant.Type.FullName?.ToUrlFriendlyString() ?? Guid.NewGuid().ToString(),
+                Alias = variant.Type.FullName?.ToUrlFriendlyString() ?? throw new InvalidOperationException("The Type of an EntityVariant should have a FullName"),
                 Icon = variant.Icon,
                 Name = variant.Name,
                 Type = variant.Type

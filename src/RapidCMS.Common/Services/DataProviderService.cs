@@ -44,7 +44,7 @@ namespace RapidCMS.Common.Services
                         propertyField.Property,
                         collectionRelation.RelatedElementsGetter,
 
-                        collectionRelation.RepositoryParentIdProperty,
+                        collectionRelation.RepositoryParentSelector,
                         collectionRelation.IdProperty,
                         collectionRelation.DisplayProperties,
 

@@ -60,7 +60,7 @@
         {
             RelationDataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
 
-            await RelationDataCollection.SetEntityAsync(Entity);
+            await RelationDataCollection.SetEntityAsync(Entity, Parent);
             await UpdateOptionsAsync();
 
             SelectedOptions = await RelationDataCollection.GetRelatedElementsAsync();

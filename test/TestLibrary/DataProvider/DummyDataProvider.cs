@@ -23,7 +23,7 @@ namespace TestLibrary.DataProvider
             return Task.FromResult(data);
         }
 
-        public Task SetEntityAsync(IEntity entity)
+        public Task SetEntityAsync(IEntity entity, IParent parent)
         {
             return Task.CompletedTask;
         }

@@ -40,7 +40,7 @@
 
             var value = GetValueAsObject();
 
-            await DataCollection.SetEntityAsync(Entity);
+            await DataCollection.SetEntityAsync(Entity, Parent);
             await UpdateOptionsAsync();
 
             var list = Options?.ToList();

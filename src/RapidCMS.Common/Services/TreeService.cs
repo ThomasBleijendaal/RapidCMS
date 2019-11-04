@@ -20,19 +20,28 @@ namespace RapidCMS.Common.Services
         private readonly IMetadataProvider _metadataProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IParentService _parentService;
 
-        public TreeService(ICollectionProvider collectionProvider, IMetadataProvider metadataProvider, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
+        public TreeService(
+            ICollectionProvider collectionProvider, 
+            IMetadataProvider metadataProvider, 
+            IHttpContextAccessor httpContextAccessor, 
+            IAuthorizationService authorizationService,
+            IParentService parentService)
         {
             _collectionProvider = collectionProvider;
             _metadataProvider = metadataProvider;
             _httpContextAccessor = httpContextAccessor;
             _authorizationService = authorizationService;
+            _parentService = parentService;
         }
 
-        public async Task<TreeUI?> GetTreeAsync(string alias, string? parentId)
+        public async Task<TreeUI?> GetTreeAsync(string alias, ParentPath? parentPath)
         {
             var collection = _collectionProvider.GetCollection(alias);
-            var testEntity = await collection.Repository.InternalNewAsync(parentId, collection.EntityVariant.Type);
+            var parent = await _parentService.GetParentAsync(parentPath);
+
+            var testEntity = await collection.Repository.InternalNewAsync(parent, collection.EntityVariant.Type);
 
             var viewAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
                 _httpContextAccessor.HttpContext.User,
@@ -55,25 +64,26 @@ namespace RapidCMS.Common.Services
 
             if (collection.ListEditor != null && editAuthorizationChallenge.Succeeded)
             {
-                tree.Path = UriHelper.Collection(Constants.Edit, collection.Alias, parentId);
+                tree.Path = UriHelper.Collection(Constants.Edit, collection.Alias, parentPath);
             }
             else if (collection.ListView != null && viewAuthorizationChallenge.Succeeded)
             {
-                tree.Path = UriHelper.Collection(Constants.List, collection.Alias, parentId);
+                tree.Path = UriHelper.Collection(Constants.List, collection.Alias, parentPath);
             }
 
             return tree;
         }
 
-        public async Task<List<TreeNodeUI>> GetNodesAsync(string alias, string? parentId)
+        public async Task<List<TreeNodeUI>> GetNodesAsync(string alias, ParentPath? parentPath)
         {
             var collection = _collectionProvider.GetCollection(alias);
+            var parent = await _parentService.GetParentAsync(parentPath);
 
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
             {
                 // TODO: pagination
                 var query = Query.TakeElements(25);
-                var entities = await collection.Repository.InternalGetAllAsync(parentId, query);
+                var entities = await collection.Repository.InternalGetAllAsync(parent, query);
 
                 return await entities.ToListAsync(async entity =>
                 {
@@ -94,7 +104,7 @@ namespace RapidCMS.Common.Services
 
                     if (editAuthorizationChallenge.Succeeded)
                     {
-                        node.Path = UriHelper.Node(Constants.Edit, collection.Alias, entityVariant, parentId, entity.Id);
+                        node.Path = UriHelper.Node(Constants.Edit, collection.Alias, entityVariant, parentPath, entity.Id);
                     }
                     else
                     {
@@ -105,7 +115,7 @@ namespace RapidCMS.Common.Services
 
                         if (viewAuthorizationChallenge.Succeeded)
                         {
-                            node.Path = UriHelper.Node(Constants.View, collection.Alias, entityVariant, parentId, entity.Id);
+                            node.Path = UriHelper.Node(Constants.View, collection.Alias, entityVariant, parentPath, entity.Id);
                         }
                     }
 

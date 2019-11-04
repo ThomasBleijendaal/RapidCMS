@@ -11,8 +11,9 @@ namespace RapidCMS.Common.Data
         /// Use this method to receive the Entity for which this data collection is used. This allows for making the available elements contextual to the entity.
         /// </summary>
         /// <param name="entity">Entity for which this data collection is used.</param>
+        /// <param name="parent">The parent(s) of the entity.</param>
         /// <returns></returns>
-        Task SetEntityAsync(IEntity entity);
+        Task SetEntityAsync(IEntity entity, IParent? parent);
 
         /// <summary>
         /// This method is called when the editor which this data collection requests elements to display.

@@ -57,7 +57,7 @@
         {
             DataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
 
-            await DataCollection.SetEntityAsync(Entity);
+            await DataCollection.SetEntityAsync(Entity, Parent);
             await UpdateOptionsAsync();
         }
     }

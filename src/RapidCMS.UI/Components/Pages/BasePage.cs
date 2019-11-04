@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using RapidCMS.Common;
+using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Exceptions;
 using RapidCMS.Common.Helpers;
@@ -22,8 +23,13 @@ namespace RapidCMS.UI.Components.Pages
         [Parameter] public string Action { get; set; }
         [Parameter] public string CollectionAlias { get; set; }
         [Parameter] public string VariantAlias { get; set; }
-        [Parameter] public string? ParentId { get; set; } = null;
+        [Parameter] public string? Path { get; set; } = null;
         [Parameter] public string? Id { get; set; } = null;
+
+        protected ParentPath? GetParentPath()
+        {
+            return ParentPath.TryParse(Path);
+        }
 
         protected async Task HandleViewCommandAsync(ViewCommand command)
         {
@@ -68,29 +74,29 @@ namespace RapidCMS.UI.Components.Pages
                             Action = Action,
                             CollectionAlias = CollectionAlias,
                             Id = Id,
-                            ParentId = ParentId,
+                            ParentPath = Path,
                             VariantAlias = VariantAlias
                         };
 
                         var data = new Dictionary<string, object>()
                         {
-                            { "Action", parameterCommand.Action },
-                            { "CollectionAlias", parameterCommand.CollectionAlias }
+                            { nameof(Action), parameterCommand.Action },
+                            { nameof(CollectionAlias), parameterCommand.CollectionAlias }
                         };
 
                         if (parameterCommand.VariantAlias != null)
                         {
-                            data.Add("VariantAlias", parameterCommand.VariantAlias);
+                            data.Add(nameof(VariantAlias), parameterCommand.VariantAlias);
                         }
 
                         if (parameterCommand.Id != null)
                         {
-                            data.Add("Id", parameterCommand.Id);
+                            data.Add(nameof(Id), parameterCommand.Id);
                         }
 
-                        if (parameterCommand.ParentId != null)
+                        if (parameterCommand.ParentPath != null)
                         {
-                            data.Add("ParentId", parameterCommand.ParentId);
+                            data.Add(nameof(Path), parameterCommand.ParentPath);
                         }
 
                         var update = ParameterView.FromDictionary(data);
