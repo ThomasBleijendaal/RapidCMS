@@ -7,11 +7,13 @@ TODO:
 
 [] Look for memory leaks due to not removing event handlers from components
 
-[] Allow for custom View elements
+[] Allow for custom View elements in ListView / NodeView
 
 [] DateTime editor does not handle DateTime?
 
 [] SetReadonly() is confusing
+
+[] Column ordering
 
 2.0
 [] Add more than one view to page (to allow for ListView + CustomBlock)
