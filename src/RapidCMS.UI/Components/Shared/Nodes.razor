@@ -40,7 +40,7 @@
                     {
                         @foreach (var subCollection in node.Collections)
                         {
-                            <Tree CollectionAlias=@subCollection ParentPath=@(ParentPath.AddLevel(ParentPath, subCollection, node.Id)) />
+                            <Tree CollectionAlias=@subCollection ParentPath=@(ParentPath.AddLevel(ParentPath, CollectionAlias, node.Id)) />
                         }
                     }
                 </ul>
