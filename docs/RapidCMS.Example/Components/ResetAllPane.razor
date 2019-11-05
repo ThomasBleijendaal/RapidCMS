@@ -8,8 +8,12 @@
 </div>
 
 @code {
-    // This is only an example.
-    // Please do not use Repositories in your components.
+    // Side panes can Inject any dependency they require, and even modify data based upon user actions
+    // You have access to the EditContext, so you can even edit the entity on which this pane was opened.
+
+
+    // This code below is only an example.
+    // Please do not use the IRepository based classes in your components.
     [Inject] private InMemoryRepository<User> Repository { get; set; }
 
     async Task ResetPasswordsAsync()

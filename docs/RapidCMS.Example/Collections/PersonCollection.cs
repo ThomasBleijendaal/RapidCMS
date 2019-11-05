@@ -87,6 +87,9 @@ namespace RapidCMS.Example.Collections
                         // sections can be made specifically for a type
                         editor.AddSection<Person>(section =>
                         {
+                            // sections can have labels to make complex forms more understandable
+                            section.SetLabel("Biography");
+                            
                             // sections can be hidden using VisibleWhen, based upon the entity or the state of that entity
                             // so users won't be confronted with editors that do not apply
                             section.VisibleWhen((person, state) => state == EntityState.IsExisting);

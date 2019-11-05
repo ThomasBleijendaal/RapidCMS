@@ -1,6 +1,8 @@
 ﻿using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models.Config;
+using RapidCMS.Example.ActionHandlers;
+using RapidCMS.Example.Components;
 using RapidCMS.Example.Data;
 using RapidCMS.Repositories;
 
@@ -41,6 +43,8 @@ namespace RapidCMS.Example.Collections
                             });
                     });
 
+                // any collection can be added as subcollection, even collections based upon totally difference repositories
+                // this lets you mix repositories which are based upon totally different databases easily
                 collection
                     .AddCollection<Tag>("tag", "Tags", subCollection =>
                     {
@@ -57,6 +61,9 @@ namespace RapidCMS.Example.Collections
                                 {
                                     section.AddDefaultButton(DefaultButtonType.SaveExisting);
                                     section.AddDefaultButton(DefaultButtonType.SaveNew);
+
+                                    // add custom buttons and action handlers using the following handler
+                                    section.AddCustomButton<RandomNameActionHandler>(typeof(CustomButton), "Create name", "add-circle");
 
                                     section.AddField(x => x.Name);
                                 });

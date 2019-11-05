@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RapidCMS.Example.ActionHandlers;
 using RapidCMS.Example.Collections;
+using RapidCMS.Example.Components;
 using RapidCMS.Example.Data;
 using RapidCMS.Repositories;
 
@@ -31,6 +33,8 @@ namespace RapidCMS.Example
             services.AddSingleton<JsonRepository<TagGroup>>();
             services.AddSingleton<JsonRepository<Tag>>();
 
+            services.AddSingleton<RandomNameActionHandler>();
+
             services.AddRapidCMS(config =>
             {
                 config.AllowAnonymousUser();
@@ -50,6 +54,10 @@ namespace RapidCMS.Example
                 // CRUD editor with nested collection
                 // --> see Collections/TagCollection
                 config.AddTagCollection();
+                
+                // the dashboard can be build up of custom Blazor components, or the ListViews or ListEditors of collections
+                config.AddDashboardSection(typeof(DashboardSection));
+                config.AddDashboardSection("user", edit: true);
             });
         }
 
