@@ -8,6 +8,7 @@ namespace RapidCMS.Example.Data
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public DateTime? StartDate { get; set; }
 
         [Required]
         // the horror

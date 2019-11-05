@@ -34,6 +34,7 @@ namespace RapidCMS.Example.Collections
                             .AddSection(section =>
                             {
                                 section.AddField(x => x.Name);
+                                section.AddField(x => x.StartDate).SetType(EditorType.Date);
 
                                 // this field uses a custom editor, which must inherit BaseEditor
                                 section.AddField(x => x.Password).SetType(typeof(PasswordEditor));

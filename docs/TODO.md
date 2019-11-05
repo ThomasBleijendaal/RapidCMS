@@ -9,8 +9,6 @@ TODO:
 
 [] Allow for custom View elements in ListView / NodeView
 
-[] DateTime editor does not handle DateTime?
-
 [] Column ordering
 
 [] EditContext available in repositories

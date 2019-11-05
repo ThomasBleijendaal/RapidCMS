@@ -1,15 +1,15 @@
 ﻿@inherits BasePropertyEditor
 
 @{ 
-    DateTime date = (DateTime)GetValueAsObject();
+    var date = (DateTime?)GetValueAsObject();
 
-    if (date == DateTime.MinValue)
+    if (!date.HasValue || date.Value == DateTime.MinValue)
     {
         date = DateTime.UtcNow.Date;
     }
 }
 
-<input value=@date.ToString("yyyy-MM-dd")
+<input value=@date.Value.ToString("yyyy-MM-dd")
        disabled=@IsDisabled
        @onchange=@(args => SetValueFromString((string)args.Value))
        class="form-control @(CssHelper.GetValidationClass(State))"
