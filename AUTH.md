@@ -115,7 +115,7 @@ app.UseEndpoints(endpoints =>
 });
 ```
 
-These methods allow the virtual controllers provided by `AzureAD.UI` work and do their job.
+These methods allow the virtual controllers provided by `AzureAD.UI` to do their job, and authentication is enforced.
 
 ## 4. Add `LoginScreen` component
 
@@ -202,10 +202,12 @@ Open `Startup.cs`,  look up the `services.AddRapidCMS` method, and add the follo
 
 ```c#
 config.SetCustomLoginScreen(typeof(LoginScreen));
-config.SetCustomLoginStatus(typeof(LoginControl));
+config.SetCustomLoginStatus(typeof(LoginStatus));
 ```
 
-Remove `config.AllowAnonymousUser()`.
+These instructions tell RapidCMS to use those components as login screen and login status.
+
+Remove `config.AllowAnonymousUser()` to prevent anonymous users to use the CMS.
 
 ## 7. Hit Run
 
