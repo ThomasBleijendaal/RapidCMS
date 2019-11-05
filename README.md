@@ -157,8 +157,7 @@ The `AuthorizationHandler` is part of the [ASP.NET Core Authorization Infrastruc
 
 There is no standard authentication support out of the box, so you have to do everything to have your
 uses sign in. But there are already some great resources [for adding Azure AD support to blazor](https://devblogs.microsoft.com/aspnet/configuring-a-server-side-blazor-app-with-azure-app-configuration/),
-so it's easy to get it working. In the [TestServer project](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/RapidCMS/TestServer)
-it's also setup by adding some `Microsoft.AspNetCore.Authentication.*` packages and providing some configuration.
+so it's easy to get it working. See [this page about adding authentication](AUTH.md) for more information.
 
 ### Collections
 

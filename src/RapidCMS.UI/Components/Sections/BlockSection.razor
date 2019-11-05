@@ -45,13 +45,16 @@
             }
             else if (element is SubCollectionUI subCollection)
             {
-                var parentPath = ParentPath.AddLevel(EditContext.Parent?.GetParentPath(), EditContext.CollectionAlias, EditContext.Entity.Id);
+                if (!EditContext.UsageType.HasFlag(UsageType.New))
+                {
+                    var parentPath = ParentPath.AddLevel(EditContext.Parent?.GetParentPath(), EditContext.CollectionAlias, EditContext.Entity.Id);
 
-                <div class="nested-content">
-                    <RapidCMS.UI.Components.Pages.Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
-                                                             CollectionAlias=@subCollection.CollectionAlias
-                                                             Path=@parentPath.ToPathString() />
-                </div>
+                    <div class="nested-content">
+                        <RapidCMS.UI.Components.Pages.Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                                                                 CollectionAlias=@subCollection.CollectionAlias
+                                                                 Path=@parentPath.ToPathString() />
+                    </div>
+                }
             }
             else if (element is RelatedCollectionUI relatedCollection)
             {

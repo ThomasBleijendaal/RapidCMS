@@ -64,7 +64,9 @@ else
         {
             if (reloadEntityIds == null)
             {
-                var rootEditContext = await EditContextService.GetRootAsync(GetUsageType(), CollectionAlias, GetParentPath());
+                var parentPath = GetParentPath();
+
+                var rootEditContext = await EditContextService.GetRootAsync(GetUsageType(), CollectionAlias, parentPath);
 
                 UIResolver = await EditorService.GetListUIResolverAsync(GetUsageType(), CollectionAlias);
 
