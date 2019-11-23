@@ -39,6 +39,11 @@ namespace RapidCMS.Common.Services
         public async Task<TreeUI?> GetTreeAsync(string alias, ParentPath? parentPath)
         {
             var collection = _collectionProvider.GetCollection(alias);
+            if (collection == null)
+            {
+                throw new InvalidOperationException($"Failed to get collection for given alias ({alias}).");
+            }
+
             var parent = await _parentService.GetParentAsync(parentPath);
 
             var testEntity = await collection.Repository.InternalNewAsync(parent, collection.EntityVariant.Type);
@@ -77,6 +82,11 @@ namespace RapidCMS.Common.Services
         public async Task<List<TreeNodeUI>> GetNodesAsync(string alias, ParentPath? parentPath)
         {
             var collection = _collectionProvider.GetCollection(alias);
+            if (collection == null)
+            {
+                throw new InvalidOperationException($"Failed to get collection for given alias ({alias}).");
+            }
+
             var parent = await _parentService.GetParentAsync(parentPath);
 
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)

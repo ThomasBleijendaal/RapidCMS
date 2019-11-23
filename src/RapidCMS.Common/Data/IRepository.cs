@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Primitives;
+using RapidCMS.Common.Forms;
 
 namespace RapidCMS.Common.Data
 {
-    public interface IRepository
+    internal interface IRepository
     {
         Task<IEntity?> InternalGetByIdAsync(string id, IParent? parent);
         Task<IEnumerable<IEntity>> InternalGetAllAsync(IParent? parent, IQuery query);
@@ -21,8 +22,8 @@ namespace RapidCMS.Common.Data
         /// <param name="variantType"></param>
         /// <returns></returns>
         Task<IEntity> InternalNewAsync(IParent? parent, Type? variantType);
-        Task<IEntity?> InternalInsertAsync(IParent? parent, IEntity entity, IRelationContainer? relations);
-        Task InternalUpdateAsync(string id, IParent? parent, IEntity entity, IRelationContainer? relations);
+        Task<IEntity?> InternalInsertAsync(IEditContext editContext, IParent? parent, IEntity entity, IRelationContainer? relations);
+        Task InternalUpdateAsync(string id, IEditContext editContext, IParent? parent, IEntity entity, IRelationContainer? relations);
         Task InternalDeleteAsync(string id, IParent? parent);
 
         Task InternalAddAsync(IEntity relatedEntity, string id);
@@ -31,7 +32,7 @@ namespace RapidCMS.Common.Data
         IChangeToken ChangeToken { get; }
     }
 
-    public interface IRepository<TKey, TEntity> : IRepository
+    internal interface IRepository<TKey, TEntity> : IRepository
         where TEntity : class, IEntity
     {
         Task<TEntity?> GetByIdAsync(TKey id, IParent? parent);
@@ -41,7 +42,9 @@ namespace RapidCMS.Common.Data
 
         Task<TEntity> NewAsync(IParent? parent, Type? variantType);
         Task<TEntity?> InsertAsync(IParent? parent, TEntity entity, IRelationContainer? relations);
+        Task<TEntity?> InsertAsync(IEditContext editContext, IParent? parent, TEntity entity, IRelationContainer? relations);
         Task UpdateAsync(TKey id, IParent? parent, TEntity entity, IRelationContainer? relations);
+        Task UpdateAsync(TKey id, IEditContext editContext, IParent? parent, TEntity entity, IRelationContainer? relations);
         Task DeleteAsync(TKey id, IParent? parent);
 
         Task AddAsync(IEntity relatedEntity, TKey id);

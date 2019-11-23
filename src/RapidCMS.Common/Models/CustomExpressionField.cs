@@ -3,9 +3,9 @@ using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Models
 {
-    internal class CustomField : PropertyField
+    internal class CustomExpressionField : ExpressionField
     {
-        public CustomField(IPropertyMetadata property, Type customFieldType) : base(property)
+        public CustomExpressionField(IExpressionMetadata expression, Type customFieldType) : base(expression)
         {
             CustomType = customFieldType ?? throw new ArgumentNullException(nameof(customFieldType));
         }

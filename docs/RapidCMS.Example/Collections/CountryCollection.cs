@@ -24,7 +24,7 @@ namespace RapidCMS.Example.Collections
                         view
                             .AddRow(row =>
                             {
-                                row.AddField(p => p.Id.ToString()).SetName("ID");
+                                row.AddField(p => p.Id.ToString()).SetName("ID").SetType(DisplayType.Pre);
                                 row.AddField(p => p.Name);
 
                                 row.AddDefaultButton(DefaultButtonType.Edit);

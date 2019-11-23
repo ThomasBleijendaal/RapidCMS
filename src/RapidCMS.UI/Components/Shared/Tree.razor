@@ -4,6 +4,10 @@
 {
     <li>Loading tree..</li>
 }
+else if (!string.IsNullOrWhiteSpace(error))
+{
+    <li>@error</li>
+}
 else if (UI.RootVisible)
 {
     <li class="nav-item">
@@ -52,10 +56,21 @@ else
     bool NodesVisible = false;
 
     TreeUI? UI;
+    string? error;
 
     protected override async Task OnParametersSetAsync()
     {
-        UI = await TreeService.GetTreeAsync(CollectionAlias, ParentPath);
+        try
+        {
+            UI = await TreeService.GetTreeAsync(CollectionAlias, ParentPath);
+        }
+        catch (Exception ex)
+        {
+            UI = null;
+            error = ex.Message;
+        }
+
+        StateHasChanged();
     }
 
     [Parameter] public string CollectionAlias { get; set; }

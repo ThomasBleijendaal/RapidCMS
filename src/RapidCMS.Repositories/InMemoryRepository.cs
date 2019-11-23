@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Extensions;
+using RapidCMS.Common.Forms;
 using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Repositories
@@ -74,7 +75,7 @@ namespace RapidCMS.Repositories
             return Task.FromResult((TEntity?)GetListForParent(parent).FirstOrDefault(x => x.Id == id)?.Clone());
         }
 
-        public override async Task<TEntity?> InsertAsync(IParent? parent, TEntity entity, IRelationContainer? relations)
+        public override async Task<TEntity?> InsertAsync(IEditContext editContext, IParent? parent, TEntity entity, IRelationContainer? relations)
         {
             entity.Id = new Random().Next(0, int.MaxValue).ToString();
 
@@ -95,7 +96,7 @@ namespace RapidCMS.Repositories
             return id;
         }
 
-        public override async Task UpdateAsync(string id, IParent? parent, TEntity entity, IRelationContainer? relations)
+        public override async Task UpdateAsync(string id, IEditContext editContext, IParent? parent, TEntity entity, IRelationContainer? relations)
         {
             var list = GetListForParent(parent);
 
@@ -112,7 +113,7 @@ namespace RapidCMS.Repositories
         private async Task HandleRelationsAsync(TEntity entity, IRelationContainer? relations)
         {
             // this is some generic code to handle relations very genericly
-            // please do not use in production
+            // please do not use in production (and you can't, since you cannot access IRepository)
 
             if (relations != null)
             {

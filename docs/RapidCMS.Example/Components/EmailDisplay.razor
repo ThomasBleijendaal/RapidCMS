@@ -1,0 +1,48 @@
+﻿@inherits BaseDisplay
+
+@if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(domain) && !string.IsNullOrEmpty(tld))
+{
+    <label class="col-form-label">
+        <span style="color: darkred">@name</span>
+        <strong>@@</strong>
+        <span style="color: darkblue">@domain</span>
+        <strong>.</strong>
+        <span style="color: darkgreen">@tld</span>
+    </label>
+}
+else
+{
+    <label class="col-form-label">
+        Invalid email address
+    </label>
+}
+
+@code {
+    // this is just an example
+    string? name;
+    string? domain;
+    string? tld;
+
+    protected override void OnInitialized()
+    {
+        var email = GetValueAsString();
+
+        if (!string.IsNullOrWhiteSpace(email))
+        {
+            var parts = email.Split('@');
+
+            if (parts.Count() == 2)
+            {
+                name = parts[0];
+
+                var moreparts = parts[1].Split('.', 2);
+
+                if (moreparts.Count() == 2)
+                {
+                    domain = moreparts[0];
+                    tld = moreparts[1];
+                }
+            }
+        }
+    }
+}

@@ -4,7 +4,7 @@ using RapidCMS.Common.Models;
 
 namespace RapidCMS.Common.Providers
 {
-    public interface ICollectionProvider
+    internal interface ICollectionProvider
     {
         Collection GetCollection(string alias);
         IEnumerable<Collection> GetAllCollections();

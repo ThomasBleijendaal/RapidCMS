@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Linq.Expressions;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
+using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Forms
 {
     // TODO: fix memory leak due to events
-    public sealed class EditContext : IServiceProvider
+    public sealed class EditContext : IEditContext, IServiceProvider
     {
         private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();
         private readonly IServiceProvider _serviceProvider;
@@ -88,10 +90,9 @@ namespace RapidCMS.Common.Forms
             return GetPropertyState(property).WasValidated;
         }
 
-        internal IRelationContainer GenerateRelationContainer()
+        public IRelationContainer GetRelationContainer()
         {
-            return new RelationContainer(
-                DataProviders.Select(x => x.GenerateRelation()).WhereAs(x => x as IRelation));
+            return new RelationContainer(DataProviders.Select(x => x.GenerateRelation()).WhereAs(x => x as IRelation));
         }
 
         public IEnumerable<string> GetValidationMessages()
@@ -235,10 +236,25 @@ namespace RapidCMS.Common.Forms
             {
                 return _serviceProvider.GetService(serviceType);
             }
-            catch (Exception ex)
+            catch
             {
                 throw;
             }
+        }
+
+        bool? IEditContext.IsModified<TEntity, TValue>(Expression<Func<TEntity, TValue>> property)
+        {
+            var propertyMetadata = PropertyMetadataHelper.GetPropertyMetadata(property);
+            return propertyMetadata == null 
+                ? default 
+                : _fieldStates.TryGetValue(propertyMetadata, out var fieldState) 
+                    ? fieldState.IsModified 
+                    : default;
+        }
+
+        bool? IEditContext.IsModified(string propertyName)
+        {
+            return GetFieldState(propertyName)?.IsModified;
         }
     }
 }

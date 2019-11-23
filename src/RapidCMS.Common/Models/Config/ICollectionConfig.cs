@@ -87,7 +87,7 @@ namespace RapidCMS.Common.Models.Config
         /// </summary>
         /// <typeparam name="TRepository"></typeparam>
         /// <returns></returns>
-        ICollectionConfig<TEntity> SetRepository<TRepository>() where TRepository : IRepository;
+        ICollectionConfig<TEntity> SetRepository<TRepository>();
         
         /// <summary>
         /// Sets how the collection should be displayed in the tree.

@@ -1,6 +1,5 @@
 ﻿using System;
 using RapidCMS.Common.Data;
-using RapidCMS.Common.Enums;
 using RapidCMS.Common.Forms;
 using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
@@ -29,7 +28,6 @@ namespace RapidCMS.Common.Extensions
             {
                 Description = field.Description,
                 Name = field.Name,
-                Type = field.DataType,
                 IsVisible = field.IsVisible,
                 IsDisabled = field.IsDisabled
             };
@@ -39,22 +37,24 @@ namespace RapidCMS.Common.Extensions
         {
             if (field is ExpressionField expressionField)
             {
-                var ui = new ExpressionFieldUI
-                {
-                    Expression = expressionField.Expression,
-                };
+                var ui = (field is CustomExpressionField customExpressionField)
+                    ? new CustomExpressionFieldUI
+                    {
+                        CustomType = customExpressionField.CustomType
+                    }
+                    : new ExpressionFieldUI();
 
-                PopulateProperties(ui, field);
+                PopulateProperties(ui, expressionField);
 
                 return ui;
             }
             else if (field is PropertyField propertyField)
             {
-                var ui = (field is CustomField customPropertyField)
+                var ui = (field is CustomPropertyField customPropertyField)
                     ? new CustomPropertyFieldUI
                     {
                         CustomType = customPropertyField.CustomType
-                    } 
+                    }
                     : new PropertyFieldUI();
 
                 PopulateProperties(ui, propertyField, dataProvider);
@@ -67,19 +67,27 @@ namespace RapidCMS.Common.Extensions
             }
         }
 
-        private static void PopulateProperties(FieldUI ui, Field field)
+        private static void PopulateBaseProperties(FieldUI ui, Field field)
         {
             ui.Description = field.Description;
             ui.Name = field.Name;
-            ui.Type = field.DataType;
             ui.IsVisible = field.IsVisible;
             ui.IsDisabled = field.IsDisabled;
         }
 
+        private static void PopulateProperties(ExpressionFieldUI ui, ExpressionField field)
+        {
+            PopulateBaseProperties(ui, field);
+
+            ui.Expression = field.Expression;
+            ui.Type = field.DisplayType;
+        }
+
         private static void PopulateProperties(PropertyFieldUI ui, PropertyField field, DataProvider? dataProvider)
         {
-            PopulateProperties(ui, field);
+            PopulateBaseProperties(ui, field);
 
+            ui.Type = field.EditorType;
             ui.Property = field.Property;
             ui.DataCollection = dataProvider?.Collection;
         }

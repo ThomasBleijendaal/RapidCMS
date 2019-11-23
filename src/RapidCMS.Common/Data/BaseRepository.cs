@@ -3,29 +3,137 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Primitives;
+using RapidCMS.Common.Forms;
 
 namespace RapidCMS.Common.Data
 {
     public abstract class BaseRepository<TKey, TEntity> : IRepository, IRepository<TKey, TEntity>
         where TEntity : class, IEntity
     {
+        /// <summary>
+        /// This method gets an entity belonging to the given id and parent(s).
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="parent"></param>
+        /// <returns></returns>
         public abstract Task<TEntity?> GetByIdAsync(TKey id, IParent? parent);
+
+        /// <summary>
+        /// This method gets all entities belonging to the given parent(s) and query instructions (paging / search).
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public abstract Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query);
+
+        /// <summary>
+        /// This method gets all entities that are related to the given entity and query instruction (paging / search).
+        /// </summary>
+        /// <param name="relatedEntity"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllRelatedAsync)} on the {GetType()}.");
+
+        /// <summary>
+        /// This method gets all entities that match the given query instruction (paging / search) but are not related to the given entity.
+        /// </summary>
+        /// <param name="relatedEntity"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllNonRelatedAsync)} on the {GetType()}.");
 
+        /// <summary>
+        /// This method creates a new entity in-memory, and does not affect the database.
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="variantType"></param>
+        /// <returns></returns>
         public abstract Task<TEntity> NewAsync(IParent? parent, Type? variantType = null);
-        public abstract Task<TEntity?> InsertAsync(IParent? parent, TEntity entity, IRelationContainer? relations);
-        public abstract Task UpdateAsync(TKey id, IParent? parent, TEntity entity, IRelationContainer? relations);
+
+        /// <summary>
+        /// This method inserts a new entity in the database.
+        /// 
+        /// The relations parameter contains all the relations that are set to this entity.
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="entity"></param>
+        /// <param name="relations"></param>
+        /// <returns></returns>
+        public virtual Task<TEntity?> InsertAsync(IParent? parent, TEntity entity, IRelationContainer? relations)
+            => throw new NotImplementedException($"Implement one of the {nameof(InsertAsync)} on the {GetType()}.");
+
+        /// <summary>
+        /// This method inserts a new entity in the database.
+        /// 
+        /// The editContext parameter contains the state of the form at the time of saving, allowing to check which property was edited.
+        /// 
+        /// The relations parameter contains all the relations that are set to this entity.
+        /// </summary>
+        /// <param name="editContext"></param>
+        /// <param name="parent"></param>
+        /// <param name="entity"></param>
+        /// <param name="relations"></param>
+        /// <returns></returns>
+        public virtual Task<TEntity?> InsertAsync(IEditContext editContext, IParent? parent, TEntity entity, IRelationContainer? relations) 
+            => InsertAsync(parent, entity, relations);
+
+        /// <summary>
+        /// This method updates an existing entity in the database.
+        /// 
+        /// The relations parameter contains all the relations that are set to this entity.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="parent"></param>
+        /// <param name="entity"></param>
+        /// <param name="relations"></param>
+        /// <returns></returns>
+        public virtual Task UpdateAsync(TKey id, IParent? parent, TEntity entity, IRelationContainer? relations)
+            => throw new NotImplementedException($"Implement one of the {nameof(UpdateAsync)} on the {GetType()}.");
+
+        /// <summary>
+        /// This method updates an existing entity in the database.
+        /// 
+        /// The editContext parameter contains the state of the form at the time of saving, allowing to check which property was edited.
+        /// 
+        /// The relations parameter contains all the relations that are set to this entity.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="editContext"></param>
+        /// <param name="parent"></param>
+        /// <param name="entity"></param>
+        /// <param name="relations"></param>
+        /// <returns></returns>
+        public virtual Task UpdateAsync(TKey id, IEditContext editContext, IParent? parent, TEntity entity, IRelationContainer? relations)
+            => UpdateAsync(id, parent, entity, relations);
         public abstract Task DeleteAsync(TKey id, IParent? parent);
 
+        /// <summary>
+        /// This methods adds an releated entity to the entity that corresponds with the given id. 
+        /// This method is used when an new many-to-many relation between two entities is made.
+        /// </summary>
+        /// <param name="relatedEntity"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public virtual Task AddAsync(IEntity relatedEntity, TKey id)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(AddAsync)} on the {GetType()}.");
+
+        /// <summary>
+        /// This methods removes an releated entity from the entity that corresponds with the given id. 
+        /// This method is used when a many-to-many relation between two entities is removed.
+        /// </summary>
+        /// <param name="relatedEntity"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public virtual Task RemoveAsync(IEntity relatedEntity, TKey id)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(RemoveAsync)} on the {GetType()}.");
 
+        /// <summary>
+        /// This method is invoked when the id of the entity must be parsed from a string (originating from the URL) to TKey.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public abstract TKey ParseKey(string id);
 
         protected internal RepositoryChangeToken _repositoryChangeToken = new RepositoryChangeToken();
@@ -63,16 +171,16 @@ namespace RapidCMS.Common.Data
             return (await NewAsync(parent, variantType)) as IEntity;
         }
 
-        async Task<IEntity?> IRepository.InternalInsertAsync(IParent? parent, IEntity entity, IRelationContainer? relations)
+        async Task<IEntity?> IRepository.InternalInsertAsync(IEditContext editContext, IParent? parent, IEntity entity, IRelationContainer? relations)
         {
-            var data = (await InsertAsync(parent, (TEntity)entity, relations)) as IEntity;
+            var data = (await InsertAsync(editContext, parent, (TEntity)entity, relations)) as IEntity;
             NotifyUpdate();
             return data;
         }
 
-        async Task IRepository.InternalUpdateAsync(string id, IParent? parent, IEntity entity, IRelationContainer? relations)
+        async Task IRepository.InternalUpdateAsync(string id, IEditContext editContext, IParent? parent, IEntity entity, IRelationContainer? relations)
         {
-            await UpdateAsync(ParseKey(id), parent, (TEntity)entity, relations);
+            await UpdateAsync(ParseKey(id), editContext, parent, (TEntity)entity, relations);
             NotifyUpdate();
         }
 

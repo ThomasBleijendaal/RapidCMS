@@ -48,11 +48,18 @@
         }
     </ul>
 }
+else if (!string.IsNullOrWhiteSpace(error))
+{
+    <ul class="nav flex-column">
+        <li>@error</li>
+    </ul>
+}
 
 @code {
 
     Dictionary<string, bool>? NodesVisible;
     List<TreeNodeUI>? UI;
+    string? error;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -63,19 +70,26 @@
     {
         var oldNodesVisible = NodesVisible;
 
-        UI = await TreeService.GetNodesAsync(CollectionAlias, ParentPath);
-        NodesVisible = UI.ToDictionary(x => x.Id, x => x.RootVisibleOfCollections);
-
-        // restore the view state with the new nodes
-        if (oldNodesVisible != null)
+        try
         {
-            foreach (var node in oldNodesVisible.Where(x => x.Value))
+            UI = await TreeService.GetNodesAsync(CollectionAlias, ParentPath);
+            NodesVisible = UI.ToDictionary(x => x.Id, x => x.RootVisibleOfCollections);
+
+            // restore the view state with the new nodes
+            if (oldNodesVisible != null)
             {
-                if ( NodesVisible.ContainsKey(node.Key))
+                foreach (var node in oldNodesVisible.Where(x => x.Value))
                 {
-                    NodesVisible[node.Key] = true;
+                    if (NodesVisible.ContainsKey(node.Key))
+                    {
+                        NodesVisible[node.Key] = true;
+                    }
                 }
             }
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
         }
 
         StateHasChanged();

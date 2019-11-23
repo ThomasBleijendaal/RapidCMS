@@ -13,7 +13,7 @@
 
 
     // This code below is only an example.
-    // Please do not use the IRepository based classes in your components.
+    // Please do not use the IRepository based classes in your components. (and you can't, since you cannot access IRepository)
     [Inject] private InMemoryRepository<User> Repository { get; set; }
 
     async Task ResetPasswordsAsync()
@@ -27,7 +27,7 @@
             var typedUser = (User)user;
             typedUser.Password = "Reset";
 
-            await repo.InternalUpdateAsync(user.Id, null, user, null);
+            await repo.InternalUpdateAsync(user.Id, EditContext, null, user, null);
         }
 
         // CrudType Refresh refreshes the data in the view

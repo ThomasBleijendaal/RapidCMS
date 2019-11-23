@@ -269,9 +269,9 @@ a.current-page {
     border-radius: 0;
 }
 
-.btn .icon {
-    margin-right: .5rem;
-}
+    .btn .icon {
+        margin-right: .5rem;
+    }
 
 .form-row {
     padding-top: .1rem;
@@ -295,9 +295,14 @@ a.current-page {
         padding: 0;
     }
 
-    .form-check {
-        padding-top: 0.5rem;
-    }
+.form-check {
+    padding-top: 0.5rem;
+}
+
+pre.col-form-label {
+    height: auto !important;
+    padding: .5rem;
+}
 
 .input-group-prepend *, .input-group-append * {
     border-radius: 0 !important;
@@ -339,9 +344,9 @@ table td {
         background: repeating-linear-gradient( -45deg, #ced4da, #ced4da 2px, #fff 2px, #fff 4px );
     }
 
-    table tr.dragover td {
-        border-top: 3px solid red;
-    }
+table tr.dragover td {
+    border-top: 3px solid red;
+}
 
 pre {
     background: #f0f0f0;

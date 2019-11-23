@@ -18,6 +18,11 @@ namespace RapidCMS.Repositories
         {
             try
             {
+                if (!Directory.Exists(Folder()))
+                {
+                    Directory.CreateDirectory(Folder());
+                }
+
                 var fileContents = File.ReadAllText(JsonFileName());
                 if (!string.IsNullOrWhiteSpace(fileContents))
                 {
@@ -36,9 +41,14 @@ namespace RapidCMS.Repositories
             UpdateJson(default);
         }
 
+        private static string Folder()
+        {
+            return "./bin/";
+        }
+
         private static string JsonFileName()
         {
-            return $"./bin/{typeof(TEntity).FullName}.json";
+            return $"{Folder()}{typeof(TEntity).FullName}.json";
         }
 
         private void UpdateJson(object? obj)

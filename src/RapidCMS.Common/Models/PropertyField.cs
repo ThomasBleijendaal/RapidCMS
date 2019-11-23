@@ -1,4 +1,5 @@
 ﻿using System;
+using RapidCMS.Common.Enums;
 using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Models
@@ -9,7 +10,8 @@ namespace RapidCMS.Common.Models
         {
             Property = property ?? throw new ArgumentNullException(nameof(property));
         }
-
+        
+        internal EditorType EditorType { get; set; } = EditorType.Readonly;
         internal IPropertyMetadata Property { get; set; }
 
         internal Relation? Relation { get; set; }

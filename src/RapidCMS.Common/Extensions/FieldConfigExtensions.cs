@@ -9,30 +9,15 @@ namespace RapidCMS.Common.Extensions
     {
         public static Field ToField(this FieldConfig field)
         {
-            if (field.Type == EditorType.Custom)
+            if (field.Property != null)
             {
-                return new CustomField(field.Property!, field.CustomType)
+                if (field.EditorType == EditorType.Custom)
                 {
-                    Index = field.Index,
-
-                    DataType = field.Type,
-                    Description = field.Description,
-                    Name = field.Name,
-                    IsVisible = field.IsVisible,
-                    IsDisabled = field.IsDisabled,
-
-                    Relation = field.Relation?.ToRelation()
-                };
-            }
-            else
-            {
-                if (field.Property != null)
-                {
-                    return new PropertyField(field.Property)
+                    return new CustomPropertyField(field.Property!, field.CustomType!)
                     {
                         Index = field.Index,
 
-                        DataType = field.Type,
+                        EditorType = field.EditorType,
                         Description = field.Description,
                         Name = field.Name,
                         IsVisible = field.IsVisible,
@@ -41,12 +26,31 @@ namespace RapidCMS.Common.Extensions
                         Relation = field.Relation?.ToRelation()
                     };
                 }
-                else if (field.Expression != null)
+                else
                 {
-                    return new ExpressionField(field.Expression)
+                    return new PropertyField(field.Property)
                     {
                         Index = field.Index,
 
+                        EditorType = field.EditorType,
+                        Description = field.Description,
+                        Name = field.Name,
+                        IsVisible = field.IsVisible,
+                        IsDisabled = field.IsDisabled,
+
+                        Relation = field.Relation?.ToRelation()
+                    };
+                }
+            }
+            else if (field.Expression != null)
+            {
+                if (field.DisplayType == DisplayType.Custom)
+                {
+                    return new CustomExpressionField(field.Expression, field.CustomType!)
+                    {
+                        Index = field.Index,
+                        
+                        DisplayType = field.DisplayType,
                         Description = field.Description,
                         Name = field.Name,
                         IsVisible = field.IsVisible,
@@ -55,8 +59,21 @@ namespace RapidCMS.Common.Extensions
                 }
                 else
                 {
-                    throw new InvalidOperationException();
+                    return new ExpressionField(field.Expression)
+                    {
+                        Index = field.Index,
+
+                        DisplayType = field.DisplayType,
+                        Description = field.Description,
+                        Name = field.Name,
+                        IsVisible = field.IsVisible,
+                        IsDisabled = field.IsDisabled
+                    };
                 }
+            }
+            else
+            {
+                throw new InvalidOperationException();
             }
         }
     }

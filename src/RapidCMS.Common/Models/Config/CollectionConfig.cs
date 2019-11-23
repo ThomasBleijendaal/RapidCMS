@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Exceptions;
+using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
 
 namespace RapidCMS.Common.Models.Config
@@ -51,8 +52,12 @@ namespace RapidCMS.Common.Models.Config
         }
 
         public ICollectionConfig<TEntity> SetRepository<TRepository>()
-           where TRepository : IRepository
         {
+            if (!typeof(IRepository).IsAssignableFrom(typeof(TRepository)))
+            {
+                throw new InvalidOperationException("You should only use Repositories that are derived from BaseRepository<>");
+            }
+
             RepositoryType = typeof(TRepository);
 
             return this;

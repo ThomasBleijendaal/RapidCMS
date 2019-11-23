@@ -30,16 +30,7 @@
                         <small class="form-text text-muted">@field.Description</small>
                     </div>
                     <div class="col-10">
-                        @if (field is ExpressionFieldUI expressionField)
-                        {
-                            <label class="col-form-label">
-                                @field.ToRenderFragment(EditContext)
-                            </label>
-                        }
-                        else if (field is PropertyFieldUI propertyField)
-                        {
-                            @field.ToRenderFragment(EditContext)
-                        }
+                        @field.ToRenderFragment(EditContext)
                     </div>
                 </div>
             }

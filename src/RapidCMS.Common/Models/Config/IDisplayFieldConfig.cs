@@ -22,6 +22,20 @@ namespace RapidCMS.Common.Models.Config
         IDisplayFieldConfig<TEntity, TValue> SetDescription(string description);
         
         /// <summary>
+        /// Sets the type of build-in display used for this field.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        IDisplayFieldConfig<TEntity, TValue> SetType(DisplayType type);
+
+        /// <summary>
+        /// Sets the type of custom razor component used for this field.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        IDisplayFieldConfig<TEntity, TValue> SetType(Type type);
+        
+        /// <summary>
         /// Sets an expression which determines whether this field should be visible.
         /// </summary>
         /// <param name="predicate"></param>

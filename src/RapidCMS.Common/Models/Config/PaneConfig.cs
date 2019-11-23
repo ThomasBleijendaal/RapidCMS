@@ -132,7 +132,7 @@ namespace RapidCMS.Common.Models.Config
                 Expression = PropertyMetadataHelper.GetExpressionMetadata(displayExpression) ?? throw new InvalidPropertyExpressionException(nameof(displayExpression)),
             };
             config.Name = config.Expression.PropertyName;
-            config.Type = EditorType.Readonly;
+            config.DisplayType = default;
 
             configure?.Invoke(config);
 
@@ -185,7 +185,7 @@ namespace RapidCMS.Common.Models.Config
                 Property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression) ?? throw new InvalidPropertyExpressionException(nameof(propertyExpression)),
             };
             config.Name = config.Property.PropertyName;
-            config.Type = EditorTypeHelper.TryFindDefaultEditorType(config.Property.PropertyType);
+            config.EditorType = EditorTypeHelper.TryFindDefaultEditorType(config.Property.PropertyType);
 
             configure?.Invoke(config);
 

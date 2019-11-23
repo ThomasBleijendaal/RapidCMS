@@ -1,6 +1,7 @@
 ﻿using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Models.Config;
+using RapidCMS.Example.Components;
 using RapidCMS.Example.Data;
 using RapidCMS.Repositories;
 
@@ -133,9 +134,11 @@ namespace RapidCMS.Example.Collections
 
                         view.AddSection(section =>
                         {
-                            section.AddField(x => x.Id.ToString()).SetName("ID");
-                            section.AddField(x => x.Name);
-                            section.AddField(x => x.Email);
+                            // views also allow for customization of how the data should be displayed
+                            // you can use the availablep DisplayType's, or create your own Razor components (must be derived from BaseDisplay)
+                            section.AddField(x => x.Id.ToString()).SetName("ID").SetType(DisplayType.Pre);
+                            section.AddField(x => x.Name).SetType(DisplayType.Label);
+                            section.AddField(x => x.Email).SetType(typeof(EmailDisplay));
                         });
 
                         view.AddSection(section =>
