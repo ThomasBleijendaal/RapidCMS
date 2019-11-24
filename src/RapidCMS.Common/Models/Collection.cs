@@ -11,8 +11,9 @@ namespace RapidCMS.Common.Models
     {
         private IRepository? _repository;
 
-        public Collection(string name, string alias, EntityVariant entityVariant, Type? repositoryType, bool isRecursive = false)
+        public Collection(string? icon, string name, string alias, EntityVariant entityVariant, Type? repositoryType, bool isRecursive = false)
         {
+            Icon = icon;
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
             EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
@@ -21,6 +22,7 @@ namespace RapidCMS.Common.Models
             Recursive = isRecursive;
         }
 
+        internal string? Icon { get; private set; }
         internal string Name { get; private set; }
         internal string Alias { get; private set; }
         internal bool Recursive { get; private set; }
@@ -33,7 +35,7 @@ namespace RapidCMS.Common.Models
         internal List<IDataView>? DataViews { get; set; }
         internal Type? DataViewBuilder { get; set; }
 
-        internal EntityVariant GetEntityVariant(string alias)
+        internal EntityVariant GetEntityVariant(string? alias)
         {
             if (string.IsNullOrWhiteSpace(alias) || SubEntityVariants == null)
             {

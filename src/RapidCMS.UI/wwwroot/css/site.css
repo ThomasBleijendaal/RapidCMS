@@ -182,6 +182,10 @@ app {
         margin: 0.3rem 0 0.3rem auto;
     }
 
+    .nav-tabs.nav-tabs-collapse {
+        margin: .2rem 1.5rem -3.2rem 0rem;
+    }
+
 .sidebar .nav-item a {
     margin-left: -1rem;
     padding-left: 2rem;

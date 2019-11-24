@@ -1,25 +1,47 @@
-<nav>
-    <ul class="pagination">
-        <li class="page-item @(CurrentPage == 1 ? "disabled" : "")"><button class="page-link" @onclick="@(e => OnPageChanged.InvokeAsync(CurrentPage - 1))">Previous</button></li>
+@if (MaxPage != 1)
+{
+    <nav>
+        <ul class="pagination">
+            <li class="page-item @((CurrentPage == 1 || disabled) ? "disabled" : "")"><button class="page-link" @onclick="@(e => ClickAsync(CurrentPage - 1))">Previous</button></li>
 
-        @for (var page = 1; page <= (MaxPage ?? CurrentPage); page++)
-        {
-            var local = page;
+            @for (var page = 1; page <= (MaxPage ?? CurrentPage); page++)
+            {
+                var local = page;
 
-            <li class="page-item @(CurrentPage == local ? "active" : "")"><button class="page-link" @onclick="@(e => OnPageChanged.InvokeAsync(local))">@(local)</button></li>
-        }
+                <li class="page-item @(CurrentPage == local ? "active" : "") @(disabled ? "disabled" : "")"><button class="page-link" @onclick="@(e => ClickAsync(local))">@(local)</button></li>
+            }
 
-        @if (!MaxPage.HasValue)
-        {
-            <li class="page-item disabled"><a class="page-link" href="">..</a></li>
-        }
+            @if (!MaxPage.HasValue)
+            {
+                <li class="page-item disabled"><a class="page-link" href="">..</a></li>
+            }
 
-        <li class="page-item @(CurrentPage == MaxPage ? "disabled" : "")"><button class="page-link" @onclick="@(e => OnPageChanged.InvokeAsync(CurrentPage + 1))">Next</button></li>
-    </ul>
-</nav>
+            <li class="page-item @((CurrentPage == MaxPage || disabled) ? "disabled" : "")"><button class="page-link" @onclick="@(e => ClickAsync(CurrentPage + 1))">Next</button></li>
+        </ul>
+    </nav>
+}
 
 @code  {
+    bool disabled = false;
+
+    private async Task ClickAsync(int newPageNr)
+    {
+        disabled = true;
+
+        StateHasChanged();
+
+        await OnPageChanged.InvokeAsync(newPageNr);
+    }
+
     [Parameter] public int CurrentPage { get; set; }
     [Parameter] public int? MaxPage { get; set; }
     [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (disabled)
+        {
+            disabled = false;
+        }
+    }
 }

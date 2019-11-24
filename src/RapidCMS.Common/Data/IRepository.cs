@@ -8,12 +8,12 @@ namespace RapidCMS.Common.Data
 {
     internal interface IRepository
     {
-        Task<IEntity?> InternalGetByIdAsync(string id, IParent? parent);
-        Task<IEnumerable<IEntity>> InternalGetAllAsync(IParent? parent, IQuery query);
+        Task<IEntity?> GetByIdAsync(string id, IParent? parent);
+        Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query);
 
         // TODO: replace with IRelated
-        Task<IEnumerable<IEntity>> InternalGetAllRelatedAsync(IEntity relatedEntity, IQuery query);
-        Task<IEnumerable<IEntity>> InternalGetAllNonRelatedAsync(IEntity relatedEntity, IQuery query);
+        Task<IEnumerable<IEntity>> GetAllRelatedAsync(IEntity relatedEntity, IQuery query);
+        Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery query);
 
         /// <summary>
         /// Create a new entity in-memory.
@@ -21,13 +21,13 @@ namespace RapidCMS.Common.Data
         /// <param name="parent"></param>
         /// <param name="variantType"></param>
         /// <returns></returns>
-        Task<IEntity> InternalNewAsync(IParent? parent, Type? variantType);
-        Task<IEntity?> InternalInsertAsync(IEditContext editContext, IParent? parent, IEntity entity, IRelationContainer? relations);
-        Task InternalUpdateAsync(string id, IEditContext editContext, IParent? parent, IEntity entity, IRelationContainer? relations);
-        Task InternalDeleteAsync(string id, IParent? parent);
+        Task<IEntity> NewAsync(IParent? parent, Type? variantType);
+        Task<IEntity?> InsertAsync(EditContext editContext);
+        Task UpdateAsync(EditContext editContext);
+        Task DeleteAsync(string id, IParent? parent);
 
-        Task InternalAddAsync(IEntity relatedEntity, string id);
-        Task InternalRemoveAsync(IEntity relatedEntity, string id);
+        Task AddAsync(IEntity relatedEntity, string id);
+        Task RemoveAsync(IEntity relatedEntity, string id);
 
         IChangeToken ChangeToken { get; }
     }
@@ -40,11 +40,11 @@ namespace RapidCMS.Common.Data
         Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query);
         Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query);
 
-        Task<TEntity> NewAsync(IParent? parent, Type? variantType);
+        new Task<TEntity> NewAsync(IParent? parent, Type? variantType);
         Task<TEntity?> InsertAsync(IParent? parent, TEntity entity, IRelationContainer? relations);
-        Task<TEntity?> InsertAsync(IEditContext editContext, IParent? parent, TEntity entity, IRelationContainer? relations);
+        Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext);
         Task UpdateAsync(TKey id, IParent? parent, TEntity entity, IRelationContainer? relations);
-        Task UpdateAsync(TKey id, IEditContext editContext, IParent? parent, TEntity entity, IRelationContainer? relations);
+        Task UpdateAsync(IEditContext<TEntity> editContext);
         Task DeleteAsync(TKey id, IParent? parent);
 
         Task AddAsync(IEntity relatedEntity, TKey id);

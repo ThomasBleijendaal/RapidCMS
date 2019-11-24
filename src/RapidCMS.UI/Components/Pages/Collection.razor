@@ -145,6 +145,17 @@ else
         if (!query.MoreDataAvailable)
         {
             MaxPage = CurrentPage;
+
+            if (CurrentPage > 1 && !Sections.Any())
+            {
+                CurrentPage--;
+                MaxPage = null;
+                await LoadSectionsAsync();
+            }
+        }
+        if (MaxPage == CurrentPage && query.MoreDataAvailable)
+        {
+            MaxPage = null;
         }
     }
 

@@ -72,12 +72,9 @@ namespace RapidCMS.Common.Data
         /// The relations parameter contains all the relations that are set to this entity.
         /// </summary>
         /// <param name="editContext"></param>
-        /// <param name="parent"></param>
-        /// <param name="entity"></param>
-        /// <param name="relations"></param>
         /// <returns></returns>
-        public virtual Task<TEntity?> InsertAsync(IEditContext editContext, IParent? parent, TEntity entity, IRelationContainer? relations) 
-            => InsertAsync(parent, entity, relations);
+        public virtual Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext)
+            => InsertAsync(editContext.Parent, editContext.Entity, editContext.GetRelationContainer());
 
         /// <summary>
         /// This method updates an existing entity in the database.
@@ -99,14 +96,10 @@ namespace RapidCMS.Common.Data
         /// 
         /// The relations parameter contains all the relations that are set to this entity.
         /// </summary>
-        /// <param name="id"></param>
         /// <param name="editContext"></param>
-        /// <param name="parent"></param>
-        /// <param name="entity"></param>
-        /// <param name="relations"></param>
         /// <returns></returns>
-        public virtual Task UpdateAsync(TKey id, IEditContext editContext, IParent? parent, TEntity entity, IRelationContainer? relations)
-            => UpdateAsync(id, parent, entity, relations);
+        public virtual Task UpdateAsync(IEditContext<TEntity> editContext)
+            => UpdateAsync(ParseKey(editContext.Entity.Id!), editContext.Parent, editContext.Entity, editContext.GetRelationContainer());
         public abstract Task DeleteAsync(TKey id, IParent? parent);
 
         /// <summary>
@@ -146,55 +139,55 @@ namespace RapidCMS.Common.Data
             currentToken.HasChanged = true;
         }
 
-        async Task<IEntity?> IRepository.InternalGetByIdAsync(string id, IParent? parent)
+        async Task<IEntity?> IRepository.GetByIdAsync(string id, IParent? parent)
         {
             return (await GetByIdAsync(ParseKey(id), parent)) as IEntity;
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllAsync(IParent? parent, IQuery query)
+        async Task<IEnumerable<IEntity>> IRepository.GetAllAsync(IParent? parent, IQuery query)
         {
             return (await GetAllAsync(parent, TypedQuery<TEntity>.Convert(query))).Cast<IEntity>();
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllRelatedAsync(IEntity relatedEntity, IQuery query)
+        async Task<IEnumerable<IEntity>> IRepository.GetAllRelatedAsync(IEntity relatedEntity, IQuery query)
         {
             return (await GetAllRelatedAsync(relatedEntity, TypedQuery<TEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.InternalGetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
+        async Task<IEnumerable<IEntity>> IRepository.GetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
         {
             return (await GetAllNonRelatedAsync(relatedEntity, TypedQuery<TEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
         }
 
-        async Task<IEntity> IRepository.InternalNewAsync(IParent? parent, Type? variantType)
+        async Task<IEntity> IRepository.NewAsync(IParent? parent, Type? variantType)
         {
             return (await NewAsync(parent, variantType)) as IEntity;
         }
 
-        async Task<IEntity?> IRepository.InternalInsertAsync(IEditContext editContext, IParent? parent, IEntity entity, IRelationContainer? relations)
+        async Task<IEntity?> IRepository.InsertAsync(EditContext editContext)
         {
-            var data = (await InsertAsync(editContext, parent, (TEntity)entity, relations)) as IEntity;
+            var data = (await InsertAsync(new EditContextWrapper<TEntity>(editContext))) as IEntity;
             NotifyUpdate();
             return data;
         }
 
-        async Task IRepository.InternalUpdateAsync(string id, IEditContext editContext, IParent? parent, IEntity entity, IRelationContainer? relations)
+        async Task IRepository.UpdateAsync(EditContext editContext)
         {
-            await UpdateAsync(ParseKey(id), editContext, parent, (TEntity)entity, relations);
+            await UpdateAsync(new EditContextWrapper<TEntity>(editContext));
             NotifyUpdate();
         }
 
-        async Task IRepository.InternalDeleteAsync(string id, IParent? parent)
+        async Task IRepository.DeleteAsync(string id, IParent? parent)
         {
             await DeleteAsync(ParseKey(id), parent);
             NotifyUpdate();
         }
 
-        async Task IRepository.InternalAddAsync(IEntity relatedEntity, string id)
+        async Task IRepository.AddAsync(IEntity relatedEntity, string id)
         {
             await AddAsync(relatedEntity, ParseKey(id));
         }
-        async Task IRepository.InternalRemoveAsync(IEntity relatedEntity, string id)
+        async Task IRepository.RemoveAsync(IEntity relatedEntity, string id)
         {
             await RemoveAsync(relatedEntity, ParseKey(id));
         }

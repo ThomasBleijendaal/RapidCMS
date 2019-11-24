@@ -1,13 +1,16 @@
 ﻿@inherits BasePropertyEditor
 
+@using System.Text.RegularExpressions
+
 <div class="input-group">
     <div class="input-group-prepend">
         <span class="input-group-text">#</span>
     </div>
     <input value=@GetValueAsString()
            disabled=@IsDisabled
-           @onchange=@(args => SetValueFromString((string)args.Value))
+           @onchange=@SetValue
            type="number"
+           step="@(OnlyAllowNaturalNumbers() ? "1" : "any")"
            class="form-control @(CssHelper.GetValidationClass(State))" />
 
     @foreach (var message in GetValidationMessages())
@@ -18,3 +21,29 @@
     }
 </div>
 
+@code  {
+    private void SetValue(ChangeEventArgs args)
+    {
+        var normalized = Regex.Replace((string)args.Value, "[^0-9\\.]", "");
+
+        if (Nullable.GetUnderlyingType(Property.PropertyType) == null && string.IsNullOrWhiteSpace(normalized))
+        {
+            SetValueFromString("0");
+        }
+        else if (Property.PropertyType == typeof(float) || Property.PropertyType == typeof(double))
+        {
+            SetValueFromString(normalized);
+        }
+        else
+        {
+            SetValueFromString(normalized.Replace(".", ""));
+        }
+
+        StateHasChanged();
+    }
+
+    private bool OnlyAllowNaturalNumbers()
+    {
+        return Property.PropertyType != typeof(float) && Property.PropertyType != typeof(double);
+    }
+}

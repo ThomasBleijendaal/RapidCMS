@@ -125,7 +125,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        IDisplayFieldConfig<TEntity, string> IDisplayPaneConfig<TEntity>.AddField(Expression<Func<TEntity, string>> displayExpression, Action<IDisplayFieldConfig<TEntity, string>>? configure)
+        IDisplayFieldConfig<TEntity, string> IDisplayPaneConfig<TEntity>.AddField(Expression<Func<TEntity, string?>> displayExpression, Action<IDisplayFieldConfig<TEntity, string>>? configure)
         {
             var config = new FieldConfig<TEntity, string>()
             {

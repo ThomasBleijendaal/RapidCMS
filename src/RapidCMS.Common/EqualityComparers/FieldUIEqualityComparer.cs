@@ -7,12 +7,12 @@ namespace RapidCMS.Common.EqualityComparers
     {
         public bool Equals(FieldUI x, FieldUI y)
         {
-            return x.Name.Equals(y.Name);
+            return x.Name?.Equals(y.Name) ?? false;
         }
 
         public int GetHashCode(FieldUI obj)
         {
-            return obj.Name.GetHashCode();
+            return obj.Name?.GetHashCode() ?? default;
         }
     }
 }

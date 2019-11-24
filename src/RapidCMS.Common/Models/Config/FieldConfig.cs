@@ -49,6 +49,7 @@ namespace RapidCMS.Common.Models.Config
         IDisplayFieldConfig<TEntity, TValue> IDisplayFieldConfig<TEntity, TValue>.SetType(DisplayType type)
         {
             DisplayType = type;
+            EditorType = EditorType.None;
             return this;
         }
 
@@ -80,6 +81,14 @@ namespace RapidCMS.Common.Models.Config
         IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetType(EditorType type)
         {
             EditorType = type;
+            DisplayType = DisplayType.None;
+            return this;
+        }
+
+        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetType(DisplayType type)
+        {
+            EditorType = EditorType.None;
+            DisplayType = type;
             return this;
         }
 

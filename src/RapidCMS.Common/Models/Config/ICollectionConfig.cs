@@ -95,7 +95,7 @@ namespace RapidCMS.Common.Models.Config
         /// <param name="entityVisibility">Controls whether the entities of this collection are visible in the tree</param>
         /// <param name="entityNameExpression">Expression used to display entities of this collection</param>
         /// <returns></returns>
-        ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, Expression<Func<TEntity, string>>? entityNameExpression = null);
+        ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, Expression<Func<TEntity, string?>>? entityNameExpression = null);
         
         /// <summary>
         /// Sets how the collection should be displayed in the tree.
@@ -104,13 +104,13 @@ namespace RapidCMS.Common.Models.Config
         /// <param name="rootVisibility">Controls whether the root of this collection is visible in the tree</param>
         /// <param name="entityNameExpression">Expression used to display entities of this collection</param>
         /// <returns></returns>
-        ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string>>? entityNameExpression);
+        ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string?>>? entityNameExpression = null);
         
         /// <summary>
         /// Sets how the collection should be displayed in the tree.
         /// </summary>
         /// <param name="entityNameExpression">Expression used to display entities of this collection</param>
         /// <returns></returns>
-        ICollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string>> entityNameExpression);
+        ICollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string?>> entityNameExpression);
     }
 }

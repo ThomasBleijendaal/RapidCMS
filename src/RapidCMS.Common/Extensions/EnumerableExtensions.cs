@@ -44,7 +44,7 @@ namespace RapidCMS.Common.Extensions
             return dictionary.SelectMany(x => x.Value).Where(x => dictionary.Values.All(v => v.Contains(x, equalityComparer))).Distinct(equalityComparer);
         }
 
-        public static IEnumerable<TResult> WhereAs<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult?> conditionalCast)
+        public static IEnumerable<TResult> SelectNotNull<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult?> conditionalCast)
             where TResult : class
         {
             foreach (var element in source)

@@ -1,6 +1,6 @@
 ﻿@using System.Threading
 
-<ul class="nav nav-tabs">
+<ul class="nav nav-tabs @((Tabs == null || !Tabs.Any()) ? "nav-tabs-collapse" : "")">
     @if (Tabs != null && Tabs.Any())
     {
         @foreach (var tab in Tabs)

@@ -14,7 +14,7 @@ namespace RapidCMS.Common.Models.Config
         /// <param name="displayExpression">Expression to display this field</param>
         /// <param name="configure">Action to configure this field</param>
         /// <returns></returns>
-        IDisplayFieldConfig<TEntity, string> AddField(Expression<Func<TEntity, string>> displayExpression, Action<IDisplayFieldConfig<TEntity, string>>? configure = null);
+        IDisplayFieldConfig<TEntity, string> AddField(Expression<Func<TEntity, string?>> displayExpression, Action<IDisplayFieldConfig<TEntity, string>>? configure = null);
         
         /// <summary>
         /// Adds a sub collection to the pane. A sub collection is defined seperately, and only referenced by alias.

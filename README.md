@@ -25,7 +25,7 @@ or browse the [Example Project](https://github.com/ThomasBleijendaal/RapidCMS/tr
 ## Screenshots
 
 Since it is a bit hard to demonstrate a CMS on the internet without having the publicly accessible
-CMS be absolutely vandalised, [on this page there are some screenshots of the features that are currently supported](SCREENSHOTS.md).
+CMS be absolutely vandalised, [this page features some screenshots displaying the features that are currently supported](SCREENSHOTS.md).
 
 ---
 
@@ -347,7 +347,8 @@ edit multiple entities at once.
 
 A `NodeEditor` is a page which displays a form for editing a entity. A node editor can consist of mulitple sections, so you can
 logically group related entities, or have specific specialisations for various entity subtypes. Using `.VisibleWhen` on sections or
-editors, it's possible to show or hide editors or sections based what the user inputs.
+editors, it's possible to show or hide editors or sections based what the user inputs. Using `.DisabledWhen` allows you to configure
+when editors are disabled.
 
 ![CMS](docs/images/nodeview.png)
 

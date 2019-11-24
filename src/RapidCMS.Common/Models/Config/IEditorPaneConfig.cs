@@ -11,7 +11,7 @@ namespace RapidCMS.Common.Models.Config
         /// <summary>
         /// Adds a field to the pane.
         /// </summary>
-        /// <param name="displayExpression">Expression to edit this field</param>
+        /// <param name="propertyExpression">Expression to edit this field</param>
         /// <param name="configure">Action to configure this field</param>
         /// <returns></returns>
         IEditorFieldConfig<TEntity, TValue> AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<IEditorFieldConfig<TEntity, TValue>>? configure = null);

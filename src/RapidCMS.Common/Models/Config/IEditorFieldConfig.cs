@@ -22,13 +22,20 @@ namespace RapidCMS.Common.Models.Config
         /// <param name="description"></param>
         /// <returns></returns>
         IEditorFieldConfig<TEntity, TValue> SetDescription(string description);
-
+        
         /// <summary>
         /// Sets the type of build-in editor used for this field.
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
         IEditorFieldConfig<TEntity, TValue> SetType(EditorType type);
+
+        /// <summary>
+        /// Sets the type of build-in display used for this field.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        IEditorFieldConfig<TEntity, TValue> SetType(DisplayType type);
 
         /// <summary>
         /// Sets the type of custom razor component used for this field.

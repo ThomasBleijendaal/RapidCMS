@@ -30,12 +30,12 @@ namespace RapidCMS.Common.Data
         private ICollection<object>? _relatedIds;
 
         public CollectionDataProvider(
-            IRepository repository, 
-            Type relatedEntityType, 
+            IRepository repository,
+            Type relatedEntityType,
             IPropertyMetadata property,
             IPropertyMetadata? relatedElementsGetter,
-            IPropertyMetadata? repositoryParentSelector, 
-            IPropertyMetadata idProperty, 
+            IPropertyMetadata? repositoryParentSelector,
+            IPropertyMetadata idProperty,
             IEnumerable<IExpressionMetadata> labelProperties,
             IMemoryCache memoryCache)
         {
@@ -58,37 +58,34 @@ namespace RapidCMS.Common.Data
 
             await SetElementsAsync();
 
-            if (_relatedElementsGetter != null)
+            var data = _relatedElementsGetter?.Getter(_property.Getter(entity)) ?? _property.Getter(entity);
+            if (data is ICollection<IEntity> entityCollection)
             {
-                var data = _relatedElementsGetter.Getter(_property.Getter(entity));
-
-                if (data is ICollection<IEntity> entityCollection)
-                {
-                    _relatedIds = entityCollection.Select(x => (object)x.Id).ToList();
-                }
-                else if (data is ICollection<object> objectCollection)
-                {
-                    _relatedIds = objectCollection;
-                }
-                else if (data is IEnumerable enumerable)
-                {
-                    var list = new List<object>();
-                    foreach (var element in enumerable)
-                    {
-                        if (element != null)
-                        {
-                            list.Add(element);
-                        }
-                    }
-                    _relatedIds = list;
-                }
-                else
-                {
-                    throw new InvalidOperationException("Failed to convert relation property to ICollection<object>");
-                }
-
-                UpdateRelatedElements();
+                _relatedIds = entityCollection.Select(x => (object)x.Id).ToList();
             }
+            else if (data is ICollection<object> objectCollection)
+            {
+                _relatedIds = objectCollection;
+            }
+            else if (data is IEnumerable enumerable)
+            {
+                var list = new List<object>();
+                foreach (var element in enumerable)
+                {
+                    if (element != null)
+                    {
+                        list.Add(element);
+                    }
+                }
+                _relatedIds = list;
+            }
+            else
+            {
+                return;
+                // throw new InvalidOperationException("Failed to convert relation property to ICollection<object>");
+            }
+
+            UpdateRelatedElements();
         }
 
         private async Task SetElementsAsync()
@@ -125,7 +122,7 @@ namespace RapidCMS.Common.Data
             {
                 entry.AddExpirationToken(_repository.ChangeToken);
 
-                return _repository.InternalGetAllAsync(parent, Query.Default()); 
+                return _repository.GetAllAsync(parent, Query.Default());
             });
 
             _elements = entities

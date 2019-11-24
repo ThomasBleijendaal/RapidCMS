@@ -1,15 +1,15 @@
-﻿    @if (Buttons != null && Buttons.Any())
-    {
-        <div class="top-row">
-            @foreach (var button in Buttons)
-            {
-                var model = button.ToViewModel();
-                model.OnClick += OnButtonClick;
+﻿@if (Buttons != null && Buttons.Any())
+{
+    <div class="top-row">
+        @foreach (var button in Buttons)
+        {
+            var model = button.ToViewModel();
+            model.OnClick += OnButtonClick;
 
-                @button.ToRenderFragment(model);
-            }
-        </div>
-    }
+            @button.ToRenderFragment(model);
+        }
+    </div>
+}
 
 
 @code {

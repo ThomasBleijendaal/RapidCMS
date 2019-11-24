@@ -5,22 +5,23 @@ using System.Linq.Expressions;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Exceptions;
-using RapidCMS.Common.Extensions;
 using RapidCMS.Common.Helpers;
 
 namespace RapidCMS.Common.Models.Config
 {
     internal class CollectionConfig : ICollectionConfig
     {
-        internal CollectionConfig(string alias, string name, EntityVariantConfig entityVariant)
+        internal CollectionConfig(string alias, string? icon, string name, EntityVariantConfig entityVariant)
         {
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
+            Icon = icon;
             Name = name ?? throw new ArgumentNullException(nameof(name));
             EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
         }
 
         internal bool Recursive { get; set; }
         public string Alias { get; internal set; }
+        internal string? Icon { get; set; }
         internal string Name { get; set; }
 
         internal Type? RepositoryType { get; set; }
@@ -47,7 +48,7 @@ namespace RapidCMS.Common.Models.Config
     internal class CollectionConfig<TEntity> : CollectionConfig, ICollectionConfig<TEntity> 
         where TEntity : IEntity
     {
-        internal CollectionConfig(string alias, string name, EntityVariantConfig entityVariant) : base(alias, name, entityVariant)
+        internal CollectionConfig(string alias, string? icon, string name, EntityVariantConfig entityVariant) : base(alias, icon, name, entityVariant)
         {
         }
 
@@ -86,17 +87,17 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ICollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string>> entityNameExpression)
+        public ICollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string?>> entityNameExpression)
         {
             return SetTreeView(default, default, entityNameExpression);
         }
 
-        public ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, Expression<Func<TEntity, string>>? entityNameExpression = null)
+        public ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, Expression<Func<TEntity, string?>>? entityNameExpression = null)
         {
             return SetTreeView(entityVisibility, default, entityNameExpression);
         }
 
-        public ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string>>? entityNameExpression)
+        public ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string?>>? entityNameExpression = null)
         {
             TreeView = new TreeViewConfig
             {

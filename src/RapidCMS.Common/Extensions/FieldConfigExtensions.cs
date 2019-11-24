@@ -9,67 +9,74 @@ namespace RapidCMS.Common.Extensions
     {
         public static Field ToField(this FieldConfig field)
         {
-            if (field.Property != null)
+            if (field.EditorType == EditorType.Custom && field.Property != null)
             {
-                if (field.EditorType == EditorType.Custom)
+                return new CustomPropertyField(field.Property!, field.CustomType!)
                 {
-                    return new CustomPropertyField(field.Property!, field.CustomType!)
-                    {
-                        Index = field.Index,
+                    Index = field.Index,
 
-                        EditorType = field.EditorType,
-                        Description = field.Description,
-                        Name = field.Name,
-                        IsVisible = field.IsVisible,
-                        IsDisabled = field.IsDisabled,
+                    EditorType = field.EditorType,
+                    Description = field.Description,
+                    Name = field.Name,
+                    IsVisible = field.IsVisible,
+                    IsDisabled = field.IsDisabled,
 
-                        Relation = field.Relation?.ToRelation()
-                    };
-                }
-                else
-                {
-                    return new PropertyField(field.Property)
-                    {
-                        Index = field.Index,
-
-                        EditorType = field.EditorType,
-                        Description = field.Description,
-                        Name = field.Name,
-                        IsVisible = field.IsVisible,
-                        IsDisabled = field.IsDisabled,
-
-                        Relation = field.Relation?.ToRelation()
-                    };
-                }
+                    Relation = field.Relation?.ToRelation()
+                };
             }
-            else if (field.Expression != null)
+            else if (field.EditorType != EditorType.None && field.Property != null)
             {
-                if (field.DisplayType == DisplayType.Custom)
+                return new PropertyField(field.Property)
                 {
-                    return new CustomExpressionField(field.Expression, field.CustomType!)
-                    {
-                        Index = field.Index,
-                        
-                        DisplayType = field.DisplayType,
-                        Description = field.Description,
-                        Name = field.Name,
-                        IsVisible = field.IsVisible,
-                        IsDisabled = field.IsDisabled
-                    };
-                }
-                else
-                {
-                    return new ExpressionField(field.Expression)
-                    {
-                        Index = field.Index,
+                    Index = field.Index,
 
-                        DisplayType = field.DisplayType,
-                        Description = field.Description,
-                        Name = field.Name,
-                        IsVisible = field.IsVisible,
-                        IsDisabled = field.IsDisabled
-                    };
-                }
+                    EditorType = field.EditorType,
+                    Description = field.Description,
+                    Name = field.Name,
+                    IsVisible = field.IsVisible,
+                    IsDisabled = field.IsDisabled,
+
+                    Relation = field.Relation?.ToRelation()
+                };
+            }
+            else if (field.DisplayType != DisplayType.None && field.Property != null)
+            {
+                return new ExpressionField(field.Property)
+                {
+                    Index = field.Index,
+
+                    DisplayType = field.DisplayType,
+                    Description = field.Description,
+                    Name = field.Name,
+                    IsVisible = field.IsVisible,
+                    IsDisabled = field.IsDisabled
+                };
+            }
+            else if (field.DisplayType == DisplayType.Custom && field.Expression != null)
+            {
+                return new CustomExpressionField(field.Expression, field.CustomType!)
+                {
+                    Index = field.Index,
+
+                    DisplayType = field.DisplayType,
+                    Description = field.Description,
+                    Name = field.Name,
+                    IsVisible = field.IsVisible,
+                    IsDisabled = field.IsDisabled
+                };
+            }
+            else if (field.DisplayType != DisplayType.None && field.Expression != null)
+            {
+                return new ExpressionField(field.Expression)
+                {
+                    Index = field.Index,
+
+                    DisplayType = field.DisplayType,
+                    Description = field.Description,
+                    Name = field.Name,
+                    IsVisible = field.IsVisible,
+                    IsDisabled = field.IsDisabled
+                };
             }
             else
             {

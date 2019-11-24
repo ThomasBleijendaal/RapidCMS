@@ -58,7 +58,10 @@
     {
         if (RelationDataCollection != null)
         {
-            RelationDataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
+            RelationDataCollection.OnDataChange += async (s, a) =>
+            {
+                await InvokeAsync(() => UpdateOptionsAsync());
+            };
 
             await RelationDataCollection.SetEntityAsync(Entity, Parent);
             await UpdateOptionsAsync();

@@ -161,6 +161,7 @@ else
             if (CurrentPage > 1 && !Sections.Any())
             {
                 CurrentPage--;
+                MaxPage = null;
                 await LoadSectionsAsync();
             }
         }

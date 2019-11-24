@@ -55,7 +55,10 @@
     {
         if (DataCollection != null)
         {
-            DataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
+            DataCollection.OnDataChange += async (s, a) =>
+            {
+                await InvokeAsync(() => UpdateOptionsAsync());
+            };
 
             await DataCollection.SetEntityAsync(Entity, Parent);
             await UpdateOptionsAsync();

@@ -67,7 +67,7 @@ namespace RapidCMS.Repositories
 
             query.HasMoreData(GetListForParent(parent).Count > (query.Skip + query.Take));
 
-            return Task.FromResult(data);
+            return Task.FromResult(data); 
         }
 
         public override Task<TEntity?> GetByIdAsync(string id, IParent? parent)
@@ -75,15 +75,15 @@ namespace RapidCMS.Repositories
             return Task.FromResult((TEntity?)GetListForParent(parent).FirstOrDefault(x => x.Id == id)?.Clone());
         }
 
-        public override async Task<TEntity?> InsertAsync(IEditContext editContext, IParent? parent, TEntity entity, IRelationContainer? relations)
+        public override async Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext)
         {
-            entity.Id = new Random().Next(0, int.MaxValue).ToString();
+            editContext.Entity.Id = new Random().Next(0, int.MaxValue).ToString();
 
-            await HandleRelationsAsync(entity, relations);
+            await HandleRelationsAsync(editContext.Entity, editContext.GetRelationContainer());
 
-            GetListForParent(parent).Add(entity);
+            GetListForParent(editContext.Parent).Add(editContext.Entity);
 
-            return (TEntity)entity.Clone();
+            return (TEntity)editContext.Entity.Clone();
         }
 
         public override Task<TEntity> NewAsync(IParent? parent, Type? variantType = null)
@@ -96,15 +96,15 @@ namespace RapidCMS.Repositories
             return id;
         }
 
-        public override async Task UpdateAsync(string id, IEditContext editContext, IParent? parent, TEntity entity, IRelationContainer? relations)
+        public override async Task UpdateAsync(IEditContext<TEntity> editContext)
         {
-            var list = GetListForParent(parent);
+            var list = GetListForParent(editContext.Parent);
 
-            var index = list.FindIndex(x => x.Id == id);
+            var index = list.FindIndex(x => x.Id == editContext.Entity.Id);
 
-            var newEntity = (TEntity)entity.Clone();
+            var newEntity = (TEntity)editContext.Entity.Clone();
 
-            await HandleRelationsAsync(newEntity, relations);
+            await HandleRelationsAsync(newEntity, editContext.GetRelationContainer());
 
             list.Insert(index, newEntity);
             list.RemoveAt(index + 1);
@@ -126,13 +126,18 @@ namespace RapidCMS.Repositories
                     {
                         if (r.Property is IFullPropertyMetadata fp)
                         {
-                            if (_serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(r.RelatedEntity)) is IRepository repo)
+                            var inMemoryRepo = _serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(r.RelatedEntity)) as IRepository;
+                            var jsonRepo = _serviceProvider.GetService(typeof(JsonRepository<>).MakeGenericType(r.RelatedEntity)) as IRepository;
+                            
+                            var repo = inMemoryRepo ?? jsonRepo;
+
+                            if (repo != null)
                             {
                                 var relatedEntities = await r.RelatedElements
                                     .Select(x => x.Id.ToString())
                                     .ToListAsync(async id =>
                                     {
-                                        var entity = await repo.InternalGetByIdAsync(id, null);
+                                        var entity = await repo.GetByIdAsync(id, null);
                                         return entity;
                                     });
 

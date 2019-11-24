@@ -27,7 +27,7 @@ namespace RapidCMS.Common.Data
 
             return validationAttributes
                 .Select(attr => attr.IsValid(entity, relatedElements, validationContext))
-                .WhereAs(result => result as ValidationResult);
+                .SelectNotNull(result => result as ValidationResult);
         }
     }
 }

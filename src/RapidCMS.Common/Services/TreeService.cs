@@ -46,7 +46,7 @@ namespace RapidCMS.Common.Services
 
             var parent = await _parentService.GetParentAsync(parentPath);
 
-            var testEntity = await collection.Repository.InternalNewAsync(parent, collection.EntityVariant.Type);
+            var testEntity = await collection.Repository.NewAsync(parent, collection.EntityVariant.Type);
 
             var viewAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
                 _httpContextAccessor.HttpContext.User,
@@ -64,7 +64,7 @@ namespace RapidCMS.Common.Services
                 Name = collection.Name,
                 EntitiesVisible = collection.TreeView?.EntityVisibility == EntityVisibilty.Visible,
                 RootVisible = collection.TreeView?.RootVisibility == CollectionRootVisibility.Visible,
-                Icon = "list"
+                Icon = collection.Icon ?? "list"
             };
 
             if (collection.ListEditor != null && editAuthorizationChallenge.Succeeded)
@@ -93,7 +93,7 @@ namespace RapidCMS.Common.Services
             {
                 // TODO: pagination
                 var query = Query.TakeElements(25);
-                var entities = await collection.Repository.InternalGetAllAsync(parent, query);
+                var entities = await collection.Repository.GetAllAsync(parent, query);
 
                 return await entities.ToListAsync(async entity =>
                 {

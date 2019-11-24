@@ -17,4 +17,5 @@ namespace RapidCMS.Common
 
         public const string View = "view";
     }
+
 }

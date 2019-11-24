@@ -48,14 +48,14 @@ namespace RapidCMS.Common.Services
         {
             var collection = _collectionProvider.GetCollection(collectionAlias);
 
-            var dummyEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type));
+            var dummyEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.NewAsync(null, collection.EntityVariant.Type));
             await EnsureAuthorizedUserAsync(usageType, dummyEntity);
 
             await collection.ProcessDataViewAsync(query, _serviceProvider);
 
             var parent = await _parentService.GetParentAsync(parentPath);
 
-            var existingEntities = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalGetAllAsync(parent, query));
+            var existingEntities = await EnsureCorrectConcurrencyAsync(() => collection.Repository.GetAllAsync(parent, query));
 
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, parent);
 
@@ -66,14 +66,14 @@ namespace RapidCMS.Common.Services
         {
             var collection = _collectionProvider.GetCollection(collectionAlias);
 
-            var dummyEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type));
+            var dummyEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.NewAsync(null, collection.EntityVariant.Type));
             await EnsureAuthorizedUserAsync(usageType, dummyEntity);
 
             await collection.ProcessDataViewAsync(query, _serviceProvider);
 
             var existingEntities = usageType.HasFlag(UsageType.Add)
-                ? await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalGetAllNonRelatedAsync(relatedEntity, query))
-                : await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalGetAllRelatedAsync(relatedEntity, query));
+                ? await EnsureCorrectConcurrencyAsync(() => collection.Repository.GetAllNonRelatedAsync(relatedEntity, query))
+                : await EnsureCorrectConcurrencyAsync(() => collection.Repository.GetAllRelatedAsync(relatedEntity, query));
 
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, null);
 
@@ -88,9 +88,9 @@ namespace RapidCMS.Common.Services
 
             var entity = (usageType & ~UsageType.Node) switch
             {
-                UsageType.View => await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalGetByIdAsync(id ?? throw new InvalidOperationException($"Cannot View Node when {id} is null"), parent)),
-                UsageType.Edit => await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalGetByIdAsync(id ?? throw new InvalidOperationException($"Cannot Edit Node when {id} is null"), parent)),
-                UsageType.New => await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalNewAsync(parent, collection.GetEntityVariant(variantAlias).Type)),
+                UsageType.View => await EnsureCorrectConcurrencyAsync(() => collection.Repository.GetByIdAsync(id ?? throw new InvalidOperationException($"Cannot View Node when {id} is null"), parent)),
+                UsageType.Edit => await EnsureCorrectConcurrencyAsync(() => collection.Repository.GetByIdAsync(id ?? throw new InvalidOperationException($"Cannot Edit Node when {id} is null"), parent)),
+                UsageType.New => await EnsureCorrectConcurrencyAsync(() => collection.Repository.NewAsync(parent, collection.GetEntityVariant(variantAlias).Type)),
                 _ => throw new InvalidOperationException($"UsageType {usageType} is invalid for this method")
             };
 
@@ -130,8 +130,6 @@ namespace RapidCMS.Common.Services
             await EnsureAuthorizedUserAsync(editContext, button);
             EnsureValidEditContext(editContext, button);
 
-            var relationContainer = editContext.GetRelationContainer();
-
             ViewCommand viewCommand;
 
             var context = new ButtonContext(editContext.Parent, customData);
@@ -146,12 +144,12 @@ namespace RapidCMS.Common.Services
                     break;
 
                 case CrudType.Update:
-                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalUpdateAsync(id ?? throw new InvalidOperationException(), editContext, editContext.Parent, editContext.Entity, relationContainer));
-                    viewCommand = new ReloadCommand(id);
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.UpdateAsync(editContext));
+                    viewCommand = new ReloadCommand(id!);
                     break;
 
                 case CrudType.Insert:
-                    var entity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalInsertAsync(editContext, editContext.Parent, editContext.Entity, relationContainer));
+                    var entity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InsertAsync(editContext));
                     if (entity == null)
                     {
                         throw new Exception("Inserting the new entity failed.");
@@ -161,7 +159,7 @@ namespace RapidCMS.Common.Services
                     break;
 
                 case CrudType.Delete:
-                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalDeleteAsync(id ?? throw new InvalidOperationException(), editContext.Parent));
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.DeleteAsync(id ?? throw new InvalidOperationException(), editContext.Parent));
                     viewCommand = new NavigateCommand { Uri = UriHelper.Collection(Constants.List, collectionAlias, parentPath) };
                     break;
 
@@ -199,7 +197,7 @@ namespace RapidCMS.Common.Services
             var parent = await _parentService.GetParentAsync(parentPath);
 
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, parent);
-            var entity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalNewAsync(parent, collection.EntityVariant.Type));
+            var entity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.NewAsync(parent, collection.EntityVariant.Type));
 
             await EnsureAuthorizedUserAsync(rootEditContext, button);
 
@@ -239,8 +237,7 @@ namespace RapidCMS.Common.Services
                         {
                             await EnsureAuthorizedUserAsync(editContext, button);
                             EnsureValidEditContext(editContext, button);
-                            var relationContainer = editContext.GetRelationContainer();
-                            await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalUpdateAsync(editContext.Entity.Id, editContext, parent, editContext.Entity, relationContainer));
+                            await EnsureCorrectConcurrencyAsync(() => collection.Repository.UpdateAsync(editContext));
                             affectedEntities.Add(editContext.Entity);
                         }
                         catch (Exception)
@@ -248,7 +245,7 @@ namespace RapidCMS.Common.Services
                             // do not care about any exception in this case
                         }
                     }
-                    viewCommand = new ReloadCommand(affectedEntities.Select(x => x.Id));
+                    viewCommand = new ReloadCommand(affectedEntities.SelectNotNull(x => x.Id));
                     break;
 
                 case CrudType.None:
@@ -285,8 +282,6 @@ namespace RapidCMS.Common.Services
             await EnsureAuthorizedUserAsync(editContext, button);
             EnsureValidEditContext(editContext, button);
 
-            var relationContainer = editContext.GetRelationContainer();
-
             // since the id is known, get the entity variant from the entity
             var entityVariant = collection.GetEntityVariant(editContext.Entity);
 
@@ -306,12 +301,12 @@ namespace RapidCMS.Common.Services
                     break;
 
                 case CrudType.Update:
-                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalUpdateAsync(id, editContext, editContext.Parent, editContext.Entity, relationContainer));
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.UpdateAsync(editContext));
                     viewCommand = new ReloadCommand(id);
                     break;
 
                 case CrudType.Insert:
-                    var insertedEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalInsertAsync(editContext, editContext.Parent, editContext.Entity, relationContainer));
+                    var insertedEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InsertAsync(editContext));
                     if (insertedEntity == null)
                     {
                         throw new Exception("Inserting the new entity failed.");
@@ -328,7 +323,7 @@ namespace RapidCMS.Common.Services
                     break;
 
                 case CrudType.Delete:
-                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalDeleteAsync(id, editContext.Parent));
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.DeleteAsync(id, editContext.Parent));
                     viewCommand = new ReloadCommand();
                     break;
 
@@ -364,7 +359,7 @@ namespace RapidCMS.Common.Services
             }
 
             var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, null);
-            var newEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalNewAsync(null, collection.EntityVariant.Type));
+            var newEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.NewAsync(null, collection.EntityVariant.Type));
 
             await EnsureAuthorizedUserAsync(rootEditContext, button);
 
@@ -406,8 +401,7 @@ namespace RapidCMS.Common.Services
                             var updatedEntity = editContext.Entity;
                             await EnsureAuthorizedUserAsync(editContext, button);
                             EnsureValidEditContext(editContext, button);
-                            var relationContainer = editContext.GetRelationContainer();
-                            await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalUpdateAsync(updatedEntity.Id, editContext, null, updatedEntity, relationContainer));
+                            await EnsureCorrectConcurrencyAsync(() => collection.Repository.UpdateAsync(editContext));
                             affectedEntities.Add(updatedEntity);
                         }
                         catch (Exception)
@@ -415,7 +409,7 @@ namespace RapidCMS.Common.Services
                             // do not care about exceptions here
                         }
                     }
-                    viewCommand = new ReloadCommand(affectedEntities.Select(x => x.Id));
+                    viewCommand = new ReloadCommand(affectedEntities.SelectNotNull(x => x.Id));
                     break;
 
                 case CrudType.Add:
@@ -464,8 +458,6 @@ namespace RapidCMS.Common.Services
 
             EnsureValidEditContext(editContext, button);
 
-            var relationContainer = editContext.GetRelationContainer();
-
             // since the id is known, get the entity variant from the entity
             var entityVariant = collection.GetEntityVariant(editContext.Entity);
 
@@ -483,18 +475,23 @@ namespace RapidCMS.Common.Services
                     break;
 
                 case CrudType.Update:
-                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalUpdateAsync(id, editContext, null, editContext.Entity, relationContainer));
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.UpdateAsync(editContext));
                     viewCommand = new ReloadCommand(id);
                     break;
 
                 case CrudType.Insert:
-                    var insertedEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalInsertAsync(editContext, null, editContext.Entity, relationContainer));
+                    var insertedEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InsertAsync(editContext));
                     if (insertedEntity == null)
                     {
                         throw new Exception("Inserting the new entity failed.");
                     }
                     editContext.SwapEntity(insertedEntity);
-                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalAddAsync(relatedEntity, editContext.Entity.Id));
+                    if (string.IsNullOrWhiteSpace(editContext.Entity.Id))
+                    {
+                        throw new Exception("After inserting new entity Id not set.");
+                    }
+
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.AddAsync(relatedEntity, editContext.Entity.Id));
                     viewCommand = new UpdateParameterCommand
                     {
                         Action = Constants.New,
@@ -507,19 +504,19 @@ namespace RapidCMS.Common.Services
 
                 case CrudType.Delete:
 
-                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalDeleteAsync(id, null));
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.DeleteAsync(id, null));
                     viewCommand = new ReloadCommand();
                     break;
 
                 case CrudType.Pick:
 
-                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalAddAsync(relatedEntity, id));
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.AddAsync(relatedEntity, id));
                     viewCommand = new ReloadCommand();
                     break;
 
                 case CrudType.Remove:
 
-                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalRemoveAsync(relatedEntity, id));
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.RemoveAsync(relatedEntity, id));
                     viewCommand = new ReloadCommand();
                     break;
 
@@ -576,7 +573,7 @@ namespace RapidCMS.Common.Services
         private async Task<EditContext> GetRootEditContextAsync(UsageType usageType, string collectionAlias, IParent? parent)
         {
             var collection = _collectionProvider.GetCollection(collectionAlias);
-            var newEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.InternalNewAsync(parent, collection.EntityVariant.Type));
+            var newEntity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.NewAsync(parent, collection.EntityVariant.Type));
 
             await EnsureAuthorizedUserAsync(usageType, newEntity);
 

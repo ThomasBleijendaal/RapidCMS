@@ -20,14 +20,14 @@
     {
         var repo = Repository as IRepository;
 
-        var users = await repo.InternalGetAllAsync(null, Query.Default());
+        var users = await repo.GetAllAsync(null, Query.Default());
 
         foreach (var user in users)
         {
             var typedUser = (User)user;
             typedUser.Password = "Reset";
 
-            await repo.InternalUpdateAsync(user.Id, EditContext, null, user, null);
+            await repo.UpdateAsync(EditContext);
         }
 
         // CrudType Refresh refreshes the data in the view

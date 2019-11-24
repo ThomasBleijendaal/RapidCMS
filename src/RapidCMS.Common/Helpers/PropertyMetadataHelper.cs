@@ -22,153 +22,122 @@ namespace RapidCMS.Common.Helpers
         /// name: CompanyOwnerName
         /// </summary>
         /// <param name="lambdaExpression">The LambdaExpression to be converted</param>
-        /// <returns>IPropertyMetadata when successful, IFullPropertyMetadata if setter is available</returns>\
-        /// <exception cref="Exception">Thrown when expression is not convertable.</exception>
+        /// <returns>IPropertyMetadata when successful, IFullPropertyMetadata if setter is available. Returns default when unsuccessful.</returns>
         public static IPropertyMetadata? GetPropertyMetadata(LambdaExpression lambdaExpression)
         {
-            try
+            Type? parameterTType = null;
+            Type? parameterTPropertyType = null;
+
+            var parameterT = Expression.Parameter(typeof(object), "x");
+            var parameterTProperty = Expression.Parameter(typeof(object), "y");
+
+            var x = lambdaExpression.Body;
+
+            if (!(x is MemberExpression) && !(x is ParameterExpression))
             {
-                Type? parameterTType = null;
-                Type? parameterTPropertyType = null;
+                parameterTType = lambdaExpression.Parameters.First().Type;
+                var parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
 
-                var parameterT = Expression.Parameter(typeof(object), "x");
-                var parameterTProperty = Expression.Parameter(typeof(object), "y");
-
-                var x = lambdaExpression.Body;
-
-                if (!(x is MemberExpression) && !(x is ParameterExpression))
+                var getter = ConvertToGetterViaLambda(parameterT, lambdaExpression, parameterTAsType);
+                if (getter == null)
                 {
-                    parameterTType = lambdaExpression.Parameters.First().Type;
-                    var parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
-
-                    return new PropertyMetadata
-                    {
-                        ObjectType = parameterTType,
-                        PropertyName = lambdaExpression.ToString(),
-                        PropertyType = lambdaExpression.Body.Type,
-                        Getter = ConvertToGetterViaLambda(parameterT, lambdaExpression, parameterTAsType),
-
-                        Fingerprint = GetFingerprint(lambdaExpression)
-                    };
+                    return default;
                 }
-                else
+
+                return new PropertyMetadata(lambdaExpression.Body.Type, lambdaExpression.ToString(), getter, parameterTType, GetFingerprint(lambdaExpression));
+            }
+            else
+            {
+                var isAtTail = true;
+                var getNestedObjectMethods = new List<MethodInfo>();
+                var names = new List<string>();
+
+                MethodInfo? getValueMethod = null;
+                MethodInfo? setValueMethod = null;
+
+                do
                 {
-                    var isAtTail = true;
-                    var getNestedObjectMethods = new List<MethodInfo>();
-                    var names = new List<string>();
-
-                    MethodInfo? getValueMethod = null;
-                    MethodInfo? setValueMethod = null;
-
-                    do
+                    if (x is MemberExpression memberExpression)
                     {
-                        if (x is MemberExpression memberExpression)
+                        var propertyInfo = memberExpression.Member as PropertyInfo;
+
+                        if (propertyInfo == null || propertyInfo.GetGetMethod() == null)
                         {
-                            var propertyInfo = memberExpression.Member as PropertyInfo;
-
-                            if (propertyInfo == null || propertyInfo.GetGetMethod() == null)
-                            {
-                                throw new Exception("Failed to get PropertyInfo from Member.");
-                            }
-
-                            if (isAtTail)
-                            {
-                                setValueMethod = propertyInfo.GetSetMethod();
-                                getValueMethod = propertyInfo.GetGetMethod();
-                                names.Add(propertyInfo.Name);
-
-                                parameterTPropertyType = propertyInfo.PropertyType;
-
-                                isAtTail = false;
-
-                                x = memberExpression.Expression;
-                            }
-                            else
-                            {
-                                getNestedObjectMethods.Insert(0, propertyInfo.GetGetMethod()!);
-                                names.Insert(0, propertyInfo.Name);
-
-                                x = memberExpression.Expression;
-                            }
+                            return default;
                         }
-                        else if (x is ParameterExpression parameterExpression)
+
+                        if (isAtTail)
                         {
-                            parameterTType = x.Type;
+                            setValueMethod = propertyInfo.GetSetMethod();
+                            getValueMethod = propertyInfo.GetGetMethod();
+                            names.Add(propertyInfo.Name);
 
-                            // expression is x => x
-                            if (getValueMethod == null && parameterExpression == lambdaExpression.Body)
-                            {
-                                return new PropertyMetadata
-                                {
-                                    ObjectType = parameterTType,
-                                    Getter = x => x,
-                                    PropertyName = "Self",
-                                    PropertyType = parameterTType,
+                            parameterTPropertyType = propertyInfo.PropertyType;
 
-                                    Fingerprint = GetFingerprint(lambdaExpression)
-                                };
-                            }
+                            isAtTail = false;
 
-                            // done, arrived at root
-                            break;
+                            x = memberExpression.Expression;
                         }
                         else
                         {
-                            throw new Exception("Failed to interpret given LambdaExpression");
+                            getNestedObjectMethods.Insert(0, propertyInfo.GetGetMethod()!);
+                            names.Insert(0, propertyInfo.Name);
+
+                            x = memberExpression.Expression;
                         }
                     }
-                    while (true);
-
-                    if (getValueMethod == null || parameterTPropertyType == null)
+                    else if (x is ParameterExpression parameterExpression)
                     {
-                        throw new Exception("Failed to process given LambdaExpression");
-                    }
+                        parameterTType = x.Type;
 
-                    var parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
-                    var valueToType = Expression.Convert(parameterTProperty, parameterTPropertyType) as Expression;
-                    var valueToObject = Expression.Convert(Expression.Parameter(parameterTPropertyType, "z"), typeof(object));
-
-                    var instanceExpression = (getNestedObjectMethods.Count == 0)
-                        ? parameterTAsType
-                        : getNestedObjectMethods.Aggregate(
-                            parameterTAsType,
-                            (parameter, method) => Expression.Call(parameter, method));
-
-                    var getter = ConvertToGetterViaMethod(parameterT, getValueMethod, instanceExpression);
-                    var name = string.Join("", names);
-
-                    if (setValueMethod == null)
-                    {
-                        return new PropertyMetadata
+                        // expression is x => x
+                        if (getValueMethod == null && parameterExpression == lambdaExpression.Body)
                         {
-                            ObjectType = parameterTType,
-                            Getter = getter,
-                            PropertyName = name,
-                            PropertyType = parameterTPropertyType,
+                            return new PropertyMetadata(parameterTType, "Self", x => x, parameterTType, GetFingerprint(lambdaExpression));
+                        }
 
-                            Fingerprint = GetFingerprint(lambdaExpression)
-                        };
+                        // done, arrived at root
+                        break;
                     }
                     else
                     {
-                        var setter = ConvertToSetter(parameterT, parameterTProperty, setValueMethod, valueToType, instanceExpression);
-
-                        return new FullPropertyMetadata
-                        {
-                            ObjectType = parameterTType,
-                            Getter = getter,
-                            Setter = setter,
-                            PropertyName = name,
-                            PropertyType = parameterTPropertyType,
-
-                            Fingerprint = GetFingerprint(lambdaExpression)
-                        };
+                        return default;
                     }
                 }
-            }
-            catch
-            {
-                return null;
+                while (true);
+
+                if (getValueMethod == null || parameterTPropertyType == null)
+                {
+                    return default;
+                }
+
+                var parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
+                var valueToType = Expression.Convert(parameterTProperty, parameterTPropertyType) as Expression;
+                var valueToObject = Expression.Convert(Expression.Parameter(parameterTPropertyType, "z"), typeof(object));
+
+                var instanceExpression = (getNestedObjectMethods.Count == 0)
+                    ? parameterTAsType
+                    : getNestedObjectMethods.Aggregate(
+                        parameterTAsType,
+                        (parameter, method) => Expression.Call(parameter, method));
+
+                var name = string.Join("", names);
+
+                var getter = ConvertToGetterViaMethod(parameterT, getValueMethod, instanceExpression);
+                if (getter == null)
+                {
+                    return default;
+                }
+
+                var setter = setValueMethod == null ? default : ConvertToSetter(parameterT, parameterTProperty, setValueMethod, valueToType, instanceExpression);
+                if (setter == null)
+                {
+                    return new PropertyMetadata(parameterTPropertyType, name, getter, parameterTType, GetFingerprint(lambdaExpression));
+                }
+                else
+                {
+                    return new FullPropertyMetadata(parameterTPropertyType, name, getter, setter, parameterTType, GetFingerprint(lambdaExpression));
+                }
             }
         }
 
@@ -180,112 +149,123 @@ namespace RapidCMS.Common.Helpers
         /// objectType: Person
         /// propertyType: string
         /// </summary>
-        /// <exception cref="ArgumentException">Thrown when given LambdaExpression cannot be converted to a getter.</exception>
         /// <param name="lambdaExpression">The LambdaExpression to be converted</param>
-        /// <returns>GetterAndSetter object when successful, null when not.</returns>
+        /// <returns>GetterAndSetter object when successful, default when not.</returns>
         public static IExpressionMetadata? GetExpressionMetadata(LambdaExpression lambdaExpression)
+        {
+            var parameterT = Expression.Parameter(typeof(object), "x");
+            var parameterTType = lambdaExpression.Parameters.First().Type;
+            var parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
+
+            var name = ((lambdaExpression.Body as MemberExpression)?.Member as PropertyInfo)?.Name ?? lambdaExpression.ToString();
+
+            var getter = ConvertToStringGetterViaLambda(parameterT, lambdaExpression, parameterTAsType);
+            if (getter == null)
+            {
+                return default;
+            }
+
+            return new ExpressionMetadata(name, getter);
+        }
+
+        /// <summary>
+        /// Converts a given IPropertyMetadata to an IExpressionMetadata.
+        /// </summary>
+        /// <param name="propertyMetadata"></param>
+        /// <returns></returns>
+        public static IExpressionMetadata GetExpressionMetadata(IPropertyMetadata propertyMetadata)
+        {
+            return new ExpressionMetadata(propertyMetadata.PropertyName, (x => propertyMetadata.Getter(x)?.ToString() ?? ""));
+        }
+
+        private static Func<object, object>? ConvertToGetterViaMethod(ParameterExpression parameterT, MethodInfo getValueMethod, Expression instanceExpression)
         {
             try
             {
-                var parameterT = Expression.Parameter(typeof(object), "x");
-                var parameterTType = lambdaExpression.Parameters.First().Type;
-                var parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
+                var getExpression = Expression.Lambda<Func<object, object>>(
+                    Expression.Convert(Expression.Call(instanceExpression, getValueMethod), typeof(object)),
+                    parameterT
+                );
 
-                var name = ((lambdaExpression.Body as MemberExpression)?.Member as PropertyInfo)?.Name ?? lambdaExpression.ToString();
-
-                return new ExpressionMetadata
-                {
-                    PropertyName = name,
-                    StringGetter = ConvertToStringGetterViaLambda(parameterT, lambdaExpression, parameterTAsType)
-                };
+                return getExpression.Compile();
             }
             catch
             {
-                return null;
+                return default;
             }
         }
 
-        private static Func<object, object> ConvertToGetterViaMethod(ParameterExpression parameterT, MethodInfo getValueMethod, Expression instanceExpression)
+        private static Func<object, object>? ConvertToGetterViaLambda(ParameterExpression parameterT, LambdaExpression lambdaExpression, Expression parameterExpression)
         {
-            var getExpression = Expression.Lambda<Func<object, object>>(
-                Expression.Convert(Expression.Call(instanceExpression, getValueMethod), typeof(object)),
-                parameterT
-            );
+            try
+            {
+                var getExpression = Expression.Lambda<Func<object, object>>(
+                    Expression.Convert(
+                        Expression.Invoke(lambdaExpression, parameterExpression),
+                        typeof(object)),
+                    parameterT);
 
-            return getExpression.Compile();
+                return getExpression.Compile();
+            }
+            catch
+            {
+                return default;
+            }
         }
 
-        private static Func<object, object> ConvertToGetterViaLambda(ParameterExpression parameterT, LambdaExpression lambdaExpression, Expression parameterExpression)
-        {
-            var getExpression = Expression.Lambda<Func<object, object>>(
-                Expression.Convert(
-                    Expression.Invoke(lambdaExpression, parameterExpression),
-                    typeof(object)),
-                parameterT);
-
-            return getExpression.Compile();
-        }
-
-        private static Func<object, string> ConvertToStringGetterViaLambda(ParameterExpression parameterT, LambdaExpression lambdaExpression, Expression parameterExpression)
+        private static Func<object, string>? ConvertToStringGetterViaLambda(ParameterExpression parameterT, LambdaExpression lambdaExpression, Expression parameterExpression)
         {
             if (lambdaExpression.ReturnType != typeof(string))
             {
-                throw new ArgumentException("Expression must return a string.", nameof(lambdaExpression));
+                return default;
             }
 
-            var getExpression = Expression.Lambda<Func<object, string>>(
-                Expression.Coalesce(
-                    Expression.Invoke(lambdaExpression, parameterExpression),
-                    Expression.Constant(string.Empty)),
-                parameterT);
+            try
+            {
+                var getExpression = Expression.Lambda<Func<object, string>>(
+                    Expression.Coalesce(
+                        Expression.Invoke(lambdaExpression, parameterExpression),
+                        Expression.Constant(string.Empty)),
+                    parameterT);
 
-            return getExpression.Compile();
+                return getExpression.Compile();
+            }
+            catch
+            {
+                return default;
+            }
         }
 
-        private static Action<object, object> ConvertToSetter(ParameterExpression parameterT, ParameterExpression parameterTProperty, MethodInfo setValueMethod, Expression valueToType, Expression instanceExpression)
+        private static Action<object, object>? ConvertToSetter(ParameterExpression parameterT, ParameterExpression parameterTProperty, MethodInfo setValueMethod, Expression valueToType, Expression instanceExpression)
         {
-            var setExpression = Expression.Lambda<Action<object, object>>(
-                Expression.Call(instanceExpression, setValueMethod, valueToType),
-                parameterT,
-                parameterTProperty
-            );
+            try
+            {
+                var setExpression = Expression.Lambda<Action<object, object>>(
+                    Expression.Call(instanceExpression, setValueMethod, valueToType),
+                    parameterT,
+                    parameterTProperty
+                );
 
-            return setExpression.Compile();
+                return setExpression.Compile();
+            }
+            catch
+            {
+                return default;
+            }
         }
 
         private readonly static SHA1CryptoServiceProvider Sha1 = new SHA1CryptoServiceProvider();
 
         private static string GetFingerprint(Expression expression)
         {
-            string fingerprint;
-
-            switch (expression)
+            var fingerprint = expression switch
             {
-                case LambdaExpression lambda:
-
-                    fingerprint = $"{GetFingerprint(lambda.Body)}{lambda.Body.Type.ToString()}";
-                    break;
-
-                case MethodCallExpression call:
-
-                    fingerprint = $"{string.Join("", call.Arguments.Select(x => GetFingerprint(x)))}{call.Type.ToString()}";
-                    break;
-
-                case ParameterExpression param:
-
-                    fingerprint = $"{param.IsByRef}{param.Type.ToString()}";
-                    break;
-
-                case MemberExpression member:
-
-                    fingerprint = $"{member.Member.Name}{GetFingerprint(member.Expression)}";
-                    break;
-
-                default:
-
-                    fingerprint = expression.Type.ToString();
-                    break;
-            }
+                LambdaExpression lambda => $"{GetFingerprint(lambda.Body)}{lambda.Body.Type.ToString()}",
+                MethodCallExpression call => $"{string.Join("", call.Arguments.Select(x => GetFingerprint(x)))}{call.Type.ToString()}",
+                ParameterExpression param => $"{param.IsByRef}{param.Type.ToString()}",
+                MemberExpression member => $"{member.Member.Name}{GetFingerprint(member.Expression)}",
+                _ => expression.Type.ToString(),
+            };
 
             return Convert.ToBase64String(Sha1.ComputeHash(Encoding.UTF8.GetBytes(fingerprint)));
         }

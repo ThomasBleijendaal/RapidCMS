@@ -129,6 +129,31 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
             Assert.AreEqual(null, propertyData.Getter(instance));
             Assert.AreEqual(typeof(string), propertyData.PropertyType);
         }
+
+        [Test]
+        public void BasicNullNullableStringExpression()
+        {
+            var instance = new BasicClass { NullableTest = null };
+            Expression<Func<BasicClass, string?>> func = (BasicClass x) => x.NullableTest;
+
+            var data = PropertyMetadataHelper.GetExpressionMetadata(func);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual(string.Empty, data.StringGetter(instance));
+        }
+
+        [Test]
+        public void BasicNotNullNullableStringExpression()
+        {
+            var instance = new BasicClass { NullableTest = "test" };
+            Expression<Func<BasicClass, string?>> func = (BasicClass x) => x.NullableTest;
+
+            var data = PropertyMetadataHelper.GetExpressionMetadata(func);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual("test", data.StringGetter(instance));
+        }
+
         [Test]
         public void BasicStringExpression2()
         {
@@ -166,6 +191,25 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
             Assert.IsNull(propertyData as IFullPropertyMetadata);
             Assert.AreEqual("x => Join( , x.Test.ToCharArray())", propertyData.PropertyName);
             Assert.AreEqual("T e s t   V a l u e", propertyData.Getter(instance));
+        }
+
+        [Test]
+        public void BasicStringExpressionConverted()
+        {
+            var instance = new BasicClass { Test = "Test Value" };
+            Expression<Func<BasicClass, string>> func = (BasicClass x) => string.Join(' ', x.Test.ToCharArray());
+
+            var propertyData = PropertyMetadataHelper.GetPropertyMetadata(func);
+
+            Assert.IsNotNull(propertyData);
+            Assert.IsNull(propertyData as IFullPropertyMetadata);
+            Assert.AreEqual("x => Join( , x.Test.ToCharArray())", propertyData.PropertyName);
+            Assert.AreEqual("T e s t   V a l u e", propertyData.Getter(instance));
+
+            var data = PropertyMetadataHelper.GetExpressionMetadata(propertyData);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual("T e s t   V a l u e", data.StringGetter(instance));
         }
 
         [Test]
@@ -275,6 +319,72 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
         }
 
         [Test]
+        public void BasicNullableProperty()
+        {
+            var instance = new BasicClass { NullableTest = "Test Value" };
+            Expression<Func<BasicClass, string?>> func = (BasicClass x) => x.NullableTest;
+
+            var data = PropertyMetadataHelper.GetPropertyMetadata(func);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual("NullableTest", data.PropertyName);
+            Assert.AreEqual("Test Value", data.Getter(instance));
+            Assert.AreEqual(typeof(string), data.PropertyType);
+            Assert.AreEqual(typeof(BasicClass), data.ObjectType);
+
+            Assert.IsNotNull(data as IFullPropertyMetadata);
+        }
+
+        [Test]
+        public void BasicNullableNonStringProperty()
+        {
+            var instance = new BasicClass { NullableTest = "Test Value", Id = 1 };
+            Expression<Func<BasicClass, int?>> func = (BasicClass x) => x.NullableTest == null ? default(int?) : x.NullableTest.Length;
+
+            var data = PropertyMetadataHelper.GetPropertyMetadata(func);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual(10, data.Getter(instance));
+            Assert.AreEqual(typeof(int?), data.PropertyType);
+            Assert.AreEqual(typeof(BasicClass), data.ObjectType);
+
+            Assert.IsNull(data as IFullPropertyMetadata);
+        }
+
+        [Test]
+        public void NestedNullableProperty()
+        {
+            var instance = new ParentClass { Basic = new BasicClass { NullableTest = "Test Value" } };
+            Expression<Func<ParentClass, string?>> func = (ParentClass x) => x.Basic.NullableTest;
+
+            var data = PropertyMetadataHelper.GetPropertyMetadata(func);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual("BasicNullableTest", data.PropertyName);
+            Assert.AreEqual("Test Value", data.Getter(instance));
+            Assert.AreEqual(typeof(string), data.PropertyType);
+            Assert.AreEqual(typeof(ParentClass), data.ObjectType);
+
+            Assert.IsNotNull(data as IFullPropertyMetadata);
+        }
+
+        [Test]
+        public void NestedNullableNonStringProperty()
+        {
+            var instance = new ParentClass { Basic = new BasicClass { NullableTest = "Test Value", Id = 1 } };
+            Expression<Func<ParentClass, int?>> func = (ParentClass x) => x.Basic == null ? default(int?) : x.Basic.NullableTest == null ? default : x.Basic.NullableTest.Length;
+
+            var data = PropertyMetadataHelper.GetPropertyMetadata(func);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual(10, data.Getter(instance));
+            Assert.AreEqual(typeof(int?), data.PropertyType);
+            Assert.AreEqual(typeof(ParentClass), data.ObjectType);
+
+            Assert.IsNull(data as IFullPropertyMetadata);
+        }
+
+        [Test]
         public void PropertyFingerprintDifference()
         {
             Expression<Func<ParentClass, int>> func1 = (ParentClass x) => x.Basic.Id * 2;
@@ -370,9 +480,10 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
         {
             public string Test { get; set; }
             public int Id { get; set; }
+            public string? NullableTest { get; set; }
         }
 
-        
+
         class ParentClass
         {
             public BasicClass Basic { get; set; }
@@ -387,6 +498,7 @@ namespace RapidCMS.Common.Tests.PropertyMetadata
         {
             public RecursiveClass? Parent { get; set; }
             public string Name { get; set; }
+            public string? NullableTest { get; set; }
 
             IRecursiveClass IRecursiveClass.Parent => Parent;
         }

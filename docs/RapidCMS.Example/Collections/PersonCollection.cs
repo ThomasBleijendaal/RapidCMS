@@ -79,7 +79,9 @@ namespace RapidCMS.Example.Collections
                             // the DisableWhen expression is evaluated everytime any property of the entity is updated
                             // so this allows you to make response forms which show or hide parts based upon the entity and its state
                             section.AddField(x => x.Id).DisableWhen((person, state) => true);
-                            section.AddField(x => x.Name);
+
+                            // it is allowed to use DisplayType fields in Editors, so some readonly data can easily be displayed
+                            section.AddField(x => x.Name).SetType(DisplayType.Label);
                             section.AddField(x => x.Email);
                         });
 

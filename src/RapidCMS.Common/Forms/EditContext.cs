@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Linq.Expressions;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Helpers;
 using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Forms
 {
     // TODO: fix memory leak due to events
-    public sealed class EditContext : IEditContext, IServiceProvider
+    // TODO: should this be a ServiceProvider?
+    public sealed class EditContext : IServiceProvider
     {
         private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();
         private readonly IServiceProvider _serviceProvider;
@@ -52,19 +51,19 @@ namespace RapidCMS.Common.Forms
         {
             ValidateProperty(property);
 
-            GetPropertyState(property).IsModified = true;
+            GetPropertyState(property)!.IsModified = true;
             OnFieldChanged?.Invoke(this, new FieldChangedEventArgs(property));
         }
 
         public void NotifyPropertyBusy(IPropertyMetadata property)
         {
-            GetPropertyState(property).IsBusy = true;
+            GetPropertyState(property)!.IsBusy = true;
             OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(false));
         }
 
         public void NotifyPropertyFinished(IPropertyMetadata property)
         {
-            GetPropertyState(property).IsBusy = false;
+            GetPropertyState(property)!.IsBusy = false;
             OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs());
         }
 
@@ -82,28 +81,12 @@ namespace RapidCMS.Common.Forms
 
         public bool IsValid(IPropertyMetadata property)
         {
-            return !GetPropertyState(property).GetValidationMessages().Any();
+            return !GetPropertyState(property)!.GetValidationMessages().Any();
         }
 
         public bool WasValidated(IPropertyMetadata property)
         {
-            return GetPropertyState(property).WasValidated;
-        }
-
-        public IRelationContainer GetRelationContainer()
-        {
-            return new RelationContainer(DataProviders.Select(x => x.GenerateRelation()).WhereAs(x => x as IRelation));
-        }
-
-        public IEnumerable<string> GetValidationMessages()
-        {
-            foreach (var state in _fieldStates)
-            {
-                foreach (var message in state.Value.GetValidationMessages())
-                {
-                    yield return message;
-                }
-            }
+            return GetPropertyState(property)!.WasValidated;
         }
 
         public IEnumerable<string> GetValidationMessages(IPropertyMetadata property)
@@ -117,21 +100,20 @@ namespace RapidCMS.Common.Forms
             }
         }
 
-        public void AddValidationMessage(IPropertyMetadata property, string message)
-        {
-            GetPropertyState(property).AddMessage(message);
-            GetPropertyState(property).WasValidated = true;
-        }
-
         private bool HasValidationMessages()
         {
-            return GetValidationMessages().Any();
+            return _fieldStates.Values.Any(x => x.GetValidationMessages().Any());
         }
 
-        private PropertyState GetPropertyState(IPropertyMetadata property)
+        internal PropertyState? GetPropertyState(IPropertyMetadata property, bool createWhenNotFound = true)
         {
             if (!_fieldStates.TryGetValue(property, out var fieldState))
             {
+                if (!createWhenNotFound)
+                {
+                    return default;
+                }
+
                 fieldState = new PropertyState(property);
                 _fieldStates.Add(property, fieldState);
             }
@@ -139,7 +121,7 @@ namespace RapidCMS.Common.Forms
             return fieldState;
         }
 
-        private PropertyState? GetFieldState(string propertyName)
+        internal PropertyState? GetPropertyState(string propertyName)
         {
             return _fieldStates.SingleOrDefault(field => field.Key.PropertyName == propertyName).Value;
         }
@@ -187,7 +169,7 @@ namespace RapidCMS.Common.Forms
                     throw new InvalidOperationException("Only validators which explicitly specify which member is invalid should be used.");
                 }
 
-                result.MemberNames.ForEach(name => GetFieldState(name)?.AddMessage(result.ErrorMessage));
+                result.MemberNames.ForEach(name => GetPropertyState(name)?.AddMessage(result.ErrorMessage));
             }
 
             _fieldStates.ForEach(kv => kv.Value.WasValidated = true);
@@ -218,7 +200,7 @@ namespace RapidCMS.Common.Forms
                 results.Add(result);
             }
 
-            var state = GetPropertyState(property);
+            var state = GetPropertyState(property)!;
             state.ClearMessages();
             state.WasValidated = true;
 
@@ -240,21 +222,6 @@ namespace RapidCMS.Common.Forms
             {
                 throw;
             }
-        }
-
-        bool? IEditContext.IsModified<TEntity, TValue>(Expression<Func<TEntity, TValue>> property)
-        {
-            var propertyMetadata = PropertyMetadataHelper.GetPropertyMetadata(property);
-            return propertyMetadata == null 
-                ? default 
-                : _fieldStates.TryGetValue(propertyMetadata, out var fieldState) 
-                    ? fieldState.IsModified 
-                    : default;
-        }
-
-        bool? IEditContext.IsModified(string propertyName)
-        {
-            return GetFieldState(propertyName)?.IsModified;
         }
     }
 }

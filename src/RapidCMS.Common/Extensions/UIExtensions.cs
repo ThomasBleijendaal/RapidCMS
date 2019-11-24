@@ -10,10 +10,9 @@ namespace RapidCMS.Common.Extensions
     {
         internal static ButtonUI ToUI(this Button button, EditContext editContext)
         {
-            return new ButtonUI
+            return new ButtonUI(button.ButtonId)
             {
                 Icon = button.Icon,
-                ButtonId = button.ButtonId,
                 Label = button.Label,
                 ShouldConfirm = button.ShouldAskForConfirmation(editContext),
                 IsPrimary = button.IsPrimary,

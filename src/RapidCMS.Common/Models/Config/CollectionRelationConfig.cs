@@ -40,7 +40,7 @@ namespace RapidCMS.Common.Models.Config
             return this;
         }
 
-        public ICollectionRelationConfig<TEntity, TRelatedEntity> SetElementDisplayProperties(params Expression<Func<TRelatedEntity, string>>[] propertyExpressions)
+        public ICollectionRelationConfig<TEntity, TRelatedEntity> SetElementDisplayProperties(params Expression<Func<TRelatedEntity, string?>>[] propertyExpressions)
         {
             DisplayProperties = propertyExpressions
                 .Select(propertyExpression => PropertyMetadataHelper.GetExpressionMetadata(propertyExpression) ?? throw new InvalidExpressionException(nameof(propertyExpression)))

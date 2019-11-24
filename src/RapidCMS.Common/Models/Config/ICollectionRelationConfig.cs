@@ -11,7 +11,7 @@ namespace RapidCMS.Common.Models.Config
         /// </summary>
         /// <param name="propertyExpressions">Expression(s) indicating how an entity should be displayed in the input / list</param>
         /// <returns></returns>
-        ICollectionRelationConfig<TEntity, TRelatedEntity> SetElementDisplayProperties(params Expression<Func<TRelatedEntity, string>>[] propertyExpressions);
+        ICollectionRelationConfig<TEntity, TRelatedEntity> SetElementDisplayProperties(params Expression<Func<TRelatedEntity, string?>>[] propertyExpressions);
 
         /// <summary>
         /// Sets the property that will be used as id for the relation.

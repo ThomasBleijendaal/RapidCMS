@@ -5,6 +5,7 @@ namespace RapidCMS.Common.Enums
 {
     public enum EditorType
     {
+        None = -99,
         Custom = -1,
 
         TextBox = 0,

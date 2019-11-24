@@ -28,7 +28,7 @@ namespace RapidCMS.Common.Services
             {
                 var collection = _collectionProvider.GetCollection(collectionAlias);
 
-                var entity = await collection.Repository.InternalGetByIdAsync(id, parent);
+                var entity = await collection.Repository.GetByIdAsync(id, parent);
                 if (entity == null)
                 {
                     break;

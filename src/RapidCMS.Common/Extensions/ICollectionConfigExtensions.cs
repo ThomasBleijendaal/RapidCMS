@@ -13,6 +13,12 @@ namespace RapidCMS.Common.Extensions
         public static ICollectionConfig AddCollection<TEntity>(this ICollectionConfig root, string alias, string name, Action<ICollectionConfig<TEntity>> configure)
             where TEntity : IEntity
         {
+            return root.AddCollection(alias, default, name, configure);
+        }
+
+        public static ICollectionConfig AddCollection<TEntity>(this ICollectionConfig root, string alias, string? icon, string name, Action<ICollectionConfig<TEntity>> configure)
+            where TEntity : IEntity
+        {
             if (configure == null)
             {
                 throw new ArgumentNullException(nameof(configure));
@@ -26,7 +32,7 @@ namespace RapidCMS.Common.Extensions
                 throw new NotUniqueException(nameof(alias));
             }
 
-            var configReceiver = new CollectionConfig<TEntity>(alias, name,
+            var configReceiver = new CollectionConfig<TEntity>(alias, icon, name,
                 new EntityVariantConfig(typeof(TEntity).Name, typeof(TEntity)));
 
             configure.Invoke(configReceiver);
@@ -42,7 +48,7 @@ namespace RapidCMS.Common.Extensions
             var collectionConfig = (CollectionConfig)root;
             var collectionRoot = (ICollectionConfig)root;
 
-            var configReceiver = new CollectionConfig<TEntity>(collectionConfig.Alias, collectionConfig.Name, collectionConfig.EntityVariant)
+            var configReceiver = new CollectionConfig<TEntity>(collectionConfig.Alias, collectionConfig.Icon, collectionConfig.Name, collectionConfig.EntityVariant)
             {
                 Recursive = true
             };
@@ -61,6 +67,7 @@ namespace RapidCMS.Common.Extensions
             foreach (var configReceiver in root.Collections.Cast<CollectionConfig>())
             {
                 var collection = new Collection(
+                    configReceiver.Icon,
                     configReceiver.Name,
                     configReceiver.Alias,
                     configReceiver.EntityVariant.ToEntityVariant(),
