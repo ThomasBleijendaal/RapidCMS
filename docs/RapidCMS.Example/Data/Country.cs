@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Forms.Validation;
 using RapidCMS.Example.ValidationAttributes;
 
 namespace RapidCMS.Example.Data
 {
+    [CountryValidation]
     public class Country : IEntity, ICloneable
     {
         public int Id { get; set; }
+
+        [Required]
         public string Name { get; set; }
 
         [MaxTwo]
@@ -22,8 +27,24 @@ namespace RapidCMS.Example.Data
             {
                 Id = Id,
                 Name = Name,
-                People = People.ToList()
+                People = People.ToList(),
+                Metadata = new CountryMetadata
+                {
+                    Continent= Metadata.Continent
+                }
             };
+        }
+
+        [Required, ValidateObject]
+        public CountryMetadata Metadata { get; set; } = new CountryMetadata();
+
+        [CountryMetadataValidation]
+        public class CountryMetadata
+        {
+            [Required]
+            [MinLength(8)]
+            [MaxLength(10)]
+            public string Continent { get; set; }
         }
     }
 }

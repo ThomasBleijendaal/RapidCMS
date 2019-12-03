@@ -1,0 +1,36 @@
+﻿@inherits EditContextComponentBase
+
+@if (EditContext.GetStrayValidationMessages().Any())
+{
+    <div class="validation-summary-errors">
+        <ul>
+            @foreach (var message in EditContext.GetStrayValidationMessages())
+            {
+                <li>@message</li>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    protected override void AttachValidationStateChangedListener()
+    {
+        if (EditContext != null)
+        {
+            EditContext.OnValidationStateChanged += ValidationStateChangeHandler;
+        }
+    }
+
+    protected override void DetachValidationStateChangedListener()
+    {
+        if (EditContext != null)
+        {
+            EditContext.OnValidationStateChanged -= ValidationStateChangeHandler;
+        }
+    }
+
+    private void ValidationStateChangeHandler(object? sender, ValidationStateChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
+}

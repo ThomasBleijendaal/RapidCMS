@@ -18,6 +18,8 @@ else
     <CascadingEditContext EditContext=@EditContext>
         <ButtonBar Buttons="Buttons" OnButtonClick="ButtonOnClickAsync" />
 
+        <EditContextStrayErrors />
+
         @if (Sections != null)
         {
             @foreach (var section in Sections)

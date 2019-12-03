@@ -39,6 +39,7 @@ namespace RapidCMS.Example.Collections
                         editor.AddSection(section =>
                         {
                             section.AddField(x => x.Name);
+                            section.AddField(x => x.Metadata.Continent);
 
                             // this property contains a list of people it is related to
                             // you can see it as a ICollection<TRelated> property in EF Core

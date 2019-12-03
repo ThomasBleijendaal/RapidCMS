@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace RapidCMS.Common.Attributes
+namespace RapidCMS.Common.Forms.Validation
 {
     public abstract class RelationValidationAttribute : Attribute
     {

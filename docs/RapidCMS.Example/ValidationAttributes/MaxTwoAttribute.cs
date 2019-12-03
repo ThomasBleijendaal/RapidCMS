@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Data;
+using RapidCMS.Common.Forms.Validation;
 
 namespace RapidCMS.Example.ValidationAttributes
 {

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using RapidCMS.Common.Attributes;
 using RapidCMS.Common.Extensions;
+using RapidCMS.Common.Forms.Validation;
 using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Data

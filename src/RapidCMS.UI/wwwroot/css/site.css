@@ -196,6 +196,17 @@ app {
     padding-left: 2rem;
 }
 
+.validation-summary-errors {
+    background: #fdd;
+    padding: 1rem 1rem 1rem 1rem;
+    border-bottom: 4px solid #f55;
+    box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
+    margin: 0 1rem 0;
+}
+    .validation-summary-errors ul li {
+        color: red;
+    }
+
 .content {
     background: #fff;
     padding: 1rem 1rem 1rem 1rem;

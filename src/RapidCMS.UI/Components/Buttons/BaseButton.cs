@@ -28,7 +28,7 @@ namespace RapidCMS.UI.Components.Buttons
             }
         }
 
-        private void ValidationStateChangeHandler(object sender, ValidationStateChangedEventArgs e)
+        private void ValidationStateChangeHandler(object? sender, ValidationStateChangedEventArgs e)
         {
             FormIsValid = e.IsValid != false;
 

@@ -5,7 +5,7 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     
-    <Version>1.6.0</Version>
+    <Version>1.7.0</Version>
     
     <Authors>Thomas Bleijendaal</Authors>
     <Company>Thomas Bleijendaal</Company>
@@ -19,8 +19,6 @@ RapidCMS is a Blazor framework which allows you to build a responsive and flexib
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageTags>Blazor, CMS</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>1.4.0.0</AssemblyVersion>
-    <FileVersion>1.4.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

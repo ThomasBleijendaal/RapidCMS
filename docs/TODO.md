@@ -9,6 +9,8 @@ TODO:
 
 [] Deleting node in nested ListEditors gives error due to unfound List
 
+[] Find solution for stray validation messages for Table / Block ListEditor
+
 2.0
 [] Add more than one view to page (to allow for ListView + CustomBlock)
 [] GetRelationListViewAsync method evaluates authorization for all buttons to relatedEntity, while the processing functions will evaluate authorizaton sometimes to IEntity and sometimes to IRelatedEntity.

@@ -5,6 +5,7 @@ using System.Linq;
 using RapidCMS.Common.Data;
 using RapidCMS.Common.Enums;
 using RapidCMS.Common.Extensions;
+using RapidCMS.Common.Forms.Validation;
 using RapidCMS.Common.Models.Metadata;
 
 namespace RapidCMS.Common.Forms
@@ -13,6 +14,7 @@ namespace RapidCMS.Common.Forms
     // TODO: should this be a ServiceProvider?
     public sealed class EditContext : IServiceProvider
     {
+        private readonly FormState _formState = new FormState();
         private readonly Dictionary<IPropertyMetadata, PropertyState> _fieldStates = new Dictionary<IPropertyMetadata, PropertyState>();
         private readonly IServiceProvider _serviceProvider;
 
@@ -105,9 +107,14 @@ namespace RapidCMS.Common.Forms
             }
         }
 
+        public IEnumerable<string> GetStrayValidationMessages()
+        {
+            return _formState.GetValidationMessages();
+        }
+
         private bool HasValidationMessages()
         {
-            return _fieldStates.Values.Any(x => x.GetValidationMessages().Any());
+            return _formState.GetValidationMessages().Any() || _fieldStates.Values.Any(x => x.GetValidationMessages().Any());
         }
 
         internal PropertyState? GetPropertyState(IPropertyMetadata property, bool createWhenNotFound = true)
@@ -133,6 +140,8 @@ namespace RapidCMS.Common.Forms
 
         private void ClearAllFieldStates()
         {
+            _formState.ClearMessages();
+
             foreach (var fieldState in _fieldStates)
             {
                 fieldState.Value.ClearMessages();
@@ -140,6 +149,81 @@ namespace RapidCMS.Common.Forms
         }
 
         private void ValidateModel()
+        {
+            var results = GetValidationResultsForModel();
+
+            foreach (var result in results)
+            {
+                var strayError = true;
+
+                result.MemberNames.ForEach(name =>
+                {
+                    GetPropertyState(name)?.AddMessage(result.ErrorMessage);
+                    strayError = false;
+                });
+
+                if (strayError)
+                {
+                    _formState.AddMessage(result.ErrorMessage);
+                }
+            }
+
+            _fieldStates.ForEach(kv => kv.Value.WasValidated = true);
+
+            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !HasValidationMessages()));
+        }
+
+        private void ValidateProperty(IPropertyMetadata property)
+        {
+            IEnumerable<ValidationResult> results;
+
+            // when a property must be validated which is not part of the entity (like a nested object)
+            // validate the complete model, but only keep the results of that property
+            if (Entity.GetType().GetProperty(property.PropertyName) == null)
+            {
+                results = GetValidationResultsForModel().Where(x => x.MemberNames.Contains(property.PropertyName));
+            }
+            else
+            {
+                results = GetValidationResultsForProperty(property);
+            }
+
+            var state = GetPropertyState(property)!;
+            state.ClearMessages();
+            state.WasValidated = true;
+
+            foreach (var result in results)
+            {
+                state.AddMessage(result.ErrorMessage);
+            }
+
+            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !HasValidationMessages()));
+        }
+
+        private IEnumerable<ValidationResult> GetValidationResultsForProperty(IPropertyMetadata property)
+        {
+            var results = new List<ValidationResult>();
+            var context = new ValidationContext(Entity, _serviceProvider, null)
+            {
+                MemberName = property.PropertyName
+            };
+
+            try
+            {
+                // even though this says Try, and therefore it should not throw an error, IT DOES when a given property is not part of Entity
+                Validator.TryValidateProperty(property.Getter(Entity), context, results);
+            }
+            catch { }
+
+            foreach (var result in DataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(Entity, _serviceProvider)))
+            {
+                results.Add(result);
+            }
+
+            return results;
+        }
+
+        private IEnumerable<ValidationResult> GetValidationResultsForModel()
         {
             var context = new ValidationContext(Entity, _serviceProvider, null);
             var results = new List<ValidationResult>();
@@ -149,10 +233,7 @@ namespace RapidCMS.Common.Forms
                 // even though this says Try, and therefore it should not throw an error, IT DOES when a given property is not part of Entity
                 Validator.TryValidateObject(Entity, context, results, true);
             }
-            catch
-            {
-
-            }
+            catch { }
 
             ClearAllFieldStates();
 
@@ -167,54 +248,29 @@ namespace RapidCMS.Common.Forms
                 results.Add(result);
             }
 
-            foreach (var result in results)
-            {
-                if (!result.MemberNames.Any())
-                {
-                    throw new InvalidOperationException("Only validators which explicitly specify which member is invalid should be used.");
-                }
-
-                result.MemberNames.ForEach(name => GetPropertyState(name)?.AddMessage(result.ErrorMessage));
-            }
-
-            _fieldStates.ForEach(kv => kv.Value.WasValidated = true);
-
-            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !HasValidationMessages()));
+            return FlattenCompositeValidationResults(results);
         }
 
-        private void ValidateProperty(IPropertyMetadata property)
+        private IEnumerable<ValidationResult> FlattenCompositeValidationResults(IEnumerable<ValidationResult> results, string? memberNamePrefix = null)
         {
-            var context = new ValidationContext(Entity, _serviceProvider, null)
-            {
-                MemberName = property.PropertyName
-            };
-            var results = new List<ValidationResult>();
-
-            try
-            {
-                // even though this says Try, and therefore it should not throw an error, IT DOES when a given property is not part of Entity
-                Validator.TryValidateProperty(property.Getter(Entity), context, results);
-            }
-            catch
-            {
-
-            }
-
-            foreach (var result in DataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(Entity, _serviceProvider)))
-            {
-                results.Add(result);
-            }
-
-            var state = GetPropertyState(property)!;
-            state.ClearMessages();
-            state.WasValidated = true;
-
             foreach (var result in results)
             {
-                state.AddMessage(result.ErrorMessage);
+                if (result is CompositeValidationResult composite)
+                {
+                    foreach (var nestedResult in FlattenCompositeValidationResults(composite.Results, composite.MemberName))
+                    {
+                        yield return nestedResult;
+                    }
+                }
+                else if (string.IsNullOrWhiteSpace(memberNamePrefix))
+                {
+                    yield return result;
+                }
+                else
+                {
+                    yield return new ValidationResult(result.ErrorMessage, result.MemberNames.Select(x => $"{memberNamePrefix}{x}"));
+                }
             }
-
-            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !HasValidationMessages()));
         }
 
         public object GetService(Type serviceType)
