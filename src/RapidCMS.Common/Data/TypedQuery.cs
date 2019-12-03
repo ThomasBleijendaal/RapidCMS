@@ -4,24 +4,17 @@ using System.Linq.Expressions;
 namespace RapidCMS.Common.Data
 {
     internal class TypedQuery<TEntity> : IQuery, IQuery<TEntity>
-        where TEntity : IEntity
     {
         private readonly Query _query;
 
         public static IQuery<TEntity> Convert(IQuery query)
         {
-            if (query is Query q1)
+            return query switch
             {
-                return new TypedQuery<TEntity>(q1);
-            }
-            else if (query is TypedQuery<TEntity> q2)
-            {
-                return q2;
-            }
-            else
-            {
-                throw new InvalidOperationException();
-            }
+                Query q => new TypedQuery<TEntity>(q),
+                TypedQuery<TEntity> q => q,
+                _ => throw new InvalidOperationException()
+            }; 
         }
 
         public TypedQuery(Query query)

@@ -80,7 +80,7 @@ namespace RapidCMS.Common.Models.Config
         }
 
         public ICollectionConfig<TEntity> SetDataViewBuilder<TDataViewBuilder>()
-            where TDataViewBuilder : DataViewBuilder<TEntity>
+            where TDataViewBuilder : IDataViewBuilder
         {
             DataViewBuilder = typeof(TDataViewBuilder);
 

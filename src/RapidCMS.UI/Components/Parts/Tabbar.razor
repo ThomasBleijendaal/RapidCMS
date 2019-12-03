@@ -1,23 +1,26 @@
 ﻿@using System.Threading
 
-<ul class="nav nav-tabs @((Tabs == null || !Tabs.Any()) ? "nav-tabs-collapse" : "")">
-    @if (Tabs != null && Tabs.Any())
-    {
-        @foreach (var tab in Tabs)
+@if ((Tabs != null && Tabs.Any()) || SearchBarVisible)
+{
+    <ul class="nav nav-tabs @((Tabs == null || !Tabs.Any()) ? "nav-tabs-collapse" : "")">
+        @if (Tabs != null && Tabs.Any())
         {
-            <li class="nav-item">
-                <a class="nav-link @((tab.Id == activeTab) ? "active" : "")" @onclick="@(args => Tab(tab.Id))" href="javascript:;">@tab.Label</a>
+            @foreach (var tab in Tabs)
+            {
+                <li class="nav-item">
+                    <a class="nav-link @((tab.Id == activeTab) ? "active" : "")" @onclick="@(args => Tab(tab.Id))" href="javascript:;">@tab.Label</a>
+                </li>
+            }
+        }
+
+        @if (SearchBarVisible)
+        {
+            <li class="nav-item search">
+                <input type="search" placeholder="Search.." class="form-control" @onchange="Search" />
             </li>
         }
-    }
-
-    @if (SearchBarVisible)
-    {
-        <li class="nav-item search">
-            <input type="search" placeholder="Search.." class="form-control" @onchange="Search" />
-        </li>
-    }
-</ul>
+    </ul>
+}
 
 @code {
     int? activeTab = null;

@@ -186,6 +186,11 @@ app {
         margin: .2rem 1.5rem -3.2rem 0rem;
     }
 
+.nested-content .nav-tabs.nav-tabs-collapse {
+    
+}
+
+
 .sidebar .nav-item a {
     margin-left: -1rem;
     padding-left: 2rem;

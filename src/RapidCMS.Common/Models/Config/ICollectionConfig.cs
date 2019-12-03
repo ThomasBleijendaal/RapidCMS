@@ -33,7 +33,7 @@ namespace RapidCMS.Common.Models.Config
         /// <typeparam name="TDataViewBuilder"></typeparam>
         /// <returns></returns>
         ICollectionConfig<TEntity> SetDataViewBuilder<TDataViewBuilder>() 
-            where TDataViewBuilder : DataViewBuilder<TEntity>;
+            where TDataViewBuilder : IDataViewBuilder;
         
         /// <summary>
         /// Sets the ListEditor of this collection

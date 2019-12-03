@@ -89,6 +89,11 @@ namespace RapidCMS.Common.Forms
             return GetPropertyState(property)!.WasValidated;
         }
 
+        public void AddValidationMessage(IPropertyMetadata property, string message)
+        {
+            GetPropertyState(property, true)!.AddMessage(message);
+        }
+
         public IEnumerable<string> GetValidationMessages(IPropertyMetadata property)
         {
             if (_fieldStates.TryGetValue(property, out var state))

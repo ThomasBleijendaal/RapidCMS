@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 namespace RapidCMS.Common.Data
 {
     public abstract class DataViewBuilder<TEntity> : IDataViewBuilder
-        where TEntity : IEntity
     {
         /// <summary>
         /// This method is called when the list view / editor want to get all data views for the list.

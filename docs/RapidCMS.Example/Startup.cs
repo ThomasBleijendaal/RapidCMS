@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RapidCMS.Common.Data;
 using RapidCMS.Example.ActionHandlers;
 using RapidCMS.Example.Collections;
 using RapidCMS.Example.Components;
 using RapidCMS.Example.Data;
+using RapidCMS.Example.DataViews;
 using RapidCMS.Repositories;
 
 namespace RapidCMS.Example
@@ -33,6 +35,10 @@ namespace RapidCMS.Example
             services.AddSingleton<JsonRepository<TagGroup>>();
             services.AddSingleton<JsonRepository<Tag>>();
 
+            services.AddSingleton<MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
+            services.AddSingleton<IConverter<MappedEntity, DatabaseEntity>>(new Mapper());
+            services.AddSingleton<DatabaseEntityDataViewBuilder>();
+
             services.AddSingleton<RandomNameActionHandler>();
 
             services.AddRapidCMS(config =>
@@ -54,6 +60,9 @@ namespace RapidCMS.Example
                 // CRUD editor with nested collection
                 // --> see Collections/TagCollection
                 config.AddTagCollection();
+
+                // CRUD editor with entity mapping
+                config.AddMappedCollection();
                 
                 // the dashboard can be build up of custom Blazor components, or the ListViews or ListEditors of collections
                 config.AddDashboardSection(typeof(DashboardSection));
@@ -64,6 +73,8 @@ namespace RapidCMS.Example
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseRapidCMS(isDevelopment: env.IsDevelopment());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -85,6 +96,29 @@ namespace RapidCMS.Example
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+        }
+    }
+
+    public class Mapper : IConverter<MappedEntity, DatabaseEntity>
+    {
+        public MappedEntity Convert(DatabaseEntity obj)
+        {
+            return new MappedEntity
+            {
+                Description = obj.Description,
+                Id = obj.Id,
+                Name = obj.Name
+            };
+        }
+
+        public DatabaseEntity Convert(MappedEntity obj)
+        {
+            return new DatabaseEntity
+            {
+                Description = obj.Description,
+                Id = obj.Id,
+                Name = obj.Name
+            };
         }
     }
 }

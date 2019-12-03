@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 namespace RapidCMS.Common.Data
 {
     public class DataView<TEntity> : IDataView
-        where TEntity : IEntity
     {
         public DataView(int id, string label, Expression<Func<TEntity, bool>> expression)
         {

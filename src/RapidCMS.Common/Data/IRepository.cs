@@ -31,25 +31,4 @@ namespace RapidCMS.Common.Data
 
         IChangeToken ChangeToken { get; }
     }
-
-    internal interface IRepository<TKey, TEntity> : IRepository
-        where TEntity : class, IEntity
-    {
-        Task<TEntity?> GetByIdAsync(TKey id, IParent? parent);
-        Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query);
-        Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query);
-        Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query);
-
-        new Task<TEntity> NewAsync(IParent? parent, Type? variantType);
-        Task<TEntity?> InsertAsync(IParent? parent, TEntity entity, IRelationContainer? relations);
-        Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext);
-        Task UpdateAsync(TKey id, IParent? parent, TEntity entity, IRelationContainer? relations);
-        Task UpdateAsync(IEditContext<TEntity> editContext);
-        Task DeleteAsync(TKey id, IParent? parent);
-
-        Task AddAsync(IEntity relatedEntity, TKey id);
-        Task RemoveAsync(IEntity relatedEntity, TKey id);
-
-        TKey ParseKey(string id);
-    }
 }

@@ -8,14 +8,16 @@ using RapidCMS.Common.Forms;
 namespace RapidCMS.Common.Data
 {
     /// <summary>
-    /// Base class of which most repositories should be derived. 
+    /// Base class of repository when backing store requires a mapping (the database entity cannot be used directly in the view).
     /// 
-    /// When backing store of this repository requires a mapping (the database entity cannot be used directly in the view), use MappedBaseRepository.
+    /// If TEntity == TQueryEntity, use BaseRepository
     /// </summary>
-    /// <typeparam name="TKey">Type of the id of the TEntity</typeparam>
-    /// <typeparam name="TEntity">Type of the entity used in views and in the backing store</typeparam>
-    public abstract class BaseRepository<TKey, TEntity> : IRepository
+    /// <typeparam name="TKey">The of the id of the TDatabaseEntity</typeparam>
+    /// <typeparam name="TEntity">Type of the entity used in the views</typeparam>
+    /// <typeparam name="TDatabaseEntity">Type of the entity in the backing store</typeparam>
+    public abstract class MappedBaseRepository<TKey, TEntity, TDatabaseEntity> : IRepository
         where TEntity : class, IEntity
+        where TDatabaseEntity : class
     {
         /// <summary>
         /// This method gets an entity belonging to the given id and parent(s).
@@ -27,28 +29,34 @@ namespace RapidCMS.Common.Data
 
         /// <summary>
         /// This method gets all entities belonging to the given parent(s) and query instructions (paging / search).
+        /// 
+        /// This query is based on the TDatabaseEntity, and not TEntity to allow for mapping.
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public abstract Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query);
+        public abstract Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TDatabaseEntity> query);
 
         /// <summary>
         /// This method gets all entities that are related to the given entity and query instruction (paging / search).
+        /// 
+        /// This query is based on the TDatabaseEntity, and not TEntity to allow for mapping.
         /// </summary>
         /// <param name="relatedEntity"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query)
+        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery<TDatabaseEntity> query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllRelatedAsync)} on the {GetType()}.");
 
         /// <summary>
         /// This method gets all entities that match the given query instruction (paging / search) but are not related to the given entity.
+        /// 
+        /// This query is based on the TDatabaseEntity, and not TEntity to allow for mapping.
         /// </summary>
         /// <param name="relatedEntity"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery<TEntity> query)
+        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery<TDatabaseEntity> query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllNonRelatedAsync)} on the {GetType()}.");
 
         /// <summary>
@@ -153,17 +161,17 @@ namespace RapidCMS.Common.Data
 
         async Task<IEnumerable<IEntity>> IRepository.GetAllAsync(IParent? parent, IQuery query)
         {
-            return (await GetAllAsync(parent, TypedQuery<TEntity>.Convert(query))).Cast<IEntity>();
+            return (await GetAllAsync(parent, TypedQuery<TDatabaseEntity>.Convert(query))).Cast<IEntity>();
         }
 
         async Task<IEnumerable<IEntity>> IRepository.GetAllRelatedAsync(IEntity relatedEntity, IQuery query)
         {
-            return (await GetAllRelatedAsync(relatedEntity, TypedQuery<TEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+            return (await GetAllRelatedAsync(relatedEntity, TypedQuery<TDatabaseEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
         }
 
         async Task<IEnumerable<IEntity>> IRepository.GetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
         {
-            return (await GetAllNonRelatedAsync(relatedEntity, TypedQuery<TEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+            return (await GetAllNonRelatedAsync(relatedEntity, TypedQuery<TDatabaseEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
         }
 
         async Task<IEntity> IRepository.NewAsync(IParent? parent, Type? variantType)
