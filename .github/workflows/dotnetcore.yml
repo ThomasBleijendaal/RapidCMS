@@ -19,3 +19,11 @@ jobs:
       run: dotnet build --configuration Release ./src/RapidCMS.Repositories/RapidCMS.Repositories.csproj
     - name: Build UI
       run: dotnet build --configuration Release ./src/RapidCMS.UI/RapidCMS.UI.csproj
+
+  release:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Authenticate
+      run: nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/ThomasBleijendaal/index.json" -UserName ThomasBleijendaal -Password GH_TOKEN
