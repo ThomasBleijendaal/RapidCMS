@@ -20,14 +20,8 @@ jobs:
     - name: Build UI
       run: dotnet build --configuration Release ./src/RapidCMS.UI/RapidCMS.UI.csproj
     - name: Publish Common
-      with:
-        apikey: ${{ secrets.NUGET_APIKEY }}
-      run: dotnet nuget push ./src/RapidCMS.Common/bin/Release/*.nupkg -k apikey -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ./src/RapidCMS.Common/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json
     - name: Publish Repositories
-      with:
-        apikey: ${{ secrets.NUGET_APIKEY }}
-      run: dotnet nuget push ./src/RapidCMS.Repositories/bin/Release/*.nupkg -k apikey -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ./src/RapidCMS.Repositories/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json
     - name: Publish UI
-      with:
-        apikey: ${{ secrets.NUGET_APIKEY }}
-      run: dotnet nuget push ./src/RapidCMS.UI/bin/Release/*.nupkg -k apikey -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ./src/RapidCMS.UI/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json
