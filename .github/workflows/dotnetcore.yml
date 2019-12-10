@@ -14,8 +14,8 @@ jobs:
       with:
         dotnet-version: 3.1.100
     - name: Build Common
-      run: dotnet build --configuration Release .\src\RapidCMS.Common\RapidCMS.Common.csproj
+      run: dotnet build --configuration Release ./src/RapidCMS.Common/RapidCMS.Common.csproj
     - name: Build Repositories
-      run: dotnet build --configuration Release .\src\RapidCMS.Repositories\RapidCMS.Repositories.csproj
+      run: dotnet build --configuration Release ./src/RapidCMS.Repositories/RapidCMS.Repositories.csproj
     - name: Build UI
-      run: dotnet build --configuration Release .\src\RapidCMS.UI\RapidCMS.UI.csproj
+      run: dotnet build --configuration Release ./src/RapidCMS.UI/RapidCMS.UI.csproj
