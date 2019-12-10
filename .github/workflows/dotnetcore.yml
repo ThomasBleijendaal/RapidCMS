@@ -22,8 +22,13 @@ jobs:
 
   release:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-    - name: Authenticate
-      run: nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/ThomasBleijendaal/index.json" -UserName ThomasBleijendaal -Password GH_TOKEN
+    - uses: actions/checkout@master
+
+    - name: Setup Nuget.exe
+      uses: warrenbuckley/Setup-Nuget@v1
+
+    - name: Nuget Push
+      run: nuget push *.nupkg
