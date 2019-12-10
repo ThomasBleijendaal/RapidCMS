@@ -19,16 +19,9 @@ jobs:
       run: dotnet build --configuration Release ./src/RapidCMS.Repositories/RapidCMS.Repositories.csproj
     - name: Build UI
       run: dotnet build --configuration Release ./src/RapidCMS.UI/RapidCMS.UI.csproj
-
-  release:
-
-    runs-on: windows-latest
-
-    steps:
-    - uses: actions/checkout@master
-
-    - name: Setup Nuget.exe
-      uses: warrenbuckley/Setup-Nuget@v1
-
-    - name: Nuget Push
-      run: nuget push *.nupkg
+    - name: Publish Common
+      run: dotnet nuget push ./src/RapidCMS.Common/bin/Release/*.nupkg -k NUGET_APIKEY -s https://api.nuget.org/v3/index.json
+    - name: Publish Repositories
+      run: dotnet nuget push ./src/RapidCMS.Repositories/bin/Release/*.nupkg -k NUGET_APIKEY -s https://api.nuget.org/v3/index.json
+    - name: Publish UI
+      run: dotnet nuget push ./src/RapidCMS.UI/bin/Release/*.nupkg -k NUGET_APIKEY -s https://api.nuget.org/v3/index.json

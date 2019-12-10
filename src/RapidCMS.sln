@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D1C57F34-48F6-4704-839B-4B158CE3C7EE}"
 	ProjectSection(SolutionItems) = preProject
 		..\AUTH.md = ..\AUTH.md
+		..\.github\workflows\dotnetcore.yml = ..\.github\workflows\dotnetcore.yml
 		..\LICENSE.md = ..\LICENSE.md
 		..\README.md = ..\README.md
 		..\SCREENSHOTS.md = ..\SCREENSHOTS.md
