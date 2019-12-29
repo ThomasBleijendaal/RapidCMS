@@ -23,6 +23,7 @@
 
         // navigation actions
         Return = 1000,
-        Refresh = 1001
+        Refresh = 1001,
+        Up = 1002
     }
 }

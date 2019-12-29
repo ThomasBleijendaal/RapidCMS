@@ -4,7 +4,7 @@ using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models.Config
 {
-    public interface IDisplayFieldConfig<TEntity, TValue>
+    public interface IDisplayFieldConfig<TEntity, TValue> : IHasOrderBy<TEntity, IDisplayFieldConfig<TEntity, TValue>>
         where TEntity : IEntity
     {
         /// <summary>

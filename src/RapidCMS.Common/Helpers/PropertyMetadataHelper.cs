@@ -44,7 +44,7 @@ namespace RapidCMS.Common.Helpers
                     return default;
                 }
 
-                return new PropertyMetadata(lambdaExpression.Body.Type, lambdaExpression.ToString(), getter, parameterTType, GetFingerprint(lambdaExpression));
+                return new PropertyMetadata(lambdaExpression, lambdaExpression.Body.Type, lambdaExpression.ToString(), getter, parameterTType, GetFingerprint(lambdaExpression));
             }
             else
             {
@@ -93,7 +93,7 @@ namespace RapidCMS.Common.Helpers
                         // expression is x => x
                         if (getValueMethod == null && parameterExpression == lambdaExpression.Body)
                         {
-                            return new PropertyMetadata(parameterTType, "Self", x => x, parameterTType, GetFingerprint(lambdaExpression));
+                            return new PropertyMetadata(lambdaExpression, parameterTType, "Self", x => x, parameterTType, GetFingerprint(lambdaExpression));
                         }
 
                         // done, arrived at root
@@ -132,11 +132,11 @@ namespace RapidCMS.Common.Helpers
                 var setter = setValueMethod == null ? default : ConvertToSetter(parameterT, parameterTProperty, setValueMethod, valueToType, instanceExpression);
                 if (setter == null)
                 {
-                    return new PropertyMetadata(parameterTPropertyType, name, getter, parameterTType, GetFingerprint(lambdaExpression));
+                    return new PropertyMetadata(lambdaExpression, parameterTPropertyType, name, getter, parameterTType, GetFingerprint(lambdaExpression));
                 }
                 else
                 {
-                    return new FullPropertyMetadata(parameterTPropertyType, name, getter, setter, parameterTType, GetFingerprint(lambdaExpression));
+                    return new FullPropertyMetadata(lambdaExpression, parameterTPropertyType, name, getter, setter, parameterTType, GetFingerprint(lambdaExpression));
                 }
             }
         }

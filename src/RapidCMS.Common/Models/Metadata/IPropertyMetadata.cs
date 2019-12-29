@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace RapidCMS.Common.Models.Metadata
 {
@@ -10,5 +11,7 @@ namespace RapidCMS.Common.Models.Metadata
         Func<object, object> Getter { get; }
 
         string Fingerprint { get; }
+
+        LambdaExpression OriginalExpression { get; }
     }
 }

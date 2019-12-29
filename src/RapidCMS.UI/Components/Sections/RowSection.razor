@@ -72,5 +72,5 @@
     private bool CollapseEmptyCells => UI.EmptyVariantColumnVisibility == EmptyVariantColumnVisibility.Collapse;
 
     [Parameter] public ListUI UI { get; set; }
-    [Parameter] public EventHandler<ButtonClickEventArgs> OnButtonClick { get; set; }
+    [Parameter] public EventCallback<ButtonClickEventArgs> OnButtonClick { get; set; }
 }

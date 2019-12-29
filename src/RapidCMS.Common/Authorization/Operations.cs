@@ -38,7 +38,7 @@ namespace RapidCMS.Common.Authorization
         
         internal static OperationAuthorizationRequirement GetOperationForUsageType(UsageType type)
         {
-            return type switch
+            return (type & ~(UsageType.Root | UsageType.NotRoot)) switch
             {
                 UsageType.Add => Add,
                 UsageType.Edit => Update,

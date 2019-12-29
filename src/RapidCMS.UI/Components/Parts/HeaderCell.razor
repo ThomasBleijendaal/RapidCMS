@@ -1,0 +1,40 @@
+﻿@if (Field != null)
+{
+    <td @onclick="HandleClick">
+        @Field.Name
+        <small>@Field.Description</small>
+
+        @if (Field.IsSortable())
+        {
+            @if (Field.SortDescending == OrderByType.None)
+            {
+                <i class="icon ion-md-arrow-dropright-circle" title="No order">&nbsp;</i>
+            }
+            else if (Field.SortDescending == OrderByType.Ascending)
+            {
+                <i class="icon ion-md-arrow-dropup-circle" title="Ascending order">&nbsp;</i>
+            }
+            else if (Field.SortDescending == OrderByType.Descending)
+            {
+                <i class="icon ion-md-arrow-dropdown-circle" title="Descending order">&nbsp;</i>
+            }
+        }
+    </td>
+}
+
+@code {
+    [Parameter] public FieldUI? Field { get; set; }
+    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+
+    private async Task HandleClick(MouseEventArgs args)
+    {
+        Field!.SortDescending =
+            Field.SortDescending == OrderByType.Ascending
+            ? OrderByType.Descending
+            : Field.SortDescending == OrderByType.Descending
+            ? OrderByType.None
+            : OrderByType.Ascending;
+
+        await OnPageChanged.InvokeAsync(1);
+    }
+}

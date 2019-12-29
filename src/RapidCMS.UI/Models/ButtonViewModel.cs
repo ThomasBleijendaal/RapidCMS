@@ -11,6 +11,7 @@ namespace RapidCMS.UI.Models
         {
             OnClick?.Invoke(this, new ButtonClickEventArgs
             {
+                ViewModel = this,
                 EditContext = editContext,
                 Data = customData
             });

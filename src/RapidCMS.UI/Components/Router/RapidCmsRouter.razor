@@ -1,44 +1,47 @@
 ﻿<CascadingValue Value="@CustomLoginScreen" Name="CustomLoginScreen">
     <CascadingValue Value="@CustomLoginStatus" Name="CustomLoginStatus">
-        <Router AppAssembly="typeof(RapidCmsRouter).Assembly">
-            <Found Context="routeData">
-                @if (!IsAuthenticated)
-                {
-                    <LayoutView Layout="typeof(LoginLayout)" />
-                }
-                else
-                {
-                    <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
-                }
-            </Found>
-            <NotFound>
-                <LayoutView Layout="typeof(MainLayout)">
-                    <h1>Page not found</h1>
-                    <p>Sorry, but there's nothing here!</p>
-                </LayoutView>
-            </NotFound>
-        </Router>
+        <CascadingAuthenticationState>
+            <Router AppAssembly="typeof(RapidCmsRouter).Assembly">
+                <Found Context="routeData">
+                    <AuthorizeView>
+                        <Authorized>
+                            <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
+                        </Authorized>
+                        <NotAuthorized>
+                            <LayoutView Layout="typeof(LoginLayout)" />
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </Found>
+                <NotFound>
+                    <AuthorizeView>
+                        <Authorized>
+                            <LayoutView Layout="typeof(MainLayout)">
+                                <h1>Page not found</h1>
+                                <p>Sorry, but there's nothing here!</p>
+                            </LayoutView>
+                        </Authorized>
+                        <NotAuthorized>
+                            <LayoutView Layout="typeof(LoginLayout)" />
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </NotFound>
+            </Router>
+        </CascadingAuthenticationState>
     </CascadingValue>
 </CascadingValue>
 
-    @code {
-        private RenderFragment? CustomLoginScreen { get; set; }
-        private RenderFragment? CustomLoginStatus { get; set; }
-        private bool IsAuthenticated { get; set; }
+@code {
+    private RenderFragment? CustomLoginScreen { get; set; }
+    private RenderFragment? CustomLoginStatus { get; set; }
 
-        [Inject]
-        private ICustomRegistrationProvider Registrations { get; set; }
+    [Inject]
+    private ICustomRegistrationProvider Registrations { get; set; }
 
-        [Inject]
-        private IAuthenticationStateProvider AuthenticationStateProvider { get; set; }
+    protected override async Task OnParametersSetAsync()
+    {
+        CustomLoginScreen = Registrations.CustomLoginScreenRegistration.ToRenderFragment();
+        CustomLoginStatus = Registrations.CustomLoginStatusRegistration.ToRenderFragment();
 
-        protected override async Task OnParametersSetAsync()
-        {
-            CustomLoginScreen = Registrations.CustomLoginScreenRegistration.ToRenderFragment();
-            CustomLoginStatus = Registrations.CustomLoginStatusRegistration.ToRenderFragment();
-
-            IsAuthenticated = await AuthenticationStateProvider.UserIsAuthenticatedAsync();
-
-            await base.OnParametersSetAsync();
-        }
+        await base.OnParametersSetAsync();
     }
+}

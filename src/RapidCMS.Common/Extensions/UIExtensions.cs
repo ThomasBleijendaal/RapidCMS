@@ -23,13 +23,11 @@ namespace RapidCMS.Common.Extensions
 
         internal static FieldUI ToUI(this Field field)
         {
-            return new FieldUI
-            {
-                Description = field.Description,
-                Name = field.Name,
-                IsVisible = field.IsVisible,
-                IsDisabled = field.IsDisabled
-            };
+            var ui = new FieldUI();
+
+            PopulateBaseProperties(ui, field);
+
+            return ui;
         }
 
         internal static FieldUI ToUI(this Field field, DataProvider? dataProvider)
@@ -72,6 +70,8 @@ namespace RapidCMS.Common.Extensions
             ui.Name = field.Name;
             ui.IsVisible = field.IsVisible;
             ui.IsDisabled = field.IsDisabled;
+            ui.OrderByExpression = field.OrderByExpression;
+            ui.SortDescending = field.DefaultOrder;
         }
 
         private static void PopulateProperties(ExpressionFieldUI ui, ExpressionField field)

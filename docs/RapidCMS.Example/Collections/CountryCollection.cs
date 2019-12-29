@@ -21,11 +21,23 @@ namespace RapidCMS.Example.Collections
                     {
                         view.AddDefaultButton(DefaultButtonType.New);
 
+                        view.SetPageSize(2);
+
                         view
                             .AddRow(row =>
                             {
-                                row.AddField(p => p.Id.ToString()).SetName("ID").SetType(DisplayType.Pre);
-                                row.AddField(p => p.Name);
+                                row.AddField(p => p.Id.ToString())
+                                    .SetName("ID").SetType(DisplayType.Pre);
+
+                                // by specifying SetOrderExpression you can allow the user to sort the data on that column
+                                // giving it a default order will cause this column to be ordered when the user opens the view
+                                row.AddField(p => p.Name)
+                                    .SetOrderByExpression(p => p.Name, OrderByType.Ascending);
+                                
+                                // multiple columns can be ordered at once, and the OrderBys stack from left to right,
+                                // so the Countries in this example will always be first ordered by Name, then by Metadata.Continent
+                                row.AddField(p => p.Metadata.Continent)
+                                    .SetOrderByExpression(p => p.Metadata.Continent);
 
                                 row.AddDefaultButton(DefaultButtonType.Edit);
                             });
@@ -33,6 +45,8 @@ namespace RapidCMS.Example.Collections
                     .SetNodeEditor(editor =>
                     {
                         editor
+                            // the Up button allows users to get one level up (based upon the tree)
+                            .AddDefaultButton(DefaultButtonType.Up, "Back to list", "list")
                             .AddDefaultButton(DefaultButtonType.SaveExisting)
                             .AddDefaultButton(DefaultButtonType.SaveNew);
 

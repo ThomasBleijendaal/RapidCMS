@@ -46,6 +46,18 @@ namespace RapidCMS.Common.Data
             return newPath;
         }
 
+        public static (ParentPath newPath, string? collectionAlias, string? id) RemoveLevel(ParentPath? currentPath)
+        {
+            if (currentPath == null)
+            {
+                return (new ParentPath(new List<(string collection, string id)>()), null, null);
+            }
+            else
+            {
+                return (new ParentPath(currentPath._path.Take(currentPath._path.Count - 1).ToList()), currentPath._path.Last().collection, currentPath._path.Last().id);
+            }
+        }
+
         public string ToPathString()
         {
             return string.Join(";", _path.Select(x => $"{x.collection}:{x.id}"));

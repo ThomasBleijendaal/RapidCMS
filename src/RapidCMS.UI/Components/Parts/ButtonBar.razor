@@ -4,15 +4,14 @@
         @foreach (var button in Buttons)
         {
             var model = button.ToViewModel();
-            model.OnClick += OnButtonClick;
+            model.OnClick += async (sender, args) => await OnButtonClick.InvokeAsync(args);
 
             @button.ToRenderFragment(model);
         }
     </div>
 }
 
-
 @code {
     [Parameter] public IEnumerable<ButtonUI>? Buttons { get; set; }
-    [Parameter] public EventHandler<ButtonClickEventArgs> OnButtonClick { get; set; }
+    [Parameter] public EventCallback<ButtonClickEventArgs> OnButtonClick { get; set; }
 }

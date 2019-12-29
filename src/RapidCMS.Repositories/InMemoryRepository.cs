@@ -47,11 +47,11 @@ namespace RapidCMS.Repositories
 
         public override Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query)
         {
-            var dataQuery = GetListForParent(parent).AsEnumerable();
+            var dataQuery = GetListForParent(parent).AsQueryable();
 
             if (query.DataViewExpression != null)
             {
-                dataQuery = dataQuery.Where(query.DataViewExpression.Compile());
+                dataQuery = dataQuery.Where(query.DataViewExpression);
             }
 
             if (query.SearchTerm != null)
@@ -60,9 +60,12 @@ namespace RapidCMS.Repositories
                 dataQuery = dataQuery.Where(x => x.Id.Contains(query.SearchTerm));
             }
 
+            dataQuery = query.ApplyOrder(dataQuery);
+
             var data = dataQuery
                 .Skip(query.Skip)
                 .Take(query.Take)
+                .ToList()
                 .Select(x => (TEntity)x.Clone());
 
             query.HasMoreData(GetListForParent(parent).Count > (query.Skip + query.Take));
@@ -96,6 +99,8 @@ namespace RapidCMS.Repositories
             return id;
         }
 
+        // using editContext overload of UpdateAsync, you can access the state of the edit form
+        // with this, you can check whether fields were edited (using editContext.IsModified(..)) 
         public override async Task UpdateAsync(IEditContext<TEntity> editContext)
         {
             var list = GetListForParent(editContext.Parent);

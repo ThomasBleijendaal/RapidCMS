@@ -31,17 +31,11 @@
         StateHasChanged();
 
         await OnPageChanged.InvokeAsync(newPageNr);
+
+        disabled = false;
     }
 
     [Parameter] public int CurrentPage { get; set; }
     [Parameter] public int? MaxPage { get; set; }
     [Parameter] public EventCallback<int> OnPageChanged { get; set; }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (disabled)
-        {
-            disabled = false;
-        }
-    }
 }

@@ -1,11 +1,19 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace RapidCMS.Common.Models.Metadata
 {
     internal class PropertyMetadata : IPropertyMetadata
     {
-        public PropertyMetadata(Type propertyType, string propertyName, Func<object, object> getter, Type objectType, string fingerprint)
+        public PropertyMetadata(
+            LambdaExpression originalExpression,
+            Type propertyType, 
+            string propertyName, 
+            Func<object, object> getter, 
+            Type objectType, 
+            string fingerprint)
         {
+            OriginalExpression = originalExpression ?? throw new ArgumentNullException(nameof(originalExpression));
             PropertyType = propertyType ?? throw new ArgumentNullException(nameof(propertyType));
             PropertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
             Getter = getter ?? throw new ArgumentNullException(nameof(getter));
@@ -19,5 +27,7 @@ namespace RapidCMS.Common.Models.Metadata
         public Type ObjectType { get; private set; }
 
         public string Fingerprint { get; private set; }
+
+        public LambdaExpression OriginalExpression { get; private set; }
     }
 }

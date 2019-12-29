@@ -6,7 +6,7 @@ using RapidCMS.Common.Enums;
 
 namespace RapidCMS.Common.Models.Config
 {
-    public interface IEditorFieldConfig<TEntity, TValue>
+    public interface IEditorFieldConfig<TEntity, TValue> : IHasOrderBy<TEntity, IEditorFieldConfig<TEntity, TValue>>
         where TEntity : IEntity
     {
         /// <summary>

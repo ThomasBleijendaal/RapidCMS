@@ -1,4 +1,4 @@
-﻿@inherits BasePage
+﻿@inherits BaseNode
 
 @layout MainLayout
 
@@ -37,58 +37,4 @@ else
             }
         }
     </CascadingEditContext>
-}
-
-@code {
-    [Inject] private IEditContextService EditContextService { get; set; }
-    [Inject] private IEditorService EditorService { get; set; }
-
-    EditContext? EditContext;
-    IEnumerable<ButtonUI>? Buttons;
-    IEnumerable<SectionUI>? Sections;
-
-    protected override async Task LoadDataAsync(IEnumerable<string>? reloadEntityIds = null)
-    {
-        try
-        {
-            var editContext = await EditContextService.GetEntityAsync(GetUsageType(), CollectionAlias, VariantAlias, GetParentPath(), Id);
-            var resolver = await EditorService.GetNodeUIResolverAsync(GetUsageType(), CollectionAlias);
-
-            Buttons = await resolver.GetButtonsForEditContextAsync(editContext);
-            Sections = await resolver.GetSectionsForEditContextAsync(editContext);
-
-            EditContext = editContext;
-
-            EditContext.OnFieldChanged += (s, a) => StateHasChanged();
-
-            StateHasChanged();
-        }
-        catch
-        {
-            EditContext = null;
-
-            throw;
-        }
-    }
-
-    async void ButtonOnClickAsync(object? sender, ButtonClickEventArgs args)
-    {
-        var model = sender as ButtonViewModel;
-
-        try
-        {
-            if (model == null)
-            {
-                throw new ArgumentException($"Argument must be of type {typeof(ButtonViewModel)}.", nameof(sender));
-            }
-
-            var command = await EditContextService.ProcessEntityActionAsync(GetUsageType(), CollectionAlias, GetParentPath(), Id, args.EditContext, model.ButtonId, args.Data);
-
-            await HandleViewCommandAsync(command);
-        }
-        catch (Exception ex)
-        {
-            HandleException(ex);
-        }
-    }
 }

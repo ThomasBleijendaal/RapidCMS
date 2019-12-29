@@ -46,24 +46,23 @@ namespace RapidCMS.UI.Components.Pages
                     {
                         command = _previousParameterCommand;
                     }
-                    else
-                    {
-                        command = new NavigateBackCommand();
-                    }
                 }
 
                 switch (command)
                 {
                     case NavigateCommand navigateCommand:
 
-                        NavigationManager.NavigateTo(navigateCommand.Uri);
+                        if (NavigationManager.Uri == new Uri(new Uri(NavigationManager.BaseUri), navigateCommand.Uri).AbsoluteUri)
+                        {
+                            // escape from New
+                            Action = Constants.Edit;
 
-                        break;
-
-                    case NavigateBackCommand navigateBackCommand:
-
-                        // TODO: improve this
-                        await JSRuntime.InvokeAsync<bool>("history.back");
+                            await LoadDataAsync();
+                        }
+                        else
+                        {
+                            NavigationManager.NavigateTo(navigateCommand.Uri);
+                        }
 
                         break;
 
@@ -161,7 +160,7 @@ namespace RapidCMS.UI.Components.Pages
 
         protected UsageType GetUsageType()
         {
-            return Action switch
+            var type = Action switch
             {
                 Constants.Edit => UsageType.Edit,
                 Constants.New => UsageType.New,
@@ -171,6 +170,17 @@ namespace RapidCMS.UI.Components.Pages
                 Constants.Pick => UsageType.Pick,
                 _ => (UsageType)0
             };
+
+            if (Path == null)
+            {
+                type |= UsageType.Root;
+            }
+            else
+            {
+                type |= UsageType.NotRoot;
+            }
+
+            return type;
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,6 +48,8 @@ namespace RapidCMS.Example
             {
                 config.AllowAnonymousUser();
 
+                config.SetCustomLoginStatus(typeof(LoginStatus));
+
                 // CRUD editor for simple POCO with recursive sub collections
                 // --> see Collections/PersonCollection for the basics of this CMS
                 config.AddPersonCollection();
@@ -63,7 +68,7 @@ namespace RapidCMS.Example
 
                 // CRUD editor with entity mapping
                 config.AddMappedCollection();
-                
+
                 // the dashboard can be build up of custom Blazor components, or the ListViews or ListEditors of collections
                 config.AddDashboardSection(typeof(DashboardSection));
                 config.AddDashboardSection("user", edit: true);

@@ -19,9 +19,9 @@ namespace RapidCMS.Common.Helpers
             return $"/{action}{path.ToUriPart()}/{collectionAlias}";
         }
 
-        private static string ToUriPart(this string? nullableInt)
+        private static string ToUriPart(this string? nullableString)
         {
-            return nullableInt != null ? $"/{nullableInt}" : "";
+            return string.IsNullOrWhiteSpace(nullableString) ? "" : $"/{nullableString}";
         }
     }
 }

@@ -47,9 +47,15 @@ namespace RapidCMS.Common.Enums
         [Actions(UsageType.Node | UsageType.Pick)]
         Pick,
 
+        // return from New
         [DefaultIconLabel(icon: "arrow-back", label: "Return")]
-        [Actions(UsageType.Node, UsageType.List | UsageType.Add, UsageType.List | UsageType.New, UsageType.List | UsageType.Pick)]
+        [Actions(UsageType.List | UsageType.Add, UsageType.List | UsageType.New, UsageType.List | UsageType.Pick)]
         Return,
+
+        // move up in tree
+        [DefaultIconLabel(icon: "arrow-up", label: "Up")]
+        [Actions(UsageType.List | UsageType.NotRoot, UsageType.Node)]
+        Up,
 
         [DefaultIconLabel(icon: "open", label: "[open pane]")]
         [Actions(UsageType.Node, UsageType.List)]

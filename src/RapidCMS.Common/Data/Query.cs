@@ -1,10 +1,12 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace RapidCMS.Common.Data
 {
     public class Query : IQuery
     {
         internal LambdaExpression? QueryExpression;
+        internal IEnumerable<IOrderBy>? OrderByExpressions;
 
         public static Query Default()
         {
@@ -43,6 +45,11 @@ namespace RapidCMS.Common.Data
         public void SetDataViewExpression(LambdaExpression expression)
         {
             QueryExpression = expression;
+        }
+
+        public void SetOrderByExpressions(IEnumerable<IOrderBy> expressions)
+        {
+            OrderByExpressions = expressions;
         }
 
         public int? ActiveTab { get; private set; }

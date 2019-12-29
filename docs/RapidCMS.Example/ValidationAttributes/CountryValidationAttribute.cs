@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using RapidCMS.Example.Data;
+using static RapidCMS.Example.Data.Country;
 
 namespace RapidCMS.Example.ValidationAttributes
 {
@@ -8,7 +10,15 @@ namespace RapidCMS.Example.ValidationAttributes
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            return default;
+            if (value is Country country)
+            {
+                if (country.Name == "fdsa")
+                {
+                    return new ValidationResult("The name of the country cannot be 'fdsa'.");
+                }
+            }
+
+            return ValidationResult.Success;
         }
     }
 
@@ -18,7 +28,15 @@ namespace RapidCMS.Example.ValidationAttributes
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            return new ValidationResult("BORK");
+            if (value is CountryMetadata metadata)
+            {
+                if (metadata.Continent == "fdsafdsa")
+                {
+                    return new ValidationResult("The name of the country's continent cannot be 'fdsafdsa'.");
+                }
+            }
+
+            return ValidationResult.Success;
         }
     }
 }

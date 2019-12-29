@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.ActionHandlers;
 using RapidCMS.Common.Authorization;
@@ -26,6 +27,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (rootConfig.AllowAnonymousUsage)
             {
                 services.AddSingleton<IAuthorizationHandler, AllowAllAuthorizationHandler>();
+                services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
             }
 
             services.AddSingleton(rootConfig);
@@ -34,7 +36,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<ICustomRegistrationProvider, CustomRegistrationProvider>();
             services.AddTransient<ICollectionProvider, CollectionProvider>();
             services.AddTransient<IMetadataProvider, MetadataProvider>();
-            services.AddTransient<IAuthenticationStateProvider, AuthenticationStateProvider>();
 
             //  UI + Repository services
             services.AddTransient<IDataProviderService, DataProviderService>();

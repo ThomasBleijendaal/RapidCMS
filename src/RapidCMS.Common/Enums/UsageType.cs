@@ -12,6 +12,9 @@ namespace RapidCMS.Common.Enums
         Pick = 16,
 
         List = 65536,
-        Node = 131072
+        Node = 131072,
+
+        Root = 2097152,
+        NotRoot = 4194304
     }
 }

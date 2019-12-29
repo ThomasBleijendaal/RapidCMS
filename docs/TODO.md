@@ -1,13 +1,6 @@
 TODO:
 
-[] Implement Return everywhere + fallback to javascript:history.back();
-    [] Escape from New
-
-[] Column ordering
-
 [] Nodes always open fully when a sub collection has no children (?)
-
-[] Deleting node in nested ListEditors gives error due to unfound List
 
 [] Find solution for stray validation messages for Table / Block ListEditor
 

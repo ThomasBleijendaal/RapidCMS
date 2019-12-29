@@ -86,7 +86,7 @@ namespace RapidCMS.Common.Services
 
             var parent = await _parentService.GetParentAsync(parentPath);
 
-            var entity = (usageType & ~UsageType.Node) switch
+            var entity = (usageType & ~(UsageType.Node | UsageType.Root | UsageType.NotRoot)) switch
             {
                 UsageType.View => await EnsureCorrectConcurrencyAsync(() => collection.Repository.GetByIdAsync(id ?? throw new InvalidOperationException($"Cannot View Node when {id} is null"), parent)),
                 UsageType.Edit => await EnsureCorrectConcurrencyAsync(() => collection.Repository.GetByIdAsync(id ?? throw new InvalidOperationException($"Cannot Edit Node when {id} is null"), parent)),
@@ -171,8 +171,8 @@ namespace RapidCMS.Common.Services
                     viewCommand = new ReloadCommand();
                     break;
 
-                case CrudType.Return:
-                    viewCommand = new ReturnCommand();
+                case CrudType.Up:
+                    viewCommand = new NavigateCommand { Uri = UriHelper.Collection(collection.ListEditor == null ? Constants.List : Constants.Edit, collectionAlias, parentPath) };
                     break;
 
                 default:
@@ -257,7 +257,25 @@ namespace RapidCMS.Common.Services
                     break;
 
                 case CrudType.Return:
-                    viewCommand = new ReturnCommand();
+                    viewCommand = new NavigateCommand { Uri = UriHelper.Collection(Constants.Edit, collectionAlias, parentPath) };
+                    break;
+
+                case CrudType.Up:
+                    var (newParentPath, parentCollectionAlias, parentId) = ParentPath.RemoveLevel(parentPath);
+
+                    if (parentCollectionAlias == null)
+                    {
+                        return new NoOperationCommand();
+                    }
+
+                    var parentCollection = _collectionProvider.GetCollection(parentCollectionAlias);
+
+                    viewCommand = new NavigateCommand { Uri = UriHelper.Node(
+                        usageType.HasFlag(UsageType.Edit) ? Constants.Edit : Constants.List,
+                        parentCollectionAlias, 
+                        parentCollection.EntityVariant,
+                        newParentPath,
+                        parentId) };
                     break;
 
                 default:
@@ -269,7 +287,7 @@ namespace RapidCMS.Common.Services
             return viewCommand;
         }
 
-        public async Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, ParentPath? parentPath, string id, EditContext editContext, string actionId, object? customData)
+        public async Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, ParentPath? parentPath, string? id, EditContext editContext, string actionId, object? customData)
         {
             var collection = _collectionProvider.GetCollection(collectionAlias);
 
@@ -302,7 +320,7 @@ namespace RapidCMS.Common.Services
 
                 case CrudType.Update:
                     await EnsureCorrectConcurrencyAsync(() => collection.Repository.UpdateAsync(editContext));
-                    viewCommand = new ReloadCommand(id);
+                    viewCommand = new ReloadCommand(id!);
                     break;
 
                 case CrudType.Insert:
@@ -323,20 +341,16 @@ namespace RapidCMS.Common.Services
                     break;
 
                 case CrudType.Delete:
-                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.DeleteAsync(id, editContext.Parent));
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.DeleteAsync(id ?? throw new InvalidOperationException(), editContext.Parent));
                     viewCommand = new ReloadCommand();
                     break;
 
                 case CrudType.None:
                     viewCommand = new NoOperationCommand();
                     break;
-
+                    
                 case CrudType.Refresh:
                     viewCommand = new ReloadCommand();
-                    break;
-
-                case CrudType.Return:
-                    viewCommand = new ReturnCommand();
                     break;
 
                 default:
@@ -444,7 +458,7 @@ namespace RapidCMS.Common.Services
             return viewCommand;
         }
 
-        public async Task<ViewCommand> ProcessRelationActionAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, string id, EditContext editContext, string actionId, object? customData)
+        public async Task<ViewCommand> ProcessRelationActionAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, string? id, EditContext editContext, string actionId, object? customData)
         {
             var collection = _collectionProvider.GetCollection(collectionAlias);
 
@@ -476,7 +490,7 @@ namespace RapidCMS.Common.Services
 
                 case CrudType.Update:
                     await EnsureCorrectConcurrencyAsync(() => collection.Repository.UpdateAsync(editContext));
-                    viewCommand = new ReloadCommand(id);
+                    viewCommand = new ReloadCommand(id!);
                     break;
 
                 case CrudType.Insert:
@@ -504,19 +518,19 @@ namespace RapidCMS.Common.Services
 
                 case CrudType.Delete:
 
-                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.DeleteAsync(id, null));
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.DeleteAsync(id ?? throw new InvalidOperationException(), null));
                     viewCommand = new ReloadCommand();
                     break;
 
                 case CrudType.Pick:
 
-                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.AddAsync(relatedEntity, id));
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.AddAsync(relatedEntity, id ?? throw new InvalidOperationException()));
                     viewCommand = new ReloadCommand();
                     break;
 
                 case CrudType.Remove:
 
-                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.RemoveAsync(relatedEntity, id));
+                    await EnsureCorrectConcurrencyAsync(() => collection.Repository.RemoveAsync(relatedEntity, id ?? throw new InvalidOperationException()));
                     viewCommand = new ReloadCommand();
                     break;
 
@@ -539,7 +553,7 @@ namespace RapidCMS.Common.Services
 
         private List<EditContext> ConvertEditContexts(UsageType usageType, string collectionAlias, EditContext rootEditContext, IEnumerable<IEntity> existingEntities, IParent? parent)
         {
-            if (usageType == UsageType.List)
+            if ((usageType & ~(UsageType.Root | UsageType.NotRoot)) == UsageType.List)
             {
                 return existingEntities
                     .Select(ent => new EditContext(collectionAlias, ent, parent, UsageType.Node | UsageType.Edit, _serviceProvider))

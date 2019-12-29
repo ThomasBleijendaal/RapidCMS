@@ -51,6 +51,9 @@ namespace RapidCMS.Common.ActionHandlers
 
                 case DefaultButtonType.Return:
                     return Task.FromResult(CrudType.Return);
+
+                case DefaultButtonType.Up:
+                    return Task.FromResult(CrudType.Up);
             }
         }
 
@@ -72,6 +75,7 @@ namespace RapidCMS.Common.ActionHandlers
                 default:
                 case DefaultButtonType.View:
                 case DefaultButtonType.Return:
+                case DefaultButtonType.Up:
                     return Operations.Read;
 
                 case DefaultButtonType.Remove:

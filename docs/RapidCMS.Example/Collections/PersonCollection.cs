@@ -12,7 +12,7 @@ namespace RapidCMS.Example.Collections
         // CRUD editor for simple POCO with recursive sub collections
         public static void AddPersonCollection(this ICmsConfig config)
         {
-            config.AddCollection<Person>("person", "Persons", collection =>
+            config.AddCollection<Person>("person", "People", collection =>
             {
                 collection
                     .SetTreeView(x => x.Name)
@@ -42,8 +42,13 @@ namespace RapidCMS.Example.Collections
                     // a list editor takes precedence over a list view, so when navigating to the Person collection, this view will be displayed
                     .SetListEditor(editor =>
                     {
+                        // adding Up to the button bar allows the user to get to the level above the current page (base upon the tree)
+                        // this button will be hidden automatically when the user is at the root
+                        editor.AddDefaultButton(DefaultButtonType.Up);
+
                         // in a list editor a New allows the user to add entities, within the list editor
                         editor.AddDefaultButton(DefaultButtonType.New);
+                        editor.AddDefaultButton(DefaultButtonType.Return);
 
                         // a list editor can be in the shape of a table, or a set of blocks, so these sections are either rows or blocks
                         editor.AddSection(row =>
@@ -65,6 +70,9 @@ namespace RapidCMS.Example.Collections
                     })
                     .SetNodeEditor(editor =>
                     {
+                        // adding Up to the button bar allows the user to get to the level above the current page (base upon the tree)
+                        editor.AddDefaultButton(DefaultButtonType.Up);
+
                         // just as in the ListEditor, SaveExisting only shows when the user is editing an existing entity, 
                         // and the SaveNew only when inserting an entity
                         editor.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);

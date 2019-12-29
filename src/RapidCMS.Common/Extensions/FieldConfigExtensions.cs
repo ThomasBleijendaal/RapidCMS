@@ -7,6 +7,7 @@ namespace RapidCMS.Common.Extensions
 {
     internal static class FieldConfigExtensions
     {
+        // TODO: perhaps reduce the repetition?
         public static Field ToField(this FieldConfig field)
         {
             if (field.EditorType == EditorType.Custom && field.Property != null)
@@ -18,6 +19,8 @@ namespace RapidCMS.Common.Extensions
                     EditorType = field.EditorType,
                     Description = field.Description,
                     Name = field.Name,
+                    OrderByExpression = field.OrderByExpression,
+                    DefaultOrder = field.DefaultOrder,
                     IsVisible = field.IsVisible,
                     IsDisabled = field.IsDisabled,
 
@@ -33,6 +36,8 @@ namespace RapidCMS.Common.Extensions
                     EditorType = field.EditorType,
                     Description = field.Description,
                     Name = field.Name,
+                    OrderByExpression = field.OrderByExpression,
+                    DefaultOrder = field.DefaultOrder,
                     IsVisible = field.IsVisible,
                     IsDisabled = field.IsDisabled,
 
@@ -48,6 +53,8 @@ namespace RapidCMS.Common.Extensions
                     DisplayType = field.DisplayType,
                     Description = field.Description,
                     Name = field.Name,
+                    OrderByExpression = field.OrderByExpression,
+                    DefaultOrder = field.DefaultOrder,
                     IsVisible = field.IsVisible,
                     IsDisabled = field.IsDisabled
                 };
@@ -61,6 +68,8 @@ namespace RapidCMS.Common.Extensions
                     DisplayType = field.DisplayType,
                     Description = field.Description,
                     Name = field.Name,
+                    OrderByExpression = field.OrderByExpression,
+                    DefaultOrder = field.DefaultOrder,
                     IsVisible = field.IsVisible,
                     IsDisabled = field.IsDisabled
                 };
@@ -74,6 +83,8 @@ namespace RapidCMS.Common.Extensions
                     DisplayType = field.DisplayType,
                     Description = field.Description,
                     Name = field.Name,
+                    OrderByExpression = field.OrderByExpression,
+                    DefaultOrder = field.DefaultOrder,
                     IsVisible = field.IsVisible,
                     IsDisabled = field.IsDisabled
                 };

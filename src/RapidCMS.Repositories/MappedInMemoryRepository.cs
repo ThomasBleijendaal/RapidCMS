@@ -52,22 +52,25 @@ namespace RapidCMS.Repositories
 
         public override Task<IEnumerable<TCmsEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query)
         {
-            var dataQuery = GetListForParent(parent).AsEnumerable();
+            var dataQuery = GetListForParent(parent).AsQueryable();
 
             if (query.DataViewExpression != null)
             {
-                dataQuery = dataQuery.Where(query.DataViewExpression.Compile());
+                dataQuery = dataQuery.Where(query.DataViewExpression);
             }
 
             if (query.SearchTerm != null)
             {
                 // this is not a very useful search function, but it's just an example
-                dataQuery = dataQuery.Where(x => x.Id?.Contains(query.SearchTerm) ?? false);
+                dataQuery = dataQuery.Where(x => x.Id == null ? false : x.Id.Contains(query.SearchTerm));
             }
+
+            dataQuery = query.ApplyOrder(dataQuery);
 
             var data = dataQuery
                 .Skip(query.Skip)
                 .Take(query.Take)
+                .ToList()
                 .Select(x => _converter.Convert((TEntity)x.Clone()));
 
             query.HasMoreData(GetListForParent(parent).Count > (query.Skip + query.Take));

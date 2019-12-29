@@ -29,8 +29,13 @@ namespace RapidCMS.Example.Collections
                         editor
                             .AddSection(section =>
                             {
-                                section.AddField(x => x.Name);
-                                section.AddField(x => x.Description);
+                                // since the repository is mapped, the OrderBy query send to the IQueryable of the repository
+                                // is based on DatabaseEntity, and not MappedEntity. because of this, the overload of SetOrderByExpression
+                                // is used by which you can specify the type of entity
+                                section.AddField(x => x.Name)
+                                    .SetOrderByExpression<DatabaseEntity, string?>(x => x.Name);
+                                section.AddField(x => x.Description)
+                                    .SetOrderByExpression<DatabaseEntity, string?>(x => x.Description);
 
                                 section.AddDefaultButton(DefaultButtonType.SaveExisting);
                                 section.AddDefaultButton(DefaultButtonType.SaveNew);

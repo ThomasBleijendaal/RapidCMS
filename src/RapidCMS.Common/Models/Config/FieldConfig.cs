@@ -29,6 +29,9 @@ namespace RapidCMS.Common.Models.Config
         internal EditorType EditorType { get; set; }
         internal DisplayType DisplayType { get; set; }
         internal Type? CustomType { get; set; }
+
+        internal IPropertyMetadata? OrderByExpression { get; set; }
+        internal OrderByType DefaultOrder { get; set; }
     }
 
     internal class FieldConfig<TEntity, TValue> : FieldConfig, IDisplayFieldConfig<TEntity, TValue>, IEditorFieldConfig<TEntity, TValue>
@@ -63,6 +66,20 @@ namespace RapidCMS.Common.Models.Config
         IDisplayFieldConfig<TEntity, TValue> IDisplayFieldConfig<TEntity, TValue>.VisibleWhen(Func<TEntity, EntityState, bool> predicate)
         {
             IsVisible = (entity, state) => predicate.Invoke((TEntity)entity, state);
+            return this;
+        }
+
+        IDisplayFieldConfig<TEntity, TValue> IHasOrderBy<TEntity, IDisplayFieldConfig<TEntity, TValue>>.SetOrderByExpression<TOrderByValue>(Expression<Func<TEntity, TOrderByValue>> orderByExpression, OrderByType defaultOrder)
+        {
+            OrderByExpression = PropertyMetadataHelper.GetPropertyMetadata(orderByExpression);
+            DefaultOrder = defaultOrder;
+            return this;
+        }
+
+        IDisplayFieldConfig<TEntity, TValue> IHasOrderBy<TEntity, IDisplayFieldConfig<TEntity, TValue>>.SetOrderByExpression<TDatabaseEntity, TOrderByValue>(Expression<Func<TDatabaseEntity, TOrderByValue>> orderByExpression, OrderByType defaultOrder)
+        {
+            OrderByExpression = PropertyMetadataHelper.GetPropertyMetadata(orderByExpression);
+            DefaultOrder = defaultOrder;
             return this;
         }
 
@@ -162,6 +179,20 @@ namespace RapidCMS.Common.Models.Config
         IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.DisableWhen(Func<TEntity, EntityState, bool> predicate)
         {
             IsDisabled = (entity, state) => predicate.Invoke((TEntity)entity, state);
+            return this;
+        }
+
+        IEditorFieldConfig<TEntity, TValue> IHasOrderBy<TEntity, IEditorFieldConfig<TEntity, TValue>>.SetOrderByExpression<TOrderByValue>(Expression<Func<TEntity, TOrderByValue>> orderByExpression, OrderByType defaultOrder)
+        {
+            OrderByExpression = PropertyMetadataHelper.GetPropertyMetadata(orderByExpression);
+            DefaultOrder = defaultOrder;
+            return this;
+        }
+
+        IEditorFieldConfig<TEntity, TValue> IHasOrderBy<TEntity, IEditorFieldConfig<TEntity, TValue>>.SetOrderByExpression<TDatabaseEntity, TOrderByValue>(Expression<Func<TDatabaseEntity, TOrderByValue>> orderByExpression, OrderByType defaultOrder)
+        {
+            OrderByExpression = PropertyMetadataHelper.GetPropertyMetadata(orderByExpression);
+            DefaultOrder = defaultOrder;
             return this;
         }
     }
