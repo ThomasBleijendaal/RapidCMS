@@ -134,7 +134,8 @@ services.AddScoped<InMemoryRepository<Person>>();
 ```
 
 There is no abstraction magic, or default repository implementation, so you need to create your own
-repositories which implement `IRepository` (or one of the derived abstract classes).
+repositories which implement `IRepository`, or derive from `BaseRepository` to get a better developer
+experience. 
 
 #### Entity Framework Core Repositories
 
