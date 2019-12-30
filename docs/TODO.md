@@ -3,6 +3,9 @@ TODO:
 [] Nodes always open fully when a sub collection has no children (?)
 
 [] Find solution for stray validation messages for Table / Block ListEditor
+    - summed up in top?
+
+[] Return in sub collection entity is weird
 
 2.0
 [] Add more than one view to page (to allow for ListView + CustomBlock)
@@ -16,7 +19,7 @@ TODO:
 [] Follow user down the tree + Always display where the user is
 [] Paginate tree
 
-x.x
+2.0
 [] All config checked during startup
     [] Check Repository compatibility with Entity
     []

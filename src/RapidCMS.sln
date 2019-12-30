@@ -23,6 +23,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Repositories", "Ra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example", "..\docs\RapidCMS.Example\RapidCMS.Example.csproj", "{5D3136E8-3B2E-4466-9B67-895B75ABDED1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidCMS.Core", "RapidCMS.Core\RapidCMS.Core.csproj", "{F8E6CA58-6F29-4500-A4DA-5283F6EFC242}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidCMS.Core.Tests", "RapidCMS.Core.Tests\RapidCMS.Core.Tests.csproj", "{23AF0F32-2AA6-45F3-8106-683BA6896118}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +53,14 @@ Global
 		{5D3136E8-3B2E-4466-9B67-895B75ABDED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D3136E8-3B2E-4466-9B67-895B75ABDED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D3136E8-3B2E-4466-9B67-895B75ABDED1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8E6CA58-6F29-4500-A4DA-5283F6EFC242}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8E6CA58-6F29-4500-A4DA-5283F6EFC242}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8E6CA58-6F29-4500-A4DA-5283F6EFC242}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8E6CA58-6F29-4500-A4DA-5283F6EFC242}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23AF0F32-2AA6-45F3-8106-683BA6896118}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23AF0F32-2AA6-45F3-8106-683BA6896118}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23AF0F32-2AA6-45F3-8106-683BA6896118}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23AF0F32-2AA6-45F3-8106-683BA6896118}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
