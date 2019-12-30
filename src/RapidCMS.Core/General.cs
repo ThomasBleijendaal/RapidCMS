@@ -6,5 +6,9 @@
 
 namespace RapidCMS.Core
 {
-
+    public class Constants
+    {
+        public const string Edit = "edit";
+        public const string View = "view";
+    }
 }

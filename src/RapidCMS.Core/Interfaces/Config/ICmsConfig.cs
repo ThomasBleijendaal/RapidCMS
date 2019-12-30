@@ -1,9 +1,38 @@
 ﻿using System;
+using RapidCMS.Core.Interfaces.Data;
+using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Interfaces.Config
 {
     public interface ICmsConfig : ICollectionConfig
     {
+        /// <summary>
+        /// Adds a collection to the CMS.
+        /// </summary>
+        /// <typeparam name="TEntity">Type of the entity of this collection</typeparam>
+        /// <typeparam name="TRepository">Type of the repository this collection will use</typeparam>
+        /// <param name="alias">Alias of the collection</param>
+        /// <param name="name">Human readable name of this collection</param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string name, Action<ICollectionConfig<TEntity>> configure)
+            where TEntity : class, IEntity
+            where TRepository : BaseRepository<TEntity>;
+
+        /// <summary>
+        /// Adds a collection to the CMS.
+        /// </summary>
+        /// <typeparam name="TEntity">Type of the entity of this collection</typeparam>
+        /// <typeparam name="TRepository">Type of the repository this collection will use</typeparam>
+        /// <param name="alias">Alias of the collection</param>
+        /// <param name="icon">Icon for this collection</param>
+        /// <param name="name">Human readable name of this collection</param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TEntity>> configure)
+            where TEntity : class, IEntity
+            where TRepository : BaseRepository<TEntity>;
+
         /// <summary>
         /// Adds a section to the list of components to draw on the dashboard, the homepage of the CMS.
         /// Use the edit flag to indicate whether this should be the editor or the view variant of the collection.

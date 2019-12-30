@@ -12,9 +12,8 @@ namespace RapidCMS.Core.Interfaces.Repositories
         Task<IEntity?> GetByIdAsync(string id, IParent? parent);
         Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query);
 
-        // TODO: replace with IRelated
-        Task<IEnumerable<IEntity>> GetAllRelatedAsync(IEntity relatedEntity, IQuery query);
-        Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery query);
+        Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelated related, IQuery query);
+        Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelated related, IQuery query);
 
         /// <summary>
         /// Create a new entity in-memory.
@@ -27,8 +26,8 @@ namespace RapidCMS.Core.Interfaces.Repositories
         Task UpdateAsync(EditContext editContext);
         Task DeleteAsync(string id, IParent? parent);
 
-        Task AddAsync(IEntity relatedEntity, string id);
-        Task RemoveAsync(IEntity relatedEntity, string id);
+        Task AddAsync(IRelated related, string id);
+        Task RemoveAsync(IRelated related, string id);
 
         IChangeToken ChangeToken { get; }
     }

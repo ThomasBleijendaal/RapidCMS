@@ -1,34 +1,51 @@
 ﻿using System;
-using System.Linq.Expressions;
-using RapidCMS.Core.Interfaces.Data;
-using RapidCMS.Core.Enums;
 using System.Collections.Generic;
-using RapidCMS.Core.Interfaces.Repositories;
+using System.Linq.Expressions;
+using RapidCMS.Core.Enums;
+using RapidCMS.Core.Interfaces.Data;
 using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Interfaces.Config
 {
     public interface ICollectionConfig
     {
-        internal List<ICollectionConfig> Collections { get; set; }
-    }
-
-    public interface ICollectionConfig<TReturn> : ICollectionConfig
-    {
-        TReturn AddCollection<TEntity, TKey, TRepository>(string alias, string name, Action<ICollectionConfig<TEntity>> configure)
-            where TEntity : class, IEntity
-            where TRepository : BaseRepository<TKey, TEntity>;
-
-        TReturn AddCollection<TEntity, TKey, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TEntity>> configure)
-            where TEntity : class, IEntity
-            where TRepository : BaseRepository<TKey, TEntity>;
-
+        List<ICollectionConfig> Collections { get; set; }
         string Alias { get; }
     }
 
-    public interface ICollectionConfig<TEntity, TReturn> : ICollectionConfig<TReturn>
+    public interface ICollectionConfig<TEntity> : ICollectionConfig
         where TEntity : IEntity
     {
+        /// <summary>
+        /// Adds a sub collection to the current collection.
+        /// </summary>
+        /// <typeparam name="TSubEntity">Type of the entity of this sub collection</typeparam>
+        /// <typeparam name="TRepository">Type of the repository this sub collection will use</typeparam>
+        /// <param name="alias">Alias of the sub collection</param>
+        /// <param name="name">Human readable name of this sub collection</param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string name, Action<ICollectionConfig<TSubEntity>> configure)
+            where TSubEntity : class, IEntity
+            where TRepository : BaseRepository<TSubEntity>;
+
+        /// <summary>
+        /// Adds a sub collection to the current collection.
+        /// </summary>
+        /// <typeparam name="TSubEntity">Type of the entity of this sub collection</typeparam>
+        /// <typeparam name="TRepository">Type of the repository this sub collection will use</typeparam>
+        /// <param name="alias">Alias of the sub collection</param>
+        /// <param name="icon">Icon for this sub collection</param>
+        /// <param name="name">Human readable name of this sub collection</param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TSubEntity>> configure)
+            where TSubEntity : class, IEntity
+            where TRepository : BaseRepository<TSubEntity>;
+
+        /// <summary>
+        /// Adds itself as sub collection.
+        /// </summary>
         void AddSelfAsRecursiveCollection();
 
         /// <summary>
@@ -104,13 +121,6 @@ namespace RapidCMS.Core.Interfaces.Config
         /// <param name="configure">Action used to configure the NodeView</param>
         /// <returns></returns>
         ICollectionConfig<TEntity> SetNodeView(Action<INodeViewConfig<TEntity>> configure);
-
-        /// <summary>
-        /// Sets the given class as repository of this collection.
-        /// </summary>
-        /// <typeparam name="TRepository"></typeparam>
-        /// <returns></returns>
-        ICollectionConfig<TEntity> SetRepository<TRepository>();
 
         /// <summary>
         /// Sets how the collection should be displayed in the tree.

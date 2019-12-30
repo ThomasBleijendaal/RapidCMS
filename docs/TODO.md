@@ -21,6 +21,6 @@ TODO:
 
 2.0
 [] All config checked during startup
-    [] Check Repository compatibility with Entity
+    [v] Check Repository compatibility with Entity
     []
 [] Unit tests
