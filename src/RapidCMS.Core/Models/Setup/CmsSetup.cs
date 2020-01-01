@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Interfaces.Setup;
 using RapidCMS.Core.Models.Config;
@@ -17,6 +16,16 @@ namespace RapidCMS.Core.Models.Setup
             SemaphoreMaxCount = config.SemaphoreMaxCount;
 
             Collections = ConfigProcessingHelper.ProcessCollections(config);
+
+            CustomDashboardSectionRegistrations = config.CustomDashboardSectionRegistrations.ToList(x => new CustomTypeRegistrationSetup(x));
+            if (config.CustomLoginScreenRegistration != null)
+            {
+                CustomLoginScreenRegistration = new CustomTypeRegistrationSetup(config.CustomLoginScreenRegistration);
+            }
+            if (config.CustomLoginStatusRegistration != null)
+            {
+                CustomLoginStatusRegistration = new CustomTypeRegistrationSetup(config.CustomLoginStatusRegistration);
+            }
         }
 
         internal string SiteName { get; set; }
@@ -33,7 +42,13 @@ namespace RapidCMS.Core.Models.Setup
         string ICms.SiteName => SiteName;
         bool ICms.IsDevelopment => IsDevelopment;
         bool ICms.AllowAnonymousUsage => AllowAnonymousUsage;
-
         int ICms.SemaphoreMaxCount => SemaphoreMaxCount;
+
+        IEnumerable<CollectionSetup> ICollections.Collections => Collections;
+
+        IEnumerable<CustomTypeRegistrationSetup> IDashboard.CustomDashboardSectionRegistrations => CustomDashboardSectionRegistrations;
+
+        CustomTypeRegistrationSetup? ILogin.CustomLoginScreenRegistration => CustomLoginScreenRegistration;
+        CustomTypeRegistrationSetup? ILogin.CustomLoginStatusRegistration => CustomLoginStatusRegistration;
     }
 }

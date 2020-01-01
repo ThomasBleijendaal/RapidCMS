@@ -7,18 +7,18 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Interfaces.Handlers;
-using RapidCMS.Core.Models.Setup;
+using RapidCMS.Core.Interfaces.Setup;
 
 namespace RapidCMS.Core.Handlers
 {
     internal class DefaultButtonActionHandler : IButtonActionHandler
     {
-        public Task ButtonClickAfterRepositoryActionAsync(ButtonSetup button, EditContext editContext, ButtonContext context)
+        public Task ButtonClickAfterRepositoryActionAsync(IButton button, EditContext editContext, ButtonContext context)
         {
             return Task.CompletedTask;
         }
 
-        public virtual Task<CrudType> ButtonClickBeforeRepositoryActionAsync(ButtonSetup button, EditContext editContext, ButtonContext context)
+        public virtual Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, EditContext editContext, ButtonContext context)
         {
             switch (button.DefaultButtonType)
             {
@@ -58,7 +58,7 @@ namespace RapidCMS.Core.Handlers
             }
         }
 
-        public OperationAuthorizationRequirement GetOperation(ButtonSetup button, EditContext editContext)
+        public OperationAuthorizationRequirement GetOperation(IButton button, EditContext editContext)
         {
             switch (button.DefaultButtonType)
             {
@@ -88,18 +88,18 @@ namespace RapidCMS.Core.Handlers
             }
         }
 
-        public bool IsCompatible(ButtonSetup button, EditContext editContext)
+        public bool IsCompatible(IButton button, EditContext editContext)
         {
             var usages = button.DefaultButtonType.GetCustomAttribute<ActionsAttribute>()?.Usages;
             return usages?.Any(x => editContext.UsageType.HasFlag(x)) ?? false;
         }
 
-        public bool RequiresValidForm(ButtonSetup button, EditContext editContext)
+        public bool RequiresValidForm(IButton button, EditContext editContext)
         {
             return button.DefaultButtonType.GetCustomAttribute<ValidFormAttribute>() != null;
         }
 
-        public bool ShouldAskForConfirmation(ButtonSetup button, EditContext editContext)
+        public bool ShouldAskForConfirmation(IButton button, EditContext editContext)
         {
             return button.DefaultButtonType.GetCustomAttribute<ConfirmAttribute>() != null;
         }

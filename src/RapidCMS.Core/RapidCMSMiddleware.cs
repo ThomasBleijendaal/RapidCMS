@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
-using RapidCMS.Core.Helpers;
+using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Interfaces.Config;
 using RapidCMS.Core.Interfaces.Setup;
 using RapidCMS.Core.Models.Config;
@@ -23,40 +23,37 @@ namespace Microsoft.Extensions.DependencyInjection
             var cmsSetup = new CmsSetup(rootConfig);
 
             services.AddSingleton<ICms>(cmsSetup);
+            services.AddSingleton<ICollections>(cmsSetup);
+            services.AddSingleton<IDashboard>(cmsSetup);
+            services.AddSingleton<ILogin>(cmsSetup);
 
-            if (rootConfig.AllowAnonymousUsage)
+            if (cmsSetup.AllowAnonymousUsage)
             {
                 services.AddSingleton<IAuthorizationHandler, AllowAllAuthorizationHandler>();
                 services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
             }
 
+            ////  UI + Repository services
+            //services.AddTransient<IDataProviderService, DataProviderService>();
+            //services.AddScoped<IEditContextService, EditContextService>();
+            //services.AddTransient<IEditorService, EditorService>();
+            //services.AddTransient<ITreeService, TreeService>();
 
-            // providers for delivering config objects
-            services.AddTransient<ICustomRegistrationProvider, CustomRegistrationProvider>();
-            services.AddTransient<ICollectionProvider, CollectionProvider>();
-            services.AddTransient<IMetadataProvider, MetadataProvider>();
+            //services.AddTransient<IParentService, ParentService>();
 
-            //  UI + Repository services
-            services.AddTransient<IDataProviderService, DataProviderService>();
-            services.AddScoped<IEditContextService, EditContextService>();
-            services.AddTransient<IEditorService, EditorService>();
-            services.AddTransient<ITreeService, TreeService>();
+            //// Data exchange services
+            //services.AddScoped<ISidePaneService, SidePaneService>();
+            //services.AddScoped<IMessageService, MessageService>();
 
-            services.AddTransient<IParentService, ParentService>();
+            //// Button handlers
+            //services.AddScoped<DefaultButtonActionHandler>();
+            //services.AddScoped(typeof(OpenPaneButtonActionHandler<>));
 
-            // Data exchange services
-            services.AddScoped<ISidePaneService, SidePaneService>();
-            services.AddScoped<IMessageService, MessageService>();
+            //// Debug helpers
+            //services.AddScoped<IExceptionHelper, ExceptionHelper>();
 
-            // Button handlers
-            services.AddScoped<DefaultButtonActionHandler>();
-            services.AddScoped(typeof(OpenPaneButtonActionHandler<>));
-
-            // Debug helpers
-            services.AddScoped<IExceptionHelper, ExceptionHelper>();
-
-            // Stock data providers
-            services.AddScoped(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
+            //// Stock data providers
+            //services.AddScoped(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
 
             // UI requirements
             services.AddHttpContextAccessor();

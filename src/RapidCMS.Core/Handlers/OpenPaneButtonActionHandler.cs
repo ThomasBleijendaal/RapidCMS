@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
-using RapidCMS.Core.Models.Setup;
-using RapidCMS.Core.Services.SidePane;
+using RapidCMS.Core.Interfaces.Setup;
+using RapidCMS.Core.Services;
 
 namespace RapidCMS.Core.Handlers
 {
@@ -15,7 +15,7 @@ namespace RapidCMS.Core.Handlers
             _sidePaneService = sidePaneService;
         }
 
-        public override Task<CrudType> ButtonClickBeforeRepositoryActionAsync(ButtonSetup button, EditContext editContext, ButtonContext context)
+        public override Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, EditContext editContext, ButtonContext context)
         {
             return _sidePaneService.HandlePaneAsync(typeof(TSidePane), editContext, context, button.DefaultCrudType);
         }

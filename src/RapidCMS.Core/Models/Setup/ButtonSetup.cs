@@ -85,6 +85,7 @@ namespace RapidCMS.Core.Models.Setup
 
         internal EntityVariantSetup? EntityVariant { get; set; }
 
+        DefaultButtonType IButton.DefaultButtonType => DefaultButtonType;
         CrudType? IButton.DefaultCrudType => DefaultCrudType;
         string IButton.Label => Label;
         string IButton.Icon => Icon;
