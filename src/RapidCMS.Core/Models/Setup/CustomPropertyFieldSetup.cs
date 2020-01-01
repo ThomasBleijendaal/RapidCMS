@@ -1,5 +1,4 @@
 ﻿using System;
-using RapidCMS.Core.Interfaces.Metadata;
 using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup

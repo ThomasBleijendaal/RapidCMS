@@ -1,8 +1,8 @@
 ﻿using System;
+using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Interfaces.Config;
-using RapidCMS.Core.Interfaces.Data;
-using RapidCMS.Core.Interfaces.Handlers;
 
 namespace RapidCMS.Core.Models.Config
 {

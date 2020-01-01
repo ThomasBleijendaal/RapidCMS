@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using RapidCMS.Core.Interfaces.Data;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Tests.ParentPathTests

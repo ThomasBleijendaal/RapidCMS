@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms.Validation;
-using RapidCMS.Core.Interfaces.Data;
-using RapidCMS.Core.Interfaces.Metadata;
 
 namespace RapidCMS.Core.Forms
 {

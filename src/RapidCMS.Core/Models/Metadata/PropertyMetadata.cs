@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
-using RapidCMS.Core.Interfaces.Metadata;
+using RapidCMS.Core.Abstractions.Metadata;
 
 namespace RapidCMS.Core.Models.Metadata
 {

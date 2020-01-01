@@ -1,6 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("RapidCMS.Core.Tests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
+
 [assembly: InternalsVisibleTo("RapidCMS.Repositories")]
 [assembly: InternalsVisibleTo("RapidCMS.Example")]
 

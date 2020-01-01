@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using RapidCMS.Core.Interfaces.Data;
+using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Core.Forms.Validation
 {

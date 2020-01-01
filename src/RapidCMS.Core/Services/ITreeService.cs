@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Models.UI;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.UI;
 
-namespace RapidCMS.Common.Services
+namespace RapidCMS.Core.Services
 {
     public interface ITreeService
     {

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using NUnit.Framework;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Interfaces.Metadata;
 using RapidCMS.Core.Models;
 
 namespace RapidCMS.Core.Tests.PropertyMetadata

@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using RapidCMS.Core.Interfaces.Metadata;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Models.Metadata;
 
 namespace RapidCMS.Core.Helpers

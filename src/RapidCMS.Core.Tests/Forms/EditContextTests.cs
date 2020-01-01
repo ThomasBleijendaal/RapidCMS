@@ -4,11 +4,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Interfaces.Data;
-using RapidCMS.Core.Interfaces.Metadata;
 
 namespace RapidCMS.Core.Tests.Forms
 {

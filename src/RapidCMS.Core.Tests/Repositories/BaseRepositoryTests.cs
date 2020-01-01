@@ -1,7 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
-using RapidCMS.Core.Interfaces.Data;
-using RapidCMS.Core.Interfaces.Repositories;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Tests.Repositories
@@ -9,23 +9,13 @@ namespace RapidCMS.Core.Tests.Repositories
     public class BaseRepositoryTests
     {
         private IRepository _subject = default!;
-        private Mock<BaseRepository<string, Entity>> _mock = default!;
+        private Mock<BaseRepository<Entity>> _mock = default!;
 
         [SetUp]
         public void Setup()
         {
-            _mock = new Mock<BaseRepository<string, Entity>>();
+            _mock = new Mock<BaseRepository<Entity>>();
             _subject = _mock.Object;
-        }
-
-        [Test]
-        public void WhenEntityIsFetchedById_TheGivenIdIsParsedFirst()
-        {
-            // act
-            _subject.GetByIdAsync("123", null);
-
-            // assert
-            _mock.Verify(x => x.ParseKey("123"), Times.Once());
         }
 
         [Test]

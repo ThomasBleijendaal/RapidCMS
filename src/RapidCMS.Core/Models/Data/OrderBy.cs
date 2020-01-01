@@ -1,10 +1,10 @@
-﻿using RapidCMS.Core.Enums;
-using RapidCMS.Core.Interfaces.Data;
-using RapidCMS.Core.Interfaces.Metadata;
+﻿using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Data
 {
-    public class OrderBy : IOrderBy
+    internal class OrderBy : IOrderBy
     {
         public OrderBy(OrderByType orderByType, IPropertyMetadata orderByExpression)
         {

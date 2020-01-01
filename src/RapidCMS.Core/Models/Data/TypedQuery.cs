@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Interfaces.Data;
-using RapidCMS.Core.Interfaces.Metadata;
 
 namespace RapidCMS.Core.Models.Data
 {

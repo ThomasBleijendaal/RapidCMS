@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Interfaces.Config;
-using RapidCMS.Core.Interfaces.Data;
-using RapidCMS.Core.Interfaces.Metadata;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.Config

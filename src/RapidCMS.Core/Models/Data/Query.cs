@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq.Expressions;
-using RapidCMS.Core.Interfaces.Data;
+using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Core.Models.Data
 {
-    public class Query : IQuery
+    internal class Query : IQuery
     {
         internal LambdaExpression? QueryExpression;
         internal IEnumerable<IOrderBy>? OrderByExpressions;

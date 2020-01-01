@@ -1,5 +1,5 @@
-﻿using RapidCMS.Core.Enums;
-using RapidCMS.Core.Interfaces.Metadata;
+﻿using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Config
 {

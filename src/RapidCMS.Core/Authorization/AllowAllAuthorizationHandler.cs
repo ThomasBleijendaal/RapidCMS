@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
-using RapidCMS.Core.Interfaces.Data;
+using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Core.Authorization
 {

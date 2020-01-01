@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using RapidCMS.Core.Abstractions.Handlers;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Handlers;
-using RapidCMS.Core.Interfaces.Handlers;
-using RapidCMS.Core.Interfaces.Setup;
 using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup

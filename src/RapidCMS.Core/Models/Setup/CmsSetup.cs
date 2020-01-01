@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Interfaces.Setup;
 using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
     internal class CmsSetup : ICms, ICollections, IDashboard, ILogin
     {
+        private Dictionary<string, CollectionSetup> _collectionMap { get; set; } = new Dictionary<string, CollectionSetup>();
+
         internal CmsSetup(CmsConfig config)
         {
             SiteName = config.SiteName;
@@ -26,6 +30,24 @@ namespace RapidCMS.Core.Models.Setup
             {
                 CustomLoginStatusRegistration = new CustomTypeRegistrationSetup(config.CustomLoginStatusRegistration);
             }
+
+            MapCollections(Collections);
+
+            void MapCollections(IEnumerable<CollectionSetup> collections)
+            {
+                foreach (var collection in collections)
+                {
+                    if (!_collectionMap.TryAdd(collection.Alias, collection))
+                    {
+                        throw new InvalidOperationException($"Duplicate collection alias '{collection.Alias}' not allowed.");
+                    }
+
+                    if (collection.Collections.Any())
+                    {
+                        MapCollections(collection.Collections);
+                    }
+                }
+            }
         }
 
         internal string SiteName { get; set; }
@@ -34,8 +56,8 @@ namespace RapidCMS.Core.Models.Setup
 
         internal int SemaphoreMaxCount { get; set; }
 
-        public List<CollectionSetup> Collections { get; set; } 
-        internal List<CustomTypeRegistrationSetup> CustomDashboardSectionRegistrations { get; set; } 
+        public List<CollectionSetup> Collections { get; set; }
+        internal List<CustomTypeRegistrationSetup> CustomDashboardSectionRegistrations { get; set; }
         internal CustomTypeRegistrationSetup? CustomLoginScreenRegistration { get; set; }
         internal CustomTypeRegistrationSetup? CustomLoginStatusRegistration { get; set; }
 
@@ -44,7 +66,16 @@ namespace RapidCMS.Core.Models.Setup
         bool ICms.AllowAnonymousUsage => AllowAnonymousUsage;
         int ICms.SemaphoreMaxCount => SemaphoreMaxCount;
 
-        IEnumerable<CollectionSetup> ICollections.Collections => Collections;
+        CollectionSetup ICollections.GetCollection(string alias)
+        {
+            return _collectionMap.FirstOrDefault(x => x.Key == alias).Value
+                ?? throw new InvalidOperationException($"Failed to find collection with alias {alias}.");
+        }
+
+        IEnumerable<CollectionSetup> ICollections.GetRootCollections()
+        {
+            return Collections;
+        }
 
         IEnumerable<CustomTypeRegistrationSetup> IDashboard.CustomDashboardSectionRegistrations => CustomDashboardSectionRegistrations;
 

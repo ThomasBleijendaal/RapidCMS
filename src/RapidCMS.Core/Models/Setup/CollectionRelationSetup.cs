@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using RapidCMS.Core.Interfaces.Metadata;
+using RapidCMS.Core.Abstractions.Metadata;
 
 namespace RapidCMS.Core.Models.Setup
 {

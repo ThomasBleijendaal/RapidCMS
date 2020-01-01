@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using RapidCMS.Core.Interfaces.Metadata;
+using RapidCMS.Core.Abstractions.Metadata;
 
 namespace RapidCMS.Core.Extensions
 {

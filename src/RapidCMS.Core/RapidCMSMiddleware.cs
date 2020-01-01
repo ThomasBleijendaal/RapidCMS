@@ -5,11 +5,17 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
+using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
-using RapidCMS.Core.Interfaces.Config;
-using RapidCMS.Core.Interfaces.Setup;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
+using RapidCMS.Core.Resolvers;
+using RapidCMS.Core.Resolvers.Repositories;
+using RapidCMS.Core.Services;
+using RapidCMS.Core.Services.Parent;
+using RapidCMS.Core.Services.SidePane;
+using RapidCMS.Core.Services.Tree;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -34,15 +40,15 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             ////  UI + Repository services
+            services.AddTransient<IRepositoryResolver, RepositoryResolver>();
             //services.AddTransient<IDataProviderService, DataProviderService>();
             //services.AddScoped<IEditContextService, EditContextService>();
             //services.AddTransient<IEditorService, EditorService>();
-            //services.AddTransient<ITreeService, TreeService>();
-
-            //services.AddTransient<IParentService, ParentService>();
+            services.AddTransient<ITreeService, TreeService>();
+            services.AddTransient<IParentService, ParentService>();
 
             //// Data exchange services
-            //services.AddScoped<ISidePaneService, SidePaneService>();
+            services.AddScoped<ISidePaneService, SidePaneService>();
             //services.AddScoped<IMessageService, MessageService>();
 
             //// Button handlers

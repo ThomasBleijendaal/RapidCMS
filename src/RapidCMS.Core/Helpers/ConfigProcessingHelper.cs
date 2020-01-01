@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Interfaces.Config;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Primitives;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Forms;
-using RapidCMS.Core.Interfaces.Data;
-using RapidCMS.Core.Interfaces.Forms;
-using RapidCMS.Core.Interfaces.Repositories;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Repositories

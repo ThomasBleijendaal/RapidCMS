@@ -1,4 +1,4 @@
-﻿using RapidCMS.Core.Interfaces.Metadata;
+﻿using RapidCMS.Core.Abstractions.Metadata;
 
 namespace RapidCMS.Core.Forms
 {

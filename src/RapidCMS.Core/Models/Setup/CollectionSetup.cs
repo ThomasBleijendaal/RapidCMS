@@ -2,18 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Interfaces.Data;
-using RapidCMS.Core.Interfaces.Repositories;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.Setup
 {
     internal class CollectionSetup
     {
-        private IRepository? _repository;
-
-        internal CollectionSetup(string? icon, string name, string alias, EntityVariantSetup entityVariant, Type? repositoryType, bool isRecursive = false)
+        internal CollectionSetup(
+            string? icon, 
+            string name, 
+            string alias, 
+            EntityVariantSetup entityVariant, 
+            Type? repositoryType,
+            bool isRecursive = false)
         {
             Icon = icon;
             Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -84,12 +88,7 @@ namespace RapidCMS.Core.Models.Setup
         }
 
         internal Type? RepositoryType { get; private set; }
-        internal IRepository Repository
-        {
-            get => _repository ?? throw new InvalidOperationException($"The collection {Name} ({Alias}) requires a Repository. Use SetRepository before using the collection.");
-            set => _repository = value;
-        }
-
+        
         internal TreeViewSetup? TreeView { get; set; }
 
         internal ListSetup? ListView { get; set; }

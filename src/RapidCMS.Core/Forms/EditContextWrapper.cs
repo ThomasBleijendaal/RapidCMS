@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Interfaces.Data;
-using RapidCMS.Core.Interfaces.Forms;
-using RapidCMS.Core.Interfaces.Metadata;
 
 namespace RapidCMS.Core.Forms
 {

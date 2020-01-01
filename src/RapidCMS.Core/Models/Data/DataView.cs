@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
-using RapidCMS.Core.Interfaces.Data;
+using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Core.Models.Data
 {
-    public class DataView<TEntity> : IDataView
+    internal class DataView<TEntity> : IDataView
     {
         public DataView(int id, string label, Expression<Func<TEntity, bool>> expression)
         {

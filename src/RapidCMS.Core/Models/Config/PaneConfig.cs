@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Interfaces.Config;
-using RapidCMS.Core.Interfaces.Data;
 
 namespace RapidCMS.Core.Models.Config
 {

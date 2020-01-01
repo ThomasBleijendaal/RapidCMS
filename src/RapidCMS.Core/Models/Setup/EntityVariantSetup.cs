@@ -1,6 +1,6 @@
 ﻿using System;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Interfaces.Setup;
 using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
