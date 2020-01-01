@@ -1,11 +1,12 @@
 ﻿using System;
 using RapidCMS.Core.Interfaces.Metadata;
+using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
     internal class CustomPropertyFieldSetup : PropertyFieldSetup
     {
-        public CustomPropertyFieldSetup(IPropertyMetadata property, Type customFieldType) : base(property)
+        internal CustomPropertyFieldSetup(FieldConfig field, Type customFieldType) : base(field)
         {
             CustomType = customFieldType ?? throw new ArgumentNullException(nameof(customFieldType));
         }

@@ -1,11 +1,12 @@
 ﻿using System;
 using RapidCMS.Core.Interfaces.Metadata;
+using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
     internal class CustomExpressionFieldSetup : ExpressionFieldSetup
     {
-        public CustomExpressionFieldSetup(IExpressionMetadata expression, Type customFieldType) : base(expression)
+        internal CustomExpressionFieldSetup(FieldConfig field, IExpressionMetadata expression, Type customFieldType) : base(field, expression)
         {
             CustomType = customFieldType ?? throw new ArgumentNullException(nameof(customFieldType));
         }

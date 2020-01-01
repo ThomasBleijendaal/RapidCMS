@@ -1,11 +1,23 @@
 ﻿using System;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Interfaces.Metadata;
+using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
     internal class FieldSetup
     {
+        internal FieldSetup(FieldConfig field)
+        {
+            Index = field.Index;
+            Description = field.Description;
+            Name = field.Name;
+            OrderByExpression = field.OrderByExpression;
+            DefaultOrder = field.DefaultOrder;
+            IsVisible = field.IsVisible;
+            IsDisabled = field.IsDisabled;
+        }
+
         internal int Index { get; set; }
         
         internal string? Name { get; set; }

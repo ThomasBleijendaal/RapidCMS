@@ -2,11 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    public sealed class NodeSetup
+    internal class NodeSetup
     {
+        internal NodeSetup(NodeConfig node, CollectionSetup collection)
+        {
+            BaseType = node.BaseType;
+            Buttons = node.Buttons.ToList(button => new ButtonSetup(button, collection.EntityVariant, collection.SubEntityVariants));
+            Panes = node.Panes.ToList(pane => new PaneSetup(pane));
+        }
+
         internal Type BaseType { get; set; }
         internal List<PaneSetup> Panes { get; set; }
         internal List<ButtonSetup> Buttons { get; set; }

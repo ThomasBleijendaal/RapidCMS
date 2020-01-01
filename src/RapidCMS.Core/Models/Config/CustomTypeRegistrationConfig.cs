@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace RapidCMS.Core.Models.Config
 {
-    public class CustomTypeRegistration
+    public class CustomTypeRegistrationConfig 
     {
-        internal CustomTypeRegistration(Type type, Dictionary<string, string>? parameters = null)
+        internal CustomTypeRegistrationConfig(Type type, Dictionary<string, string>? parameters = null)
         {
             Type = type ?? throw new ArgumentNullException(nameof(type));
             Alias = type.FullName ?? throw new InvalidOperationException($"The given type ({type}) must have a FullName");

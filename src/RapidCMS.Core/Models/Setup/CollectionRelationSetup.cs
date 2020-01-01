@@ -4,12 +4,12 @@ using RapidCMS.Core.Interfaces.Metadata;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class CollectionRelation : RelationSetup
+    internal class CollectionRelationSetup : RelationSetup
     {
-        public CollectionRelation(
-            string collectionAlias, 
-            Type relatedEntityType, 
-            IPropertyMetadata idProperty, 
+        internal CollectionRelationSetup(
+            string collectionAlias,
+            Type relatedEntityType,
+            IPropertyMetadata idProperty,
             List<IExpressionMetadata> displayProperties)
         {
             CollectionAlias = collectionAlias ?? throw new ArgumentNullException(nameof(collectionAlias));

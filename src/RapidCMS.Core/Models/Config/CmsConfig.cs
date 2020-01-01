@@ -22,9 +22,9 @@ namespace RapidCMS.Core.Models.Config
         internal static List<string> CollectionAliases = new List<string>();
 
         public List<ICollectionConfig> Collections { get; set; } = new List<ICollectionConfig>();
-        internal List<CustomTypeRegistration> CustomDashboardSectionRegistrations { get; set; } = new List<CustomTypeRegistration>();
-        internal CustomTypeRegistration? CustomLoginScreenRegistration { get; set; }
-        internal CustomTypeRegistration? CustomLoginStatusRegistration { get; set; }
+        internal List<CustomTypeRegistrationConfig> CustomDashboardSectionRegistrations { get; set; } = new List<CustomTypeRegistrationConfig>();
+        internal CustomTypeRegistrationConfig? CustomLoginScreenRegistration { get; set; }
+        internal CustomTypeRegistrationConfig? CustomLoginStatusRegistration { get; set; }
 
         public ICmsConfig SetCustomLoginScreen(Type loginType)
         {
@@ -33,7 +33,7 @@ namespace RapidCMS.Core.Models.Config
                 throw new InvalidOperationException($"{nameof(loginType)} must be derived of {nameof(ComponentBase)}.");
             }
 
-            CustomLoginScreenRegistration = new CustomTypeRegistration(loginType);
+            CustomLoginScreenRegistration = new CustomTypeRegistrationConfig(loginType);
 
             return this;
         }
@@ -45,7 +45,7 @@ namespace RapidCMS.Core.Models.Config
                 throw new InvalidOperationException($"{nameof(loginType)} must be derived of {nameof(ComponentBase)}.");
             }
 
-            CustomLoginStatusRegistration = new CustomTypeRegistration(loginType);
+            CustomLoginStatusRegistration = new CustomTypeRegistrationConfig(loginType);
 
             return this;
         }
@@ -71,20 +71,19 @@ namespace RapidCMS.Core.Models.Config
                 throw new InvalidOperationException($"{nameof(customDashboardSectionType)} must be derived of {nameof(ComponentBase)}.");
             }
 
-            CustomDashboardSectionRegistrations.Add(new CustomTypeRegistration(customDashboardSectionType));
+            CustomDashboardSectionRegistrations.Add(new CustomTypeRegistrationConfig(customDashboardSectionType));
 
             return this;
         }
 
         public ICmsConfig AddDashboardSection(string collectionAlias, bool edit = false)
         {
-            // TODO
-            //CustomDashboardSectionRegistrations.Add(
-            //    new CustomTypeRegistration(
-            //        typeof(Collection),
-            //        new Dictionary<string, string> {
-            //            { "Action", edit ? Constants.Edit : Constants.View },
-            //            { "CollectionAlias", collectionAlias } }));
+            CustomDashboardSectionRegistrations.Add(
+                new CustomTypeRegistrationConfig(
+                    typeof(CollectionConfig),
+                    new Dictionary<string, string> {
+                        { "Action", edit ? Constants.Edit : Constants.View },
+                        { "CollectionAlias", collectionAlias } }));
 
             return this;
         }

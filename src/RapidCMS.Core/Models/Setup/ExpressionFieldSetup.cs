@@ -2,17 +2,18 @@
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Interfaces.Metadata;
+using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
     internal class ExpressionFieldSetup : FieldSetup
     {
-        public ExpressionFieldSetup(IExpressionMetadata expression)
+        internal ExpressionFieldSetup(FieldConfig field, IExpressionMetadata expression) : base(field)
         {
             Expression = expression ?? throw new ArgumentNullException(nameof(expression));
         }
 
-        public ExpressionFieldSetup(IPropertyMetadata expression)
+        internal ExpressionFieldSetup(FieldConfig field, IPropertyMetadata expression) : base(field)
         {
             Expression = PropertyMetadataHelper.GetExpressionMetadata(expression ?? throw new ArgumentNullException(nameof(expression)));
         }

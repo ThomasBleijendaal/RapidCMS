@@ -8,14 +8,14 @@ namespace RapidCMS.Core.Models.Setup
 {
     internal class ListSetup
     {
-        public ListSetup(ListConfig list, CollectionSetup collection)
+        internal ListSetup(ListConfig list, CollectionSetup collection)
         {
             PageSize = list.PageSize;
             SearchBarVisible = list.SearchBarVisible;
             ListType = list.ListEditorType;
             EmptyVariantColumnVisibility = list.EmptyVariantColumnVisibility;
-            Buttons = list.Buttons.ToList(button => button.ToButton(collection.SubEntityVariants, collection.EntityVariant));
-            Panes = list.Panes.ToList(pane => pane.ToPane();
+            Buttons = list.Buttons.ToList(button => new ButtonSetup(button, collection.EntityVariant, collection.SubEntityVariants));
+            Panes = list.Panes.ToList(pane => new PaneSetup(pane));
         }
 
         internal int? PageSize { get; set; }

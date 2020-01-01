@@ -1,10 +1,11 @@
 ﻿using System;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Interfaces.Setup;
 using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    public class EntityVariantSetup
+    internal class EntityVariantSetup : IEntityVariant
     {
         public static EntityVariantSetup Undefined = new EntityVariantSetup(default!);
 
@@ -25,9 +26,14 @@ namespace RapidCMS.Core.Models.Setup
             Type = variant.Type;
         }
 
-        public string Name { get; internal set; }
-        public string? Icon { get; internal set; }
-        public Type Type { get; internal set; }
-        public string Alias { get; internal set; }
+        internal string Name { get; set; }
+        internal string? Icon { get; set; }
+        internal Type Type { get; set; }
+        internal string Alias { get; set; }
+
+        string IEntityVariant.Name => Name;
+        string? IEntityVariant.Icon => Icon;
+        Type IEntityVariant.Type => Type;
+        string IEntityVariant.Alias => Alias;
     }
 }

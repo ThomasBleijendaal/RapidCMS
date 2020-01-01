@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    public class CustomTypeRegistrationSetup
+    internal class CustomTypeRegistrationSetup
     {
-        internal CustomTypeRegistrationSetup(Type type, Dictionary<string, string>? parameters = null)
+        internal CustomTypeRegistrationSetup(CustomTypeRegistrationConfig registration)
         {
-            Type = type ?? throw new ArgumentNullException(nameof(type));
-            Alias = type.FullName ?? throw new InvalidOperationException($"The given type ({type}) must have a FullName");
-            ;
-            Parameters = parameters;
+            Type = registration.Type == typeof(CollectionConfig) ? typeof(CollectionSetup) : registration.Type;
+            Alias = registration.Alias;
+            Parameters = registration.Parameters;
         }
 
-        public Type Type { get; set; }
-        public string Alias { get; set; }
-        public Dictionary<string, string>? Parameters { get; set; }
+        internal Type Type { get; set; }
+        internal string Alias { get; set; }
+        internal Dictionary<string, string>? Parameters { get; set; }
     }
 }

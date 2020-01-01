@@ -9,11 +9,11 @@ using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    public class CollectionSetup
+    internal class CollectionSetup
     {
         private IRepository? _repository;
 
-        public CollectionSetup(string? icon, string name, string alias, EntityVariantSetup entityVariant, Type? repositoryType, bool isRecursive = false)
+        internal CollectionSetup(string? icon, string name, string alias, EntityVariantSetup entityVariant, Type? repositoryType, bool isRecursive = false)
         {
             Icon = icon;
             Name = name ?? throw new ArgumentNullException(nameof(name));

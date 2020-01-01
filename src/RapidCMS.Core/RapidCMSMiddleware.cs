@@ -5,8 +5,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
+using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Interfaces.Config;
+using RapidCMS.Core.Interfaces.Setup;
 using RapidCMS.Core.Models.Config;
+using RapidCMS.Core.Models.Setup;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -17,13 +20,16 @@ namespace Microsoft.Extensions.DependencyInjection
             var rootConfig = new CmsConfig();
             config?.Invoke(rootConfig);
 
+            var cmsSetup = new CmsSetup(rootConfig);
+
+            services.AddSingleton<ICms>(cmsSetup);
+
             if (rootConfig.AllowAnonymousUsage)
             {
                 services.AddSingleton<IAuthorizationHandler, AllowAllAuthorizationHandler>();
                 services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
             }
 
-            services.AddSingleton(rootConfig);
 
             // providers for delivering config objects
             services.AddTransient<ICustomRegistrationProvider, CustomRegistrationProvider>();

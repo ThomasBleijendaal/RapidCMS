@@ -15,7 +15,6 @@ namespace RapidCMS.Core.Forms
     {
         private readonly FormState _formState = new FormState();
         private readonly List<PropertyState> _fieldStates = new List<PropertyState>();
-        private readonly IServiceProvider _serviceProvider;
 
         internal EditContext(string collectionAlias, IEntity entity, IParent? parent, UsageType usageType, IServiceProvider serviceProvider)
         {
@@ -23,7 +22,7 @@ namespace RapidCMS.Core.Forms
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             Parent = parent;
             UsageType = usageType;
-            _serviceProvider = serviceProvider;
+            ServiceProvider = serviceProvider;
         }
 
         public string CollectionAlias { get; }
@@ -31,6 +30,8 @@ namespace RapidCMS.Core.Forms
         public IParent? Parent { get; private set; }
         public UsageType UsageType { get; private set; }
         public EntityState EntityState => UsageType.HasFlag(UsageType.New) ? EntityState.IsNew : EntityState.IsExisting;
+
+        public IServiceProvider ServiceProvider { get; private set; }
 
         internal void SwapEntity(IEntity entity)
         {
@@ -205,7 +206,7 @@ namespace RapidCMS.Core.Forms
         private IEnumerable<ValidationResult> GetValidationResultsForProperty(IPropertyMetadata property)
         {
             var results = new List<ValidationResult>();
-            var context = new ValidationContext(Entity, _serviceProvider, null)
+            var context = new ValidationContext(Entity, ServiceProvider, null)
             {
                 MemberName = property.PropertyName
             };
@@ -228,7 +229,7 @@ namespace RapidCMS.Core.Forms
 
         private IEnumerable<ValidationResult> GetValidationResultsForModel()
         {
-            var context = new ValidationContext(Entity, _serviceProvider, null);
+            var context = new ValidationContext(Entity, ServiceProvider, null);
             var results = new List<ValidationResult>();
 
             try

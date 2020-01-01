@@ -49,7 +49,7 @@ namespace RapidCMS.Core.Repositories
         /// <param name="relatedEntity"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IEntity relatedEntity, IQuery<TDatabaseEntity> query)
+        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IQuery<TDatabaseEntity> query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllRelatedAsync)} on the {GetType()}.");
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace RapidCMS.Core.Repositories
         /// <param name="relatedEntity"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IEntity relatedEntity, IQuery<TDatabaseEntity> query)
+        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TDatabaseEntity> query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllNonRelatedAsync)} on the {GetType()}.");
 
         /// <summary>
@@ -125,20 +125,20 @@ namespace RapidCMS.Core.Repositories
         /// This methods adds an releated entity to the entity that corresponds with the given id. 
         /// This method is used when an new many-to-many relation between two entities is made.
         /// </summary>
-        /// <param name="relatedEntity"></param>
+        /// <param name="related"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual Task AddAsync(IEntity relatedEntity, TKey id)
+        public virtual Task AddAsync(IRelated related, TKey id)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(AddAsync)} on the {GetType()}.");
 
         /// <summary>
         /// This methods removes an releated entity from the entity that corresponds with the given id. 
         /// This method is used when a many-to-many relation between two entities is removed.
         /// </summary>
-        /// <param name="relatedEntity"></param>
+        /// <param name="related"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual Task RemoveAsync(IEntity relatedEntity, TKey id)
+        public virtual Task RemoveAsync(IRelated related, TKey id)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(RemoveAsync)} on the {GetType()}.");
 
         /// <summary>
@@ -168,14 +168,14 @@ namespace RapidCMS.Core.Repositories
             return (await GetAllAsync(parent, TypedQuery<TDatabaseEntity>.Convert(query))).Cast<IEntity>();
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllRelatedAsync(IEntity relatedEntity, IQuery query)
+        async Task<IEnumerable<IEntity>> IRepository.GetAllRelatedAsync(IRelated related, IQuery query)
         {
-            return (await GetAllRelatedAsync(relatedEntity, TypedQuery<TDatabaseEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+            return (await GetAllRelatedAsync(related, TypedQuery<TDatabaseEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllNonRelatedAsync(IEntity relatedEntity, IQuery query)
+        async Task<IEnumerable<IEntity>> IRepository.GetAllNonRelatedAsync(IRelated related, IQuery query)
         {
-            return (await GetAllNonRelatedAsync(relatedEntity, TypedQuery<TDatabaseEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+            return (await GetAllNonRelatedAsync(related, TypedQuery<TDatabaseEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
         }
 
         async Task<IEntity> IRepository.NewAsync(IParent? parent, Type? variantType)
@@ -202,13 +202,13 @@ namespace RapidCMS.Core.Repositories
             NotifyUpdate();
         }
 
-        async Task IRepository.AddAsync(IEntity relatedEntity, string id)
+        async Task IRepository.AddAsync(IRelated related, string id)
         {
-            await AddAsync(relatedEntity, ParseKey(id));
+            await AddAsync(related, ParseKey(id));
         }
-        async Task IRepository.RemoveAsync(IEntity relatedEntity, string id)
+        async Task IRepository.RemoveAsync(IRelated related, string id)
         {
-            await RemoveAsync(relatedEntity, ParseKey(id));
+            await RemoveAsync(related, ParseKey(id));
         }
     }
 }
