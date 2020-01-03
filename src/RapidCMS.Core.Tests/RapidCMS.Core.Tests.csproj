@@ -20,4 +20,8 @@
     <ProjectReference Include="..\RapidCMS.Core\RapidCMS.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Tree\" />
+  </ItemGroup>
+
 </Project>

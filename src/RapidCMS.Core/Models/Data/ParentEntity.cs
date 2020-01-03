@@ -18,7 +18,7 @@ namespace RapidCMS.Core.Models.Data
 
         public ParentPath? GetParentPath()
         {
-            return ParentPath.AddLevel(Parent?.GetParentPath(), _collectionAlias, Entity.Id);
+            return ParentPath.AddLevel(Parent?.GetParentPath(), _collectionAlias, Entity.Id!);
         }
     }
 }

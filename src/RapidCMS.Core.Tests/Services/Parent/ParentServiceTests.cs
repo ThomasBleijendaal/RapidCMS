@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Repositories;
@@ -10,6 +6,7 @@ using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Resolvers;
 using RapidCMS.Core.Services;
 using RapidCMS.Core.Services.Parent;
+using System.Threading.Tasks;
 
 namespace RapidCMS.Core.Tests.Services.Parent
 {
@@ -23,7 +20,14 @@ namespace RapidCMS.Core.Tests.Services.Parent
         public void Setup()
         {
             _repository = new Mock<IRepository>();
-            _repository.Setup(x => x.GetByIdAsync(It.IsAny<string>(), It.IsAny<IParent>())).ReturnsAsync(new Mock<IEntity>().Object);
+            _repository
+                .Setup(x => x.GetByIdAsync(It.IsAny<string>(), It.IsAny<IParent>()))
+                .ReturnsAsync((string id, IParent parent) =>
+                {
+                    var mock = new Mock<IEntity>();
+                    mock.Setup(x => x.Id).Returns(id);
+                    return mock.Object;
+                });
             _repositoryResolver = new Mock<IRepositoryResolver>();
 
             _subject = new ParentService(_repositoryResolver.Object);
@@ -51,8 +55,8 @@ namespace RapidCMS.Core.Tests.Services.Parent
             var parents = await _subject.GetParentAsync(ParentPath.TryParse("alias:123"));
 
             // assert
-            Assert.NotNull(parents.Entity);
-            Assert.AreEqual("alias:123", parents.GetParentPath().ToPathString());
+            Assert.NotNull(parents!.Entity);
+            Assert.AreEqual("alias:123", parents.GetParentPath()!.ToPathString());
         }
     }
 }

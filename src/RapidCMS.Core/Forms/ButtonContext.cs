@@ -3,7 +3,6 @@ using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Core.Forms
 {
-    [Obsolete]
     public sealed class ButtonContext
     {
         public ButtonContext(IParent? parent, object? customData)

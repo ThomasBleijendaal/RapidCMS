@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace RapidCMS.Core.Models.Data
 {
-    public class ParentPath : IEnumerable<(string collectionAlias, string id)>
+    public sealed class ParentPath : IEnumerable<(string collectionAlias, string id)>
     {
         private readonly List<(string collection, string id)> _path;
 

@@ -7,6 +7,7 @@ using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms.Validation;
+using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Forms
 {
@@ -38,8 +39,7 @@ namespace RapidCMS.Core.Forms
             Entity = entity;
         }
 
-        // TODO
-        // internal List<DataProvider> DataProviders = new List<DataProvider>();
+        internal List<DataProvider> DataProviders = new List<DataProvider>();
 
         public event EventHandler<FieldChangedEventArgs>? OnFieldChanged;
 

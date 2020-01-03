@@ -61,10 +61,8 @@ namespace RapidCMS.Core.Services.Tree
                 testEntity,
                 Operations.Update);
 
-            var tree = new TreeUI
+            var tree = new TreeUI(collection.Alias, collection.Name)
             {
-                Alias = collection.Alias,
-                Name = collection.Name,
                 EntitiesVisible = collection.TreeView?.EntityVisibility == EntityVisibilty.Visible,
                 RootVisible = collection.TreeView?.RootVisibility == CollectionRootVisibility.Visible,
                 Icon = collection.Icon ?? "list"
@@ -103,12 +101,12 @@ namespace RapidCMS.Core.Services.Tree
                 {
                     var entityVariant = collection.GetEntityVariant(entity);
 
-                    var node = new TreeNodeUI
+                    var node = new TreeNodeUI(
+                        entity.Id!, 
+                        collection.TreeView.Name!.StringGetter.Invoke(entity), 
+                        collection.Collections.ToList(subCollection => subCollection.Alias))
                     {
-                        Id = entity.Id,
-                        Name = collection.TreeView.Name!.StringGetter.Invoke(entity),
                         RootVisibleOfCollections = collection.Collections.All(subCollection => subCollection.TreeView?.RootVisibility == CollectionRootVisibility.Visible),
-                        Collections = collection.Collections.ToList(subCollection => subCollection.Alias)
                     };
 
                     var editAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
@@ -153,11 +151,7 @@ namespace RapidCMS.Core.Services.Tree
         {
             var collections = _setup.GetRootCollections().Select(x => x.Alias).ToList();
 
-            return new TreeRootUI
-            {
-                Collections = collections,
-                Name = _cms.SiteName
-            };
+            return new TreeRootUI("-1", _cms.SiteName, collections);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RapidCMS.Core.Models.Config
 {
-    public class CustomTypeRegistrationConfig 
+    public sealed class CustomTypeRegistrationConfig 
     {
         internal CustomTypeRegistrationConfig(Type type, Dictionary<string, string>? parameters = null)
         {

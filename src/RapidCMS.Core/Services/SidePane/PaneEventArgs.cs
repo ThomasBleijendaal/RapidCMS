@@ -5,7 +5,7 @@ using RapidCMS.Core.Forms;
 
 namespace RapidCMS.Core.Services.SidePane
 {
-    public class PaneEventArgs
+    public sealed class PaneEventArgs
     {
         public PaneEventArgs(Type paneType, Task returnTask, EditContext editContext, ButtonContext buttonContext, CrudType? defaultCrudType)
         {
