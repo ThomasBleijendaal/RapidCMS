@@ -7,6 +7,7 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.UI;
+using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Resolvers.UI
 {
@@ -53,16 +54,7 @@ namespace RapidCMS.Core.Resolvers.UI
                     editContext.DataProviders.Add(dataProvider);
                 }
 
-                return (index: field.Index, element: field switch
-                {
-                    CustomExpressionFieldSetup x => new CustomExpressionFieldUI(x),
-                    ExpressionFieldSetup x => new ExpressionFieldUI(x),
-
-                    CustomPropertyFieldSetup x => new CustomPropertyFieldUI(x, dataProvider),
-                    PropertyFieldSetup x => new PropertyFieldUI(x, dataProvider),
-
-                    _ => default(ElementUI)!
-                });
+                return (index: field.Index, element: (ElementUI)GetField(field, dataProvider));
             });
 
             var subCollections = pane.SubCollectionLists.Select(subCollection =>
@@ -86,6 +78,20 @@ namespace RapidCMS.Core.Resolvers.UI
                     .Union(relatedCollections)
                     .OrderBy(x => x.index)
                     .ToList(x => x.element)
+            };
+        }
+
+        protected FieldUI GetField(FieldSetup field, DataProvider? dataProvider)
+        {
+            return field switch
+            {
+                CustomExpressionFieldSetup x => new CustomExpressionFieldUI(x),
+                ExpressionFieldSetup x => new ExpressionFieldUI(x),
+
+                CustomPropertyFieldSetup x => new CustomPropertyFieldUI(x, dataProvider),
+                PropertyFieldSetup x => new PropertyFieldUI(x, dataProvider),
+
+                _ => default!
             };
         }
     }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using RapidCMS.Common.Models.UI;
+﻿ using System.Collections.Generic;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
@@ -7,6 +6,7 @@ using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.UI
 {
+    // TODO: constructor?
     public class ListUI
     {
         public ListType ListType { get; internal set; }

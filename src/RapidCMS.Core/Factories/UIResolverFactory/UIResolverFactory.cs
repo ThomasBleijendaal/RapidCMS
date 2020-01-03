@@ -2,12 +2,10 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using RapidCMS.Common.Enums;
-using RapidCMS.Common.Providers;
 using RapidCMS.Common.Resolvers.UI;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Factories;
+using RapidCMS.Core.Resolvers;
 using RapidCMS.Core.Resolvers.UI;
 
 namespace RapidCMS.Core.Factories.UIResolverFactory
@@ -15,15 +13,18 @@ namespace RapidCMS.Core.Factories.UIResolverFactory
     internal class UIResolverFactory : IUIResolverFactory
     {
         private readonly ICollections _setup;
+        private readonly IDataProviderResolver _dataProviderResolver;
         private readonly IAuthorizationService _authorizationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UIResolverFactory(
             ICollections setup,
+            IDataProviderResolver dataProviderResolver,
             IAuthorizationService authorizationService,
             IHttpContextAccessor httpContextAccessor)
         {
             _setup = setup;
+            _dataProviderResolver = dataProviderResolver;
             _authorizationService = authorizationService;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -39,7 +40,7 @@ namespace RapidCMS.Core.Factories.UIResolverFactory
                 throw new InvalidOperationException($"Failed to get UI configuration from collection {collectionAlias} for action {usageType}");
             }
 
-            INodeUIResolver nodeUI = new NodeUIResolver(node, _dataProviderService, _authorizationService, _httpContextAccessor);
+            INodeUIResolver nodeUI = new NodeUIResolver(node, _dataProviderResolver, _authorizationService, _httpContextAccessor);
 
             return Task.FromResult(nodeUI);
         }
@@ -55,7 +56,7 @@ namespace RapidCMS.Core.Factories.UIResolverFactory
                 throw new InvalidOperationException($"Failed to get UI configuration from collection {collectionAlias} for action {usageType}");
             }
 
-            IListUIResolver listUI = new ListUIResolver(list, collection, _dataProviderService, _authorizationService, _httpContextAccessor);
+            IListUIResolver listUI = new ListUIResolver(list, collection, _dataProviderResolver, _authorizationService, _httpContextAccessor);
 
             return Task.FromResult(listUI);
         }

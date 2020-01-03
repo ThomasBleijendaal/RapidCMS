@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.EqualityComparers;
-using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Forms;
-using RapidCMS.Common.Models;
 using RapidCMS.Common.Models.UI;
+using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.Core.Resolvers;
 using RapidCMS.Core.Resolvers.UI;
@@ -17,13 +17,15 @@ namespace RapidCMS.Common.Resolvers.UI
 {
     internal class ListUIResolver : BaseUIResolver, IListUIResolver
     {
-        private readonly List _list;
-        private readonly Collection _collection;
+        private readonly ListSetup _list;
+        private readonly CollectionSetup _collection;
         private readonly Dictionary<Type, IEnumerable<FieldUI>> _fieldsPerType = new Dictionary<Type, IEnumerable<FieldUI>>();
 
+        private readonly FieldUIEqualityComparer _equalityComparer = new FieldUIEqualityComparer();
+
         public ListUIResolver(
-            List list,
-            Collection collection,
+            ListSetup list,
+            CollectionSetup collection,
             IDataProviderResolver dataProviderService,
             IAuthorizationService authorizationService,
             IHttpContextAccessor httpContextAccessor) : base(dataProviderService, authorizationService, httpContextAccessor)
@@ -35,7 +37,7 @@ namespace RapidCMS.Common.Resolvers.UI
             {
                 if (!_fieldsPerType.ContainsKey(pane.VariantType) && pane.Fields != null)
                 {
-                    _fieldsPerType.Add(pane.VariantType, pane.Fields.Select(x => x.ToUI()));
+                    _fieldsPerType.Add(pane.VariantType, pane.Fields.Select(x => GetField(x, default)));
                 }
             });
         }
@@ -54,14 +56,14 @@ namespace RapidCMS.Common.Resolvers.UI
         {
             return new ListUI
             {
-                CommonFields = _fieldsPerType.GetCommonValues(new FieldUIEqualityComparer()).ToList(),
+                CommonFields = _fieldsPerType.GetCommonValues(_equalityComparer).ToList(),
                 EmptyVariantColumnVisibility = _list.EmptyVariantColumnVisibility,
                 ListType = _list.ListType,
                 MaxUniqueFieldsInSingleEntity = _fieldsPerType.Max(x => x.Value.Count()),
                 PageSize = _list.PageSize ?? 1000,
                 SearchBarVisible = _list.SearchBarVisible ?? true,
                 SectionsHaveButtons = _list.Panes.Any(x => x.Buttons.Any()),
-                UniqueFields = _fieldsPerType.SelectMany(x => x.Value).Distinct(new FieldUIEqualityComparer()).ToList()
+                UniqueFields = _fieldsPerType.SelectMany(x => x.Value).Distinct(_equalityComparer).ToList()
             };
         }
 
@@ -76,9 +78,9 @@ namespace RapidCMS.Common.Resolvers.UI
 
         public async Task<IEnumerable<TabUI>?> GetTabsAsync(EditContext editContext)
         {
-            var data = await _collection.GetDataViewsAsync(editContext);
+            var data = await _collection.GetDataViewsAsync(editContext.ServiceProvider);
 
-            return data.ToList(x => new TabUI { Id = x.Id, Label = x.Label });
+            return data.ToList(x => new TabUI(x.Id) { Label = x.Label });
         }
     }
 }

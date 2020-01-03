@@ -1,9 +1,8 @@
 ﻿using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Setup;
-using RapidCMS.Core.Models.UI;
 
-namespace RapidCMS.Common.Models.UI
+namespace RapidCMS.Core.Models.UI
 {
     public class FieldUI : ElementUI
     {
