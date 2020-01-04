@@ -10,6 +10,7 @@ using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.UI;
 
@@ -69,15 +70,14 @@ namespace RapidCMS.Core.Services.Tree
                 Icon = collection.Icon ?? "list"
             };
 
-            // TODO
-            //if (collection.ListEditor != null && editAuthorizationChallenge.Succeeded)
-            //{
-            //    tree.Path = UriHelper.Collection(Constants.Edit, collection.Alias, parentPath);
-            //}
-            //else if (collection.ListView != null && viewAuthorizationChallenge.Succeeded)
-            //{
-            //    tree.Path = UriHelper.Collection(Constants.List, collection.Alias, parentPath);
-            //}
+            if (collection.ListEditor != null && editAuthorizationChallenge.Succeeded)
+            {
+                tree.Path = UriHelper.Collection(Constants.Edit, collection.Alias, parentPath);
+            }
+            else if (collection.ListView != null && viewAuthorizationChallenge.Succeeded)
+            {
+                tree.Path = UriHelper.Collection(Constants.View, collection.Alias, parentPath);
+            }
 
             return tree;
         }
@@ -117,8 +117,7 @@ namespace RapidCMS.Core.Services.Tree
 
                     if (editAuthorizationChallenge.Succeeded)
                     {
-                        // TODO
-                        //node.Path = UriHelper.Node(Constants.Edit, collection.Alias, entityVariant, parentPath, entity.Id);
+                        node.Path = UriHelper.Node(Constants.Edit, collection.Alias, entityVariant, parentPath, entity.Id);
                     }
                     else
                     {
@@ -129,8 +128,7 @@ namespace RapidCMS.Core.Services.Tree
 
                         if (viewAuthorizationChallenge.Succeeded)
                         {
-                            // TODO
-                            //node.Path = UriHelper.Node(Constants.View, collection.Alias, entityVariant, parentPath, entity.Id);
+                            node.Path = UriHelper.Node(Constants.View, collection.Alias, entityVariant, parentPath, entity.Id);
                         }
                     }
 

@@ -57,6 +57,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IDataProviderResolver, DataProviderResolver>();
 
             services.AddTransient<IDispatcher<GetEntityRequestModel, EntityResponseModel>, GetEntityDispatcher>();
+            services.AddTransient<IDispatcher<PersistEntityRequestModel, ViewCommandResponseModel>, PersistEntityDispatcher>();
+            services.AddTransient<IDispatcher<GetEntitiesRequestModel, EntitiesResponseModel>, GetEntitiesDispatcher>();
 
             services.AddSingleton<IExceptionService, ExceptionService>();
             services.AddScoped<IMessageService, MessageService>();

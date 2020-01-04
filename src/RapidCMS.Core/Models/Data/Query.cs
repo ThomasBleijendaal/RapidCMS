@@ -4,7 +4,7 @@ using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Core.Models.Data
 {
-    internal class Query : IQuery
+    public sealed class Query : IQuery
     {
         internal LambdaExpression? QueryExpression;
         internal IEnumerable<IOrderBy>? OrderByExpressions;

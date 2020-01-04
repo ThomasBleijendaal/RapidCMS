@@ -34,6 +34,7 @@ namespace RapidCMS.Core.Forms
 
         public IServiceProvider ServiceProvider { get; private set; }
 
+        // TODO: really not good
         internal void SwapEntity(IEntity entity)
         {
             Entity = entity;

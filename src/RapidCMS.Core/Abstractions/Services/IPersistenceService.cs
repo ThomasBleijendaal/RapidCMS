@@ -2,20 +2,34 @@
 using System.Threading.Tasks;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Commands;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Abstractions.Services
 {
     public interface IPersistenceService
     {
-        Task<EditContext> GetEntityAsync(UsageType usageType, string collectionAlias, string? variantAlias, ParentPath? parentPath, string? id);
+        Task<EditContext> GetEntityAsync(
+            UsageType usageType, 
+            string collectionAlias,
+            string? variantAlias,
+            ParentPath? parentPath,
+            string? id);
 
-        // TODO: remove parentPath
-        //Task<ViewCommand> ProcessEntityActionAsync(UsageType usageType, string collectionAlias, ParentPath? parentPath, string? id, EditContext editContext, string actionId, object? customData);
+
+        Task<ViewCommand> ProcessEntityActionAsync(
+            EditContext editContext, 
+            string actionId, 
+            object? customData);
 
         //Task<EditContext> GetRootAsync(UsageType usageType, string collectionAlias, ParentPath? parentPath);
 
-        //Task<List<EditContext>> GetEntitiesAsync(UsageType usageType, string collectionAlias, ParentPath? parentPath, Query query);
+        Task<List<EditContext>> GetEntitiesAsync(
+            UsageType usageType, 
+            string collectionAlias, 
+            ParentPath? parentPath, 
+            Query query);
+
         //Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, ParentPath? parentPath, IEnumerable<EditContext> editContexts, string actionId, object? customData);
 
         //// TODO: remove parentPath

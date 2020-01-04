@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Setup;
 
@@ -40,6 +42,14 @@ namespace RapidCMS.Core.Dispatchers
             _httpContextAccessor = httpContextAccessor;
             _serviceProvider = serviceProvider;
             _semaphore = semaphore;
+        }
+
+        protected void EnsureValidEditContext(EditContext editContext, ButtonSetup button)
+        {
+            if (button.RequiresValidForm(editContext) && !editContext.IsValid())
+            {
+                throw new InvalidEntityException();
+            }
         }
 
         protected Task EnsureAuthorizedUserAsync(EditContext editContext, ButtonSetup button)
@@ -90,6 +100,39 @@ namespace RapidCMS.Core.Dispatchers
             finally
             {
                 _semaphore.Release();
+            }
+        }
+
+        private List<EditContext> ConvertEditContexts(UsageType usageType, string collectionAlias, EditContext rootEditContext, IEnumerable<IEntity> existingEntities, IParent? parent)
+        {
+            if ((usageType & ~(UsageType.Root | UsageType.NotRoot)) == UsageType.List)
+            {
+                return existingEntities
+                    .Select(ent => new EditContext(collectionAlias, ent, parent, UsageType.Node | UsageType.Edit, _serviceProvider))
+                    .ToList();
+            }
+            else if (usageType.HasFlag(UsageType.Add))
+            {
+                return existingEntities
+                    .Select(ent => new EditContext(collectionAlias, ent, parent, UsageType.Node | UsageType.Pick, _serviceProvider))
+                    .ToList();
+            }
+            else if (usageType.HasFlag(UsageType.Edit) || usageType.HasFlag(UsageType.New))
+            {
+                var entities = existingEntities
+                    .Select(ent => new EditContext(collectionAlias, ent, parent, UsageType.Node | UsageType.Edit, _serviceProvider))
+                    .ToList();
+
+                if (usageType.HasFlag(UsageType.New))
+                {
+                    entities.Insert(0, new EditContext(collectionAlias, rootEditContext.Entity, parent, UsageType.Node | UsageType.New, _serviceProvider));
+                }
+
+                return entities;
+            }
+            else
+            {
+                throw new NotImplementedException($"Failed to process {usageType} for collection {collectionAlias}");
             }
         }
     }
