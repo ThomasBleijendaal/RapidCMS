@@ -16,6 +16,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Dispatchers
 {
+
     internal class PersistEntityDispatcher : BaseDispatcher, IDispatcher<PersistEntityRequestModel, ViewCommandResponseModel>
     {
         public PersistEntityDispatcher(ICollectionResolver collectionResolver, IRepositoryResolver repositoryResolver, IParentService parentService, IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider, SemaphoreSlim semaphore) : base(collectionResolver, repositoryResolver, parentService, authorizationService, httpContextAccessor, serviceProvider, semaphore)

@@ -16,15 +16,18 @@ namespace RapidCMS.Core.Services.Persistence
         private readonly IDispatcher<GetEntityRequestModel, EntityResponseModel> _getEntityDispatcher;
         private readonly IDispatcher<PersistEntityRequestModel, ViewCommandResponseModel> _persistEntityDispatcher;
         private readonly IDispatcher<GetEntitiesRequestModel, EntitiesResponseModel> _getEntitiesDispatcher;
+        private readonly IDispatcher<PersistEntitiesRequestModel, ViewCommandResponseModel> _persistEntitiesDispatcher;
 
         public PersistenceService(
             IDispatcher<GetEntityRequestModel, EntityResponseModel> getEntityDispatcher,
             IDispatcher<PersistEntityRequestModel, ViewCommandResponseModel> persistEntityDispatcher,
-            IDispatcher<GetEntitiesRequestModel, EntitiesResponseModel> getEntitiesDispatcher)
+            IDispatcher<GetEntitiesRequestModel, EntitiesResponseModel> getEntitiesDispatcher,
+            IDispatcher<PersistEntitiesRequestModel, ViewCommandResponseModel> persistEntitiesDispatcher)
         {
             _getEntityDispatcher = getEntityDispatcher;
             _persistEntityDispatcher = persistEntityDispatcher;
             _getEntitiesDispatcher = getEntitiesDispatcher;
+            _persistEntitiesDispatcher = persistEntitiesDispatcher;
         }
 
         public async Task<EditContext> GetEntityAsync(
@@ -70,6 +73,18 @@ namespace RapidCMS.Core.Services.Persistence
                 ActionId = actionId,
                 CustomData = customData,
                 EditContext = editContext
+            });
+
+            return response.ViewCommand;
+        }
+
+        public async Task<ViewCommand> ProcessListActionAsync(IEnumerable<EditContext> editContexts, string actionId, object? customData)
+        {
+            var response = await _persistEntitiesDispatcher.InvokeAsync(new PersistEntitiesRequestModel
+            {
+                ActionId = actionId,
+                CustomData = customData,
+                EditContexts = editContexts
             });
 
             return response.ViewCommand;

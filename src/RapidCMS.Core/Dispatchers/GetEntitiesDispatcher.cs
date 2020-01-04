@@ -31,9 +31,17 @@ namespace RapidCMS.Core.Dispatchers
 
             var existingEntities = await EnsureCorrectConcurrencyAsync(() => repository.GetAllAsync(parent, request.Query));
 
-            var rootEditContext = await GetRootEditContextAsync(request.UsageType, request.CollectionAlias, parent);
+            var rootEditContext = await GetNewEditContextAsync(request.UsageType, request.CollectionAlias, parent);
 
-            return ConvertEditContexts(request.UsageType, request.CollectionAlias, rootEditContext, existingEntities, parent);
+            return new EntitiesResponseModel
+            {
+                EditContexts = ConvertEditContexts(
+                    request.UsageType,
+                    request.CollectionAlias,
+                    rootEditContext,
+                    existingEntities,
+                    parent)
+            };
         }
     }
 }

@@ -30,7 +30,10 @@ namespace RapidCMS.Core.Abstractions.Services
             ParentPath? parentPath, 
             Query query);
 
-        //Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, ParentPath? parentPath, IEnumerable<EditContext> editContexts, string actionId, object? customData);
+        Task<ViewCommand> ProcessListActionAsync(
+            IEnumerable<EditContext> editContexts, 
+            string actionId, 
+            object? customData);
 
         //// TODO: remove parentPath
         //Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, ParentPath? parentPath, string? id, EditContext editContext, string actionId, object? customData);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -103,7 +104,12 @@ namespace RapidCMS.Core.Dispatchers
             }
         }
 
-        private List<EditContext> ConvertEditContexts(UsageType usageType, string collectionAlias, EditContext rootEditContext, IEnumerable<IEntity> existingEntities, IParent? parent)
+        protected List<EditContext> ConvertEditContexts(
+            UsageType usageType, 
+            string collectionAlias, 
+            EditContext rootEditContext, 
+            IEnumerable<IEntity> existingEntities, 
+            IParent? parent)
         {
             if ((usageType & ~(UsageType.Root | UsageType.NotRoot)) == UsageType.List)
             {
@@ -134,6 +140,18 @@ namespace RapidCMS.Core.Dispatchers
             {
                 throw new NotImplementedException($"Failed to process {usageType} for collection {collectionAlias}");
             }
+        }
+
+        protected async Task<EditContext> GetNewEditContextAsync(UsageType usageType, string collectionAlias, IParent? parent)
+        {
+            var collection = _collectionResolver.GetCollection(collectionAlias);
+            var repository = _repositoryResolver.GetRepository(collection);
+
+            var newEntity = await EnsureCorrectConcurrencyAsync(() => repository.NewAsync(parent, collection.EntityVariant.Type));
+
+            await EnsureAuthorizedUserAsync(usageType, newEntity);
+
+            return new EditContext(collectionAlias, newEntity, parent, usageType | UsageType.List, _serviceProvider);
         }
     }
 }
