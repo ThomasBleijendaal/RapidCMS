@@ -11,7 +11,6 @@ namespace RapidCMS.Core.Forms
             return _messages;
         }
 
-        
         public void AddMessage(string message)
         {
             _messages.Add(message);

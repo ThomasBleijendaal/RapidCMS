@@ -7,7 +7,7 @@ using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Enums;
 
-namespace RapidCMS.Core.Factories.UIResolverFactory
+namespace RapidCMS.Core.Factories
 {
     internal class UIResolverFactory : IUIResolverFactory
     {

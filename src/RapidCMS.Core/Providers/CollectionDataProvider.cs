@@ -62,7 +62,7 @@ namespace RapidCMS.Core.Providers
             var data = _relatedElementsGetter?.Getter(_property.Getter(entity)) ?? _property.Getter(entity);
             if (data is ICollection<IEntity> entityCollection)
             {
-                _relatedIds = entityCollection.Select(x => (object)x.Id).ToList();
+                _relatedIds = entityCollection.Select(x => (object)x.Id!).ToList();
             }
             else if (data is ICollection<object> objectCollection)
             {

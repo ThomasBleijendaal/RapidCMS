@@ -30,9 +30,7 @@ namespace RapidCMS.Core.Forms
 
         public IRelationContainer GetRelationContainer()
         {
-            // TODO
-            return default;
-             //return new RelationContainer(_editContext.DataProviders.Select(x => x.GenerateRelation()).SelectNotNull(x => x as IRelation));
+             return new RelationContainer(_editContext.DataProviders.Select(x => x.GenerateRelation()).SelectNotNull(x => x as IRelation));
         }
 
         public bool? IsModified<TValue>(Expression<Func<TEntity, TValue>> property)

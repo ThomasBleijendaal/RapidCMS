@@ -13,7 +13,7 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Dispatchers;
-using RapidCMS.Core.Factories.UIResolverFactory;
+using RapidCMS.Core.Factories;
 using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Request;
