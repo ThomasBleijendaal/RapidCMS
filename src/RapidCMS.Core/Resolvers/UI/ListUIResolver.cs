@@ -5,12 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.EqualityComparers;
-using RapidCMS.Common.Models.UI;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.UI;
-using RapidCMS.Core.Resolvers;
 using RapidCMS.Core.Resolvers.UI;
 
 namespace RapidCMS.Common.Resolvers.UI

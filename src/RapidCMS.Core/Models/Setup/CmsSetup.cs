@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
@@ -8,7 +9,7 @@ using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class CmsSetup : ICms, ICollections, IDashboard, ILogin
+    internal class CmsSetup : ICms, ICollectionResolver, IDashboard, ILogin
     {
         private Dictionary<string, CollectionSetup> _collectionMap { get; set; } = new Dictionary<string, CollectionSetup>();
 
@@ -66,13 +67,13 @@ namespace RapidCMS.Core.Models.Setup
         bool ICms.AllowAnonymousUsage => AllowAnonymousUsage;
         int ICms.SemaphoreMaxCount => SemaphoreMaxCount;
 
-        CollectionSetup ICollections.GetCollection(string alias)
+        CollectionSetup ICollectionResolver.GetCollection(string alias)
         {
             return _collectionMap.FirstOrDefault(x => x.Key == alias).Value
                 ?? throw new InvalidOperationException($"Failed to find collection with alias {alias}.");
         }
 
-        IEnumerable<CollectionSetup> ICollections.GetRootCollections()
+        IEnumerable<CollectionSetup> ICollectionResolver.GetRootCollections()
         {
             return Collections;
         }

@@ -4,7 +4,7 @@ namespace RapidCMS.Core.Models.UI
 {
     public class RelatedCollectionUI : ElementUI
     {
-        internal RelatedCollectionUI(RelatedCollectionListSetup relatedCollection) : base((x, y) => true, (x, y) => false)
+        internal RelatedCollectionUI(RelatedCollectionListSetup relatedCollection) : base((x, y) => true, (x, y) => false) // TODO: fixed lambdas
         {
             CollectionAlias = relatedCollection.CollectionAlias;
         }

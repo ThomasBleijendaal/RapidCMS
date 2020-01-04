@@ -58,6 +58,7 @@ namespace RapidCMS.Core.Models.Setup
                 ?? EntityVariant;
         }
 
+        // TODO: refactor
         internal Task<IEnumerable<IDataView>> GetDataViewsAsync(IServiceProvider serviceProvider)
         {
             if (DataViewBuilder == null)
@@ -71,6 +72,7 @@ namespace RapidCMS.Core.Models.Setup
             }
         }
 
+        // TODO: refactor
         internal async Task ProcessDataViewAsync(Query query, IServiceProvider serviceProvider)
         {
             if (DataViewBuilder != null || DataViews?.Count > 0)

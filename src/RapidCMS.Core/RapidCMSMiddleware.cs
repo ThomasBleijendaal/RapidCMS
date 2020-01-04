@@ -6,14 +6,26 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Dispatchers;
+using RapidCMS.Core.Abstractions.Factories;
+using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
+using RapidCMS.Core.Dispatchers;
+using RapidCMS.Core.Factories.UIResolverFactory;
+using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Models.Config;
+using RapidCMS.Core.Models.Request;
+using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.Setup;
-using RapidCMS.Core.Resolvers;
+using RapidCMS.Core.Providers;
+using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Resolvers.Repositories;
-using RapidCMS.Core.Services;
+using RapidCMS.Core.Services.Exceptions;
+using RapidCMS.Core.Services.Messages;
 using RapidCMS.Core.Services.Parent;
+using RapidCMS.Core.Services.Persistence;
 using RapidCMS.Core.Services.SidePane;
 using RapidCMS.Core.Services.Tree;
 
@@ -29,7 +41,6 @@ namespace Microsoft.Extensions.DependencyInjection
             var cmsSetup = new CmsSetup(rootConfig);
 
             services.AddSingleton<ICms>(cmsSetup);
-            services.AddSingleton<ICollections>(cmsSetup);
             services.AddSingleton<IDashboard>(cmsSetup);
             services.AddSingleton<ILogin>(cmsSetup);
 
@@ -39,27 +50,25 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
             }
 
-            ////  UI + Repository services
+            services.AddTransient<IUIResolverFactory, UIResolverFactory>();
+
+            services.AddSingleton<ICollectionResolver>(cmsSetup);
             services.AddTransient<IRepositoryResolver, RepositoryResolver>();
-            //services.AddTransient<IDataProviderService, DataProviderService>();
-            //services.AddScoped<IEditContextService, EditContextService>();
-            //services.AddTransient<IEditorService, EditorService>();
-            services.AddTransient<ITreeService, TreeService>();
+            services.AddTransient<IDataProviderResolver, DataProviderResolver>();
+
+            services.AddTransient<IDispatcher<GetEntityRequestModel, EntityResponseModel>, GetEntityDispatcher>();
+
+            services.AddSingleton<IExceptionService, ExceptionService>();
+            services.AddScoped<IMessageService, MessageService>();
             services.AddTransient<IParentService, ParentService>();
-
-            //// Data exchange services
+            services.AddTransient<IPersistenceService, PersistenceService>();
             services.AddScoped<ISidePaneService, SidePaneService>();
-            //services.AddScoped<IMessageService, MessageService>();
+            services.AddTransient<ITreeService, TreeService>();
 
-            //// Button handlers
-            //services.AddScoped<DefaultButtonActionHandler>();
-            //services.AddScoped(typeof(OpenPaneButtonActionHandler<>));
+            services.AddScoped<DefaultButtonActionHandler>();
+            services.AddScoped(typeof(OpenPaneButtonActionHandler<>));
 
-            //// Debug helpers
-            //services.AddScoped<IExceptionHelper, ExceptionHelper>();
-
-            //// Stock data providers
-            //services.AddScoped(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
+            services.AddScoped(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
 
             // UI requirements
             services.AddHttpContextAccessor();

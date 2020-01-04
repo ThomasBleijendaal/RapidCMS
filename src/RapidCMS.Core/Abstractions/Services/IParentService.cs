@@ -2,7 +2,7 @@
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Models.Data;
 
-namespace RapidCMS.Core.Services
+namespace RapidCMS.Core.Abstractions.Services
 {
     internal interface IParentService
     {

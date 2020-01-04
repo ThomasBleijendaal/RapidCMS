@@ -4,19 +4,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.UI;
-using RapidCMS.Core.Resolvers;
 
 namespace RapidCMS.Core.Services.Tree
 {
     internal class TreeService : ITreeService
     {
-        private readonly ICollections _setup;
+        private readonly ICollectionResolver _collectionResolver;
         private readonly ICms _cms;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -24,14 +25,14 @@ namespace RapidCMS.Core.Services.Tree
         private readonly IParentService _parentService;
 
         public TreeService(
-            ICollections setup,
+            ICollectionResolver collectionResolver,
             ICms cms,
             IRepositoryResolver repositoryResolver,
             IHttpContextAccessor httpContextAccessor,
             IAuthorizationService authorizationService,
             IParentService parentService)
         {
-            _setup = setup;
+            _collectionResolver = collectionResolver;
             _cms = cms;
             _repositoryResolver = repositoryResolver;
             _httpContextAccessor = httpContextAccessor;
@@ -41,7 +42,7 @@ namespace RapidCMS.Core.Services.Tree
 
         public async Task<TreeUI?> GetTreeAsync(string alias, ParentPath? parentPath)
         {
-            var collection = _setup.GetCollection(alias);
+            var collection = _collectionResolver.GetCollection(alias);
             if (collection == null)
             {
                 throw new InvalidOperationException($"Failed to get collection for given alias ({alias}).");
@@ -83,7 +84,7 @@ namespace RapidCMS.Core.Services.Tree
 
         public async Task<List<TreeNodeUI>> GetNodesAsync(string alias, ParentPath? parentPath)
         {
-            var collection = _setup.GetCollection(alias);
+            var collection = _collectionResolver.GetCollection(alias);
             if (collection == null)
             {
                 throw new InvalidOperationException($"Failed to get collection for given alias ({alias}).");
@@ -149,7 +150,7 @@ namespace RapidCMS.Core.Services.Tree
 
         public TreeRootUI GetRoot()
         {
-            var collections = _setup.GetRootCollections().Select(x => x.Alias).ToList();
+            var collections = _collectionResolver.GetRootCollections().Select(x => x.Alias).ToList();
 
             return new TreeRootUI("-1", _cms.SiteName, collections);
         }

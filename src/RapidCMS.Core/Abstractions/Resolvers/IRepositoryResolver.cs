@@ -1,7 +1,7 @@
 ﻿using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Core.Resolvers
+namespace RapidCMS.Core.Abstractions.Resolvers
 {
     internal interface IRepositoryResolver
     {

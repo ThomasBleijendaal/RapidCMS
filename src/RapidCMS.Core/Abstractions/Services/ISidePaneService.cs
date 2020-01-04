@@ -4,7 +4,7 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Services.SidePane;
 
-namespace RapidCMS.Core.Services
+namespace RapidCMS.Core.Abstractions.Services
 {
     public interface ISidePaneService
     {

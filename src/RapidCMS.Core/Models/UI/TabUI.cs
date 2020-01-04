@@ -1,4 +1,4 @@
-﻿namespace RapidCMS.Common.Models.UI
+﻿namespace RapidCMS.Core.Models.UI
 {
     public class TabUI
     {

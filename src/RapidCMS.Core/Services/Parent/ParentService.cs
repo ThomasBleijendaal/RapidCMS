@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Models.Data;
-using RapidCMS.Core.Resolvers;
 
 namespace RapidCMS.Core.Services.Parent
 {

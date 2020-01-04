@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 

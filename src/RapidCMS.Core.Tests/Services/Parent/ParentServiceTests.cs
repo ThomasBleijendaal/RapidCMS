@@ -2,9 +2,9 @@
 using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Models.Data;
-using RapidCMS.Core.Resolvers;
-using RapidCMS.Core.Services;
 using RapidCMS.Core.Services.Parent;
 using System.Threading.Tasks;
 

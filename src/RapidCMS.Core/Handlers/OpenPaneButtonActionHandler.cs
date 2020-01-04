@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
+using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
-using RapidCMS.Core.Services;
 
 namespace RapidCMS.Core.Handlers
 {

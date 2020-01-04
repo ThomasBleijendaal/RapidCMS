@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Providers

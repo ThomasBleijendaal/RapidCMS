@@ -3,27 +3,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Common.Resolvers.UI;
-using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Abstractions.Factories;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Resolvers;
-using RapidCMS.Core.Resolvers.UI;
 
 namespace RapidCMS.Core.Factories.UIResolverFactory
 {
     internal class UIResolverFactory : IUIResolverFactory
     {
-        private readonly ICollections _setup;
+        private readonly ICollectionResolver _collectionResolver;
         private readonly IDataProviderResolver _dataProviderResolver;
         private readonly IAuthorizationService _authorizationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UIResolverFactory(
-            ICollections setup,
+            ICollectionResolver collectionResolver,
             IDataProviderResolver dataProviderResolver,
             IAuthorizationService authorizationService,
             IHttpContextAccessor httpContextAccessor)
         {
-            _setup = setup;
+            _collectionResolver = collectionResolver;
             _dataProviderResolver = dataProviderResolver;
             _authorizationService = authorizationService;
             _httpContextAccessor = httpContextAccessor;
@@ -31,7 +30,7 @@ namespace RapidCMS.Core.Factories.UIResolverFactory
 
         public Task<INodeUIResolver> GetNodeUIResolverAsync(UsageType usageType, string collectionAlias)
         {
-            var collection = _setup.GetCollection(collectionAlias);
+            var collection = _collectionResolver.GetCollection(collectionAlias);
             var node = usageType.HasFlag(UsageType.View)
                 ? collection.NodeView ?? collection.NodeEditor
                 : collection.NodeEditor ?? collection.NodeView;
@@ -47,7 +46,7 @@ namespace RapidCMS.Core.Factories.UIResolverFactory
 
         public Task<IListUIResolver> GetListUIResolverAsync(UsageType usageType, string collectionAlias)
         {
-            var collection = _setup.GetCollection(collectionAlias);
+            var collection = _collectionResolver.GetCollection(collectionAlias);
             var list = usageType == UsageType.List || usageType.HasFlag(UsageType.Add)
                 ? collection.ListView ?? collection.ListEditor
                 : collection.ListEditor ?? collection.ListView;

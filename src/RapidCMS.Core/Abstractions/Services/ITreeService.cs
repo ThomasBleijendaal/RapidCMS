@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.UI;
 
-namespace RapidCMS.Core.Services
+namespace RapidCMS.Core.Abstractions.Services
 {
     public interface ITreeService
     {

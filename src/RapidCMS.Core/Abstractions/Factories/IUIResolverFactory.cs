@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Resolvers.UI;
 
-namespace RapidCMS.Core.Factories
+namespace RapidCMS.Core.Abstractions.Factories
 {
     public interface IUIResolverFactory
     {

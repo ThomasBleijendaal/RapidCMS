@@ -1,19 +1,19 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Repositories;
-using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Repositories
 {
     internal class RepositoryResolver : IRepositoryResolver
     {
-        private readonly ICollections _collections;
+        private readonly ICollectionResolver _collectionResolver;
         private readonly IServiceProvider _serviceProvider;
 
-        public RepositoryResolver(ICollections collections, IServiceProvider serviceProvider)
+        public RepositoryResolver(ICollectionResolver collectionResolver, IServiceProvider serviceProvider)
         {
-            _collections = collections;
+            _collectionResolver = collectionResolver;
             _serviceProvider = serviceProvider;
         }
 
@@ -24,7 +24,7 @@ namespace RapidCMS.Core.Resolvers.Repositories
 
         public IRepository GetRepository(string collectionAlias)
         {
-            return GetRepository(_collections.GetCollection(collectionAlias));
+            return GetRepository(_collectionResolver.GetCollection(collectionAlias));
         }
     }
 }
