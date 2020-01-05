@@ -16,13 +16,10 @@ namespace RapidCMS.Core.Abstractions.Services
             ParentPath? parentPath,
             string? id);
 
-
         Task<ViewCommand> ProcessEntityActionAsync(
             EditContext editContext, 
             string actionId, 
             object? customData);
-
-        //Task<EditContext> GetRootAsync(UsageType usageType, string collectionAlias, ParentPath? parentPath);
 
         Task<List<EditContext>> GetEntitiesAsync(
             UsageType usageType, 
@@ -31,12 +28,23 @@ namespace RapidCMS.Core.Abstractions.Services
             Query query);
 
         Task<ViewCommand> ProcessListActionAsync(
+            UsageType usageType,
+            string collectionAlias,
+            ParentPath? parentPath,
+            // TODO: transform into ListContext (allow to insert UsageType and stuff in ListContext)
             IEnumerable<EditContext> editContexts, 
             string actionId, 
             object? customData);
 
         //// TODO: remove parentPath
-        //Task<ViewCommand> ProcessListActionAsync(UsageType usageType, string collectionAlias, ParentPath? parentPath, string? id, EditContext editContext, string actionId, object? customData);
+        Task<ViewCommand> ProcessListActionAsync(
+            //UsageType usageType, 
+            //string collectionAlias, 
+            //ParentPath? parentPath, 
+            //string? id, 
+            EditContext editContext, 
+            string actionId, 
+            object? customData);
 
         //Task<List<EditContext>> GetRelatedEntitiesAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, Query query);
         //Task<ViewCommand> ProcessRelationActionAsync(UsageType usageType, string collectionAlias, IEntity relatedEntity, IEnumerable<EditContext> editContexts, string actionId, object? customData);

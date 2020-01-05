@@ -6,4 +6,14 @@ namespace RapidCMS.Core.Models.Response
     {
         internal ViewCommand ViewCommand { get; set; } = default!;
     }
+
+    internal class ListViewCommandResponseModel : ViewCommandResponseModel
+    {
+
+    }
+
+    internal class NodeViewCommandResponseModel : ViewCommandResponseModel
+    {
+
+    }
 }

@@ -42,6 +42,9 @@ namespace RapidCMS.Core.Models.Request
 
     internal class PersistEntitiesRequestModel
     {
+        internal UsageType UsageType { get; set; }
+        internal string CollectionAlias { get; set; } = default!;
+        internal ParentPath? ParentPath { get; set; }
         internal IEnumerable<EditContext> EditContexts { get; set; } = default!;
         internal string ActionId { get; set; } = default!;
         internal object? CustomData { get; set; }

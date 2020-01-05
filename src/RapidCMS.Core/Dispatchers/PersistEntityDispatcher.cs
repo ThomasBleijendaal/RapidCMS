@@ -70,6 +70,8 @@ namespace RapidCMS.Core.Dispatchers
                         throw new Exception("Inserting the new entity failed.");
                     }
                     request.EditContext.SwapEntity(entity);
+
+                    // TODO: make dependent of LIST or NODE
                     viewCommand = new NavigateCommand
                     {
                         Uri = NodeUri(Constants.Edit, request, entityVariant)

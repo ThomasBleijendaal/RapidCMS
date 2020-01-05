@@ -1,11 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Enums;
+using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Forms;
+using RapidCMS.Core.Helpers;
+using RapidCMS.Core.Models.Commands;
+using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request;
 using RapidCMS.Core.Models.Response;
 
@@ -19,27 +28,27 @@ namespace RapidCMS.Core.Dispatchers
 
         public async Task<ViewCommandResponseModel> InvokeAsync(PersistEntitiesRequestModel request)
         {
-
-
             var collection = _collectionResolver.GetCollection(request.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
-            var button = collection.FindButton(actionId);
+            var button = collection.FindButton(request.ActionId);
             if (button == null)
             {
-                throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
+                throw new Exception($"Cannot determine which button triggered action for collection {request.CollectionAlias}");
             }
 
-            var parent = await _parentService.GetParentAsync(parentPath);
+            var parent = await _parentService.GetParentAsync(request.ParentPath);
 
-            var rootEditContext = await GetRootEditContextAsync(usageType, collectionAlias, parent);
-            var entity = await EnsureCorrectConcurrencyAsync(() => collection.Repository.NewAsync(parent, collection.EntityVariant.Type));
+            var rootEditContext = await GetNewEditContextAsync(request.UsageType, request.CollectionAlias, parent);
+            var entity = await EnsureCorrectConcurrencyAsync(() => repository.NewAsync(parent, collection.EntityVariant.Type));
 
+            // TODO: this can cause an Update action be validated on the root, while it applies to the children (which is also checked)
+            // this could lead to invalid rejection of action
             await EnsureAuthorizedUserAsync(rootEditContext, button);
 
             ViewCommand viewCommand;
 
-            var context = new ButtonContext(parent, customData);
+            var context = new ButtonContext(parent, request.CustomData);
             switch (await button.ButtonClickBeforeRepositoryActionAsync(rootEditContext, context))
             {
                 case CrudType.Create:
@@ -47,25 +56,33 @@ namespace RapidCMS.Core.Dispatchers
                     {
                         throw new InvalidOperationException($"Button of type {CrudType.Create} must an {nameof(button.EntityVariant)}.");
                     }
-                    if (usageType.HasFlag(UsageType.List))
+                    if (request.UsageType.HasFlag(UsageType.List))
                     {
-                        viewCommand = new NavigateCommand { Uri = UriHelper.Node(Constants.New, collectionAlias, button.EntityVariant, parentPath, null) };
+                        viewCommand = new NavigateCommand
+                        {
+                            Uri = UriHelper.Node(
+                                Constants.New,
+                                request.CollectionAlias,
+                                button.EntityVariant,
+                                request.ParentPath,
+                                null)
+                        };
                     }
                     else
                     {
                         viewCommand = new UpdateParameterCommand
                         {
                             Action = Constants.New,
-                            CollectionAlias = collectionAlias,
+                            CollectionAlias = request.CollectionAlias,
                             VariantAlias = button.EntityVariant.Alias,
-                            ParentPath = parentPath?.ToPathString(),
+                            ParentPath = request.ParentPath?.ToPathString(),
                             Id = null
                         };
                     }
                     break;
 
                 case CrudType.Update:
-                    var contextsToProcess = editContexts.Where(x => x.IsModified()).Where(x => button.RequiresValidForm(x) ? x.IsValid() : true);
+                    var contextsToProcess = request.EditContexts.Where(x => x.IsModified()).Where(x => button.RequiresValidForm(x) ? x.IsValid() : true);
                     var affectedEntities = new List<IEntity>();
                     foreach (var editContext in contextsToProcess)
                     {
@@ -73,7 +90,7 @@ namespace RapidCMS.Core.Dispatchers
                         {
                             await EnsureAuthorizedUserAsync(editContext, button);
                             EnsureValidEditContext(editContext, button);
-                            await EnsureCorrectConcurrencyAsync(() => collection.Repository.UpdateAsync(editContext));
+                            await EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(editContext));
                             affectedEntities.Add(editContext.Entity);
                         }
                         catch (Exception)
@@ -93,23 +110,30 @@ namespace RapidCMS.Core.Dispatchers
                     break;
 
                 case CrudType.Return:
-                    viewCommand = new NavigateCommand { Uri = UriHelper.Collection(Constants.Edit, collectionAlias, parentPath) };
+                    viewCommand = new NavigateCommand
+                    {
+                        Uri = UriHelper.Collection(
+                            Constants.Edit,
+                            request.CollectionAlias,
+                            request.ParentPath)
+                    };
                     break;
 
                 case CrudType.Up:
-                    var (newParentPath, parentCollectionAlias, parentId) = ParentPath.RemoveLevel(parentPath);
+                    var (newParentPath, parentCollectionAlias, parentId) = ParentPath.RemoveLevel(request.ParentPath);
 
                     if (parentCollectionAlias == null)
                     {
-                        return new NoOperationCommand();
+                        viewCommand = new NoOperationCommand();
+                        break;
                     }
 
-                    var parentCollection = _collectionProvider.GetCollection(parentCollectionAlias);
+                    var parentCollection = _collectionResolver.GetCollection(parentCollectionAlias);
 
                     viewCommand = new NavigateCommand
                     {
                         Uri = UriHelper.Node(
-                        usageType.HasFlag(UsageType.Edit) ? Constants.Edit : Constants.List,
+                        request.UsageType.HasFlag(UsageType.Edit) ? Constants.Edit : Constants.View,
                         parentCollectionAlias,
                         parentCollection.EntityVariant,
                         newParentPath,
@@ -123,7 +147,10 @@ namespace RapidCMS.Core.Dispatchers
 
             await button.ButtonClickAfterRepositoryActionAsync(rootEditContext, context);
 
-            return viewCommand;
+            return new ViewCommandResponseModel
+            {
+                ViewCommand = viewCommand
+            };
         }
     }
 }
