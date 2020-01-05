@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Forms;
+using RapidCMS.Core.Forms;
 
 namespace RapidCMS.UI.Components
 {

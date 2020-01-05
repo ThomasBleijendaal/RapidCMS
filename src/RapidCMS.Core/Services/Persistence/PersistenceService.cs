@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
@@ -89,7 +90,7 @@ namespace RapidCMS.Core.Services.Persistence
             string actionId, 
             object? customData)
         {
-            var response = await _persistEntitiesDispatcher.InvokeAsync(new PersistEntitiesRequestModel
+            var response = await _persistEntitiesDispatcher.InvokeAsync(new PersistChildEntitiesRequestModel
             {
                 ActionId = actionId,
                 CollectionAlias = collectionAlias,
@@ -112,6 +113,42 @@ namespace RapidCMS.Core.Services.Persistence
                 ActionId = actionId,
                 CustomData = customData,
                 EditContext = editContext
+            });
+
+            return response.ViewCommand;
+        }
+
+        public async Task<ViewCommand> ProcessRelationActionAsync(
+            UsageType usageType, 
+            string collectionAlias,
+            IEnumerable<EditContext> editContexts, 
+            string actionId, 
+            object? customData)
+        {
+            var response = await _persistEntitiesDispatcher.InvokeAsync(new PersistEntitiesRequestModel
+            {
+                ActionId = actionId,
+                CollectionAlias = collectionAlias,
+                CustomData = customData,
+                EditContexts = editContexts,
+                UsageType = usageType
+            });
+
+            return response.ViewCommand;
+        }
+
+        public async Task<ViewCommand> ProcessRelationActionAsync(
+            IRelated related,
+            EditContext editContext,
+            string actionId,
+            object? customData)
+        {
+            var response = await _persistEntityDispatcher.InvokeAsync(new PersistRelatedEntityRequestModel
+            {
+                ActionId = actionId,
+                CustomData = customData,
+                EditContext = editContext,
+                Related = related
             });
 
             return response.ViewCommand;

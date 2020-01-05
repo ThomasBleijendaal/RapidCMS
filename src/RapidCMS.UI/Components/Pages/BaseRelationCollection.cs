@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Enums;
-using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Forms;
-using RapidCMS.Common.Models.UI;
-using RapidCMS.Common.Resolvers.UI;
-using RapidCMS.Common.Services;
-using RapidCMS.Common.Services.UI;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Factories;
+using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Enums;
+using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.UI;
 using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Components.Pages
@@ -19,8 +20,8 @@ namespace RapidCMS.UI.Components.Pages
     {
         [Parameter] public IEntity RelatedEntity { get; set; }
 
-        [Inject] private IEditContextService EditContextService { get; set; }
-        [Inject] private IEditorService EditorService { get; set; }
+        [Inject] protected IPersistenceService PersistenceService { get; set; }
+        [Inject] protected IUIResolverFactory UIResolverFactory { get; set; }
 
         protected EditContext? RootEditContext;
 
@@ -44,9 +45,10 @@ namespace RapidCMS.UI.Components.Pages
             {
                 if (reloadEntityIds == null)
                 {
-                    var rootEditContext = await EditContextService.GetRootAsync(GetUsageType(), CollectionAlias, default);
+                    // TODO: ListContext
+                    var rootEditContext = default(EditContext); // await PersistenceService.GetRootAsync(GetUsageType(), CollectionAlias, default);
 
-                    UIResolver = await EditorService.GetListUIResolverAsync(GetUsageType(), CollectionAlias);
+                    UIResolver = await UIResolverFactory.GetListUIResolverAsync(GetUsageType(), CollectionAlias);
 
                     Buttons = await UIResolver.GetButtonsForEditContextAsync(rootEditContext);
                     Tabs = await UIResolver.GetTabsAsync(rootEditContext);
@@ -117,7 +119,7 @@ namespace RapidCMS.UI.Components.Pages
 
             var query = Query.Create(ListUI.PageSize, CurrentPage, SearchTerm, ActiveTab);
 
-            var editContexts = await EditContextService.GetRelatedEntitiesAsync(GetUsageType(), CollectionAlias, RelatedEntity, query);
+            var editContexts = await PersistenceService.GetEntitiesAsync(GetUsageType(), CollectionAlias, default, query);
             Sections = await editContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
 
             if (!query.MoreDataAvailable)
@@ -148,7 +150,7 @@ namespace RapidCMS.UI.Components.Pages
             {
                 if (reloadEntityIds.Contains(x.editContext.Entity.Id))
                 {
-                    var reloadedEditContext = await EditContextService.GetEntityAsync(x.editContext.UsageType, CollectionAlias, null, null, x.editContext.Entity.Id);
+                    var reloadedEditContext = await PersistenceService.GetEntityAsync(x.editContext.UsageType, CollectionAlias, null, null, x.editContext.Entity.Id);
                     return (reloadedEditContext, await UIResolver.GetSectionsForEditContextAsync(reloadedEditContext));
                 }
                 else
@@ -164,10 +166,9 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
-                var command = await EditContextService.ProcessRelationActionAsync(
+                var command = await PersistenceService.ProcessRelationActionAsync(
                     GetUsageType(),
                     CollectionAlias,
-                    RelatedEntity,
                     Sections.Select(x => x.editContext),
                     args.ViewModel.ButtonId,
                     args.Data);
@@ -184,11 +185,11 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
-                var command = await EditContextService.ProcessRelationActionAsync(
-                    args.EditContext.UsageType,
-                    CollectionAlias,
-                    RelatedEntity,
-                    args.EditContext.Entity.Id,
+                var command = await PersistenceService.ProcessEntityActionAsync(
+                    // args.EditContext.UsageType,
+                    // CollectionAlias,
+                    // RelatedEntity,
+                    // args.EditContext.Entity.Id,
                     args.EditContext,
                     args.ViewModel.ButtonId,
                     args.Data);

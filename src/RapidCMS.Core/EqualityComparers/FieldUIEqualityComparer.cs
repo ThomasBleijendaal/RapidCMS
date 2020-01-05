@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using RapidCMS.Core.Models.UI;
 
-namespace RapidCMS.Common.EqualityComparers
+namespace RapidCMS.Core.EqualityComparers
 {
     internal class FieldUIEqualityComparer : IEqualityComparer<FieldUI>
     {

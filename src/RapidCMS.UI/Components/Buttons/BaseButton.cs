@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using RapidCMS.Common.Forms;
+using RapidCMS.Core.Forms;
 using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Components.Buttons

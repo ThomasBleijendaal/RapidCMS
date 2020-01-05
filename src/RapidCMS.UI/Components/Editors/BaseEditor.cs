@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Enums;
-using RapidCMS.Common.Forms;
-using RapidCMS.Common.Models.Metadata;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Enums;
+using RapidCMS.Core.Forms;
 
 namespace RapidCMS.UI.Components.Editors
 {
@@ -74,7 +74,7 @@ namespace RapidCMS.UI.Components.Editors
             if (EditContext != null)
             {
                 EditContext.OnValidationStateChanged += ValidationStateChangeHandler;
-                EditContext.NotifyPropertyStartedListening(Property);
+                EditContext.NotifyPropertyIncludedInForm(Property);
 
                 State = ValidationState.NotValidated;
             }

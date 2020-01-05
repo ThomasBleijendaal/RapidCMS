@@ -78,9 +78,9 @@ namespace RapidCMS.Core.Models.Setup
             return Collections;
         }
 
-        IEnumerable<CustomTypeRegistrationSetup> IDashboard.CustomDashboardSectionRegistrations => CustomDashboardSectionRegistrations;
+        IEnumerable<ITypeRegistration> IDashboard.CustomDashboardSectionRegistrations => CustomDashboardSectionRegistrations;
 
-        CustomTypeRegistrationSetup? ILogin.CustomLoginScreenRegistration => CustomLoginScreenRegistration;
-        CustomTypeRegistrationSetup? ILogin.CustomLoginStatusRegistration => CustomLoginStatusRegistration;
+        ITypeRegistration? ILogin.CustomLoginScreenRegistration => CustomLoginScreenRegistration;
+        ITypeRegistration? ILogin.CustomLoginStatusRegistration => CustomLoginStatusRegistration;
     }
 }

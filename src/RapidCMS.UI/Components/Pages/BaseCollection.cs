@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Forms;
-using RapidCMS.Common.Models.UI;
-using RapidCMS.Common.Resolvers.UI;
-using RapidCMS.Common.Services;
-using RapidCMS.Common.Services.UI;
+using RapidCMS.Core.Abstractions.Factories;
+using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.UI;
 using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Components.Pages
 {
     public abstract class BaseCollection : BasePage
     {
-        [Inject] protected IEditContextService EditContextService { get; set; }
-        [Inject] protected IEditorService EditorService { get; set; }
+        [Inject] protected IPersistenceService PersistenceService { get; set; }
+        [Inject] protected IUIResolverFactory UIResolverFactory { get; set; }
 
         protected EditContext? RootEditContext;
 
@@ -41,9 +41,10 @@ namespace RapidCMS.UI.Components.Pages
                 {
                     var parentPath = GetParentPath();
 
-                    var rootEditContext = await EditContextService.GetRootAsync(GetUsageType(), CollectionAlias, parentPath);
+                    // TODO: ListContext
+                    var rootEditContext = default(EditContext); // await PersistenceService.GetRootAsync(GetUsageType(), CollectionAlias, parentPath);
 
-                    UIResolver = await EditorService.GetListUIResolverAsync(GetUsageType(), CollectionAlias);
+                    UIResolver = await UIResolverFactory.GetListUIResolverAsync(GetUsageType(), CollectionAlias);
 
                     ListUI = UIResolver.GetListDetails();
                     Buttons = await UIResolver.GetButtonsForEditContextAsync(rootEditContext);
@@ -113,7 +114,7 @@ namespace RapidCMS.UI.Components.Pages
                 query.SetOrderByExpressions(ListUI.OrderBys);
             }
 
-            var editContexts = await EditContextService.GetEntitiesAsync(GetUsageType(), CollectionAlias, GetParentPath(), query);
+            var editContexts = await PersistenceService.GetEntitiesAsync(GetUsageType(), CollectionAlias, GetParentPath(), query);
             Sections = await editContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
 
             if (!query.MoreDataAvailable)
@@ -144,7 +145,7 @@ namespace RapidCMS.UI.Components.Pages
             {
                 if (reloadEntityIds.Contains(x.editContext.Entity.Id))
                 {
-                    var reloadedEditContext = await EditContextService.GetEntityAsync(x.editContext.UsageType, CollectionAlias, null, GetParentPath(), x.editContext.Entity.Id);
+                    var reloadedEditContext = await PersistenceService.GetEntityAsync(x.editContext.UsageType, CollectionAlias, null, GetParentPath(), x.editContext.Entity.Id);
                     return (reloadedEditContext, await UIResolver.GetSectionsForEditContextAsync(reloadedEditContext));
                 }
                 else
@@ -160,7 +161,7 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
-                var command = await EditContextService.ProcessListActionAsync(
+                var command = await PersistenceService.ProcessListActionAsync(
                     GetUsageType(), 
                     CollectionAlias, 
                     GetParentPath(),
@@ -180,11 +181,7 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
-                var command = await EditContextService.ProcessListActionAsync(
-                    args.EditContext.UsageType, 
-                    CollectionAlias, 
-                    GetParentPath(), 
-                    args.EditContext.Entity.Id, 
+                var command = await PersistenceService.ProcessEntityActionAsync(
                     args.EditContext, 
                     args.ViewModel.ButtonId, 
                     args.Data);

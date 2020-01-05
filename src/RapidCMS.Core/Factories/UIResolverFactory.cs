@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using RapidCMS.Common.Resolvers.UI;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Resolvers.UI;
 
 namespace RapidCMS.Core.Factories
 {

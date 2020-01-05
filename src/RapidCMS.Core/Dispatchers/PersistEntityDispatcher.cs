@@ -71,6 +71,8 @@ namespace RapidCMS.Core.Dispatchers
                     }
                     request.EditContext.SwapEntity(entity);
 
+                    // TODO: add to related collection
+
                     // TODO: make dependent of LIST or NODE
                     viewCommand = new NavigateCommand
                     {
@@ -84,6 +86,16 @@ namespace RapidCMS.Core.Dispatchers
                     {
                         Uri = CollectionUri(Constants.View, request)
                     };
+                    break;
+
+                case CrudType.Pick:
+                    viewCommand = default!;
+                    // TODO: add to related collection
+                    break;
+
+                case CrudType.Remove:
+                    viewCommand = default!;
+                    // TODO: add to related collection
                     break;
 
                 case CrudType.None:

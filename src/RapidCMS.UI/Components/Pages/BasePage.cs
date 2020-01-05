@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using RapidCMS.Common;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Enums;
-using RapidCMS.Common.Exceptions;
-using RapidCMS.Common.Helpers;
-using RapidCMS.Common.Models.Commands;
+using RapidCMS.Core;
+using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Enums;
+using RapidCMS.Core.Exceptions;
+using RapidCMS.Core.Models.Commands;
+using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.UI.Components.Pages
 {
@@ -17,7 +17,7 @@ namespace RapidCMS.UI.Components.Pages
         private UpdateParameterCommand? _previousParameterCommand = null;
 
         [Inject] private NavigationManager NavigationManager { get; set; }
-        [Inject] private IExceptionHelper ExceptionHelper { get; set; }
+        [Inject] private IExceptionService ExceptionService { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
 
         [Parameter] public string Action { get; set; }
@@ -147,7 +147,7 @@ namespace RapidCMS.UI.Components.Pages
             }
             else
             {
-                ExceptionHelper.StoreException(ex);
+                ExceptionService.StoreException(ex);
 
                 NavigationManager.NavigateTo("/error");
             }
@@ -164,10 +164,10 @@ namespace RapidCMS.UI.Components.Pages
             {
                 Constants.Edit => UsageType.Edit,
                 Constants.New => UsageType.New,
-                Constants.Add => UsageType.Add,
+                // TODO Constants.Add => UsageType.Add,
                 Constants.View => UsageType.View,
-                Constants.List => UsageType.List,
-                Constants.Pick => UsageType.Pick,
+                // TODO Constants.List => UsageType.List,
+                // TODO Constants.Pick => UsageType.Pick,
                 _ => (UsageType)0
             };
 

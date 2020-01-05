@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.EventArgs;
 
 namespace RapidCMS.Core.Services.SidePane
 {

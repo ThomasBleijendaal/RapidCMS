@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Services;
+using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.UI.Components.Shared
 {

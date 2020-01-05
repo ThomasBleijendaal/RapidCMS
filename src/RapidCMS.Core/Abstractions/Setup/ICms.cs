@@ -1,6 +1,6 @@
 ﻿namespace RapidCMS.Core.Abstractions.Setup
 {
-    internal interface ICms
+    public interface ICms
     {
         string SiteName { get; }
         bool IsDevelopment { get; }

@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Models;
+using RapidCMS.Core.Abstractions.Setup;
 
 namespace RapidCMS.UI.Extensions
 {
     public static class CustomRegistrationRenderFragmentExtensions
     {
-        public static RenderFragment? ToRenderFragment(this CustomTypeRegistration? registration)
+        public static RenderFragment? ToRenderFragment(this ITypeRegistration? registration)
         {
             if (registration != null)
             {

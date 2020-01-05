@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Data;
+using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.UI.Components.Editors
 {

@@ -1,10 +1,8 @@
-﻿using RapidCMS.Core.Models.Setup;
-
-namespace RapidCMS.Core.Abstractions.Setup
+﻿namespace RapidCMS.Core.Abstractions.Setup
 {
-    internal interface ILogin
+    public interface ILogin
     {
-        CustomTypeRegistrationSetup? CustomLoginScreenRegistration { get; }
-        CustomTypeRegistrationSetup? CustomLoginStatusRegistration { get; }
+        ITypeRegistration? CustomLoginScreenRegistration { get; }
+        ITypeRegistration? CustomLoginStatusRegistration { get; }
     }
 }

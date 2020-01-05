@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Models.UI;
+using RapidCMS.Core.Models.UI;
 using RapidCMS.UI.Components.Sections;
 
 namespace RapidCMS.UI.Extensions

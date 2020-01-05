@@ -28,6 +28,8 @@ namespace RapidCMS.Core.Dispatchers
 
         public async Task<ViewCommandResponseModel> InvokeAsync(PersistEntitiesRequestModel request)
         {
+            var childRequest = request as PersistChildEntitiesRequestModel;
+
             var collection = _collectionResolver.GetCollection(request.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
@@ -37,7 +39,7 @@ namespace RapidCMS.Core.Dispatchers
                 throw new Exception($"Cannot determine which button triggered action for collection {request.CollectionAlias}");
             }
 
-            var parent = await _parentService.GetParentAsync(request.ParentPath);
+            var parent = childRequest == null ? default : await _parentService.GetParentAsync(childRequest.ParentPath);
 
             var rootEditContext = await GetNewEditContextAsync(request.UsageType, request.CollectionAlias, parent);
             var entity = await EnsureCorrectConcurrencyAsync(() => repository.NewAsync(parent, collection.EntityVariant.Type));
@@ -64,7 +66,7 @@ namespace RapidCMS.Core.Dispatchers
                                 Constants.New,
                                 request.CollectionAlias,
                                 button.EntityVariant,
-                                request.ParentPath,
+                                childRequest?.ParentPath,
                                 null)
                         };
                     }
@@ -75,7 +77,7 @@ namespace RapidCMS.Core.Dispatchers
                             Action = Constants.New,
                             CollectionAlias = request.CollectionAlias,
                             VariantAlias = button.EntityVariant.Alias,
-                            ParentPath = request.ParentPath?.ToPathString(),
+                            ParentPath = childRequest?.ParentPath?.ToPathString(),
                             Id = null
                         };
                     }
@@ -115,12 +117,12 @@ namespace RapidCMS.Core.Dispatchers
                         Uri = UriHelper.Collection(
                             Constants.Edit,
                             request.CollectionAlias,
-                            request.ParentPath)
+                            childRequest?.ParentPath)
                     };
                     break;
 
                 case CrudType.Up:
-                    var (newParentPath, parentCollectionAlias, parentId) = ParentPath.RemoveLevel(request.ParentPath);
+                    var (newParentPath, parentCollectionAlias, parentId) = ParentPath.RemoveLevel(childRequest?.ParentPath);
 
                     if (parentCollectionAlias == null)
                     {

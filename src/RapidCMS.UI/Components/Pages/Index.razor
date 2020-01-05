@@ -2,19 +2,19 @@
 
 @layout MainLayout
 
-@inject ICustomRegistrationProvider Registrations
+@inject IDashboard Dashboard
 
-@foreach (var section in Registrations.CustomDashboardSectionRegistrations)
+@foreach (var section in Dashboard.CustomDashboardSectionRegistrations)
 {
     @RenderType(section);
 }
 
 @code {
-    RenderFragment RenderType(CustomTypeRegistration section)
+    RenderFragment RenderType(ITypeRegistration section)
     {
         return builder =>
         {
-            var type = section.Type == typeof(RapidCMS.Common.Models.Collection)
+            var type = section.Type.GetInterfaces().Any(x => x == typeof(ICollectionConfig))
                 ? typeof(Collection)
                 : section.Type;
 

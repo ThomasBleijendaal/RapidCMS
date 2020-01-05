@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 
-namespace RapidCMS.Core.Services.SidePane
+namespace RapidCMS.Core.Models.EventArgs
 {
     public sealed class PaneEventArgs
     {

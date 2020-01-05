@@ -8,17 +8,16 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.UI;
-using RapidCMS.Core.Resolvers.UI;
 
-namespace RapidCMS.Common.Resolvers.UI
+namespace RapidCMS.Core.Resolvers.UI
 {
     internal class NodeUIResolver : BaseUIResolver, INodeUIResolver
     {
         private readonly NodeSetup _node;
 
         public NodeUIResolver(
-            NodeSetup node, 
-            IDataProviderResolver dataProviderService, 
+            NodeSetup node,
+            IDataProviderResolver dataProviderService,
             IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor) : base(dataProviderService, authorizationService, httpContextAccessor)
         {
             _node = node;

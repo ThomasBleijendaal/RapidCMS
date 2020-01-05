@@ -1,4 +1,4 @@
-﻿using RapidCMS.Common.Enums;
+﻿using RapidCMS.Core.Enums;
 
 namespace RapidCMS.UI.Helpers
 {

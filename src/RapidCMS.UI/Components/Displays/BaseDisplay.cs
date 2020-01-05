@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Enums;
-using RapidCMS.Common.Models.Metadata;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Enums;
 
 namespace RapidCMS.UI.Components.Displays
 {

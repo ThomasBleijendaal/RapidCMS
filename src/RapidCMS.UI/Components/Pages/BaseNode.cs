@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Forms;
-using RapidCMS.Common.Models.UI;
-using RapidCMS.Common.Services;
-using RapidCMS.Common.Services.UI;
+using RapidCMS.Core.Abstractions.Factories;
+using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.UI;
 using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Components.Pages
 {
     public abstract class BaseNode : BasePage
     {
-        [Inject] private IEditContextService EditContextService { get; set; }
-        [Inject] private IEditorService EditorService { get; set; }
+        [Inject] protected IPersistenceService PersistenceService { get; set; }
+        [Inject] protected IUIResolverFactory UIResolverFactory { get; set; }
 
         protected EditContext? EditContext;
         protected IEnumerable<ButtonUI>? Buttons;
@@ -23,8 +23,8 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
-                var editContext = await EditContextService.GetEntityAsync(GetUsageType(), CollectionAlias, VariantAlias, GetParentPath(), Id);
-                var resolver = await EditorService.GetNodeUIResolverAsync(GetUsageType(), CollectionAlias);
+                var editContext = await PersistenceService.GetEntityAsync(GetUsageType(), CollectionAlias, VariantAlias, GetParentPath(), Id);
+                var resolver = await UIResolverFactory.GetNodeUIResolverAsync(GetUsageType(), CollectionAlias);
 
                 Buttons = await resolver.GetButtonsForEditContextAsync(editContext);
                 Sections = await resolver.GetSectionsForEditContextAsync(editContext);
@@ -52,11 +52,7 @@ namespace RapidCMS.UI.Components.Pages
                     throw new ArgumentException($"ViewModel required");
                 }
 
-                var command = await EditContextService.ProcessEntityActionAsync(
-                    GetUsageType(),
-                    CollectionAlias,
-                    GetParentPath(),
-                    Id,
+                var command = await PersistenceService.ProcessEntityActionAsync(
                     args.EditContext,
                     args.ViewModel.ButtonId,
                     args.Data);
