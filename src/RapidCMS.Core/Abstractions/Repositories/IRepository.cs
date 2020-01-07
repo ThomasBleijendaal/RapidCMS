@@ -7,7 +7,7 @@ using RapidCMS.Core.Forms;
 
 namespace RapidCMS.Core.Abstractions.Repositories
 {
-    internal interface IRepository
+    public interface IRepository
     {
         Task<IEntity?> GetByIdAsync(string id, IParent? parent);
         Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query);

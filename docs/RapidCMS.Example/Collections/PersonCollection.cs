@@ -1,6 +1,5 @@
-﻿using RapidCMS.Common.Enums;
-using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Models.Config;
+﻿using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Enums;
 using RapidCMS.Example.Components;
 using RapidCMS.Example.Data;
 using RapidCMS.Repositories;
@@ -12,12 +11,11 @@ namespace RapidCMS.Example.Collections
         // CRUD editor for simple POCO with recursive sub collections
         public static void AddPersonCollection(this ICmsConfig config)
         {
-            config.AddCollection<Person>("person", "People", collection =>
+            config.AddCollection<Person, JsonRepository<Person>>("person", "People", collection =>
             {
                 collection
                     .SetTreeView(x => x.Name)
                     // this repository handles all the CRUD for this collection
-                    .SetRepository<JsonRepository<Person>>()
                     // a list view is a table that displays a row (or multiple rows) of info per entity
                     .SetListView(view =>
                     {

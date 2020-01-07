@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Forms;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Repositories
 {
@@ -19,7 +20,7 @@ namespace RapidCMS.Repositories
     /// simplifying the use of data views in these repositories.
     /// </summary>
     /// <typeparam name="TCmsEntity">Entity to store</typeparam>
-    public class MappedInMemoryRepository<TCmsEntity, TEntity> : MappedBaseRepository<string, TCmsEntity, TEntity>
+    public class MappedInMemoryRepository<TCmsEntity, TEntity> : MappedBaseRepository<TCmsEntity, TEntity>
         where TCmsEntity : class, IEntity, new()
         where TEntity : class, IEntity, ICloneable, new()
     {
@@ -103,11 +104,6 @@ namespace RapidCMS.Repositories
         public override Task<TCmsEntity> NewAsync(IParent? parent, Type? variantType = null)
         {
             return Task.FromResult(new TCmsEntity());
-        }
-
-        public override string ParseKey(string id)
-        {
-            return id;
         }
 
         public override Task UpdateAsync(IEditContext<TCmsEntity> editContext)

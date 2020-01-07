@@ -91,7 +91,6 @@ namespace RapidCMS.Core.Repositories
         /// 
         /// The relations parameter contains all the relations that are set to this entity.
         /// </summary>
-        /// <param name="id"></param>
         /// <param name="parent"></param>
         /// <param name="entity"></param>
         /// <param name="relations"></param>

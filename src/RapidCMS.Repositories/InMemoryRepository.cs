@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Forms;
-using RapidCMS.Common.Models.Metadata;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Repositories
 {
@@ -15,7 +17,7 @@ namespace RapidCMS.Repositories
     /// Use *only* List<TRelatedEntity> properties for relations.
     /// </summary>
     /// <typeparam name="TEntity">Entity to store</typeparam>
-    public class InMemoryRepository<TEntity> : BaseRepository<string, TEntity>
+    public class InMemoryRepository<TEntity> : BaseRepository<TEntity>
         where TEntity : class, IEntity, ICloneable, new()
     {
         protected Dictionary<string, List<TEntity>> _data = new Dictionary<string, List<TEntity>>();
@@ -92,11 +94,6 @@ namespace RapidCMS.Repositories
         public override Task<TEntity> NewAsync(IParent? parent, Type? variantType = null)
         {
             return Task.FromResult(new TEntity());
-        }
-
-        public override string ParseKey(string id)
-        {
-            return id;
         }
 
         // using editContext overload of UpdateAsync, you can access the state of the edit form

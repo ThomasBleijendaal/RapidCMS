@@ -90,7 +90,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IApplicationBuilder UseRapidCMS(this IApplicationBuilder app, bool isDevelopment = false)
         {
-            app.ApplicationServices.GetService<CmsConfig>().IsDevelopment = isDevelopment;
+            app.ApplicationServices.GetService<ICms>().IsDevelopment = isDevelopment;
 
             return app;
         }

@@ -1,7 +1,6 @@
 ﻿using System.Linq;
-using RapidCMS.Common.Enums;
-using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Models.Config;
+using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Enums;
 using RapidCMS.Example.Data;
 using RapidCMS.Repositories;
 
@@ -12,11 +11,10 @@ namespace RapidCMS.Example.Collections
         // CRUD editor with support for one-to-many relation + validation
         public static void AddCountryCollection(this ICmsConfig config)
         {
-            config.AddCollection<Country>("country", "Countries", collection =>
+            config.AddCollection<Country, JsonRepository<Country>>("country", "Countries", collection =>
             {
                 collection
                     .SetTreeView(x => x.Name)
-                    .SetRepository<JsonRepository<Country>>()
                     .SetListView(view =>
                     {
                         view.AddDefaultButton(DefaultButtonType.New);

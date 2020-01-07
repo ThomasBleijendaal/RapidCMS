@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
@@ -42,7 +43,7 @@ namespace RapidCMS.UI.Components.Pages
                     var parentPath = GetParentPath();
 
                     // TODO: ListContext
-                    var rootEditContext = default(EditContext); // await PersistenceService.GetRootAsync(GetUsageType(), CollectionAlias, parentPath);
+                    var rootEditContext = await PersistenceService.GetEntityAsync(UsageType.New, CollectionAlias, default, parentPath, default);
 
                     UIResolver = await UIResolverFactory.GetListUIResolverAsync(GetUsageType(), CollectionAlias);
 

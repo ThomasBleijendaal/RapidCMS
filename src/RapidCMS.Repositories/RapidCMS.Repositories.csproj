@@ -21,10 +21,6 @@ RapidCMS is a Blazor framework which allows you to build a responsive and flexib
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RapidCMS.Common\RapidCMS.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\..\LICENSE.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
@@ -33,6 +29,10 @@ RapidCMS is a Blazor framework which allows you to build a responsive and flexib
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RapidCMS.Core\RapidCMS.Core.csproj" />
   </ItemGroup>
 
 </Project>

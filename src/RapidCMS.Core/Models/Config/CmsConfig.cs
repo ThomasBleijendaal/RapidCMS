@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Repositories;
@@ -80,7 +81,7 @@ namespace RapidCMS.Core.Models.Config
         {
             CustomDashboardSectionRegistrations.Add(
                 new CustomTypeRegistrationConfig(
-                    typeof(CollectionConfig),
+                    typeof(ICollectionConfig),
                     new Dictionary<string, string> {
                         { "Action", edit ? Constants.Edit : Constants.View },
                         { "CollectionAlias", collectionAlias } }));
@@ -90,14 +91,14 @@ namespace RapidCMS.Core.Models.Config
 
         public ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string name, Action<ICollectionConfig<TEntity>> configure)
             where TEntity : class, IEntity
-            where TRepository : BaseRepository<TEntity>
+            where TRepository : IRepository
         {
             return AddCollection<TEntity, TRepository>(alias, default, name, configure);
         }
 
         public ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TEntity>> configure)
             where TEntity : class, IEntity
-            where TRepository : BaseRepository<TEntity>
+            where TRepository : IRepository
         {
             if (configure == null)
             {

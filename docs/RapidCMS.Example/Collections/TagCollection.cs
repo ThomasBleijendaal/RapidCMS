@@ -1,6 +1,5 @@
-﻿using RapidCMS.Common.Enums;
-using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Models.Config;
+﻿using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Enums;
 using RapidCMS.Example.ActionHandlers;
 using RapidCMS.Example.Components;
 using RapidCMS.Example.Data;
@@ -12,11 +11,10 @@ namespace RapidCMS.Example.Collections
     {
         public static void AddTagCollection(this ICmsConfig config)
         {
-            config.AddCollection<TagGroup>("taggroup", "Tag groups", collection =>
+            config.AddCollection<TagGroup, JsonRepository<TagGroup>>("taggroup", "Tag groups", collection =>
             {
                 collection
                     .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
-                    .SetRepository<JsonRepository<TagGroup>>()
                     .SetListEditor(ListType.Block, editor =>
                     {
                         editor.SetSearchBarVisibility(false);
@@ -46,10 +44,9 @@ namespace RapidCMS.Example.Collections
                 // any collection can be added as subcollection, even collections based upon totally difference repositories
                 // this lets you mix repositories which are based upon totally different databases easily
                 collection
-                    .AddCollection<Tag>("tag", "Tags", subCollection =>
+                    .AddSubCollection<Tag, JsonRepository<Tag>>("tag", "Tags", subCollection =>
                     {
                         subCollection
-                            .SetRepository<JsonRepository<Tag>>()
                             .SetListEditor(ListType.Table, editor =>
                             {
                                 editor.SetSearchBarVisibility(false);

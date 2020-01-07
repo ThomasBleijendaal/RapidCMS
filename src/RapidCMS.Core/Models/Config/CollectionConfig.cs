@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
@@ -156,14 +157,14 @@ namespace RapidCMS.Core.Models.Config
 
         public ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string name, Action<ICollectionConfig<TSubEntity>> configure)
             where TSubEntity : class, IEntity
-            where TRepository : BaseRepository<TSubEntity>
+            where TRepository : IRepository
         {
             return AddSubCollection<TSubEntity, TRepository>(alias, default, name, configure);
         }
 
         public ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TSubEntity>> configure)
             where TSubEntity : class, IEntity
-            where TRepository : BaseRepository<TSubEntity>
+            where TRepository : IRepository
         {
             if (configure == null)
             {
@@ -177,7 +178,7 @@ namespace RapidCMS.Core.Models.Config
             {
                 throw new NotUniqueException(nameof(alias));
             }
-
+            
             CmsConfig.CollectionAliases.Add(alias);
 
             var configReceiver = new CollectionConfig<TSubEntity>(

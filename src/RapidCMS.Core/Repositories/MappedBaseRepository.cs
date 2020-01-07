@@ -16,10 +16,9 @@ namespace RapidCMS.Core.Repositories
     /// 
     /// If TEntity == TQueryEntity, use BaseRepository
     /// </summary>
-    /// <typeparam name="TKey">The of the id of the TDatabaseEntity</typeparam>
     /// <typeparam name="TEntity">Type of the entity used in the views</typeparam>
     /// <typeparam name="TDatabaseEntity">Type of the entity in the backing store</typeparam>
-    public abstract class MappedBaseRepository<TKey, TEntity, TDatabaseEntity> : IRepository
+    public abstract class MappedBaseRepository<TEntity, TDatabaseEntity> : IRepository
         where TEntity : class, IEntity
         where TDatabaseEntity : class
     {
@@ -29,7 +28,7 @@ namespace RapidCMS.Core.Repositories
         /// <param name="id"></param>
         /// <param name="parent"></param>
         /// <returns></returns>
-        public abstract Task<TEntity?> GetByIdAsync(TKey id, IParent? parent);
+        public abstract Task<TEntity?> GetByIdAsync(string id, IParent? parent);
 
         /// <summary>
         /// This method gets all entities belonging to the given parent(s) and query instructions (paging / search).
@@ -100,12 +99,11 @@ namespace RapidCMS.Core.Repositories
         /// 
         /// The relations parameter contains all the relations that are set to this entity.
         /// </summary>
-        /// <param name="id"></param>
         /// <param name="parent"></param>
         /// <param name="entity"></param>
         /// <param name="relations"></param>
         /// <returns></returns>
-        public virtual Task UpdateAsync(TKey id, IParent? parent, TEntity entity, IRelationContainer? relations)
+        public virtual Task UpdateAsync(IParent? parent, TEntity entity, IRelationContainer? relations)
             => throw new NotImplementedException($"Implement one of the {nameof(UpdateAsync)} on the {GetType()}.");
 
         /// <summary>
@@ -118,8 +116,8 @@ namespace RapidCMS.Core.Repositories
         /// <param name="editContext"></param>
         /// <returns></returns>
         public virtual Task UpdateAsync(IEditContext<TEntity> editContext)
-            => UpdateAsync(ParseKey(editContext.Entity.Id!), editContext.Parent, editContext.Entity, editContext.GetRelationContainer());
-        public abstract Task DeleteAsync(TKey id, IParent? parent);
+            => UpdateAsync(editContext.Parent, editContext.Entity, editContext.GetRelationContainer());
+        public abstract Task DeleteAsync(string id, IParent? parent);
 
         /// <summary>
         /// This methods adds an releated entity to the entity that corresponds with the given id. 
@@ -128,7 +126,7 @@ namespace RapidCMS.Core.Repositories
         /// <param name="related"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual Task AddAsync(IRelated related, TKey id)
+        public virtual Task AddAsync(IRelated related, string id)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(AddAsync)} on the {GetType()}.");
 
         /// <summary>
@@ -138,15 +136,8 @@ namespace RapidCMS.Core.Repositories
         /// <param name="related"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual Task RemoveAsync(IRelated related, TKey id)
+        public virtual Task RemoveAsync(IRelated related, string id)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(RemoveAsync)} on the {GetType()}.");
-
-        /// <summary>
-        /// This method is invoked when the id of the entity must be parsed from a string (originating from the URL) to TKey.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public abstract TKey ParseKey(string id);
 
         protected internal RepositoryChangeToken _repositoryChangeToken = new RepositoryChangeToken();
 
@@ -160,7 +151,7 @@ namespace RapidCMS.Core.Repositories
 
         async Task<IEntity?> IRepository.GetByIdAsync(string id, IParent? parent)
         {
-            return await GetByIdAsync(ParseKey(id), parent) as IEntity;
+            return await GetByIdAsync(id, parent) as IEntity;
         }
 
         async Task<IEnumerable<IEntity>> IRepository.GetAllAsync(IParent? parent, IQuery query)
@@ -198,17 +189,17 @@ namespace RapidCMS.Core.Repositories
 
         async Task IRepository.DeleteAsync(string id, IParent? parent)
         {
-            await DeleteAsync(ParseKey(id), parent);
+            await DeleteAsync(id, parent);
             NotifyUpdate();
         }
 
         async Task IRepository.AddAsync(IRelated related, string id)
         {
-            await AddAsync(related, ParseKey(id));
+            await AddAsync(related, id);
         }
         async Task IRepository.RemoveAsync(IRelated related, string id)
         {
-            await RemoveAsync(related, ParseKey(id));
+            await RemoveAsync(related, id);
         }
     }
 }

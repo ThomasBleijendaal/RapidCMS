@@ -1,5 +1,6 @@
 ﻿using System;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Abstractions.Config
@@ -17,7 +18,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <returns></returns>
         ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string name, Action<ICollectionConfig<TEntity>> configure)
             where TEntity : class, IEntity
-            where TRepository : BaseRepository<TEntity>;
+            where TRepository : IRepository;
 
         /// <summary>
         /// Adds a collection to the CMS.
@@ -31,7 +32,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <returns></returns>
         ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TEntity>> configure)
             where TEntity : class, IEntity
-            where TRepository : BaseRepository<TEntity>;
+            where TRepository : IRepository;
 
         /// <summary>
         /// Adds a section to the list of components to draw on the dashboard, the homepage of the CMS.

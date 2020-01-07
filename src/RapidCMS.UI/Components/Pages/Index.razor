@@ -14,7 +14,7 @@
     {
         return builder =>
         {
-            var type = section.Type.GetInterfaces().Any(x => x == typeof(ICollectionConfig))
+            var type = section.Type == typeof(ICollectionConfig)
                 ? typeof(Collection)
                 : section.Type;
 

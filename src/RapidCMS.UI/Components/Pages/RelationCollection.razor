@@ -35,7 +35,7 @@ else
     }
     else
     {
-        if (Action == Constants.Add)
+        if (GetUsageType().HasFlag(UsageType.Add))
         {
             <div class="content">
                 <p>No furter elements are available.</p>

@@ -1,6 +1,5 @@
-﻿using RapidCMS.Common.Enums;
-using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Models.Config;
+﻿using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Enums;
 using RapidCMS.Example.Data;
 using RapidCMS.Example.DataViews;
 using RapidCMS.Repositories;
@@ -12,12 +11,11 @@ namespace RapidCMS.Example.Collections
         // CURD editor using a mapped repository
         public static void AddMappedCollection(this ICmsConfig config)
         {
-            config.AddCollection<MappedEntity>("mapped", icon: "git-compare", "Mapped entities", collection =>
+            config.AddCollection<MappedEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>("mapped", icon: "git-compare", "Mapped entities", collection =>
             {
                 collection
                     .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
-                    .SetRepository<MappedInMemoryRepository<MappedEntity, DatabaseEntity>>()
-
+                    
                     // adding a data view builder allows you to have multiple tabs in the list editor, each with a different
                     // query associated with it
                     .SetDataViewBuilder<DatabaseEntityDataViewBuilder>()

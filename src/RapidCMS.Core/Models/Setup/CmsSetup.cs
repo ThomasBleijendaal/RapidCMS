@@ -36,7 +36,7 @@ namespace RapidCMS.Core.Models.Setup
 
             void MapCollections(IEnumerable<CollectionSetup> collections)
             {
-                foreach (var collection in collections)
+                foreach (var collection in collections.Where(col => !col.Recursive))
                 {
                     if (!_collectionMap.TryAdd(collection.Alias, collection))
                     {
@@ -63,7 +63,11 @@ namespace RapidCMS.Core.Models.Setup
         internal CustomTypeRegistrationSetup? CustomLoginStatusRegistration { get; set; }
 
         string ICms.SiteName => SiteName;
-        bool ICms.IsDevelopment => IsDevelopment;
+        bool ICms.IsDevelopment
+        {
+            get => IsDevelopment;
+            set => IsDevelopment = value;
+        }
         bool ICms.AllowAnonymousUsage => AllowAnonymousUsage;
         int ICms.SemaphoreMaxCount => SemaphoreMaxCount;
 

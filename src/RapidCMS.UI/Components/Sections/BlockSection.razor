@@ -41,7 +41,7 @@
                     var parentPath = ParentPath.AddLevel(EditContext.Parent?.GetParentPath(), EditContext.CollectionAlias, EditContext.Entity.Id);
 
                     <div class="nested-content">
-                        <RapidCMS.UI.Components.Pages.Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                        <RapidCMS.UI.Components.Pages.Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.View : Constants.Edit)
                                                                  CollectionAlias=@subCollection.CollectionAlias
                                                                  Path=@parentPath.ToPathString() />
                     </div>
@@ -52,7 +52,7 @@
                 if (!EditContext.UsageType.HasFlag(UsageType.New))
                 {
                     <div class="nested-content">
-                        <RapidCMS.UI.Components.Pages.RelationCollection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.List : Constants.Edit)
+                        <RapidCMS.UI.Components.Pages.RelationCollection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.View : Constants.Edit)
                                                                          CollectionAlias=@relatedCollection.CollectionAlias
                                                                          RelatedEntity=@EditContext.Entity />
                     </div>

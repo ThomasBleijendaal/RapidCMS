@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Repositories;
 
@@ -27,7 +28,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <returns></returns>
         ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string name, Action<ICollectionConfig<TSubEntity>> configure)
             where TSubEntity : class, IEntity
-            where TRepository : BaseRepository<TSubEntity>;
+            where TRepository : IRepository;
 
         /// <summary>
         /// Adds a sub collection to the current collection.
@@ -41,7 +42,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <returns></returns>
         ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TSubEntity>> configure)
             where TSubEntity : class, IEntity
-            where TRepository : BaseRepository<TSubEntity>;
+            where TRepository : IRepository;
 
         /// <summary>
         /// Adds itself as sub collection.
