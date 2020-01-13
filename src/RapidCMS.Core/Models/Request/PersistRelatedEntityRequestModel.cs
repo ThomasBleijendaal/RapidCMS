@@ -2,8 +2,8 @@
 
 namespace RapidCMS.Core.Models.Request
 {
-    internal class PersistRelatedEntityRequestModel : PersistEntityRequestModel
+    public class PersistRelatedEntityRequestModel : PersistEntityRequestModel
     {
-        internal IRelated Related { get; set; } = default!;
+        public IRelated Related { get; set; } = default!;
     }
 }

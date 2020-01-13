@@ -35,7 +35,7 @@
     private RenderFragment? CustomLoginStatus { get; set; }
 
     [Inject]
-    private ILogin LoginRegistration { get; set; }
+    private ILogin LoginRegistration { get; set; } = default!;
 
     protected override async Task OnParametersSetAsync()
     {

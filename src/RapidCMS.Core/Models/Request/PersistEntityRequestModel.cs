@@ -2,10 +2,10 @@
 
 namespace RapidCMS.Core.Models.Request
 {
-    internal class PersistEntityRequestModel
+    public class PersistEntityRequestModel
     {
-        internal EditContext EditContext { get; set; } = default!;
-        internal string ActionId { get; set; } = default!;
-        internal object? CustomData { get; set; }
+        public EditContext EditContext { get; set; } = default!;
+        public string ActionId { get; set; } = default!;
+        public object? CustomData { get; set; }
     }
 }

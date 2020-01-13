@@ -20,7 +20,7 @@ namespace RapidCMS.UI.Components.Pages
     {
         [Parameter] public IEntity RelatedEntity { get; set; }
 
-        [Inject] protected IPersistenceService PersistenceService { get; set; }
+        [Inject] protected IInteractionService PersistenceService { get; set; }
         [Inject] protected IUIResolverFactory UIResolverFactory { get; set; }
 
         protected EditContext? RootEditContext;

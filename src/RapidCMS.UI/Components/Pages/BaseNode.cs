@@ -7,23 +7,34 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.UI.Models;
+using RapidCMS.Core.Models.Request;
+using RapidCMS.Core.Models.Response;
 
 namespace RapidCMS.UI.Components.Pages
 {
     public abstract class BaseNode : BasePage
     {
-        [Inject] protected IPersistenceService PersistenceService { get; set; }
-        [Inject] protected IUIResolverFactory UIResolverFactory { get; set; }
+        [Inject] protected IPresentationService PresentationService { get; set; } = default!;
+        [Inject] protected IInteractionService InteractionService { get; set; } = default!;
+        [Inject] protected IUIResolverFactory UIResolverFactory { get; set; } = default!;
 
-        protected EditContext? EditContext;
-        protected IEnumerable<ButtonUI>? Buttons;
-        protected IEnumerable<SectionUI>? Sections;
+        protected EditContext? EditContext { get; set; } 
+        protected IEnumerable<ButtonUI>? Buttons { get; set; }
+        protected IEnumerable<SectionUI>? Sections { get; set; }
 
         protected override async Task LoadDataAsync(IEnumerable<string>? reloadEntityIds = null)
         {
             try
             {
-                var editContext = await PersistenceService.GetEntityAsync(GetUsageType(), CollectionAlias, VariantAlias, GetParentPath(), Id);
+                var editContext = await PresentationService.GetEntityAsync(new GetEntityRequestModel
+                {
+                    CollectionAlias = CollectionAlias,
+                    Id = Id,
+                    ParentPath = GetParentPath(),
+                    UsageType = GetUsageType(),
+                    VariantAlias = VariantAlias
+                });
+
                 var resolver = await UIResolverFactory.GetNodeUIResolverAsync(GetUsageType(), CollectionAlias);
 
                 Buttons = await resolver.GetButtonsForEditContextAsync(editContext);
@@ -52,10 +63,12 @@ namespace RapidCMS.UI.Components.Pages
                     throw new ArgumentException($"ViewModel required");
                 }
 
-                var command = await PersistenceService.ProcessEntityActionAsync(
-                    args.EditContext,
-                    args.ViewModel.ButtonId,
-                    args.Data);
+                var command = await InteractionService.InteractAsync<PersistEntityRequestModel, NodeViewCommandResponseModel>(new PersistEntityRequestModel
+                {
+                    ActionId = args.ViewModel.ButtonId,
+                    CustomData = args.Data,
+                    EditContext = args.EditContext
+                });
 
                 await HandleViewCommandAsync(command);
             }

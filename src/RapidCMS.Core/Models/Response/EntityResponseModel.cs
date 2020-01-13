@@ -2,7 +2,7 @@
 
 namespace RapidCMS.Core.Models.Response
 {
-    internal class EntityResponseModel
+    public class EntityResponseModel
     {
         internal EditContext EditContext { get; set; } = default!;
     }

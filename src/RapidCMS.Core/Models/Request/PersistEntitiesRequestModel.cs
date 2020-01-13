@@ -4,12 +4,12 @@ using RapidCMS.Core.Forms;
 
 namespace RapidCMS.Core.Models.Request
 {
-    internal class PersistEntitiesRequestModel
+    public class PersistEntitiesRequestModel
     {
-        internal UsageType UsageType { get; set; }
-        internal string CollectionAlias { get; set; } = default!;
-        internal IEnumerable<EditContext> EditContexts { get; set; } = default!;
-        internal string ActionId { get; set; } = default!;
-        internal object? CustomData { get; set; }
+        public UsageType UsageType { get; set; }
+        public string CollectionAlias { get; set; } = default!;
+        public IEnumerable<EditContext> EditContexts { get; set; } = default!;
+        public string ActionId { get; set; } = default!;
+        public object? CustomData { get; set; }
     }
 }

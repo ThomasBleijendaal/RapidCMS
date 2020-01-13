@@ -64,7 +64,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IExceptionService, ExceptionService>();
             services.AddScoped<IMessageService, MessageService>();
             services.AddTransient<IParentService, ParentService>();
-            services.AddTransient<IPersistenceService, PersistenceService>();
+            services.AddTransient<IInteractionService, InteractionService>();
             services.AddScoped<ISidePaneService, SidePaneService>();
             services.AddTransient<ITreeService, TreeService>();
 

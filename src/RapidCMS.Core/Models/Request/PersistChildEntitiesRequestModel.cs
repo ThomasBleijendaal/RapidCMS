@@ -2,8 +2,8 @@
 
 namespace RapidCMS.Core.Models.Request
 {
-    internal class PersistChildEntitiesRequestModel : PersistEntitiesRequestModel
+    public class PersistChildEntitiesRequestModel : PersistEntitiesRequestModel
     {
-        internal ParentPath? ParentPath { get; set; }
+        public ParentPath? ParentPath { get; set; }
     }
 }

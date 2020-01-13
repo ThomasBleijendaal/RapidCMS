@@ -9,6 +9,7 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Models.Commands;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.Response;
 
 namespace RapidCMS.UI.Components.Pages
 {
@@ -26,12 +27,13 @@ namespace RapidCMS.UI.Components.Pages
         [Parameter] public string? Path { get; set; } = null;
         [Parameter] public string? Id { get; set; } = null;
 
+        [Obsolete("In everything except init")]
         protected ParentPath? GetParentPath()
         {
             return ParentPath.TryParse(Path);
         }
 
-        protected async Task HandleViewCommandAsync(ViewCommand command)
+        protected async Task HandleViewCommandAsync(ViewCommandResponseModel command)
         {
             try
             {
@@ -136,6 +138,7 @@ namespace RapidCMS.UI.Components.Pages
 
         protected void HandleException(Exception ex)
         {
+            // meh
             if (ex is UnauthorizedAccessException)
             {
                 NavigationManager.NavigateTo("/unauthorized");
@@ -158,6 +161,7 @@ namespace RapidCMS.UI.Components.Pages
             return Task.CompletedTask;
         }
 
+        [Obsolete("In everything except init")]
         protected UsageType GetUsageType()
         {
             var type = Action switch

@@ -11,7 +11,7 @@ using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Forms
 {
-    // TODO: fix memory leak due to events
+
     public sealed class EditContext
     {
         private readonly FormState _formState = new FormState();
@@ -19,14 +19,14 @@ namespace RapidCMS.Core.Forms
 
         internal EditContext(string collectionAlias, IEntity entity, IParent? parent, UsageType usageType, IServiceProvider serviceProvider)
         {
-            CollectionAlias = collectionAlias;
+            CollectionAlias = collectionAlias ?? throw new ArgumentNullException(nameof(collectionAlias));
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             Parent = parent;
             UsageType = usageType;
             ServiceProvider = serviceProvider;
         }
 
-        public string CollectionAlias { get; }
+        public string CollectionAlias { get; private set; }
         public IEntity Entity { get; private set; }
         public IParent? Parent { get; private set; }
         public UsageType UsageType { get; private set; }

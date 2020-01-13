@@ -18,6 +18,7 @@ TODO:
 [] Propagating update to subcollections
 [] Follow user down the tree + Always display where the user is
 [] Paginate tree
+[] Alias sub collection pages and have edit / view buttons direct to them
 
 2.0
 [] All config checked during startup

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Resolvers;
@@ -10,17 +7,35 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Request;
-using RapidCMS.Core.Models.Response;
 
 namespace RapidCMS.Core.Dispatchers
 {
-    internal class GetEntityDispatcher : BaseDispatcher, IDispatcher<GetEntityRequestModel, EntityResponseModel>
+    internal class GetEntityDispatcher : IPresenationDispatcher<GetEntityRequestModel, EditContext>
     {
-        public GetEntityDispatcher(ICollectionResolver collectionResolver, IRepositoryResolver repositoryResolver, IParentService parentService, IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider, SemaphoreSlim semaphore) : base(collectionResolver, repositoryResolver, parentService, authorizationService, httpContextAccessor, serviceProvider, semaphore)
+        private readonly ICollectionResolver _collectionResolver;
+        private readonly IRepositoryResolver _repositoryResolver;
+        private readonly IParentService _parentService;
+        private readonly IConcurrencyService _concurrencyService;
+        private readonly IAuthService _authService;
+        private readonly IServiceProvider _serviceProvider;
+
+        public GetEntityDispatcher(
+            ICollectionResolver collectionResolver, 
+            IRepositoryResolver repositoryResolver, 
+            IParentService parentService,
+            IConcurrencyService concurrencyService,
+            IAuthService authService,
+            IServiceProvider serviceProvider)
         {
+            _collectionResolver = collectionResolver;
+            _repositoryResolver = repositoryResolver;
+            _parentService = parentService;
+            _concurrencyService = concurrencyService;
+            _authService = authService;
+            _serviceProvider = serviceProvider;
         }
 
-        public async Task<EntityResponseModel> InvokeAsync(GetEntityRequestModel request)
+        public async Task<EditContext> GetAsync(GetEntityRequestModel request)
         {
             if (string.IsNullOrWhiteSpace(request.Id) && (request.UsageType.HasFlag(UsageType.View) || request.UsageType.HasFlag(UsageType.Edit)))
             {
@@ -46,23 +61,15 @@ namespace RapidCMS.Core.Dispatchers
                 throw new InvalidOperationException($"UsageType {request.UsageType} is invalid for this method");
             }
 
-            var entity = await EnsureCorrectConcurrencyAsync(action);
+            var entity = await _concurrencyService.EnsureCorrectConcurrencyAsync(action);
             if (entity == null)
             {
                 throw new Exception("Failed to get entity for given id(s)");
             }
 
-            await EnsureAuthorizedUserAsync(request.UsageType, entity);
+            await _authService.EnsureAuthorizedUserAsync(request.UsageType, entity);
 
-            return new EntityResponseModel
-            {
-                EditContext = new EditContext(request.CollectionAlias, entity, parent, request.UsageType | UsageType.Node, _serviceProvider)
-            };
-        }
-
-        private object Func<T>()
-        {
-            throw new NotImplementedException();
+            return new EditContext(request.CollectionAlias, entity, parent, request.UsageType | UsageType.Node, _serviceProvider);
         }
     }
 }

@@ -3,11 +3,11 @@ using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.Request
 {
-    internal class GetEntitiesRequestModel
+    public class GetEntitiesRequestModel
     {
-        internal UsageType UsageType { get; set; }
-        internal string CollectionAlias { get; set; } = default!;
-        internal ParentPath? ParentPath { get; set; }
-        internal Query Query { get; set; } = default!;
+        public UsageType UsageType { get; set; }
+        public string CollectionAlias { get; set; } = default!;
+        public ParentPath? ParentPath { get; set; }
+        public Query Query { get; set; } = default!;
     }
 }
