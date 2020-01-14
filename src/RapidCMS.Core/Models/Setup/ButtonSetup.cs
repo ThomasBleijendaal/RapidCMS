@@ -62,6 +62,7 @@ namespace RapidCMS.Core.Models.Setup
             }
             else if (button is PaneButtonConfig paneButton)
             {
+                DefaultButtonType = DefaultButtonType.OpenPane;
                 DefaultCrudType = paneButton.CrudType;
                 _buttonHandler = typeof(OpenPaneButtonActionHandler<>).MakeGenericType(paneButton.PaneType);
             }

@@ -41,7 +41,7 @@ namespace RapidCMS.Core.Services.Tree
             _parentService = parentService;
         }
 
-        public async Task<TreeUI?> GetTreeAsync(string alias, ParentPath? parentPath)
+        public async Task<TreeCollectionUI?> GetCollectionAsync(string alias, ParentPath? parentPath)
         {
             var collection = _collectionResolver.GetCollection(alias);
             if (collection == null)
@@ -63,7 +63,7 @@ namespace RapidCMS.Core.Services.Tree
                 testEntity,
                 Operations.Update);
 
-            var tree = new TreeUI(collection.Alias, collection.Name)
+            var tree = new TreeCollectionUI(collection.Alias, collection.Name)
             {
                 EntitiesVisible = collection.TreeView?.EntityVisibility == EntityVisibilty.Visible,
                 RootVisible = collection.TreeView?.RootVisibility == CollectionRootVisibility.Visible,
@@ -76,13 +76,13 @@ namespace RapidCMS.Core.Services.Tree
             }
             else if (collection.ListView != null && viewAuthorizationChallenge.Succeeded)
             {
-                tree.Path = UriHelper.Collection(Constants.View, collection.Alias, parentPath);
+                tree.Path = UriHelper.Collection(Constants.List, collection.Alias, parentPath);
             }
 
             return tree;
         }
 
-        public async Task<List<TreeNodeUI>> GetNodesAsync(string alias, ParentPath? parentPath)
+        public async Task<TreeNodesUI?> GetNodesAsync(string alias, ParentPath? parentPath, int pageNr, int pageSize)
         {
             var collection = _collectionResolver.GetCollection(alias);
             if (collection == null)
@@ -94,11 +94,10 @@ namespace RapidCMS.Core.Services.Tree
 
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
             {
-                // TODO: pagination
-                var query = Query.TakeElements(25);
+                var query = Query.Create(pageSize + 1, pageNr, default, default);
                 var entities = await _repositoryResolver.GetRepository(collection).GetAllAsync(parent, query);
 
-                return await entities.ToListAsync(async entity =>
+                var list = await entities.ToListAsync(async entity =>
                 {
                     var entityVariant = collection.GetEntityVariant(entity);
 
@@ -134,10 +133,12 @@ namespace RapidCMS.Core.Services.Tree
 
                     return node;
                 });
+
+                return new TreeNodesUI(list.Take(pageSize).ToList(), list.Count > pageSize);
             }
             else
             {
-                return new List<TreeNodeUI>();
+                return default;
             }
         }
 

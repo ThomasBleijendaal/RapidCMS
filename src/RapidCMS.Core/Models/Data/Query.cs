@@ -18,15 +18,6 @@ namespace RapidCMS.Core.Models.Data
             };
         }
 
-        public static Query TakeElements(int take)
-        {
-            return new Query
-            {
-                Skip = 0,
-                Take = take
-            };
-        }
-
         public static Query Create(int pageSize, int pageNumber, string? searchTerm, int? activeTab)
         {
             return new Query

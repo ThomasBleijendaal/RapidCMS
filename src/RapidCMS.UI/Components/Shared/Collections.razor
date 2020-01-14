@@ -55,14 +55,14 @@ else
 
     bool NodesVisible = false;
 
-    TreeUI? UI;
+    TreeCollectionUI? UI;
     string? error;
 
     protected override async Task OnParametersSetAsync()
     {
         try
         {
-            UI = await TreeService.GetTreeAsync(CollectionAlias, ParentPath);
+            UI = await TreeService.GetCollectionAsync(CollectionAlias, ParentPath);
         }
         catch (Exception ex)
         {
@@ -73,7 +73,7 @@ else
         StateHasChanged();
     }
 
-    [Parameter] public string CollectionAlias { get; set; }
+    [Parameter] public string CollectionAlias { get; set; } = default!;
 
     [Parameter] public ParentPath? ParentPath { get; set; } = null;
 }

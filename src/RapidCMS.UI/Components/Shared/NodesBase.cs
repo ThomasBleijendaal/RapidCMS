@@ -10,9 +10,9 @@ namespace RapidCMS.UI.Components.Shared
     {
         private IDisposable? _eventHandle;
 
-        [Inject] protected ITreeService TreeService { get; set; }
+        [Inject] protected ITreeService TreeService { get; set; } = default!;
 
-        [Parameter] public string CollectionAlias { get; set; }
+        [Parameter] public string CollectionAlias { get; set; } = default!;
 
         [Parameter] public ParentPath? ParentPath { get; set; } = null;
 

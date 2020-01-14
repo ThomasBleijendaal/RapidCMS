@@ -2,9 +2,9 @@
 
 namespace RapidCMS.Core.Models.UI
 {
-    public class TreeUI
+    public class TreeCollectionUI
     {
-        public TreeUI(string alias, string name)
+        public TreeCollectionUI(string alias, string name)
         {
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
             Name = name ?? throw new ArgumentNullException(nameof(name));

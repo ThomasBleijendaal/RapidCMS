@@ -3,7 +3,13 @@
 @if (UI != null && NodesVisible != null)
 {
     <ul class="nav flex-column">
-        @foreach (var node in UI)
+        @if (PageNr > 1)
+        {
+            <li class="nav-item">
+                BACK
+            </li>
+        }
+        @foreach (var node in UI.Nodes)
         {
             <li class="nav-item">
                 @if (!node.RootVisibleOfCollections)
@@ -40,10 +46,16 @@
                     {
                         @foreach (var subCollection in node.Collections)
                         {
-                            <Tree CollectionAlias=@subCollection ParentPath=@(ParentPath.AddLevel(ParentPath, CollectionAlias, node.Id)) />
+                            <Collections CollectionAlias=@subCollection ParentPath=@(ParentPath.AddLevel(ParentPath, CollectionAlias, node.Id)) />
                         }
                     }
                 </ul>
+            </li>
+        }
+        @if (UI.MoreDataAvailable)
+        {
+            <li class="nav-item">
+                MOAR
             </li>
         }
     </ul>
@@ -58,8 +70,11 @@ else if (!string.IsNullOrWhiteSpace(error))
 @code {
 
     Dictionary<string, bool>? NodesVisible;
-    List<TreeNodeUI>? UI;
+    TreeNodesUI? UI;
     string? error;
+
+    int PageSize = 1;
+    int PageNr = 1;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -72,8 +87,8 @@ else if (!string.IsNullOrWhiteSpace(error))
 
         try
         {
-            UI = await TreeService.GetNodesAsync(CollectionAlias, ParentPath);
-            NodesVisible = UI.ToDictionary(x => x.Id, x => x.RootVisibleOfCollections);
+            UI = await TreeService.GetNodesAsync(CollectionAlias, ParentPath, PageNr, PageSize);
+            NodesVisible = UI.Nodes.ToDictionary(x => x.Id, x => x.RootVisibleOfCollections);
 
             // restore the view state with the new nodes
             if (oldNodesVisible != null)

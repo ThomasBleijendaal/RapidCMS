@@ -27,7 +27,7 @@
             var typedUser = (User)user;
             typedUser.Password = "Reset";
 
-            await repo.UpdateAsync(EditContext);
+            await repo.UpdateAsync(new Core.Forms.EditContext(EditContext.CollectionAlias, typedUser, EditContext.Parent, EditContext.UsageType, EditContext.ServiceProvider));
         }
 
         // CrudType Refresh refreshes the data in the view

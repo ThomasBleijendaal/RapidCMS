@@ -47,15 +47,16 @@ namespace RapidCMS.UI.Components.Pages
                     UIResolver = await UIResolverFactory.GetListUIResolverAsync(GetUsageType(), CollectionAlias);
                     ListUI = UIResolver.GetListDetails();
 
-                    var listContext = await LoadSectionsAsync();
-
-                    Buttons = await UIResolver.GetButtonsForEditContextAsync(listContext.ProtoEditContext);
-                    Tabs = await UIResolver.GetTabsAsync(listContext.ProtoEditContext);
 
                     CurrentPage = 1;
                     MaxPage = null;
                     ActiveTab = null;
                     SearchTerm = null;
+
+                    var listContext = await LoadSectionsAsync();
+
+                    Buttons = await UIResolver.GetButtonsForEditContextAsync(listContext.ProtoEditContext);
+                    Tabs = await UIResolver.GetTabsAsync(listContext.ProtoEditContext);
 
                     ListContext = listContext;
                     Sections?.ForEach(x => x.editContext.OnFieldChanged += (s, a) => StateHasChanged());

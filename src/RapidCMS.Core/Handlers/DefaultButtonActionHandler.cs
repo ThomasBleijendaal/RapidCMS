@@ -20,42 +20,20 @@ namespace RapidCMS.Core.Handlers
 
         public virtual Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, EditContext editContext, ButtonContext context)
         {
-            switch (button.DefaultButtonType)
+            return button.DefaultButtonType switch
             {
-                case DefaultButtonType.New:
-                    return Task.FromResult(CrudType.Create);
-
-                case DefaultButtonType.SaveNew:
-                    return Task.FromResult(CrudType.Insert);
-
-                case DefaultButtonType.SaveExisting:
-                    return Task.FromResult(CrudType.Update);
-
-                case DefaultButtonType.Delete:
-                    return Task.FromResult(CrudType.Delete);
-
-                case DefaultButtonType.Edit:
-                    return Task.FromResult(CrudType.Edit);
-
-                default:
-                case DefaultButtonType.View:
-                    return Task.FromResult(CrudType.View);
-
-                case DefaultButtonType.Remove:
-                    return Task.FromResult(CrudType.Remove);
-
-                case DefaultButtonType.Add:
-                    return Task.FromResult(CrudType.Add);
-
-                case DefaultButtonType.Pick:
-                    return Task.FromResult(CrudType.Pick);
-
-                case DefaultButtonType.Return:
-                    return Task.FromResult(CrudType.Return);
-
-                case DefaultButtonType.Up:
-                    return Task.FromResult(CrudType.Up);
-            }
+                DefaultButtonType.New => Task.FromResult(CrudType.Create),
+                DefaultButtonType.SaveNew => Task.FromResult(CrudType.Insert),
+                DefaultButtonType.SaveExisting => Task.FromResult(CrudType.Update),
+                DefaultButtonType.Delete => Task.FromResult(CrudType.Delete),
+                DefaultButtonType.Edit => Task.FromResult(CrudType.Edit),
+                DefaultButtonType.Remove => Task.FromResult(CrudType.Remove),
+                DefaultButtonType.Add => Task.FromResult(CrudType.Add),
+                DefaultButtonType.Pick => Task.FromResult(CrudType.Pick),
+                DefaultButtonType.Return => Task.FromResult(CrudType.Return),
+                DefaultButtonType.Up => Task.FromResult(CrudType.Up),
+                _ => Task.FromResult(CrudType.View),
+            };
         }
 
         public OperationAuthorizationRequirement GetOperation(IButton button, EditContext editContext)

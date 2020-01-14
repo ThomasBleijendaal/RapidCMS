@@ -170,10 +170,10 @@ namespace RapidCMS.UI.Components.Pages
             {
                 Constants.Edit => UsageType.Edit,
                 Constants.New => UsageType.New,
-                // TODO Constants.Add => UsageType.Add,
+                Constants.Add => UsageType.Add,
                 Constants.View => UsageType.View,
-                // TODO Constants.List => UsageType.List,
-                // TODO Constants.Pick => UsageType.Pick,
+                Constants.List => UsageType.List,
+                Constants.Pick => UsageType.Pick,
                 _ => (UsageType)0
             };
 
