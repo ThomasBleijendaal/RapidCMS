@@ -9,5 +9,6 @@ namespace RapidCMS.Core.Abstractions.Services
     {
         Task<EditContext> GetEntityAsync(GetEntityRequestModel request);
         Task<ListContext> GetEntitiesAsync(GetEntitiesRequestModel request);
+        Task<ListContext> GetEntitiesAsync(GetEntitiesOfParentRequestModel request);
     }
 }

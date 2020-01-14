@@ -60,6 +60,28 @@ namespace RapidCMS.Core.Interactions
             await button.ButtonClickAfterRepositoryActionAsync(request.EditContext, context);
         }
 
+        public async Task<CrudType> ValidateButtonInteractionAsync(IEditorInListInteractionRequestModel request)
+        {
+            var collection = _collectionResolver.GetCollection(request.ListContext.CollectionAlias);
+
+            var button = collection.FindButton(request.ActionId);
+            if (button == null)
+            {
+                throw new Exception($"Cannot determine which button triggered action for collection {request.ListContext.CollectionAlias}");
+            }
+
+            await _authService.EnsureAuthorizedUserAsync(request.EditContext, button);
+
+            if (button.RequiresValidForm(request.EditContext) && !request.EditContext.IsValid())
+            {
+                throw new InvalidEntityException();
+            }
+
+            var context = new ButtonContext(request.EditContext.Parent, request.CustomData);
+
+            return await button.ButtonClickBeforeRepositoryActionAsync(request.EditContext, context);
+        }
+
         public async Task<(CrudType crudType, EntityVariantSetup? entityVariant)> ValidateButtonInteractionAsync(IListButtonInteractionRequestModel request)
         {
             var collection = _collectionResolver.GetCollection(request.ListContext.CollectionAlias);
@@ -92,5 +114,7 @@ namespace RapidCMS.Core.Interactions
 
             await button.ButtonClickAfterRepositoryActionAsync(request.ListContext.ProtoEditContext, context);
         }
+
+        
     }
 }

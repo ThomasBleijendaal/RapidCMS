@@ -47,6 +47,8 @@ namespace RapidCMS.Core.Dispatchers
         private async Task<T> InvokeAsync<T>(PersistEntityRequestModel request, T response)
             where T : ViewCommandResponseModel
         {
+            var relationRequest = request as PersistRelatedEntityRequestModel;
+
             var collection = _collectionResolver.GetCollection(request.EditContext.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
@@ -123,14 +125,18 @@ namespace RapidCMS.Core.Dispatchers
 
                     break;
 
-                case CrudType.Pick:
-                    response.ViewCommand = default!;
-                    // TODO: add to related collection
+                case CrudType.Pick when relationRequest != null:
+
+                    await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.AddAsync(relationRequest.Related, request.EditContext.Entity.Id!));
+                    response.ViewCommand = new ReloadCommand();
+
                     break;
 
-                case CrudType.Remove:
-                    response.ViewCommand = default!;
-                    // TODO: add to related collection
+                case CrudType.Remove when relationRequest != null:
+
+                    await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.RemoveAsync(relationRequest.Related, request.EditContext.Entity.Id!));
+                    response.ViewCommand = new ReloadCommand();
+
                     break;
 
                 case CrudType.None:

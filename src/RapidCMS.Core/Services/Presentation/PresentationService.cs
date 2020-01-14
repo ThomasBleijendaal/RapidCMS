@@ -19,6 +19,11 @@ namespace RapidCMS.Core.Services.Presentation
             _getEntitiesDispatcher = getEntitiesDispatcher;
         }
 
+        public Task<ListContext> GetEntitiesAsync(GetEntitiesOfParentRequestModel request)
+        {
+            return _getEntitiesDispatcher.GetAsync(request);
+        }
+
         public Task<ListContext> GetEntitiesAsync(GetEntitiesRequestModel request)
         {
             return _getEntitiesDispatcher.GetAsync(request);

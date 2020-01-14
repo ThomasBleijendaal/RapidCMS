@@ -42,16 +42,30 @@ namespace RapidCMS.Core.Dispatchers
             var collection = _collectionResolver.GetCollection(request.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
-            var parent = await _parentService.GetParentAsync(request.ParentPath);
-
+            var parent = request is GetEntitiesOfParentRequestModel parentRequest ? await _parentService.GetParentAsync(parentRequest.ParentPath) : default;
+            var relatedEntity = (request as GetEntitiesOfRelationRequestModel)?.Related;
+            
             var protoEntity = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.NewAsync(parent, collection.EntityVariant.Type));
 
             await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity);
 
             await collection.ProcessDataViewAsync(request.Query, _serviceProvider);
 
-            var existingEntities = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.GetAllAsync(parent, request.Query));
+            var action = (request.UsageType & ~(UsageType.Node | UsageType.Root | UsageType.NotRoot)) switch
+            {
+                UsageType.Add when relatedEntity != null => () => repository.GetAllNonRelatedAsync(relatedEntity!, request.Query),
+                _ when relatedEntity != null => () => repository.GetAllRelatedAsync(relatedEntity!, request.Query),
+                _ when relatedEntity == null => () => repository.GetAllAsync(parent, request.Query),
 
+                _ => default(Func<Task<IEnumerable<IEntity>>>)
+            };
+
+            if (action == default)
+            {
+                throw new InvalidOperationException($"UsageType {request.UsageType} is invalid for this method");
+            }
+
+            var existingEntities = await _concurrencyService.EnsureCorrectConcurrencyAsync(action);
             var protoEditContext = new EditContext(request.CollectionAlias, protoEntity, parent, request.UsageType | UsageType.List, _serviceProvider);
 
             return new ListContext(

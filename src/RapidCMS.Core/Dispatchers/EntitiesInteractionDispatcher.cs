@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Commands;
 using RapidCMS.Core.Models.Data;
@@ -15,36 +18,26 @@ using RapidCMS.Core.Models.Response;
 namespace RapidCMS.Core.Dispatchers
 {
     internal class EntitiesInteractionDispatcher : 
-        IInteractionDispatcher<PersistChildEntitiesRequestModel, ListViewCommandResponseModel>
+        IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>
     {
         private readonly ICollectionResolver _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IConcurrencyService _concurrencyService;
         private readonly IButtonInteraction _buttonInteraction;
-        private readonly IParentService _parentService;
-        private readonly IAuthorizationService _authorizationService;
-        private readonly IAuthService _authService;
-
+        
         public EntitiesInteractionDispatcher(
             ICollectionResolver collectionResolver, 
             IRepositoryResolver repositoryResolver, 
             IConcurrencyService concurrencyService,
-            IButtonInteraction buttonInteraction,
-            IParentService parentService, 
-            IAuthorizationService authorizationService,
-            IServiceProvider serviceProvider,
-            IAuthService authService)
+            IButtonInteraction buttonInteraction)
         {
             _collectionResolver = collectionResolver;
             _repositoryResolver = repositoryResolver;
             _concurrencyService = concurrencyService;
             _buttonInteraction = buttonInteraction;
-            _parentService = parentService;
-            _authorizationService = authorizationService;
-            _authService = authService;
         }
         
-        Task<ListViewCommandResponseModel> IInteractionDispatcher<PersistChildEntitiesRequestModel, ListViewCommandResponseModel>.InvokeAsync(PersistChildEntitiesRequestModel request)
+        Task<ListViewCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request)
         {
             return InvokeAsync(request, new ListViewCommandResponseModel());
         }
@@ -52,8 +45,6 @@ namespace RapidCMS.Core.Dispatchers
         private async Task<T> InvokeAsync<T>(PersistEntitiesRequestModel request, T response)
             where T : ViewCommandResponseModel
         {
-            var childRequest = request as PersistChildEntitiesRequestModel;
-
             var collection = _collectionResolver.GetCollection(request.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
@@ -74,7 +65,7 @@ namespace RapidCMS.Core.Dispatchers
                                 Constants.New,
                                 request.CollectionAlias,
                                 entityVariant,
-                                childRequest?.ParentPath,
+                                request.ListContext.Parent?.GetParentPath(),
                                 null)
                         };
                     }
@@ -85,33 +76,31 @@ namespace RapidCMS.Core.Dispatchers
                             Action = Constants.New,
                             CollectionAlias = request.CollectionAlias,
                             VariantAlias = entityVariant.Alias,
-                            ParentPath = childRequest?.ParentPath?.ToPathString(),
+                            ParentPath = request.ListContext.Parent?.GetParentPath()?.ToPathString(),
                             Id = null
                         };
                     }
                     break;
 
                 case CrudType.Update:
-                    //var contextsToProcess = request.ListContext.EditContexts.Where(x => x.IsModified()).Where(x => button.RequiresValidForm(x) ? x.IsValid() : true);
-                    //var affectedEntities = new List<IEntity>();
-                    //foreach (var editContext in contextsToProcess)
-                    //{
-                    //    try
-                    //    {
-                    //        await _authService.EnsureAuthorizedUserAsync(editContext, button);
-                    //        if (button.RequiresValidForm(editContext) && !editContext.IsValid())
-                    //        {
-                    //            throw new InvalidEntityException();
-                    //        }
-                    //        await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(editContext));
-                    //        affectedEntities.Add(editContext.Entity);
-                    //    }
-                    //    catch (Exception)
-                    //    {
-                    //        // do not care about any exception in this case
-                    //    }
-                    //}
-                    //response.ViewCommand = new ReloadCommand(affectedEntities.SelectNotNull(x => x.Id));
+                    var affectedEntities = new List<IEntity>();
+
+                    foreach (var editContext in request.ListContext.EditContexts.Where(f => f.IsModified()))
+                    {
+                        var innerRequest = new PersistEntityCollectionRequestModel
+                        {
+                            ActionId = request.ActionId,
+                            CustomData = request.CustomData,
+                            EditContext = editContext,
+                            ListContext = request.ListContext
+                        };
+
+                        await _buttonInteraction.ValidateButtonInteractionAsync(innerRequest);
+                        await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(editContext));
+                        affectedEntities.Add(editContext.Entity);
+                    }
+
+                    response.ViewCommand = new ReloadCommand(affectedEntities.SelectNotNull(x => x.Id));
                     break;
 
                 case CrudType.None:
@@ -128,12 +117,12 @@ namespace RapidCMS.Core.Dispatchers
                         Uri = UriHelper.Collection(
                             Constants.Edit,
                             request.CollectionAlias,
-                            childRequest?.ParentPath)
+                            request.ListContext.Parent?.GetParentPath())
                     };
                     break;
 
                 case CrudType.Up:
-                    var (newParentPath, parentCollectionAlias, parentId) = ParentPath.RemoveLevel(childRequest?.ParentPath);
+                    var (newParentPath, parentCollectionAlias, parentId) = ParentPath.RemoveLevel(request.ListContext.Parent?.GetParentPath());
 
                     if (parentCollectionAlias == null)
                     {
@@ -162,7 +151,5 @@ namespace RapidCMS.Core.Dispatchers
 
             return response;
         }
-
-        
     }
 }

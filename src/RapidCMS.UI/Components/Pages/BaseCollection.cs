@@ -47,13 +47,6 @@ namespace RapidCMS.UI.Components.Pages
                     UIResolver = await UIResolverFactory.GetListUIResolverAsync(GetUsageType(), CollectionAlias);
                     ListUI = UIResolver.GetListDetails();
 
-                    var query = Query.Create(ListUI.PageSize, CurrentPage, SearchTerm, ActiveTab);
-
-                    if (ListUI.OrderBys != null)
-                    {
-                        query.SetOrderByExpressions(ListUI.OrderBys);
-                    }
-
                     var listContext = await LoadSectionsAsync();
 
                     Buttons = await UIResolver.GetButtonsForEditContextAsync(listContext.ProtoEditContext);
@@ -63,7 +56,6 @@ namespace RapidCMS.UI.Components.Pages
                     MaxPage = null;
                     ActiveTab = null;
                     SearchTerm = null;
-
 
                     ListContext = listContext;
                     Sections?.ForEach(x => x.editContext.OnFieldChanged += (s, a) => StateHasChanged());
@@ -122,7 +114,7 @@ namespace RapidCMS.UI.Components.Pages
                 query.SetOrderByExpressions(ListUI.OrderBys);
             }
 
-            var listContext = await PresentationService.GetEntitiesAsync(new GetEntitiesRequestModel
+            var listContext = await PresentationService.GetEntitiesAsync(new GetEntitiesOfParentRequestModel
             {
                 CollectionAlias = CollectionAlias,
                 ParentPath = GetParentPath(),
@@ -167,9 +159,9 @@ namespace RapidCMS.UI.Components.Pages
                         CollectionAlias = CollectionAlias,
                         Id = x.editContext.Entity.Id,
                         ParentPath = x.editContext.Parent?.GetParentPath(),
-                        UsageType = x.editContext.UsageType,
-                        VariantAlias = null
+                        UsageType = x.editContext.UsageType
                     });
+
                     return (reloadedEditContext, await UIResolver.GetSectionsForEditContextAsync(reloadedEditContext));
                 }
                 else
@@ -185,13 +177,12 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
-                var command = await InteractionService.InteractAsync<PersistChildEntitiesRequestModel, ListViewCommandResponseModel>(new PersistChildEntitiesRequestModel
+                var command = await InteractionService.InteractAsync<PersistEntitiesRequestModel, ListViewCommandResponseModel>(new PersistEntitiesRequestModel
                 {
                     ActionId = args.ViewModel.ButtonId,
                     CollectionAlias = CollectionAlias,
                     CustomData = args.Data,
                     ListContext = ListContext!,
-                    ParentPath = GetParentPath(),
                     UsageType = GetUsageType()
                 });
 

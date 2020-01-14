@@ -48,6 +48,10 @@ namespace RapidCMS.Example.Collections
                         editor.AddDefaultButton(DefaultButtonType.New);
                         editor.AddDefaultButton(DefaultButtonType.Return);
 
+                        // adding a SaveExisting button to the ListEditor allows the user to bulk-save the entire list
+                        // (only modified entities are touched)
+                        editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+
                         // a list editor can be in the shape of a table, or a set of blocks, so these sections are either rows or blocks
                         editor.AddSection(row =>
                         {

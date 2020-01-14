@@ -9,6 +9,8 @@ namespace RapidCMS.Core.Abstractions.Interactions
         Task<CrudType> ValidateButtonInteractionAsync(IEditorButtonInteractionRequestModel request);
         Task CompleteButtonInteractionAsync(IEditorButtonInteractionRequestModel request);
 
+        Task<CrudType> ValidateButtonInteractionAsync(IEditorInListInteractionRequestModel request);
+
         Task<(CrudType crudType, EntityVariantSetup? entityVariant)> ValidateButtonInteractionAsync(IListButtonInteractionRequestModel request);
         Task CompleteButtonInteractionAsync(IListButtonInteractionRequestModel request);
     }
