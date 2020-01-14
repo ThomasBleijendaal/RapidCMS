@@ -33,10 +33,12 @@ namespace RapidCMS.UI.Components.Pages
             return ParentPath.TryParse(Path);
         }
 
-        protected async Task HandleViewCommandAsync(ViewCommandResponseModel command)
+        protected async Task HandleViewCommandAsync(ViewCommandResponseModel viewCommand)
         {
             try
             {
+                var command = viewCommand?.ViewCommand;
+
                 if (command == null)
                 {
                     return;

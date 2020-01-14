@@ -56,14 +56,6 @@ namespace RapidCMS.UI.Components.Pages
 
                     var listContext = await LoadSectionsAsync();
 
-                    //var listContext = await PresentationService.GetEntitiesAsync(new GetEntitiesRequestModel
-                    //{
-                    //    CollectionAlias = CollectionAlias,
-                    //    ParentPath = GetParentPath(),
-                    //    Query = query,
-                    //    UsageType = GetUsageType()
-                    //});
-
                     Buttons = await UIResolver.GetButtonsForEditContextAsync(listContext.ProtoEditContext);
                     Tabs = await UIResolver.GetTabsAsync(listContext.ProtoEditContext);
 
@@ -198,7 +190,7 @@ namespace RapidCMS.UI.Components.Pages
                     ActionId = args.ViewModel.ButtonId,
                     CollectionAlias = CollectionAlias,
                     CustomData = args.Data,
-                    EditContexts = Sections.Select(x => x.editContext),
+                    ListContext = ListContext!,
                     ParentPath = GetParentPath(),
                     UsageType = GetUsageType()
                 });

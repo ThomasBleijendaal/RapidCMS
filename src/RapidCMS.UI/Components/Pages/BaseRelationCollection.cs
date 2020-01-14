@@ -119,7 +119,7 @@ namespace RapidCMS.UI.Components.Pages
 
             var query = Query.Create(ListUI.PageSize, CurrentPage, SearchTerm, ActiveTab);
 
-            var editContexts = await PersistenceService.GetEntitiesAsync(GetUsageType(), CollectionAlias, default, query);
+            var editContexts = new List<EditContext>(); // await PersistenceService.GetEntitiesAsync(GetUsageType(), CollectionAlias, default, query);
             Sections = await editContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
 
             if (!query.MoreDataAvailable)
@@ -150,8 +150,9 @@ namespace RapidCMS.UI.Components.Pages
             {
                 if (reloadEntityIds.Contains(x.editContext.Entity.Id))
                 {
-                    var reloadedEditContext = await PersistenceService.GetEntityAsync(x.editContext.UsageType, CollectionAlias, null, null, x.editContext.Entity.Id);
-                    return (reloadedEditContext, await UIResolver.GetSectionsForEditContextAsync(reloadedEditContext));
+                    return x;
+                    //var reloadedEditContext = await PersistenceService.GetEntityAsync(x.editContext.UsageType, CollectionAlias, null, null, x.editContext.Entity.Id);
+                    //return (reloadedEditContext, await UIResolver.GetSectionsForEditContextAsync(reloadedEditContext));
                 }
                 else
                 {
@@ -166,14 +167,14 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
-                var command = await PersistenceService.ProcessRelationActionAsync(
-                    GetUsageType(),
-                    CollectionAlias,
-                    Sections.Select(x => x.editContext),
-                    args.ViewModel.ButtonId,
-                    args.Data);
+                //var command = await PersistenceService.ProcessRelationActionAsync(
+                //    GetUsageType(),
+                //    CollectionAlias,
+                //    Sections.Select(x => x.editContext),
+                //    args.ViewModel.ButtonId,
+                //    args.Data);
 
-                await HandleViewCommandAsync(command);
+                //await HandleViewCommandAsync(command);
             }
             catch (Exception ex)
             {
@@ -185,16 +186,16 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
-                var command = await PersistenceService.ProcessEntityActionAsync(
-                    // args.EditContext.UsageType,
-                    // CollectionAlias,
-                    // RelatedEntity,
-                    // args.EditContext.Entity.Id,
-                    args.EditContext,
-                    args.ViewModel.ButtonId,
-                    args.Data);
+                //var command = await PersistenceService.ProcessEntityActionAsync(
+                //    // args.EditContext.UsageType,
+                //    // CollectionAlias,
+                //    // RelatedEntity,
+                //    // args.EditContext.Entity.Id,
+                //    args.EditContext,
+                //    args.ViewModel.ButtonId,
+                //    args.Data);
 
-                await HandleViewCommandAsync(command);
+                //await HandleViewCommandAsync(command);
             }
             catch (Exception ex)
             {

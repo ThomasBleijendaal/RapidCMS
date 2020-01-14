@@ -8,13 +8,16 @@ using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
+using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Dispatchers;
 using RapidCMS.Core.Factories;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Handlers;
+using RapidCMS.Core.Interactions;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Request;
 using RapidCMS.Core.Models.Response;
@@ -22,10 +25,13 @@ using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Resolvers.Repositories;
+using RapidCMS.Core.Services.Auth;
+using RapidCMS.Core.Services.Concurrency;
 using RapidCMS.Core.Services.Exceptions;
 using RapidCMS.Core.Services.Messages;
 using RapidCMS.Core.Services.Parent;
 using RapidCMS.Core.Services.Persistence;
+using RapidCMS.Core.Services.Presentation;
 using RapidCMS.Core.Services.SidePane;
 using RapidCMS.Core.Services.Tree;
 
@@ -56,15 +62,20 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IRepositoryResolver, RepositoryResolver>();
             services.AddTransient<IDataProviderResolver, DataProviderResolver>();
 
-            services.AddTransient<IDispatcher<GetEntityRequestModel, EntityResponseModel>, GetEntityDispatcher>();
-            services.AddTransient<IDispatcher<GetEntitiesRequestModel, EntitiesResponseModel>, GetEntitiesDispatcher>();
-            services.AddTransient<IDispatcher<PersistEntityRequestModel, ViewCommandResponseModel>, PersistEntityDispatcher>();
-            services.AddTransient<IDispatcher<PersistEntitiesRequestModel, ViewCommandResponseModel>, PersistEntitiesDispatcher>();
+            services.AddTransient<IPresenationDispatcher<GetEntityRequestModel, EditContext>, GetEntityDispatcher>();
+            services.AddTransient<IPresenationDispatcher<GetEntitiesRequestModel, ListContext>, GetEntitiesDispatcher>();
+            services.AddTransient<IPresentationService, PresentationService>();
 
+            services.AddTransient<IInteractionDispatcher, EntityInteractionDispatcher>();
+            services.AddTransient<IInteractionDispatcher, EntitiesInteractionDispatcher>();
+            services.AddTransient<IButtonInteraction, ButtonInteraction>();
+            services.AddTransient<IInteractionService, InteractionService>();
+
+            services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IConcurrencyService, ConcurrencyService>();
             services.AddSingleton<IExceptionService, ExceptionService>();
             services.AddScoped<IMessageService, MessageService>();
             services.AddTransient<IParentService, ParentService>();
-            services.AddTransient<IInteractionService, InteractionService>();
             services.AddScoped<ISidePaneService, SidePaneService>();
             services.AddTransient<ITreeService, TreeService>();
 
