@@ -125,6 +125,20 @@ app {
         width: 1.5rem;
     }
 
+    .nav-item .paginate {
+        border: 0;
+        background: none !important;
+        color: #777;
+        padding: 0 1rem;
+    }
+        .nav-item .paginate:hover {
+            color: #000;
+        }
+
+        .nav-item .paginate:disabled {
+            color: #ccc;
+        }
+
     .nav-item .icon {
         width: 2rem;
         font-size: 1.1rem;

@@ -1,10 +1,11 @@
-﻿using RapidCMS.Core.Models.Setup;
+﻿using RapidCMS.Core.Enums;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Models.UI
 {
     public class SubCollectionUI : ElementUI
     {
-        internal SubCollectionUI(SubCollectionListSetup subCollection) : base((x, y) => true, (x, y) => false) // TODO: fixed lambdas
+        internal SubCollectionUI(SubCollectionListSetup subCollection) : base((x, state) => state == EntityState.IsExisting, (x, y) => false)
         {
             CollectionAlias = subCollection.CollectionAlias;
         }

@@ -6,7 +6,7 @@
         @if (PageNr > 1)
         {
             <li class="nav-item">
-                BACK
+                <button @onclick="@((MouseEventArgs e) => OnPageChangeAsync(-1))" class="paginate" title="Previous items" disabled="@Loading"><i class="icon ion-md-arrow-dropup-circle"></i></button>
             </li>
         }
         @foreach (var node in UI.Nodes)
@@ -55,7 +55,7 @@
         @if (UI.MoreDataAvailable)
         {
             <li class="nav-item">
-                MOAR
+                <button @onclick="@((MouseEventArgs e) => OnPageChangeAsync(1))" class="paginate" title="Next items" disabled="@Loading"><i class="icon ion-md-arrow-dropdown-circle"></i></button>
             </li>
         }
     </ul>
@@ -73,12 +73,21 @@ else if (!string.IsNullOrWhiteSpace(error))
     TreeNodesUI? UI;
     string? error;
 
-    int PageSize = 1;
+    int PageSize = 3;
     int PageNr = 1;
+    bool Loading = false;
 
     protected override async Task OnParametersSetAsync()
     {
         await OnNodesUpdateAsync();
+    }
+
+    private async Task OnPageChangeAsync(int delta)
+    {
+        Loading = true;
+        PageNr += delta;
+        await OnNodesUpdateAsync();
+        Loading = false;
     }
 
     protected override async Task OnNodesUpdateAsync()
@@ -88,6 +97,11 @@ else if (!string.IsNullOrWhiteSpace(error))
         try
         {
             UI = await TreeService.GetNodesAsync(CollectionAlias, ParentPath, PageNr, PageSize);
+            if (UI == null)
+            {
+                return;
+            }
+
             NodesVisible = UI.Nodes.ToDictionary(x => x.Id, x => x.RootVisibleOfCollections);
 
             // restore the view state with the new nodes

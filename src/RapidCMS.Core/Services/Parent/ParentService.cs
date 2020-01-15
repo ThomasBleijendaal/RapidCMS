@@ -10,7 +10,8 @@ namespace RapidCMS.Core.Services.Parent
     {
         private readonly IRepositoryResolver _repositoryResolver;
 
-        public ParentService(IRepositoryResolver repositoryResolver)
+        public ParentService(
+            IRepositoryResolver repositoryResolver)
         {
             _repositoryResolver = repositoryResolver;
         }

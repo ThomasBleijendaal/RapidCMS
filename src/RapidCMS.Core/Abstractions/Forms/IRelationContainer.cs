@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using RapidCMS.Core.Abstractions.Data;
 
-// TODO: weird
 namespace RapidCMS.Core.Abstractions.Forms
 {
     public interface IRelationContainer

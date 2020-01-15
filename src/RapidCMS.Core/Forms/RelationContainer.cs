@@ -8,7 +8,6 @@ using RapidCMS.Core.Helpers;
 
 namespace RapidCMS.Core.Forms
 {
-    // TODO: weird
     internal class RelationContainer : IRelationContainer
     {
         public RelationContainer(IEnumerable<IRelation> relations)

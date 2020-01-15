@@ -9,7 +9,6 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Helpers
 {
-    // TODO: implicit operators?
     internal static class ConfigProcessingHelper
     {
         internal static List<CollectionSetup> ProcessCollections(this ICollectionConfig root)

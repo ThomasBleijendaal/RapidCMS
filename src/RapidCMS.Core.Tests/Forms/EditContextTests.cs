@@ -16,18 +16,17 @@ namespace RapidCMS.Core.Tests.Forms
     public class EditContextTests
     {
         private EditContext _subject = default!;
+        private ServiceCollection _serviceCollection = new ServiceCollection();
 
         [SetUp]
         public void Setup()
         {
-            var serviceProvider = new ServiceCollection();
-
             _subject = new EditContext(
                 "alias",
                 new Entity { Id = "1" },
                 default,
                 UsageType.Edit,
-                serviceProvider.BuildServiceProvider());
+                _serviceCollection.BuildServiceProvider());
         }
 
         [Test]
@@ -73,23 +72,15 @@ namespace RapidCMS.Core.Tests.Forms
         }
 
         [Test]
-        public void WhenEntityIsSwapped_ThenEditContextShouldContainNewEntity()
-        {
-            // arrange
-            var newEntity = new Entity();
-
-            // act
-            _subject.SwapEntity(newEntity);
-
-            // assert
-            Assert.AreSame(newEntity, _subject.Entity);
-        }
-
-        [Test]
         public void WhenEntityIsInvalidButNotTouched_ThenEditContextIsValid()
         {
             // arrange
-            _subject.SwapEntity(new Entity());
+            _subject = new EditContext(
+                "alias",
+                new Entity { },
+                default,
+                UsageType.Edit,
+                _serviceCollection.BuildServiceProvider());
 
             // act & assert
             Assert.IsTrue(_subject.IsValid());
@@ -99,7 +90,12 @@ namespace RapidCMS.Core.Tests.Forms
         public void WhenEntityIsInvalidButTouched_ThenEditContextIsInvalid()
         {
             // arrange
-            _subject.SwapEntity(new Entity());
+            _subject = new EditContext(
+                "alias",
+                new Entity { },
+                default,
+                UsageType.Edit,
+                _serviceCollection.BuildServiceProvider());
             _subject.NotifyPropertyIncludedInForm(_property);
 
             // act & assert
@@ -110,7 +106,12 @@ namespace RapidCMS.Core.Tests.Forms
         public void WhenEntityIsValidAndTouched_ThenEditContextIsValid()
         {
             // arrange
-            _subject.SwapEntity(new Entity { Id = "123" });
+            _subject = new EditContext(
+                "alias",
+                new Entity { Id = "123" },
+                default,
+                UsageType.Edit,
+                _serviceCollection.BuildServiceProvider());
             _subject.NotifyPropertyChanged(_property);
 
             // act & assert
@@ -121,7 +122,12 @@ namespace RapidCMS.Core.Tests.Forms
         public void WhenPropertyIsInvalidButNotTouched_ThenEditContextIsValid()
         {
             // arrange
-            _subject.SwapEntity(new Entity());
+            _subject = new EditContext(
+                "alias",
+                new Entity { },
+                default,
+                UsageType.Edit,
+                _serviceCollection.BuildServiceProvider());
 
             // act & assert
             Assert.IsTrue(_subject.IsValid(_property));
@@ -131,7 +137,12 @@ namespace RapidCMS.Core.Tests.Forms
         public void WhenPropertyIsInvalidButTouched_ThenEditContextIsInvalid()
         {
             // arrange
-            _subject.SwapEntity(new Entity());
+            _subject = new EditContext(
+                "alias",
+                new Entity { },
+                default,
+                UsageType.Edit,
+                _serviceCollection.BuildServiceProvider());
             _subject.NotifyPropertyChanged(_property);
 
             // act & assert
@@ -142,7 +153,12 @@ namespace RapidCMS.Core.Tests.Forms
         public void WhenPropertyIsValidAndTouched_ThenEditContextIsValid()
         {
             // arrange
-            _subject.SwapEntity(new Entity { Id = "123" });
+            _subject = new EditContext(
+                "alias",
+                new Entity { Id = "123" },
+                default,
+                UsageType.Edit,
+                _serviceCollection.BuildServiceProvider());
             _subject.NotifyPropertyIncludedInForm(_property);
 
             // act & assert
@@ -165,7 +181,6 @@ namespace RapidCMS.Core.Tests.Forms
             // act & assert
             Assert.IsTrue(_subject.IsModified());
         }
-
 
         [Test]
         public void WhenPropertyIsNotTouched_ThenPropertyIsNotValidated()

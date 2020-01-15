@@ -36,27 +36,21 @@
             }
             else if (element is SubCollectionUI subCollection)
             {
-                if (!EditContext.UsageType.HasFlag(UsageType.New))
-                {
-                    var parentPath = ParentPath.AddLevel(EditContext.Parent?.GetParentPath(), EditContext.CollectionAlias, EditContext.Entity.Id);
+                var parentPath = ParentPath.AddLevel(EditContext.Parent?.GetParentPath(), EditContext.CollectionAlias, EditContext.Entity.Id);
 
-                    <div class="nested-content">
-                        <RapidCMS.UI.Components.Pages.Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.View : Constants.Edit)
-                                                                 CollectionAlias=@subCollection.CollectionAlias
-                                                                 Path=@parentPath.ToPathString() />
-                    </div>
-                }
+                <div class="nested-content">
+                    <RapidCMS.UI.Components.Pages.Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.View : Constants.Edit)
+                                                             CollectionAlias=@subCollection.CollectionAlias
+                                                             Path=@parentPath.ToPathString() />
+                </div>
             }
             else if (element is RelatedCollectionUI relatedCollection)
             {
-                if (!EditContext.UsageType.HasFlag(UsageType.New))
-                {
-                    <div class="nested-content">
-                        <RapidCMS.UI.Components.Pages.RelationCollection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.View : Constants.Edit)
-                                                                         CollectionAlias=@relatedCollection.CollectionAlias
-                                                                         RelatedEntity=@EditContext.Entity />
-                    </div>
-                }
+                <div class="nested-content">
+                    <RapidCMS.UI.Components.Pages.RelationCollection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.View : Constants.Edit)
+                                                                     CollectionAlias=@relatedCollection.CollectionAlias
+                                                                     RelatedEntity=@EditContext.Entity />
+                </div>
             }
         }
     </div>

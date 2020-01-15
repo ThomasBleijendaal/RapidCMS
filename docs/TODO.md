@@ -2,19 +2,15 @@ TODO:
 
 [] BUG: Nodes always open fully when displayed (when sub collections have no visible entities)
 
-[] Find solution for stray validation messages for Table / Block ListEditor
-    - summed up in top?
-
-[] Return in sub collection entity is weird -> implement complete state breadcrumb (with search + data views)
-
 2.0
 [] Redirect user to different edit pages / branches
     [] Alias sub collection pages and have edit / view buttons direct to them (multiple node editors for 1 collection)
-[] Hide sections of the tree when user is unauthorized
+    [] Redirect user to edit page of other collection
+    [] Allow New to go to dedicated NodeEditor from ListEditor
 [] Reordering
-[] Propagating update to subcollections
-[] Follow user down the tree + Always display where the user is
-[] Paginate tree
+[] Return in sub collection entity is weird -> implement complete state breadcrumb (with search + data views)
+    [] Do not make New in list editor something new, since it is very temporary and weird to redirect to
+[v] Paginate tree
 [v] Do not disable buttons when form is invalid (this causes issues to trigger revalidation)
 
 2.0
@@ -28,3 +24,13 @@ TODO:
     - do this via allowing any subview as element to a page
     - test with repo less collections which just display as single page (call them Page and not Collection)
     - have repos and collection more combined (since Pages do thing without Repos)
+[] Hide sections of the tree when user is unauthorized
+
+uncertain
+[] Propagating update to subcollections 
+    - CON: requires total rework of UI and total refactor of how list are contained inside nodes
+[] Follow user down the tree + Always display where the user is 
+    - CON: is this better UX? this will be changing the tree everything the user does something
+[] Find solution for stray validation messages for Table / Block ListEditor
+    - CON: there is no room for it in a table
+    - PRO: there is room for it in a block

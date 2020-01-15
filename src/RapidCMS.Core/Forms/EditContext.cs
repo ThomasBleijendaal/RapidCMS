@@ -34,13 +34,6 @@ namespace RapidCMS.Core.Forms
 
         public IServiceProvider ServiceProvider { get; private set; }
 
-        // TODO: really not good
-        [Obsolete]
-        internal void SwapEntity(IEntity entity)
-        {
-            Entity = entity;
-        }
-
         internal List<DataProvider> DataProviders = new List<DataProvider>();
 
         public event EventHandler<FieldChangedEventArgs>? OnFieldChanged;
@@ -220,11 +213,10 @@ namespace RapidCMS.Core.Forms
             }
             catch { }
 
-            // TODO
-            //foreach (var result in DataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(Entity, _serviceProvider)))
-            //{
-            //    results.Add(result);
-            //}
+            foreach (var result in DataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(Entity, ServiceProvider)))
+            {
+                results.Add(result);
+            }
 
             return results;
         }
@@ -249,11 +241,10 @@ namespace RapidCMS.Core.Forms
                     $"The {kv.Property.PropertyName} field indicates it is performing an asynchronous task which must be awaited.",
                     new[] { kv.Property.PropertyName })));
 
-            // TODO
-            //foreach (var result in DataProviders.SelectMany(p => p.Validate(Entity, _serviceProvider)))
-            //{
-            //    results.Add(result);
-            //}
+            foreach (var result in DataProviders.SelectMany(p => p.Validate(Entity, ServiceProvider)))
+            {
+                results.Add(result);
+            }
 
             return FlattenCompositeValidationResults(results);
         }

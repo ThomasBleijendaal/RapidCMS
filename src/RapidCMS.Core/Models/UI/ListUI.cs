@@ -1,7 +1,7 @@
-﻿ using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.UI
@@ -21,7 +21,6 @@ namespace RapidCMS.Core.Models.UI
         public bool SearchBarVisible { get; internal set; }
 
         // TODO: join with unique fields?
-        // null ref?
-        public IEnumerable<IOrderBy>? OrderBys => CommonFields?.SelectNotNull(x => new OrderBy(x.SortDescending, x.OrderByExpression));
+        public IEnumerable<IOrderBy>? OrderBys => CommonFields?.Where(x => x.OrderByExpression != null).Select(x => new OrderBy(x.SortDescending, x.OrderByExpression!));
     }
 }

@@ -94,7 +94,7 @@ namespace RapidCMS.Core.Services.Tree
 
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
             {
-                var query = Query.Create(pageSize + 1, pageNr, default, default);
+                var query = Query.Create(pageSize, pageNr, default, default);
                 var entities = await _repositoryResolver.GetRepository(collection).GetAllAsync(parent, query);
 
                 var list = await entities.ToListAsync(async entity =>
@@ -134,7 +134,7 @@ namespace RapidCMS.Core.Services.Tree
                     return node;
                 });
 
-                return new TreeNodesUI(list.Take(pageSize).ToList(), list.Count > pageSize);
+                return new TreeNodesUI(list.Take(pageSize).ToList(), query.MoreDataAvailable);
             }
             else
             {

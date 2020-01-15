@@ -9,7 +9,6 @@ using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Commands;
 using RapidCMS.Core.Models.Request;
 using RapidCMS.Core.Models.Response;
-using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Dispatchers
 {
@@ -61,14 +60,14 @@ namespace RapidCMS.Core.Dispatchers
                 case CrudType.View:
                     response.ViewCommand = new NavigateCommand
                     {
-                        Uri = NodeUri(Constants.View, request, entityVariant)
+                        Uri =UriHelper.Node(Constants.View, request.EditContext.CollectionAlias, entityVariant, request.EditContext.Parent?.GetParentPath(), request.EditContext.Entity.Id) 
                     };
                     break;
 
                 case CrudType.Edit:
                     response.ViewCommand = new NavigateCommand
                     {
-                        Uri = NodeUri(Constants.Edit, request, entityVariant)
+                        Uri = UriHelper.Node(Constants.Edit, request.EditContext.CollectionAlias, entityVariant, request.EditContext.Parent?.GetParentPath(), request.EditContext.Entity.Id)
                     };
                     break;
 
@@ -83,15 +82,12 @@ namespace RapidCMS.Core.Dispatchers
                     {
                         throw new Exception("Inserting the new entity failed.");
                     }
-                    request.EditContext.SwapEntity(newEntity);
-
-                    // TODO: add to related collection
 
                     if (response is NodeViewCommandResponseModel)
                     {
                         response.ViewCommand = new NavigateCommand
                         {
-                            Uri = NodeUri(Constants.Edit, request, entityVariant)
+                            Uri = UriHelper.Node(Constants.Edit, request.EditContext.CollectionAlias, entityVariant, request.EditContext.Parent?.GetParentPath(), newEntity.Id)
                         };
                     }
                     else if (response is NodeInListViewCommandResponseModel)
@@ -115,7 +111,7 @@ namespace RapidCMS.Core.Dispatchers
                     {
                         response.ViewCommand = new NavigateCommand
                         {
-                            Uri = CollectionUri(Constants.View, request)
+                            Uri = UriHelper.Collection(Constants.View, request.EditContext.CollectionAlias, request.EditContext.Parent?.GetParentPath())
                         };
                     }
                     else if (response is NodeInListViewCommandResponseModel)
@@ -150,7 +146,7 @@ namespace RapidCMS.Core.Dispatchers
                 case CrudType.Up:
                     response.ViewCommand = new NavigateCommand
                     {
-                        Uri = CollectionUri(collection.ListEditor == null ? Constants.View : Constants.Edit, request)
+                        Uri = UriHelper.Collection(collection.ListEditor == null ? Constants.List : Constants.Edit, request.EditContext.CollectionAlias, request.EditContext.Parent?.GetParentPath())
                     };
                     break;
 
@@ -161,16 +157,6 @@ namespace RapidCMS.Core.Dispatchers
             await _buttonInteraction.CompleteButtonInteractionAsync(request);
 
             return response;
-        }
-
-        private static string CollectionUri(string action, PersistEntityRequestModel request)
-        {
-            return UriHelper.Collection(action, request.EditContext.CollectionAlias, request.EditContext.Parent?.GetParentPath());
-        }
-
-        private static string NodeUri(string action, PersistEntityRequestModel request, EntityVariantSetup entityVariant)
-        {
-            return UriHelper.Node(action, request.EditContext.CollectionAlias, entityVariant, request.EditContext.Parent?.GetParentPath(), request.EditContext.Entity.Id);
         }
     }
 }
