@@ -14,7 +14,10 @@
 
         @if (Section.Elements != null)
         {
-            <tr>
+            <tr draggable="true" 
+                @ondragstart="async (args) => await DragStart(args, EditContext.Entity.Id!)" 
+                @ondragenter="async (args) => await DragEnter(args, EditContext.Entity.Id!)" 
+                @ondragend="DragEnd">
                 @{
                     foreach (var element in Section.Elements)
                     {
@@ -73,4 +76,27 @@
 
     [Parameter] public ListUI UI { get; set; }
     [Parameter] public EventCallback<ButtonClickEventArgs> OnButtonClick { get; set; }
+    [Inject] private IJSRuntime runtime { get; set; }
+
+    static string? DraggedId { get; set; }
+    static string? DroppedId { get; set; }
+
+    private async Task DragStart(DragEventArgs args, string id)
+    {
+        DraggedId = id;
+
+        await runtime.InvokeVoidAsync("console.log", $"{id} started");
+    }
+
+    private async Task DragEnter(DragEventArgs args, string id)
+    {
+        DroppedId = id;
+
+        await runtime.InvokeVoidAsync("console.log", $"Over {id}");
+    }
+
+    private async Task DragEnd(DragEventArgs args)
+    {
+        await runtime.InvokeVoidAsync("console.log", $"{DraggedId} dropped on {DroppedId}");
+    }
 }
