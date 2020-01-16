@@ -14,7 +14,7 @@
 
         @if (Section.Elements != null)
         {
-            <tr draggable="true"
+            <tr draggable=@(UI.Reorderable ? "true" : "false")
                 @ondragstart="async (args) => DragInteraction.DragStart(args, EditContext.Entity.Id!)"
                 @ondragenter="async (args) => DragInteraction.DragEnter(args, EditContext.Entity.Id!)"
                 @ondragend="DragInteraction.DragEnd"

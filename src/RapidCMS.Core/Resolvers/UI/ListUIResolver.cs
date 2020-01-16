@@ -60,6 +60,7 @@ namespace RapidCMS.Core.Resolvers.UI
                 MaxUniqueFieldsInSingleEntity = _fieldsPerType.Max(x => x.Value.Count()),
                 PageSize = _list.PageSize ?? 1000,
                 SearchBarVisible = _list.SearchBarVisible ?? true,
+                Reorderable = _list.ReorderingAllowed ?? false,
                 SectionsHaveButtons = _list.Panes.Any(x => x.Buttons.Any()),
                 UniqueFields = _fieldsPerType.SelectMany(x => x.Value).Distinct(_equalityComparer).ToList()
             };

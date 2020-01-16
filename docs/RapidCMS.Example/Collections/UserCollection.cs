@@ -19,7 +19,7 @@ namespace RapidCMS.Example.Collections
                     .SetListEditor(editor =>
                     {
                         // you can control the number of entities on a single page
-                        editor.SetPageSize(1);
+                        editor.SetPageSize(2);
 
                         editor.AddDefaultButton(DefaultButtonType.Return);
                         editor.AddDefaultButton(DefaultButtonType.New);

@@ -52,6 +52,10 @@ namespace RapidCMS.Example.Collections
                         // (only modified entities are touched)
                         editor.AddDefaultButton(DefaultButtonType.SaveExisting);
 
+                        // allowing reordering so the user can shuffle the entities around and save them in a new order.
+                        // the Repository must implement ReorderAsync
+                        editor.AllowReordering(true);
+
                         // a list editor can be in the shape of a table, or a set of blocks, so these sections are either rows or blocks
                         editor.AddSection(row =>
                         {

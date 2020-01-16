@@ -12,6 +12,7 @@ namespace RapidCMS.Core.Models.Setup
         {
             PageSize = list.PageSize;
             SearchBarVisible = list.SearchBarVisible;
+            ReorderingAllowed = list.ReorderingAllowed;
             ListType = list.ListEditorType;
             EmptyVariantColumnVisibility = list.EmptyVariantColumnVisibility;
             Buttons = list.Buttons.ToList(button => new ButtonSetup(button, collection.EntityVariant, collection.SubEntityVariants));
@@ -20,6 +21,7 @@ namespace RapidCMS.Core.Models.Setup
 
         internal int? PageSize { get; set; }
         internal bool? SearchBarVisible { get; set; }
+        internal bool? ReorderingAllowed { get; set; }
         internal ListType ListType { get; set; }
         internal EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; set; }
         internal List<PaneSetup>? Panes { get; set; }

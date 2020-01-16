@@ -86,6 +86,11 @@ namespace RapidCMS.Core.Forms
             return _fieldStates.Any(x => x.IsModified);
         }
 
+        public bool IsModified(IPropertyMetadata property)
+        {
+            return GetPropertyState(property)!.IsModified;
+        }
+
         public bool IsReordered()
         {
             return ReorderedState == ReorderedState.Reordered;

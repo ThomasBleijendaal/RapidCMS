@@ -20,7 +20,6 @@ using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Interactions;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Request;
-using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Resolvers.Data;

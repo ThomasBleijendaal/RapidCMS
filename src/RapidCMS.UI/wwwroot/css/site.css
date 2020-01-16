@@ -319,9 +319,8 @@ a.current-page {
     }
 
 .form-row {
-    padding-top: .1rem;
-    padding-bottom: .1rem;
-    margin-bottom: .5rem;
+    padding-top: .4rem;
+    padding-bottom: .3rem;
 }
 
     .form-row:last-of-type {
@@ -390,13 +389,13 @@ table td {
         background: repeating-linear-gradient( -45deg, #ced4da, #ced4da 2px, #fff 2px, #fff 4px );
     }
 
-    table tr.dragged td {
-        background: #ccc;
-    }
+table tr.dragged td {
+    background: #ccc;
+}
 
-    table tr.modified td {
-        background: #fff0d0;
-    }
+table tr.modified td {
+    background: #fff0d0;
+}
 
 table tr.dropover td {
     border-top: 1px solid #333;

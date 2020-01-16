@@ -1,6 +1,5 @@
-﻿using System;//
+﻿using System;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Models.EventArgs;
 
@@ -16,13 +15,6 @@ namespace RapidCMS.Core.Interactions
         private string? _draggedId;
         private string? _draggedOverId;
         private Guid? _endZoneGuid;
-        private readonly IJSRuntime _js;
-
-        public DragInteraction(IJSRuntime js)
-        {
-            _js = js;
-            _js.InvokeVoidAsync("console.log", "HI");
-        }
 
         public void DragStart(DragEventArgs args, string id)
         {
@@ -30,8 +22,6 @@ namespace RapidCMS.Core.Interactions
 
             _draggedOverId = default;
             _endZoneGuid = default;
-
-            _js.InvokeVoidAsync("console.log", $"DragStart {id} || {_draggedOverId} {_endZoneGuid}");
 
             args.DataTransfer.EffectAllowed = "move";
         }
@@ -46,15 +36,11 @@ namespace RapidCMS.Core.Interactions
             _draggedOverId = id;
             _endZoneGuid = default;
 
-            _js.InvokeVoidAsync("console.log", $"DragEnter {id} || {_draggedOverId} {_endZoneGuid}");
-
             DragStateChange?.Invoke(default, new EventArgs());
         }
 
         public void EndZoneDragEnter(DragEventArgs args, Guid guid)
         {
-            _js.InvokeVoidAsync("console.log", $"EndZoneDragEnterAsync {guid} || {_draggedOverId} {_endZoneGuid}");
-
             _draggedOverId = default;
             _endZoneGuid = guid;
 
@@ -63,8 +49,6 @@ namespace RapidCMS.Core.Interactions
 
         public void DragEnd(DragEventArgs args)
         {
-            _js.InvokeVoidAsync("console.log", $"DragEnd {_draggedId} || {_draggedOverId} {_endZoneGuid}");
-
             if (!string.IsNullOrWhiteSpace(_draggedId) && !string.IsNullOrWhiteSpace(_draggedOverId))
             {
                 DragCompletion?.Invoke(default, new RowDragEventArgs(_draggedId, _draggedOverId));
