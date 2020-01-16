@@ -7,7 +7,7 @@ TODO:
     [] Alias sub collection pages and have edit / view buttons direct to them (multiple node editors for 1 collection)
     [] Redirect user to edit page of other collection
     [] Allow New to go to dedicated NodeEditor from ListEditor
-[] Reordering
+[v] Reordering
 [] Return in sub collection entity is weird -> implement complete state breadcrumb (with search + data views)
     [] Do not make New in list editor something new, since it is very temporary and weird to redirect to
 [v] Paginate tree

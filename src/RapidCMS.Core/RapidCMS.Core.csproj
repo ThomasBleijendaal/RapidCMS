@@ -3,6 +3,16 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
+    <Version>2.0.0-preview</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Thomas Bleijendaal</Authors>
+    <Company>Thomas Bleijendaal</Company>
+    <Description>RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS purely from code.</Description>
+    <Copyright>2020</Copyright>
+    <RepositoryUrl>https://github.com/ThomasBleijendaal/RapidCMS</RepositoryUrl>
+    <RepositoryType>Github</RepositoryType>
+    <PackageTags>Blazor, CMS</PackageTags>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +25,13 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
