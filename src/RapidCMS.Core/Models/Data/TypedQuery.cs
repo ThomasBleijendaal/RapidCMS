@@ -41,6 +41,16 @@ namespace RapidCMS.Core.Models.Data
             _query.HasMoreData(hasMoreData);
         }
 
+        public IQueryable<TEntity> ApplyDataView(IQueryable<TEntity> queryable)
+        {
+            if (!(_query.QueryExpression is Expression<Func<TEntity, bool>> validQueryExpression))
+            {
+                return queryable;
+            }
+
+            return queryable.Where(validQueryExpression);
+        }
+
         public IQueryable<TEntity> ApplyOrder(IQueryable<TEntity> queryable)
         {
             if (_query.OrderByExpressions == null)
@@ -68,7 +78,7 @@ namespace RapidCMS.Core.Models.Data
             return queryable;
         }
 
-        public static IQueryable<T> ApplyOrderBy<T>(IQueryable<T> source, IPropertyMetadata ordering, string method)
+        private static IQueryable<T> ApplyOrderBy<T>(IQueryable<T> source, IPropertyMetadata ordering, string method)
         {
             if (typeof(T) != ordering.ObjectType)
             {

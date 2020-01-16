@@ -37,7 +37,12 @@ namespace RapidCMS.Example.Collections
                                 // the entity of this editor will be passed in as IParent in the repository of the 
                                 // sub collection, making it possible to access the parents properties in the childrens repository
 
-                                section.AddSubCollectionList<Tag>("tag");
+                                section.AddSubCollectionList("tag");
+
+                                section.AddSubCollectionList<Tag, JsonRepository<Tag>>(config =>
+                                {
+                                    config.SetListEditor()
+                                });
                             });
                     });
 

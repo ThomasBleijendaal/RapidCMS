@@ -1,4 +1,5 @@
 ﻿using System;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Enums;
 

@@ -159,7 +159,7 @@ namespace RapidCMS.Core.Models.Config
             return AddPaneButton(paneType, label, icon, defaultCrudType);
         }
 
-        ISubCollectionListConfig<TSubEntity> IDisplayPaneConfig<TEntity>.AddSubCollectionList<TSubEntity>(string collectionAlias, Action<ISubCollectionListConfig<TSubEntity>>? configure)
+        ISubCollectionListEditorConfig<TSubEntity> IDisplayPaneConfig<TEntity>.AddSubCollectionList<TSubEntity>(string collectionAlias, Action<ISubCollectionListEditorConfig<TSubEntity>>? configure)
         {
             return AddSubCollectionList(collectionAlias, configure);
         }
@@ -212,7 +212,7 @@ namespace RapidCMS.Core.Models.Config
             return AddPaneButton(paneType, label, icon, defaultCrudType);
         }
 
-        ISubCollectionListConfig<TSubEntity> IEditorPaneConfig<TEntity>.AddSubCollectionList<TSubEntity>(string collectionAlias, Action<ISubCollectionListConfig<TSubEntity>>? configure)
+        ISubCollectionListEditorConfig<TSubEntity> IEditorPaneConfig<TEntity>.AddSubCollectionList<TSubEntity>(string collectionAlias, Action<ISubCollectionListEditorConfig<TSubEntity>>? configure)
         {
             return AddSubCollectionList(collectionAlias, configure);
         }

@@ -16,7 +16,7 @@ namespace RapidCMS.Core.Models.Config
         internal string CollectionAlias { get; set; }
     }
 
-    internal class SubCollectionListConfig<TSubEntity> : SubCollectionListConfig, ISubCollectionListConfig<TSubEntity>
+    internal class SubCollectionListConfig<TSubEntity> : SubCollectionListConfig, ISubCollectionListEditorConfig<TSubEntity>
         where TSubEntity : IEntity
     {
         internal SubCollectionListConfig(string collectionAlias) : base(collectionAlias)
