@@ -117,6 +117,13 @@ namespace RapidCMS.Core.Repositories
         /// <returns></returns>
         public virtual Task UpdateAsync(IEditContext<TEntity> editContext)
             => UpdateAsync(editContext.Parent, editContext.Entity, editContext.GetRelationContainer());
+
+        /// <summary>
+        /// This method deletes an existing entity in the database.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="parent"></param>
+        /// <returns></returns>
         public abstract Task DeleteAsync(string id, IParent? parent);
 
         /// <summary>
@@ -138,6 +145,17 @@ namespace RapidCMS.Core.Repositories
         /// <returns></returns>
         public virtual Task RemoveAsync(IRelated related, string id)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(RemoveAsync)} on the {GetType()}.");
+
+        /// <summary>
+        /// This method is called when an entity is reorderd and put in before of the given beforeId.
+        /// If the beforeId is null, the entity is put in as last.
+        /// </summary>
+        /// <param name="beforeId"></param>
+        /// <param name="id"></param>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        public virtual Task ReorderAsync(string? beforeId, string id, IParent? parent)
+            => throw new NotImplementedException($"In order to use reordering in list editors, implement {nameof(ReorderAsync)} on the {GetType()}.");
 
         protected internal RepositoryChangeToken _repositoryChangeToken = new RepositoryChangeToken();
 
@@ -200,6 +218,12 @@ namespace RapidCMS.Core.Repositories
         async Task IRepository.RemoveAsync(IRelated related, string id)
         {
             await RemoveAsync(related, id);
+        }
+
+        async Task IRepository.ReorderAsync(string? beforeId, string id, IParent? parent)
+        {
+            await ReorderAsync(beforeId, id, parent);
+            NotifyUpdate();
         }
     }
 }

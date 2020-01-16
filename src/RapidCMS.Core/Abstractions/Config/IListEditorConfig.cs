@@ -6,7 +6,8 @@ namespace RapidCMS.Core.Abstractions.Config
         : IHasButtons<IListEditorConfig<TEntity>>,
         IHasPageSize<IListEditorConfig<TEntity>>,
         IHasSearchBar<IListEditorConfig<TEntity>>,
-        IHasEditorPanes<TEntity, IListEditorConfig<TEntity>>
+        IHasEditorPanes<TEntity, IListEditorConfig<TEntity>>,
+        ISupportReordering<IListEditorConfig<TEntity>>
         where TEntity : IEntity
     {
     }

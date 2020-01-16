@@ -29,6 +29,13 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
+        public IListEditorConfig<TEntity> AllowReordering(bool allowReordering)
+        {
+            ReorderingAllowed = allowReordering;
+
+            return this;
+        }
+
         public IListEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using RapidCMS.Core;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
@@ -17,15 +16,14 @@ namespace RapidCMS.UI.Components.Pages
     {
         private UpdateParameterCommand? _previousParameterCommand = null;
 
-        [Inject] private NavigationManager NavigationManager { get; set; }
-        [Inject] private IExceptionService ExceptionService { get; set; }
-        [Inject] private IJSRuntime JSRuntime { get; set; }
+        [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+        [Inject] private IExceptionService ExceptionService { get; set; } = default!;
 
-        [Parameter] public string Action { get; set; }
-        [Parameter] public string CollectionAlias { get; set; }
-        [Parameter] public string VariantAlias { get; set; }
-        [Parameter] public string? Path { get; set; } = null;
-        [Parameter] public string? Id { get; set; } = null;
+        [Parameter] public string Action { get; set; } = default!;
+        [Parameter] public string CollectionAlias { get; set; } = default!;
+        [Parameter] public string VariantAlias { get; set; } = default!;
+        [Parameter] public string? Path { get; set; } = default!;
+        [Parameter] public string? Id { get; set; } = default!;
 
         [Obsolete("In everything except init")]
         protected ParentPath? GetParentPath()

@@ -10,6 +10,7 @@ namespace RapidCMS.Core.Enums
         Edit = 4,
         Add = 8,
         Pick = 16,
+        Reordered = 32,
 
         List = 65536,
         Node = 131072,

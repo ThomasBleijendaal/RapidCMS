@@ -85,7 +85,7 @@ namespace RapidCMS.Core.Dispatchers
                 case CrudType.Update:
                     var affectedEntities = new List<IEntity>();
 
-                    foreach (var editContext in request.ListContext.EditContexts.Where(f => f.IsModified()))
+                    foreach (var editContext in request.ListContext.EditContexts.Where(f => f.IsModified() || f.IsReordered()))
                     {
                         var innerRequest = new PersistEntityCollectionRequestModel
                         {
@@ -96,7 +96,17 @@ namespace RapidCMS.Core.Dispatchers
                         };
 
                         await _buttonInteraction.ValidateButtonInteractionAsync(innerRequest);
-                        await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(editContext));
+                        
+                        if (editContext.IsModified())
+                        {
+                            await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(editContext));
+                        }
+                        if (editContext.IsReordered())
+                        {
+                            await _concurrencyService.EnsureCorrectConcurrencyAsync(
+                                () => repository.ReorderAsync(editContext.ReorderedBeforeId, editContext.Entity.Id!, editContext.Parent));
+                        }
+
                         affectedEntities.Add(editContext.Entity);
                     }
 

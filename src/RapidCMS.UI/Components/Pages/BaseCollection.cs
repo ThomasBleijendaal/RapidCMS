@@ -9,6 +9,7 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.EventArgs;
 using RapidCMS.Core.Models.Request;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.UI;
@@ -123,7 +124,7 @@ namespace RapidCMS.UI.Components.Pages
                 UsageType = GetUsageType()
             });
 
-            Sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
+            await SetSectionsAsync(listContext);
 
             if (!query.MoreDataAvailable)
             {
@@ -142,6 +143,11 @@ namespace RapidCMS.UI.Components.Pages
             }
 
             return listContext;
+        }
+
+        private async Task SetSectionsAsync(ListContext listContext)
+        {
+            Sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
         }
 
         protected async Task ReloadSectionsAsync(IEnumerable<string> reloadEntityIds)
@@ -207,6 +213,46 @@ namespace RapidCMS.UI.Components.Pages
                 });
 
                 await HandleViewCommandAsync(command);
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
+        }
+
+        protected async Task OnRowDraggedAsync(RowDragEventArgs args)
+        {
+            try
+            {
+                if (ListContext == null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                var editContext = ListContext.EditContexts.FirstOrDefault(x => x.Entity.Id == args.SubjectId);
+                if (editContext == null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                editContext.NotifyReordered(args.TargetId);
+
+                ListContext.EditContexts.Remove(editContext);
+                
+                if (args.TargetId == null)
+                {
+                    ListContext.EditContexts.Add(editContext);
+                }
+                else
+                {
+                    ListContext.EditContexts.Insert(
+                        ListContext.EditContexts.FindIndex(x => x.Entity.Id == args.TargetId),
+                        editContext);
+                }
+
+                await SetSectionsAsync(ListContext);
+
+                StateHasChanged();
             }
             catch (Exception ex)
             {

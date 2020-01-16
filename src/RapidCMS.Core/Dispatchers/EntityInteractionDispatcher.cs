@@ -60,7 +60,7 @@ namespace RapidCMS.Core.Dispatchers
                 case CrudType.View:
                     response.ViewCommand = new NavigateCommand
                     {
-                        Uri =UriHelper.Node(Constants.View, request.EditContext.CollectionAlias, entityVariant, request.EditContext.Parent?.GetParentPath(), request.EditContext.Entity.Id) 
+                        Uri = UriHelper.Node(Constants.View, request.EditContext.CollectionAlias, entityVariant, request.EditContext.Parent?.GetParentPath(), request.EditContext.Entity.Id)
                     };
                     break;
 
@@ -73,6 +73,13 @@ namespace RapidCMS.Core.Dispatchers
 
                 case CrudType.Update:
                     await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(request.EditContext));
+
+                    if (request.EditContext.IsReordered())
+                    {
+                        await _concurrencyService.EnsureCorrectConcurrencyAsync(
+                            () => repository.ReorderAsync(request.EditContext.ReorderedBeforeId, request.EditContext.Entity.Id!, request.EditContext.Parent));
+                    }
+
                     response.ViewCommand = new ReloadCommand(request.EditContext.Entity.Id!);
                     break;
 

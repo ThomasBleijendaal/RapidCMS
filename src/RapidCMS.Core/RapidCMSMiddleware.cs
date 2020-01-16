@@ -69,6 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IInteractionDispatcher, EntityInteractionDispatcher>();
             services.AddTransient<IInteractionDispatcher, EntitiesInteractionDispatcher>();
             services.AddTransient<IButtonInteraction, ButtonInteraction>();
+            services.AddTransient<IDragInteraction, DragInteraction>();
             services.AddTransient<IInteractionService, InteractionService>();
 
             services.AddTransient<IAuthService, AuthService>();

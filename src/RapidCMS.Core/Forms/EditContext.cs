@@ -30,6 +30,9 @@ namespace RapidCMS.Core.Forms
         public IEntity Entity { get; private set; }
         public IParent? Parent { get; private set; }
         public UsageType UsageType { get; private set; }
+
+        public ReorderedState ReorderedState { get; private set; }
+        internal string? ReorderedBeforeId { get; private set; }
         public EntityState EntityState => UsageType.HasFlag(UsageType.New) ? EntityState.IsNew : EntityState.IsExisting;
 
         public IServiceProvider ServiceProvider { get; private set; }
@@ -39,6 +42,12 @@ namespace RapidCMS.Core.Forms
         public event EventHandler<FieldChangedEventArgs>? OnFieldChanged;
 
         public event EventHandler<ValidationStateChangedEventArgs>? OnValidationStateChanged;
+
+        public void NotifyReordered(string? beforeId)
+        {
+            ReorderedState = ReorderedState.Reordered;
+            ReorderedBeforeId = beforeId;
+        }
 
         public void NotifyPropertyIncludedInForm(IPropertyMetadata property)
         {
@@ -75,6 +84,11 @@ namespace RapidCMS.Core.Forms
         public bool IsModified()
         {
             return _fieldStates.Any(x => x.IsModified);
+        }
+
+        public bool IsReordered()
+        {
+            return ReorderedState == ReorderedState.Reordered;
         }
 
         public bool IsValid(IPropertyMetadata property)

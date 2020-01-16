@@ -14,12 +14,13 @@
 
         @if (Section.Elements != null)
         {
-            <tr draggable="true" 
-                @ondragstart="async (args) => await DragStart(args, EditContext.Entity.Id!)" 
-                @ondragenter="async (args) => await DragEnter(args, EditContext.Entity.Id!)" 
-                @ondragleave="async (args) => await DragLeave(args, EditContext.Entity.Id!)"
-                @ondragend="DragEnd"
-                class="@(DroppedId == EditContext.Entity.Id ? "dropover" : "")">
+            <tr draggable="true"
+                @ondragstart="async (args) => DragInteraction.DragStart(args, EditContext.Entity.Id!)"
+                @ondragenter="async (args) => DragInteraction.DragEnter(args, EditContext.Entity.Id!)"
+                @ondragend="DragInteraction.DragEnd"
+                class="@(DragInteraction.IsDraggedOver(EditContext.Entity.Id!) ? "dropover" : "")
+                    @(DragInteraction.IsDragged(EditContext.Entity.Id!) ? "dragged" : "")
+                    @(EditContext.IsModified() || EditContext.IsReordered() ? "modified" : "")">
                 @{
                     foreach (var element in Section.Elements)
                     {
@@ -76,41 +77,24 @@
 @code {
     private bool CollapseEmptyCells => UI.EmptyVariantColumnVisibility == EmptyVariantColumnVisibility.Collapse;
 
-    [Parameter] public ListUI UI { get; set; }
+    [Parameter] public ListUI UI { get; set; } = default!;
     [Parameter] public EventCallback<ButtonClickEventArgs> OnButtonClick { get; set; }
-    [Inject] private IJSRuntime runtime { get; set; }
+    [Parameter] public IDragInteraction DragInteraction { get; set; } = default!;
 
-    static string? DraggedId { get; set; }
-    static string? DroppedId { get; set; }
-
-    private async Task DragStart(DragEventArgs args, string id)
+    protected override void OnInitialized()
     {
-        DraggedId = id;
-        DroppedId = null;
+        base.OnInitialized();
 
-        await runtime.InvokeVoidAsync("console.log", $"{id} started");
+        DragInteraction.DragStateChange += OnDragStateChange;
     }
 
-    private async Task DragEnter(DragEventArgs args, string id)
+    ~RowSection()
     {
-        DroppedId = id;
-
-        await runtime.InvokeVoidAsync("console.log", $"Over {id}");
+        DragInteraction.DragStateChange -= OnDragStateChange;
     }
 
-    private async Task DragLeave(DragEventArgs args, string id)
+    private void OnDragStateChange(object? sender, EventArgs args)
     {
-        if (DroppedId == id)
-        {
-            DroppedId = null;
-        }
-    }
-
-    private async Task DragEnd(DragEventArgs args)
-    {
-        await runtime.InvokeVoidAsync("console.log", $"{DraggedId} dropped on {DroppedId}");
-
-        DraggedId = null;
-        DroppedId = null;
+        StateHasChanged();
     }
 }

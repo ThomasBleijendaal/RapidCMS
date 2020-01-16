@@ -72,7 +72,7 @@ namespace RapidCMS.Repositories
 
             query.HasMoreData(GetListForParent(parent).Count > (query.Skip + query.Take));
 
-            return Task.FromResult(data); 
+            return Task.FromResult(data);
         }
 
         public override Task<TEntity?> GetByIdAsync(string id, IParent? parent)
@@ -112,6 +112,30 @@ namespace RapidCMS.Repositories
             list.RemoveAt(index + 1);
         }
 
+        public override Task ReorderAsync(string? beforeId, string id, IParent? parent)
+        {
+            var parentId = parent?.Entity.Id ?? string.Empty;
+
+            var entity = _data[parentId].FirstOrDefault(x => x.Id == id);
+            if (entity == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            _data[parentId].Remove(entity);
+            if (string.IsNullOrWhiteSpace(beforeId))
+            {
+                _data[parentId].Add(entity);
+            }
+            else
+            {
+                var index = _data[parentId].FindIndex(x => x.Id == beforeId);
+                _data[parentId].Insert(index, entity);
+            }
+
+            return Task.CompletedTask;
+        }
+
         private async Task HandleRelationsAsync(TEntity entity, IRelationContainer? relations)
         {
             // this is some generic code to handle relations very genericly
@@ -130,7 +154,7 @@ namespace RapidCMS.Repositories
                         {
                             var inMemoryRepo = _serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(r.RelatedEntity)) as IRepository;
                             var jsonRepo = _serviceProvider.GetService(typeof(JsonRepository<>).MakeGenericType(r.RelatedEntity)) as IRepository;
-                            
+
                             var repo = inMemoryRepo ?? jsonRepo;
 
                             if (repo != null)

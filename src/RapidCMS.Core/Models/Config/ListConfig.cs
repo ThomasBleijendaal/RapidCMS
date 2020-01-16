@@ -8,6 +8,7 @@ namespace RapidCMS.Core.Models.Config
     {
         internal int? PageSize { get; set; }
         internal bool? SearchBarVisible { get; set; }
+        internal bool? ReorderingAllowed { get; set; }
         internal ListType ListEditorType { get; set; }
         internal EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; set; }
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();

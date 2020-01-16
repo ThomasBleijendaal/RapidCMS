@@ -390,10 +390,17 @@ table td {
         background: repeating-linear-gradient( -45deg, #ced4da, #ced4da 2px, #fff 2px, #fff 4px );
     }
 
-    table tr.dropover td {
-        padding-top: calc(.75em - 2px);
-        border-top: 3px solid #888;
+    table tr.dragged td {
+        background: #ccc;
     }
+
+    table tr.modified td {
+        background: #fff0d0;
+    }
+
+table tr.dropover td {
+    border-top: 1px solid #333;
+}
 
 pre {
     background: #f0f0f0;

@@ -40,7 +40,8 @@
                     {
                         <RowSection Section="section"
                                     UI="UI"
-                                    OnButtonClick="OnButtonClick" />
+                                    OnButtonClick="OnButtonClick"
+                                    DragInteraction="DragInteraction"/>
                     }
                 </CascadingEditContext>
             }
@@ -54,9 +55,8 @@
             else
             {
                 <tr
-                    @ondragenter="DragEnter" 
-                    @ondragleave="DragLeave"
-                    class="@(DraggedOver ? "dropover" : "")">
+                    @ondragenter="(args) => DragInteraction.EndZoneDragEnter(args, SectionId)"
+                    class="@(DragInteraction.IsDraggedOverEndZone(SectionId) ? "dropover" : "")">
                     <td colspan="99">&nbsp;</td>
                 </tr>
             }
@@ -71,26 +71,38 @@
 @code {
     private bool CollapseEmptyCells => UI.EmptyVariantColumnVisibility == EmptyVariantColumnVisibility.Collapse;
 
-    [Parameter] public IEnumerable<(EditContext editContext, IEnumerable<SectionUI> sections)> Sections { get; set; }
-    [Parameter] public ListUI UI { get; set; }
+    [Parameter] public IEnumerable<(EditContext editContext, IEnumerable<SectionUI> sections)> Sections { get; set; } = default!;
+    [Parameter] public ListUI UI { get; set; } = default!;
     [Parameter] public EventCallback<ButtonClickEventArgs> OnButtonClick { get; set; }
+    [Parameter] public EventCallback<RowDragEventArgs> OnRowDragged { get; set; }
 
     [Parameter] public int CurrentPage { get; set; }
     [Parameter] public int? MaxPage { get; set; }
     [Parameter] public EventCallback<int> OnPageChanged { get; set; }
     
-    [Inject] private IJSRuntime runtime { get; set; }
-    static bool DraggedOver { get; set; }
-    
-    private async Task DragEnter(DragEventArgs args)
-    {
-        DraggedOver = true;
+    [Inject] private IDragInteraction DragInteraction { get; set; } = default!;
 
-        await runtime.InvokeVoidAsync("console.log", $"Over end");
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        DragInteraction.DragCompletion += OnDragCompletion;
+        DragInteraction.DragStateChange += OnDragStateChange;
     }
 
-    private async Task DragLeave(DragEventArgs args)
+    ~TableSection()
     {
-        DraggedOver = false;
+        DragInteraction.DragCompletion -= OnDragCompletion;
+        DragInteraction.DragStateChange -= OnDragStateChange;
+    }
+
+    private async void OnDragCompletion(object? sender, RowDragEventArgs args)
+    {
+        await OnRowDragged.InvokeAsync(args);
+    }
+
+    private void OnDragStateChange(object? sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }
