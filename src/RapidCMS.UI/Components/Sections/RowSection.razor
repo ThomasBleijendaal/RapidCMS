@@ -17,7 +17,9 @@
             <tr draggable="true" 
                 @ondragstart="async (args) => await DragStart(args, EditContext.Entity.Id!)" 
                 @ondragenter="async (args) => await DragEnter(args, EditContext.Entity.Id!)" 
-                @ondragend="DragEnd">
+                @ondragleave="async (args) => await DragLeave(args, EditContext.Entity.Id!)"
+                @ondragend="DragEnd"
+                class="@(DroppedId == EditContext.Entity.Id ? "dropover" : "")">
                 @{
                     foreach (var element in Section.Elements)
                     {
@@ -84,6 +86,7 @@
     private async Task DragStart(DragEventArgs args, string id)
     {
         DraggedId = id;
+        DroppedId = null;
 
         await runtime.InvokeVoidAsync("console.log", $"{id} started");
     }
@@ -95,8 +98,19 @@
         await runtime.InvokeVoidAsync("console.log", $"Over {id}");
     }
 
+    private async Task DragLeave(DragEventArgs args, string id)
+    {
+        if (DroppedId == id)
+        {
+            DroppedId = null;
+        }
+    }
+
     private async Task DragEnd(DragEventArgs args)
     {
         await runtime.InvokeVoidAsync("console.log", $"{DraggedId} dropped on {DroppedId}");
+
+        DraggedId = null;
+        DroppedId = null;
     }
 }

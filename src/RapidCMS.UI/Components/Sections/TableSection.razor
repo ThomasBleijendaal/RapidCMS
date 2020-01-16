@@ -51,6 +51,15 @@
                     <td colspan="99">&nbsp;</td>
                 </tr>
             }
+            else
+            {
+                <tr
+                    @ondragenter="DragEnter" 
+                    @ondragleave="DragLeave"
+                    class="@(DraggedOver ? "dropover" : "")">
+                    <td colspan="99">&nbsp;</td>
+                </tr>
+            }
         </tbody>
     </table>
 
@@ -69,4 +78,19 @@
     [Parameter] public int CurrentPage { get; set; }
     [Parameter] public int? MaxPage { get; set; }
     [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+    
+    [Inject] private IJSRuntime runtime { get; set; }
+    static bool DraggedOver { get; set; }
+    
+    private async Task DragEnter(DragEventArgs args)
+    {
+        DraggedOver = true;
+
+        await runtime.InvokeVoidAsync("console.log", $"Over end");
+    }
+
+    private async Task DragLeave(DragEventArgs args)
+    {
+        DraggedOver = false;
+    }
 }

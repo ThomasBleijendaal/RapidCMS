@@ -131,6 +131,7 @@ app {
         color: #777;
         padding: 0 1rem;
     }
+
         .nav-item .paginate:hover {
             color: #000;
         }
@@ -211,7 +212,6 @@ app {
     }
 
 .nested-content .nav-tabs.nav-tabs-collapse {
-    
 }
 
 
@@ -227,6 +227,7 @@ app {
     box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
     margin: 0 1rem 0;
 }
+
     .validation-summary-errors ul li {
         color: red;
     }
@@ -389,9 +390,10 @@ table td {
         background: repeating-linear-gradient( -45deg, #ced4da, #ced4da 2px, #fff 2px, #fff 4px );
     }
 
-table tr.dragover td {
-    border-top: 3px solid red;
-}
+    table tr.dropover td {
+        padding-top: calc(.75em - 2px);
+        border-top: 3px solid #888;
+    }
 
 pre {
     background: #f0f0f0;

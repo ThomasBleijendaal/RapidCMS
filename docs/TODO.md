@@ -12,6 +12,7 @@ TODO:
     [] Do not make New in list editor something new, since it is very temporary and weird to redirect to
 [v] Paginate tree
 [v] Do not disable buttons when form is invalid (this causes issues to trigger revalidation)
+[] ListEditor + NodeEditor do not change upon Repository update (should ask for refresh)
 
 2.0
 [] All config checked during startup
