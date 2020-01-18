@@ -153,6 +153,17 @@ namespace RapidCMS.Core.Dispatchers
                     };
                     break;
 
+                case CrudType.Add:
+                    response.ViewCommand = new UpdateParameterCommand
+                    {
+                        Action = Constants.Add,
+                        CollectionAlias = request.CollectionAlias,
+                        VariantAlias = null,
+                        ParentPath = null,
+                        Id = null
+                    };
+                    break;
+
                 default:
                     throw new InvalidOperationException();
             }
