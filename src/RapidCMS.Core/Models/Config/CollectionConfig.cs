@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
@@ -9,12 +10,13 @@ using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Data;
-using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Models.Config
 {
     internal class CollectionConfig : ICollectionConfig
     {
+        protected List<ICollectionConfig> _collections = new List<ICollectionConfig>();
+
         internal CollectionConfig(string alias, string? icon, string name, Type repositoryType, EntityVariantConfig entityVariant)
         {
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
@@ -31,7 +33,35 @@ namespace RapidCMS.Core.Models.Config
 
         internal Type RepositoryType { get; set; }
 
-        public List<ICollectionConfig> Collections { get; set; } = new List<ICollectionConfig>();
+        public List<ICollectionConfig> Collections { get => _collections.Union(InlineCollections).ToList(); }
+
+        private IEnumerable<CollectionConfig> InlineCollections
+        {
+            get
+            {
+                var referencedCollections = new[] {
+                    ListEditor?.Panes.SelectMany(x => x.SubCollectionLists.Union(x.RelatedCollectionLists)),
+                    ListView?.Panes.SelectMany(x => x.SubCollectionLists.Union(x.RelatedCollectionLists)),
+                    NodeEditor?.Panes.SelectMany(x => x.SubCollectionLists.Union(x.RelatedCollectionLists)),
+                    NodeView?.Panes.SelectMany(x => x.SubCollectionLists.Union(x.RelatedCollectionLists)),
+                };
+
+                var referencedInlineCollections = referencedCollections.Where(x => x != null).SelectMany(x => x);
+
+                return referencedInlineCollections
+                    .Select(collection => new CollectionConfig(
+                        collection.CollectionAlias,
+                        default,
+                        $"{Name}-{collection.RepositoryType!.Name}",
+                        collection.RepositoryType!,
+                        new EntityVariantConfig(collection.EntityType!.Name, collection.EntityType, default))
+                    {
+                        ListEditor = collection.ListEditor,
+                        ListView = collection.ListView
+                    });
+            }
+        }
+
         internal List<EntityVariantConfig> SubEntityVariants { get; set; } = new List<EntityVariantConfig>();
         internal EntityVariantConfig EntityVariant { get; set; }
 
@@ -111,22 +141,9 @@ namespace RapidCMS.Core.Models.Config
 
         public ICollectionConfig<TEntity> SetListEditor(Action<IListEditorConfig<TEntity>> configure)
         {
-            return SetListEditor(default, default, configure);
-        }
-
-        public ICollectionConfig<TEntity> SetListEditor(ListType listEditorType, Action<IListEditorConfig<TEntity>> configure)
-        {
-            return SetListEditor(listEditorType, default, configure);
-        }
-
-        public ICollectionConfig<TEntity> SetListEditor(ListType listEditorType, EmptyVariantColumnVisibility emptyVariantColumnVisibility, Action<IListEditorConfig<TEntity>> configure)
-        {
             var config = new ListEditorConfig<TEntity>();
 
             configure.Invoke(config);
-
-            config.ListEditorType = listEditorType;
-            config.EmptyVariantColumnVisibility = emptyVariantColumnVisibility;
 
             ListEditor = config;
 
@@ -178,19 +195,19 @@ namespace RapidCMS.Core.Models.Config
             {
                 throw new NotUniqueException(nameof(alias));
             }
-            
+
             CmsConfig.CollectionAliases.Add(alias);
 
             var configReceiver = new CollectionConfig<TSubEntity>(
-                alias, 
-                icon, 
+                alias,
+                icon,
                 name,
                 typeof(TRepository),
                 new EntityVariantConfig(typeof(TEntity).Name, typeof(TEntity)));
 
             configure.Invoke(configReceiver);
 
-            Collections.Add(configReceiver);
+            _collections.Add(configReceiver);
 
             return configReceiver;
         }
@@ -202,7 +219,7 @@ namespace RapidCMS.Core.Models.Config
                 Recursive = true
             };
 
-            Collections.Add(configReceiver);
+            _collections.Add(configReceiver);
         }
     }
 }

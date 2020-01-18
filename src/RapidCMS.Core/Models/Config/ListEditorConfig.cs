@@ -36,6 +36,20 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
+        public IListEditorConfig<TEntity> SetListType(ListType listType)
+        {
+            ListEditorType = listType;
+
+            return this;
+        }
+
+        public IListEditorConfig<TEntity> SetColumnVisibility(EmptyVariantColumnVisibility columnVisibility)
+        {
+            EmptyVariantColumnVisibility = columnVisibility;
+
+            return this;
+        }
+
         public IListEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig
@@ -93,7 +107,6 @@ namespace RapidCMS.Core.Models.Config
         {
             return AddSection(null, configure);
         }
-
 
         public IListEditorConfig<TEntity> AddSection<TDerivedEntity>(Type? customSectionType, Action<IEditorPaneConfig<TDerivedEntity>>? configure)
             where TDerivedEntity : TEntity

@@ -15,8 +15,8 @@ TODO:
 [] ListEditor + NodeEditor do not change upon Repository update (should ask for refresh)
 [] Base file uploader
 [] Support Scoped EF Core repos
-[] Add specialty collection via AddSubCollectionList / AddRelatedCollectionList instead of weak alias binding
-    [] Remove ListType and EmptyVariantColumnVisibility from SetListEditor overloads and put it in config action
+[v] Add specialty collection via AddSubCollectionList / AddRelatedCollectionList instead of weak alias binding
+    [v] Remove ListType and EmptyVariantColumnVisibility from SetListEditor overloads and put it in config action
 
 2.0
 [] All config checked during startup

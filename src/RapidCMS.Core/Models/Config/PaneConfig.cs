@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Helpers;
@@ -25,8 +26,8 @@ namespace RapidCMS.Core.Models.Config
 
         internal List<ButtonConfig> Buttons { get; set; } = new List<ButtonConfig>();
         internal List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
-        internal List<SubCollectionListConfig> SubCollectionLists { get; set; } = new List<SubCollectionListConfig>();
-        internal List<RelatedCollectionListConfig> RelatedCollectionLists { get; set; } = new List<RelatedCollectionListConfig>();
+        internal List<CollectionListConfig> SubCollectionLists { get; set; } = new List<CollectionListConfig>();
+        internal List<CollectionListConfig> RelatedCollectionLists { get; set; } = new List<CollectionListConfig>();
     }
 
     internal class PaneConfig<TEntity> : PaneConfig, IDisplayPaneConfig<TEntity>, IEditorPaneConfig<TEntity>
@@ -91,10 +92,35 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
-        private SubCollectionListConfig<TSubEntity> AddSubCollectionList<TSubEntity>(string collectionAlias, Action<SubCollectionListConfig<TSubEntity>>? configure = null)
-            where TSubEntity : IEntity
+        private PaneConfig<TEntity> AddSubCollectionList(string collectionAlias)
         {
-            var config = new SubCollectionListConfig<TSubEntity>(collectionAlias);
+            var config = new CollectionListConfig(collectionAlias)
+            {
+                Index = FieldIndex++
+            };
+
+            SubCollectionLists.Add(config);
+
+            return this;
+        }
+
+        private PaneConfig<TEntity> AddRelatedCollectionList(string collectionAlias)
+        {
+            var config = new CollectionListConfig(collectionAlias)
+            {
+                Index = FieldIndex++
+            };
+
+            RelatedCollectionLists.Add(config);
+
+            return this;
+        }
+
+        private PaneConfig<TEntity> AddSubCollectionList<TSubEntity, TSubRepository>(Action<SubCollectionListConfig<TSubEntity, TSubRepository>>? configure = null)
+            where TSubEntity : IEntity
+            where TSubRepository : IRepository
+        {
+            var config = new SubCollectionListConfig<TSubEntity, TSubRepository>(Guid.NewGuid().ToString());
 
             configure?.Invoke(config);
 
@@ -102,13 +128,14 @@ namespace RapidCMS.Core.Models.Config
 
             SubCollectionLists.Add(config);
 
-            return config;
+            return this;
         }
 
-        private RelatedCollectionListConfig<TEntity, TRelatedEntity> AddRelatedCollectionList<TRelatedEntity>(string collectionAlias, Action<RelatedCollectionListConfig<TEntity, TRelatedEntity>>? configure = null)
+        private PaneConfig<TEntity> AddRelatedCollectionList<TRelatedEntity, TRelatedRepository>(Action<RelatedCollectionListConfig<TRelatedEntity, TRelatedRepository>>? configure = null)
             where TRelatedEntity : IEntity
+            where TRelatedRepository : IRepository
         {
-            var config = new RelatedCollectionListConfig<TEntity, TRelatedEntity>(collectionAlias);
+            var config = new RelatedCollectionListConfig<TRelatedEntity, TRelatedRepository>(Guid.NewGuid().ToString());
 
             configure?.Invoke(config);
 
@@ -116,8 +143,9 @@ namespace RapidCMS.Core.Models.Config
 
             RelatedCollectionLists.Add(config);
 
-            return config;
+            return this;
         }
+
 
         private PaneConfig<TEntity> VisibleWhen(Func<TEntity, EntityState, bool> predicate)
         {
@@ -159,14 +187,24 @@ namespace RapidCMS.Core.Models.Config
             return AddPaneButton(paneType, label, icon, defaultCrudType);
         }
 
-        ISubCollectionListEditorConfig<TSubEntity> IDisplayPaneConfig<TEntity>.AddSubCollectionList<TSubEntity>(string collectionAlias, Action<ISubCollectionListEditorConfig<TSubEntity>>? configure)
+        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddSubCollectionList(string collectionAlias)
         {
-            return AddSubCollectionList(collectionAlias, configure);
+            return AddSubCollectionList(collectionAlias);
         }
 
-        IRelatedCollectionListConfig<TEntity, TRelatedEntity> IDisplayPaneConfig<TEntity>.AddRelatedCollectionList<TRelatedEntity>(string collectionAlias, Action<IRelatedCollectionListConfig<TEntity, TRelatedEntity>>? configure)
+        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddSubCollectionList<TSubEntity, TSubRepository>(Action<ISubCollectionListViewConfig<TSubEntity, TSubRepository>>? configure)
         {
-            return AddRelatedCollectionList(collectionAlias, configure);
+            return AddSubCollectionList(configure);
+        }
+
+        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddRelatedCollectionList(string collectionAlias)
+        {
+            return AddRelatedCollectionList(collectionAlias);
+        }
+
+        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddRelatedCollectionList<TRelatedEntity, TRelatedRepository>(Action<IRelatedCollectionListViewConfig<TRelatedEntity, TRelatedRepository>>? configure)
+        {
+            return AddRelatedCollectionList(configure);
         }
 
         IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.SetLabel(string label)
@@ -212,14 +250,24 @@ namespace RapidCMS.Core.Models.Config
             return AddPaneButton(paneType, label, icon, defaultCrudType);
         }
 
-        ISubCollectionListEditorConfig<TSubEntity> IEditorPaneConfig<TEntity>.AddSubCollectionList<TSubEntity>(string collectionAlias, Action<ISubCollectionListEditorConfig<TSubEntity>>? configure)
+        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddSubCollectionList(string collectionAlias)
         {
-            return AddSubCollectionList(collectionAlias, configure);
+            return AddSubCollectionList(collectionAlias);
         }
 
-        IRelatedCollectionListConfig<TEntity, TRelatedEntity> IEditorPaneConfig<TEntity>.AddRelatedCollectionList<TRelatedEntity>(string collectionAlias, Action<IRelatedCollectionListConfig<TEntity, TRelatedEntity>>? configure)
+        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddSubCollectionList<TSubEntity, TSubRepository>(Action<ISubCollectionListEditorConfig<TSubEntity, TSubRepository>>? configure)
         {
-            return AddRelatedCollectionList(collectionAlias, configure);
+            return AddSubCollectionList(configure);
+        }
+
+        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddRelatedCollectionList(string collectionAlias)
+        {
+            return AddRelatedCollectionList(collectionAlias);
+        }
+
+        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddRelatedCollectionList<TRelatedEntity, TRelatedRepository>(Action<IRelatedCollectionListEditorConfig<TRelatedEntity, TRelatedRepository>>? configure)
+        {
+            return AddRelatedCollectionList(configure);
         }
 
         IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.SetLabel(string label)

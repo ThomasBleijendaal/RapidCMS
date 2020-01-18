@@ -4,7 +4,7 @@ namespace RapidCMS.Core.Models.Setup
 {
     internal class SubCollectionListSetup
     {
-        internal SubCollectionListSetup(SubCollectionListConfig subCollection)
+        internal SubCollectionListSetup(CollectionListConfig subCollection)
         {
             Index = subCollection.Index;
             CollectionAlias = subCollection.CollectionAlias;
