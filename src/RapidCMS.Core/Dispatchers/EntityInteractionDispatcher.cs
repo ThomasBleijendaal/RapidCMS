@@ -14,7 +14,8 @@ namespace RapidCMS.Core.Dispatchers
 {
     internal class EntityInteractionDispatcher :
         IInteractionDispatcher<PersistEntityRequestModel, NodeViewCommandResponseModel>,
-        IInteractionDispatcher<PersistEntityRequestModel, NodeInListViewCommandResponseModel>
+        IInteractionDispatcher<PersistEntityRequestModel, NodeInListViewCommandResponseModel>,
+        IInteractionDispatcher<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>
     {
         private readonly ICollectionResolver _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
@@ -39,6 +40,11 @@ namespace RapidCMS.Core.Dispatchers
         }
 
         Task<NodeInListViewCommandResponseModel> IInteractionDispatcher<PersistEntityRequestModel, NodeInListViewCommandResponseModel>.InvokeAsync(PersistEntityRequestModel request)
+        {
+            return InvokeAsync(request, new NodeInListViewCommandResponseModel());
+        }
+
+        Task<NodeInListViewCommandResponseModel> IInteractionDispatcher<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>.InvokeAsync(PersistRelatedEntityRequestModel request)
         {
             return InvokeAsync(request, new NodeInListViewCommandResponseModel());
         }

@@ -19,7 +19,7 @@ namespace RapidCMS.UI.Components.Pages
 {
     public abstract class BaseRelationCollection : BasePage
     {
-        [Parameter] public IEntity RelatedEntity { get; set; }
+        [Parameter] public IEntity RelatedEntity { get; set; } = default!;
 
         [Inject] protected IPresentationService PresentationService { get; set; } = default!;
         [Inject] protected IInteractionService InteractionService { get; set; } = default!;
@@ -208,11 +208,12 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
-                var command = await InteractionService.InteractAsync<PersistEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistEntityRequestModel
+                var command = await InteractionService.InteractAsync<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistRelatedEntityRequestModel
                 {
                     ActionId = args.ViewModel.ButtonId,
                     CustomData = args.Data,
-                    EditContext = args.EditContext
+                    EditContext = args.EditContext,
+                    Related = new RelatedEntity(RelatedEntity)
                 });
 
                 await HandleViewCommandAsync(command);

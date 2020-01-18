@@ -38,7 +38,7 @@ namespace RapidCMS.Example.Collections
 
                                 // the entity of this editor will be passed in as IParent in the repository of the 
                                 // sub collection, making it possible to access the parents properties in the childrens repository
-                                section.AddSubCollectionList<Tag, JsonRepository<Tag>>(config =>
+                                section.AddRelatedCollectionList<Tag, JsonRepository<Tag>>(config =>
                                 {
                                     config.SetListEditor(editor =>
                                     {
@@ -46,11 +46,14 @@ namespace RapidCMS.Example.Collections
 
                                         editor.AddDefaultButton(DefaultButtonType.Return);
                                         editor.AddDefaultButton(DefaultButtonType.New);
+                                        editor.AddDefaultButton(DefaultButtonType.Add);
 
                                         editor.AddSection(section =>
                                         {
                                             section.AddDefaultButton(DefaultButtonType.SaveExisting);
                                             section.AddDefaultButton(DefaultButtonType.SaveNew);
+                                            section.AddDefaultButton(DefaultButtonType.Pick);
+                                            section.AddDefaultButton(DefaultButtonType.Remove);
 
                                             // add custom buttons and action handlers using the following handler
                                             section.AddCustomButton<RandomNameActionHandler>(typeof(CustomButton), "Create name", "add-circle");
