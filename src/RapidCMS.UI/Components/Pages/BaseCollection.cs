@@ -48,7 +48,6 @@ namespace RapidCMS.UI.Components.Pages
                     UIResolver = await UIResolverFactory.GetListUIResolverAsync(GetUsageType(), CollectionAlias);
                     ListUI = UIResolver.GetListDetails();
 
-
                     CurrentPage = 1;
                     MaxPage = null;
                     ActiveTab = null;

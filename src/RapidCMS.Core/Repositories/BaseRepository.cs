@@ -65,38 +65,13 @@ namespace RapidCMS.Core.Repositories
         /// <summary>
         /// This method inserts a new entity in the database.
         /// 
-        /// The relations parameter contains all the relations that are set to this entity.
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="entity"></param>
-        /// <param name="relations"></param>
-        /// <returns></returns>
-        public virtual Task<TEntity?> InsertAsync(IParent? parent, TEntity entity, IRelationContainer? relations)
-            => throw new NotImplementedException($"Implement one of the {nameof(InsertAsync)} on the {GetType()}.");
-
-        /// <summary>
-        /// This method inserts a new entity in the database.
-        /// 
         /// The editContext parameter contains the state of the form at the time of saving, allowing to check which property was edited.
         /// 
         /// The relations parameter contains all the relations that are set to this entity.
         /// </summary>
         /// <param name="editContext"></param>
         /// <returns></returns>
-        public virtual Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext)
-            => InsertAsync(editContext.Parent, editContext.Entity, editContext.GetRelationContainer());
-
-        /// <summary>
-        /// This method updates an existing entity in the database.
-        /// 
-        /// The relations parameter contains all the relations that are set to this entity.
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="entity"></param>
-        /// <param name="relations"></param>
-        /// <returns></returns>
-        public virtual Task UpdateAsync(IParent? parent, TEntity entity, IRelationContainer? relations)
-            => throw new NotImplementedException($"Implement one of the {nameof(UpdateAsync)} on the {GetType()}.");
+        public abstract Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext);
 
         /// <summary>
         /// This method updates an existing entity in the database.
@@ -107,8 +82,7 @@ namespace RapidCMS.Core.Repositories
         /// </summary>
         /// <param name="editContext"></param>
         /// <returns></returns>
-        public virtual Task UpdateAsync(IEditContext<TEntity> editContext)
-            => UpdateAsync(editContext.Parent, editContext.Entity, editContext.GetRelationContainer());
+        public abstract Task UpdateAsync(IEditContext<TEntity> editContext);
 
         /// <summary>
         /// This method deletes an existing entity in the database.

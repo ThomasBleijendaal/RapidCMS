@@ -7,11 +7,11 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request;
+using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.UI.Models;
 
@@ -128,7 +128,7 @@ namespace RapidCMS.UI.Components.Pages
                 UsageType = GetUsageType()
             });
 
-            Sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
+            await SetSectionsAsync(listContext);
 
             if (!query.MoreDataAvailable)
             {
@@ -147,6 +147,11 @@ namespace RapidCMS.UI.Components.Pages
             }
 
             return listContext;
+        }
+
+        private async Task SetSectionsAsync(ListContext listContext)
+        {
+            Sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
         }
 
         protected async Task ReloadSectionsAsync(IEnumerable<string> reloadEntityIds)
@@ -182,14 +187,16 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
-                //var command = await PersistenceService.ProcessRelationActionAsync(
-                //    GetUsageType(),
-                //    CollectionAlias,
-                //    Sections.Select(x => x.editContext),
-                //    args.ViewModel.ButtonId,
-                //    args.Data);
+                var command = await InteractionService.InteractAsync<PersistEntitiesRequestModel, ListViewCommandResponseModel>(new PersistEntitiesRequestModel
+                {
+                    ActionId = args.ViewModel.ButtonId,
+                    CollectionAlias = CollectionAlias,
+                    CustomData = args.Data,
+                    ListContext = ListContext!,
+                    UsageType = GetUsageType()
+                });
 
-                //await HandleViewCommandAsync(command);
+                await HandleViewCommandAsync(command);
             }
             catch (Exception ex)
             {
@@ -201,16 +208,14 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
-                //var command = await PersistenceService.ProcessEntityActionAsync(
-                //    // args.EditContext.UsageType,
-                //    // CollectionAlias,
-                //    // RelatedEntity,
-                //    // args.EditContext.Entity.Id,
-                //    args.EditContext,
-                //    args.ViewModel.ButtonId,
-                //    args.Data);
+                var command = await InteractionService.InteractAsync<PersistEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistEntityRequestModel
+                {
+                    ActionId = args.ViewModel.ButtonId,
+                    CustomData = args.Data,
+                    EditContext = args.EditContext
+                });
 
-                //await HandleViewCommandAsync(command);
+                await HandleViewCommandAsync(command);
             }
             catch (Exception ex)
             {

@@ -1,11 +1,10 @@
-﻿
-using RapidCMS.Core.Models.Config;
+﻿using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
     internal class RelatedCollectionListSetup
     {
-        internal RelatedCollectionListSetup(RelatedCollectionListConfig subCollection)
+        internal RelatedCollectionListSetup(CollectionListConfig subCollection)
         {
             Index = subCollection.Index;
             CollectionAlias = subCollection.CollectionAlias;

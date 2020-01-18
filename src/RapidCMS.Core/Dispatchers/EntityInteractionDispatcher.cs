@@ -118,7 +118,7 @@ namespace RapidCMS.Core.Dispatchers
                     {
                         response.ViewCommand = new NavigateCommand
                         {
-                            Uri = UriHelper.Collection(Constants.View, request.EditContext.CollectionAlias, request.EditContext.Parent?.GetParentPath())
+                            Uri = UriHelper.Collection(collection.ListEditor == null ? Constants.List : Constants.Edit, request.EditContext.CollectionAlias, request.EditContext.Parent?.GetParentPath())
                         };
                     }
                     else if (response is NodeInListViewCommandResponseModel)

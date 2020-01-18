@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Repositories;
 
 namespace RapidCMS.Core.Abstractions.Config
 {
@@ -25,7 +26,18 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <param name="collectionAlias">Alias of the sub collection</param>
         /// <param name="configure">Action to configure the use of this sub collection</param>
         /// <returns></returns>
-        ISubCollectionListConfig<TSubEntity> AddSubCollectionList<TSubEntity>(string collectionAlias, Action<ISubCollectionListConfig<TSubEntity>>? configure = null)
+        IDisplayPaneConfig<TEntity> AddSubCollectionList(string collectionAlias);
+
+        /// <summary>
+        /// Adds a sub collection to the pane. A sub collection is defined seperately, and only referenced by alias.
+        /// 
+        /// Not visible when EntityState is New.
+        /// </summary>
+        /// <typeparam name="TSubEntity">Type of the sub collections entity</typeparam>
+        /// <param name="configure">Action to configure the use of this sub collection</param>
+        /// <returns></returns>
+        IDisplayPaneConfig<TEntity> AddSubCollectionList<TSubEntity, TSubRepository>(Action<ISubCollectionListViewConfig<TSubEntity, TSubRepository>>? configure = null)
+            where TSubRepository : IRepository
             where TSubEntity : IEntity;
 
         /// <summary>
@@ -34,11 +46,22 @@ namespace RapidCMS.Core.Abstractions.Config
         /// 
         /// Not visible when EntityState is New.
         /// </summary>
-        /// <typeparam name="TRelatedEntity">Type of the related collections entity</typeparam>
         /// <param name="collectionAlias">Alias of the related collection</param>
-        /// <param name="configure">Action to configure the use of this related collection</param>
         /// <returns></returns>
-        IRelatedCollectionListConfig<TEntity, TRelatedEntity> AddRelatedCollectionList<TRelatedEntity>(string collectionAlias, Action<IRelatedCollectionListConfig<TEntity, TRelatedEntity>>? configure = null)
+        IDisplayPaneConfig<TEntity> AddRelatedCollectionList(string collectionAlias);
+
+        /// <summary>
+        /// Adds a collection to the pane which is used to view the many-to-many relation between the collection of this pane, and the related collection.
+        /// The related collection can by any collection.
+        /// 
+        /// Not visible when EntityState is New.
+        /// </summary>
+        /// <typeparam name="TRelatedEntity">Type of the related collections entity</typeparam>
+        /// <typeparam name="TRelatedRepository">Repository for the related collections</typeparam>
+        /// <param name="configure">Action to configure the related collection</param>
+        /// <returns></returns>
+        IDisplayPaneConfig<TEntity> AddRelatedCollectionList<TRelatedEntity, TRelatedRepository>(Action<IRelatedCollectionListViewConfig<TRelatedEntity, TRelatedRepository>>? configure = null)
+            where TRelatedRepository : IRepository
             where TRelatedEntity : IEntity;
 
         /// <summary>

@@ -91,8 +91,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddHttpClient();
             services.AddScoped<HttpClient>();
 
-            // Scoped semaphore for repositories
-            services.AddScoped(serviceProvider => new SemaphoreSlim(rootConfig.SemaphoreMaxCount, rootConfig.SemaphoreMaxCount));
+            // Semaphore for repositories
+            // TODO: test singleton
+            services.AddSingleton(serviceProvider => new SemaphoreSlim(rootConfig.SemaphoreMaxCount, rootConfig.SemaphoreMaxCount));
 
             services.AddMemoryCache();
 

@@ -20,7 +20,15 @@ namespace RapidCMS.Core.Abstractions.Data
         /// <summary>
         /// Expression corresponding to the selected data view. Can be directly inserted into IQueryable.Where.
         /// </summary>
+        [Obsolete]
         Expression<Func<TEntity, bool>>? DataViewExpression { get; }
+
+        /// <summary>
+        /// Method that applies the effective data view selected by the user. 
+        /// </summary>
+        /// <param name="queryable">Queryable that will be returned with additional Where specified in DataViewBuilder.</param>
+        /// <returns></returns>
+        IQueryable<TEntity> ApplyDataView(IQueryable<TEntity> queryable);
 
         /// <summary>
         /// Method that applies the effective ordering specified by the user. 

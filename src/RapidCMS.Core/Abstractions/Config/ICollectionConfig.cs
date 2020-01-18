@@ -4,13 +4,12 @@ using System.Linq.Expressions;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Abstractions.Config
 {
     public interface ICollectionConfig
     {
-        List<ICollectionConfig> Collections { get; set; }
+        List<ICollectionConfig> Collections { get; }
         string Alias { get; }
     }
 
@@ -82,25 +81,6 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <param name="configure">Action used to configure the ListEditor</param>
         /// <returns></returns>
         ICollectionConfig<TEntity> SetListEditor(Action<IListEditorConfig<TEntity>> configure);
-
-        /// <summary>
-        /// Sets the ListEditor of this collection
-        /// </summary>
-        /// <param name="listEditorType">Controls how the ListEditor is displayed</param>
-        /// <param name="configure">Action used to configure the ListEditor</param>
-        /// <returns></returns>
-        ICollectionConfig<TEntity> SetListEditor(ListType listEditorType, Action<IListEditorConfig<TEntity>> configure);
-
-        /// <summary>
-        /// Sets the ListEditor of this collection
-        /// </summary>
-        /// <param name="listEditorType">Controls how the ListEditor is displayed</param>
-        /// <param name="emptyVariantColumnVisibility">Controls whether empty columns in the table should be collapsed. Only required when the
-        /// collection uses multiple EntityVariants, with seperate sets of properties which are not shared between the variants. Collapsing
-        /// the empty cell will reduce the number of columns required, and makes the table more readable.</param>
-        /// <param name="configure">Action used to configure the ListEditor</param>
-        /// <returns></returns>
-        ICollectionConfig<TEntity> SetListEditor(ListType listEditorType, EmptyVariantColumnVisibility emptyVariantColumnVisibility, Action<IListEditorConfig<TEntity>> configure);
 
         /// <summary>
         /// Sets the ListView of this collection
