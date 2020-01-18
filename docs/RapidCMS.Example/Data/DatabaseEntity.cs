@@ -1,5 +1,5 @@
 ﻿using System;
-using RapidCMS.Common.Data;
+using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Example.Data
 {

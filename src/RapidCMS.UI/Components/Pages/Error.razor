@@ -2,8 +2,8 @@
 
 @layout MainLayout
 
-@inject IExceptionHelper ExceptionHelper
-@inject IMetadataProvider Metadata
+@inject IExceptionService ExceptionService
+@inject ICms Cms
 
 <div class="content">
     <p>An errror occured when your request was made.</p>
@@ -11,9 +11,9 @@
 </div>
 
 @{
-    if (Metadata.IsDevelopment)
+    if (Cms.IsDevelopment)
     {
-        var ex = ExceptionHelper.GetLatestException();
+        var ex = ExceptionService.GetLatestException();
 
         if (ex != null)
         {

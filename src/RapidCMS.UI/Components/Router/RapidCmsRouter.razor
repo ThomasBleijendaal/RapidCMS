@@ -35,12 +35,12 @@
     private RenderFragment? CustomLoginStatus { get; set; }
 
     [Inject]
-    private ICustomRegistrationProvider Registrations { get; set; }
+    private ILogin LoginRegistration { get; set; } = default!;
 
     protected override async Task OnParametersSetAsync()
     {
-        CustomLoginScreen = Registrations.CustomLoginScreenRegistration.ToRenderFragment();
-        CustomLoginStatus = Registrations.CustomLoginStatusRegistration.ToRenderFragment();
+        CustomLoginScreen = LoginRegistration.CustomLoginScreenRegistration.ToRenderFragment();
+        CustomLoginStatus = LoginRegistration.CustomLoginStatusRegistration.ToRenderFragment();
 
         await base.OnParametersSetAsync();
     }

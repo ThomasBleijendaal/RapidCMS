@@ -16,14 +16,14 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.100
-    - name: Build Common
-      run: dotnet build --configuration Release ./src/RapidCMS.Common/RapidCMS.Common.csproj
+    - name: Build Core
+      run: dotnet build --configuration Release ./src/RapidCMS.Core/RapidCMS.Core.csproj
     - name: Build Repositories
       run: dotnet build --configuration Release ./src/RapidCMS.Repositories/RapidCMS.Repositories.csproj
     - name: Build UI
       run: dotnet build --configuration Release ./src/RapidCMS.UI/RapidCMS.UI.csproj
-    - name: Publish Common
-      run: dotnet nuget push ./src/RapidCMS.Common/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json
+    - name: Publish Core
+      run: dotnet nuget push ./src/RapidCMS.Core/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json
     - name: Publish Repositories
       run: dotnet nuget push ./src/RapidCMS.Repositories/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json
     - name: Publish UI

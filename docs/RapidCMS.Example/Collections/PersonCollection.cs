@@ -1,6 +1,5 @@
-﻿using RapidCMS.Common.Enums;
-using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Models.Config;
+﻿using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Enums;
 using RapidCMS.Example.Components;
 using RapidCMS.Example.Data;
 using RapidCMS.Repositories;
@@ -12,12 +11,11 @@ namespace RapidCMS.Example.Collections
         // CRUD editor for simple POCO with recursive sub collections
         public static void AddPersonCollection(this ICmsConfig config)
         {
-            config.AddCollection<Person>("person", "People", collection =>
+            config.AddCollection<Person, JsonRepository<Person>>("person", "People", collection =>
             {
                 collection
                     .SetTreeView(x => x.Name)
                     // this repository handles all the CRUD for this collection
-                    .SetRepository<JsonRepository<Person>>()
                     // a list view is a table that displays a row (or multiple rows) of info per entity
                     .SetListView(view =>
                     {
@@ -49,6 +47,14 @@ namespace RapidCMS.Example.Collections
                         // in a list editor a New allows the user to add entities, within the list editor
                         editor.AddDefaultButton(DefaultButtonType.New);
                         editor.AddDefaultButton(DefaultButtonType.Return);
+
+                        // adding a SaveExisting button to the ListEditor allows the user to bulk-save the entire list
+                        // (only modified entities are touched)
+                        editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+
+                        // allowing reordering so the user can shuffle the entities around and save them in a new order.
+                        // the Repository must implement ReorderAsync
+                        editor.AllowReordering(true);
 
                         // a list editor can be in the shape of a table, or a set of blocks, so these sections are either rows or blocks
                         editor.AddSection(row =>

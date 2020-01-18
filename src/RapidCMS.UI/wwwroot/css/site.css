@@ -125,6 +125,21 @@ app {
         width: 1.5rem;
     }
 
+    .nav-item .paginate {
+        border: 0;
+        background: none !important;
+        color: #777;
+        padding: 0 1rem;
+    }
+
+        .nav-item .paginate:hover {
+            color: #000;
+        }
+
+        .nav-item .paginate:disabled {
+            color: #ccc;
+        }
+
     .nav-item .icon {
         width: 2rem;
         font-size: 1.1rem;
@@ -197,7 +212,6 @@ app {
     }
 
 .nested-content .nav-tabs.nav-tabs-collapse {
-    
 }
 
 
@@ -213,6 +227,7 @@ app {
     box-shadow: rgba(0,0,0,0.2) 2px 2px 3px;
     margin: 0 1rem 0;
 }
+
     .validation-summary-errors ul li {
         color: red;
     }
@@ -304,9 +319,8 @@ a.current-page {
     }
 
 .form-row {
-    padding-top: .1rem;
-    padding-bottom: .1rem;
-    margin-bottom: .5rem;
+    padding-top: .4rem;
+    padding-bottom: .3rem;
 }
 
     .form-row:last-of-type {
@@ -375,8 +389,16 @@ table td {
         background: repeating-linear-gradient( -45deg, #ced4da, #ced4da 2px, #fff 2px, #fff 4px );
     }
 
-table tr.dragover td {
-    border-top: 3px solid red;
+table tr.dragged td {
+    background: #ccc;
+}
+
+table tr.modified td {
+    background: #fff0d0;
+}
+
+table tr.dropover td {
+    border-top: 1px solid #333;
 }
 
 pre {

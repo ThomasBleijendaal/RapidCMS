@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Enums;
-using RapidCMS.Common.Forms;
-using RapidCMS.Common.Models.UI;
+using RapidCMS.Core.Enums;
+using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.UI;
 using RapidCMS.UI.Components.Displays;
 using RapidCMS.UI.Components.Editors;
 

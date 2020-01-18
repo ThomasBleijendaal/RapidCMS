@@ -1,6 +1,5 @@
-﻿using RapidCMS.Common.Enums;
-using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Models.Config;
+﻿using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Enums;
 using RapidCMS.Example.Components;
 using RapidCMS.Example.Data;
 using RapidCMS.Repositories;
@@ -13,15 +12,14 @@ namespace RapidCMS.Example.Collections
         public static void AddUserCollection(this ICmsConfig config)
         {
             // the CMS users https://ionicons.com/, so use the name of any Ion Icon as icon for a collection
-            config.AddCollection<User>("user", icon: "contacts", "Users", collection =>
+            config.AddCollection<User, JsonRepository<User>>("user", icon: "contacts", "Users", collection =>
             {
                 collection
                     .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
-                    .SetRepository<JsonRepository<User>>()
                     .SetListEditor(editor =>
                     {
                         // you can control the number of entities on a single page
-                        editor.SetPageSize(1);
+                        editor.SetPageSize(2);
 
                         editor.AddDefaultButton(DefaultButtonType.Return);
                         editor.AddDefaultButton(DefaultButtonType.New);

@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Models.UI;
+﻿using System;
+using Microsoft.AspNetCore.Components;
+using RapidCMS.Core.Models.UI;
 
 namespace RapidCMS.UI.Components.Sections
 {
     public class BaseSection : ComponentBase
     {
         [Parameter] public SectionUI? Section { get; set; }
+
+        protected Guid SectionId { get; } = Guid.NewGuid();
     }
 }

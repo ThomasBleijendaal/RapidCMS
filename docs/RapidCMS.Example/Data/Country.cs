@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Forms.Validation;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Forms.Validation;
 using RapidCMS.Example.ValidationAttributes;
 
 namespace RapidCMS.Example.Data
@@ -14,12 +14,12 @@ namespace RapidCMS.Example.Data
         public int Id { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [MaxTwo]
         public List<Person> People { get; set; } = new List<Person>();
 
-        string IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value); }
+        string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? "0"); }
 
         public object Clone()
         {
@@ -44,7 +44,7 @@ namespace RapidCMS.Example.Data
             [Required]
             [MinLength(8)]
             [MaxLength(10)]
-            public string Continent { get; set; }
+            public string? Continent { get; set; }
         }
     }
 }

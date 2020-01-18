@@ -3,7 +3,7 @@
         @foreach (var message in MessageService.Messages)
         {
             <div class="@CssHelper.GetMessageClass(message.Type)" role="alert">
-                @message.Message
+                @message.Content
             </div>
         }
     </div>

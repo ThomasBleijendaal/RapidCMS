@@ -14,7 +14,7 @@
 
     // This code below is only an example.
     // Please do not use the IRepository based classes in your components. (and you can't, since you cannot access IRepository)
-    [Inject] private JsonRepository<User> Repository { get; set; }
+    [Inject] private JsonRepository<User> Repository { get; set; } = default!;
 
     async Task ResetPasswordsAsync()
     {
@@ -27,7 +27,7 @@
             var typedUser = (User)user;
             typedUser.Password = "Reset";
 
-            await repo.UpdateAsync(EditContext);
+            await repo.UpdateAsync(new Core.Forms.EditContext(EditContext.CollectionAlias, typedUser, EditContext.Parent, EditContext.UsageType, EditContext.ServiceProvider));
         }
 
         // CrudType Refresh refreshes the data in the view

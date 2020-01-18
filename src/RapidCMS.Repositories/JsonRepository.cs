@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
-using RapidCMS.Common.Data;
+using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Repositories
 {

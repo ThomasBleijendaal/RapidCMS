@@ -28,13 +28,16 @@
 
     private async Task HandleClick(MouseEventArgs args)
     {
-        Field!.SortDescending =
-            Field.SortDescending == OrderByType.Ascending
-            ? OrderByType.Descending
-            : Field.SortDescending == OrderByType.Descending
-            ? OrderByType.None
-            : OrderByType.Ascending;
+        if (Field?.IsSortable() ?? false)
+        {
+            Field!.SortDescending =
+                Field.SortDescending == OrderByType.Ascending
+                ? OrderByType.Descending
+                : Field.SortDescending == OrderByType.Descending
+                ? OrderByType.None
+                : OrderByType.Ascending;
 
-        await OnPageChanged.InvokeAsync(1);
+            await OnPageChanged.InvokeAsync(1);
+        }
     }
 }

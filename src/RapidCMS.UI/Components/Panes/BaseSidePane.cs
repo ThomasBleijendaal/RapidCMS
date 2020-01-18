@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Enums;
-using RapidCMS.Common.Forms;
-using RapidCMS.Common.Services.SidePane;
+using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Enums;
+using RapidCMS.Core.Forms;
 
 namespace RapidCMS.UI.Components.Panes
 {

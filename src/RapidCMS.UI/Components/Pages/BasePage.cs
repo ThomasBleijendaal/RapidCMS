@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using RapidCMS.Common;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Enums;
-using RapidCMS.Common.Exceptions;
-using RapidCMS.Common.Helpers;
-using RapidCMS.Common.Models.Commands;
+using RapidCMS.Core;
+using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Enums;
+using RapidCMS.Core.Exceptions;
+using RapidCMS.Core.Models.Commands;
+using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.Response;
 
 namespace RapidCMS.UI.Components.Pages
 {
@@ -16,25 +16,27 @@ namespace RapidCMS.UI.Components.Pages
     {
         private UpdateParameterCommand? _previousParameterCommand = null;
 
-        [Inject] private NavigationManager NavigationManager { get; set; }
-        [Inject] private IExceptionHelper ExceptionHelper { get; set; }
-        [Inject] private IJSRuntime JSRuntime { get; set; }
+        [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+        [Inject] private IExceptionService ExceptionService { get; set; } = default!;
 
-        [Parameter] public string Action { get; set; }
-        [Parameter] public string CollectionAlias { get; set; }
-        [Parameter] public string VariantAlias { get; set; }
-        [Parameter] public string? Path { get; set; } = null;
-        [Parameter] public string? Id { get; set; } = null;
+        [Parameter] public string Action { get; set; } = default!;
+        [Parameter] public string CollectionAlias { get; set; } = default!;
+        [Parameter] public string VariantAlias { get; set; } = default!;
+        [Parameter] public string? Path { get; set; } = default!;
+        [Parameter] public string? Id { get; set; } = default!;
 
+        [Obsolete("In everything except init")]
         protected ParentPath? GetParentPath()
         {
             return ParentPath.TryParse(Path);
         }
 
-        protected async Task HandleViewCommandAsync(ViewCommand command)
+        protected async Task HandleViewCommandAsync(ViewCommandResponseModel viewCommand)
         {
             try
             {
+                var command = viewCommand?.ViewCommand;
+
                 if (command == null)
                 {
                     return;
@@ -136,6 +138,7 @@ namespace RapidCMS.UI.Components.Pages
 
         protected void HandleException(Exception ex)
         {
+            // meh
             if (ex is UnauthorizedAccessException)
             {
                 NavigationManager.NavigateTo("/unauthorized");
@@ -147,7 +150,7 @@ namespace RapidCMS.UI.Components.Pages
             }
             else
             {
-                ExceptionHelper.StoreException(ex);
+                ExceptionService.StoreException(ex);
 
                 NavigationManager.NavigateTo("/error");
             }
@@ -158,6 +161,7 @@ namespace RapidCMS.UI.Components.Pages
             return Task.CompletedTask;
         }
 
+        [Obsolete("In everything except init")]
         protected UsageType GetUsageType()
         {
             var type = Action switch

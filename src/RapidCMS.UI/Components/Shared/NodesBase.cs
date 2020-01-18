@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Services;
+using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.UI.Components.Shared
 {
@@ -10,9 +10,9 @@ namespace RapidCMS.UI.Components.Shared
     {
         private IDisposable? _eventHandle;
 
-        [Inject] protected ITreeService TreeService { get; set; }
+        [Inject] protected ITreeService TreeService { get; set; } = default!;
 
-        [Parameter] public string CollectionAlias { get; set; }
+        [Parameter] public string CollectionAlias { get; set; } = default!;
 
         [Parameter] public ParentPath? ParentPath { get; set; } = null;
 

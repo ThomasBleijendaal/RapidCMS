@@ -5,7 +5,7 @@
 @page "/{Action}/{CollectionAlias}"
 @page "/{Action}/{Path}/{CollectionAlias}"
 
-@if (RootEditContext == null || ListUI == null)
+@if (ListContext == null || ListUI == null)
 {
     <div class="content">
         <p>Loading..</p>
@@ -13,7 +13,7 @@
 }
 else
 {
-    <CascadingEditContext EditContext=@RootEditContext>
+    <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
         <Tabbar Tabs="Tabs" SearchBarVisible="ListUI.SearchBarVisible" OnSearch="SearchAsync" OnTabChange="TabChangeAsync" />
         <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
     </CascadingEditContext>
@@ -27,6 +27,7 @@ else
                           CurrentPage="CurrentPage"
                           MaxPage="MaxPage"
                           OnButtonClick="NodeButtonOnClickAsync"
+                          OnRowDragged="OnRowDraggedAsync"
                           OnPageChanged="PageChangedAsync" />
         }
         else if (ListUI.ListType == ListType.Block)

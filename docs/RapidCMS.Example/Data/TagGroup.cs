@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using RapidCMS.Common.Data;
+using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Example.Data
 {
     public class TagGroup : IEntity, ICloneable
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public string? Name { get; set; }
 
         public List<Tag> Tags { get; set; } = new List<Tag>();
@@ -26,7 +25,7 @@ namespace RapidCMS.Example.Data
 
     public class Tag : IEntity, ICloneable
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public string? Name { get; set; }
 
         public object Clone()

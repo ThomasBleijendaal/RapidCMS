@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Forms;
-using RapidCMS.Common.Models.Metadata;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Repositories
 {
@@ -15,7 +17,7 @@ namespace RapidCMS.Repositories
     /// Use *only* List<TRelatedEntity> properties for relations.
     /// </summary>
     /// <typeparam name="TEntity">Entity to store</typeparam>
-    public class InMemoryRepository<TEntity> : BaseRepository<string, TEntity>
+    public class InMemoryRepository<TEntity> : BaseRepository<TEntity>
         where TEntity : class, IEntity, ICloneable, new()
     {
         protected Dictionary<string, List<TEntity>> _data = new Dictionary<string, List<TEntity>>();
@@ -70,7 +72,7 @@ namespace RapidCMS.Repositories
 
             query.HasMoreData(GetListForParent(parent).Count > (query.Skip + query.Take));
 
-            return Task.FromResult(data); 
+            return Task.FromResult(data);
         }
 
         public override Task<TEntity?> GetByIdAsync(string id, IParent? parent)
@@ -94,11 +96,6 @@ namespace RapidCMS.Repositories
             return Task.FromResult(new TEntity());
         }
 
-        public override string ParseKey(string id)
-        {
-            return id;
-        }
-
         // using editContext overload of UpdateAsync, you can access the state of the edit form
         // with this, you can check whether fields were edited (using editContext.IsModified(..)) 
         public override async Task UpdateAsync(IEditContext<TEntity> editContext)
@@ -113,6 +110,30 @@ namespace RapidCMS.Repositories
 
             list.Insert(index, newEntity);
             list.RemoveAt(index + 1);
+        }
+
+        public override Task ReorderAsync(string? beforeId, string id, IParent? parent)
+        {
+            var parentId = parent?.Entity.Id ?? string.Empty;
+
+            var entity = _data[parentId].FirstOrDefault(x => x.Id == id);
+            if (entity == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            _data[parentId].Remove(entity);
+            if (string.IsNullOrWhiteSpace(beforeId))
+            {
+                _data[parentId].Add(entity);
+            }
+            else
+            {
+                var index = _data[parentId].FindIndex(x => x.Id == beforeId);
+                _data[parentId].Insert(index, entity);
+            }
+
+            return Task.CompletedTask;
         }
 
         private async Task HandleRelationsAsync(TEntity entity, IRelationContainer? relations)
@@ -133,7 +154,7 @@ namespace RapidCMS.Repositories
                         {
                             var inMemoryRepo = _serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(r.RelatedEntity)) as IRepository;
                             var jsonRepo = _serviceProvider.GetService(typeof(JsonRepository<>).MakeGenericType(r.RelatedEntity)) as IRepository;
-                            
+
                             var repo = inMemoryRepo ?? jsonRepo;
 
                             if (repo != null)

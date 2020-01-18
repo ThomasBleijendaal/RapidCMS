@@ -14,7 +14,13 @@
 
         @if (Section.Elements != null)
         {
-            <tr>
+            <tr draggable=@(UI.Reorderable ? "true" : "false")
+                @ondragstart="async (args) => DragInteraction.DragStart(args, EditContext.Entity.Id!)"
+                @ondragenter="async (args) => DragInteraction.DragEnter(args, EditContext.Entity.Id!)"
+                @ondragend="DragInteraction.DragEnd"
+                class="@(DragInteraction.IsDraggedOver(EditContext.Entity.Id!) ? "dropover" : "")
+                    @(DragInteraction.IsDragged(EditContext.Entity.Id!) ? "dragged" : "")
+                    @(EditContext.IsModified() || EditContext.IsReordered() ? "modified" : "")">
                 @{
                     foreach (var element in Section.Elements)
                     {
@@ -71,6 +77,24 @@
 @code {
     private bool CollapseEmptyCells => UI.EmptyVariantColumnVisibility == EmptyVariantColumnVisibility.Collapse;
 
-    [Parameter] public ListUI UI { get; set; }
+    [Parameter] public ListUI UI { get; set; } = default!;
     [Parameter] public EventCallback<ButtonClickEventArgs> OnButtonClick { get; set; }
+    [Parameter] public IDragInteraction DragInteraction { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        DragInteraction.DragStateChange += OnDragStateChange;
+    }
+
+    ~RowSection()
+    {
+        DragInteraction.DragStateChange -= OnDragStateChange;
+    }
+
+    private void OnDragStateChange(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
 }

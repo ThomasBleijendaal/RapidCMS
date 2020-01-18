@@ -2,7 +2,6 @@
 
 <button type="button" 
         class="btn @(Model.IsPrimary ? "btn-primary" : (Model.ShouldConfirm) ? "btn-danger" : "btn-light")" 
-        @onclick=@(async (MouseEventArgs a) => await ButtonClickAsync())
-        disabled=@(!FormIsValid && Model.RequiresValidForm ? "disabled" : null)>
+        @onclick=@(async (MouseEventArgs a) => await ButtonClickAsync())>
     <i class="icon ion-md-@Model.Icon"></i> @Model.Label
 </button>

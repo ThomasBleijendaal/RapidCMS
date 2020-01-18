@@ -3,35 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using RapidCMS.Common.Data;
-using RapidCMS.Common.Extensions;
-using RapidCMS.Common.Forms;
-using RapidCMS.Common.Models.UI;
-using RapidCMS.Common.Resolvers.UI;
-using RapidCMS.Common.Services;
-using RapidCMS.Common.Services.UI;
+using RapidCMS.Core.Abstractions.Factories;
+using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.EventArgs;
+using RapidCMS.Core.Models.Request;
+using RapidCMS.Core.Models.Response;
+using RapidCMS.Core.Models.UI;
 using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Components.Pages
 {
     public abstract class BaseCollection : BasePage
     {
-        [Inject] protected IEditContextService EditContextService { get; set; }
-        [Inject] protected IEditorService EditorService { get; set; }
+        [Inject] protected IPresentationService PresentationService { get; set; } = default!;
+        [Inject] protected IInteractionService InteractionService { get; set; } = default!;
+        [Inject] protected IUIResolverFactory UIResolverFactory { get; set; } = default!;
 
-        protected EditContext? RootEditContext;
+        protected ListContext? ListContext { get; set; }
 
-        protected IEnumerable<ButtonUI>? Buttons;
-        protected IEnumerable<(EditContext editContext, IEnumerable<SectionUI> sections)>? Sections;
-        protected IEnumerable<TabUI>? Tabs;
+        protected IEnumerable<ButtonUI>? Buttons { get; set; }
+        protected IEnumerable<(EditContext editContext, IEnumerable<SectionUI> sections)>? Sections { get; set; }
+        protected IEnumerable<TabUI>? Tabs { get; set; }
 
-        protected IListUIResolver? UIResolver;
-        protected ListUI? ListUI;
+        protected IListUIResolver? UIResolver { get; set; }
+        protected ListUI? ListUI { get; set; }
 
-        protected int? ActiveTab = null;
-        protected string? SearchTerm = null;
-        protected int CurrentPage = 1;
-        protected int? MaxPage = null;
+        protected int? ActiveTab { get; set; } = null;
+        protected string? SearchTerm { get; set; } = null;
+        protected int CurrentPage { get; set; } = 1;
+        protected int? MaxPage { get; set; } = null;
 
         protected override async Task LoadDataAsync(IEnumerable<string>? reloadEntityIds = null)
         {
@@ -41,22 +45,20 @@ namespace RapidCMS.UI.Components.Pages
                 {
                     var parentPath = GetParentPath();
 
-                    var rootEditContext = await EditContextService.GetRootAsync(GetUsageType(), CollectionAlias, parentPath);
-
-                    UIResolver = await EditorService.GetListUIResolverAsync(GetUsageType(), CollectionAlias);
-
+                    UIResolver = await UIResolverFactory.GetListUIResolverAsync(GetUsageType(), CollectionAlias);
                     ListUI = UIResolver.GetListDetails();
-                    Buttons = await UIResolver.GetButtonsForEditContextAsync(rootEditContext);
-                    Tabs = await UIResolver.GetTabsAsync(rootEditContext);
 
                     CurrentPage = 1;
                     MaxPage = null;
                     ActiveTab = null;
                     SearchTerm = null;
 
-                    await LoadSectionsAsync();
+                    var listContext = await LoadSectionsAsync();
 
-                    RootEditContext = rootEditContext;
+                    Buttons = await UIResolver.GetButtonsForEditContextAsync(listContext.ProtoEditContext);
+                    Tabs = await UIResolver.GetTabsAsync(listContext.ProtoEditContext);
+
+                    ListContext = listContext;
                     Sections?.ForEach(x => x.editContext.OnFieldChanged += (s, a) => StateHasChanged());
                 }
                 else
@@ -68,7 +70,7 @@ namespace RapidCMS.UI.Components.Pages
             }
             catch
             {
-                RootEditContext = null;
+                ListContext = null;
                 Sections = null;
                 ListUI = null;
 
@@ -104,17 +106,24 @@ namespace RapidCMS.UI.Components.Pages
             StateHasChanged();
         }
 
-        protected async Task LoadSectionsAsync()
+        protected async Task<ListContext> LoadSectionsAsync()
         {
-            var query = Query.Create(ListUI.PageSize, CurrentPage, SearchTerm, ActiveTab);
+            var query = Query.Create(ListUI!.PageSize, CurrentPage, SearchTerm, ActiveTab);
 
             if (ListUI.OrderBys != null)
             {
                 query.SetOrderByExpressions(ListUI.OrderBys);
             }
 
-            var editContexts = await EditContextService.GetEntitiesAsync(GetUsageType(), CollectionAlias, GetParentPath(), query);
-            Sections = await editContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
+            var listContext = await PresentationService.GetEntitiesAsync(new GetEntitiesOfParentRequestModel
+            {
+                CollectionAlias = CollectionAlias,
+                ParentPath = GetParentPath(),
+                Query = query,
+                UsageType = GetUsageType()
+            });
+
+            await SetSectionsAsync(listContext);
 
             if (!query.MoreDataAvailable)
             {
@@ -131,6 +140,13 @@ namespace RapidCMS.UI.Components.Pages
             {
                 MaxPage = null;
             }
+
+            return listContext;
+        }
+
+        private async Task SetSectionsAsync(ListContext listContext)
+        {
+            Sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
         }
 
         protected async Task ReloadSectionsAsync(IEnumerable<string> reloadEntityIds)
@@ -144,7 +160,14 @@ namespace RapidCMS.UI.Components.Pages
             {
                 if (reloadEntityIds.Contains(x.editContext.Entity.Id))
                 {
-                    var reloadedEditContext = await EditContextService.GetEntityAsync(x.editContext.UsageType, CollectionAlias, null, GetParentPath(), x.editContext.Entity.Id);
+                    var reloadedEditContext = await PresentationService.GetEntityAsync(new GetEntityRequestModel
+                    {
+                        CollectionAlias = CollectionAlias,
+                        Id = x.editContext.Entity.Id,
+                        ParentPath = x.editContext.Parent?.GetParentPath(),
+                        UsageType = x.editContext.UsageType
+                    });
+
                     return (reloadedEditContext, await UIResolver.GetSectionsForEditContextAsync(reloadedEditContext));
                 }
                 else
@@ -160,13 +183,14 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
-                var command = await EditContextService.ProcessListActionAsync(
-                    GetUsageType(), 
-                    CollectionAlias, 
-                    GetParentPath(),
-                    Sections.Select(x => x.editContext), 
-                    args.ViewModel.ButtonId, 
-                    args.Data);
+                var command = await InteractionService.InteractAsync<PersistEntitiesRequestModel, ListViewCommandResponseModel>(new PersistEntitiesRequestModel
+                {
+                    ActionId = args.ViewModel.ButtonId,
+                    CollectionAlias = CollectionAlias,
+                    CustomData = args.Data,
+                    ListContext = ListContext!,
+                    UsageType = GetUsageType()
+                });
 
                 await HandleViewCommandAsync(command);
             }
@@ -180,16 +204,54 @@ namespace RapidCMS.UI.Components.Pages
         {
             try
             {
-                var command = await EditContextService.ProcessListActionAsync(
-                    args.EditContext.UsageType, 
-                    CollectionAlias, 
-                    GetParentPath(), 
-                    args.EditContext.Entity.Id, 
-                    args.EditContext, 
-                    args.ViewModel.ButtonId, 
-                    args.Data);
+                var command = await InteractionService.InteractAsync<PersistEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistEntityRequestModel
+                {
+                    ActionId = args.ViewModel.ButtonId,
+                    CustomData = args.Data,
+                    EditContext = args.EditContext
+                });
 
                 await HandleViewCommandAsync(command);
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
+        }
+
+        protected async Task OnRowDraggedAsync(RowDragEventArgs args)
+        {
+            try
+            {
+                if (ListContext == null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                var editContext = ListContext.EditContexts.FirstOrDefault(x => x.Entity.Id == args.SubjectId);
+                if (editContext == null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                editContext.NotifyReordered(args.TargetId);
+
+                ListContext.EditContexts.Remove(editContext);
+                
+                if (args.TargetId == null)
+                {
+                    ListContext.EditContexts.Add(editContext);
+                }
+                else
+                {
+                    ListContext.EditContexts.Insert(
+                        ListContext.EditContexts.FindIndex(x => x.Entity.Id == args.TargetId),
+                        editContext);
+                }
+
+                await SetSectionsAsync(ListContext);
+
+                StateHasChanged();
             }
             catch (Exception ex)
             {

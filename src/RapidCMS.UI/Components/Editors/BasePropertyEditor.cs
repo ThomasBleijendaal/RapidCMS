@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
-using RapidCMS.Common.Forms;
-using RapidCMS.Common.Models.Metadata;
+using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Forms;
 
 namespace RapidCMS.UI.Components.Editors
 {
