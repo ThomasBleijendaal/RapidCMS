@@ -9,7 +9,7 @@ namespace RapidCMS.Example.Handlers
 {
     public class Base64ImageUploadHandler : IFileUploadHandler
     {
-        public async Task<object> SaveFileAsync(Stream stream)
+        public async Task<object> SaveFileAsync(IFileInfo fileInfo, Stream stream)
         {
             using (stream)
             {

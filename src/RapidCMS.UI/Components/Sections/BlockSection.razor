@@ -36,20 +36,36 @@
             }
             else if (element is SubCollectionUI subCollection)
             {
-                var parentPath = ParentPath.AddLevel(EditContext.Parent?.GetParentPath(), EditContext.CollectionAlias, EditContext.Entity.Id);
+                var parentPath = ParentPath.AddLevel(EditContext.Parent?.GetParentPath(), EditContext.CollectionAlias, EditContext.Entity.Id!);
+
+                var state = new NavigationStateModel
+                {
+                    PageType = PageType.Collection,
+                    UsageType = EditContext.UsageType.HasFlag(UsageType.View) ? UsageType.View : UsageType.Edit,
+
+                    CollectionAlias = subCollection.CollectionAlias,
+                    ParentPath = parentPath
+                };
 
                 <div class="nested-content">
-                    <RapidCMS.UI.Components.Pages.Collection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.View : Constants.Edit)
-                                                             CollectionAlias=@subCollection.CollectionAlias
-                                                             Path=@parentPath.ToPathString() />
+                    <RootSection InitialState="state" />
                 </div>
             }
             else if (element is RelatedCollectionUI relatedCollection)
             {
+                var related = new RelatedEntity(EditContext.Entity);
+
+                var state = new NavigationStateModel
+                {
+                    PageType = PageType.Collection,
+                    UsageType = EditContext.UsageType.HasFlag(UsageType.View) ? UsageType.View : UsageType.Edit,
+
+                    CollectionAlias = relatedCollection.CollectionAlias,
+                    Related = related
+                };
+
                 <div class="nested-content">
-                    <RapidCMS.UI.Components.Pages.RelationCollection Action=@(EditContext.UsageType.HasFlag(UsageType.View) ? Constants.View : Constants.Edit)
-                                                                     CollectionAlias=@relatedCollection.CollectionAlias
-                                                                     RelatedEntity=@EditContext.Entity />
+                    <RootSection InitialState="state" />
                 </div>
             }
         }

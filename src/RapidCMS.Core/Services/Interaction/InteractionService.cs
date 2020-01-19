@@ -16,11 +16,12 @@ namespace RapidCMS.Core.Services.Persistence
             _interactionDispatchers = interactionDispatchers;
         }
 
-        public Task<TResponse> InteractAsync<TRequest, TResponse>(TRequest request)
+        // TODO: change to  navigationState ViewContext to allow for more flexibility
+        public Task<TResponse> InteractAsync<TRequest, TResponse>(TRequest request, INavigationStateService navigationState)
         {
             if (_interactionDispatchers.FirstOrDefault(x => x.GetType().GetInterfaces().Any(i => i == typeof(IInteractionDispatcher<TRequest, TResponse>))) is IInteractionDispatcher<TRequest, TResponse> dispatcher)
             {
-                return dispatcher.InvokeAsync(request);
+                return dispatcher.InvokeAsync(request, navigationState);
             }
             else
             {

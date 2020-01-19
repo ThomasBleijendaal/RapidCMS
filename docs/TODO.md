@@ -17,8 +17,9 @@ TODO:
     [v] Support for configurable preview component
 [v] Add specialty collection via AddSubCollectionList / AddRelatedCollectionList instead of weak alias binding
     [v] Remove ListType and EmptyVariantColumnVisibility from SetListEditor overloads and put it in config action
+[] Be able to disable buttons (and validate state in Dispatcher)
+[] Bring back DataView<> and builder 
 
-2.0
 [] All config checked during startup
     [v] Check Repository compatibility with Entity
     []

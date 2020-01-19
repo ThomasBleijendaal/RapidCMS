@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("RapidCMS.Core.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -12,6 +13,8 @@ namespace RapidCMS.Core
     {
         public const string Add = "add";
         public const string Edit = "edit";
+
+        [Obsolete]
         public const string List = "list";
         public const string New = "new";
         public const string Pick = "pick";

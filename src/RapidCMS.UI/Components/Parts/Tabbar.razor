@@ -16,7 +16,19 @@
         @if (SearchBarVisible)
         {
             <li class="nav-item search">
-                <input type="search" placeholder="Search.." class="form-control" @onchange="Search" />
+                <div class="input-group">
+                    <input type="search"
+                           placeholder="Search.."
+                           class="form-control"
+                           value="@searchTerm"
+                           @onchange="(args) => Search((string)args.Value)" />
+                    <div class="input-group-append">
+                        <button class="btn" 
+                                @onclick="(args) => { searchTerm = string.Empty; Search(string.Empty); }">
+                            <i class="icon ion-md-close"></i>
+                        </button>
+                    </div>
+                </div>
             </li>
         }
     </ul>
@@ -24,6 +36,7 @@
 
 @code {
     int? activeTab = null;
+    string? searchTerm = null;
     CancellationTokenSource cts = new CancellationTokenSource();
 
     [Parameter] public IEnumerable<TabUI>? Tabs { get; set; }
@@ -31,15 +44,16 @@
     [Parameter] public EventCallback<string?> OnSearch { get; set; }
     [Parameter] public EventCallback<int?> OnTabChange { get; set; }
 
+    [Parameter] public NavigationStateModel? State { get; set; }
+
     protected override void OnInitialized()
     {
-        activeTab = Tabs?.FirstOrDefault()?.Id;
+        activeTab = State?.ActiveTab ?? Tabs?.FirstOrDefault()?.Id;
+        searchTerm = State?.SearchTerm;
     }
 
-    async void Search(ChangeEventArgs args)
+    async void Search(string searchValue)
     {
-        var searchValue = (string)args.Value;
-
         cts.Cancel();
         cts = new CancellationTokenSource();
 
@@ -51,6 +65,8 @@
                 (string.IsNullOrWhiteSpace(searchValue))
                 ? null
                 : searchValue);
+
+            StateHasChanged();
         }
     }
 

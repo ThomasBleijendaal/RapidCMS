@@ -1,0 +1,68 @@
+﻿@page "/collection/{Action}/{CollectionAlias}"
+@page "/collection/{Action}/{Path}/{CollectionAlias}"
+@page "/node/{Action}/{CollectionAlias}/{VariantAlias}/{Id}"
+@page "/node/{Action}/{Path}/{CollectionAlias}/{VariantAlias}/{Id}"
+
+@layout MainLayout
+
+@if (State != null)
+{
+    <RootSection InitialState="State" />
+}
+
+@code {
+    private NavigationStateModel? State;
+
+    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+
+    [Parameter] public string Action { get; set; } = default!;
+    [Parameter] public string CollectionAlias { get; set; } = default!;
+    [Parameter] public string VariantAlias { get; set; } = default!;
+    [Parameter] public string? Path { get; set; } = default!;
+    [Parameter] public string? Id { get; set; } = default!;
+
+    protected override void OnParametersSet()
+    {
+        State = new NavigationStateModel
+        {
+            PageType = GetPageType(),
+            UsageType = GetUsageType(),
+            CollectionAlias = CollectionAlias,
+            Id = Id,
+            ParentPath = ParentPath.TryParse(Path),
+            VariantAlias = VariantAlias
+        };
+    }
+
+    protected UsageType GetUsageType()
+    {
+        var type = Action switch
+        {
+            Constants.Edit => UsageType.Edit,
+            Constants.New => UsageType.New,
+            Constants.Add => UsageType.Add,
+            Constants.View => UsageType.View,
+            Constants.List => UsageType.List,
+            Constants.Pick => UsageType.Pick,
+            _ => (UsageType)0
+        };
+
+        if (Path == null)
+        {
+            type |= UsageType.Root;
+        }
+        else
+        {
+            type |= UsageType.NotRoot;
+        }
+
+        return type;
+    }
+
+    protected PageType GetPageType()
+    {
+        return NavigationManager.Uri.Contains("/collection/")
+            ? PageType.Collection
+            : PageType.Node;
+    }
+}

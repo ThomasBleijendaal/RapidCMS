@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Tests.Repositories
@@ -23,10 +24,14 @@ namespace RapidCMS.Core.Tests.Repositories
         {
             // arrange
             var notified = false;
-            _subject.ChangeToken.RegisterChangeCallback((o) => notified = true, default);
+            _subject.ChangeToken.RegisterChangeCallback((o) =>
+            {
+                notified = true;
+            }, default);
+            var editContext = new EditContext("", new Entity { Id = "123" }, default, default, default!);
 
             // act
-            _subject.InsertAsync(default!);
+            _subject.InsertAsync(editContext);
 
             // assert
             Assert.IsTrue(notified);
@@ -37,10 +42,14 @@ namespace RapidCMS.Core.Tests.Repositories
         {
             // arrange
             var notified = false;
-            _subject.ChangeToken.RegisterChangeCallback((o) => notified = true, default);
+            _subject.ChangeToken.RegisterChangeCallback((o) =>
+            {
+                notified = true;
+            }, default);
+            var editContext = new EditContext("", new Entity { Id = "123" }, default, default, default!);
 
             // act
-            _subject.UpdateAsync(default!);
+            _subject.InsertAsync(editContext);
 
             // assert
             Assert.IsTrue(notified);
@@ -51,7 +60,10 @@ namespace RapidCMS.Core.Tests.Repositories
         {
             // arrange
             var notified = false;
-            _subject.ChangeToken.RegisterChangeCallback((o) => notified = true, default);
+            _subject.ChangeToken.RegisterChangeCallback((o) =>
+            {
+                notified = true;
+            }, default);
 
             // act
             _subject.DeleteAsync("123", default);

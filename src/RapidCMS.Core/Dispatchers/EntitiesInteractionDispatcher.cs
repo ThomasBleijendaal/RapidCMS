@@ -9,25 +9,27 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Commands;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.NavigationState;
 using RapidCMS.Core.Models.Request;
 using RapidCMS.Core.Models.Response;
 
 namespace RapidCMS.Core.Dispatchers
 {
-    internal class EntitiesInteractionDispatcher : 
-        IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>
+    internal class EntitiesInteractionDispatcher :
+        IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>,
+        IInteractionDispatcher<PersistEntitiesRequestModel, ListEditorCommandResponseModel>
     {
         private readonly ICollectionResolver _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
+        private INavigationStateService _navigationStateService;
         private readonly IConcurrencyService _concurrencyService;
         private readonly IButtonInteraction _buttonInteraction;
-        
+
         public EntitiesInteractionDispatcher(
-            ICollectionResolver collectionResolver, 
-            IRepositoryResolver repositoryResolver, 
+            ICollectionResolver collectionResolver,
+            IRepositoryResolver repositoryResolver,
             IConcurrencyService concurrencyService,
             IButtonInteraction buttonInteraction)
         {
@@ -36,16 +38,23 @@ namespace RapidCMS.Core.Dispatchers
             _concurrencyService = concurrencyService;
             _buttonInteraction = buttonInteraction;
         }
-        
-        Task<ListViewCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request)
+
+        Task<ListViewCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request, INavigationStateService navigationState)
         {
+            _navigationStateService = navigationState;
             return InvokeAsync(request, new ListViewCommandResponseModel());
+        }
+
+        Task<ListEditorCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListEditorCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request, INavigationStateService navigationState)
+        {
+            _navigationStateService = navigationState;
+            return InvokeAsync(request, new ListEditorCommandResponseModel());
         }
 
         private async Task<T> InvokeAsync<T>(PersistEntitiesRequestModel request, T response)
             where T : ViewCommandResponseModel
         {
-            var collection = _collectionResolver.GetCollection(request.CollectionAlias);
+            var collection = _collectionResolver.GetCollection(request.ListContext.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
             var (crudType, entityVariant) = await _buttonInteraction.ValidateButtonInteractionAsync(request);
@@ -57,28 +66,37 @@ namespace RapidCMS.Core.Dispatchers
                     {
                         throw new InvalidOperationException($"Button of type {CrudType.Create} must have an EntityVariant.");
                     }
-                    if (request.UsageType.HasFlag(UsageType.List))
+                    if (response is ListViewCommandResponseModel)
                     {
-                        response.ViewCommand = new NavigateCommand
+                        _navigationStateService.PushState(new NavigationStateModel
                         {
-                            Uri = UriHelper.Node(
-                                Constants.New,
-                                request.CollectionAlias,
-                                entityVariant,
-                                request.ListContext.Parent?.GetParentPath(),
-                                null)
-                        };
+                            PageType = PageType.Node,
+                            UsageType = UsageType.New,
+
+                            CollectionAlias = request.ListContext.CollectionAlias,
+                            VariantAlias = entityVariant.Alias,
+                            ParentPath = request.ListContext.Parent?.GetParentPath()
+                        });
                     }
                     else
                     {
-                        response.ViewCommand = new UpdateParameterCommand
+                        var currentState = _navigationStateService.GetCurrentState();
+
+                        _navigationStateService.PushState(new NavigationStateModel
                         {
-                            Action = Constants.New,
-                            CollectionAlias = request.CollectionAlias,
+                            PageType = PageType.Collection,
+                            UsageType = UsageType.New,
+
+                            CollectionAlias = request.ListContext.CollectionAlias,
                             VariantAlias = entityVariant.Alias,
-                            ParentPath = request.ListContext.Parent?.GetParentPath()?.ToPathString(),
-                            Id = null
-                        };
+                            ParentPath = request.ListContext.Parent?.GetParentPath(),
+
+                            // is this the best place here?
+                            ActiveTab = currentState?.ActiveTab,
+                            CurrentPage = currentState?.CurrentPage ?? 1,
+                            MaxPage = currentState?.MaxPage,
+                            SearchTerm = currentState?.SearchTerm,
+                        });
                     }
                     break;
 
@@ -96,7 +114,7 @@ namespace RapidCMS.Core.Dispatchers
                         };
 
                         await _buttonInteraction.ValidateButtonInteractionAsync(innerRequest);
-                        
+
                         if (editContext.IsModified())
                         {
                             await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(editContext));
@@ -110,58 +128,69 @@ namespace RapidCMS.Core.Dispatchers
                         affectedEntities.Add(editContext.Entity);
                     }
 
-                    response.ViewCommand = new ReloadCommand(affectedEntities.SelectNotNull(x => x.Id));
+                    response.ViewCommand = new ViewCommand
+                    {
+                        RefreshIds = affectedEntities.SelectNotNull(x => x.Id)
+                    };
                     break;
 
                 case CrudType.None:
-                    response.ViewCommand = new NoOperationCommand();
                     break;
 
                 case CrudType.Refresh:
-                    response.ViewCommand = new ReloadCommand();
+                    response.ViewCommand = new ViewCommand
+                    {
+                        ReloadData = true
+                    };
                     break;
 
                 case CrudType.Return:
-                    response.ViewCommand = new NavigateCommand
+                    if (_navigationStateService.PopState() == null)
                     {
-                        Uri = UriHelper.Collection(
-                            Constants.Edit,
-                            request.CollectionAlias,
-                            request.ListContext.Parent?.GetParentPath())
-                    };
+                        _navigationStateService.ReplaceState(new NavigationStateModel
+                        {
+                            PageType = PageType.Collection,
+                            UsageType = collection.ListEditor == null ? UsageType.List : UsageType.Edit,
+
+                            CollectionAlias = request.ListContext.CollectionAlias,
+                            ParentPath = request.ListContext.Parent?.GetParentPath()
+                        });
+                    }
                     break;
 
                 case CrudType.Up:
-                    var (newParentPath, parentCollectionAlias, parentId) = ParentPath.RemoveLevel(request.ListContext.Parent?.GetParentPath());
-
-                    if (parentCollectionAlias == null)
+                    if (_navigationStateService.PopState() == null)
                     {
-                        response.ViewCommand = new NoOperationCommand();
-                        break;
+                        var (newParentPath, parentCollectionAlias, parentId) = ParentPath.RemoveLevel(request.ListContext.Parent?.GetParentPath());
+
+                        if (parentCollectionAlias == null)
+                        {
+                            break;
+                        }
+
+                        var parentCollection = _collectionResolver.GetCollection(parentCollectionAlias);
+
+                        _navigationStateService.ReplaceState(new NavigationStateModel
+                        {
+                            PageType = PageType.Node,
+                            UsageType = parentCollection.NodeEditor == null ? UsageType.View : UsageType.Edit,
+
+                            CollectionAlias = parentCollectionAlias,
+                            ParentPath = newParentPath,
+                            VariantAlias = collection.EntityVariant.Alias,
+                            Id = parentId
+                        });
                     }
-
-                    var parentCollection = _collectionResolver.GetCollection(parentCollectionAlias);
-
-                    response.ViewCommand = new NavigateCommand
-                    {
-                        Uri = UriHelper.Node(
-                        request.UsageType.HasFlag(UsageType.Edit) ? Constants.Edit : Constants.View,
-                        parentCollectionAlias,
-                        parentCollection.EntityVariant,
-                        newParentPath,
-                        parentId)
-                    };
                     break;
 
                 case CrudType.Add:
-                    response.ViewCommand = new UpdateParameterCommand
+                    _navigationStateService.PushState(new NavigationStateModel
                     {
-                        Action = Constants.Add,
-                        CollectionAlias = request.CollectionAlias,
-                        VariantAlias = null,
-                        ParentPath = null,
-                        Id = null
-                    };
+                        PageType = PageType.Collection,
+                        UsageType = UsageType.Add,
+
+                        CollectionAlias = request.ListContext.CollectionAlias
+                    });
                     break;
 
                 default:

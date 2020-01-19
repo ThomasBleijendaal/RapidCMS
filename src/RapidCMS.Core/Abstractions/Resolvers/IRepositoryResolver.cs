@@ -3,9 +3,9 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Resolvers
 {
-    internal interface IRepositoryResolver
+    public interface IRepositoryResolver
     {
-        IRepository GetRepository(CollectionSetup collection);
-        IRepository GetRepository(string collectionAlias);
+        internal IRepository GetRepository(CollectionSetup collection);
+        public IRepository GetRepository(string collectionAlias);
     }
 }

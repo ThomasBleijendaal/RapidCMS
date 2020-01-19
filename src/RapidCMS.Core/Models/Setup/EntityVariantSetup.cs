@@ -20,7 +20,7 @@ namespace RapidCMS.Core.Models.Setup
                 return;
             }
 
-            Alias = variant.Type.FullName?.ToUrlFriendlyString() ?? throw new InvalidOperationException("The Type of an EntityVariant should have a FullName");
+            Alias = variant.Type.Name.ToUrlFriendlyString();
             Icon = variant.Icon;
             Name = variant.Name;
             Type = variant.Type;

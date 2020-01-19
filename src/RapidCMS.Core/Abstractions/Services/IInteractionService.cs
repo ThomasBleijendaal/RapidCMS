@@ -4,6 +4,6 @@ namespace RapidCMS.Core.Abstractions.Services
 {
     public interface IInteractionService
     {
-        Task<TResponse> InteractAsync<TRequest, TResponse>(TRequest request);
+        Task<TResponse> InteractAsync<TRequest, TResponse>(TRequest request, INavigationStateService navigationState);
     }
 }

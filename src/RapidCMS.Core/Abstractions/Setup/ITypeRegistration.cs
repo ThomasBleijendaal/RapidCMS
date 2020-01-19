@@ -7,6 +7,6 @@ namespace RapidCMS.Core.Abstractions.Setup
     {
         Type Type { get; }
         string Alias { get; }
-        Dictionary<string, string>? Parameters { get; }
+        Dictionary<string, object>? Parameters { get; }
     }
 }

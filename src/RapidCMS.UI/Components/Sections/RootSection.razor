@@ -1,0 +1,79 @@
+﻿@inherits BaseRootSection
+
+@if (CurrentState?.PageType == PageType.Node)
+{
+    @if (EditContext == null)
+    {
+        <div class="content">
+            <p>Loading..</p>
+        </div>
+    }
+    else
+    {
+        <CascadingEditContext EditContext=@EditContext>
+            <ButtonBar Buttons="Buttons" OnButtonClick="ButtonOnClickAsync" />
+
+            <EditContextStrayErrors />
+
+            @if (Sections != null)
+            {
+                // TODO: this could be better
+                @foreach (var section in Sections.First().sections)
+                {
+                    var renderFragment = section.ToRenderFragment();
+
+                    if (renderFragment != null)
+                    {
+                        @renderFragment
+                    }
+                    else
+                    {
+                        <BlockSection Section="section" OnButtonClick="ButtonOnClickAsync" />
+                    }
+                }
+            }
+        </CascadingEditContext>
+    }
+}
+else if (CurrentState?.PageType == PageType.Collection)
+{
+    @if (ListContext == null || ListUI == null)
+    {
+        <div class="content">
+            <p>Loading..</p>
+        </div>
+    }
+    else
+    {
+        <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
+            <Tabbar Tabs="Tabs"
+                    SearchBarVisible="ListUI.SearchBarVisible"
+                    State="CurrentState"
+                    OnSearch="SearchAsync"
+                    OnTabChange="TabChangeAsync" />
+            <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
+        </CascadingEditContext>
+
+        @if (Sections != null)
+        {
+            @if (ListUI.ListType == ListType.Table)
+            {
+                <TableSection UI="ListUI"
+                              Sections="Sections"
+                              CurrentPage="CurrentState.CurrentPage"
+                              MaxPage="CurrentState.MaxPage"
+                              OnButtonClick="NodeButtonOnClickAsync"
+                              OnRowDragged="OnRowDraggedAsync"
+                              OnPageChanged="PageChangedAsync" />
+            }
+            else if (ListUI.ListType == ListType.Block)
+            {
+                <BlocksSection Sections="Sections"
+                               CurrentPage="CurrentState.CurrentPage"
+                               MaxPage="CurrentState.MaxPage"
+                               OnButtonClick="NodeButtonOnClickAsync"
+                               OnPageChanged="PageChangedAsync" />
+            }
+        }
+    }
+}

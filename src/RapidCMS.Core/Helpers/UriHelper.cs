@@ -7,16 +7,21 @@ namespace RapidCMS.Core.Helpers
     {
         public static string Node(string action, string collectionAlias, EntityVariantSetup entityVariant, ParentPath? parentPath, string? id)
         {
+            return Node(action, collectionAlias, entityVariant.Alias, parentPath, id);
+        }
+
+        public static string Node(string action, string collectionAlias, string entityVariantAlias, ParentPath? parentPath, string? id)
+        {
             var path = parentPath?.ToPathString();
 
-            return $"/{action}{path.ToUriPart()}/{collectionAlias}/entity/{entityVariant.Alias}{id.ToUriPart()}";
+            return $"/node/{action}{path.ToUriPart()}/{collectionAlias}/{entityVariantAlias}{id.ToUriPart()}";
         }
 
         public static string Collection(string action, string collectionAlias, ParentPath? parentPath)
         {
             var path = parentPath?.ToPathString();
 
-            return $"/{action}{path.ToUriPart()}/{collectionAlias}";
+            return $"/collection/{action}{path.ToUriPart()}/{collectionAlias}";
         }
 
         private static string ToUriPart(this string? nullableString)

@@ -15,7 +15,7 @@
         return builder =>
         {
             var type = section.Type == typeof(ICollectionConfig)
-                ? typeof(Collection)
+                ? typeof(RootSection)
                 : section.Type;
 
             builder.OpenComponent(0, type);

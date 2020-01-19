@@ -17,14 +17,14 @@ namespace RapidCMS.Core.Resolvers.Repositories
             _serviceProvider = serviceProvider;
         }
 
-        public IRepository GetRepository(CollectionSetup collection)
+        IRepository IRepositoryResolver.GetRepository(CollectionSetup collection)
         {
             return (IRepository)_serviceProvider.GetRequiredService(collection.RepositoryType);
         }
 
-        public IRepository GetRepository(string collectionAlias)
+        IRepository IRepositoryResolver.GetRepository(string collectionAlias)
         {
-            return GetRepository(_collectionResolver.GetCollection(collectionAlias));
+            return (this as IRepositoryResolver).GetRepository(_collectionResolver.GetCollection(collectionAlias));
         }
     }
 }

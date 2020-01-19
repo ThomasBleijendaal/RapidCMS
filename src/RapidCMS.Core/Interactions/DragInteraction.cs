@@ -5,8 +5,6 @@ using RapidCMS.Core.Models.EventArgs;
 
 namespace RapidCMS.Core.Interactions
 {
-    // TODO: do not allow dropping elements from collection a to collection b
-
     internal class DragInteraction : IDragInteraction
     {
         public event EventHandler<RowDragEventArgs>? DragCompletion;
@@ -65,14 +63,14 @@ namespace RapidCMS.Core.Interactions
             DragStateChange?.Invoke(default, new EventArgs());
         }
 
-        public bool IsDraggedOver(string id)
+        public bool IsDraggedOver(string? id)
         {
-            return _draggedOverId == id;
+            return id != null && _draggedOverId == id;
         }
 
-        public bool IsDragged(string id)
+        public bool IsDragged(string? id)
         {
-            return _draggedId == id;
+            return id != null && _draggedId == id;
         }
 
         public bool IsDraggedOverEndZone(Guid guid)

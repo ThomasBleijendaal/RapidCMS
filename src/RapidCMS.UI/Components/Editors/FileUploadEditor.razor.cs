@@ -68,7 +68,7 @@ namespace RapidCMS.UI.Components.Editors
             UploadCompletion = 0.0;
             StateHasChanged();
 
-            var value = await FileUploadHandler.SaveFileAsync(uploadedFile);
+            var value = await FileUploadHandler.SaveFileAsync(fileInfo, uploadedFile);
 
             SetValueFromObject(value);
 

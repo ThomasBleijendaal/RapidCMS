@@ -13,8 +13,8 @@ namespace RapidCMS.Core.Abstractions.Interactions
 
         void EndZoneDragEnter(DragEventArgs args, Guid guid);
 
-        bool IsDragged(string id);
-        bool IsDraggedOver(string id);
+        bool IsDragged(string? id);
+        bool IsDraggedOver(string? id);
         bool IsDraggedOverEndZone(Guid guid);
 
         event EventHandler<RowDragEventArgs> DragCompletion;

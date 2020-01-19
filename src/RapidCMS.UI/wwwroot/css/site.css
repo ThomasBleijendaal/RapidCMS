@@ -207,6 +207,14 @@ app {
         margin: 0.3rem 0 0.3rem auto;
     }
 
+        .nav-tabs .nav-item.search .btn {
+            background: #fff;
+            border-color: #ced4da;
+            border-left: 0;
+            line-height: 0.5rem;
+            text-align: right;
+        }
+
     .nav-tabs.nav-tabs-collapse {
         margin: .2rem 1.5rem -3.2rem 0rem;
     }

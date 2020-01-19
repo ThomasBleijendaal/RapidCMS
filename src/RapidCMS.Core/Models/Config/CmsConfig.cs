@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Models.NavigationState;
 using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Models.Config
@@ -82,9 +84,17 @@ namespace RapidCMS.Core.Models.Config
             CustomDashboardSectionRegistrations.Add(
                 new CustomTypeRegistrationConfig(
                     typeof(ICollectionConfig),
-                    new Dictionary<string, string> {
-                        { "Action", edit ? Constants.Edit : Constants.View },
-                        { "CollectionAlias", collectionAlias } }));
+                    new Dictionary<string, object> {
+                        {
+                            "InitialState",
+                            new NavigationStateModel
+                            {
+                                PageType = PageType.Collection,
+                                UsageType = edit ? UsageType.Edit : UsageType.View,
+                                CollectionAlias = collectionAlias
+                            }
+                        } 
+                    }));
 
             return this;
         }
@@ -116,8 +126,8 @@ namespace RapidCMS.Core.Models.Config
             CollectionAliases.Add(alias);
 
             var configReceiver = new CollectionConfig<TEntity>(
-                alias, 
-                icon, 
+                alias,
+                icon,
                 name,
                 typeof(TRepository),
                 new EntityVariantConfig(typeof(TEntity).Name, typeof(TEntity)));

@@ -1,7 +1,7 @@
-﻿namespace RapidCMS.Core.Models.Commands
-{
-    public class NoOperationCommand : ViewCommand
-    {
+﻿//namespace RapidCMS.Core.Models.Commands
+//{
+//    public class NoOperationCommand : ViewCommand
+//    {
 
-    }
-}
+//    }
+//}

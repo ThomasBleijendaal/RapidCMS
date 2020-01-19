@@ -206,7 +206,7 @@ namespace RapidCMS.Core.Tests.Forms
             _subject.AddValidationMessage(_property, "Error");
 
             // assert
-            Assert.IsFalse(_subject.WasValidated(_property));
+            Assert.IsTrue(_subject.WasValidated(_property));
             Assert.IsFalse(_subject.IsValid(_property));
         }
 
