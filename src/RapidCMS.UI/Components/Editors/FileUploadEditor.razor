@@ -1,0 +1,33 @@
+﻿@typeparam TFileUploadHandler
+@typeparam TPreviewComponent
+
+@inherits BasePropertyEditor
+
+@Preview
+
+<input type="file"
+       @ref="_fileInput"
+       @onchange=OnFileSelectedAsync
+       disabled=@IsDisabled
+       class="form-control @(CssHelper.GetValidationClass(State)) @(UploadCompletion > 0 ? "uploading" : "")" />
+
+@if (UploadCompletion > 0.0)
+{
+    <progress value="@UploadCompletion" max="100" class="form-control" />
+}
+
+@foreach (var message in GetValidationMessages())
+{
+    <div class="invalid-feedback">
+        @message
+    </div>
+}
+
+@code  {
+    private RenderFragment Preview => (builder) =>
+    {
+        builder.OpenComponent<TPreviewComponent>(0);
+        builder.AddAttribute(1, nameof(BasePreview.PreviewValue), GetValueAsObject());
+        builder.CloseComponent();
+    };
+}

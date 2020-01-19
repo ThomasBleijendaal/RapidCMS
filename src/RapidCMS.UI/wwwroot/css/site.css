@@ -339,6 +339,11 @@ a.current-page {
         padding: 0;
     }
 
+    .form-control.uploading {
+        visibility: hidden;
+        margin-bottom: calc(-1.5em - .75rem - 2px)
+    }
+
 .form-check {
     padding-top: 0.5rem;
 }

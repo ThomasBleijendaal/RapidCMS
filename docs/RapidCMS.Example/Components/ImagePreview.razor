@@ -1,0 +1,8 @@
+﻿@inherits BasePreview
+
+@if (PreviewValue is string base64String)
+{
+    <div class="form-group">
+        <img src="data:image/png;base64,@base64String" />
+    </div>
+}

@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RapidCMS.Example.ActionHandlers;
 using RapidCMS.Example.Collections;
 using RapidCMS.Example.Components;
 using RapidCMS.Example.Data;
 using RapidCMS.Example.DataViews;
+using RapidCMS.Example.Handlers;
 using RapidCMS.Repositories;
 
 namespace RapidCMS.Example
@@ -39,6 +39,8 @@ namespace RapidCMS.Example
             services.AddSingleton<DatabaseEntityDataViewBuilder>();
 
             services.AddSingleton<RandomNameActionHandler>();
+            services.AddSingleton<Base64TextFileUploadHandler>();
+            services.AddSingleton<Base64ImageUploadHandler>();
 
             services.AddRapidCMS(config =>
             {

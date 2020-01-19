@@ -121,11 +121,12 @@ namespace RapidCMS.UI.Components.Pages
                 query.SetOrderByExpressions(ListUI.OrderBys);
             }
 
-            var listContext = await PresentationService.GetEntitiesAsync(new GetEntitiesRequestModel
+            var listContext = await PresentationService.GetEntitiesAsync(new GetEntitiesOfRelationRequestModel
             {
                 CollectionAlias = CollectionAlias,
                 Query = query,
-                UsageType = GetUsageType()
+                UsageType = GetUsageType(),
+                Related = new RelatedEntity(RelatedEntity)
             });
 
             await SetSectionsAsync(listContext);

@@ -2,7 +2,10 @@
 using RapidCMS.Core.Enums;
 using RapidCMS.Example.Components;
 using RapidCMS.Example.Data;
+using RapidCMS.Example.Handlers;
 using RapidCMS.Repositories;
+using RapidCMS.UI.Components.Editors;
+using RapidCMS.UI.Components.Preview;
 
 namespace RapidCMS.Example.Collections
 {
@@ -36,16 +39,46 @@ namespace RapidCMS.Example.Collections
                             .AddSection(section =>
                             {
                                 section.AddField(x => x.Name);
+
+                                // this field uses a custom editor, which must inherit BaseEditor
+                                section.AddField(x => x.Password).SetType(typeof(PasswordEditor));
+                                
+                                // even though some properties on User are required, saving a User with only its Name set is allowed
+                                // since this editor cannot touch those required properties. 
+                                // if all displayed properties on a model are valid, the whole model is considered valid, as the user
+                                // will be unable to make the model valid otherwise.
+                                section.AddDefaultButton(DefaultButtonType.SaveExisting);
+                                section.AddDefaultButton(DefaultButtonType.SaveNew);
+
+                                section.AddDefaultButton(DefaultButtonType.Edit);
+                            });
+                    })
+                    .SetNodeEditor(editor =>
+                    {
+                        editor
+                            .AddSection(section =>
+                            {
+                                section.AddDefaultButton(DefaultButtonType.SaveExisting);
+                                section.AddDefaultButton(DefaultButtonType.SaveNew);
+
+                                section.AddField(x => x.Name);
                                 section.AddField(x => x.StartDate).SetType(EditorType.Date);
 
                                 // this field uses a custom editor, which must inherit BaseEditor
                                 section.AddField(x => x.Password).SetType(typeof(PasswordEditor));
 
+                                // some default editors (like FileUploadEditor) require custom components, so they must be added using their full classname
+                                // NoPreview is a default component indicating this upload editor has no preview of the file
+                                section.AddField(x => x.FileBase64).SetType(typeof(FileUploadEditor<Base64TextFileUploadHandler, NoPreview>))
+                                    .SetName("User file");
+
+                                // ImagePreview is a custom component derived from BasePreview to display the uploaded image
+                                section.AddField(x => x.ProfilePictureBase64).SetType(typeof(FileUploadEditor<Base64ImageUploadHandler, ImagePreview>))
+                                    .SetName("User picture");
+
                                 section.AddField(x => x.Integer).SetType(EditorType.Numeric);
                                 section.AddField(x => x.Double).SetType(EditorType.Numeric);
 
-                                section.AddDefaultButton(DefaultButtonType.SaveExisting);
-                                section.AddDefaultButton(DefaultButtonType.SaveNew);
                             });
                     });
             });

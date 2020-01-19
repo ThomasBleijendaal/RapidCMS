@@ -16,6 +16,11 @@ namespace RapidCMS.Example.Data
             ErrorMessage = "Passwords must be at least 8 characters and contain at 3 of 4 of the following: upper case (A-Z), lower case (a-z), number (0-9) and special character (e.g. !@#$%^&*)")]
         public string? Password { get; set; }
 
+        [Required]
+        public string? FileBase64 { get; set; }
+
+        public string? ProfilePictureBase64 { get; set; }
+
         public int Integer { get; set; }
         public double Double { get; set; }
 
@@ -27,7 +32,12 @@ namespace RapidCMS.Example.Data
             {
                 Id = Id,
                 Name = Name,
-                Password = Password
+                Password = Password,
+                Double = Double,
+                FileBase64 = FileBase64,
+                ProfilePictureBase64 = ProfilePictureBase64,
+                Integer = Integer,
+                StartDate = StartDate
             };
         }
     }

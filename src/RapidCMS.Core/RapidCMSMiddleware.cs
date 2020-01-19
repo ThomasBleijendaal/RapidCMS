@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading;
+using Blazor.FileReader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -92,8 +93,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<HttpClient>();
 
             // Semaphore for repositories
-            // TODO: test singleton
             services.AddSingleton(serviceProvider => new SemaphoreSlim(rootConfig.SemaphoreMaxCount, rootConfig.SemaphoreMaxCount));
+
+            services.AddFileReaderService();
 
             services.AddMemoryCache();
 

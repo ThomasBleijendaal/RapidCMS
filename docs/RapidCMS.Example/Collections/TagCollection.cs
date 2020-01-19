@@ -1,8 +1,8 @@
 ﻿using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Enums;
-using RapidCMS.Example.ActionHandlers;
 using RapidCMS.Example.Components;
 using RapidCMS.Example.Data;
+using RapidCMS.Example.Handlers;
 using RapidCMS.Repositories;
 
 namespace RapidCMS.Example.Collections
@@ -38,7 +38,7 @@ namespace RapidCMS.Example.Collections
 
                                 // the entity of this editor will be passed in as IParent in the repository of the 
                                 // sub collection, making it possible to access the parents properties in the childrens repository
-                                section.AddRelatedCollectionList<Tag, JsonRepository<Tag>>(config =>
+                                section.AddSubCollectionList<Tag, JsonRepository<Tag>>(config =>
                                 {
                                     config.SetListEditor(editor =>
                                     {
