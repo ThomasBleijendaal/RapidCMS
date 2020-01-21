@@ -38,14 +38,12 @@ namespace RapidCMS.Core.Authorization
 
         internal static OperationAuthorizationRequirement GetOperationForUsageType(UsageType type)
         {
-            return (type & ~(UsageType.Root | UsageType.NotRoot)) switch
+            return (type & ~(UsageType.Root | UsageType.NotRoot | UsageType.Node | UsageType.List)) switch
             {
                 UsageType.Add => Add,
                 UsageType.Edit => Update,
-                UsageType.Edit | UsageType.Node => Update,
                 UsageType.List => Read,
                 UsageType.New => Create,
-                UsageType.Node => Update,
                 UsageType.Pick => Add,
                 UsageType.View => Read,
                 _ => throw new InvalidOperationException($"Operation of type {type} is not supported.")

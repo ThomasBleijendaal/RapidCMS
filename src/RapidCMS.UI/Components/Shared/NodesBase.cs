@@ -24,7 +24,7 @@ namespace RapidCMS.UI.Components.Shared
         private void OnNodesUpdate()
         {
             _eventHandle?.Dispose();
-            _eventHandle = TreeService.SubscribeToUpdates(CollectionAlias, async () =>
+            _eventHandle = TreeService.SubscribeToRepositoryUpdates(CollectionAlias, async () =>
             {
                 await InvokeAsync(() => OnNodesUpdateAsync());
                 OnNodesUpdate();

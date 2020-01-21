@@ -51,7 +51,7 @@ namespace RapidCMS.Core.Dispatchers
 
             await collection.ProcessDataViewAsync(request.Query, _serviceProvider);
 
-            var action = (request.UsageType & ~(UsageType.Node | UsageType.Root | UsageType.NotRoot)) switch
+            var action = (request.UsageType & ~(UsageType.List | UsageType.Root | UsageType.NotRoot)) switch
             {
                 UsageType.Add when relatedEntity != null => () => repository.GetAllNonRelatedAsync(relatedEntity!, request.Query),
                 _ when relatedEntity != null => () => repository.GetAllRelatedAsync(relatedEntity!, request.Query),
@@ -82,13 +82,7 @@ namespace RapidCMS.Core.Dispatchers
             EditContext protoEditContext,
             IEnumerable<IEntity> existingEntities)
         {
-            if ((request.UsageType & ~(UsageType.Root | UsageType.NotRoot)) == UsageType.List)
-            {
-                return existingEntities
-                    .Select(ent => new EditContext(request.CollectionAlias, ent, protoEditContext.Parent, UsageType.Node | UsageType.Edit, _serviceProvider))
-                    .ToList();
-            }
-            else if (request.UsageType.HasFlag(UsageType.Add))
+            if (request.UsageType.HasFlag(UsageType.Add))
             {
                 return existingEntities
                     .Select(ent => new EditContext(request.CollectionAlias, ent, protoEditContext.Parent, UsageType.Node | UsageType.Pick, _serviceProvider))
@@ -106,6 +100,12 @@ namespace RapidCMS.Core.Dispatchers
                 }
 
                 return entities;
+            }
+            else if (request.UsageType.HasFlag(UsageType.View))
+            {
+                return existingEntities
+                    .Select(ent => new EditContext(request.CollectionAlias, ent, protoEditContext.Parent, UsageType.Node | UsageType.Edit, _serviceProvider))
+                    .ToList();
             }
             else
             {

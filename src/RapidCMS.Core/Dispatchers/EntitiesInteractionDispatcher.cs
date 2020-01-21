@@ -9,7 +9,6 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Models.Commands;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.NavigationState;
 using RapidCMS.Core.Models.Request;
@@ -128,20 +127,14 @@ namespace RapidCMS.Core.Dispatchers
                         affectedEntities.Add(editContext.Entity);
                     }
 
-                    response.ViewCommand = new ViewCommand
-                    {
-                        RefreshIds = affectedEntities.SelectNotNull(x => x.Id)
-                    };
+                    response.RefreshIds = affectedEntities.SelectNotNull(x => x.Id);
                     break;
 
                 case CrudType.None:
+                    response.NoOp = true;
                     break;
 
                 case CrudType.Refresh:
-                    response.ViewCommand = new ViewCommand
-                    {
-                        ReloadData = true
-                    };
                     break;
 
                 case CrudType.Return:

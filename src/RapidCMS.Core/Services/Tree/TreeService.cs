@@ -76,7 +76,7 @@ namespace RapidCMS.Core.Services.Tree
             }
             else if (collection.ListView != null && viewAuthorizationChallenge.Succeeded)
             {
-                tree.Path = UriHelper.Collection(Constants.List, collection.Alias, parentPath);
+                tree.Path = UriHelper.Collection(Constants.View, collection.Alias, parentPath);
             }
 
             return tree;
@@ -142,7 +142,7 @@ namespace RapidCMS.Core.Services.Tree
             }
         }
 
-        public IDisposable SubscribeToUpdates(string alias, Func<Task> asyncCallback)
+        public IDisposable SubscribeToRepositoryUpdates(string alias, Func<Task> asyncCallback)
         {
             return _repositoryResolver.GetRepository(alias).ChangeToken.RegisterChangeCallback((x) => asyncCallback.Invoke(), null);
         }

@@ -1,9 +1,10 @@
-﻿using RapidCMS.Core.Models.Commands;
+﻿using System.Collections.Generic;
 
 namespace RapidCMS.Core.Models.Response
 {
     public class ViewCommandResponseModel
     {
-        public ViewCommand? ViewCommand { get; set; } 
+        public IEnumerable<string> RefreshIds { get; internal set; } = new List<string>();
+        public bool NoOp { get; internal set; }
     }
 }

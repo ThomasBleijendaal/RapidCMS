@@ -6,6 +6,7 @@ using Microsoft.Extensions.Primitives;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.ChangeToken;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 
@@ -131,13 +132,13 @@ namespace RapidCMS.Core.Repositories
         public virtual Task ReorderAsync(string? beforeId, string id, IParent? parent)
             => throw new NotImplementedException($"In order to use reordering in list editors, implement {nameof(ReorderAsync)} on the {GetType()}.");
 
-        protected internal RepositoryChangeToken _repositoryChangeToken = new RepositoryChangeToken();
+        protected internal CmsChangeToken _repositoryChangeToken = new CmsChangeToken();
 
         public IChangeToken ChangeToken => _repositoryChangeToken;
         protected internal void NotifyUpdate()
         {
             var currentToken = _repositoryChangeToken;
-            _repositoryChangeToken = new RepositoryChangeToken();
+            _repositoryChangeToken = new CmsChangeToken();
             currentToken.HasChanged = true;
         }
 

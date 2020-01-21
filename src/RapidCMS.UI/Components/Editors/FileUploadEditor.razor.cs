@@ -58,7 +58,7 @@ namespace RapidCMS.UI.Components.Editors
 
             using var uploadedFile = await UploadFileToTempFileAsync(file, 8192, fileInfo.Size, (completion) =>
             {
-                if (completion - UploadCompletion > 5.0)
+                if (completion - UploadCompletion > 1)
                 {
                     UploadCompletion = completion;
                     StateHasChanged();

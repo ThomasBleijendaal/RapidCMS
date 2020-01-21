@@ -12,10 +12,7 @@ namespace RapidCMS.Core.Enums
         Pick = 16,
         Reordered = 32,
 
-        [Obsolete("Replace with PageType")]
         List = 65536,
-
-        [Obsolete("Replace with PageType")]
         Node = 131072,
 
         Root = 2097152,

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Primitives;
 
-namespace RapidCMS.Core.Repositories
+namespace RapidCMS.Core.ChangeToken
 {
-    public class RepositoryChangeToken : IChangeToken
+    public class CmsChangeToken : IChangeToken
     {
-        private readonly List<RepositoryChangeTokenCallback> _callbacks = new List<RepositoryChangeTokenCallback>();
+        private readonly List<ChangeTokenCallback> _callbacks = new List<ChangeTokenCallback>();
 
         private bool _hasChanged = false;
 
@@ -31,18 +31,18 @@ namespace RapidCMS.Core.Repositories
 
         public IDisposable RegisterChangeCallback(Action<object> callback, object state)
         {
-            var tokenCallback = new RepositoryChangeTokenCallback(callback, state);
+            var tokenCallback = new ChangeTokenCallback(callback, state);
             _callbacks.Add(tokenCallback);
 
             return tokenCallback;
         }
 
-        private class RepositoryChangeTokenCallback : IDisposable
+        private class ChangeTokenCallback : IDisposable
         {
             private Action<object>? _callback;
             private object? _state;
 
-            public RepositoryChangeTokenCallback(Action<object> callback, object? state)
+            public ChangeTokenCallback(Action<object> callback, object? state)
             {
                 _callback = callback ?? throw new ArgumentNullException(nameof(callback));
                 _state = state;
@@ -54,7 +54,7 @@ namespace RapidCMS.Core.Repositories
                 _state = null;
             }
 
-            public RepositoryChangeTokenCallback Invoke()
+            public ChangeTokenCallback Invoke()
             {
                 _callback?.Invoke(_state!);
 

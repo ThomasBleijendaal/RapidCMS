@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Primitives;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.ChangeToken;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.NavigationState;
@@ -12,6 +13,7 @@ namespace RapidCMS.Core.Services.NavigationState
 {
     internal class NavigationStateService : INavigationStateService
     {
+        protected internal CmsChangeToken _navigationChangeToken = new CmsChangeToken();
         private readonly List<NavigationStateModel> _currentState = new List<NavigationStateModel>();
         private readonly NavigationManager _navigationManager;
 
@@ -20,7 +22,14 @@ namespace RapidCMS.Core.Services.NavigationState
             _navigationManager = navigationManager;
         }
 
-        public IChangeToken ChangeToken => throw new NotImplementedException();
+        public IChangeToken ChangeToken => _navigationChangeToken;
+
+        protected internal void NotifyUpdate()
+        {
+            var currentToken = _navigationChangeToken;
+            _navigationChangeToken = new CmsChangeToken();
+            currentToken.HasChanged = true;
+        }
 
         public IEnumerable<NavigationStateModel> GetCurrentStates()
         {
@@ -36,7 +45,7 @@ namespace RapidCMS.Core.Services.NavigationState
                 _currentState.Remove(_currentState.Last());
             }
 
-            UpdateUrl();
+            NotifyUpdate();
 
             return _currentState.LastOrDefault();
         }
@@ -45,20 +54,26 @@ namespace RapidCMS.Core.Services.NavigationState
         {
             _currentState.Add(newState);
 
-            UpdateUrl();
+            NotifyUpdate();
         }
 
         public void ReplaceState(NavigationStateModel replacementState)
         {
-            PopState();
+            if (_currentState.Any())
+            {
+                _currentState.Remove(_currentState.Last());
+            }
             _currentState.Add(replacementState);
 
-            UpdateUrl();
+            NotifyUpdate();
         }
 
-        public void ResetState()
+        public void ResetState(NavigationStateModel newState)
         {
             _currentState.Clear();
+            _currentState.Add(newState);
+
+            NotifyUpdate();
         }
 
         private void UpdateUrl()
@@ -70,7 +85,7 @@ namespace RapidCMS.Core.Services.NavigationState
                 var url = state.PageType switch
                 {
                     PageType.Collection => UriHelper.Collection(
-                        state.UsageType.HasFlag(UsageType.List) ? Constants.List : Constants.Edit,
+                        state.UsageType.HasFlag(UsageType.List) ? Constants.View : Constants.Edit,
                         state.CollectionAlias,
                         state.ParentPath),
 

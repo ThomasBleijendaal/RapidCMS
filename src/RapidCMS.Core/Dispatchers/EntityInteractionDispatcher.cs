@@ -5,7 +5,6 @@ using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Models.Commands;
 using RapidCMS.Core.Models.NavigationState;
 using RapidCMS.Core.Models.Request;
 using RapidCMS.Core.Models.Response;
@@ -101,10 +100,7 @@ namespace RapidCMS.Core.Dispatchers
                             () => repository.ReorderAsync(request.EditContext.ReorderedBeforeId, request.EditContext.Entity.Id!, request.EditContext.Parent));
                     }
 
-                    response.ViewCommand = new ViewCommand
-                    {
-                        RefreshIds = new[] { request.EditContext.Entity.Id! }
-                    };
+                    response.RefreshIds = new[] { request.EditContext.Entity.Id! };
                     break;
 
                 case CrudType.Insert:
@@ -132,15 +128,7 @@ namespace RapidCMS.Core.Dispatchers
                             Id = newEntity.Id
                         });
                     }
-                    else if (response is NodeInListViewCommandResponseModel)
-                    {
-                        // what does this do?
-                        response.ViewCommand = new ViewCommand
-                        {
-                            ReloadData = true
-                        };
-                    }
-
+                    
                     break;
 
                 case CrudType.Delete:
@@ -160,24 +148,12 @@ namespace RapidCMS.Core.Dispatchers
                             });
                         }
                     }
-                    else
-                    {
-                        response.ViewCommand = new ViewCommand
-                        {
-                            ReloadData = true
-                        };
-                    }
-
+                    
                     break;
 
                 case CrudType.Pick when request is PersistRelatedEntityRequestModel relationRequest:
 
                     await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.AddAsync(relationRequest.Related, request.EditContext.Entity.Id!));
-
-                    response.ViewCommand = new ViewCommand
-                    {
-                        ReloadData = true
-                    };
 
                     break;
 
@@ -185,21 +161,13 @@ namespace RapidCMS.Core.Dispatchers
 
                     await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.RemoveAsync(relationRequest.Related, request.EditContext.Entity.Id!));
 
-                    response.ViewCommand = new ViewCommand
-                    {
-                        ReloadData = true
-                    };
-
                     break;
 
                 case CrudType.None:
+                    response.NoOp = true;
                     break;
 
                 case CrudType.Refresh:
-                    response.ViewCommand = new ViewCommand
-                    {
-                        ReloadData = true
-                    };
                     break;
 
                 case CrudType.Up:

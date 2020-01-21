@@ -41,8 +41,7 @@
             Constants.Edit => UsageType.Edit,
             Constants.New => UsageType.New,
             Constants.Add => UsageType.Add,
-            Constants.View => UsageType.View,
-            Constants.List => UsageType.List,
+            Constants.View => UsageType.View | ((GetPageType() == PageType.Collection) ? UsageType.List : UsageType.Node),
             Constants.Pick => UsageType.Pick,
             _ => (UsageType)0
         };

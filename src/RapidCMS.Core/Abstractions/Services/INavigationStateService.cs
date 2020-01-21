@@ -13,7 +13,7 @@ namespace RapidCMS.Core.Abstractions.Services
         NavigationStateModel? GetCurrentState();
         IEnumerable<NavigationStateModel> GetCurrentStates();
 
-        void ResetState();
+        void ResetState(NavigationStateModel newState);
 
         IChangeToken ChangeToken { get; }
     }
