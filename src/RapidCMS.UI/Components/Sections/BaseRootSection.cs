@@ -8,8 +8,8 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Forms;
-using RapidCMS.Core.Models.NavigationState;
 using RapidCMS.Core.Models.Response;
+using RapidCMS.Core.Models.State;
 using RapidCMS.Core.Models.UI;
 
 namespace RapidCMS.UI.Components.Sections
@@ -18,7 +18,7 @@ namespace RapidCMS.UI.Components.Sections
     {
         [Inject] private NavigationManager NavigationManager { get; set; } = default!;
         [Inject] private IExceptionService ExceptionService { get; set; } = default!;
-        [Inject] protected INavigationStateService NavigationState { get; set; } = default!;
+        [Inject] protected INavigationState NavigationState { get; set; } = default!;
 
         [Inject] protected IPresentationService PresentationService { get; set; } = default!;
         [Inject] protected IInteractionService InteractionService { get; set; } = default!;
@@ -29,6 +29,8 @@ namespace RapidCMS.UI.Components.Sections
 
         protected IEnumerable<ButtonUI>? Buttons { get; set; }
         protected IEnumerable<(EditContext editContext, IEnumerable<SectionUI> sections)>? Sections { get; set; }
+
+        protected ViewState CurrentViewState => new ViewState(NavigationState);
 
         protected async Task HandleViewCommandAsync(ViewCommandResponseModel response)
         {

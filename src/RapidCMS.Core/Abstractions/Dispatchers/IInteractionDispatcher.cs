@@ -9,6 +9,6 @@ namespace RapidCMS.Core.Abstractions.Dispatchers
 
     internal interface IInteractionDispatcher<TRequest, TResponse> : IInteractionDispatcher
     {
-        Task<TResponse> InvokeAsync(TRequest request, INavigationStateService navigationState);
+        Task<TResponse> InvokeAsync(TRequest request, INavigationState navigationState);
     }
 }

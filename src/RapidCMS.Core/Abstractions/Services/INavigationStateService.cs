@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Primitives;
-using RapidCMS.Core.Models.NavigationState;
+using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Core.Abstractions.Services
 {
-    public interface INavigationStateService
+    public interface INavigationState
     {
         void PushState(NavigationStateModel newState);
         void ReplaceState(NavigationStateModel replacementState);

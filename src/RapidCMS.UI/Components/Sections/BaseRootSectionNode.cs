@@ -62,7 +62,7 @@ namespace RapidCMS.UI.Components.Sections
                     ActionId = args.ViewModel.ButtonId,
                     CustomData = args.Data,
                     EditContext = args.EditContext
-                }, NavigationState);
+                }, CurrentViewState);
 
                 await HandleViewCommandAsync(command);
             }

@@ -2,26 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Core.Services.Persistence
 {
     internal class InteractionService : IInteractionService
     {
-        private readonly IEnumerable<IInteractionDispatcher> _interactionDispatchers;
+        private readonly IServiceProvider _serviceProvider;
 
-        public InteractionService(IEnumerable<IInteractionDispatcher> interactionDispatchers)
+        public InteractionService(IServiceProvider serviceProvider)
         {
-            _interactionDispatchers = interactionDispatchers;
+            _serviceProvider = serviceProvider;
         }
 
-        // TODO: change to  navigationState ViewContext to allow for more flexibility
-        public Task<TResponse> InteractAsync<TRequest, TResponse>(TRequest request, INavigationStateService navigationState)
+        public Task<TResponse> InteractAsync<TRequest, TResponse>(TRequest request, ViewState state)
         {
-            if (_interactionDispatchers.FirstOrDefault(x => x.GetType().GetInterfaces().Any(i => i == typeof(IInteractionDispatcher<TRequest, TResponse>))) is IInteractionDispatcher<TRequest, TResponse> dispatcher)
+            var dispatchers = _serviceProvider.GetService<IEnumerable<IInteractionDispatcher>>();
+
+            if (dispatchers.FirstOrDefault(x => x.GetType().GetInterfaces().Any(i => i == typeof(IInteractionDispatcher<TRequest, TResponse>))) is IInteractionDispatcher<TRequest, TResponse> dispatcher)
             {
-                return dispatcher.InvokeAsync(request, navigationState);
+                return dispatcher.InvokeAsync(request, state.NavigationState);
             }
             else
             {

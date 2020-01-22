@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Forms;
@@ -8,30 +10,26 @@ namespace RapidCMS.Core.Services.Presentation
 {
     internal class PresentationService : IPresentationService
     {
-        private readonly IPresenationDispatcher<GetEntityRequestModel, EditContext> _getEntityDispatcher;
-        private readonly IPresenationDispatcher<GetEntitiesRequestModel, ListContext> _getEntitiesDispatcher;
+        private readonly IServiceProvider _serviceProvider;
 
-        public PresentationService(
-            IPresenationDispatcher<GetEntityRequestModel, EditContext> getEntityDispatcher,
-            IPresenationDispatcher<GetEntitiesRequestModel, ListContext> getEntitiesDispatcher)
+        public PresentationService(IServiceProvider serviceProvider)
         {
-            _getEntityDispatcher = getEntityDispatcher;
-            _getEntitiesDispatcher = getEntitiesDispatcher;
+            _serviceProvider = serviceProvider;
         }
 
         public Task<ListContext> GetEntitiesAsync(GetEntitiesOfParentRequestModel request)
         {
-            return _getEntitiesDispatcher.GetAsync(request);
+            return _serviceProvider.GetService<IPresenationDispatcher<GetEntitiesRequestModel, ListContext>>().GetAsync(request);
         }
 
         public Task<ListContext> GetEntitiesAsync(GetEntitiesRequestModel request)
         {
-            return _getEntitiesDispatcher.GetAsync(request);
+            return _serviceProvider.GetService<IPresenationDispatcher<GetEntitiesRequestModel, ListContext>>().GetAsync(request);
         }
 
         public Task<EditContext> GetEntityAsync(GetEntityRequestModel request)
         {
-            return _getEntityDispatcher.GetAsync(request);
+            return _serviceProvider.GetService<IPresenationDispatcher<GetEntityRequestModel, EditContext>>().GetAsync(request);
         }
     }
 }

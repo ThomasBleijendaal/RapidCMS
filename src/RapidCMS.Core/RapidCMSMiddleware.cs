@@ -29,11 +29,11 @@ using RapidCMS.Core.Services.Auth;
 using RapidCMS.Core.Services.Concurrency;
 using RapidCMS.Core.Services.Exceptions;
 using RapidCMS.Core.Services.Messages;
-using RapidCMS.Core.Services.NavigationState;
 using RapidCMS.Core.Services.Parent;
 using RapidCMS.Core.Services.Persistence;
 using RapidCMS.Core.Services.Presentation;
 using RapidCMS.Core.Services.SidePane;
+using RapidCMS.Core.Services.State;
 using RapidCMS.Core.Services.Tree;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -77,7 +77,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IConcurrencyService, ConcurrencyService>();
             services.AddSingleton<IExceptionService, ExceptionService>();
             services.AddScoped<IMessageService, MessageService>();
-            services.AddTransient<INavigationStateService, NavigationStateService>();
+            services.AddTransient<INavigationState, NavigationState>();
             services.AddTransient<IParentService, ParentService>();
             services.AddScoped<ISidePaneService, SidePaneService>();
             services.AddTransient<ITreeService, TreeService>();

@@ -7,17 +7,17 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.ChangeToken;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Models.NavigationState;
+using RapidCMS.Core.Models.State;
 
-namespace RapidCMS.Core.Services.NavigationState
+namespace RapidCMS.Core.Services.State
 {
-    internal class NavigationStateService : INavigationStateService
+    internal class NavigationState : INavigationState
     {
         protected internal CmsChangeToken _navigationChangeToken = new CmsChangeToken();
         private readonly List<NavigationStateModel> _currentState = new List<NavigationStateModel>();
         private readonly NavigationManager _navigationManager;
 
-        public NavigationStateService(NavigationManager navigationManager)
+        public NavigationState(NavigationManager navigationManager)
         {
             _navigationManager = navigationManager;
         }
@@ -96,7 +96,7 @@ namespace RapidCMS.Core.Services.NavigationState
                         state.ParentPath,
                         state.Id),
 
-                        _ => ""
+                    _ => ""
                 };
 
                 // TODO: this triggers a new OnParameterSet which it should not

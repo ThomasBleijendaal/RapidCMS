@@ -189,8 +189,8 @@ namespace RapidCMS.UI.Components.Sections
                 };
 
                 var command = CurrentState.UsageType.HasFlag(UsageType.Edit)
-                    ? (ViewCommandResponseModel)await InteractionService.InteractAsync<PersistEntitiesRequestModel, ListEditorCommandResponseModel>(request, NavigationState)
-                    : (ViewCommandResponseModel)await InteractionService.InteractAsync<PersistEntitiesRequestModel, ListViewCommandResponseModel>(request, NavigationState);
+                    ? (ViewCommandResponseModel)await InteractionService.InteractAsync<PersistEntitiesRequestModel, ListEditorCommandResponseModel>(request, CurrentViewState)
+                    : (ViewCommandResponseModel)await InteractionService.InteractAsync<PersistEntitiesRequestModel, ListViewCommandResponseModel>(request, CurrentViewState);
 
                 await HandleViewCommandAsync(command);
             }
@@ -209,7 +209,7 @@ namespace RapidCMS.UI.Components.Sections
                     ActionId = args.ViewModel.ButtonId,
                     CustomData = args.Data,
                     EditContext = args.EditContext
-                }, NavigationState);
+                }, CurrentViewState);
 
                 await HandleViewCommandAsync(command);
             }

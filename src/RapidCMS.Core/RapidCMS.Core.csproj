@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>2.0.7-preview</Version>
+    <Version>2.0.8-preview</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Thomas Bleijendaal</Authors>
     <Company>Thomas Bleijendaal</Company>
@@ -33,6 +33,11 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Abstractions\State\" />
+    <Folder Include="Models\Contexts\" />
   </ItemGroup>
 
 </Project>

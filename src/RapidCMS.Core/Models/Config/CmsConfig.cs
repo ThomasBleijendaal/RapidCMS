@@ -7,7 +7,7 @@ using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Models.NavigationState;
+using RapidCMS.Core.Models.State;
 using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Models.Config

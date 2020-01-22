@@ -2,7 +2,7 @@
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Data;
 
-namespace RapidCMS.Core.Models.NavigationState
+namespace RapidCMS.Core.Models.State
 {
     public class NavigationStateModel
     {

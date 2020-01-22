@@ -10,9 +10,9 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Data;
-using RapidCMS.Core.Models.NavigationState;
 using RapidCMS.Core.Models.Request;
 using RapidCMS.Core.Models.Response;
+using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Core.Dispatchers
 {
@@ -22,7 +22,6 @@ namespace RapidCMS.Core.Dispatchers
     {
         private readonly ICollectionResolver _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
-        private INavigationStateService _navigationStateService;
         private readonly IConcurrencyService _concurrencyService;
         private readonly IButtonInteraction _buttonInteraction;
 
@@ -38,19 +37,17 @@ namespace RapidCMS.Core.Dispatchers
             _buttonInteraction = buttonInteraction;
         }
 
-        Task<ListViewCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request, INavigationStateService navigationState)
+        Task<ListViewCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request, INavigationState navigationState)
         {
-            _navigationStateService = navigationState;
-            return InvokeAsync(request, new ListViewCommandResponseModel());
+            return InvokeAsync(request, new ListViewCommandResponseModel(), navigationState);
         }
 
-        Task<ListEditorCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListEditorCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request, INavigationStateService navigationState)
+        Task<ListEditorCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListEditorCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request, INavigationState navigationState)
         {
-            _navigationStateService = navigationState;
-            return InvokeAsync(request, new ListEditorCommandResponseModel());
+            return InvokeAsync(request, new ListEditorCommandResponseModel(), navigationState);
         }
 
-        private async Task<T> InvokeAsync<T>(PersistEntitiesRequestModel request, T response)
+        private async Task<T> InvokeAsync<T>(PersistEntitiesRequestModel request, T response, INavigationState navigationState)
             where T : ViewCommandResponseModel
         {
             var collection = _collectionResolver.GetCollection(request.ListContext.CollectionAlias);
@@ -67,7 +64,7 @@ namespace RapidCMS.Core.Dispatchers
                     }
                     if (response is ListViewCommandResponseModel)
                     {
-                        _navigationStateService.PushState(new NavigationStateModel
+                        navigationState.PushState(new NavigationStateModel
                         {
                             PageType = PageType.Node,
                             UsageType = UsageType.New,
@@ -79,9 +76,9 @@ namespace RapidCMS.Core.Dispatchers
                     }
                     else
                     {
-                        var currentState = _navigationStateService.GetCurrentState();
+                        var currentState = navigationState.GetCurrentState();
 
-                        _navigationStateService.PushState(new NavigationStateModel
+                        navigationState.PushState(new NavigationStateModel
                         {
                             PageType = PageType.Collection,
                             UsageType = UsageType.New,
@@ -138,9 +135,9 @@ namespace RapidCMS.Core.Dispatchers
                     break;
 
                 case CrudType.Return:
-                    if (_navigationStateService.PopState() == null)
+                    if (navigationState.PopState() == null)
                     {
-                        _navigationStateService.ReplaceState(new NavigationStateModel
+                        navigationState.ReplaceState(new NavigationStateModel
                         {
                             PageType = PageType.Collection,
                             UsageType = collection.ListEditor == null ? UsageType.List : UsageType.Edit,
@@ -152,7 +149,7 @@ namespace RapidCMS.Core.Dispatchers
                     break;
 
                 case CrudType.Up:
-                    if (_navigationStateService.PopState() == null)
+                    if (navigationState.PopState() == null)
                     {
                         var (newParentPath, parentCollectionAlias, parentId) = ParentPath.RemoveLevel(request.ListContext.Parent?.GetParentPath());
 
@@ -163,7 +160,7 @@ namespace RapidCMS.Core.Dispatchers
 
                         var parentCollection = _collectionResolver.GetCollection(parentCollectionAlias);
 
-                        _navigationStateService.ReplaceState(new NavigationStateModel
+                        navigationState.ReplaceState(new NavigationStateModel
                         {
                             PageType = PageType.Node,
                             UsageType = parentCollection.NodeEditor == null ? UsageType.View : UsageType.Edit,
@@ -177,7 +174,7 @@ namespace RapidCMS.Core.Dispatchers
                     break;
 
                 case CrudType.Add:
-                    _navigationStateService.PushState(new NavigationStateModel
+                    navigationState.PushState(new NavigationStateModel
                     {
                         PageType = PageType.Collection,
                         UsageType = UsageType.Add,
