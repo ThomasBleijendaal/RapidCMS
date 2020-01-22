@@ -15,7 +15,7 @@
 
             <EditContextStrayErrors />
 
-            @if (Sections != null)
+            @if (Sections != null && Sections.Any())
             {
                 // TODO: this could be better
                 @foreach (var section in Sections.First().sections)

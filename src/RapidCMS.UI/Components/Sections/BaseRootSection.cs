@@ -53,6 +53,14 @@ namespace RapidCMS.UI.Components.Sections
         {
             try
             {
+                Buttons = null;
+                Sections = null;
+                ListContext = null;
+                Tabs = null;
+                UIResolver = null;
+                ListUI = null;
+                EditContext = null;
+
                 NavigationState.ResetState(InitialState);
 
                 await LoadDataAsync();

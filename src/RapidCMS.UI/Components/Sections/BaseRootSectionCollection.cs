@@ -204,12 +204,20 @@ namespace RapidCMS.UI.Components.Sections
         {
             try
             {
-                var command = await InteractionService.InteractAsync<PersistEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistEntityRequestModel
-                {
-                    ActionId = args.ViewModel.ButtonId,
-                    CustomData = args.Data,
-                    EditContext = args.EditContext
-                }, CurrentViewState);
+                var command = (CurrentState.Related != null)
+                    ? await InteractionService.InteractAsync<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistRelatedEntityRequestModel
+                    {
+                        ActionId = args.ViewModel.ButtonId,
+                        CustomData = args.Data,
+                        EditContext = args.EditContext,
+                        Related = CurrentState.Related
+                    }, CurrentViewState)
+                    : await InteractionService.InteractAsync<PersistEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistEntityRequestModel
+                    {
+                        ActionId = args.ViewModel.ButtonId,
+                        CustomData = args.Data,
+                        EditContext = args.EditContext,
+                    }, CurrentViewState);
 
                 await HandleViewCommandAsync(command);
             }

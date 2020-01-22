@@ -46,14 +46,11 @@ namespace RapidCMS.Example.Collections
 
                                         editor.AddDefaultButton(DefaultButtonType.Return);
                                         editor.AddDefaultButton(DefaultButtonType.New);
-                                        editor.AddDefaultButton(DefaultButtonType.Add);
 
                                         editor.AddSection(section =>
                                         {
                                             section.AddDefaultButton(DefaultButtonType.SaveExisting);
                                             section.AddDefaultButton(DefaultButtonType.SaveNew);
-                                            section.AddDefaultButton(DefaultButtonType.Pick);
-                                            section.AddDefaultButton(DefaultButtonType.Remove);
 
                                             // add custom buttons and action handlers using the following handler
                                             section.AddCustomButton<RandomNameActionHandler>(typeof(CustomButton), "Create name", "add-circle");
