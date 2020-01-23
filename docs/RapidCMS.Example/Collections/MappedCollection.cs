@@ -18,7 +18,7 @@ namespace RapidCMS.Example.Collections
                     
                     // adding a data view builder allows you to have multiple tabs in the list editor, each with a different
                     // query associated with it
-                    .SetDataViewBuilder<DatabaseEntityDataViewBuilder>()
+                    .SetDataViewBuilder<DatabaseEntityDataViewBuilder, DatabaseEntity>()
                     .SetListEditor(editor =>
                     {
                         editor.AddDefaultButton(DefaultButtonType.Return);

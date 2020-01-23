@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Data;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Example.Data;
 
@@ -10,9 +10,9 @@ namespace RapidCMS.Example.DataViews
 {
     // a DataViewBuilder allows you to create multiple dataviews - views in the same list editor / list views that
     // allow the user to more easily find entities
-    public class DatabaseEntityDataViewBuilder : IDataViewBuilder
+    public class DatabaseEntityDataViewBuilder : DataViewBuilder<DatabaseEntity>
     {
-        public Task<IEnumerable<IDataView>> GetDataViewsAsync()
+        public override Task<IEnumerable<DataView<DatabaseEntity>>> GetDataViewsAsync()
         {
             var list = new List<DataView<DatabaseEntity>>
             {
@@ -23,7 +23,7 @@ namespace RapidCMS.Example.DataViews
                 new DataView<DatabaseEntity>(3, "[other]", x => Regex.IsMatch(x.Name, "^[^A-Z]"))
             };
 
-            return Task.FromResult(list.AsEnumerable<IDataView>());
+            return Task.FromResult(list.AsEnumerable());
         }
     }
 }

@@ -4,18 +4,18 @@ using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Core.Models.Data
 {
-    internal class DataView<TEntity> : IDataView
+    public class DataView<TDatabaseEntity> : IDataView
     {
-        public DataView(int id, string label, Expression<Func<TEntity, bool>> expression)
+        public DataView(int id, string label, Expression<Func<TDatabaseEntity, bool>> expression)
         {
             Id = id;
             Label = label ?? throw new ArgumentNullException(nameof(label));
             Expression = expression ?? throw new ArgumentNullException(nameof(expression));
         }
 
-        public int Id { get; }
-        public string Label { get; set; }
-        public Expression<Func<TEntity, bool>> Expression { get; set; }
+        public int Id { get; private set; }
+        public string Label { get; private set; }
+        public Expression<Func<TDatabaseEntity, bool>> Expression { get; private set; }
 
         int IDataView.Id => Id;
 
