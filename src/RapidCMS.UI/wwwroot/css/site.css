@@ -51,9 +51,11 @@ app {
         background-color: #03AAF3;
     }
 
+
+
 .main {
     flex: 1;
-    margin-top: 3.5rem;
+    margin-top: 4.5rem;
     margin-left: 450px;
 }
 
@@ -78,6 +80,7 @@ app {
     overflow-x: hidden;
     border-right: 1px solid #c8c8c8;
     background-color: #e0e0e0;
+    padding-top: 1rem;
 }
 
     .sidebar .navbar-brand {
@@ -249,6 +252,7 @@ app {
 
     .content .top-row {
     }
+
 
     .content .nested-content {
         margin: 1.1rem -1rem -1rem -1rem;

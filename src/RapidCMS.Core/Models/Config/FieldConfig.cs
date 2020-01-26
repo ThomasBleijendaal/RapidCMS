@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
@@ -139,10 +140,24 @@ namespace RapidCMS.Core.Models.Config
                 throw new InvalidOperationException("Cannot add CollectionRelation to Editor with no support for RelationType.One / RelationType.Many");
             }
 
-            var config = new CollectionRelationConfig<TEntity, TRelatedEntity>
+            var config = new CollectionRelationConfig<TEntity, TRelatedEntity>(collectionAlias);
+
+            configure.Invoke(config);
+
+            Relation = config;
+
+            return this;
+        }
+
+        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetCollectionRelation<TRelatedEntity, TRelatedRepository>(
+            Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure)
+        {
+            if (EditorType != EditorType.Custom && !(EditorType.GetCustomAttribute<RelationAttribute>()?.Type.In(RelationType.One, RelationType.Many) ?? false))
             {
-                CollectionAlias = collectionAlias
-            };
+                throw new InvalidOperationException("Cannot add CollectionRelation to Editor with no support for RelationType.One / RelationType.Many");
+            }
+
+            var config = new CollectionRelationConfig<TEntity, TRelatedEntity>(typeof(TRelatedRepository));
 
             configure.Invoke(config);
 
@@ -160,11 +175,27 @@ namespace RapidCMS.Core.Models.Config
             }
 
             var relatedElementsGetter = PropertyMetadataHelper.GetPropertyMetadata(relatedElements);
-            var config = new CollectionRelationConfig<TEntity, TRelatedEntity>(relatedElementsGetter ?? throw new InvalidExpressionException(nameof(relatedElements)));
+            var config = new CollectionRelationConfig<TEntity, TRelatedEntity>(collectionAlias, relatedElementsGetter ?? throw new InvalidExpressionException(nameof(relatedElements)));
 
             configure.Invoke(config);
 
-            config.CollectionAlias = collectionAlias;
+            Relation = config;
+
+            return this;
+        }
+
+        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetCollectionRelation<TRelatedEntity, TKey, TRelatedRepository>(
+            Expression<Func<TValue, IEnumerable<TKey>>> relatedElements, Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure)
+        {
+            if (EditorType != EditorType.Custom && !(EditorType.GetCustomAttribute<RelationAttribute>()?.Type.In(RelationType.Many) ?? false))
+            {
+                throw new InvalidOperationException("Cannot add CollectionRelation with relatedElements to Editor with no support for RelationType.Many");
+            }
+
+            var relatedElementsGetter = PropertyMetadataHelper.GetPropertyMetadata(relatedElements);
+            var config = new CollectionRelationConfig<TEntity, TRelatedEntity>(typeof(TRelatedRepository), relatedElementsGetter ?? throw new InvalidExpressionException(nameof(relatedElements)));
+
+            configure.Invoke(config);
 
             Relation = config;
 

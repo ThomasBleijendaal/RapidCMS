@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using RapidCMS.Core.Models.Setup;
+using RapidCMS.Core.Abstractions.Setup;
 
 namespace RapidCMS.Core.Abstractions.Resolvers
 {
     internal interface ICollectionResolver
     {
-        CollectionSetup GetCollection(string alias);
-        IEnumerable<CollectionSetup> GetRootCollections();
+        ICollectionSetup GetCollection(string alias);
+        IEnumerable<ICollectionSetup> GetRootCollections();
     }
 }

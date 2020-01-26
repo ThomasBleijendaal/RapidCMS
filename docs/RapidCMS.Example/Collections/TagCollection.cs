@@ -32,6 +32,24 @@ namespace RapidCMS.Example.Collections
 
                                 section.AddField(x => x.Name);
 
+                                section.AddField(x => x.DefaultTagId).SetName("Default tag")
+                                    .SetType(EditorType.Dropdown)
+                                    .SetCollectionRelation<Tag, JsonRepository<Tag>>(config =>
+                                    {
+                                        // this allows for configuring which property of the entity will make up the id for the element, and that value
+                                        // is set to FavouriteChildId when the user selects an element
+                                        config.SetElementIdProperty(x => x.Id);
+
+                                        // because a single label is often not enough, you can add more properties to make the labels for each option
+                                        config.SetElementDisplayProperties(x => x.Name, x => $"{x.Id} - {x.Name}");
+
+                                        // sets the entity that is currently edited as parent for the repository to get elements for this field
+                                        config.SetEntityAsParent();
+
+                                        // the data in this dropdown will refresh automatically when the repository on which the data
+                                        // is based flags that the data has been updated
+                                    });
+
                                 // it is possible to view or edit an subcollection from the parent
                                 // when adding a subcollection in an Editor will have to be a ListEditor while
                                 // adding a subcollection in a View will be a ListView.

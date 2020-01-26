@@ -14,13 +14,13 @@ using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class ButtonSetup : IButton
+    internal class ButtonSetup : IButton, IButtonSetup
     {
         private static readonly IEnumerable<ButtonSetup> EmptySubButtons = Enumerable.Empty<ButtonSetup>();
 
         private readonly Type _buttonHandler;
 
-        internal ButtonSetup(ButtonConfig button, EntityVariantSetup? baseEntityVariant = default, IEnumerable<EntityVariantSetup>? entityVariants = default)
+        public ButtonSetup(ButtonConfig button, EntityVariantSetup? baseEntityVariant = default, IEnumerable<EntityVariantSetup>? entityVariants = default)
         {
             var def = (button as DefaultButtonConfig)?.ButtonType.GetCustomAttribute<DefaultIconLabelAttribute>();
             Label = button.Label ?? def?.Label ?? "Button";
@@ -72,19 +72,19 @@ namespace RapidCMS.Core.Models.Setup
             }
         }
 
-        internal DefaultButtonType DefaultButtonType { get; private set; }
-        internal CrudType? DefaultCrudType { get; private set; }
+        public DefaultButtonType DefaultButtonType { get; private set; }
+        public CrudType? DefaultCrudType { get; private set; }
 
-        internal string ButtonId { get; private set; }
-        internal Type? CustomType { get; private set; }
+        public string ButtonId { get; private set; }
+        public Type? CustomType { get; private set; }
 
-        internal string Label { get; private set; }
-        internal string Icon { get; private set; }
-        internal bool IsPrimary { get; private set; }
+        public string Label { get; private set; }
+        public string Icon { get; private set; }
+        public bool IsPrimary { get; private set; }
 
-        internal IEnumerable<ButtonSetup> Buttons { get; private set; } = EmptySubButtons;
+        public IEnumerable<ButtonSetup> Buttons { get; private set; } = EmptySubButtons;
 
-        internal EntityVariantSetup? EntityVariant { get; set; }
+        public EntityVariantSetup? EntityVariant { get; set; }
 
         DefaultButtonType IButton.DefaultButtonType => DefaultButtonType;
         CrudType? IButton.DefaultCrudType => DefaultCrudType;
@@ -92,12 +92,12 @@ namespace RapidCMS.Core.Models.Setup
         string IButton.Icon => Icon;
         IEntityVariant? IButton.EntityVariant => EntityVariant;
 
-        internal OperationAuthorizationRequirement GetOperation(EditContext editContext) => GetButtonHandler(editContext).GetOperation(this, editContext);
-        internal bool IsCompatible(EditContext editContext) => GetButtonHandler(editContext).IsCompatible(this, editContext);
-        internal bool ShouldAskForConfirmation(EditContext editContext) => GetButtonHandler(editContext).ShouldAskForConfirmation(this, editContext);
-        internal bool RequiresValidForm(EditContext editContext) => GetButtonHandler(editContext).RequiresValidForm(this, editContext);
-        internal Task<CrudType> ButtonClickBeforeRepositoryActionAsync(EditContext editContext, ButtonContext context) => GetButtonHandler(editContext).ButtonClickBeforeRepositoryActionAsync(this, editContext, context);
-        internal Task ButtonClickAfterRepositoryActionAsync(EditContext editContext, ButtonContext context) => GetButtonHandler(editContext).ButtonClickAfterRepositoryActionAsync(this, editContext, context);
+        public OperationAuthorizationRequirement GetOperation(EditContext editContext) => GetButtonHandler(editContext).GetOperation(this, editContext);
+        public bool IsCompatible(EditContext editContext) => GetButtonHandler(editContext).IsCompatible(this, editContext);
+        public bool ShouldAskForConfirmation(EditContext editContext) => GetButtonHandler(editContext).ShouldAskForConfirmation(this, editContext);
+        public bool RequiresValidForm(EditContext editContext) => GetButtonHandler(editContext).RequiresValidForm(this, editContext);
+        public Task<CrudType> ButtonClickBeforeRepositoryActionAsync(EditContext editContext, ButtonContext context) => GetButtonHandler(editContext).ButtonClickBeforeRepositoryActionAsync(this, editContext, context);
+        public Task ButtonClickAfterRepositoryActionAsync(EditContext editContext, ButtonContext context) => GetButtonHandler(editContext).ButtonClickAfterRepositoryActionAsync(this, editContext, context);
 
         private IButtonActionHandler GetButtonHandler(EditContext editContext) => editContext.ServiceProvider.GetService<IButtonActionHandler>(_buttonHandler);
     }

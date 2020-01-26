@@ -39,7 +39,11 @@ namespace RapidCMS.Core.Dispatchers
         {
             if (string.IsNullOrWhiteSpace(request.Id) && (request.UsageType.HasFlag(UsageType.View) || request.UsageType.HasFlag(UsageType.Edit)))
             {
-                throw new InvalidOperationException($"Cannot View Node when id is null");
+                throw new InvalidOperationException($"Cannot View/Edit Node when id is null");
+            }
+            if (!string.IsNullOrWhiteSpace(request.Id) && request.UsageType.HasFlag(UsageType.New))
+            {
+                throw new InvalidOperationException($"Cannot New Node when id is not null");
             }
 
             var collection = _collectionResolver.GetCollection(request.CollectionAlias);

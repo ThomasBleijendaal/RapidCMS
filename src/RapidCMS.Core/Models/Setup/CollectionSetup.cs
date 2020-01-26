@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class CollectionSetup
+    internal class CollectionSetup : ICollectionSetup
     {
         internal CollectionSetup(
-            string? icon, 
-            string name, 
-            string alias, 
-            EntityVariantSetup entityVariant, 
+            string? icon,
+            string name,
+            string alias,
+            EntityVariantSetup entityVariant,
             Type? repositoryType,
             bool isRecursive = false)
         {
@@ -28,22 +28,22 @@ namespace RapidCMS.Core.Models.Setup
             Recursive = isRecursive;
         }
 
-        internal string? Icon { get; private set; }
-        internal string Name { get; private set; }
-        internal string Alias { get; private set; }
-        internal bool Recursive { get; private set; }
+        public string? Icon { get; private set; }
+        public string Name { get; private set; }
+        public string Alias { get; private set; }
+        public bool Recursive { get; private set; }
 
         public List<CollectionSetup> Collections { get; set; } = new List<CollectionSetup>();
 
-        internal List<EntityVariantSetup>? SubEntityVariants { get; set; }
-        internal EntityVariantSetup EntityVariant { get; private set; }
+        public List<EntityVariantSetup>? SubEntityVariants { get; set; }
+        public EntityVariantSetup EntityVariant { get; private set; }
 
-        internal List<IDataView>? DataViews { get; set; }
-        internal Type? DataViewBuilder { get; set; }
+        public List<IDataView>? DataViews { get; set; }
+        public Type? DataViewBuilder { get; set; }
 
-        internal EntityVariantSetup GetEntityVariant(string? alias)
+        public EntityVariantSetup GetEntityVariant(string? alias)
         {
-            if (string.IsNullOrWhiteSpace(alias) || SubEntityVariants == null)
+            if (string.IsNullOrWhiteSpace(alias) || SubEntityVariants == null || EntityVariant.Alias == alias)
             {
                 return EntityVariant;
             }
@@ -52,14 +52,14 @@ namespace RapidCMS.Core.Models.Setup
                 return SubEntityVariants.First(x => x.Alias == alias);
             }
         }
-        internal EntityVariantSetup GetEntityVariant(IEntity entity)
+        public EntityVariantSetup GetEntityVariant(IEntity entity)
         {
             return SubEntityVariants?.FirstOrDefault(x => x.Type == entity.GetType())
                 ?? EntityVariant;
         }
 
         // TODO: refactor
-        internal Task<IEnumerable<IDataView>> GetDataViewsAsync(IServiceProvider serviceProvider)
+        public Task<IEnumerable<IDataView>> GetDataViewsAsync(IServiceProvider serviceProvider)
         {
             if (DataViewBuilder == null)
             {
@@ -73,7 +73,7 @@ namespace RapidCMS.Core.Models.Setup
         }
 
         // TODO: refactor
-        internal async Task ProcessDataViewAsync(Query query, IServiceProvider serviceProvider)
+        public async Task ProcessDataViewAsync(Query query, IServiceProvider serviceProvider)
         {
             if (DataViewBuilder != null || DataViews?.Count > 0)
             {
@@ -89,17 +89,17 @@ namespace RapidCMS.Core.Models.Setup
             }
         }
 
-        internal Type? RepositoryType { get; private set; }
-        
-        internal TreeViewSetup? TreeView { get; set; }
+        public Type? RepositoryType { get; private set; }
 
-        internal ListSetup? ListView { get; set; }
-        internal ListSetup? ListEditor { get; set; }
+        public TreeViewSetup? TreeView { get; set; }
 
-        internal NodeSetup? NodeView { get; set; }
-        internal NodeSetup? NodeEditor { get; set; }
+        public ListSetup? ListView { get; set; }
+        public ListSetup? ListEditor { get; set; }
 
-        internal ButtonSetup? FindButton(string buttonId)
+        public NodeSetup? NodeView { get; set; }
+        public NodeSetup? NodeEditor { get; set; }
+
+        public IButtonSetup? FindButton(string buttonId)
         {
             return EnumerableExtensions
                 .MergeAll(

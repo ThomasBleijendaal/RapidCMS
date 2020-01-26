@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.EqualityComparers;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
@@ -16,14 +17,14 @@ namespace RapidCMS.Core.Resolvers.UI
     internal class ListUIResolver : BaseUIResolver, IListUIResolver
     {
         private readonly ListSetup _list;
-        private readonly CollectionSetup _collection;
+        private readonly ICollectionSetup _collection;
         private readonly Dictionary<Type, IEnumerable<FieldUI>> _fieldsPerType = new Dictionary<Type, IEnumerable<FieldUI>>();
 
         private readonly FieldUIEqualityComparer _equalityComparer = new FieldUIEqualityComparer();
 
         public ListUIResolver(
             ListSetup list,
-            CollectionSetup collection,
+            ICollectionSetup collection,
             IDataProviderResolver dataProviderService,
             IAuthorizationService authorizationService,
             IHttpContextAccessor httpContextAccessor) : base(dataProviderService, authorizationService, httpContextAccessor)

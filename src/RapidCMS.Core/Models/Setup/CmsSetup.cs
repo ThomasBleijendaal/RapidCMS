@@ -71,13 +71,13 @@ namespace RapidCMS.Core.Models.Setup
         bool ICms.AllowAnonymousUsage => AllowAnonymousUsage;
         int ICms.SemaphoreMaxCount => SemaphoreMaxCount;
 
-        CollectionSetup ICollectionResolver.GetCollection(string alias)
+        ICollectionSetup ICollectionResolver.GetCollection(string alias)
         {
             return _collectionMap.FirstOrDefault(x => x.Key == alias).Value
                 ?? throw new InvalidOperationException($"Failed to find collection with alias {alias}.");
         }
 
-        IEnumerable<CollectionSetup> ICollectionResolver.GetRootCollections()
+        IEnumerable<ICollectionSetup> ICollectionResolver.GetRootCollections()
         {
             return Collections;
         }

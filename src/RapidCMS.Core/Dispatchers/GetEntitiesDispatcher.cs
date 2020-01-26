@@ -104,7 +104,7 @@ namespace RapidCMS.Core.Dispatchers
             else if (request.UsageType.HasFlag(UsageType.View))
             {
                 return existingEntities
-                    .Select(ent => new EditContext(request.CollectionAlias, ent, protoEditContext.Parent, UsageType.Node | UsageType.Edit, _serviceProvider))
+                    .Select(ent => new EditContext(request.CollectionAlias, ent, protoEditContext.Parent, UsageType.Node | UsageType.View, _serviceProvider))
                     .ToList();
             }
             else

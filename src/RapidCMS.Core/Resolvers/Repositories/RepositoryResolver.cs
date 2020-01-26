@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Models.Setup;
+using RapidCMS.Core.Abstractions.Setup;
 
 namespace RapidCMS.Core.Resolvers.Repositories
 {
@@ -17,7 +17,7 @@ namespace RapidCMS.Core.Resolvers.Repositories
             _serviceProvider = serviceProvider;
         }
 
-        IRepository IRepositoryResolver.GetRepository(CollectionSetup collection)
+        IRepository IRepositoryResolver.GetRepository(ICollectionSetup collection)
         {
             return (IRepository)_serviceProvider.GetRequiredService(collection.RepositoryType);
         }
@@ -25,6 +25,11 @@ namespace RapidCMS.Core.Resolvers.Repositories
         IRepository IRepositoryResolver.GetRepository(string collectionAlias)
         {
             return (this as IRepositoryResolver).GetRepository(_collectionResolver.GetCollection(collectionAlias));
+        }
+
+        IRepository IRepositoryResolver.GetRepository(Type repositoryType)
+        {
+            return (IRepository)_serviceProvider.GetRequiredService(repositoryType);
         }
     }
 }

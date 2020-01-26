@@ -55,7 +55,8 @@ namespace RapidCMS.Core.Helpers
             return config switch
             {
                 CollectionRelationConfig collectionConfig => (RelationSetup)new CollectionRelationSetup(
-                    collectionConfig.CollectionAlias!,
+                    collectionConfig.CollectionAlias,
+                    collectionConfig.RelatedRepositoryType,
                     collectionConfig.RelatedEntityType!,
                     collectionConfig.IdProperty!,
                     collectionConfig.DisplayProperties!)

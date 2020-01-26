@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Forms;
@@ -25,13 +26,7 @@ namespace RapidCMS.Core.Interactions
 
         public async Task<CrudType> ValidateButtonInteractionAsync(IEditorButtonInteractionRequestModel request)
         {
-            var collection = _collectionResolver.GetCollection(request.EditContext.CollectionAlias);
-
-            var button = collection.FindButton(request.ActionId);
-            if (button == null)
-            {
-                throw new Exception($"Cannot determine which button triggered action for collection {request.EditContext.CollectionAlias}");
-            }
+            var button = FindButton(request.EditContext.CollectionAlias, request.ActionId);
 
             await _authService.EnsureAuthorizedUserAsync(request.EditContext, button);
 
@@ -45,16 +40,11 @@ namespace RapidCMS.Core.Interactions
             return await button.ButtonClickBeforeRepositoryActionAsync(request.EditContext, context);
         }
 
+        
         public async Task CompleteButtonInteractionAsync(IEditorButtonInteractionRequestModel request)
         {
-            var collection = _collectionResolver.GetCollection(request.EditContext.CollectionAlias);
-
-            var button = collection.FindButton(request.ActionId);
-            if (button == null)
-            {
-                throw new Exception($"Cannot determine which button triggered action for collection {request.EditContext.CollectionAlias}");
-            }
-
+            var button = FindButton(request.EditContext.CollectionAlias, request.ActionId);
+            
             var context = new ButtonContext(request.EditContext.Parent, request.CustomData);
 
             await button.ButtonClickAfterRepositoryActionAsync(request.EditContext, context);
@@ -62,13 +52,7 @@ namespace RapidCMS.Core.Interactions
 
         public async Task<CrudType> ValidateButtonInteractionAsync(IEditorInListInteractionRequestModel request)
         {
-            var collection = _collectionResolver.GetCollection(request.ListContext.CollectionAlias);
-
-            var button = collection.FindButton(request.ActionId);
-            if (button == null)
-            {
-                throw new Exception($"Cannot determine which button triggered action for collection {request.ListContext.CollectionAlias}");
-            }
+            var button = FindButton(request.ListContext.CollectionAlias, request.ActionId);
 
             await _authService.EnsureAuthorizedUserAsync(request.EditContext, button);
 
@@ -84,13 +68,7 @@ namespace RapidCMS.Core.Interactions
 
         public async Task<(CrudType crudType, EntityVariantSetup? entityVariant)> ValidateButtonInteractionAsync(IListButtonInteractionRequestModel request)
         {
-            var collection = _collectionResolver.GetCollection(request.ListContext.CollectionAlias);
-
-            var button = collection.FindButton(request.ActionId);
-            if (button == null)
-            {
-                throw new Exception($"Cannot determine which button triggered action for collection {request.ListContext.CollectionAlias}");
-            }
+            var button = FindButton(request.ListContext.CollectionAlias, request.ActionId);
 
             // TODO: this can cause an Update action be validated on the root, while it applies to the children (which is also checked)
             // this could lead to invalid rejection of action
@@ -102,19 +80,24 @@ namespace RapidCMS.Core.Interactions
 
         public async Task CompleteButtonInteractionAsync(IListButtonInteractionRequestModel request)
         {
-            var collection = _collectionResolver.GetCollection(request.ListContext.CollectionAlias);
-
-            var button = collection.FindButton(request.ActionId);
-            if (button == null)
-            {
-                throw new Exception($"Cannot determine which button triggered action for collection {request.ListContext.CollectionAlias}");
-            }
+            var button = FindButton(request.ListContext.CollectionAlias, request.ActionId);
 
             var context = new ButtonContext(request.ListContext.Parent, request.CustomData);
 
             await button.ButtonClickAfterRepositoryActionAsync(request.ListContext.ProtoEditContext, context);
         }
 
-        
+        private IButtonSetup FindButton(string collectionAlias, string buttonId)
+        {
+            var collection = _collectionResolver.GetCollection(collectionAlias);
+
+            var button = collection.FindButton(buttonId);
+            if (button == null)
+            {
+                throw new Exception($"Cannot determine which button triggered action for collection {collectionAlias}");
+            }
+
+            return button;
+        }
     }
 }

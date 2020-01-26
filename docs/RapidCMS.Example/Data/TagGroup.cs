@@ -10,6 +10,8 @@ namespace RapidCMS.Example.Data
         public string? Id { get; set; }
         public string? Name { get; set; }
 
+        public string? DefaultTagId { get; set; }
+
         public List<Tag> Tags { get; set; } = new List<Tag>();
 
         public object Clone()

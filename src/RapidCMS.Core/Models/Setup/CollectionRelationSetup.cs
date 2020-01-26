@@ -7,19 +7,22 @@ namespace RapidCMS.Core.Models.Setup
     internal class CollectionRelationSetup : RelationSetup
     {
         internal CollectionRelationSetup(
-            string collectionAlias,
+            string? collectionAlias,
+            Type? relatedRepositoryType,
             Type relatedEntityType,
             IPropertyMetadata idProperty,
             List<IExpressionMetadata> displayProperties)
         {
-            CollectionAlias = collectionAlias ?? throw new ArgumentNullException(nameof(collectionAlias));
+            CollectionAlias = collectionAlias;
+            RelatedRepositoryType = relatedRepositoryType;
             RelatedEntityType = relatedEntityType ?? throw new ArgumentNullException(nameof(relatedEntityType));
             IdProperty = idProperty ?? throw new ArgumentNullException(nameof(idProperty));
             DisplayProperties = displayProperties ?? throw new ArgumentNullException(nameof(displayProperties));
         }
 
-        internal string CollectionAlias { get; set; }
+        internal string? CollectionAlias { get; set; }
         internal Type RelatedEntityType { get; set; }
+        internal Type? RelatedRepositoryType { get; set; }
         internal IPropertyMetadata? RelatedElementsGetter { get; set; }
         internal IPropertyMetadata? RepositoryParentSelector { get; set; }
         internal IPropertyMetadata IdProperty { get; set; }

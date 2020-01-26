@@ -12,14 +12,12 @@ namespace RapidCMS.Core.Resolvers.Data
 {
     internal class DataProviderResolver : IDataProviderResolver
     {
-        private readonly ICollectionResolver _setup;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IMemoryCache _memoryCache;
         private readonly IServiceProvider _serviceProvider;
 
-        public DataProviderResolver(ICollectionResolver setup, IRepositoryResolver repositoryResolver, IMemoryCache memoryCache, IServiceProvider serviceProvider)
+        public DataProviderResolver(IRepositoryResolver repositoryResolver, IMemoryCache memoryCache, IServiceProvider serviceProvider)
         {
-            _setup = setup;
             _repositoryResolver = repositoryResolver;
             _memoryCache = memoryCache;
             _serviceProvider = serviceProvider;
@@ -36,10 +34,15 @@ namespace RapidCMS.Core.Resolvers.Data
             {
                 case CollectionRelationSetup collectionRelation:
 
-                    var repo = _repositoryResolver.GetRepository(collectionRelation.CollectionAlias);
+                    var repo = collectionRelation.RelatedRepositoryType != null
+                        ? _repositoryResolver.GetRepository(collectionRelation.RelatedRepositoryType)
+                        : collectionRelation.CollectionAlias != null
+                        ? _repositoryResolver.GetRepository(collectionRelation.CollectionAlias)
+                        : default;
+
                     if (repo == null)
                     {
-                        throw new InvalidOperationException($"Field {propertyField.Property.PropertyName} has incorrectly configure relation, cannot find repository for collection alias {collectionRelation.CollectionAlias}.");
+                        throw new InvalidOperationException($"Field {propertyField.Property.PropertyName} has incorrectly configure relation, cannot find repository for collection alias {(collectionRelation.CollectionAlias ?? collectionRelation.RelatedRepositoryType?.FullName)}.");
                     }
 
                     var provider = new CollectionDataProvider(

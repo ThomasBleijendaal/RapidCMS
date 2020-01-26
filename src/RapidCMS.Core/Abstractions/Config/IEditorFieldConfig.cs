@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Repositories;
 
 namespace RapidCMS.Core.Abstractions.Config
 {
@@ -65,6 +66,18 @@ namespace RapidCMS.Core.Abstractions.Config
 
         /// <summary>
         /// Binds a Collection to this field. This collection is used by dropdowns and selects to display options.
+        /// </summary>
+        /// <typeparam name="TRelatedEntity">Entity of the bound collection.</typeparam>
+        /// <typeparam name="TRelatedRepository">Type of the repository.</typeparam>
+        /// <param name="collectionAlias">Alias of the collection to bind.</param>
+        /// <param name="configure">Action to configure relation.</param>
+        /// <returns></returns>
+        IEditorFieldConfig<TEntity, TValue> SetCollectionRelation<TRelatedEntity, TRelatedRepository>(
+            Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure)
+            where TRelatedRepository : IRepository;
+
+        /// <summary>
+        /// Binds a Collection to this field. This collection is used by dropdowns and selects to display options.
         /// 
         /// Use this overload to bind a collection for a many-to-many relation in EF Core backed repositories:
         /// - Use the joining table as property for this editor.
@@ -80,6 +93,25 @@ namespace RapidCMS.Core.Abstractions.Config
             Expression<Func<TValue, IEnumerable<TKey>>> relatedElements,
             string collectionAlias,
             Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure);
+
+        /// <summary>
+        /// Binds a Collection to this field. This collection is used by dropdowns and selects to display options.
+        /// 
+        /// Use this overload to bind a collection for a many-to-many relation in EF Core backed repositories:
+        /// - Use the joining table as property for this editor.
+        /// - Use the relatedElements expression as selector for selected elements to display in the EditorType.MultiSelect or any other RelationAttribute(RelationType.Many) editor.
+        /// </summary>
+        /// <typeparam name="TRelatedEntity">Entity of the bound collection.</typeparam>
+        /// <typeparam name="TKey">Type of the foreign key</typeparam>
+        /// <typeparam name="TRelatedRepository">Type of the related repository</typeparam>
+        /// <param name="relatedElements">Expression for selected entities.</param>
+        /// <param name="collectionAlias">Alias of the collection to bind.</param>
+        /// <param name="configure">Action to configure relation.</param>
+        /// <returns></returns>
+        IEditorFieldConfig<TEntity, TValue> SetCollectionRelation<TRelatedEntity, TKey, TRelatedRepository>(
+            Expression<Func<TValue, IEnumerable<TKey>>> relatedElements,
+            Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure)
+            where TRelatedRepository : IRepository;
 
         /// <summary>
         /// Sets an expression which determines whether this field should be visible.

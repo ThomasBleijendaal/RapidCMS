@@ -13,8 +13,9 @@ namespace RapidCMS.Core.Models.Config
 {
     internal class CollectionRelationConfig : RelationConfig
     {
-        internal string? CollectionAlias { get; set; }
+        protected internal string? CollectionAlias { get; protected set; }
         internal Type? RelatedEntityType { get; set; }
+        protected internal Type? RelatedRepositoryType { get; protected set; }
         internal IPropertyMetadata? RelatedElementsGetter { get; set; }
         internal IPropertyMetadata? RepositoryParentProperty { get; set; }
         internal IPropertyMetadata? IdProperty { get; set; }
@@ -24,14 +25,31 @@ namespace RapidCMS.Core.Models.Config
     internal class CollectionRelationConfig<TEntity, TRelatedEntity> : CollectionRelationConfig, ICollectionRelationConfig<TEntity, TRelatedEntity>
         where TEntity : IEntity
     {
-        public CollectionRelationConfig()
+        public CollectionRelationConfig(string collectionAlias)
         {
+            CollectionAlias = collectionAlias;
             RelatedEntityType = typeof(TRelatedEntity);
         }
 
-        public CollectionRelationConfig(IPropertyMetadata relatedElements)
+        public CollectionRelationConfig(Type relatedRepositoryType)
         {
+            CollectionAlias = Guid.NewGuid().ToString();
             RelatedEntityType = typeof(TRelatedEntity);
+            RelatedRepositoryType = relatedRepositoryType;
+        }
+
+        public CollectionRelationConfig(string collectionAlias, IPropertyMetadata relatedElements)
+        {
+            CollectionAlias = collectionAlias;
+            RelatedEntityType = typeof(TRelatedEntity);
+            RelatedElementsGetter = relatedElements;
+        }
+
+        public CollectionRelationConfig(Type relatedRepositoryType, IPropertyMetadata relatedElements)
+        {
+            CollectionAlias = Guid.NewGuid().ToString();
+            RelatedEntityType = typeof(TRelatedEntity);
+            RelatedRepositoryType = relatedRepositoryType;
             RelatedElementsGetter = relatedElements;
         }
 
