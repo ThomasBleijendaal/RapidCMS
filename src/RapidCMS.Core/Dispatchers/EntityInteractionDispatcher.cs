@@ -11,7 +11,6 @@ using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Core.Dispatchers
 {
-    // TODO: refactor futher to pull the three dispatches from each other
     internal class EntityInteractionDispatcher :
         IInteractionDispatcher<PersistEntityRequestModel, NodeViewCommandResponseModel>,
         IInteractionDispatcher<PersistEntityRequestModel, NodeInListViewCommandResponseModel>,

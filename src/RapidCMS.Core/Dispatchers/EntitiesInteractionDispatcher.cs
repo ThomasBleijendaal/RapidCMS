@@ -173,13 +173,14 @@ namespace RapidCMS.Core.Dispatchers
                     }
                     break;
 
-                case CrudType.Add:
+                case CrudType.Add when request.Related != null:
                     navigationState.PushState(new NavigationStateModel
                     {
                         PageType = PageType.Collection,
                         UsageType = UsageType.Add,
 
-                        CollectionAlias = request.ListContext.CollectionAlias
+                        CollectionAlias = request.ListContext.CollectionAlias,
+                        Related = request.Related
                     });
                     break;
 

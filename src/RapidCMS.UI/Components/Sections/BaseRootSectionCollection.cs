@@ -185,7 +185,8 @@ namespace RapidCMS.UI.Components.Sections
                 {
                     ActionId = args.ViewModel.ButtonId,
                     CustomData = args.Data,
-                    ListContext = ListContext!
+                    ListContext = ListContext!,
+                    Related = CurrentState.Related
                 };
 
                 var command = CurrentState.UsageType.HasFlag(UsageType.Edit)
