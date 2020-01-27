@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Setup;
@@ -18,7 +18,9 @@ namespace RapidCMS.Core.Resolvers.UI
         public NodeUIResolver(
             NodeSetup node,
             IDataProviderResolver dataProviderService,
-            IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor) : base(dataProviderService, authorizationService, httpContextAccessor)
+            IButtonActionHandlerResolver buttonActionHandlerResolver,
+            IAuthService authService, 
+            IHttpContextAccessor httpContextAccessor) : base(dataProviderService, buttonActionHandlerResolver, authService, httpContextAccessor)
         {
             _node = node;
         }

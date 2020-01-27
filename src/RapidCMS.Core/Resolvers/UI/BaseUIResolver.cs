@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Setup;
@@ -15,16 +15,19 @@ namespace RapidCMS.Core.Resolvers.UI
     internal class BaseUIResolver
     {
         private readonly IDataProviderResolver _dataProviderResolver;
-        protected readonly IAuthorizationService _authorizationService;
+        private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
+        protected readonly IAuthService _authService;
         protected readonly IHttpContextAccessor _httpContextAccessor;
 
         protected BaseUIResolver(
             IDataProviderResolver dataProviderResolver,
-            IAuthorizationService authorizationService,
+            IButtonActionHandlerResolver buttonActionHandlerResolver,
+            IAuthService authService,
             IHttpContextAccessor httpContextAccessor)
         {
             _dataProviderResolver = dataProviderResolver;
-            _authorizationService = authorizationService;
+            _buttonActionHandlerResolver = buttonActionHandlerResolver;
+            _authService = authService;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -32,17 +35,20 @@ namespace RapidCMS.Core.Resolvers.UI
         {
             return await buttons
                 .GetAllButtons()
-                .Where(button => button.IsCompatible(editContext))
-                .WhereAsync(async button =>
+                .SelectNotNullAsync(async button =>
                 {
-                    var authorizationChallenge = await _authorizationService.AuthorizeAsync(
-                        _httpContextAccessor.HttpContext.User,
-                        editContext.Entity,
-                        button.GetOperation(editContext));
-
-                    return authorizationChallenge.Succeeded;
+                    var handler = _buttonActionHandlerResolver.GetButtonActionHandler(button);
+                    if (handler.IsCompatible(button, editContext) && 
+                        await _authService.IsUserAuthorizedAsync(editContext, button))
+                    {
+                        return new ButtonUI(handler, button, editContext);
+                    }
+                    else
+                    {
+                        return default;
+                    }
                 })
-                .ToListAsync(button => new ButtonUI(button, editContext));
+                .ToListAsync();
         }
 
         protected internal async Task<SectionUI> GetSectionUIAsync(PaneSetup pane, EditContext editContext)

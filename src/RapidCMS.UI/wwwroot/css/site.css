@@ -356,6 +356,10 @@ a.current-page {
         margin-bottom: calc(-1.5em - .75rem - 2px)
     }
 
+    .form-control.is-valid, .form-control.is-invalid {
+        padding-right: .75em !important;
+    }
+
 .form-check {
     padding-top: 0.5rem;
 }

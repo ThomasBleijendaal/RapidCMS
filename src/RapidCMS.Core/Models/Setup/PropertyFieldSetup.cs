@@ -20,7 +20,6 @@ namespace RapidCMS.Core.Models.Setup
         }
         
         internal EditorType EditorType { get; set; } = EditorType.Readonly;
-        internal IPropertyMetadata Property { get; set; }
 
         internal RelationSetup? Relation { get; set; }
     }

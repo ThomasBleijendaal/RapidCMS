@@ -9,6 +9,10 @@ namespace RapidCMS.Core.Abstractions.Services
 {
     internal interface IAuthService
     {
+        Task<bool> IsUserAuthorizedAsync(UsageType usageType, IEntity entity);
+        Task<bool> IsUserAuthorizedAsync(OperationAuthorizationRequirement operation, IEntity entity);
+        Task<bool> IsUserAuthorizedAsync(EditContext editContext, IButtonSetup button);
+
         Task EnsureAuthorizedUserAsync(UsageType usageType, IEntity entity);
         Task EnsureAuthorizedUserAsync(OperationAuthorizationRequirement operation, IEntity entity);
         Task EnsureAuthorizedUserAsync(EditContext editContext, IButtonSetup button);

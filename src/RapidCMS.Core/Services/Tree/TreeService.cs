@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
@@ -21,23 +18,20 @@ namespace RapidCMS.Core.Services.Tree
         private readonly ICollectionResolver _collectionResolver;
         private readonly ICms _cms;
         private readonly IRepositoryResolver _repositoryResolver;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IAuthorizationService _authorizationService;
+        private readonly IAuthService _authService;
         private readonly IParentService _parentService;
 
         public TreeService(
             ICollectionResolver collectionResolver,
             ICms cms,
             IRepositoryResolver repositoryResolver,
-            IHttpContextAccessor httpContextAccessor,
-            IAuthorizationService authorizationService,
+            IAuthService authService,
             IParentService parentService)
         {
             _collectionResolver = collectionResolver;
             _cms = cms;
             _repositoryResolver = repositoryResolver;
-            _httpContextAccessor = httpContextAccessor;
-            _authorizationService = authorizationService;
+            _authService = authService;
             _parentService = parentService;
         }
 
@@ -53,16 +47,6 @@ namespace RapidCMS.Core.Services.Tree
 
             var testEntity = await _repositoryResolver.GetRepository(collection).NewAsync(parent, collection.EntityVariant.Type);
 
-            var viewAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
-                _httpContextAccessor.HttpContext.User,
-                testEntity,
-                Operations.Read);
-
-            var editAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
-                _httpContextAccessor.HttpContext.User,
-                testEntity,
-                Operations.Update);
-
             var tree = new TreeCollectionUI(collection.Alias, collection.Name)
             {
                 EntitiesVisible = collection.TreeView?.EntityVisibility == EntityVisibilty.Visible,
@@ -70,11 +54,11 @@ namespace RapidCMS.Core.Services.Tree
                 Icon = collection.Icon ?? "list"
             };
 
-            if (collection.ListEditor != null && editAuthorizationChallenge.Succeeded)
+            if (collection.ListEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, testEntity))
             {
                 tree.Path = UriHelper.Collection(Constants.Edit, collection.Alias, parentPath);
             }
-            else if (collection.ListView != null && viewAuthorizationChallenge.Succeeded)
+            else if (collection.ListView != null && await _authService.IsUserAuthorizedAsync(Operations.Read, testEntity))
             {
                 tree.Path = UriHelper.Collection(Constants.View, collection.Alias, parentPath);
             }
@@ -102,33 +86,35 @@ namespace RapidCMS.Core.Services.Tree
                     var entityVariant = collection.GetEntityVariant(entity);
 
                     var node = new TreeNodeUI(
-                        entity.Id!, 
-                        collection.TreeView.Name!.StringGetter.Invoke(entity), 
+                        entity.Id!,
+                        collection.TreeView.Name!.StringGetter.Invoke(entity),
                         collection.Collections.ToList(subCollection => subCollection.Alias))
                     {
                         RootVisibleOfCollections = collection.Collections.All(subCollection => subCollection.TreeView?.RootVisibility == CollectionRootVisibility.Visible),
                     };
 
-                    var editAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
-                        _httpContextAccessor.HttpContext.User,
-                        entity,
-                        Operations.Update);
+                    // TODO: should this be restored?
 
-                    if (editAuthorizationChallenge.Succeeded)
+                    //var editAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
+                    //    _httpContextAccessor.HttpContext.User,
+                    //    entity,
+                    //    Operations.Update);
+
+                    if (collection.ListEditor != null)
                     {
                         node.Path = UriHelper.Node(Constants.Edit, collection.Alias, entityVariant, parentPath, entity.Id);
                     }
-                    else
+                    else if (collection.ListView != null)
                     {
-                        var viewAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
-                            _httpContextAccessor.HttpContext.User,
-                            entity,
-                            Operations.Read);
+                        //var viewAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
+                        //    _httpContextAccessor.HttpContext.User,
+                        //    entity,
+                        //    Operations.Read);
 
-                        if (viewAuthorizationChallenge.Succeeded)
-                        {
-                            node.Path = UriHelper.Node(Constants.View, collection.Alias, entityVariant, parentPath, entity.Id);
-                        }
+                        //if (viewAuthorizationChallenge.Succeeded)
+                        //{
+                        node.Path = UriHelper.Node(Constants.View, collection.Alias, entityVariant, parentPath, entity.Id);
+                        //}
                     }
 
                     return node;

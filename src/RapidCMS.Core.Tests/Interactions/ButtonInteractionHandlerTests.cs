@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NUnit.Framework;
+using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
@@ -21,6 +22,8 @@ namespace RapidCMS.Core.Tests.Interactions
         private IButtonInteraction _subject = default!;
 
         private Mock<ICollectionResolver> _collectionResolver = default!;
+        private Mock<IButtonActionHandler> _buttonActionHandler = default!;
+        private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
         private Mock<IAuthService> _authService = default!;
         private Mock<IButtonSetup> _button = default!;
         private Mock<ICollectionSetup> _collection = default!;
@@ -41,10 +44,16 @@ namespace RapidCMS.Core.Tests.Interactions
                 .Setup(x => x.GetCollection(It.IsAny<string>()))
                 .Returns(_collection.Object);
 
+            _buttonActionHandler = new Mock<IButtonActionHandler>();
+            _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
+            _buttonActionHandlerResolver
+                .Setup(x => x.GetButtonActionHandler(It.IsAny<IButtonSetup>()))
+                .Returns(_buttonActionHandler.Object);
+
             _authService = new Mock<IAuthService>();
             _serviceProvider = new Mock<IServiceProvider>();
 
-            _subject = new ButtonInteraction(_collectionResolver.Object, _authService.Object);
+            _subject = new ButtonInteraction(_collectionResolver.Object, _buttonActionHandlerResolver.Object, _authService.Object);
         }
 
         [TestCase(true)]
@@ -52,7 +61,7 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenValidationOfEditorButtonIsRequested_ThenValidityOfEditContextIsTested(bool requiresTesting)
         {
             // arrange
-            _button.Setup(x => x.RequiresValidForm(It.IsAny<EditContext>())).Returns(requiresTesting);
+            _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<EditContext>())).Returns(requiresTesting);
             var editContext = new EditContext("alias", new ValidEntity(), default, UsageType.Edit, _serviceProvider.Object);
             Expression<Func<ValidEntity, string>> property = x => x.Name;
             editContext.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata(property)!);
@@ -66,7 +75,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _button.Verify(x => x.RequiresValidForm(It.IsAny<EditContext>()), Times.Once());
+            _buttonActionHandler.Verify(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<EditContext>()), Times.Once());
             Assert.AreEqual(requiresTesting, editContext.WasValidated(PropertyMetadataHelper.GetPropertyMetadata(property)!));
         }
 
@@ -74,7 +83,7 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenValidationOfEditorButtonIsRequested_ThenExceptionIsThrownIfFormIsInvalid()
         {
             // arrange
-            _button.Setup(x => x.RequiresValidForm(It.IsAny<EditContext>())).Returns(true);
+            _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<EditContext>())).Returns(true);
             var editContext = new EditContext("alias", new InvalidEntity(), default, UsageType.Edit, _serviceProvider.Object);
             Expression<Func<InvalidEntity, string>> property = x => x.Name;
             editContext.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata(property)!);
@@ -105,7 +114,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _button.Verify(x => x.ButtonClickBeforeRepositoryActionAsync(It.Is<EditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
+            _buttonActionHandler.Verify(x => x.ButtonClickBeforeRepositoryActionAsync(It.IsAny<IButton>(), It.Is<EditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
         }
 
         [Test]
@@ -126,7 +135,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.CompleteButtonInteractionAsync(request);
 
             // assert
-            _button.Verify(x => x.ButtonClickAfterRepositoryActionAsync(It.Is<EditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
+            _buttonActionHandler.Verify(x => x.ButtonClickAfterRepositoryActionAsync(It.IsAny<IButton>(), It.Is<EditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
         }
 
         [TestCase(true)]
@@ -134,7 +143,7 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenValidationOfEditorInListButtonIsRequested_ThenValidityOfEditContextIsTested(bool requiresTesting)
         {
             // arrange
-            _button.Setup(x => x.RequiresValidForm(It.IsAny<EditContext>())).Returns(requiresTesting);
+            _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<EditContext>())).Returns(requiresTesting);
             var editContext = new EditContext("alias", new ValidEntity(), default, UsageType.Edit, _serviceProvider.Object);
             var listContext = new ListContext("alias", editContext, default, UsageType.Edit, default, _serviceProvider.Object);
             Expression<Func<ValidEntity, string>> property = x => x.Name;
@@ -150,7 +159,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _button.Verify(x => x.RequiresValidForm(It.IsAny<EditContext>()), Times.Once());
+            _buttonActionHandler.Verify(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<EditContext>()), Times.Once());
             Assert.AreEqual(requiresTesting, editContext.WasValidated(PropertyMetadataHelper.GetPropertyMetadata(property)!));
         }
 
@@ -158,7 +167,7 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenValidationOfEditorInListButtonIsRequested_ThenExceptionIsThrownIfFormIsInvalid()
         {
             // arrange
-            _button.Setup(x => x.RequiresValidForm(It.IsAny<EditContext>())).Returns(true);
+            _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<EditContext>())).Returns(true);
             var editContext = new EditContext("alias", new InvalidEntity(), default, UsageType.Edit, _serviceProvider.Object);
             var listContext = new ListContext("alias", editContext, default, UsageType.Edit, default, _serviceProvider.Object);
             Expression<Func<InvalidEntity, string>> property = x => x.Name;
@@ -193,7 +202,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _button.Verify(x => x.ButtonClickBeforeRepositoryActionAsync(It.Is<EditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
+            _buttonActionHandler.Verify(x => x.ButtonClickBeforeRepositoryActionAsync(It.IsAny<IButton>(), It.Is<EditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
         }
 
         [Test]
@@ -214,7 +223,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _button.Verify(x => x.ButtonClickBeforeRepositoryActionAsync(It.Is<EditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
+            _buttonActionHandler.Verify(x => x.ButtonClickBeforeRepositoryActionAsync(It.IsAny<IButton>(), It.Is<EditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
         }
 
         [Test]
@@ -236,7 +245,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.CompleteButtonInteractionAsync(request);
 
             // assert
-            _button.Verify(x => x.ButtonClickAfterRepositoryActionAsync(It.Is<EditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
+            _buttonActionHandler.Verify(x => x.ButtonClickAfterRepositoryActionAsync(It.IsAny<IButton>(), It.Is<EditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
         }
     }
 }

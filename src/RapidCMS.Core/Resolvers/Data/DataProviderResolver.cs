@@ -42,14 +42,14 @@ namespace RapidCMS.Core.Resolvers.Data
 
                     if (repo == null)
                     {
-                        throw new InvalidOperationException($"Field {propertyField.Property.PropertyName} has incorrectly configure relation, cannot find repository for collection alias {(collectionRelation.CollectionAlias ?? collectionRelation.RelatedRepositoryType?.FullName)}.");
+                        throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrectly configure relation, cannot find repository for collection alias {(collectionRelation.CollectionAlias ?? collectionRelation.RelatedRepositoryType?.FullName)}.");
                     }
 
                     var provider = new CollectionDataProvider(
                         repo,
                         collectionRelation.RelatedEntityType,
 
-                        propertyField.Property,
+                        propertyField.Property!,
                         collectionRelation.RelatedElementsGetter,
 
                         collectionRelation.RepositoryParentSelector,
@@ -58,16 +58,16 @@ namespace RapidCMS.Core.Resolvers.Data
 
                         _memoryCache);
 
-                    var validator = new CollectionDataValidator(propertyField.Property);
+                    var validator = new CollectionDataValidator(propertyField.Property!);
 
                     return new DataProvider(
-                        propertyField.Property,
+                        propertyField.Property!,
                         provider,
                         validator);
 
                 case DataProviderRelationSetup dataProviderRelation:
 
-                    return new DataProvider(propertyField.Property, _serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType), default);
+                    return new DataProvider(propertyField.Property!, _serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType), default);
 
                 default:
                     throw new InvalidOperationException();

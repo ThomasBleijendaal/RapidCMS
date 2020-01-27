@@ -30,6 +30,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         private Mock<ICollectionResolver> _collectionResolver = default!;
         private Mock<IRepository> _repository = default!;
         private Mock<IRepositoryResolver> _repositoryResolver = default!;
+        private Mock<IDataViewResolver> _dataViewResolver = default!;
         private Mock<IParentService> _parentService = default!;
         private IConcurrencyService _concurrencyService = default!;
         private Mock<IAuthService> _authService = default!;
@@ -74,6 +75,9 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _repositoryResolver
                 .Setup(x => x.GetRepository(It.IsAny<CollectionSetup>()))
                 .Returns(_repository.Object);
+
+            _dataViewResolver = new Mock<IDataViewResolver>();
+
             _parentService = new Mock<IParentService>();
             _parentService
                 .Setup(x => x.GetParentAsync(It.IsAny<ParentPath>()))
@@ -93,6 +97,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _subject = new GetEntitiesDispatcher(
                 _collectionResolver.Object,
                 _repositoryResolver.Object,
+                _dataViewResolver.Object,
                 _parentService.Object,
                 _concurrencyService,
                 _authService.Object,

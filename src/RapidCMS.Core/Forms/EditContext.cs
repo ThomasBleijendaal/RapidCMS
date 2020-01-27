@@ -14,16 +14,18 @@ namespace RapidCMS.Core.Forms
 
     public sealed class EditContext
     {
+        private readonly IServiceProvider _serviceProvider;
         private readonly FormState _formState = new FormState();
         private readonly List<PropertyState> _fieldStates = new List<PropertyState>();
 
+
         internal EditContext(string collectionAlias, IEntity entity, IParent? parent, UsageType usageType, IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             CollectionAlias = collectionAlias ?? throw new ArgumentNullException(nameof(collectionAlias));
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             Parent = parent;
             UsageType = usageType;
-            ServiceProvider = serviceProvider;
         }
 
         public string CollectionAlias { get; private set; }
@@ -35,7 +37,6 @@ namespace RapidCMS.Core.Forms
         internal string? ReorderedBeforeId { get; private set; }
         public EntityState EntityState => UsageType.HasFlag(UsageType.New) ? EntityState.IsNew : EntityState.IsExisting;
 
-        public IServiceProvider ServiceProvider { get; private set; }
 
         internal List<DataProvider> DataProviders = new List<DataProvider>();
 
@@ -221,7 +222,7 @@ namespace RapidCMS.Core.Forms
         private IEnumerable<ValidationResult> GetValidationResultsForProperty(IPropertyMetadata property)
         {
             var results = new List<ValidationResult>();
-            var context = new ValidationContext(Entity, ServiceProvider, null)
+            var context = new ValidationContext(Entity, _serviceProvider, null)
             {
                 MemberName = property.PropertyName
             };
@@ -233,7 +234,7 @@ namespace RapidCMS.Core.Forms
             }
             catch { }
 
-            foreach (var result in DataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(Entity, ServiceProvider)))
+            foreach (var result in DataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(Entity, _serviceProvider)))
             {
                 results.Add(result);
             }
@@ -243,7 +244,7 @@ namespace RapidCMS.Core.Forms
 
         private IEnumerable<ValidationResult> GetValidationResultsForModel()
         {
-            var context = new ValidationContext(Entity, ServiceProvider, null);
+            var context = new ValidationContext(Entity, _serviceProvider, null);
             var results = new List<ValidationResult>();
 
             try
@@ -261,7 +262,7 @@ namespace RapidCMS.Core.Forms
                     $"The {kv.Property.PropertyName} field indicates it is performing an asynchronous task which must be awaited.",
                     new[] { kv.Property.PropertyName })));
 
-            foreach (var result in DataProviders.SelectMany(p => p.Validate(Entity, ServiceProvider)))
+            foreach (var result in DataProviders.SelectMany(p => p.Validate(Entity, _serviceProvider)))
             {
                 results.Add(result);
             }

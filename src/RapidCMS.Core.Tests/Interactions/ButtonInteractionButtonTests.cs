@@ -20,6 +20,7 @@ namespace RapidCMS.Core.Tests.Interactions
         private IButtonInteraction _subject = default!;
 
         private Mock<ICollectionResolver> _collectionResolver = default!;
+        private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
         private Mock<IAuthService> _authService = default!;
         private Mock<ICollectionSetup> _collection = default!;
         private Mock<IServiceProvider> _serviceProvider = default!;
@@ -34,10 +35,12 @@ namespace RapidCMS.Core.Tests.Interactions
                 .Setup(x => x.GetCollection(It.IsAny<string>()))
                 .Returns(_collection.Object);
 
+            _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
+
             _authService = new Mock<IAuthService>();
             _serviceProvider = new Mock<IServiceProvider>();
 
-            _subject = new ButtonInteraction(_collectionResolver.Object, _authService.Object);
+            _subject = new ButtonInteraction(_collectionResolver.Object, _buttonActionHandlerResolver.Object, _authService.Object);
         }
 
         [TestCase("abc")]

@@ -2,7 +2,7 @@
 
 namespace RapidCMS.Core.Abstractions.Setup
 {
-    public interface IEntityVariant
+    public interface IEntityVariantSetup
     {
         string Name { get; }
         string? Icon { get; }

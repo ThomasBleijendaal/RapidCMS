@@ -13,6 +13,5 @@ namespace RapidCMS.Core.Models.UI
         }
 
         public DisplayType Type { get; private set; }
-        public IExpressionMetadata Expression { get; private set; }
     }
 }

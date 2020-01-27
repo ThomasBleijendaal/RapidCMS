@@ -19,6 +19,5 @@ namespace RapidCMS.Core.Models.Setup
         }
         
         internal DisplayType DisplayType { get; set; } = DisplayType.Label;
-        internal IExpressionMetadata Expression { get; set; }
     }
 }

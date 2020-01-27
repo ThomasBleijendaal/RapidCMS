@@ -8,7 +8,7 @@ using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Data;
 
-namespace RapidCMS.Core.Resolvers
+namespace RapidCMS.Core.Resolvers.Data
 {
     internal class DataViewResolver : IDataViewResolver
     {

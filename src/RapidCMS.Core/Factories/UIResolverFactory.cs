@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Resolvers.UI;
 
@@ -13,21 +13,24 @@ namespace RapidCMS.Core.Factories
     {
         private readonly ICollectionResolver _collectionResolver;
         private readonly IDataProviderResolver _dataProviderResolver;
+        private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
         private readonly IDataViewResolver _dataViewResolver;
-        private readonly IAuthorizationService _authorizationService;
+        private readonly IAuthService _authService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UIResolverFactory(
             ICollectionResolver collectionResolver,
             IDataProviderResolver dataProviderResolver,
+            IButtonActionHandlerResolver buttonActionHandlerResolver,
             IDataViewResolver dataViewResolver,
-            IAuthorizationService authorizationService,
+            IAuthService authService,
             IHttpContextAccessor httpContextAccessor)
         {
             _collectionResolver = collectionResolver;
             _dataProviderResolver = dataProviderResolver;
+            _buttonActionHandlerResolver = buttonActionHandlerResolver;
             _dataViewResolver = dataViewResolver;
-            _authorizationService = authorizationService;
+            _authService = authService;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -42,7 +45,7 @@ namespace RapidCMS.Core.Factories
                 throw new InvalidOperationException($"Failed to get UI configuration from collection {collectionAlias} for action {usageType}");
             }
 
-            INodeUIResolver nodeUI = new NodeUIResolver(node, _dataProviderResolver, _authorizationService, _httpContextAccessor);
+            INodeUIResolver nodeUI = new NodeUIResolver(node, _dataProviderResolver, _buttonActionHandlerResolver,  _authService, _httpContextAccessor);
 
             return Task.FromResult(nodeUI);
         }
@@ -58,7 +61,7 @@ namespace RapidCMS.Core.Factories
                 throw new InvalidOperationException($"Failed to get UI configuration from collection {collectionAlias} for action {usageType}");
             }
 
-            IListUIResolver listUI = new ListUIResolver(list, collection, _dataProviderResolver, _dataViewResolver, _authorizationService, _httpContextAccessor);
+            IListUIResolver listUI = new ListUIResolver(list, collection, _dataProviderResolver, _dataViewResolver, _buttonActionHandlerResolver, _authService, _httpContextAccessor);
 
             return Task.FromResult(listUI);
         }

@@ -1,20 +1,21 @@
 ﻿using System;
+using RapidCMS.Core.Abstractions.Handlers;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Forms;
-using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Models.UI
 {
     public class ButtonUI
     {
-        internal ButtonUI(ButtonSetup button, EditContext editContext)
+        internal ButtonUI(IButtonActionHandler handler, IButtonSetup button, EditContext editContext)
         {
             ButtonId = button.ButtonId ?? throw new ArgumentNullException(nameof(button.ButtonId));
 
             Icon = button.Icon;
             Label = button.Label;
-            ShouldConfirm = button.ShouldAskForConfirmation(editContext);
+            ShouldConfirm = handler.ShouldAskForConfirmation(button, editContext);
             IsPrimary = button.IsPrimary;
-            RequiresValidForm = button.RequiresValidForm(editContext);
+            RequiresValidForm = handler.RequiresValidForm(button, editContext);
             CustomType = button.CustomType;
         }
 

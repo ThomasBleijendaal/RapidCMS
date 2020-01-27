@@ -21,8 +21,8 @@ namespace RapidCMS.Core.Models.UI
 
         public bool IsSortable() => OrderByExpression != null;
 
-        internal IPropertyMetadata? Property { get; private set; }
-        internal IExpressionMetadata? Expression { get; private set; }
+        public IPropertyMetadata? Property { get; internal set; }
+        public IExpressionMetadata? Expression { get; internal set; }
         internal IPropertyMetadata? OrderByExpression { get; private set; }
         public OrderByType SortDescending { get; set; }
     }

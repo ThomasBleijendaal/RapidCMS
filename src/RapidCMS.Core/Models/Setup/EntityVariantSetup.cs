@@ -5,7 +5,7 @@ using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class EntityVariantSetup : IEntityVariant
+    internal class EntityVariantSetup : IEntityVariantSetup
     {
         public static EntityVariantSetup Undefined = new EntityVariantSetup(default!);
 
@@ -31,9 +31,9 @@ namespace RapidCMS.Core.Models.Setup
         internal Type Type { get; set; }
         internal string Alias { get; set; }
 
-        string IEntityVariant.Name => Name;
-        string? IEntityVariant.Icon => Icon;
-        Type IEntityVariant.Type => Type;
-        string IEntityVariant.Alias => Alias;
+        string IEntityVariantSetup.Name => Name;
+        string? IEntityVariantSetup.Icon => Icon;
+        Type IEntityVariantSetup.Type => Type;
+        string IEntityVariantSetup.Alias => Alias;
     }
 }

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.EqualityComparers;
 using RapidCMS.Core.Extensions;
@@ -28,12 +28,14 @@ namespace RapidCMS.Core.Resolvers.UI
             ICollectionSetup collection,
             IDataProviderResolver dataProviderService,
             IDataViewResolver dataViewResolver,
-            IAuthorizationService authorizationService,
-            IHttpContextAccessor httpContextAccessor) : base(dataProviderService, authorizationService, httpContextAccessor)
+            IButtonActionHandlerResolver buttonActionHandlerResolver,
+            IAuthService authService,
+            IHttpContextAccessor httpContextAccessor) : base(dataProviderService, buttonActionHandlerResolver, authService, httpContextAccessor)
         {
             _list = list;
             _collection = collection;
             _dataViewResolver = dataViewResolver;
+
             _list.Panes?.ForEach(pane =>
             {
                 if (!_fieldsPerType.ContainsKey(pane.VariantType) && pane.Fields != null)

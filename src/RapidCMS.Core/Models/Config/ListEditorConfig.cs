@@ -115,7 +115,7 @@ namespace RapidCMS.Core.Models.Config
                 ? new PaneConfig<TDerivedEntity>(typeof(TDerivedEntity))
                 : new PaneConfig<TDerivedEntity>(typeof(TDerivedEntity), customSectionType);
 
-            configure.Invoke(config);
+            configure?.Invoke(config);
 
             Panes.Add(config);
 

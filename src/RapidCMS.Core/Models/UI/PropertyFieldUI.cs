@@ -17,7 +17,6 @@ namespace RapidCMS.Core.Models.UI
 
         public EditorType Type { get; internal set; }
 
-        public IPropertyMetadata Property { get; private set; }
         public IDataCollection? DataCollection { get; internal set; }
     }
 }

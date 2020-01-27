@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
 
@@ -19,11 +20,11 @@ namespace RapidCMS.Core.Models.Setup
         internal List<PaneSetup> Panes { get; set; }
         internal List<ButtonSetup> Buttons { get; set; }
 
-        internal ButtonSetup? FindButton(string buttonId)
+        internal IButtonSetup? FindButton(string buttonId)
         {
             return GetAllButtons()?.FirstOrDefault(x => x.ButtonId == buttonId);
         }
-        internal IEnumerable<ButtonSetup>? GetAllButtons()
+        internal IEnumerable<IButtonSetup>? GetAllButtons()
         {
             if (Buttons != null)
             {

@@ -30,6 +30,18 @@ namespace RapidCMS.Core.Extensions
             return result;
         }
 
+        public static async Task<List<TResult>> ToListAsync<TResult>(this IEnumerable<Task<TResult>> source)
+        {
+            var result = new List<TResult>();
+
+            foreach (var element in source)
+            {
+                result.Add(await element);
+            }
+
+            return result;
+        }
+
         public static void ForEach<TSource>(this IEnumerable<TSource> source, Action<TSource> action)
         {
             foreach (var element in source)
@@ -50,6 +62,18 @@ namespace RapidCMS.Core.Extensions
             foreach (var element in source)
             {
                 if (conditionalCast.Invoke(element) is TResult result)
+                {
+                    yield return result;
+                }
+            }
+        }
+
+        public static async IAsyncEnumerable<TResult> SelectNotNullAsync<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, Task<TResult?>> conditionalCast)
+            where TResult : class
+        {
+            foreach (var element in source)
+            {
+                if (await conditionalCast.Invoke(element) is TResult result)
                 {
                     yield return result;
                 }

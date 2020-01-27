@@ -19,6 +19,7 @@ namespace RapidCMS.Core.Tests.Interactions
         private IButtonInteraction _subject = default!;
 
         private Mock<ICollectionResolver> _collectionResolver = default!;
+        private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
         private Mock<IAuthService> _authService = default!;
         private Mock<IServiceProvider> _serviceProvider = default!;
 
@@ -38,10 +39,12 @@ namespace RapidCMS.Core.Tests.Interactions
                         
                     });
 
+            _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
+
             _authService = new Mock<IAuthService>();
             _serviceProvider = new Mock<IServiceProvider>();
 
-            _subject = new ButtonInteraction(_collectionResolver.Object, _authService.Object);
+            _subject = new ButtonInteraction(_collectionResolver.Object, _buttonActionHandlerResolver.Object, _authService.Object);
         }
 
         [Test]

@@ -17,6 +17,7 @@ using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Abstractions.Resolvers;
 
 namespace RapidCMS.Core.Tests.Services.Auth
 {
@@ -25,6 +26,8 @@ namespace RapidCMS.Core.Tests.Services.Auth
         private IAuthService _subject = default!;
 
         private Mock<IAuthorizationService> _authorizationService = default!;
+        private Mock<IButtonActionHandler> _buttonActionHandler = default!;
+        private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
         private Mock<IHttpContextAccessor> _httpContextAccessor = default!;
         private readonly ClaimsPrincipal _user = new ClaimsPrincipal();
 
@@ -32,11 +35,19 @@ namespace RapidCMS.Core.Tests.Services.Auth
         public void Setup()
         {
             _authorizationService = new Mock<IAuthorizationService>();
+
+            _buttonActionHandler = new Mock<IButtonActionHandler>();
+            _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
+            _buttonActionHandlerResolver
+                .Setup(x => x.GetButtonActionHandler(It.IsAny<IButtonSetup>()))
+                .Returns(_buttonActionHandler.Object);
+
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _httpContextAccessor.Setup(x => x.HttpContext.User).Returns(_user);
 
             _subject = new AuthService(
                 _authorizationService.Object,
+                _buttonActionHandlerResolver.Object,
                 _httpContextAccessor.Object);
         }
 
@@ -88,10 +99,8 @@ namespace RapidCMS.Core.Tests.Services.Auth
         public void WhenCheckingButtonIsAllowed_AuthorizationServiceShouldBeConsulted(UsageType usageType, string requirement)
         {
             // arrange
-            var buttonHandler = new Mock<IButtonActionHandler>();
-            buttonHandler.Setup(x => x.GetOperation(It.IsAny<IButton>(), It.IsAny<EditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
+            _buttonActionHandler.Setup(x => x.GetOperation(It.IsAny<IButton>(), It.IsAny<EditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
             var serviceProvider = new Mock<IServiceProvider>();
-            serviceProvider.Setup(x => x.GetService(It.IsAny<Type>())).Returns(buttonHandler.Object);
             var entity = new Mock<IEntity>();
             var editContext = new EditContext("", entity.Object, default, usageType, serviceProvider.Object);
             var button = new ButtonSetup(new DefaultButtonConfig {  });
@@ -117,10 +126,8 @@ namespace RapidCMS.Core.Tests.Services.Auth
         public void WhenButtonIsNotAllowed_AuthServiceShouldThrowUnauthorizedAccessException(UsageType usageType, string requirement)
         {
             // arrange
-            var buttonHandler = new Mock<IButtonActionHandler>();
-            buttonHandler.Setup(x => x.GetOperation(It.IsAny<IButton>(), It.IsAny<EditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
+            _buttonActionHandler.Setup(x => x.GetOperation(It.IsAny<IButton>(), It.IsAny<EditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
             var serviceProvider = new Mock<IServiceProvider>();
-            serviceProvider.Setup(x => x.GetService(It.IsAny<Type>())).Returns(buttonHandler.Object);
             var entity = new Mock<IEntity>();
             var editContext = new EditContext("", entity.Object, default, usageType, serviceProvider.Object);
             var button = new ButtonSetup(new DefaultButtonConfig { });

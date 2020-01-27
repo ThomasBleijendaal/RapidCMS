@@ -10,6 +10,6 @@ namespace RapidCMS.Core.Abstractions.Setup
         string Label { get; }
         string Icon { get; }
 
-        IEntityVariant? EntityVariant { get; }
+        IEntityVariantSetup? EntityVariant { get; }
     }
 }
