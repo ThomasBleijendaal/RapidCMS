@@ -12,6 +12,8 @@ namespace RapidCMS.Core.Models.Setup
             Index = field.Index;
             Description = field.Description;
             Name = field.Name;
+            Property = field.Property;
+            Expression = field.Expression;
             OrderByExpression = field.OrderByExpression;
             DefaultOrder = field.DefaultOrder;
             IsVisible = field.IsVisible;
@@ -23,6 +25,8 @@ namespace RapidCMS.Core.Models.Setup
         internal string? Name { get; set; }
         internal string? Description { get; set; }
 
+        internal IPropertyMetadata? Property { get; set; }
+        internal IExpressionMetadata? Expression { get; set; }
         internal IPropertyMetadata? OrderByExpression { get; set; }
         internal OrderByType DefaultOrder { get; set; }
 

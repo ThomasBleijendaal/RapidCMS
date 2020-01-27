@@ -55,10 +55,8 @@ namespace RapidCMS.Repositories
         {
             var dataQuery = GetListForParent(parent).AsQueryable();
 
-            if (query.DataViewExpression != null)
-            {
-                dataQuery = dataQuery.Where(query.DataViewExpression);
-            }
+            dataQuery = query.ApplyDataView(dataQuery);
+            dataQuery = query.ApplyOrder(dataQuery);
 
             if (query.SearchTerm != null)
             {

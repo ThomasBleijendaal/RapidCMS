@@ -95,7 +95,7 @@ namespace RapidCMS.UI.Components.Sections
 
             if (ListUI.OrderBys != null)
             {
-                query.SetOrderByExpressions(ListUI.OrderBys);
+                query.SetOrderBys(ListUI.OrderBys);
             }
 
             var request = CurrentState.Related != null

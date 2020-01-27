@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Setup
@@ -24,9 +22,6 @@ namespace RapidCMS.Core.Abstractions.Setup
 
         EntityVariantSetup GetEntityVariant(string? alias);
         EntityVariantSetup GetEntityVariant(IEntity entity);
-
-        Task<IEnumerable<IDataView>> GetDataViewsAsync(IServiceProvider serviceProvider);
-        Task ProcessDataViewAsync(Query query, IServiceProvider serviceProvider);
 
         Type? RepositoryType { get; }
 

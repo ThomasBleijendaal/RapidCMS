@@ -23,6 +23,7 @@ using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Request;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
+using RapidCMS.Core.Resolvers;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Resolvers.Repositories;
 using RapidCMS.Core.Services.Auth;
@@ -62,6 +63,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ICollectionResolver>(cmsSetup);
             services.AddTransient<IRepositoryResolver, RepositoryResolver>();
             services.AddTransient<IDataProviderResolver, DataProviderResolver>();
+            services.AddTransient<IDataViewResolver, DataViewResolver>();
 
             services.AddTransient<IPresenationDispatcher<GetEntityRequestModel, EditContext>, GetEntityDispatcher>();
             services.AddTransient<IPresenationDispatcher<GetEntitiesRequestModel, ListContext>, GetEntitiesDispatcher>();

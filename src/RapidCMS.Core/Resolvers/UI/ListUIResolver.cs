@@ -18,6 +18,7 @@ namespace RapidCMS.Core.Resolvers.UI
     {
         private readonly ListSetup _list;
         private readonly ICollectionSetup _collection;
+        private readonly IDataViewResolver _dataViewResolver;
         private readonly Dictionary<Type, IEnumerable<FieldUI>> _fieldsPerType = new Dictionary<Type, IEnumerable<FieldUI>>();
 
         private readonly FieldUIEqualityComparer _equalityComparer = new FieldUIEqualityComparer();
@@ -26,12 +27,13 @@ namespace RapidCMS.Core.Resolvers.UI
             ListSetup list,
             ICollectionSetup collection,
             IDataProviderResolver dataProviderService,
+            IDataViewResolver dataViewResolver,
             IAuthorizationService authorizationService,
             IHttpContextAccessor httpContextAccessor) : base(dataProviderService, authorizationService, httpContextAccessor)
         {
             _list = list;
             _collection = collection;
-
+            _dataViewResolver = dataViewResolver;
             _list.Panes?.ForEach(pane =>
             {
                 if (!_fieldsPerType.ContainsKey(pane.VariantType) && pane.Fields != null)
@@ -78,7 +80,7 @@ namespace RapidCMS.Core.Resolvers.UI
 
         public async Task<IEnumerable<TabUI>?> GetTabsAsync(EditContext editContext)
         {
-            var data = await _collection.GetDataViewsAsync(editContext.ServiceProvider);
+            var data = await _dataViewResolver.GetDataViewsAsync(_collection);
 
             return data.ToList(x => new TabUI(x.Id) { Label = x.Label });
         }

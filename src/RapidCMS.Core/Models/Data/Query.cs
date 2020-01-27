@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Linq.Expressions;
 using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Core.Models.Data
 {
     public sealed class Query : IQuery
     {
-        internal LambdaExpression? QueryExpression;
-        internal IEnumerable<IOrderBy>? OrderByExpressions;
+        internal IDataView? DataView;
+        internal IEnumerable<IOrderBy>? OrderBys;
 
         public static Query Default()
         {
@@ -34,14 +33,14 @@ namespace RapidCMS.Core.Models.Data
             MoreDataAvailable = hasMoreData;
         }
 
-        public void SetDataViewExpression(LambdaExpression expression)
+        public void SetDataView(IDataView dataView)
         {
-            QueryExpression = expression;
+            DataView = dataView;
         }
 
-        public void SetOrderByExpressions(IEnumerable<IOrderBy> expressions)
+        public void SetOrderBys(IEnumerable<IOrderBy> orderBys)
         {
-            OrderByExpressions = expressions;
+            OrderBys = orderBys;
         }
 
         public int? ActiveTab { get; private set; }

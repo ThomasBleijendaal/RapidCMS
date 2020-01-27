@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.Setup
 {
@@ -56,37 +54,6 @@ namespace RapidCMS.Core.Models.Setup
         {
             return SubEntityVariants?.FirstOrDefault(x => x.Type == entity.GetType())
                 ?? EntityVariant;
-        }
-
-        // TODO: refactor
-        public Task<IEnumerable<IDataView>> GetDataViewsAsync(IServiceProvider serviceProvider)
-        {
-            if (DataViewBuilder == null)
-            {
-                return Task.FromResult(DataViews ?? Enumerable.Empty<IDataView>());
-            }
-            else
-            {
-                var builder = serviceProvider.GetService<IDataViewBuilder>(DataViewBuilder);
-                return builder.GetDataViewsAsync();
-            }
-        }
-
-        // TODO: refactor
-        public async Task ProcessDataViewAsync(Query query, IServiceProvider serviceProvider)
-        {
-            if (DataViewBuilder != null || DataViews?.Count > 0)
-            {
-                var dataViews = await GetDataViewsAsync(serviceProvider);
-
-                var dataView = dataViews.FirstOrDefault(x => x.Id == query.ActiveTab)
-                    ?? dataViews.FirstOrDefault();
-
-                if (dataView != null)
-                {
-                    query.SetDataViewExpression(dataView.QueryExpression);
-                }
-            }
         }
 
         public Type? RepositoryType { get; private set; }

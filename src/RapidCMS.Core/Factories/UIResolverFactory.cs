@@ -13,17 +13,20 @@ namespace RapidCMS.Core.Factories
     {
         private readonly ICollectionResolver _collectionResolver;
         private readonly IDataProviderResolver _dataProviderResolver;
+        private readonly IDataViewResolver _dataViewResolver;
         private readonly IAuthorizationService _authorizationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UIResolverFactory(
             ICollectionResolver collectionResolver,
             IDataProviderResolver dataProviderResolver,
+            IDataViewResolver dataViewResolver,
             IAuthorizationService authorizationService,
             IHttpContextAccessor httpContextAccessor)
         {
             _collectionResolver = collectionResolver;
             _dataProviderResolver = dataProviderResolver;
+            _dataViewResolver = dataViewResolver;
             _authorizationService = authorizationService;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -55,7 +58,7 @@ namespace RapidCMS.Core.Factories
                 throw new InvalidOperationException($"Failed to get UI configuration from collection {collectionAlias} for action {usageType}");
             }
 
-            IListUIResolver listUI = new ListUIResolver(list, collection, _dataProviderResolver, _authorizationService, _httpContextAccessor);
+            IListUIResolver listUI = new ListUIResolver(list, collection, _dataProviderResolver, _dataViewResolver, _authorizationService, _httpContextAccessor);
 
             return Task.FromResult(listUI);
         }

@@ -22,6 +22,8 @@ namespace RapidCMS.Core.Models.UI
         public bool Reorderable { get; internal set; }
 
         // TODO: join with unique fields?
-        public IEnumerable<IOrderBy>? OrderBys => CommonFields?.Where(x => x.OrderByExpression != null).Select(x => new OrderBy(x.SortDescending, x.OrderByExpression!));
+        public IEnumerable<IOrderBy>? OrderBys => CommonFields?
+            .Where(x => x.OrderByExpression != null)
+            .Select(x => new OrderBy(x.SortDescending, x.OrderByExpression!, x.Property, x.Expression));
     }
 }

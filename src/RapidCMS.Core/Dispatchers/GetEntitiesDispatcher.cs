@@ -16,6 +16,7 @@ namespace RapidCMS.Core.Dispatchers
     {
         private readonly ICollectionResolver _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
+        private readonly IDataViewResolver _dataViewResolver;
         private readonly IParentService _parentService;
         private readonly IConcurrencyService _concurrencyService;
         private readonly IAuthService _authService;
@@ -24,6 +25,7 @@ namespace RapidCMS.Core.Dispatchers
         public GetEntitiesDispatcher(
             ICollectionResolver collectionResolver, 
             IRepositoryResolver repositoryResolver, 
+            IDataViewResolver dataViewResolver,
             IParentService parentService,
             IConcurrencyService concurrencyService,
             IAuthService authService,
@@ -31,6 +33,7 @@ namespace RapidCMS.Core.Dispatchers
         {
             _collectionResolver = collectionResolver;
             _repositoryResolver = repositoryResolver;
+            _dataViewResolver = dataViewResolver;
             _parentService = parentService;
             _concurrencyService = concurrencyService;
             _authService = authService;
@@ -49,7 +52,7 @@ namespace RapidCMS.Core.Dispatchers
 
             await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity);
 
-            await collection.ProcessDataViewAsync(request.Query, _serviceProvider);
+            await _dataViewResolver.ApplyDataViewToQueryAsync(request.Query, collection);
 
             var action = (request.UsageType & ~(UsageType.List | UsageType.Root | UsageType.NotRoot)) switch
             {

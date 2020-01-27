@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using RapidCMS.Core.Abstractions.Data;
@@ -34,7 +35,7 @@ namespace RapidCMS.Core.Models.Data
 
         public bool MoreDataAvailable => _query.MoreDataAvailable;
 
-        public Expression<Func<TEntity, bool>>? DataViewExpression => _query.QueryExpression as Expression<Func<TEntity, bool>>;
+        public Expression<Func<TEntity, bool>>? DataViewExpression => _query.DataView?.QueryExpression as Expression<Func<TEntity, bool>>;
 
         public void HasMoreData(bool hasMoreData)
         {
@@ -43,7 +44,7 @@ namespace RapidCMS.Core.Models.Data
 
         public IQueryable<TEntity> ApplyDataView(IQueryable<TEntity> queryable)
         {
-            if (!(_query.QueryExpression is Expression<Func<TEntity, bool>> validQueryExpression))
+            if (!(_query.DataView?.QueryExpression is Expression<Func<TEntity, bool>> validQueryExpression))
             {
                 return queryable;
             }
@@ -53,13 +54,13 @@ namespace RapidCMS.Core.Models.Data
 
         public IQueryable<TEntity> ApplyOrder(IQueryable<TEntity> queryable)
         {
-            if (_query.OrderByExpressions == null)
+            if (_query.OrderBys == null)
             {
                 return queryable;
             }
 
             var first = true;
-            foreach (var orderBy in _query.OrderByExpressions)
+            foreach (var orderBy in _query.OrderBys)
             {
                 if (orderBy.OrderByType == OrderByType.None || orderBy.OrderByExpression == null)
                 {
@@ -95,5 +96,9 @@ namespace RapidCMS.Core.Models.Data
 
             return source.Provider.CreateQuery<T>(resultExp);
         }
+
+        public IDataView? ActiveDataView => _query.DataView;
+
+        public IEnumerable<IOrderBy> ActiveOrderBys => _query.OrderBys ?? Enumerable.Empty<OrderBy>();
     }
 }
