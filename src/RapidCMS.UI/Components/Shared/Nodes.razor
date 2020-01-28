@@ -34,7 +34,8 @@
 
                 @if (node.Path != null)
                 {
-                    <NavLink href=@node.Path Match="NavLinkMatch.All">@node.Name</NavLink>
+                    <NavigationLink NewState="@node.State">@node.Name</NavigationLink>
+                    @*<NavLink href=@node.Path Match="NavLinkMatch.All">@node.Name</NavLink>*@
                 }
                 else
                 {

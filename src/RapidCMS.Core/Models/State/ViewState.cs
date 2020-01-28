@@ -1,15 +1,15 @@
 ﻿using System;
-using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Abstractions.State;
 
 namespace RapidCMS.Core.Models.State
 {
     public class ViewState
     {
-        public ViewState(INavigationState navigationState)
+        public ViewState(IPageState pageState)
         {
-            NavigationState = navigationState ?? throw new ArgumentNullException(nameof(navigationState));
+            PageState = pageState ?? throw new ArgumentNullException(nameof(pageState));
         }
 
-        public INavigationState NavigationState { get; private set; }
+        public IPageState PageState { get; private set; }
     }
 }

@@ -1,10 +1,11 @@
-﻿using RapidCMS.Core.Abstractions.Data;
+﻿using System;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.State
 {
-    public class NavigationStateModel
+    public class PageStateModel : IEquatable<PageStateModel>
     {
         public PageType PageType { get; set; }
         public UsageType UsageType { get; set; }
@@ -19,5 +20,14 @@ namespace RapidCMS.Core.Models.State
         public string? SearchTerm { get; set; } = null;
         public int CurrentPage { get; set; } = 1;
         public int? MaxPage { get; set; } = null;
+
+        public bool Equals(PageStateModel? other)
+        {
+            return PageType == other?.PageType &&
+                UsageType == other?.UsageType &&
+                CollectionAlias == other?.CollectionAlias &&
+                ParentPath?.ToPathString() == other?.ParentPath?.ToPathString() &&
+                Id == other?.Id;
+        }
     }
 }

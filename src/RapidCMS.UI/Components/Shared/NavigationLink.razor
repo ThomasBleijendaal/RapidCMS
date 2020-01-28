@@ -1,0 +1,34 @@
+﻿@implements IDisposable
+
+<a href="javascript:;" @onclick="OnLinkClick" class="@(_isActive ? "active" : "")">@ChildContent</a>
+
+@code {
+    private bool _isActive;
+
+    [Inject] private INavigationState Navigation { get; set; } = default!;
+
+    [Parameter] public RenderFragment ChildContent { get; set; } = default!;
+
+    [Parameter] public PageStateModel NewState { get; set; } = default!;
+
+    protected override void OnParametersSet()
+    {
+        Navigation.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, PageStateModel model)
+    {
+        _isActive = NewState.Equals(model);
+        StateHasChanged();
+    }
+
+    private void OnLinkClick(MouseEventArgs args)
+    {
+        Navigation.ResetState(NewState);
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
+}

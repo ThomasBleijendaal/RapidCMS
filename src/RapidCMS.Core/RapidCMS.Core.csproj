@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>2.0.14-preview</Version>
+    <Version>2.0.15-preview</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Thomas Bleijendaal</Authors>
     <Company>Thomas Bleijendaal</Company>
@@ -14,12 +14,6 @@
     <PackageTags>Blazor, CMS</PackageTags>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Abstractions\State\**" />
-    <EmbeddedResource Remove="Abstractions\State\**" />
-    <None Remove="Abstractions\State\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="3.1.0" />

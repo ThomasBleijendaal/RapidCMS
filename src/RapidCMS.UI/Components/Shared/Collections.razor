@@ -33,7 +33,8 @@ else if (UI.RootVisible)
 
         @if (UI.Path != null)
         {
-            <NavLink href=@UI.Path Match="NavLinkMatch.All"><i class="icon ion-md-@UI.Icon"></i> @UI.Name</NavLink>
+            <NavigationLink NewState="@UI.State">@UI.Name</NavigationLink>
+            @*<NavLink href=@UI.Path Match="NavLinkMatch.All"><i class="icon ion-md-@UI.Icon"></i> @UI.Name</NavLink>*@
         }
         else
         {

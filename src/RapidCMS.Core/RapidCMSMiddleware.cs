@@ -13,6 +13,7 @@ using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Dispatchers;
 using RapidCMS.Core.Factories;
@@ -80,7 +81,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IConcurrencyService, ConcurrencyService>();
             services.AddSingleton<IExceptionService, ExceptionService>();
             services.AddScoped<IMessageService, MessageService>();
-            services.AddTransient<INavigationState, NavigationState>();
+            services.AddScoped<INavigationState, NavigationState>();
+            services.AddTransient<IPageState, PageState>();
             services.AddTransient<IParentService, ParentService>();
             services.AddScoped<ISidePaneService, SidePaneService>();
             services.AddTransient<ITreeService, TreeService>();

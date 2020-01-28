@@ -1,4 +1,7 @@
-﻿@page "/collection/{Action}/{CollectionAlias}"
+﻿@implements IDisposable
+
+@page "/"
+@page "/collection/{Action}/{CollectionAlias}"
 @page "/collection/{Action}/{Path}/{CollectionAlias}"
 @page "/node/{Action}/{CollectionAlias}/{VariantAlias}/{Id}"
 @page "/node/{Action}/{Path}/{CollectionAlias}/{VariantAlias}/{Id}"
@@ -7,13 +10,27 @@
 
 @if (State != null)
 {
-    <RootSection InitialState="State" />
+    <RootSection InitialState="State" IsRoot="true" />
+}
+else if (IsDashboard)
+{
+    <CascadingValue Name="Embedded" Value="true">
+        @foreach (var section in Dashboard.CustomDashboardSectionRegistrations)
+        {
+            @RenderType(section);
+        }
+    </CascadingValue>
 }
 
 @code {
-    private NavigationStateModel? State;
+    private PageStateModel? State;
 
+    // TODO: change to overload of PageStateModel
+    private bool IsDashboard;
+
+    [Inject] private INavigationState NavigationState { get; set; } = default!;
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+    [Inject] private IDashboard Dashboard { get; set; } = default!;
 
     [Parameter] public string Action { get; set; } = default!;
     [Parameter] public string CollectionAlias { get; set; } = default!;
@@ -23,15 +40,40 @@
 
     protected override void OnParametersSet()
     {
-        State = new NavigationStateModel
+        NavigationState.LocationChanged += OnLocationChanged;
+
+        IsDashboard = false;
+        State = null;
+
+        var pageType = GetPageType();
+
+        if (!pageType.HasValue)
         {
-            PageType = GetPageType(),
-            UsageType = GetUsageType(),
-            CollectionAlias = CollectionAlias,
-            Id = Id,
-            ParentPath = ParentPath.TryParse(Path),
-            VariantAlias = VariantAlias
-        };
+            IsDashboard = true;
+        }
+        else
+        {
+            State = new PageStateModel
+            {
+                PageType = pageType.Value,
+                UsageType = GetUsageType(),
+                CollectionAlias = CollectionAlias,
+                Id = Id,
+                ParentPath = ParentPath.TryParse(Path),
+                VariantAlias = VariantAlias
+            };
+        }
+    }
+
+    private void OnLocationChanged(object? sender, PageStateModel newState)
+    {
+        State = newState;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationState.LocationChanged -= OnLocationChanged;
     }
 
     protected UsageType GetUsageType()
@@ -58,10 +100,33 @@
         return type;
     }
 
-    protected PageType GetPageType()
+    protected PageType? GetPageType()
     {
-        return NavigationManager.Uri.Contains("/collection/")
-            ? PageType.Collection
-            : PageType.Node;
+        return NavigationManager.Uri.Contains("/collection/") ? PageType.Collection :
+               NavigationManager.Uri.Contains("/node/") ? PageType.Node :
+               default(PageType?);
+    }
+
+    private RenderFragment RenderType(ITypeRegistration section)
+    {
+        return builder =>
+        {
+            var type = section.Type == typeof(ICollectionConfig)
+                ? typeof(RootSection)
+                : section.Type;
+
+            builder.OpenComponent(0, type);
+
+            if (section.Parameters != null)
+            {
+                var index = 1;
+                section.Parameters.ForEach(kv =>
+                {
+                    builder.AddAttribute(index++, kv.Key, kv.Value);
+                });
+            }
+
+            builder.CloseComponent();
+        };
     }
 }

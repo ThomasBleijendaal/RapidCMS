@@ -87,7 +87,7 @@ namespace RapidCMS.Core.Models.Config
                     new Dictionary<string, object> {
                         {
                             "InitialState",
-                            new NavigationStateModel
+                            new PageStateModel
                             {
                                 PageType = PageType.Collection,
                                 UsageType = edit ? UsageType.Edit : UsageType.View,

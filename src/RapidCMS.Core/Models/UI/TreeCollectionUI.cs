@@ -1,4 +1,5 @@
 ﻿using System;
+using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Core.Models.UI
 {
@@ -14,6 +15,7 @@ namespace RapidCMS.Core.Models.UI
         public string Name { get; private set; }
         public string? Icon { get; internal set; }
         public string? Path { get; internal set; }
+        public PageStateModel State { get; internal set; }
 
         public bool EntitiesVisible { get; internal set; }
         public bool RootVisible { get; internal set; }

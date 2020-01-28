@@ -21,7 +21,7 @@ namespace RapidCMS.Core.Services.Persistence
         {
             if (_dispatchers.FirstOrDefault(x => x.GetType().GetInterfaces().Any(i => i == typeof(IInteractionDispatcher<TRequest, TResponse>))) is IInteractionDispatcher<TRequest, TResponse> dispatcher)
             {
-                return dispatcher.InvokeAsync(request, state.NavigationState);
+                return dispatcher.InvokeAsync(request, state.PageState);
             }
             else
             {

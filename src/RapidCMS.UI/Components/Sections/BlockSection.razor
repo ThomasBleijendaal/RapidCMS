@@ -38,7 +38,7 @@
             {
                 var parentPath = ParentPath.AddLevel(EditContext.Parent?.GetParentPath(), EditContext.CollectionAlias, EditContext.Entity.Id!);
 
-                var state = new NavigationStateModel
+                var state = new PageStateModel
                 {
                     PageType = PageType.Collection,
                     UsageType = EditContext.UsageType.HasFlag(UsageType.View) ? UsageType.View : UsageType.Edit,
@@ -55,7 +55,7 @@
             {
                 var related = new RelatedEntity(EditContext.Entity);
 
-                var state = new NavigationStateModel
+                var state = new PageStateModel
                 {
                     PageType = PageType.Collection,
                     UsageType = EditContext.UsageType.HasFlag(UsageType.View) ? UsageType.View : UsageType.Edit,

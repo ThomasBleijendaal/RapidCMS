@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Forms;
@@ -17,19 +18,20 @@ namespace RapidCMS.UI.Components.Sections
     {
         [Inject] private NavigationManager NavigationManager { get; set; } = default!;
         [Inject] private IExceptionService ExceptionService { get; set; } = default!;
-        [Inject] protected INavigationState NavigationState { get; set; } = default!;
+        [Inject] protected IPageState PageState { get; set; } = default!;
 
         [Inject] protected IPresentationService PresentationService { get; set; } = default!;
         [Inject] protected IInteractionService InteractionService { get; set; } = default!;
         [Inject] protected IUIResolverFactory UIResolverFactory { get; set; } = default!;
 
-        [Parameter] public NavigationStateModel InitialState { get; set; } = default!;
-        protected NavigationStateModel CurrentState => NavigationState.GetCurrentState()!;
+        [Parameter] public bool IsRoot { get; set; }
+        [Parameter] public PageStateModel InitialState { get; set; } = default!;
+        protected PageStateModel CurrentState => PageState.GetCurrentState()!;
 
         protected IEnumerable<ButtonUI>? Buttons { get; set; }
         protected IEnumerable<(EditContext editContext, IEnumerable<SectionUI> sections)>? Sections { get; set; }
 
-        protected ViewState CurrentViewState => new ViewState(NavigationState);
+        protected ViewState CurrentViewState => new ViewState(PageState);
 
         protected async Task HandleViewCommandAsync(ViewCommandResponseModel response)
         {
@@ -60,7 +62,12 @@ namespace RapidCMS.UI.Components.Sections
                 ListUI = null;
                 EditContext = null;
 
-                NavigationState.ResetState(InitialState);
+                PageState.ResetState(InitialState);
+
+                if (IsRoot)
+                {
+                    PageState.UpdateNavigationStateWhenStateChanges();
+                }
 
                 await LoadDataAsync();
             }

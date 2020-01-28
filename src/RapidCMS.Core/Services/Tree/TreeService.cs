@@ -9,6 +9,7 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.State;
 using RapidCMS.Core.Models.UI;
 
 namespace RapidCMS.Core.Services.Tree
@@ -57,10 +58,24 @@ namespace RapidCMS.Core.Services.Tree
             if (collection.ListEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, testEntity))
             {
                 tree.Path = UriHelper.Collection(Constants.Edit, collection.Alias, parentPath);
+                tree.State = new PageStateModel
+                {
+                    CollectionAlias = collection.Alias,
+                    PageType = PageType.Collection,
+                    ParentPath = parentPath,
+                    UsageType = UsageType.Edit
+                };
             }
             else if (collection.ListView != null && await _authService.IsUserAuthorizedAsync(Operations.Read, testEntity))
             {
                 tree.Path = UriHelper.Collection(Constants.View, collection.Alias, parentPath);
+                tree.State = new PageStateModel
+                {
+                    CollectionAlias = collection.Alias,
+                    PageType = PageType.Collection,
+                    ParentPath = parentPath,
+                    UsageType = UsageType.View
+                };
             }
 
             return tree;
@@ -103,6 +118,15 @@ namespace RapidCMS.Core.Services.Tree
                     if (collection.ListEditor != null)
                     {
                         node.Path = UriHelper.Node(Constants.Edit, collection.Alias, entityVariant, parentPath, entity.Id);
+                        node.State = new PageStateModel
+                        {
+                            CollectionAlias = collection.Alias,
+                            Id = entity.Id,
+                            PageType = PageType.Node,
+                            ParentPath = parentPath,
+                            UsageType = UsageType.Edit,
+                            VariantAlias = entityVariant.Alias
+                        };
                     }
                     else if (collection.ListView != null)
                     {
@@ -114,6 +138,15 @@ namespace RapidCMS.Core.Services.Tree
                         //if (viewAuthorizationChallenge.Succeeded)
                         //{
                         node.Path = UriHelper.Node(Constants.View, collection.Alias, entityVariant, parentPath, entity.Id);
+                        node.State = new PageStateModel
+                        {
+                            CollectionAlias = collection.Alias,
+                            Id = entity.Id,
+                            PageType = PageType.Node,
+                            ParentPath = parentPath,
+                            UsageType = UsageType.View,
+                            VariantAlias = entityVariant.Alias
+                        };
                         //}
                     }
 
