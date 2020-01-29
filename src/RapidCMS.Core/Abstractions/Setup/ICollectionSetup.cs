@@ -20,8 +20,8 @@ namespace RapidCMS.Core.Abstractions.Setup
         List<IDataView>? DataViews { get; }
         Type? DataViewBuilder { get; }
 
-        EntityVariantSetup GetEntityVariant(string? alias);
-        EntityVariantSetup GetEntityVariant(IEntity entity);
+        IEntityVariantSetup GetEntityVariant(string? alias);
+        IEntityVariantSetup GetEntityVariant(IEntity entity);
 
         Type? RepositoryType { get; }
 

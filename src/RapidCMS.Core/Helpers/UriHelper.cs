@@ -1,11 +1,11 @@
-﻿using RapidCMS.Core.Models.Data;
-using RapidCMS.Core.Models.Setup;
+﻿using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Helpers
 {
     internal static class UriHelper
     {
-        public static string Node(string action, string collectionAlias, EntityVariantSetup entityVariant, ParentPath? parentPath, string? id)
+        public static string Node(string action, string collectionAlias, IEntityVariantSetup entityVariant, ParentPath? parentPath, string? id)
         {
             return Node(action, collectionAlias, entityVariant.Alias, parentPath, id);
         }

@@ -39,7 +39,7 @@ namespace RapidCMS.Core.Models.Setup
         public List<IDataView>? DataViews { get; set; }
         public Type? DataViewBuilder { get; set; }
 
-        public EntityVariantSetup GetEntityVariant(string? alias)
+        public IEntityVariantSetup GetEntityVariant(string? alias)
         {
             if (string.IsNullOrWhiteSpace(alias) || SubEntityVariants == null || EntityVariant.Alias == alias)
             {
@@ -50,7 +50,7 @@ namespace RapidCMS.Core.Models.Setup
                 return SubEntityVariants.First(x => x.Alias == alias);
             }
         }
-        public EntityVariantSetup GetEntityVariant(IEntity entity)
+        public IEntityVariantSetup GetEntityVariant(IEntity entity)
         {
             return SubEntityVariants?.FirstOrDefault(x => x.Type == entity.GetType())
                 ?? EntityVariant;
