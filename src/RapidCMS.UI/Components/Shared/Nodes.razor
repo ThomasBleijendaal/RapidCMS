@@ -12,8 +12,8 @@
         @foreach (var node in UI.Nodes)
         {
             <li class="nav-item">
-                @if (!node.RootVisibleOfCollections)
-                {
+                @*@if (!node.RootVisibleOfCollections)
+                {*@
                     <button @onclick="@((MouseEventArgs e) => NodesVisible[node.Id] = !NodesVisible[node.Id])" class="toggle">
                         @if (NodesVisible[node.Id])
                         {
@@ -24,13 +24,13 @@
                             <i class="icon ion-md-arrow-dropright"></i>
                         }
                     </button>
-                }
+                @*}
                 else
                 {
                     <button class="toggle" disabled>
                         <i class="icon"></i>
                     </button>
-                }
+                }*@
 
                 @if (node.Path != null)
                 {
@@ -103,7 +103,7 @@ else if (!string.IsNullOrWhiteSpace(error))
                 return;
             }
 
-            NodesVisible = UI.Nodes.ToDictionary(x => x.Id, x => x.RootVisibleOfCollections);
+            NodesVisible = UI.Nodes.ToDictionary(x => x.Id, x => false);
 
             // restore the view state with the new nodes
             if (oldNodesVisible != null)
