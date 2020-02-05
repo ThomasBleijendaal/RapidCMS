@@ -46,7 +46,10 @@ namespace RapidCMS.Core.Models.Config
                     NodeView?.Panes.SelectMany(x => x.SubCollectionLists.Union(x.RelatedCollectionLists)),
                 };
 
-                var referencedInlineCollections = referencedCollections.Where(x => x != null).SelectMany(x => x);
+                var referencedInlineCollections = referencedCollections
+                    .Where(x => x != null)
+                    .SelectMany(x => x)
+                    .Where(x => x.RepositoryType != null);
 
                 return referencedInlineCollections
                     .Select(collection => new CollectionConfig(
