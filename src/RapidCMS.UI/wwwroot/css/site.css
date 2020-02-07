@@ -107,6 +107,7 @@ app {
     background: #ffffff;
     padding: 2rem;
     box-shadow: rgba(0,0,0,0.2) -2px -2px 6px;
+    z-index: 100;
 }
 
     .sidepane .buttonbar {

@@ -81,7 +81,7 @@ namespace RapidCMS.Example.Collections
                                 // if you want to reuse a collection in multiple views, you can also reference it by alias
                                 // if you comment out the AddSubCollectionList above this comment, and enable the AddSubCollectionList below, 
                                 // the editor will work identical, but now the collection with alias "tag" can be used for multiple things
-                                
+
                                 // section.AddSubCollectionList("tag");
                             });
                     });
@@ -100,6 +100,7 @@ namespace RapidCMS.Example.Collections
 
                                 editor.AddDefaultButton(DefaultButtonType.Return);
                                 editor.AddDefaultButton(DefaultButtonType.New);
+                                editor.AddDefaultButton(DefaultButtonType.SaveExisting);
 
                                 editor.AddSection(section =>
                                 {
