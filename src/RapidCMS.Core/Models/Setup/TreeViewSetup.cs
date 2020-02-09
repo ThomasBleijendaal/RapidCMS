@@ -11,11 +11,14 @@ namespace RapidCMS.Core.Models.Setup
             EntityVisibility = treeView.EntityVisibilty;
             RootVisibility = treeView.RootVisibility;
             Name = treeView.Name;
-
+            DefaultOpenEntities = treeView.DefaultOpenEntities;
+            DefaultOpenCollections = treeView.DefaultOpenCollections;
         }
 
         internal EntityVisibilty EntityVisibility { get; set; }
         internal CollectionRootVisibility RootVisibility { get; set; }
+        internal bool DefaultOpenEntities { get; set; }
+        internal bool DefaultOpenCollections { get; set; }
 
         internal IExpressionMetadata? Name { get; set; }
     }

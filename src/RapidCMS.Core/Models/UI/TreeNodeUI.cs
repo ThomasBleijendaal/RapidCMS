@@ -15,9 +15,9 @@ namespace RapidCMS.Core.Models.UI
 
         public string Id { get; private set; }
         public string Name { get; private set; }
-        public string? Path { get; internal set; }
-        public PageStateModel State { get; internal set; }
+        public PageStateModel? State { get; internal set; }
         public bool RootVisibleOfCollections { get; internal set; }
+        public bool DefaultOpenCollections { get; internal set; }
         public List<string> Collections { get; private set; }
     }
 }

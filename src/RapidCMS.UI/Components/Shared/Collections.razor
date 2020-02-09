@@ -31,10 +31,9 @@ else if (UI.RootVisible)
             </button>
         }
 
-        @if (UI.Path != null)
+        @if (UI.State != null)
         {
             <NavigationLink NewState="@UI.State"><i class="icon ion-md-@UI.Icon"></i> @UI.Name</NavigationLink>
-            @*<NavLink href=@UI.Path Match="NavLinkMatch.All"><i class="icon ion-md-@UI.Icon"></i> @UI.Name</NavLink>*@
         }
         else
         {
@@ -64,6 +63,7 @@ else
         try
         {
             UI = await TreeService.GetCollectionAsync(CollectionAlias, ParentPath);
+            NodesVisible = UI?.DefaultOpenEntities ?? false;
         }
         catch (Exception ex)
         {

@@ -1,6 +1,6 @@
 ﻿@inherits NodesBase
 
-@if (UI != null && NodesVisible != null)
+@if (UI != null && CollectionsVisible != null)
 {
     <ul class="nav flex-column">
         @if (PageNr > 1)
@@ -12,30 +12,21 @@
         @foreach (var node in UI.Nodes)
         {
             <li class="nav-item">
-                @*@if (!node.RootVisibleOfCollections)
-                {*@
-                    <button @onclick="@((MouseEventArgs e) => NodesVisible[node.Id] = !NodesVisible[node.Id])" class="toggle">
-                        @if (NodesVisible[node.Id])
-                        {
-                            <i class="icon ion-md-arrow-dropdown"></i>
-                        }
-                        else
-                        {
-                            <i class="icon ion-md-arrow-dropright"></i>
-                        }
-                    </button>
-                @*}
-                else
-                {
-                    <button class="toggle" disabled>
-                        <i class="icon"></i>
-                    </button>
-                }*@
+                <button @onclick="@((MouseEventArgs e) => CollectionsVisible[node.Id] = !CollectionsVisible[node.Id])" class="toggle">
+                    @if (CollectionsVisible[node.Id])
+                    {
+                        <i class="icon ion-md-arrow-dropdown"></i>
+                    }
+                    else
+                    {
+                        <i class="icon ion-md-arrow-dropright"></i>
+                    }
+                </button>
 
-                @if (node.Path != null)
+
+                @if (node.State != null)
                 {
                     <NavigationLink NewState="@node.State">@node.Name</NavigationLink>
-                    @*<NavLink href=@node.Path Match="NavLinkMatch.All">@node.Name</NavLink>*@
                 }
                 else
                 {
@@ -43,7 +34,7 @@
                 }
 
                 <ul class="nav flex-column">
-                    @if (NodesVisible[node.Id])
+                    @if (CollectionsVisible[node.Id])
                     {
                         @foreach (var subCollection in node.Collections)
                         {
@@ -70,7 +61,7 @@ else if (!string.IsNullOrWhiteSpace(error))
 
 @code {
 
-    Dictionary<string, bool>? NodesVisible;
+    Dictionary<string, bool>? CollectionsVisible;
     TreeNodesUI? UI;
     string? error;
 
@@ -93,7 +84,7 @@ else if (!string.IsNullOrWhiteSpace(error))
 
     protected override async Task OnNodesUpdateAsync()
     {
-        var oldNodesVisible = NodesVisible;
+        var oldNodesVisible = CollectionsVisible;
 
         try
         {
@@ -103,16 +94,16 @@ else if (!string.IsNullOrWhiteSpace(error))
                 return;
             }
 
-            NodesVisible = UI.Nodes.ToDictionary(x => x.Id, x => false);
+            CollectionsVisible = UI.Nodes.ToDictionary(x => x.Id, x => x.DefaultOpenCollections);
 
             // restore the view state with the new nodes
             if (oldNodesVisible != null)
             {
                 foreach (var node in oldNodesVisible.Where(x => x.Value))
                 {
-                    if (NodesVisible.ContainsKey(node.Key))
+                    if (CollectionsVisible.ContainsKey(node.Key))
                     {
-                        NodesVisible[node.Key] = true;
+                        CollectionsVisible[node.Key] = true;
                     }
                 }
             }

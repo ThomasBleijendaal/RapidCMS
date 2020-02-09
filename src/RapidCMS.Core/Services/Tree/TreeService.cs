@@ -52,12 +52,12 @@ namespace RapidCMS.Core.Services.Tree
             {
                 EntitiesVisible = collection.TreeView?.EntityVisibility == EntityVisibilty.Visible,
                 RootVisible = collection.TreeView?.RootVisibility == CollectionRootVisibility.Visible,
-                Icon = collection.Icon ?? "list"
+                Icon = collection.Icon ?? "list",
+                DefaultOpenEntities = collection.TreeView?.DefaultOpenEntities ?? false
             };
 
             if (collection.ListEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, testEntity))
             {
-                tree.Path = UriHelper.Collection(Constants.Edit, collection.Alias, parentPath);
                 tree.State = new PageStateModel
                 {
                     CollectionAlias = collection.Alias,
@@ -68,7 +68,6 @@ namespace RapidCMS.Core.Services.Tree
             }
             else if (collection.ListView != null && await _authService.IsUserAuthorizedAsync(Operations.Read, testEntity))
             {
-                tree.Path = UriHelper.Collection(Constants.View, collection.Alias, parentPath);
                 tree.State = new PageStateModel
                 {
                     CollectionAlias = collection.Alias,
@@ -106,18 +105,11 @@ namespace RapidCMS.Core.Services.Tree
                         collection.Collections.ToList(subCollection => subCollection.Alias))
                     {
                         RootVisibleOfCollections = collection.Collections.All(subCollection => subCollection.TreeView?.RootVisibility == CollectionRootVisibility.Visible),
+                        DefaultOpenCollections = collection.TreeView?.DefaultOpenCollections ?? false
                     };
 
-                    // TODO: should this be restored?
-
-                    //var editAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
-                    //    _httpContextAccessor.HttpContext.User,
-                    //    entity,
-                    //    Operations.Update);
-
-                    if (collection.ListEditor != null)
+                    if (collection.ListEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, entity))
                     {
-                        node.Path = UriHelper.Node(Constants.Edit, collection.Alias, entityVariant, parentPath, entity.Id);
                         node.State = new PageStateModel
                         {
                             CollectionAlias = collection.Alias,
@@ -128,16 +120,8 @@ namespace RapidCMS.Core.Services.Tree
                             VariantAlias = entityVariant.Alias
                         };
                     }
-                    else if (collection.ListView != null)
+                    else if (collection.ListView != null && await _authService.IsUserAuthorizedAsync(Operations.Read, entity))
                     {
-                        //var viewAuthorizationChallenge = await _authorizationService.AuthorizeAsync(
-                        //    _httpContextAccessor.HttpContext.User,
-                        //    entity,
-                        //    Operations.Read);
-
-                        //if (viewAuthorizationChallenge.Succeeded)
-                        //{
-                        node.Path = UriHelper.Node(Constants.View, collection.Alias, entityVariant, parentPath, entity.Id);
                         node.State = new PageStateModel
                         {
                             CollectionAlias = collection.Alias,
@@ -147,7 +131,6 @@ namespace RapidCMS.Core.Services.Tree
                             UsageType = UsageType.View,
                             VariantAlias = entityVariant.Alias
                         };
-                        //}
                     }
 
                     return node;

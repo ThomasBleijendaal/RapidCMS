@@ -109,22 +109,24 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
-        public ICollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string?>> entityNameExpression)
+        public ICollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string?>> entityNameExpression, bool showEntities = false, bool showCollections = false)
         {
-            return SetTreeView(default, default, entityNameExpression);
+            return SetTreeView(default, default, entityNameExpression, showEntities, showCollections);
         }
 
-        public ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, Expression<Func<TEntity, string?>>? entityNameExpression = null)
+        public ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, Expression<Func<TEntity, string?>>? entityNameExpression = null, bool showEntities = false, bool showCollections = false)
         {
-            return SetTreeView(entityVisibility, default, entityNameExpression);
+            return SetTreeView(entityVisibility, default, entityNameExpression, showEntities, showCollections);
         }
 
-        public ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string?>>? entityNameExpression = null)
+        public ICollectionConfig<TEntity> SetTreeView(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, Expression<Func<TEntity, string?>>? entityNameExpression = null, bool showEntities = false, bool showCollections = false)
         {
             TreeView = new TreeViewConfig
             {
                 EntityVisibilty = entityVisibility,
                 RootVisibility = rootVisibility,
+                DefaultOpenEntities = showEntities,
+                DefaultOpenCollections = showCollections,
                 Name = entityNameExpression == null ? null : PropertyMetadataHelper.GetExpressionMetadata(entityNameExpression) ?? throw new InvalidExpressionException(nameof(entityNameExpression))
             };
 

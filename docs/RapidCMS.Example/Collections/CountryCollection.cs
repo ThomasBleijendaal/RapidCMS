@@ -14,7 +14,8 @@ namespace RapidCMS.Example.Collections
             config.AddCollection<Country, JsonRepository<Country>>("country", "Countries", collection =>
             {
                 collection
-                    .SetTreeView(x => x.Name)
+                    // Set showEntities to true to have this collection to fold open on default
+                    .SetTreeView(x => x.Name, showEntitiesOnStartup: true)
                     .SetListView(view =>
                     {
                         view.AddDefaultButton(DefaultButtonType.New);
