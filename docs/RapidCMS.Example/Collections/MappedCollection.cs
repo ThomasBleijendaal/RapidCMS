@@ -8,7 +8,7 @@ namespace RapidCMS.Example.Collections
 {
     public static class MappedCollection
     {
-        // CURD editor using a mapped repository
+        // CRUD editor using a mapped repository
         public static void AddMappedCollection(this ICmsConfig config)
         {
             config.AddCollection<MappedEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>("mapped", icon: "git-compare", "Mapped entities", collection =>

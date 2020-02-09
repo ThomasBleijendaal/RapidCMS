@@ -42,14 +42,6 @@ To the `ConfigureServices` method in `Startup`, add the following code:
 services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
     .AddAzureAD(options => Configuration.Bind("AzureAd", options));
 
-//services.Configure<CookiePolicyOptions>(options =>
-//{
-//    // This lambda determines whether user consent for non-essential
-//    // cookies is needed for a given request.
-//    options.CheckConsentNeeded = context => true;
-//    options.MinimumSameSitePolicy = SameSiteMode.None;
-//});
-
 // This configures the 'middleware' pipeline
 // This is where code to determine what happens
 // when a person logs in is configured and processed

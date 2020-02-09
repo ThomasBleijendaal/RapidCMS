@@ -17,7 +17,7 @@ fully replace the default UI libary and only use the core of RapidCMS.
 2. Install NuGet-package: `RapidCMS.UI`.
 3. Add `services.AddRapidCMS(config => { config.AllowAnonymousUser(); })` at the end of `ConfigureServices` in `Startup.cs`.
 4. Replace the `<Router>` in `App.razor` with `<RapidCMS.UI.Components.Router.RapidCmsRouter />`.
-5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `_Host.cshtml` with `<link href="_content/rapidcms.ui/css/site.css" rel="stylesheet" />` and remove any other css.
+5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `_Host.cshtml` with `<link href="_content/rapidcms.ui/css/site.css" rel="stylesheet" />` and remove any other css. Add `<script src="_framework/blazor.server.js"></script>` at the end of the body tag.
 6. Hit `F5`: you're now running a completely empty RapidCMS instance. 
 7. Start building your CMS using by expanding `config => {}`. Read the introduction below to get a sense of what is possible,
 or browse the [Example Project](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/docs/RapidCMS.Example) to see all the options.
@@ -62,7 +62,7 @@ The `IEntity` interface expects an `Id` of type `string`, and by implementing it
 it does not interfere with the rest of the entity.
 
 In order to start specifying how the UI for this entity, head to your `Startup.cs` and add
-`using RapidCMS.Common.Extensions;` at the top of the file, and put the following code in the
+`using RapidCMS.Core.Extensions;` at the top of the file, and put the following code in the
 `ConfigureServices` method.
 
 ```c#

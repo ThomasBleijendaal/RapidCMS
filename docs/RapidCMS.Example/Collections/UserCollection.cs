@@ -11,7 +11,7 @@ namespace RapidCMS.Example.Collections
 {
     public static class UserCollection
     {
-        // CURD editor with validation attributes, custom editor and custom button panes
+        // CRUD editor with validation attributes, custom editor and custom button panes
         public static void AddUserCollection(this ICmsConfig config)
         {
             // the CMS users https://ionicons.com/, so use the name of any Ion Icon as icon for a collection
