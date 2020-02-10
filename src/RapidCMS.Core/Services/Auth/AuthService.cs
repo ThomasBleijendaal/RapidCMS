@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
@@ -15,18 +16,18 @@ namespace RapidCMS.Core.Services.Auth
 {
     internal class AuthService : IAuthService
     {
-        private readonly IAuthorizationService _authorizationService;
         private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IServiceProvider _serviceProvider;
 
         public AuthService(
-            IAuthorizationService authorizationService,
             IButtonActionHandlerResolver buttonActionHandlerResolver,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IServiceProvider serviceProvider)
         {
-            _authorizationService = authorizationService;
             _buttonActionHandlerResolver = buttonActionHandlerResolver;
             _httpContextAccessor = httpContextAccessor;
+            _serviceProvider = serviceProvider;
         }
 
         public Task<bool> IsUserAuthorizedAsync(UsageType usageType, IEntity entity)
@@ -44,7 +45,9 @@ namespace RapidCMS.Core.Services.Auth
 
         public async Task<bool> IsUserAuthorizedAsync(OperationAuthorizationRequirement operation, IEntity entity)
         {
-            var authorizationChallenge = await _authorizationService.AuthorizeAsync(
+            var authorizationService = _serviceProvider.GetService<IAuthorizationService>();
+
+            var authorizationChallenge = await authorizationService.AuthorizeAsync(
                 _httpContextAccessor.HttpContext.User,
                 entity,
                 operation);

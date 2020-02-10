@@ -27,7 +27,7 @@ namespace RapidCMS.UI.Components.Editors
         {
             EditContext.NotifyPropertyBusy(Property);
 
-            UploadCompletion = 0.0;
+            UploadCompletion = 0.01;
 
             var files = await FileReaderService.CreateReference(_fileInput).EnumerateFilesAsync();
             if (files.Count() > 1)
