@@ -69,7 +69,7 @@ namespace RapidCMS.Core.Services.State
         {
             if (_updateState && _currentState.Any())
             {
-                _navigationState.NotifyLocationChanged(_currentState.Last());
+                _navigationState.NotifyLocationChanged(_currentState.Last(), false);
             }
         }
     }

@@ -20,9 +20,12 @@ namespace RapidCMS.Core.Services.State
             NotifyLocationChanged(newState);
         }
 
-        public void NotifyLocationChanged(PageStateModel newState)
+        public void NotifyLocationChanged(PageStateModel newState, bool forceReload = true)
         {
-            LocationChanged?.Invoke(default, newState);
+            if (forceReload)
+            {
+                LocationChanged?.Invoke(default, newState);
+            }
 
             var parentPath = newState.ParentPath?.ToPathString();
 
