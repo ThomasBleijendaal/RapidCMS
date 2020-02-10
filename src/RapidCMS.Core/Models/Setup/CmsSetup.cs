@@ -17,8 +17,6 @@ namespace RapidCMS.Core.Models.Setup
         {
             SiteName = config.SiteName;
             IsDevelopment = config.IsDevelopment;
-            AllowAnonymousUsage = config.AllowAnonymousUsage;
-            SemaphoreMaxCount = config.SemaphoreMaxCount;
 
             Collections = ConfigProcessingHelper.ProcessCollections(config);
 
@@ -53,9 +51,6 @@ namespace RapidCMS.Core.Models.Setup
 
         internal string SiteName { get; set; }
         internal bool IsDevelopment { get; set; }
-        internal bool AllowAnonymousUsage { get; set; }
-
-        internal int SemaphoreMaxCount { get; set; }
 
         public List<CollectionSetup> Collections { get; set; }
         internal List<CustomTypeRegistrationSetup> CustomDashboardSectionRegistrations { get; set; }
@@ -68,9 +63,7 @@ namespace RapidCMS.Core.Models.Setup
             get => IsDevelopment;
             set => IsDevelopment = value;
         }
-        bool ICms.AllowAnonymousUsage => AllowAnonymousUsage;
-        int ICms.SemaphoreMaxCount => SemaphoreMaxCount;
-
+        
         ICollectionSetup ICollectionResolver.GetCollection(string alias)
         {
             return _collectionMap.FirstOrDefault(x => x.Key == alias).Value

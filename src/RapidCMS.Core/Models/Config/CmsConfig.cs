@@ -14,11 +14,13 @@ namespace RapidCMS.Core.Models.Config
 {
     internal class CmsConfig : ICmsConfig
     {
+        internal CmsAdvancedConfig AdvancedConfig { get; set; } = new CmsAdvancedConfig
+        {
+            SemaphoreCount = 1
+        };
         internal string SiteName { get; set; } = "RapidCMS";
         internal bool IsDevelopment { get; set; }
         internal bool AllowAnonymousUsage { get; set; } = false;
-
-        internal int SemaphoreMaxCount { get; set; } = 1;
 
         public string Alias => "__root";
 
@@ -28,6 +30,8 @@ namespace RapidCMS.Core.Models.Config
         internal List<CustomTypeRegistrationConfig> CustomDashboardSectionRegistrations { get; set; } = new List<CustomTypeRegistrationConfig>();
         internal CustomTypeRegistrationConfig? CustomLoginScreenRegistration { get; set; }
         internal CustomTypeRegistrationConfig? CustomLoginStatusRegistration { get; set; }
+
+        public IAdvancedCmsConfig Advanced => AdvancedConfig;
 
         public ICmsConfig SetCustomLoginScreen(Type loginType)
         {
@@ -93,7 +97,7 @@ namespace RapidCMS.Core.Models.Config
                                 UsageType = edit ? UsageType.Edit : UsageType.View,
                                 CollectionAlias = collectionAlias
                             }
-                        } 
+                        }
                     }));
 
             return this;

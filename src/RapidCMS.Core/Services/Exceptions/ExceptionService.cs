@@ -7,8 +7,12 @@ namespace RapidCMS.Core.Services.Exceptions
     {
         private Exception? _ex;
 
+        public event EventHandler<Exception>? OnException;
+
         public void StoreException(Exception ex)
         {
+            OnException?.Invoke(default, ex);
+
             _ex = ex ?? throw new ArgumentNullException(nameof(ex));
         }
 

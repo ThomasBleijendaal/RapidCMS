@@ -53,7 +53,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IDashboard>(cmsSetup);
             services.AddSingleton<ILogin>(cmsSetup);
 
-            if (cmsSetup.AllowAnonymousUsage)
+            if (rootConfig.AllowAnonymousUsage)
             {
                 services.AddSingleton<IAuthorizationHandler, AllowAllAuthorizationHandler>();
                 services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
@@ -100,7 +100,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<HttpClient>();
 
             // Semaphore for repositories
-            services.AddSingleton(serviceProvider => new SemaphoreSlim(rootConfig.SemaphoreMaxCount, rootConfig.SemaphoreMaxCount));
+            services.AddSingleton(serviceProvider => new SemaphoreSlim(rootConfig.Advanced.SemaphoreCount, rootConfig.Advanced.SemaphoreCount));
 
             services.AddFileReaderService();
 

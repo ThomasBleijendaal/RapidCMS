@@ -1,7 +1,6 @@
 ﻿using System;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Repositories;
-using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Abstractions.Config
 {
@@ -78,5 +77,10 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <param name="siteName">Name of your CMS</param>
         /// <returns></returns>
         ICmsConfig SetSiteName(string siteName);
+
+        /// <summary>
+        /// These settings are for advanced or debugging scenarios.
+        /// </summary>
+        IAdvancedCmsConfig Advanced { get; }
     }
 }

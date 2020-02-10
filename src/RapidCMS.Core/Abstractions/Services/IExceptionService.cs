@@ -6,5 +6,7 @@ namespace RapidCMS.Core.Abstractions.Services
     {
         void StoreException(Exception ex);
         Exception? GetLatestException();
+
+        event EventHandler<Exception> OnException;
     }
 }
