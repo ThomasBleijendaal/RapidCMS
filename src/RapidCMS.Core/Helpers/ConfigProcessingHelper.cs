@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
@@ -11,40 +12,48 @@ namespace RapidCMS.Core.Helpers
 {
     internal static class ConfigProcessingHelper
     {
-        internal static List<CollectionSetup> ProcessCollections(this ICollectionConfig root)
+        internal static List<ITreeElementSetup> ProcessCollections(this ICollectionConfig root)
         {
-            var list = new List<CollectionSetup>();
+            var list = new List<ITreeElementSetup>();
 
-            foreach (var configReceiver in root.Collections.Cast<CollectionConfig>())
+            foreach (var element in root.CollectionsAndPages)
             {
-                var collection = new CollectionSetup(
-                    configReceiver.Icon,
-                    configReceiver.Name,
-                    configReceiver.Alias,
-                    new EntityVariantSetup(configReceiver.EntityVariant),
-                    configReceiver.RepositoryType,
-                    configReceiver.Recursive)
-                {
-                    DataViews = configReceiver.DataViews,
-                    DataViewBuilder = configReceiver.DataViewBuilder
-                };
+                if (element is CollectionConfig collectionConfigReceiver) {
 
-                if (configReceiver.SubEntityVariants.Any())
-                {
-                    collection.SubEntityVariants = configReceiver.SubEntityVariants.ToList(variant => new EntityVariantSetup(variant));
+                    var collection = new CollectionSetup(
+                        collectionConfigReceiver.Icon,
+                        collectionConfigReceiver.Name,
+                        collectionConfigReceiver.Alias,
+                        new EntityVariantSetup(collectionConfigReceiver.EntityVariant),
+                        collectionConfigReceiver.RepositoryType,
+                        collectionConfigReceiver.Recursive)
+                    {
+                        DataViews = collectionConfigReceiver.DataViews,
+                        DataViewBuilder = collectionConfigReceiver.DataViewBuilder
+                    };
+
+                    if (collectionConfigReceiver.SubEntityVariants.Any())
+                    {
+                        collection.SubEntityVariants = collectionConfigReceiver.SubEntityVariants.ToList(variant => new EntityVariantSetup(variant));
+                    }
+
+                    collection.TreeView = collectionConfigReceiver.TreeView == null ? null : new TreeViewSetup(collectionConfigReceiver.TreeView);
+
+                    collection.ListView = collectionConfigReceiver.ListView == null ? null : new ListSetup(collectionConfigReceiver.ListView, collection);
+                    collection.ListEditor = collectionConfigReceiver.ListEditor == null ? null : new ListSetup(collectionConfigReceiver.ListEditor, collection);
+
+                    collection.NodeView = collectionConfigReceiver.NodeView == null ? null : new NodeSetup(collectionConfigReceiver.NodeView, collection);
+                    collection.NodeEditor = collectionConfigReceiver.NodeEditor == null ? null : new NodeSetup(collectionConfigReceiver.NodeEditor, collection);
+
+                    // nested pages are not supported
+                    collection.Collections = collectionConfigReceiver.ProcessCollections().SelectNotNull(x => x as CollectionSetup).ToList();
+
+                    list.Add(collection);
                 }
-
-                collection.TreeView = configReceiver.TreeView == null ? null : new TreeViewSetup(configReceiver.TreeView);
-
-                collection.ListView = configReceiver.ListView == null ? null : new ListSetup(configReceiver.ListView, collection);
-                collection.ListEditor = configReceiver.ListEditor == null ? null : new ListSetup(configReceiver.ListEditor, collection);
-
-                collection.NodeView = configReceiver.NodeView == null ? null : new NodeSetup(configReceiver.NodeView, collection);
-                collection.NodeEditor = configReceiver.NodeEditor == null ? null : new NodeSetup(configReceiver.NodeEditor, collection);
-
-                collection.Collections = configReceiver.ProcessCollections();
-
-                list.Add(collection);
+                else if (element is IPageConfig pageConfigReceiver)
+                {
+                    list.Add(new PageRegistrationSetup(pageConfigReceiver));
+                }
             }
 
             return list;

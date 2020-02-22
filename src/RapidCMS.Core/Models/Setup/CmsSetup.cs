@@ -9,7 +9,7 @@ using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class CmsSetup : ICms, ICollectionResolver, IDashboard, ILogin
+    internal class CmsSetup : ICms, ICollectionResolver, ILogin
     {
         private Dictionary<string, CollectionSetup> _collectionMap { get; set; } = new Dictionary<string, CollectionSetup>();
 
@@ -18,9 +18,8 @@ namespace RapidCMS.Core.Models.Setup
             SiteName = config.SiteName;
             IsDevelopment = config.IsDevelopment;
 
-            Collections = ConfigProcessingHelper.ProcessCollections(config);
-
-            CustomDashboardSectionRegistrations = config.CustomDashboardSectionRegistrations.ToList(x => new CustomTypeRegistrationSetup(x));
+            CollectionsAndPages = ConfigProcessingHelper.ProcessCollections(config);
+            
             if (config.CustomLoginScreenRegistration != null)
             {
                 CustomLoginScreenRegistration = new CustomTypeRegistrationSetup(config.CustomLoginScreenRegistration);
@@ -30,7 +29,7 @@ namespace RapidCMS.Core.Models.Setup
                 CustomLoginStatusRegistration = new CustomTypeRegistrationSetup(config.CustomLoginStatusRegistration);
             }
 
-            MapCollections(Collections);
+            MapCollections(CollectionsAndPages.SelectNotNull(x => x as CollectionSetup));
 
             void MapCollections(IEnumerable<CollectionSetup> collections)
             {
@@ -52,8 +51,7 @@ namespace RapidCMS.Core.Models.Setup
         internal string SiteName { get; set; }
         internal bool IsDevelopment { get; set; }
 
-        public List<CollectionSetup> Collections { get; set; }
-        internal List<CustomTypeRegistrationSetup> CustomDashboardSectionRegistrations { get; set; }
+        public List<ITreeElementSetup> CollectionsAndPages { get; set; }
         internal CustomTypeRegistrationSetup? CustomLoginScreenRegistration { get; set; }
         internal CustomTypeRegistrationSetup? CustomLoginStatusRegistration { get; set; }
 
@@ -70,12 +68,15 @@ namespace RapidCMS.Core.Models.Setup
                 ?? throw new InvalidOperationException($"Failed to find collection with alias {alias}.");
         }
 
-        IEnumerable<ICollectionSetup> ICollectionResolver.GetRootCollections()
+        IPageSetup ICollectionResolver.GetPage(string alias)
         {
-            return Collections;
+            return CollectionsAndPages.SelectNotNull(x => x as IPageSetup).First(x => x.Alias == alias);
         }
 
-        IEnumerable<ITypeRegistration> IDashboard.CustomDashboardSectionRegistrations => CustomDashboardSectionRegistrations;
+        IEnumerable<ITreeElementSetup> ICollectionResolver.GetRootCollections()
+        {
+            return CollectionsAndPages.Skip(1);
+        }
 
         ITypeRegistration? ILogin.CustomLoginScreenRegistration => CustomLoginScreenRegistration;
         ITypeRegistration? ILogin.CustomLoginStatusRegistration => CustomLoginStatusRegistration;

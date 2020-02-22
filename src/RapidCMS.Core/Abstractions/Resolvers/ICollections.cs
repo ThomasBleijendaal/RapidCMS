@@ -6,6 +6,7 @@ namespace RapidCMS.Core.Abstractions.Resolvers
     internal interface ICollectionResolver
     {
         ICollectionSetup GetCollection(string alias);
-        IEnumerable<ICollectionSetup> GetRootCollections();
+        IPageSetup GetPage(string alias);
+        IEnumerable<ITreeElementSetup> GetRootCollections();
     }
 }

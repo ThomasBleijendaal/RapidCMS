@@ -1,6 +1,7 @@
 ﻿@implements IDisposable
 
 @page "/"
+@page "/page/{CollectionAlias}"
 @page "/collection/{Action}/{CollectionAlias}"
 @page "/collection/{Action}/{Path}/{CollectionAlias}"
 @page "/node/{Action}/{CollectionAlias}/{VariantAlias}/{Id}"
@@ -12,25 +13,12 @@
 {
     <RootSection InitialState="State" IsRoot="true" />
 }
-else if (IsDashboard)
-{
-    <CascadingValue Name="Embedded" Value="true">
-        @foreach (var section in Dashboard.CustomDashboardSectionRegistrations)
-        {
-            @RenderType(section);
-        }
-    </CascadingValue>
-}
 
 @code {
     private PageStateModel? State;
 
-    // TODO: change to overload of PageStateModel
-    private bool IsDashboard;
-
     [Inject] private INavigationState NavigationState { get; set; } = default!;
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
-    [Inject] private IDashboard Dashboard { get; set; } = default!;
 
     [Parameter] public string Action { get; set; } = default!;
     [Parameter] public string CollectionAlias { get; set; } = default!;
@@ -42,20 +30,22 @@ else if (IsDashboard)
     {
         NavigationState.LocationChanged += OnLocationChanged;
 
-        IsDashboard = false;
         State = null;
 
         var pageType = GetPageType();
 
-        if (!pageType.HasValue)
+        if (pageType == PageType.Dashboard)
         {
-            IsDashboard = true;
+            State = new PageStateModel
+            {
+                PageType = PageType.Dashboard
+            };
         }
         else
         {
             State = new PageStateModel
             {
-                PageType = pageType.Value,
+                PageType = pageType,
                 UsageType = GetUsageType(),
                 CollectionAlias = CollectionAlias,
                 Id = Id,
@@ -100,33 +90,11 @@ else if (IsDashboard)
         return type;
     }
 
-    protected PageType? GetPageType()
+    protected PageType GetPageType()
     {
         return NavigationManager.Uri.Contains("/collection/") ? PageType.Collection :
                NavigationManager.Uri.Contains("/node/") ? PageType.Node :
-               default(PageType?);
-    }
-
-    private RenderFragment RenderType(ITypeRegistration section)
-    {
-        return builder =>
-        {
-            var type = section.Type == typeof(ICollectionConfig)
-                ? typeof(RootSection)
-                : section.Type;
-
-            builder.OpenComponent(0, type);
-
-            if (section.Parameters != null)
-            {
-                var index = 1;
-                section.Parameters.ForEach(kv =>
-                {
-                    builder.AddAttribute(index++, kv.Key, kv.Value);
-                });
-            }
-
-            builder.CloseComponent();
-        };
+               NavigationManager.Uri.Contains("/page/") ? PageType.Page :
+               PageType.Dashboard;
     }
 }

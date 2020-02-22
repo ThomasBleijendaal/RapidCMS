@@ -7,7 +7,6 @@ using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.State;
 using RapidCMS.Core.Models.UI;
@@ -80,6 +79,21 @@ namespace RapidCMS.Core.Services.Tree
             return tree;
         }
 
+        public Task<TreePageUI?> GetPageAsync(string alias)
+        {
+            var page = _collectionResolver.GetPage(alias);
+            if (page == null)
+            {
+                throw new InvalidOperationException($"Failed to get page for given alias ({alias}).");
+            }
+
+            return Task.FromResult(new TreePageUI(page.Name, page.Icon, new PageStateModel
+            {
+                CollectionAlias = page.Alias,
+                PageType = PageType.Page
+            }))!;
+        }
+
         public async Task<TreeNodesUI?> GetNodesAsync(string alias, ParentPath? parentPath, int pageNr, int pageSize)
         {
             var collection = _collectionResolver.GetCollection(alias);
@@ -102,7 +116,7 @@ namespace RapidCMS.Core.Services.Tree
                     var node = new TreeNodeUI(
                         entity.Id!,
                         collection.TreeView.Name!.StringGetter.Invoke(entity),
-                        collection.Collections.ToList(subCollection => subCollection.Alias))
+                        collection.Collections.ToList(subCollection => (subCollection.Alias, PageType.Collection)))
                     {
                         RootVisibleOfCollections = collection.Collections.All(subCollection => subCollection.TreeView?.RootVisibility == CollectionRootVisibility.Visible),
                         DefaultOpenCollections = collection.TreeView?.DefaultOpenCollections ?? false
@@ -151,9 +165,16 @@ namespace RapidCMS.Core.Services.Tree
 
         public TreeRootUI GetRoot()
         {
-            var collections = _collectionResolver.GetRootCollections().Select(x => x.Alias).ToList();
+            var collections = _collectionResolver.GetRootCollections()
+                .ToList(x => (x.Alias, x is ICollectionSetup ? PageType.Collection : PageType.Page));
 
-            return new TreeRootUI("-1", _cms.SiteName, collections);
+            return new TreeRootUI("-1", _cms.SiteName, collections)
+            {
+                State = new PageStateModel
+                {
+                    PageType = PageType.Dashboard
+                }
+            };
         }
     }
 }

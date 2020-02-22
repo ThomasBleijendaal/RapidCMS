@@ -5,11 +5,10 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Setup
 {
-    internal interface ICollectionSetup
+    internal interface ICollectionSetup : ITreeElementSetup
     {
         string? Icon { get; }
         string Name { get; }
-        string Alias { get; }
         bool Recursive { get; }
 
         List<CollectionSetup> Collections { get; }

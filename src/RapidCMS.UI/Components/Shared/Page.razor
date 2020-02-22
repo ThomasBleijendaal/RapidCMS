@@ -1,0 +1,39 @@
+﻿@inject ITreeService TreeService
+
+@if (UI == null)
+{
+    <li>Loading tree..</li>
+}
+else if (!string.IsNullOrWhiteSpace(error))
+{
+    <li>@error</li>
+}
+else
+{
+    <li class="nav-item">
+        <NavigationLink NewState="@UI.State"><i class="icon ion-md-@UI.Icon"></i> @UI.Name</NavigationLink>
+    </li>
+}
+
+@code {
+
+    TreePageUI? UI;
+    string? error;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            UI = await TreeService.GetPageAsync(PageAlias);
+        }
+        catch (Exception ex)
+        {
+            UI = null;
+            error = ex.Message;
+        }
+
+        StateHasChanged();
+    }
+
+    [Parameter] public string PageAlias { get; set; } = default!;
+}

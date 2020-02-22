@@ -5,9 +5,16 @@
     <ul class="nav flex-column">
         @if (TreeRoot != null)
         {
-            @foreach (var collection in TreeRoot.Collections)
+            @foreach (var (alias, type) in TreeRoot.Collections)
             {
-                <Collections CollectionAlias=@collection />
+                if (type == PageType.Collection)
+                {
+                    <Collections CollectionAlias=@alias />
+                }
+                else if (type == PageType.Page)
+                {
+                    <Page PageAlias="@alias" />
+                }
             }
         }
     </ul>
@@ -19,11 +26,11 @@
     protected override void OnInitialized()
     {
         NavigationManager.LocationChanged += LocationChanged;
-        
+
         TreeRoot = TreeService.GetRoot();
     }
 
-    private void LocationChanged(object sender, LocationChangedEventArgs args)
+    private void LocationChanged(object? sender, LocationChangedEventArgs args)
     {
         StateHasChanged();
     }

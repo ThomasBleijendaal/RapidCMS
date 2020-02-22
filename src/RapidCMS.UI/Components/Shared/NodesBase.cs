@@ -10,7 +10,6 @@ namespace RapidCMS.UI.Components.Shared
     public abstract class NodesBase : ComponentBase, IDisposable
     {
         private IDisposable? _nodeEventHandle;
-        //private IDisposable? _navEventHandle;
 
         [Inject] protected ITreeService TreeService { get; set; } = default!;
         [Inject] protected IPageState PageState { get; set; } = default!;
@@ -22,7 +21,6 @@ namespace RapidCMS.UI.Components.Shared
         protected override void OnInitialized()
         {
             OnNodesUpdate();
-            //OnNavUpdate();
         }
 
         private void OnNodesUpdate()
@@ -34,16 +32,6 @@ namespace RapidCMS.UI.Components.Shared
                 OnNodesUpdate();
             });
         }
-
-        //private void OnNavUpdate()
-        //{
-        //    _navEventHandle?.Dispose();
-        //    _navEventHandle = PageState.ChangeToken.RegisterChangeCallback(async (object state) =>
-        //    {
-        //        await InvokeAsync(() => StateHasChanged());
-        //        OnNavUpdate();
-        //    }, default);
-        //}
 
         protected abstract Task OnNodesUpdateAsync();
 

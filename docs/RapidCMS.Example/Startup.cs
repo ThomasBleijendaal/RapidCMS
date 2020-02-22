@@ -56,6 +56,13 @@ namespace RapidCMS.Example
                 // --> see Collections/CountryCollection for one-to-many relation with validation
                 config.AddCountryCollection();
 
+                // Custom page with either custom Blazor components, or ListViews or ListEditors of collections
+                config.AddPage("beaker", "Some random page", config =>
+                {
+                    config.AddSection(typeof(CustomSection));
+                    config.AddSection("country", edit: false);
+                });
+
                 // CRUD editor with validation attributes, custom editor and custom button panes
                 // --> see Collections/UserCollection 
                 config.AddUserCollection();
@@ -68,8 +75,8 @@ namespace RapidCMS.Example
                 config.AddMappedCollection();
 
                 // the dashboard can be build up of custom Blazor components, or the ListViews or ListEditors of collections
-                config.AddDashboardSection(typeof(DashboardSection));
-                config.AddDashboardSection("user", edit: true);
+                config.Dashboard.AddSection(typeof(DashboardSection));
+                config.Dashboard.AddSection("user", edit: true);
             });
         }
 

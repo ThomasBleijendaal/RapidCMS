@@ -77,3 +77,20 @@ else if (CurrentState?.PageType == PageType.Collection)
         }
     }
 }
+else if ((CurrentState?.PageType == PageType.Page || CurrentState?.PageType == PageType.Dashboard) && PageContents != null)
+{
+    <CascadingValue Name="Embedded" Value="true">
+        @foreach (var section in PageContents)
+        {
+            @RenderType(section);
+        }
+    </CascadingValue>
+}
+else if (CurrentState?.PageType == PageType.Unauthorized)
+{
+    <UnauthorizedSection />
+}
+else if (CurrentState?.PageType == PageType.Error)
+{
+    <ErrorSection />
+}

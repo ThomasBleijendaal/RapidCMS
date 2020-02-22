@@ -1,16 +1,16 @@
 ﻿@inject ITreeService TreeService
 
-<div class="top-row navbar navbar-dark">
-    @if (TreeRoot != null)
-    {
-        <a class="navbar-brand" href="">@TreeRoot.Name</a>
-    }
+    <div class="top-row navbar navbar-dark">
+        @if (TreeRoot != null)
+        {
+            <NavigationLink NewState="@TreeRoot.State">@TreeRoot.Name</NavigationLink>
+        }
 
-    @if (CustomLoginStatus != null)
-    {
-        @CustomLoginStatus
-    }
-</div>
+        @if (CustomLoginStatus != null)
+        {
+            @CustomLoginStatus
+        }
+    </div>
 
 @code {
     TreeRootUI? TreeRoot;

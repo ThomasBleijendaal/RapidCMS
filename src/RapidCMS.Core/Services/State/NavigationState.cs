@@ -29,9 +29,11 @@ namespace RapidCMS.Core.Services.State
 
             var parentPath = newState.ParentPath?.ToPathString();
 
-            _jsRuntime.InvokeVoidAsync("RapidCMS.navigateTo", (newState.PageType == PageType.Collection) 
-                ? $"/collection/{GetAction(newState.UsageType)}{(parentPath == null ? "" : $"/{parentPath}")}/{newState.CollectionAlias}"
-                : $"/node/{GetAction(newState.UsageType)}{(parentPath == null ? "" : $"/{parentPath}")}/{newState.CollectionAlias}/{newState.VariantAlias}/{newState.Id}");
+            var url = (newState.PageType == PageType.Collection) ? $"/collection/{GetAction(newState.UsageType)}{(parentPath == null ? "" : $"/{parentPath}")}/{newState.CollectionAlias}"
+                : (newState.PageType == PageType.Node) ? $"/node/{GetAction(newState.UsageType)}{(parentPath == null ? "" : $"/{parentPath}")}/{newState.CollectionAlias}/{newState.VariantAlias}/{newState.Id}"
+                : (newState.PageType == PageType.Page) ? $"/page/{newState.CollectionAlias}" : "/";
+
+            _jsRuntime.InvokeVoidAsync("RapidCMS.navigateTo", url);
         }
 
         private string GetAction(UsageType usageType)

@@ -8,6 +8,7 @@ namespace RapidCMS.Core.Abstractions.Services
     public interface ITreeService
     {
         Task<TreeCollectionUI?> GetCollectionAsync(string alias, ParentPath? parentPath);
+        Task<TreePageUI?> GetPageAsync(string alias);
         Task<TreeNodesUI?> GetNodesAsync(string alias, ParentPath? parentPath, int pageNr, int pageSize);
         IDisposable SubscribeToRepositoryUpdates(string alias, Func<Task> asyncCallback);
         TreeRootUI GetRoot();

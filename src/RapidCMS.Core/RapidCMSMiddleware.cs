@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using Blazor.FileReader;
@@ -50,7 +51,6 @@ namespace Microsoft.Extensions.DependencyInjection
             var cmsSetup = new CmsSetup(rootConfig);
 
             services.AddSingleton<ICms>(cmsSetup);
-            services.AddSingleton<IDashboard>(cmsSetup);
             services.AddSingleton<ILogin>(cmsSetup);
 
             if (rootConfig.AllowAnonymousUsage)
@@ -69,6 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddTransient<IPresenationDispatcher<GetEntityRequestModel, EditContext>, GetEntityDispatcher>();
             services.AddTransient<IPresenationDispatcher<GetEntitiesRequestModel, ListContext>, GetEntitiesDispatcher>();
+            services.AddTransient<IPresenationDispatcher<string, IEnumerable<ITypeRegistration>>, GetPageDispatcher>();
             services.AddTransient<IPresentationService, PresentationService>();
 
             services.AddTransient<IInteractionDispatcher, EntityInteractionDispatcher>();

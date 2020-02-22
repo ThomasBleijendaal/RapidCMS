@@ -7,10 +7,9 @@ using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Abstractions.Config
 {
-    public interface ICollectionConfig
+    public interface ICollectionConfig : ITreeElementConfig
     {
-        List<ICollectionConfig> Collections { get; }
-        string Alias { get; }
+        IEnumerable<ITreeElementConfig> CollectionsAndPages { get; }
     }
 
     public interface ICollectionConfig<TEntity> : ICollectionConfig

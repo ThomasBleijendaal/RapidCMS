@@ -2,9 +2,9 @@
 
 @if (Options != null)
 {
-    <select class="form-control @(CssHelper.GetValidationClass(State))" 
+    <select class="form-control @(CssHelper.GetValidationClass(State))"
             disabled=@IsDisabled
-            @onchange=@OnChange 
+            @onchange=@OnChange
             value="@SelectedIndex">
         @if (IsNullable)
         {
@@ -78,7 +78,7 @@
         {
             SetValueFromObject(Options.ElementAt(index).Id);
         }
-        
+
         // reset nullable when option is selected
         if (Nullable.GetUnderlyingType(Property.PropertyType) == null && IsNullable)
         {
