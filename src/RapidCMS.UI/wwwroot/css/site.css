@@ -51,12 +51,12 @@ app {
         background-color: #03AAF3;
     }
 
-    .top a {
+    .top .logo a {
         font-size: 1.3rem;
         color: #fff;
     }
 
-        .top a:hover {
+        .top .logo a:hover {
             text-decoration: none;
         }
 
