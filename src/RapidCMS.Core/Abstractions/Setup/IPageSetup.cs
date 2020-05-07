@@ -2,10 +2,11 @@
 
 namespace RapidCMS.Core.Abstractions.Setup
 {
-    internal interface IPageSetup : ITreeElementSetup
+    internal interface IPageSetup
     {
         string Icon { get; }
         string Name { get; }
+        string Alias { get; }
         List<ITypeRegistration> Sections { get; }
     }
 }

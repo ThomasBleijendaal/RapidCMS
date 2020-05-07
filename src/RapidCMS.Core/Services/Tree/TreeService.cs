@@ -166,7 +166,7 @@ namespace RapidCMS.Core.Services.Tree
         public TreeRootUI GetRoot()
         {
             var collections = _collectionResolver.GetRootCollections()
-                .ToList(x => (x.Alias, x is ICollectionSetup ? PageType.Collection : PageType.Page));
+                .ToList(x => (x.Alias, x.Type));
 
             return new TreeRootUI("-1", _cms.SiteName, collections)
             {

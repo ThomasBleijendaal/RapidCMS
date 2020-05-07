@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace RapidCMS.Core.Abstractions.Config
+﻿namespace RapidCMS.Core.Abstractions.Config
 {
     public interface IAdvancedCmsConfig
     {

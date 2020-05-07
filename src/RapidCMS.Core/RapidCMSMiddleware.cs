@@ -12,6 +12,7 @@ using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Resolvers.Setup;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.State;
@@ -28,6 +29,7 @@ using RapidCMS.Core.Providers;
 using RapidCMS.Core.Resolvers.Buttons;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Resolvers.Repositories;
+using RapidCMS.Core.Resolvers.Setup;
 using RapidCMS.Core.Services.Auth;
 using RapidCMS.Core.Services.Concurrency;
 using RapidCMS.Core.Services.Exceptions;
@@ -48,10 +50,18 @@ namespace Microsoft.Extensions.DependencyInjection
             var rootConfig = new CmsConfig();
             config?.Invoke(rootConfig);
 
-            var cmsSetup = new CmsSetup(rootConfig);
+            services.AddSingleton(rootConfig);
+            services.AddSingleton<ICmsConfig>(rootConfig);
 
-            services.AddSingleton<ICms>(cmsSetup);
-            services.AddSingleton<ILogin>(cmsSetup);
+            // var cmsSetup = new CmsSetup(rootConfig);
+
+            services.AddSingleton<ICms, CmsSetup>();
+            services.AddSingleton(x => (ILogin)x.GetService(typeof(ICms)));
+            services.AddSingleton(x => (ICollectionResolver)x.GetService(typeof(ICms)));
+
+            services.AddSingleton<ISetupResolver<IPageSetup>, PageSetupResolver>();
+            services.AddSingleton<ISetupResolver<ICollectionSetup>, CollectionSetupResolver>();
+            services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>>, TreeElementSetupResolver>();
 
             if (rootConfig.AllowAnonymousUsage)
             {
@@ -61,7 +71,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddTransient<IUIResolverFactory, UIResolverFactory>();
 
-            services.AddSingleton<ICollectionResolver>(cmsSetup);
             services.AddTransient<IButtonActionHandlerResolver, ButtonActionHandlerResolver>();
             services.AddTransient<IDataProviderResolver, DataProviderResolver>();
             services.AddTransient<IDataViewResolver, DataViewResolver>();
