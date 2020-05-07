@@ -21,7 +21,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
         IEnumerable<ITreeElementSetup> ISetupResolver<IEnumerable<ITreeElementSetup>>.ResolveSetup()
         {
-            return _treeElementResolver.ResolveSetup(_cmsConfig.CollectionsAndPages?.Skip(1) ?? Enumerable.Empty<ITreeElementConfig>());
+            return _treeElementResolver.ResolveSetup(_cmsConfig.CollectionsAndPages?.Skip(1) ?? Enumerable.Empty<ITreeElementConfig>(), default!); // TODO
         }
 
         IEnumerable<ITreeElementSetup> ISetupResolver<IEnumerable<ITreeElementSetup>>.ResolveSetup(string alias)

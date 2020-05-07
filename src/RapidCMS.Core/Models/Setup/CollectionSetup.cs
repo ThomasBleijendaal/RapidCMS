@@ -13,28 +13,29 @@ namespace RapidCMS.Core.Models.Setup
             string? icon,
             string name,
             string alias,
-            EntityVariantSetup entityVariant,
             Type? repositoryType,
-            bool isRecursive = false)
+            bool isRecursive = false,
+            bool isResolverCachable = true)
         {
             Icon = icon;
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
-            EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
             RepositoryType = repositoryType;
 
             Recursive = isRecursive;
+            ResolverCachable = isResolverCachable;
         }
 
         public string? Icon { get; private set; }
         public string Name { get; private set; }
         public string Alias { get; private set; }
         public bool Recursive { get; private set; }
+        public bool ResolverCachable { get; private set; }
 
-        public List<ITreeElementSetup> Collections { get; set; } = new List<CollectionSetup>();
+        public List<ITreeElementSetup> Collections { get; set; } = new List<ITreeElementSetup>();
 
-        public List<EntityVariantSetup>? SubEntityVariants { get; set; }
-        public EntityVariantSetup EntityVariant { get; private set; }
+        public List<IEntityVariantSetup>? SubEntityVariants { get; set; }
+        public IEntityVariantSetup EntityVariant { get; set; } = EntityVariantSetup.Undefined;
 
         public List<IDataView>? DataViews { get; set; }
         public Type? DataViewBuilder { get; set; }

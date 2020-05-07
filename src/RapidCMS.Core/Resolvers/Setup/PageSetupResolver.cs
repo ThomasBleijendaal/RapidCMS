@@ -47,7 +47,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 Name = config.Name,
                 Alias = config.Alias,
                 Icon = config.Icon,
-                Sections = _typeRegistrationSetupResolver.ResolveSetup(config.SectionRegistrations).ToList()
+                Sections = _typeRegistrationSetupResolver.ResolveSetup(config.SectionRegistrations, default!).ToList() // TODO
             };
 
             // pages always allow caching

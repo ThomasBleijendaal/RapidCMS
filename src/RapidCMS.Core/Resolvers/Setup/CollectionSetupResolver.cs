@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Resolvers.Setup;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
+using RapidCMS.Core.Models.Config.Convention;
 using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
@@ -13,12 +14,30 @@ namespace RapidCMS.Core.Resolvers.Setup
     internal class CollectionSetupResolver : ISetupResolver<ICollectionSetup>
     {
         private readonly ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> _treeElementResolver;
+        private readonly ISetupResolver<IEntityVariantSetup, EntityVariantConfig> _entityVariantResolver;
+        private readonly ISetupResolver<TreeViewSetup, TreeViewConfig> _treeViewResolver;
+        private readonly ISetupResolver<ListSetup, ListConfig> _listResolver;
+        private readonly ISetupResolver<NodeSetup, NodeConfig> _nodeResolver;
 
         private Dictionary<string, CollectionConfig> _collectionMap { get; set; } = new Dictionary<string, CollectionConfig>();
         private Dictionary<string, CollectionSetup> _cachedCollectionMap { get; set; } = new Dictionary<string, CollectionSetup>();
 
         public CollectionSetupResolver(ICmsConfig cmsConfig,
-            ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> treeElementResolver)
+            ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> treeElementResolver,
+            ISetupResolver<IEntityVariantSetup, EntityVariantConfig> entityVariantResolver,
+            ISetupResolver<TreeViewSetup, TreeViewConfig> treeViewResolver,
+            ISetupResolver<ListSetup, ListConfig> listResolver,
+            ISetupResolver<NodeSetup, NodeConfig> nodeResolver)
+        {
+            _treeElementResolver = treeElementResolver;
+            _entityVariantResolver = entityVariantResolver;
+            _treeViewResolver = treeViewResolver;
+            _listResolver = listResolver;
+            _nodeResolver = nodeResolver;
+            Initialize(cmsConfig);
+        }
+
+        private void Initialize(ICmsConfig cmsConfig)
         {
             MapCollections(cmsConfig.CollectionsAndPages.SelectNotNull(x => x as CollectionConfig));
 
@@ -38,7 +57,6 @@ namespace RapidCMS.Core.Resolvers.Setup
                     }
                 }
             }
-            _treeElementResolver = treeElementResolver;
         }
 
         ICollectionSetup ISetupResolver<ICollectionSetup>.ResolveSetup()
@@ -57,8 +75,11 @@ namespace RapidCMS.Core.Resolvers.Setup
             {
                 collectionSetup = ConvertConfig(collectionConfig);
 
-                // TODO: test if the collection allows this
-                _cachedCollectionMap[alias] = collectionSetup;
+                // TODO: set this property
+                if (collectionSetup.ResolverCachable)
+                {
+                    _cachedCollectionMap[alias] = collectionSetup;
+                }
 
                 return collectionSetup;
             }
@@ -74,28 +95,29 @@ namespace RapidCMS.Core.Resolvers.Setup
                 config.Icon,
                 config.Name,
                 config.Alias,
-                new EntityVariantSetup(config.EntityVariant),
                 config.RepositoryType,
-                config.Recursive)
+                isRecursive: config.Recursive,
+                isResolverCachable: true) // TODO
             {
                 DataViews = config.DataViews,
                 DataViewBuilder = config.DataViewBuilder
             };
 
+            collection.EntityVariant = _entityVariantResolver.ResolveSetup(config.EntityVariant, collection);
             if (config.SubEntityVariants.Any())
             {
-                collection.SubEntityVariants = config.SubEntityVariants.ToList(variant => new EntityVariantSetup(variant));
+                collection.SubEntityVariants = _entityVariantResolver.ResolveSetup(config.SubEntityVariants, collection).ToList();
             }
 
-            collection.TreeView = config.TreeView == null ? null : new TreeViewSetup(config.TreeView);
+            collection.TreeView =config.TreeView == null ? null :  _treeViewResolver.ResolveSetup(config.TreeView, collection);
 
-            collection.ListView = config.ListView == null ? null : new ListSetup(config.ListView, collection);
-            collection.ListEditor = config.ListEditor == null ? null : new ListSetup(config.ListEditor, collection);
+            collection.ListView = config.ListView == null ? null : _listResolver.ResolveSetup(config.ListView, collection);
+            collection.ListEditor = config.ListEditor == null ? null : _listResolver.ResolveSetup(config.ListEditor, collection);
 
-            collection.NodeView = config.NodeView == null ? null : new NodeSetup(config.NodeView, collection);
-            collection.NodeEditor = config.NodeEditor == null ? null : new NodeSetup(config.NodeEditor, collection);
+            collection.NodeView = config.NodeView == null ? null : _nodeResolver.ResolveSetup(config.NodeView, collection);
+            collection.NodeEditor = config.NodeEditor == null ? null : _nodeResolver.ResolveSetup(config.NodeEditor, collection);
 
-            collection.Collections = _treeElementResolver.ResolveSetup(config.CollectionsAndPages).ToList();
+            collection.Collections = _treeElementResolver.ResolveSetup(config.CollectionsAndPages, collection).ToList();
 
             return collection;
         }

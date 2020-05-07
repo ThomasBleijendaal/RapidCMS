@@ -1,4 +1,6 @@
-﻿namespace RapidCMS.Core.Abstractions.Resolvers.Setup
+﻿using RapidCMS.Core.Abstractions.Setup;
+
+namespace RapidCMS.Core.Abstractions.Resolvers.Setup
 {
     internal interface ISetupResolver<TSetup>
     {
@@ -7,7 +9,8 @@
     }
 
     internal interface ISetupResolver<TSetup, TConfig>
+        where TConfig : notnull
     {
-        TSetup ResolveSetup(TConfig config);
+        TSetup ResolveSetup(TConfig config, ICollectionSetup collection);
     }
 }

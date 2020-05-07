@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
+    // TODO: constructor
     internal class CustomTypeRegistrationSetup : ITypeRegistration
     {
         internal Type Type { get; set; } = default!;

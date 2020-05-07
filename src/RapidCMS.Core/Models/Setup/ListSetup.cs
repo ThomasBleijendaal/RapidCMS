@@ -1,23 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
     internal class ListSetup
     {
-        internal ListSetup(ListConfig list, CollectionSetup collection)
+        public ListSetup(
+            int? pageSize, 
+            bool? searchBarVisible, 
+            bool? reorderingAllowed, 
+            ListType listType, 
+            EmptyVariantColumnVisibility emptyVariantColumnVisibility, 
+            List<PaneSetup> panes, 
+            List<IButtonSetup> buttons)
         {
-            PageSize = list.PageSize;
-            SearchBarVisible = list.SearchBarVisible;
-            ReorderingAllowed = list.ReorderingAllowed;
-            ListType = list.ListEditorType;
-            EmptyVariantColumnVisibility = list.EmptyVariantColumnVisibility;
-            Buttons = list.Buttons.ToList(button => new ButtonSetup(button, collection.EntityVariant, collection.SubEntityVariants));
-            Panes = list.Panes.ToList(pane => new PaneSetup(pane));
+            PageSize = pageSize;
+            SearchBarVisible = searchBarVisible;
+            ReorderingAllowed = reorderingAllowed;
+            ListType = listType;
+            EmptyVariantColumnVisibility = emptyVariantColumnVisibility;
+            Panes = panes ?? throw new ArgumentNullException(nameof(panes));
+            Buttons = buttons ?? throw new ArgumentNullException(nameof(buttons));
         }
 
         internal int? PageSize { get; set; }
@@ -25,8 +32,8 @@ namespace RapidCMS.Core.Models.Setup
         internal bool? ReorderingAllowed { get; set; }
         internal ListType ListType { get; set; }
         internal EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; set; }
-        internal List<PaneSetup>? Panes { get; set; }
-        internal List<ButtonSetup>? Buttons { get; set; }
+        internal List<PaneSetup> Panes { get; set; }
+        internal List<IButtonSetup> Buttons { get; set; }
 
         internal IButtonSetup? FindButton(string buttonId)
         {

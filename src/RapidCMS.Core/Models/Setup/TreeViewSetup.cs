@@ -1,18 +1,17 @@
 ﻿using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
     internal class TreeViewSetup
     {
-        internal TreeViewSetup(TreeViewConfig treeView)
+        public TreeViewSetup(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, bool defaultOpenEntities, bool defaultOpenCollections, IExpressionMetadata? name)
         {
-            EntityVisibility = treeView.EntityVisibilty;
-            RootVisibility = treeView.RootVisibility;
-            Name = treeView.Name;
-            DefaultOpenEntities = treeView.DefaultOpenEntities;
-            DefaultOpenCollections = treeView.DefaultOpenCollections;
+            EntityVisibility = entityVisibility;
+            RootVisibility = rootVisibility;
+            DefaultOpenEntities = defaultOpenEntities;
+            DefaultOpenCollections = defaultOpenCollections;
+            Name = name;
         }
 
         internal EntityVisibilty EntityVisibility { get; set; }

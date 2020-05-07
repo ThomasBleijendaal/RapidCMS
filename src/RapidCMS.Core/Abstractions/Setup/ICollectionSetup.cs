@@ -5,7 +5,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Setup
 {
-    internal interface ICollectionSetup
+    internal interface ICollectionSetup : IResolverCachable
     {
         string? Icon { get; }
         string Alias { get; }
@@ -14,8 +14,8 @@ namespace RapidCMS.Core.Abstractions.Setup
 
         List<ITreeElementSetup> Collections { get; }
 
-        List<EntityVariantSetup>? SubEntityVariants { get; }
-        EntityVariantSetup EntityVariant { get; }
+        List<IEntityVariantSetup>? SubEntityVariants { get; }
+        IEntityVariantSetup EntityVariant { get; }
 
         List<IDataView>? DataViews { get; }
         Type? DataViewBuilder { get; }

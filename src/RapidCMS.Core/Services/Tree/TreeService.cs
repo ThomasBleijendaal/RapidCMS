@@ -119,7 +119,7 @@ namespace RapidCMS.Core.Services.Tree
                         collection.Collections.ToList(subCollection => (subCollection.Alias, PageType.Collection)))
                     {
                         RootVisibleOfCollections = collection.Collections.All(subCollection => subCollection.RootVisibility == CollectionRootVisibility.Visible),
-                        DefaultOpenCollections = collection.DefaultOpenCollections
+                        DefaultOpenCollections = collection.TreeView?.DefaultOpenCollections ?? false
                     };
 
                     if (collection.ListEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, entity))

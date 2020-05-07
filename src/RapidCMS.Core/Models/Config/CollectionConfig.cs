@@ -252,15 +252,15 @@ namespace RapidCMS.Core.Models.Config
 
             if (convention == CollectionConvention.ListView || convention == CollectionConvention.ListViewNodeEditor)
             {
-                ListView = new ConventionListView<TEntity>(canGoToNodeEditor: convention == CollectionConvention.ListViewNodeEditor);
+                ListView = new ConventionListViewConfig<TEntity>(canGoToNodeEditor: convention == CollectionConvention.ListViewNodeEditor);
             }
             else if (convention == CollectionConvention.ListViewNodeEditor)
             {
-                NodeEditor = new ConventionNodeEditor<TEntity>();
+                NodeEditor = new ConventionNodeEditorConfig<TEntity>();
             }
             else if (convention == CollectionConvention.ListView)
             {
-                ListView = new ConventionListEditor<TEntity>();
+                ListView = new ConventionListEditorConfig<TEntity>();
             }
 
             return this;

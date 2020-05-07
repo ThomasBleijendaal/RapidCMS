@@ -27,18 +27,5 @@ namespace RapidCMS.Core.Helpers
                 _ => throw new InvalidOperationException("Invalid RelationConfig")
             };
         }
-
-        public static FieldSetup ProcessField(FieldConfig field)
-        {
-            return field switch
-            {
-                _ when field.EditorType == EditorType.Custom && field.Property != null => new CustomPropertyFieldSetup(field, field.CustomType!),
-                _ when field.EditorType != EditorType.None && field.Property != null => new PropertyFieldSetup(field),
-                _ when field.DisplayType != DisplayType.None && field.Property != null => new ExpressionFieldSetup(field, field.Property),
-                _ when field.DisplayType == DisplayType.Custom && field.Expression != null => new CustomExpressionFieldSetup(field, field.Expression, field.CustomType!),
-                _ when field.DisplayType != DisplayType.None && field.Expression != null => new ExpressionFieldSetup(field, field.Expression),
-                _ => throw new InvalidOperationException()
-            };
-        }
     }
 }

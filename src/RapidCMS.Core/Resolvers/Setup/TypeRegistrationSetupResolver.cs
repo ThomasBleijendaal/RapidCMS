@@ -7,7 +7,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class TypeRegistrationSetupResolver : ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig>
     {
-        public ITypeRegistration ResolveSetup(CustomTypeRegistrationConfig config)
+        public ITypeRegistration ResolveSetup(CustomTypeRegistrationConfig config, ICollectionSetup collection)
         {
             return new CustomTypeRegistrationSetup
             {

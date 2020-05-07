@@ -1,39 +1,30 @@
 ﻿using System;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
     internal class EntityVariantSetup : IEntityVariantSetup
     {
-        public static EntityVariantSetup Undefined = new EntityVariantSetup(default!);
+        public static EntityVariantSetup Undefined = new EntityVariantSetup();
 
-        internal EntityVariantSetup(EntityVariantConfig variant)
+        private EntityVariantSetup()
         {
-            if (variant == default)
-            {
-                Name = "";
-                Type = typeof(object);
-                Alias = "";
-
-                return;
-            }
-
-            Alias = variant.Type.Name.ToUrlFriendlyString();
-            Icon = variant.Icon;
-            Name = variant.Name;
-            Type = variant.Type;
+            Name = "";
+            Type = typeof(object);
+            Alias = "";
         }
 
-        internal string Name { get; set; }
-        internal string? Icon { get; set; }
-        internal Type Type { get; set; }
-        internal string Alias { get; set; }
+        public EntityVariantSetup(string name, string? icon, Type type, string alias)
+        {
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Icon = icon;
+            Type = type ?? throw new ArgumentNullException(nameof(type));
+            Alias = alias ?? throw new ArgumentNullException(nameof(alias));
+        }
 
-        string IEntityVariantSetup.Name => Name;
-        string? IEntityVariantSetup.Icon => Icon;
-        Type IEntityVariantSetup.Type => Type;
-        string IEntityVariantSetup.Alias => Alias;
+        public string Name { get; internal set; }
+        public string? Icon { get; internal set; }
+        public Type Type { get; internal set; }
+        public string Alias { get; internal set; }
     }
 }

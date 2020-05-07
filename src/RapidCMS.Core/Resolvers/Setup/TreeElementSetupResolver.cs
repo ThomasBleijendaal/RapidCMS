@@ -11,7 +11,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class TreeElementSetupResolver : ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>
     {
-        public IEnumerable<ITreeElementSetup> ResolveSetup(IEnumerable<ITreeElementConfig> config)
+        public IEnumerable<ITreeElementSetup> ResolveSetup(IEnumerable<ITreeElementConfig> config, ICollectionSetup collection)
         {
             return config.Select(corp =>
             {
@@ -23,8 +23,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
                 return new TreeElementSetup(corp.Alias, type)
                 {
-                    RootVisibility = (corp as CollectionConfig)?.TreeView?.RootVisibility ?? default,
-                    DefaultOpenCollections = (corp as CollectionConfig)?.TreeView?.DefaultOpenCollections ?? default
+                    RootVisibility = (corp as CollectionConfig)?.TreeView?.RootVisibility ?? default
                 };
 
             }) ?? Enumerable.Empty<ITreeElementSetup>();

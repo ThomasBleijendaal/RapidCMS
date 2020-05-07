@@ -1,13 +1,13 @@
-﻿using RapidCMS.Core.Models.Config;
+﻿using System;
 
 namespace RapidCMS.Core.Models.Setup
 {
     internal class RelatedCollectionListSetup
     {
-        internal RelatedCollectionListSetup(CollectionListConfig subCollection)
+        public RelatedCollectionListSetup(int index, string collectionAlias)
         {
-            Index = subCollection.Index;
-            CollectionAlias = subCollection.CollectionAlias;
+            Index = index;
+            CollectionAlias = collectionAlias ?? throw new ArgumentNullException(nameof(collectionAlias));
         }
 
         internal int Index { get; set; }
