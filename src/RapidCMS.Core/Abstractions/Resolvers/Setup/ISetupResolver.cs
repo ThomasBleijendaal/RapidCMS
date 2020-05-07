@@ -5,4 +5,9 @@
         TSetup ResolveSetup();
         TSetup ResolveSetup(string alias);
     }
+
+    internal interface ISetupResolver<TSetup, TConfig>
+    {
+        TSetup ResolveSetup(TConfig config);
+    }
 }

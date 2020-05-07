@@ -11,37 +11,38 @@ namespace RapidCMS.Core.Models.Setup
         private readonly ISetupResolver<IPageSetup> _pageResolver;
         private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
         private readonly ISetupResolver<IEnumerable<ITreeElementSetup>> _treeElementsResolver;
+        private readonly ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig> _typeRegistrationSetupResolver;
 
         public CmsSetup(CmsConfig config,
             ISetupResolver<IPageSetup> pageResolver,
             ISetupResolver<ICollectionSetup> collectionResolver,
-            ISetupResolver<IEnumerable<ITreeElementSetup>> treeElementsResolver)
+            ISetupResolver<IEnumerable<ITreeElementSetup>> treeElementsResolver,
+            ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig> typeRegistrationSetupResolver)
         {
             _pageResolver = pageResolver;
             _collectionResolver = collectionResolver;
             _treeElementsResolver = treeElementsResolver;
+            _typeRegistrationSetupResolver = typeRegistrationSetupResolver;
 
+            // TODO: resolve?
             SiteName = config.SiteName;
             IsDevelopment = config.IsDevelopment;
 
-            // TODO: resolvers
             if (config.CustomLoginScreenRegistration != null)
             {
-                CustomLoginScreenRegistration = new CustomTypeRegistrationSetup(config.CustomLoginScreenRegistration);
+                CustomLoginScreenRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginScreenRegistration);
             }
             if (config.CustomLoginStatusRegistration != null)
             {
-                CustomLoginStatusRegistration = new CustomTypeRegistrationSetup(config.CustomLoginStatusRegistration);
+                CustomLoginStatusRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginStatusRegistration);
             }
-
-
         }
 
         internal string SiteName { get; set; }
         internal bool IsDevelopment { get; set; }
 
-        internal CustomTypeRegistrationSetup? CustomLoginScreenRegistration { get; set; }
-        internal CustomTypeRegistrationSetup? CustomLoginStatusRegistration { get; set; }
+        public ITypeRegistration? CustomLoginScreenRegistration { get; internal set; }
+        public ITypeRegistration? CustomLoginStatusRegistration { get; internal set; }
 
         string ICms.SiteName => SiteName;
         bool ICms.IsDevelopment
@@ -64,8 +65,5 @@ namespace RapidCMS.Core.Models.Setup
         {
             return _treeElementsResolver.ResolveSetup();
         }
-
-        ITypeRegistration? ILogin.CustomLoginScreenRegistration => CustomLoginScreenRegistration;
-        ITypeRegistration? ILogin.CustomLoginStatusRegistration => CustomLoginStatusRegistration;
     }
 }

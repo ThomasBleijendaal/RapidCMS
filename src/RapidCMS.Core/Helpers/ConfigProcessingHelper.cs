@@ -1,64 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using RapidCMS.Core.Abstractions.Config;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Helpers
 {
+    [Obsolete]
     internal static class ConfigProcessingHelper
     {
-        //internal static List<ITreeElementSetup> ProcessCollections(this ICollectionConfig root)
-        //{
-        //    var list = new List<ITreeElementSetup>();
-
-        //    foreach (var element in root.CollectionsAndPages)
-        //    {
-        //        if (element is CollectionConfig collectionConfigReceiver) {
-
-        //            var collection = new CollectionSetup(
-        //                collectionConfigReceiver.Icon,
-        //                collectionConfigReceiver.Name,
-        //                collectionConfigReceiver.Alias,
-        //                new EntityVariantSetup(collectionConfigReceiver.EntityVariant),
-        //                collectionConfigReceiver.RepositoryType,
-        //                collectionConfigReceiver.Recursive)
-        //            {
-        //                DataViews = collectionConfigReceiver.DataViews,
-        //                DataViewBuilder = collectionConfigReceiver.DataViewBuilder
-        //            };
-
-        //            if (collectionConfigReceiver.SubEntityVariants.Any())
-        //            {
-        //                collection.SubEntityVariants = collectionConfigReceiver.SubEntityVariants.ToList(variant => new EntityVariantSetup(variant));
-        //            }
-
-        //            collection.TreeView = collectionConfigReceiver.TreeView == null ? null : new TreeViewSetup(collectionConfigReceiver.TreeView);
-
-        //            collection.ListView = collectionConfigReceiver.ListView == null ? null : new ListSetup(collectionConfigReceiver.ListView, collection);
-        //            collection.ListEditor = collectionConfigReceiver.ListEditor == null ? null : new ListSetup(collectionConfigReceiver.ListEditor, collection);
-
-        //            collection.NodeView = collectionConfigReceiver.NodeView == null ? null : new NodeSetup(collectionConfigReceiver.NodeView, collection);
-        //            collection.NodeEditor = collectionConfigReceiver.NodeEditor == null ? null : new NodeSetup(collectionConfigReceiver.NodeEditor, collection);
-
-        //            // nested pages are not supported
-        //            collection.Collections = collectionConfigReceiver.ProcessCollections().SelectNotNull(x => x as CollectionSetup).ToList();
-
-        //            list.Add(collection);
-        //        }
-        //        else if (element is IPageConfig pageConfigReceiver)
-        //        {
-        //            list.Add(new PageRegistrationSetup(pageConfigReceiver));
-        //        }
-        //    }
-
-        //    return list;
-        //}
-
         internal static RelationSetup ProcessRelation(RelationConfig config)
         {
             return config switch

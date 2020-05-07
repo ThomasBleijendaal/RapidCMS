@@ -7,16 +7,9 @@ namespace RapidCMS.Core.Models.Setup
 {
     internal class CustomTypeRegistrationSetup : ITypeRegistration
     {
-        internal CustomTypeRegistrationSetup(CustomTypeRegistrationConfig registration)
-        {
-            Type = registration.Type == typeof(CollectionConfig) ? typeof(CollectionSetup) : registration.Type;
-            Alias = registration.Alias;
-            Parameters = registration.Parameters;
-        }
-
-        internal Type Type { get; set; }
-        internal string Alias { get; set; }
-        internal Dictionary<string, object>? Parameters { get; set; }
+        internal Type Type { get; set; } = default!;
+        internal string Alias { get; set; } = default!;
+        internal Dictionary<string, object>? Parameters { get; set; } = default!;
 
         Type ITypeRegistration.Type => Type;
         string ITypeRegistration.Alias => Alias;
