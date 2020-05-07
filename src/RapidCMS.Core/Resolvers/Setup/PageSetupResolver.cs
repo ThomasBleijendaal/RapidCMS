@@ -50,6 +50,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 Sections = _typeRegistrationSetupResolver.ResolveSetup(config.SectionRegistrations).ToList()
             };
 
+            // pages always allow caching
             _cache[alias] = pageSetup;
 
             return pageSetup;

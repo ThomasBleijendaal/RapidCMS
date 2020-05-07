@@ -13,6 +13,7 @@ namespace RapidCMS.Core.Resolvers.Setup
     internal class CollectionSetupResolver : ISetupResolver<ICollectionSetup>
     {
         private Dictionary<string, CollectionConfig> _collectionMap { get; set; } = new Dictionary<string, CollectionConfig>();
+        private Dictionary<string, CollectionSetup> _cachedCollectionMap { get; set; } = new Dictionary<string, CollectionSetup>();
 
         public CollectionSetupResolver(ICmsConfig cmsConfig)
         {
@@ -43,12 +44,24 @@ namespace RapidCMS.Core.Resolvers.Setup
 
         ICollectionSetup ISetupResolver<ICollectionSetup>.ResolveSetup(string alias)
         {
-            if (_collectionMap.TryGetValue(alias, out var collectionConfig))
+            if (_cachedCollectionMap.TryGetValue(alias, out var collectionSetup))
             {
-                return ConvertConfig(collectionConfig);
+                return collectionSetup;
             }
 
-            throw new InvalidOperationException($"Cannot find collection with alias {alias}.");
+            if (_collectionMap.TryGetValue(alias, out var collectionConfig))
+            {
+                collectionSetup = ConvertConfig(collectionConfig);
+
+                // TODO: test if the collection allows this
+                _cachedCollectionMap[alias] = collectionSetup;
+
+                return collectionSetup;
+            }
+            else
+            {
+                throw new InvalidOperationException($"Cannot find collection with alias {alias}.");
+            }
         }
 
         private CollectionSetup ConvertConfig(CollectionConfig config)
