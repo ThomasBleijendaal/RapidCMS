@@ -31,7 +31,7 @@ namespace RapidCMS.Core.Models.Setup
         public string Alias { get; private set; }
         public bool Recursive { get; private set; }
 
-        public List<CollectionSetup> Collections { get; set; } = new List<CollectionSetup>();
+        public List<ITreeElementSetup> Collections { get; set; } = new List<CollectionSetup>();
 
         public List<EntityVariantSetup>? SubEntityVariants { get; set; }
         public EntityVariantSetup EntityVariant { get; private set; }

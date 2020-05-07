@@ -15,5 +15,9 @@ namespace RapidCMS.Core.Models.Setup
         public string Alias { get; }
 
         public PageType Type { get; }
+
+        public CollectionRootVisibility RootVisibility { get; internal set; }
+
+        public bool DefaultOpenCollections { get; internal set; }
     }
 }

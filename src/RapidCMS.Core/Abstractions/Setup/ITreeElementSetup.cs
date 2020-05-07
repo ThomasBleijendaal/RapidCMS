@@ -6,5 +6,8 @@ namespace RapidCMS.Core.Abstractions.Setup
     {
         string Alias { get; }
         PageType Type { get; }
+
+        CollectionRootVisibility RootVisibility { get; }
+        bool DefaultOpenCollections { get; }
     }
 }

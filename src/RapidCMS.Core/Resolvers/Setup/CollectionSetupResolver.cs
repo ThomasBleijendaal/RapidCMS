@@ -12,10 +12,13 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class CollectionSetupResolver : ISetupResolver<ICollectionSetup>
     {
+        private readonly ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> _treeElementResolver;
+
         private Dictionary<string, CollectionConfig> _collectionMap { get; set; } = new Dictionary<string, CollectionConfig>();
         private Dictionary<string, CollectionSetup> _cachedCollectionMap { get; set; } = new Dictionary<string, CollectionSetup>();
 
-        public CollectionSetupResolver(ICmsConfig cmsConfig)
+        public CollectionSetupResolver(ICmsConfig cmsConfig,
+            ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> treeElementResolver)
         {
             MapCollections(cmsConfig.CollectionsAndPages.SelectNotNull(x => x as CollectionConfig));
 
@@ -35,6 +38,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                     }
                 }
             }
+            _treeElementResolver = treeElementResolver;
         }
 
         ICollectionSetup ISetupResolver<ICollectionSetup>.ResolveSetup()
@@ -91,11 +95,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             collection.NodeView = config.NodeView == null ? null : new NodeSetup(config.NodeView, collection);
             collection.NodeEditor = config.NodeEditor == null ? null : new NodeSetup(config.NodeEditor, collection);
 
-            // nested pages are not supported
-            collection.Collections = config.CollectionsAndPages
-                .SelectNotNull(x => x as CollectionConfig)
-                .Select(ConvertConfig)
-                .ToList();
+            collection.Collections = _treeElementResolver.ResolveSetup(config.CollectionsAndPages).ToList();
 
             return collection;
         }

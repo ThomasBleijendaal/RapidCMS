@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Resolvers.Setup;
@@ -10,18 +9,11 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class TreeElementSetupResolver : ISetupResolver<IEnumerable<ITreeElementSetup>>
+    internal class TreeElementSetupResolver : ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>
     {
-        private readonly ICmsConfig _cmsConfig;
-
-        public TreeElementSetupResolver(ICmsConfig cmsConfig)
+        public IEnumerable<ITreeElementSetup> ResolveSetup(IEnumerable<ITreeElementConfig> config)
         {
-            _cmsConfig = cmsConfig;
-        }
-
-        IEnumerable<ITreeElementSetup> ISetupResolver<IEnumerable<ITreeElementSetup>>.ResolveSetup()
-        {
-            return _cmsConfig.CollectionsAndPages?.Skip(1).Select(corp =>
+            return config.Select(corp =>
             {
                 var type = corp switch
                 {
@@ -29,13 +21,13 @@ namespace RapidCMS.Core.Resolvers.Setup
                     _ => PageType.Collection
                 };
 
-                return new TreeElementSetup(corp.Alias, type);
-            }) ?? Enumerable.Empty<ITreeElementSetup>();
-        }
+                return new TreeElementSetup(corp.Alias, type)
+                {
+                    RootVisibility = (corp as CollectionConfig)?.TreeView?.RootVisibility ?? default,
+                    DefaultOpenCollections = (corp as CollectionConfig)?.TreeView?.DefaultOpenCollections ?? default
+                };
 
-        IEnumerable<ITreeElementSetup> ISetupResolver<IEnumerable<ITreeElementSetup>>.ResolveSetup(string alias)
-        {
-            throw new InvalidOperationException("Cannot resolve root collections with alias.");
+            }) ?? Enumerable.Empty<ITreeElementSetup>();
         }
     }
 }

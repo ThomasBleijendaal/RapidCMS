@@ -61,7 +61,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton<ISetupResolver<IPageSetup>, PageSetupResolver>();
             services.AddSingleton<ISetupResolver<ICollectionSetup>, CollectionSetupResolver>();
-            services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>>, TreeElementSetupResolver>();
+            services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>>, TreeElementsSetupResolver>();
+            services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>, TreeElementSetupResolver>();
             services.AddSingleton<ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig>, TypeRegistrationSetupResolver>();
 
             if (rootConfig.AllowAnonymousUsage)

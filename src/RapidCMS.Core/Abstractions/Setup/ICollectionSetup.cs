@@ -12,7 +12,7 @@ namespace RapidCMS.Core.Abstractions.Setup
         string Name { get; }
         bool Recursive { get; }
 
-        List<CollectionSetup> Collections { get; }
+        List<ITreeElementSetup> Collections { get; }
 
         List<EntityVariantSetup>? SubEntityVariants { get; }
         EntityVariantSetup EntityVariant { get; }
