@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Resolvers.UI;
 
@@ -11,7 +12,7 @@ namespace RapidCMS.Core.Factories
 {
     internal class UIResolverFactory : IUIResolverFactory
     {
-        private readonly ICollectionResolver _collectionResolver;
+        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
         private readonly IDataProviderResolver _dataProviderResolver;
         private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
         private readonly IDataViewResolver _dataViewResolver;
@@ -19,7 +20,7 @@ namespace RapidCMS.Core.Factories
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UIResolverFactory(
-            ICollectionResolver collectionResolver,
+            ISetupResolver<ICollectionSetup> collectionResolver,
             IDataProviderResolver dataProviderResolver,
             IButtonActionHandlerResolver buttonActionHandlerResolver,
             IDataViewResolver dataViewResolver,
@@ -36,7 +37,7 @@ namespace RapidCMS.Core.Factories
 
         public Task<INodeUIResolver> GetNodeUIResolverAsync(UsageType usageType, string collectionAlias)
         {
-            var collection = _collectionResolver.GetCollection(collectionAlias);
+            var collection = _collectionResolver.ResolveSetup(collectionAlias);
             var node = usageType.HasFlag(UsageType.View)
                 ? collection.NodeView ?? collection.NodeEditor
                 : collection.NodeEditor ?? collection.NodeView;
@@ -52,7 +53,7 @@ namespace RapidCMS.Core.Factories
 
         public Task<IListUIResolver> GetListUIResolverAsync(UsageType usageType, string collectionAlias)
         {
-            var collection = _collectionResolver.GetCollection(collectionAlias);
+            var collection = _collectionResolver.ResolveSetup(collectionAlias);
             var list = usageType == UsageType.List || usageType.HasFlag(UsageType.Add)
                 ? collection.ListView ?? collection.ListEditor
                 : collection.ListEditor ?? collection.ListView;

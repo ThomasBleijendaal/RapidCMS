@@ -12,7 +12,6 @@ using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Resolvers.Setup;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.State;
@@ -57,7 +56,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton<ICms, CmsSetup>();
             services.AddSingleton(x => (ILogin)x.GetService(typeof(ICms)));
-            services.AddSingleton(x => (ICollectionResolver)x.GetService(typeof(ICms)));
 
             services.AddSingleton<ISetupResolver<IPageSetup>, PageSetupResolver>();
             services.AddSingleton<ISetupResolver<ICollectionSetup>, CollectionSetupResolver>();

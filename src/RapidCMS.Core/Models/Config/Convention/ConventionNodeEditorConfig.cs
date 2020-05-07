@@ -9,5 +9,10 @@ namespace RapidCMS.Core.Models.Config.Convention
         public ConventionNodeEditorConfig() : base(typeof(TEntity))
         {
         }
+
+        public T GenerateConfig<T>() where T : class
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

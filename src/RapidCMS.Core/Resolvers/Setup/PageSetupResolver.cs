@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Config;
-using RapidCMS.Core.Abstractions.Resolvers.Setup;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
@@ -47,7 +47,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 Name = config.Name,
                 Alias = config.Alias,
                 Icon = config.Icon,
-                Sections = _typeRegistrationSetupResolver.ResolveSetup(config.SectionRegistrations, default!).ToList() // TODO
+                Sections = _typeRegistrationSetupResolver.ResolveSetup(config.SectionRegistrations).ToList()
             };
 
             // pages always allow caching

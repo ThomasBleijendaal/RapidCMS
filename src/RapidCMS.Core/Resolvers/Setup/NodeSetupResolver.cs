@@ -1,6 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using RapidCMS.Core.Abstractions.Config;
-using RapidCMS.Core.Abstractions.Resolvers.Setup;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
@@ -21,8 +22,13 @@ namespace RapidCMS.Core.Resolvers.Setup
             _buttonSetupResolver = buttonSetupResolver;
         }
 
-        public NodeSetup ResolveSetup(NodeConfig config, ICollectionSetup collection)
+        public NodeSetup ResolveSetup(NodeConfig config, ICollectionSetup? collection = default)
         {
+            if (collection == null)
+            {
+                throw new ArgumentNullException(nameof(collection));
+            }
+
             if (config is IIsConventionBased isConventionBasedConfig)
             {
 

@@ -1,6 +1,6 @@
 ﻿using RapidCMS.Core.Abstractions.Setup;
 
-namespace RapidCMS.Core.Abstractions.Resolvers.Setup
+namespace RapidCMS.Core.Abstractions.Resolvers
 {
     internal interface ISetupResolver<TSetup>
     {
@@ -11,6 +11,6 @@ namespace RapidCMS.Core.Abstractions.Resolvers.Setup
     internal interface ISetupResolver<TSetup, TConfig>
         where TConfig : notnull
     {
-        TSetup ResolveSetup(TConfig config, ICollectionSetup collection);
+        TSetup ResolveSetup(TConfig config, ICollectionSetup? collection = default);
     }
 }

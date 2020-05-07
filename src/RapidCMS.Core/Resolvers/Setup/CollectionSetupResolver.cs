@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Config;
-using RapidCMS.Core.Abstractions.Resolvers.Setup;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;

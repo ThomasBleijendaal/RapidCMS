@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Resolvers.Setup;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class CmsSetup : ICms, ICollectionResolver, ILogin
+    internal class CmsSetup : ICms, ILogin
     {
         private readonly ISetupResolver<IPageSetup> _pageResolver;
         private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
@@ -30,11 +29,11 @@ namespace RapidCMS.Core.Models.Setup
 
             if (config.CustomLoginScreenRegistration != null)
             {
-                CustomLoginScreenRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginScreenRegistration, default!); // TODO
+                CustomLoginScreenRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginScreenRegistration);
             }
             if (config.CustomLoginStatusRegistration != null)
             {
-                CustomLoginStatusRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginStatusRegistration, default!);
+                CustomLoginStatusRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginStatusRegistration);
             }
         }
 
@@ -49,21 +48,6 @@ namespace RapidCMS.Core.Models.Setup
         {
             get => IsDevelopment;
             set => IsDevelopment = value;
-        }
-        
-        ICollectionSetup ICollectionResolver.GetCollection(string alias)
-        {
-            return _collectionResolver.ResolveSetup(alias);
-        }
-
-        IPageSetup ICollectionResolver.GetPage(string alias)
-        {
-            return _pageResolver.ResolveSetup(alias);
-        }
-
-        IEnumerable<ITreeElementSetup> ICollectionResolver.GetRootCollections()
-        {
-            return _treeElementsResolver.ResolveSetup();
         }
     }
 }

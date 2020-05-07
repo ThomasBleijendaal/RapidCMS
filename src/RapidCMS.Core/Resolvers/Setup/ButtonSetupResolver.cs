@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RapidCMS.Core.Abstractions.Resolvers.Setup;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Enums;
@@ -16,8 +16,13 @@ namespace RapidCMS.Core.Resolvers.Setup
     {
         private static readonly IEnumerable<ButtonSetup> EmptySubButtons = Enumerable.Empty<ButtonSetup>();
 
-        public IButtonSetup ResolveSetup(ButtonConfig config, ICollectionSetup collection)
+        public IButtonSetup ResolveSetup(ButtonConfig config, ICollectionSetup? collection = default)
         {
+            if (collection == null)
+            {
+                throw new ArgumentNullException(nameof(collection));
+            }
+
             var @default = (config as DefaultButtonConfig)?.ButtonType.GetCustomAttribute<DefaultIconLabelAttribute>();
 
             var button = new ButtonSetup

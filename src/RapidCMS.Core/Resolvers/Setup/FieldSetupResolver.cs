@@ -1,5 +1,5 @@
 ﻿using System;
-using RapidCMS.Core.Abstractions.Resolvers.Setup;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Config;
@@ -9,8 +9,13 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class FieldSetupResolver : ISetupResolver<FieldSetup, FieldConfig>
     {
-        public FieldSetup ResolveSetup(FieldConfig config, ICollectionSetup collection)
+        public FieldSetup ResolveSetup(FieldConfig config, ICollectionSetup? collection = default)
         {
+            if (collection == null)
+            {
+                throw new ArgumentNullException(nameof(collection));
+            }
+
             // TODO: move logic out of constructors?
             return config switch
             {

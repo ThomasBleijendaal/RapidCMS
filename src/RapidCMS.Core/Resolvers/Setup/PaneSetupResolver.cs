@@ -1,5 +1,6 @@
-﻿using System.Linq;
-using RapidCMS.Core.Abstractions.Resolvers.Setup;
+﻿using System;
+using System.Linq;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
@@ -26,8 +27,13 @@ namespace RapidCMS.Core.Resolvers.Setup
             _relatedCollectionSetupResolver = relatedCollectionSetupResolver;
         }
 
-        public PaneSetup ResolveSetup(PaneConfig config, ICollectionSetup collection)
+        public PaneSetup ResolveSetup(PaneConfig config, ICollectionSetup? collection = default)
         {
+            if (collection == null)
+            {
+                throw new ArgumentNullException(nameof(collection));
+            }
+
             var buttons = _buttonSetupResolver.ResolveSetup(config.Buttons, collection).ToList();
             var fields = _fieldSetupResolver.ResolveSetup(config.Fields, collection).ToList();
             var subCollectionLists = _subCollectionSetupResolver.ResolveSetup(config.SubCollectionLists, collection).ToList();

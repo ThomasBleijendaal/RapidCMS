@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Config;
-using RapidCMS.Core.Abstractions.Resolvers.Setup;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Config;
@@ -11,7 +11,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class TreeElementSetupResolver : ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>
     {
-        public IEnumerable<ITreeElementSetup> ResolveSetup(IEnumerable<ITreeElementConfig> config, ICollectionSetup collection)
+        public IEnumerable<ITreeElementSetup> ResolveSetup(IEnumerable<ITreeElementConfig> config, ICollectionSetup? collection = default)
         {
             return config.Select(corp =>
             {
