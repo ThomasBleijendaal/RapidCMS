@@ -9,7 +9,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class EntityVariantSetupResolver : ISetupResolver<IEntityVariantSetup, EntityVariantConfig>
     {
-        public IEntityVariantSetup ResolveSetup(EntityVariantConfig config, ICollectionSetup? collection = default)
+        public IResolvedSetup<IEntityVariantSetup> ResolveSetup(EntityVariantConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -18,11 +18,13 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             if (config == default)
             {
-                return EntityVariantSetup.Undefined;
+                return new ResolvedSetup<IEntityVariantSetup>( EntityVariantSetup.Undefined, true);
             } 
             else
             {
-                return new EntityVariantSetup(config.Name, config.Icon, config.Type, config.Type.Name.ToUrlFriendlyString());
+                return new ResolvedSetup<IEntityVariantSetup>(
+                    new EntityVariantSetup(config.Name, config.Icon, config.Type, config.Type.Name.ToUrlFriendlyString()),
+                    true);
             }
         }
     }

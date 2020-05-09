@@ -5,7 +5,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Setup
 {
-    internal interface ICollectionSetup : IResolverCachable
+    internal interface ICollectionSetup
     {
         string? Icon { get; }
         string Alias { get; }

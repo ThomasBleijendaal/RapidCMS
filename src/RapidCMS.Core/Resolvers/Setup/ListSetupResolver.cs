@@ -13,16 +13,19 @@ namespace RapidCMS.Core.Resolvers.Setup
     {
         private readonly ISetupResolver<PaneSetup, PaneConfig> _paneSetupResolver;
         private readonly ISetupResolver<IButtonSetup, ButtonConfig> _buttonSetupResolver;
+        private readonly IConventionBasedResolver<ListConfig> _conventionListConfigResolver;
 
         public ListSetupResolver(
             ISetupResolver<PaneSetup, PaneConfig> paneSetupResolver,
-            ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver)
+            ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver,
+            IConventionBasedResolver<ListConfig> conventionListConfigResolver)
         {
             _paneSetupResolver = paneSetupResolver;
             _buttonSetupResolver = buttonSetupResolver;
+            _conventionListConfigResolver = conventionListConfigResolver;
         }
 
-        public ListSetup ResolveSetup(ListConfig config, ICollectionSetup? collection = default)
+        public IResolvedSetup<ListSetup> ResolveSetup(ListConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -31,20 +34,22 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             if (config is IIsConventionBased isConventionBasedConfig)
             {
-                config = isConventionBasedConfig.GenerateConfig<ListConfig>();
+                config = _conventionListConfigResolver.ResolveByConvention(config.BaseType, isConventionBasedConfig.GetFeatures());
             }
 
-            var panes = _paneSetupResolver.ResolveSetup(config.Panes, collection).ToList();
-            var buttons = _buttonSetupResolver.ResolveSetup(config.Buttons, collection).ToList();
+            var cacheable = true;
 
-            return new ListSetup(
+            var panes = _paneSetupResolver.ResolveSetup(config.Panes, collection).CheckIfCachable(ref cacheable).ToList();
+            var buttons = _buttonSetupResolver.ResolveSetup(config.Buttons, collection).CheckIfCachable(ref cacheable).ToList();
+
+            return new ResolvedSetup<ListSetup>(new ListSetup(
                 config.PageSize,
                 config.SearchBarVisible,
                 config.ReorderingAllowed,
                 config.ListEditorType,
                 config.EmptyVariantColumnVisibility,
                 panes,
-                buttons); 
+                buttons), cacheable); 
         }
     }
 }

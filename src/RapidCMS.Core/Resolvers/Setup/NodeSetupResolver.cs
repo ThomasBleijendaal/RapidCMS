@@ -13,16 +13,19 @@ namespace RapidCMS.Core.Resolvers.Setup
     {
         private readonly ISetupResolver<PaneSetup, PaneConfig> _paneSetupResolver;
         private readonly ISetupResolver<IButtonSetup, ButtonConfig> _buttonSetupResolver;
+        private readonly IConventionBasedResolver<NodeConfig> _conventionNodeConfigResolver;
 
         public NodeSetupResolver(
             ISetupResolver<PaneSetup, PaneConfig> paneSetupResolver,
-            ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver)
+            ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver,
+            IConventionBasedResolver<NodeConfig> conventionNodeConfigResolver)
         {
             _paneSetupResolver = paneSetupResolver;
             _buttonSetupResolver = buttonSetupResolver;
+            _conventionNodeConfigResolver = conventionNodeConfigResolver;
         }
 
-        public NodeSetup ResolveSetup(NodeConfig config, ICollectionSetup? collection = default)
+        public IResolvedSetup<NodeSetup> ResolveSetup(NodeConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -31,16 +34,19 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             if (config is IIsConventionBased isConventionBasedConfig)
             {
-
+                config = _conventionNodeConfigResolver.ResolveByConvention(config.BaseType, isConventionBasedConfig.GetFeatures());
             }
 
-            var panes = _paneSetupResolver.ResolveSetup(config.Panes, collection).ToList();
-            var buttons = _buttonSetupResolver.ResolveSetup(config.Buttons, collection).ToList();
+            var cacheable = true;
 
-            return new NodeSetup(
+            var panes = _paneSetupResolver.ResolveSetup(config.Panes, collection).CheckIfCachable(ref cacheable).ToList();
+            var buttons = _buttonSetupResolver.ResolveSetup(config.Buttons, collection).CheckIfCachable(ref cacheable).ToList();
+
+            return new ResolvedSetup<NodeSetup>(new NodeSetup(
                 config.BaseType,
                 panes,
-                buttons);
+                buttons),
+                cacheable);
         }
     }
 }

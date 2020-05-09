@@ -7,14 +7,15 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class TreeViewSetupResolver : ISetupResolver<TreeViewSetup, TreeViewConfig>
     {
-        public TreeViewSetup ResolveSetup(TreeViewConfig config, ICollectionSetup? collection = default)
+        public IResolvedSetup<TreeViewSetup> ResolveSetup(TreeViewConfig config, ICollectionSetup? collection = default)
         {
-            return new TreeViewSetup(
+            return new ResolvedSetup<TreeViewSetup>(new TreeViewSetup(
                 config.EntityVisibilty,
                 config.RootVisibility,
                 config.DefaultOpenEntities,
                 config.DefaultOpenCollections,
-                config.Name);
+                config.Name),
+                true);
         }
     }
 }

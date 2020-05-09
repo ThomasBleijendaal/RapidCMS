@@ -16,7 +16,7 @@ namespace RapidCMS.Core.Resolvers.Setup
     {
         private static readonly IEnumerable<ButtonSetup> EmptySubButtons = Enumerable.Empty<ButtonSetup>();
 
-        public IButtonSetup ResolveSetup(ButtonConfig config, ICollectionSetup? collection = default)
+        public IResolvedSetup<IButtonSetup> ResolveSetup(ButtonConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -80,7 +80,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 throw new InvalidOperationException();
             }
 
-            return button;
+            return new ResolvedSetup<IButtonSetup>(button, true);
         }
     }
 }

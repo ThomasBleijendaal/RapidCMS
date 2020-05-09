@@ -23,14 +23,12 @@ namespace RapidCMS.Core.Models.Setup
             RepositoryType = repositoryType;
 
             Recursive = isRecursive;
-            ResolverCachable = isResolverCachable;
         }
 
         public string? Icon { get; private set; }
         public string Name { get; private set; }
         public string Alias { get; private set; }
         public bool Recursive { get; private set; }
-        public bool ResolverCachable { get; private set; }
 
         public List<ITreeElementSetup> Collections { get; set; } = new List<ITreeElementSetup>();
 

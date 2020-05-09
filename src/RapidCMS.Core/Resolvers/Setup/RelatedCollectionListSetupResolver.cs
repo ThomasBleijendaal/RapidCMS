@@ -7,9 +7,9 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class RelatedCollectionListSetupResolver : ISetupResolver<RelatedCollectionListSetup, CollectionListConfig>
     {
-        public RelatedCollectionListSetup ResolveSetup(CollectionListConfig config, ICollectionSetup? collection = default)
+        public IResolvedSetup<RelatedCollectionListSetup> ResolveSetup(CollectionListConfig config, ICollectionSetup? collection = default)
         {
-            return new RelatedCollectionListSetup(config.Index, config.CollectionAlias);
+            return new ResolvedSetup<RelatedCollectionListSetup>(new RelatedCollectionListSetup(config.Index, config.CollectionAlias), true);
         }
     }
 }

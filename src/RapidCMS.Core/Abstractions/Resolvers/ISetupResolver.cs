@@ -11,6 +11,6 @@ namespace RapidCMS.Core.Abstractions.Resolvers
     internal interface ISetupResolver<TSetup, TConfig>
         where TConfig : notnull
     {
-        TSetup ResolveSetup(TConfig config, ICollectionSetup? collection = default);
+        IResolvedSetup<TSetup> ResolveSetup(TConfig config, ICollectionSetup? collection = default);
     }
 }

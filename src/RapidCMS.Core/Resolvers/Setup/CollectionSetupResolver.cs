@@ -73,15 +73,13 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             if (_collectionMap.TryGetValue(alias, out var collectionConfig))
             {
-                collectionSetup = ConvertConfig(collectionConfig);
-
-                // TODO: set this property
-                if (collectionSetup.ResolverCachable)
+                var resolvedSetup = ConvertConfig(collectionConfig);
+                if (resolvedSetup.Cachable)
                 {
-                    _cachedCollectionMap[alias] = collectionSetup;
+                    _cachedCollectionMap[alias] = resolvedSetup.Setup;
                 }
 
-                return collectionSetup;
+                return resolvedSetup.Setup;
             }
             else
             {
@@ -89,7 +87,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             }
         }
 
-        private CollectionSetup ConvertConfig(CollectionConfig config)
+        private IResolvedSetup<CollectionSetup> ConvertConfig(CollectionConfig config)
         {
             var collection = new CollectionSetup(
                 config.Icon,
@@ -103,23 +101,25 @@ namespace RapidCMS.Core.Resolvers.Setup
                 DataViewBuilder = config.DataViewBuilder
             };
 
-            collection.EntityVariant = _entityVariantResolver.ResolveSetup(config.EntityVariant, collection);
+            var cacheable = true;
+
+            collection.EntityVariant = _entityVariantResolver.ResolveSetup(config.EntityVariant, collection).CheckIfCachable(ref cacheable);
             if (config.SubEntityVariants.Any())
             {
-                collection.SubEntityVariants = _entityVariantResolver.ResolveSetup(config.SubEntityVariants, collection).ToList();
+                collection.SubEntityVariants = _entityVariantResolver.ResolveSetup(config.SubEntityVariants, collection).CheckIfCachable(ref cacheable).ToList();
             }
 
-            collection.TreeView =config.TreeView == null ? null :  _treeViewResolver.ResolveSetup(config.TreeView, collection);
+            collection.TreeView = config.TreeView == null ? null : _treeViewResolver.ResolveSetup(config.TreeView, collection).CheckIfCachable(ref cacheable);
 
-            collection.ListView = config.ListView == null ? null : _listResolver.ResolveSetup(config.ListView, collection);
-            collection.ListEditor = config.ListEditor == null ? null : _listResolver.ResolveSetup(config.ListEditor, collection);
+            collection.ListView = config.ListView == null ? null : _listResolver.ResolveSetup(config.ListView, collection).CheckIfCachable(ref cacheable);
+            collection.ListEditor = config.ListEditor == null ? null : _listResolver.ResolveSetup(config.ListEditor, collection).CheckIfCachable(ref cacheable);
 
-            collection.NodeView = config.NodeView == null ? null : _nodeResolver.ResolveSetup(config.NodeView, collection);
-            collection.NodeEditor = config.NodeEditor == null ? null : _nodeResolver.ResolveSetup(config.NodeEditor, collection);
+            collection.NodeView = config.NodeView == null ? null : _nodeResolver.ResolveSetup(config.NodeView, collection).CheckIfCachable(ref cacheable);
+            collection.NodeEditor = config.NodeEditor == null ? null : _nodeResolver.ResolveSetup(config.NodeEditor, collection).CheckIfCachable(ref cacheable);
 
-            collection.Collections = _treeElementResolver.ResolveSetup(config.CollectionsAndPages, collection).ToList();
+            collection.Collections = _treeElementResolver.ResolveSetup(config.CollectionsAndPages, collection).CheckIfCachable(ref cacheable).ToList();
 
-            return collection;
+            return new ResolvedSetup<CollectionSetup>(collection, cacheable);
         }
     }
 }

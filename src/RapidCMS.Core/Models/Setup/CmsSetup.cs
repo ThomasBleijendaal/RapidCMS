@@ -29,11 +29,11 @@ namespace RapidCMS.Core.Models.Setup
 
             if (config.CustomLoginScreenRegistration != null)
             {
-                CustomLoginScreenRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginScreenRegistration);
+                CustomLoginScreenRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginScreenRegistration).Setup;
             }
             if (config.CustomLoginStatusRegistration != null)
             {
-                CustomLoginStatusRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginStatusRegistration);
+                CustomLoginStatusRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginStatusRegistration).Setup;
             }
         }
 

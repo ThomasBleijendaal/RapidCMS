@@ -1,11 +1,9 @@
-﻿using System;
-using System.ComponentModel;
+﻿using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Abstractions.Config
 {
     internal interface IIsConventionBased
     {
-        [Obsolete("Create IConventionBasedConfigResolver to generate this")]
-        T GenerateConfig<T>() where T: class;
+        Features GetFeatures();
     }
 }

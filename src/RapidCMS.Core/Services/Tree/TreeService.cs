@@ -129,7 +129,7 @@ namespace RapidCMS.Core.Services.Tree
                         DefaultOpenCollections = collection.TreeView?.DefaultOpenCollections ?? false
                     };
 
-                    if (collection.ListEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, entity))
+                    if (collection.NodeEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, entity))
                     {
                         node.State = new PageStateModel
                         {

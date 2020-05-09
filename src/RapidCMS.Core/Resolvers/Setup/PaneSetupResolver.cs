@@ -27,19 +27,21 @@ namespace RapidCMS.Core.Resolvers.Setup
             _relatedCollectionSetupResolver = relatedCollectionSetupResolver;
         }
 
-        public PaneSetup ResolveSetup(PaneConfig config, ICollectionSetup? collection = default)
+        public IResolvedSetup<PaneSetup> ResolveSetup(PaneConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
                 throw new ArgumentNullException(nameof(collection));
             }
 
-            var buttons = _buttonSetupResolver.ResolveSetup(config.Buttons, collection).ToList();
-            var fields = _fieldSetupResolver.ResolveSetup(config.Fields, collection).ToList();
-            var subCollectionLists = _subCollectionSetupResolver.ResolveSetup(config.SubCollectionLists, collection).ToList();
-            var relatedCollectionLists = _relatedCollectionSetupResolver.ResolveSetup(config.RelatedCollectionLists, collection).ToList();
+            var cacheable = true;
 
-            return new PaneSetup(
+            var buttons = _buttonSetupResolver.ResolveSetup(config.Buttons, collection).CheckIfCachable(ref cacheable).ToList();
+            var fields = _fieldSetupResolver.ResolveSetup(config.Fields, collection).CheckIfCachable(ref cacheable).ToList();
+            var subCollectionLists = _subCollectionSetupResolver.ResolveSetup(config.SubCollectionLists, collection).CheckIfCachable(ref cacheable).ToList();
+            var relatedCollectionLists = _relatedCollectionSetupResolver.ResolveSetup(config.RelatedCollectionLists, collection).CheckIfCachable(ref cacheable).ToList();
+
+            return new ResolvedSetup<PaneSetup>(new PaneSetup(
                 config.CustomType,
                 config.Label,
                 config.IsVisible,
@@ -47,7 +49,8 @@ namespace RapidCMS.Core.Resolvers.Setup
                 buttons,
                 fields,
                 subCollectionLists,
-                relatedCollectionLists);
+                relatedCollectionLists),
+                cacheable);
         }
     }
 }

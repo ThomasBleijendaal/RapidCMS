@@ -10,9 +10,9 @@ using RapidCMS.Core.Helpers;
 
 namespace RapidCMS.Core.Models.Config
 {
-    internal abstract class PaneConfig
+    internal class PaneConfig
     {
-        protected PaneConfig(Type variantType)
+        internal PaneConfig(Type variantType)
         {
             VariantType = variantType ?? throw new ArgumentNullException(nameof(variantType));
         }
@@ -28,13 +28,13 @@ namespace RapidCMS.Core.Models.Config
         internal List<FieldConfig> Fields { get; set; } = new List<FieldConfig>();
         internal List<CollectionListConfig> SubCollectionLists { get; set; } = new List<CollectionListConfig>();
         internal List<CollectionListConfig> RelatedCollectionLists { get; set; } = new List<CollectionListConfig>();
+
+        internal int FieldIndex { get; set; } = 0;
     }
 
     internal class PaneConfig<TEntity> : PaneConfig, IDisplayPaneConfig<TEntity>, IEditorPaneConfig<TEntity>
         where TEntity : IEntity
     {
-        internal int FieldIndex { get; set; } = 0;
-
         internal PaneConfig(Type variantType) : base(variantType)
         {
         }

@@ -41,8 +41,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Abstractions\Resolvers\Setup\" />
-  </ItemGroup>
-
 </Project>

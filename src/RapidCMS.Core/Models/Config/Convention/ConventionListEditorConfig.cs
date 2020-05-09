@@ -1,12 +1,19 @@
-﻿using RapidCMS.Core.Abstractions.Config;
+﻿using System;
+using System.Reflection.Metadata.Ecma335;
+using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Config.Convention
 {
     internal class ConventionListEditorConfig<TEntity> : ListConfig, IIsConventionBased
     {
-        public T GenerateConfig<T>() where T : class
+        public ConventionListEditorConfig() : base(typeof(TEntity))
         {
-            throw new System.NotImplementedException();
+        }
+
+        public Features GetFeatures()
+        {
+            return Features.CanEdit;
         }
     }
 }

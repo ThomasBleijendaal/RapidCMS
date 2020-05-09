@@ -11,9 +11,9 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class TreeElementSetupResolver : ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>
     {
-        public IEnumerable<ITreeElementSetup> ResolveSetup(IEnumerable<ITreeElementConfig> config, ICollectionSetup? collection = default)
+        public IResolvedSetup<IEnumerable<ITreeElementSetup>> ResolveSetup(IEnumerable<ITreeElementConfig> config, ICollectionSetup? collection = default)
         {
-            return config.Select(corp =>
+            return new ResolvedSetup<IEnumerable<ITreeElementSetup>>(config.Select(corp =>
             {
                 var type = corp switch
                 {
@@ -26,7 +26,8 @@ namespace RapidCMS.Core.Resolvers.Setup
                     RootVisibility = (corp as CollectionConfig)?.TreeView?.RootVisibility ?? default
                 };
 
-            }) ?? Enumerable.Empty<ITreeElementSetup>();
+            }) ?? Enumerable.Empty<ITreeElementSetup>(),
+            true);
         }
     }
 }

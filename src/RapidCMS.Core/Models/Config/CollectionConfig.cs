@@ -235,32 +235,17 @@ namespace RapidCMS.Core.Models.Config
 
         public ICollectionConfig<TEntity> ConfigureByConvention(CollectionConvention convention = CollectionConvention.ListViewNodeEditor)
         {
-            //var entityType = typeof(TEntity);
-            //var properties = entityType.GetProperties();
-            //var usabelProperties = properties.Select(prop =>
-            //{
-            //    var displayAttribute = prop.GetCustomAttribute<DisplayAttribute>();
-            //    if (displayAttribute != null)
-            //    {
-            //        return (prop, displayAttribute);
-            //    }
-            //    else
-            //    {
-            //        return default;
-            //    }
-            //}).Where(x => x != default);
-
             if (convention == CollectionConvention.ListView || convention == CollectionConvention.ListViewNodeEditor)
             {
                 ListView = new ConventionListViewConfig<TEntity>(canGoToNodeEditor: convention == CollectionConvention.ListViewNodeEditor);
             }
-            else if (convention == CollectionConvention.ListViewNodeEditor)
+            if (convention == CollectionConvention.ListViewNodeEditor)
             {
                 NodeEditor = new ConventionNodeEditorConfig<TEntity>();
             }
-            else if (convention == CollectionConvention.ListView)
+            if (convention == CollectionConvention.ListEditor)
             {
-                ListView = new ConventionListEditorConfig<TEntity>();
+                ListEditor = new ConventionListEditorConfig<TEntity>();
             }
 
             return this;

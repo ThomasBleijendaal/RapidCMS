@@ -12,7 +12,7 @@ namespace RapidCMS.Example.Collections
         {
             config.AddCollection<ConventionalPerson, JsonRepository<ConventionalPerson>>("person-convention", "People (by convention)", collection =>
             {
-                collection.SetTreeView(x => x.Name); // TODO: move into convention
+                collection.SetTreeView(x => x.Name);
                 collection.ConfigureByConvention(CollectionConvention.ListViewNodeEditor);
             });
         }

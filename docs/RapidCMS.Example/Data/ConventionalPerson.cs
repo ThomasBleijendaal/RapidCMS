@@ -8,11 +8,14 @@ namespace RapidCMS.Example.Data
     {
         public int Id { get; set; }
 
-        [Display(Name = "Name", Description = "The name of the person")]
+        [Display(Name = "Name", Description = "The name of the person", ShortName = "Name")]
+        [Required]
         public string? Name { get; set; }
 
         [Display(Name = "Email", Description = "The email of the person")]
         public string? Email { get; set; }
+
+        [Display(Name = "Biography", Description = "The biography of the persion")]
         public string? Bio { get; set; }
 
         string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? "0"); }

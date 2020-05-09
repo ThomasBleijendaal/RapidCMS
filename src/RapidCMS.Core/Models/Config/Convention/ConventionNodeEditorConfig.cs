@@ -1,5 +1,6 @@
 ﻿using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Config.Convention
 {
@@ -10,9 +11,9 @@ namespace RapidCMS.Core.Models.Config.Convention
         {
         }
 
-        public T GenerateConfig<T>() where T : class
+        public Features GetFeatures()
         {
-            throw new System.NotImplementedException();
+            return Features.CanEdit;
         }
     }
 }

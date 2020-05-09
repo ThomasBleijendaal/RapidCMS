@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
-using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;

@@ -26,6 +26,7 @@ using RapidCMS.Core.Models.Request;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Resolvers.Buttons;
+using RapidCMS.Core.Resolvers.Convention;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Resolvers.Repositories;
 using RapidCMS.Core.Resolvers.Setup;
@@ -75,7 +76,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ISetupResolver<SubCollectionListSetup, CollectionListConfig>, SubCollectionListSetupResolver>();
             services.AddSingleton<ISetupResolver<RelatedCollectionListSetup, CollectionListConfig>, RelatedCollectionListSetupResolver>();
 
-
+            services.AddSingleton<IConventionBasedResolver<ListConfig>, ConventionBasedListConfigResolver>();
+            services.AddSingleton<IConventionBasedResolver<NodeConfig>, ConventionBasedNodeConfigResolver>();
+            services.AddSingleton<IFieldConfigResolver, FieldConfigResolver>();
 
             if (rootConfig.AllowAnonymousUsage)
             {

@@ -42,16 +42,20 @@ namespace RapidCMS.Core.Resolvers.Setup
                 throw new InvalidOperationException($"Cannot find page with alias {alias}.");
             }
 
+            var cacheable = true;
+
             pageSetup = new PageRegistrationSetup
             {
                 Name = config.Name,
                 Alias = config.Alias,
                 Icon = config.Icon,
-                Sections = _typeRegistrationSetupResolver.ResolveSetup(config.SectionRegistrations).ToList()
+                Sections = _typeRegistrationSetupResolver.ResolveSetup(config.SectionRegistrations).CheckIfCachable(ref cacheable).ToList()
             };
 
-            // pages always allow caching
-            _cache[alias] = pageSetup;
+            if (cacheable)
+            {
+                _cache[alias] = pageSetup;
+            }
 
             return pageSetup;
         }

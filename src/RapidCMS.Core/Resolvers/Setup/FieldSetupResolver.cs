@@ -9,7 +9,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class FieldSetupResolver : ISetupResolver<FieldSetup, FieldConfig>
     {
-        public FieldSetup ResolveSetup(FieldConfig config, ICollectionSetup? collection = default)
+        public IResolvedSetup<FieldSetup> ResolveSetup(FieldConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -17,7 +17,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             }
 
             // TODO: move logic out of constructors?
-            return config switch
+            return new ResolvedSetup<FieldSetup>(config switch
             {
                 _ when config.EditorType == EditorType.Custom && config.Property != null => new CustomPropertyFieldSetup(config, config.CustomType!),
                 _ when config.EditorType != EditorType.None && config.Property != null => new PropertyFieldSetup(config),
@@ -25,7 +25,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 _ when config.DisplayType == DisplayType.Custom && config.Expression != null => new CustomExpressionFieldSetup(config, config.Expression, config.CustomType!),
                 _ when config.DisplayType != DisplayType.None && config.Expression != null => new ExpressionFieldSetup(config, config.Expression),
                 _ => throw new InvalidOperationException()
-            };
+            }, true);
         }
     }
 }
