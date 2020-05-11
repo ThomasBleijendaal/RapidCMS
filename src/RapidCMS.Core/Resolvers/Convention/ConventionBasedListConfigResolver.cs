@@ -20,7 +20,7 @@ namespace RapidCMS.Core.Resolvers.Convention
         {
             var listButtons = new List<ButtonConfig>();
 
-            if (features.HasFlag(Features.CanEdit))
+            if (features.HasFlag(Features.CanEdit) || features.HasFlag(Features.CanGoToEdit))
             {
                 listButtons.Add(new DefaultButtonConfig
                 {

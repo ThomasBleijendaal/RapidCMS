@@ -22,6 +22,10 @@ namespace RapidCMS.Core.Resolvers.Convention
             {
                 new DefaultButtonConfig
                 {
+                    ButtonType = DefaultButtonType.Up
+                },
+                new DefaultButtonConfig
+                {
                     ButtonType = DefaultButtonType.SaveExisting
                 },
                 new DefaultButtonConfig
