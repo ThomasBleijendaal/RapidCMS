@@ -26,4 +26,4 @@ namespace RapidCMS.Example.Data
             };
         }
     }
-}
+ }

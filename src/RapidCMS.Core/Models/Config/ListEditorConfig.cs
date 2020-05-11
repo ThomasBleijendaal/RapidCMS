@@ -10,6 +10,10 @@ namespace RapidCMS.Core.Models.Config
         IListEditorConfig<TEntity>
         where TEntity : IEntity
     {
+        public ListEditorConfig() : base(typeof(TEntity))
+        {
+        }
+
         public IListEditorConfig<TEntity> SetPageSize(int pageSize)
         {
             if (pageSize < 1)

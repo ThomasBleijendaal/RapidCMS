@@ -3,22 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
     internal class NodeSetup
     {
-        internal NodeSetup(NodeConfig node, CollectionSetup collection)
+        public NodeSetup(
+            Type baseType, 
+            List<PaneSetup> panes, 
+            List<IButtonSetup> buttons)
         {
-            BaseType = node.BaseType;
-            Buttons = node.Buttons.ToList(button => new ButtonSetup(button, collection.EntityVariant, collection.SubEntityVariants));
-            Panes = node.Panes.ToList(pane => new PaneSetup(pane));
+            BaseType = baseType ?? throw new ArgumentNullException(nameof(baseType));
+            Panes = panes ?? throw new ArgumentNullException(nameof(panes));
+            Buttons = buttons ?? throw new ArgumentNullException(nameof(buttons));
         }
 
         internal Type BaseType { get; set; }
         internal List<PaneSetup> Panes { get; set; }
-        internal List<ButtonSetup> Buttons { get; set; }
+        internal List<IButtonSetup> Buttons { get; set; }
 
         internal IButtonSetup? FindButton(string buttonId)
         {

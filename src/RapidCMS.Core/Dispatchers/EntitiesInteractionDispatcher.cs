@@ -7,6 +7,7 @@ using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
@@ -21,13 +22,13 @@ namespace RapidCMS.Core.Dispatchers
         IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>,
         IInteractionDispatcher<PersistEntitiesRequestModel, ListEditorCommandResponseModel>
     {
-        private readonly ICollectionResolver _collectionResolver;
+        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IConcurrencyService _concurrencyService;
         private readonly IButtonInteraction _buttonInteraction;
 
         public EntitiesInteractionDispatcher(
-            ICollectionResolver collectionResolver,
+            ISetupResolver<ICollectionSetup> collectionResolver,
             IRepositoryResolver repositoryResolver,
             IConcurrencyService concurrencyService,
             IButtonInteraction buttonInteraction)
@@ -51,7 +52,7 @@ namespace RapidCMS.Core.Dispatchers
         private async Task<T> InvokeAsync<T>(PersistEntitiesRequestModel request, T response, IPageState pageState)
             where T : ViewCommandResponseModel
         {
-            var collection = _collectionResolver.GetCollection(request.ListContext.CollectionAlias);
+            var collection = _collectionResolver.ResolveSetup(request.ListContext.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
             var (crudType, entityVariant) = await _buttonInteraction.ValidateButtonInteractionAsync(request);
@@ -159,7 +160,7 @@ namespace RapidCMS.Core.Dispatchers
                             break;
                         }
 
-                        var parentCollection = _collectionResolver.GetCollection(parentCollectionAlias);
+                        var parentCollection = _collectionResolver.ResolveSetup(parentCollectionAlias);
 
                         pageState.ReplaceState(new PageStateModel
                         {

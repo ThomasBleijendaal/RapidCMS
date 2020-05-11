@@ -5,6 +5,7 @@ using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Dispatchers;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
@@ -54,14 +55,14 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
                     new CollectionSetup(default,
                         "name",
                         alias,
-                        new EntityVariantSetup(new EntityVariantConfig("default", typeof(DefaultEntityVariant))),
                         default)
                     {
-                        SubEntityVariants = new List<EntityVariantSetup>
+                        EntityVariant = new EntityVariantSetup("default", default, typeof(DefaultEntityVariant), "alias"),
+                        SubEntityVariants = new List<IEntityVariantSetup>
                         {
-                            new EntityVariantSetup(new EntityVariantConfig("sub1", typeof(SubEntityVariant1))),
-                            new EntityVariantSetup(new EntityVariantConfig("sub2", typeof(SubEntityVariant2))),
-                            new EntityVariantSetup(new EntityVariantConfig("sub3", typeof(SubEntityVariant3)))
+                            new EntityVariantSetup("sub1", default, typeof(SubEntityVariant1), "sub1"),
+                            new EntityVariantSetup("sub3", default, typeof(SubEntityVariant3), "sub2"),
+                            new EntityVariantSetup("sub2", default, typeof(SubEntityVariant2), "sub3")
                         }
                     });
 

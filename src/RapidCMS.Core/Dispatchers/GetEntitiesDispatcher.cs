@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Request;
@@ -14,7 +15,7 @@ namespace RapidCMS.Core.Dispatchers
 {
     internal class GetEntitiesDispatcher : IPresenationDispatcher<GetEntitiesRequestModel, ListContext>
     {
-        private readonly ICollectionResolver _collectionResolver;
+        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IDataViewResolver _dataViewResolver;
         private readonly IParentService _parentService;
@@ -23,7 +24,7 @@ namespace RapidCMS.Core.Dispatchers
         private readonly IServiceProvider _serviceProvider;
 
         public GetEntitiesDispatcher(
-            ICollectionResolver collectionResolver, 
+            ISetupResolver<ICollectionSetup> collectionResolver, 
             IRepositoryResolver repositoryResolver, 
             IDataViewResolver dataViewResolver,
             IParentService parentService,
@@ -42,7 +43,7 @@ namespace RapidCMS.Core.Dispatchers
 
         public async Task<ListContext> GetAsync(GetEntitiesRequestModel request)
         {
-            var collection = _collectionResolver.GetCollection(request.CollectionAlias);
+            var collection = _collectionResolver.ResolveSetup(request.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
             var parent = request is GetEntitiesOfParentRequestModel parentRequest ? await _parentService.GetParentAsync(parentRequest.ParentPath) : default;

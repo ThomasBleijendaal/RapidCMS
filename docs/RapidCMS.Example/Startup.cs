@@ -29,6 +29,7 @@ namespace RapidCMS.Example
             services.AddServerSideBlazor();
 
             services.AddSingleton<JsonRepository<Person>>();
+            services.AddSingleton<JsonRepository<ConventionalPerson>>();
             services.AddSingleton<JsonRepository<Country>>();
             services.AddSingleton<JsonRepository<User>>();
             services.AddSingleton<JsonRepository<TagGroup>>();
@@ -73,6 +74,9 @@ namespace RapidCMS.Example
 
                 // CRUD editor with entity mapping
                 config.AddMappedCollection();
+
+                // CRUD editor based on conventions for even more rapid development
+                config.AddConventionCollection();
 
                 // the dashboard can be build up of custom Blazor components, or the ListViews or ListEditors of collections
                 config.Dashboard.AddSection(typeof(DashboardSection));

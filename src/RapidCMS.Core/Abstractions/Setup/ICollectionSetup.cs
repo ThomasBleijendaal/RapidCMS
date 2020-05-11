@@ -5,16 +5,17 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Setup
 {
-    internal interface ICollectionSetup : ITreeElementSetup
+    internal interface ICollectionSetup
     {
         string? Icon { get; }
+        string Alias { get; }
         string Name { get; }
         bool Recursive { get; }
 
-        List<CollectionSetup> Collections { get; }
+        List<ITreeElementSetup> Collections { get; }
 
-        List<EntityVariantSetup>? SubEntityVariants { get; }
-        EntityVariantSetup EntityVariant { get; }
+        List<IEntityVariantSetup>? SubEntityVariants { get; }
+        IEntityVariantSetup EntityVariant { get; }
 
         List<IDataView>? DataViews { get; }
         Type? DataViewBuilder { get; }

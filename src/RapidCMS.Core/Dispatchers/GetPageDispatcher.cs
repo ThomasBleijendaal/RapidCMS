@@ -9,16 +9,16 @@ namespace RapidCMS.Core.Dispatchers
 {
     internal class GetPageDispatcher : IPresenationDispatcher<string, IEnumerable<ITypeRegistration>>
     {
-        private readonly ICollectionResolver _collectionResolver;
+        private readonly ISetupResolver<IPageSetup> _pageResolver;
 
-        public GetPageDispatcher(ICollectionResolver collectionResolver)
+        public GetPageDispatcher(ISetupResolver<IPageSetup> pageResolver)
         {
-            _collectionResolver = collectionResolver;
+            _pageResolver = pageResolver;
         }
 
         public Task<IEnumerable<ITypeRegistration>> GetAsync(string request)
         {
-            return Task.FromResult(_collectionResolver.GetPage(request).Sections.AsEnumerable());
+            return Task.FromResult(_pageResolver.ResolveSetup(request).Sections.AsEnumerable());
         }
     }
 }

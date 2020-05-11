@@ -8,10 +8,10 @@ namespace RapidCMS.Core.Resolvers.Repositories
 {
     internal class RepositoryResolver : IRepositoryResolver
     {
-        private readonly ICollectionResolver _collectionResolver;
+        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
         private readonly IServiceProvider _serviceProvider;
 
-        public RepositoryResolver(ICollectionResolver collectionResolver, IServiceProvider serviceProvider)
+        public RepositoryResolver(ISetupResolver<ICollectionSetup> collectionResolver, IServiceProvider serviceProvider)
         {
             _collectionResolver = collectionResolver;
             _serviceProvider = serviceProvider;
@@ -24,7 +24,7 @@ namespace RapidCMS.Core.Resolvers.Repositories
 
         IRepository IRepositoryResolver.GetRepository(string collectionAlias)
         {
-            return (this as IRepositoryResolver).GetRepository(_collectionResolver.GetCollection(collectionAlias));
+            return (this as IRepositoryResolver).GetRepository(_collectionResolver.ResolveSetup(collectionAlias));
         }
 
         IRepository IRepositoryResolver.GetRepository(Type repositoryType)

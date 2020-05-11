@@ -26,8 +26,10 @@ using RapidCMS.Core.Models.Request;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Resolvers.Buttons;
+using RapidCMS.Core.Resolvers.Convention;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Resolvers.Repositories;
+using RapidCMS.Core.Resolvers.Setup;
 using RapidCMS.Core.Services.Auth;
 using RapidCMS.Core.Services.Concurrency;
 using RapidCMS.Core.Services.Exceptions;
@@ -48,10 +50,35 @@ namespace Microsoft.Extensions.DependencyInjection
             var rootConfig = new CmsConfig();
             config?.Invoke(rootConfig);
 
-            var cmsSetup = new CmsSetup(rootConfig);
+            services.AddSingleton(rootConfig);
+            services.AddSingleton<ICmsConfig>(rootConfig);
 
-            services.AddSingleton<ICms>(cmsSetup);
-            services.AddSingleton<ILogin>(cmsSetup);
+            // var cmsSetup = new CmsSetup(rootConfig);
+
+            services.AddSingleton<ICms, CmsSetup>();
+            services.AddSingleton(x => (ILogin)x.GetService(typeof(ICms)));
+
+            services.AddSingleton<ISetupResolver<IPageSetup>, PageSetupResolver>();
+            services.AddSingleton<ISetupResolver<ICollectionSetup>, CollectionSetupResolver>();
+            services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>>, TreeElementsSetupResolver>();
+            services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>, TreeElementSetupResolver>();
+
+            // TODO: fix not having corresponding interface for either class
+            services.AddSingleton<ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig>, TypeRegistrationSetupResolver>();
+            services.AddSingleton<ISetupResolver<IEntityVariantSetup, EntityVariantConfig>, EntityVariantSetupResolver>();
+            services.AddSingleton<ISetupResolver<TreeViewSetup, TreeViewConfig>, TreeViewSetupResolver>();
+
+            services.AddSingleton<ISetupResolver<PaneSetup, PaneConfig>, PaneSetupResolver>();
+            services.AddSingleton<ISetupResolver<ListSetup, ListConfig>, ListSetupResolver>();
+            services.AddSingleton<ISetupResolver<NodeSetup, NodeConfig>, NodeSetupResolver>();
+            services.AddSingleton<ISetupResolver<FieldSetup, FieldConfig>, FieldSetupResolver>();
+            services.AddSingleton<ISetupResolver<IButtonSetup, ButtonConfig>, ButtonSetupResolver>();
+            services.AddSingleton<ISetupResolver<SubCollectionListSetup, CollectionListConfig>, SubCollectionListSetupResolver>();
+            services.AddSingleton<ISetupResolver<RelatedCollectionListSetup, CollectionListConfig>, RelatedCollectionListSetupResolver>();
+
+            services.AddSingleton<IConventionBasedResolver<ListConfig>, ConventionBasedListConfigResolver>();
+            services.AddSingleton<IConventionBasedResolver<NodeConfig>, ConventionBasedNodeConfigResolver>();
+            services.AddSingleton<IFieldConfigResolver, FieldConfigResolver>();
 
             if (rootConfig.AllowAnonymousUsage)
             {
@@ -61,7 +88,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddTransient<IUIResolverFactory, UIResolverFactory>();
 
-            services.AddSingleton<ICollectionResolver>(cmsSetup);
             services.AddTransient<IButtonActionHandlerResolver, ButtonActionHandlerResolver>();
             services.AddTransient<IDataProviderResolver, DataProviderResolver>();
             services.AddTransient<IDataViewResolver, DataViewResolver>();

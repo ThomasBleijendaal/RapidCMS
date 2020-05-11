@@ -21,6 +21,7 @@ namespace RapidCMS.Core.Models.Config
         internal bool AllowAnonymousUsage { get; set; } = false;
 
         public string Alias => "__root";
+        public bool Recursive => throw new NotImplementedException();
 
         internal static List<string> CollectionAliases = new List<string>();
 

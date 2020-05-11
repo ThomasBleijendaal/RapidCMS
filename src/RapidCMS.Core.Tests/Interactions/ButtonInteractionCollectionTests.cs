@@ -33,10 +33,9 @@ namespace RapidCMS.Core.Tests.Interactions
                     new CollectionSetup(default,
                         "name",
                         alias,
-                        new EntityVariantSetup(new EntityVariantConfig("default", typeof(DefaultEntityVariant))),
                         default)
                     {
-                        
+                        EntityVariant = new EntityVariantSetup("default", default, typeof(DefaultEntityVariant), "alias")
                     });
 
             _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();

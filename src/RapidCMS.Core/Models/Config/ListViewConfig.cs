@@ -9,6 +9,10 @@ namespace RapidCMS.Core.Models.Config
     internal class ListViewConfig<TEntity> : ListConfig, IListViewConfig<TEntity>
         where TEntity : IEntity
     {
+        public ListViewConfig() : base(typeof(TEntity))
+        {
+        }
+
         public IListViewConfig<TEntity> SetPageSize(int pageSize)
         {
             PageSize = pageSize;

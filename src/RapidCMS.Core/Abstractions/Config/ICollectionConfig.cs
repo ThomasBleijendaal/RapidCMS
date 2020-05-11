@@ -10,6 +10,8 @@ namespace RapidCMS.Core.Abstractions.Config
     public interface ICollectionConfig : ITreeElementConfig
     {
         IEnumerable<ITreeElementConfig> CollectionsAndPages { get; }
+
+        bool Recursive { get; }
     }
 
     public interface ICollectionConfig<TEntity> : ICollectionConfig
@@ -101,6 +103,17 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <param name="configure">Action used to configure the NodeView</param>
         /// <returns></returns>
         ICollectionConfig<TEntity> SetNodeView(Action<INodeViewConfig<TEntity>> configure);
+
+        /// <summary>
+        /// Sets the UI of this collection by convention
+        /// 
+        /// The resulting UI will be based on what DisplayAttribute
+        /// s on primitive properties are configured on the model.
+        /// The Name and Description property of 
+        /// </summary>
+        /// <param name="convention">Type of convention to use.</param>
+        /// <returns></returns>
+        ICollectionConfig<TEntity> ConfigureByConvention(CollectionConvention convention = CollectionConvention.ListViewNodeEditor);
 
         /// <summary>
         /// Sets how the collection should be displayed in the tree.

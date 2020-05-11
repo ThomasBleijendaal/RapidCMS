@@ -4,6 +4,7 @@ using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Request;
@@ -17,13 +18,13 @@ namespace RapidCMS.Core.Dispatchers
         IInteractionDispatcher<PersistEntityRequestModel, NodeInListViewCommandResponseModel>,
         IInteractionDispatcher<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>
     {
-        private readonly ICollectionResolver _collectionResolver;
+        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IConcurrencyService _concurrencyService;
         private readonly IButtonInteraction _buttonInteraction;
 
         public EntityInteractionDispatcher(
-            ICollectionResolver collectionResolver,
+            ISetupResolver<ICollectionSetup> collectionResolver,
             IRepositoryResolver repositoryResolver,
             IConcurrencyService concurrencyService,
             IButtonInteraction buttonInteraction)
@@ -52,7 +53,7 @@ namespace RapidCMS.Core.Dispatchers
         private async Task<T> InvokeAsync<T>(PersistEntityRequestModel request, T response, IPageState pageState)
             where T : ViewCommandResponseModel
         {
-            var collection = _collectionResolver.GetCollection(request.EditContext.CollectionAlias);
+            var collection = _collectionResolver.ResolveSetup(request.EditContext.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
             var entityVariant = collection.GetEntityVariant(request.EditContext.Entity);

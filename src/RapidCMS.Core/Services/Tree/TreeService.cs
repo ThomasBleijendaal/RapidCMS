@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
@@ -15,20 +16,26 @@ namespace RapidCMS.Core.Services.Tree
 {
     internal class TreeService : ITreeService
     {
-        private readonly ICollectionResolver _collectionResolver;
+        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
+        private readonly ISetupResolver<IPageSetup> _pageResolver;
+        private readonly ISetupResolver<IEnumerable<ITreeElementSetup>> _treeElementResolver;
         private readonly ICms _cms;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IAuthService _authService;
         private readonly IParentService _parentService;
 
         public TreeService(
-            ICollectionResolver collectionResolver,
+            ISetupResolver<ICollectionSetup> collectionResolver,
+            ISetupResolver<IPageSetup> pageResolver,
+            ISetupResolver<IEnumerable<ITreeElementSetup>> treeElementResolver,
             ICms cms,
             IRepositoryResolver repositoryResolver,
             IAuthService authService,
             IParentService parentService)
         {
             _collectionResolver = collectionResolver;
+            _pageResolver = pageResolver;
+            _treeElementResolver = treeElementResolver;
             _cms = cms;
             _repositoryResolver = repositoryResolver;
             _authService = authService;
@@ -37,7 +44,7 @@ namespace RapidCMS.Core.Services.Tree
 
         public async Task<TreeCollectionUI?> GetCollectionAsync(string alias, ParentPath? parentPath)
         {
-            var collection = _collectionResolver.GetCollection(alias);
+            var collection = _collectionResolver.ResolveSetup(alias);
             if (collection == null)
             {
                 throw new InvalidOperationException($"Failed to get collection for given alias ({alias}).");
@@ -81,7 +88,7 @@ namespace RapidCMS.Core.Services.Tree
 
         public Task<TreePageUI?> GetPageAsync(string alias)
         {
-            var page = _collectionResolver.GetPage(alias);
+            var page = _pageResolver.ResolveSetup(alias);
             if (page == null)
             {
                 throw new InvalidOperationException($"Failed to get page for given alias ({alias}).");
@@ -96,7 +103,7 @@ namespace RapidCMS.Core.Services.Tree
 
         public async Task<TreeNodesUI?> GetNodesAsync(string alias, ParentPath? parentPath, int pageNr, int pageSize)
         {
-            var collection = _collectionResolver.GetCollection(alias);
+            var collection = _collectionResolver.ResolveSetup(alias);
             if (collection == null)
             {
                 throw new InvalidOperationException($"Failed to get collection for given alias ({alias}).");
@@ -118,11 +125,11 @@ namespace RapidCMS.Core.Services.Tree
                         collection.TreeView.Name!.StringGetter.Invoke(entity),
                         collection.Collections.ToList(subCollection => (subCollection.Alias, PageType.Collection)))
                     {
-                        RootVisibleOfCollections = collection.Collections.All(subCollection => subCollection.TreeView?.RootVisibility == CollectionRootVisibility.Visible),
+                        RootVisibleOfCollections = collection.Collections.All(subCollection => subCollection.RootVisibility == CollectionRootVisibility.Visible),
                         DefaultOpenCollections = collection.TreeView?.DefaultOpenCollections ?? false
                     };
 
-                    if (collection.ListEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, entity))
+                    if (collection.NodeEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, entity))
                     {
                         node.State = new PageStateModel
                         {
@@ -165,8 +172,8 @@ namespace RapidCMS.Core.Services.Tree
 
         public TreeRootUI GetRoot()
         {
-            var collections = _collectionResolver.GetRootCollections()
-                .ToList(x => (x.Alias, x is ICollectionSetup ? PageType.Collection : PageType.Page));
+            var collections = _treeElementResolver.ResolveSetup()
+                .ToList(x => (x.Alias, x.Type));
 
             return new TreeRootUI("-1", _cms.SiteName, collections)
             {

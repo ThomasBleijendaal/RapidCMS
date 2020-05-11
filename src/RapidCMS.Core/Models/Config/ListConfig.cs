@@ -1,11 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Config
 {
     internal class ListConfig
     {
+        public ListConfig(Type baseType)
+        {
+            BaseType = baseType;
+        }
+
+        public Type BaseType { get; }
         internal int? PageSize { get; set; }
         internal bool? SearchBarVisible { get; set; }
         internal bool? ReorderingAllowed { get; set; }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Setup;
@@ -31,7 +32,7 @@ namespace RapidCMS.Core.Resolvers.UI
             _httpContextAccessor = httpContextAccessor;
         }
 
-        protected async Task<List<ButtonUI>> GetButtonsAsync(IEnumerable<ButtonSetup> buttons, EditContext editContext)
+        protected async Task<List<ButtonUI>> GetButtonsAsync(IEnumerable<IButtonSetup> buttons, EditContext editContext)
         {
             return await buttons
                 .GetAllButtons()

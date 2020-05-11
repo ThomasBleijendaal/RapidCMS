@@ -179,6 +179,22 @@ namespace RapidCMS.Core.Helpers
             return new ExpressionMetadata(propertyMetadata.PropertyName, (x => propertyMetadata.Getter(x)?.ToString() ?? ""));
         }
 
+        /// <summary>
+        /// Converts a given subject and property info to PropertyMetadataHelper.
+        /// </summary>
+        /// <param name="subject"></param>
+        /// <param name="propertyInfo"></param>
+        /// <returns></returns>
+        public static IPropertyMetadata? GetPropertyMetadata(Type subject, PropertyInfo propertyInfo)
+        {
+            var parameter = Expression.Parameter(subject);
+            var property = Expression.Property(parameter, propertyInfo);
+            var delegateType = typeof(Func<,>).MakeGenericType(subject, propertyInfo.PropertyType);
+            var lambda = Expression.Lambda(delegateType, property, parameter);
+
+            return GetPropertyMetadata(lambda);
+        }
+
         private static Func<object, object>? ConvertToGetterViaMethod(ParameterExpression parameterT, MethodInfo getValueMethod, Expression instanceExpression)
         {
             try

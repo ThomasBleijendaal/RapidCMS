@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Repositories;
@@ -9,6 +11,7 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
+using RapidCMS.Core.Models.Config.Convention;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.Config
@@ -26,7 +29,7 @@ namespace RapidCMS.Core.Models.Config
             EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
         }
 
-        internal bool Recursive { get; set; }
+        public bool Recursive { get; set; }
         public string Alias { get; internal set; }
         internal string? Icon { get; set; }
         internal string Name { get; set; }
@@ -228,6 +231,24 @@ namespace RapidCMS.Core.Models.Config
             };
 
             _collections.Add(configReceiver);
+        }
+
+        public ICollectionConfig<TEntity> ConfigureByConvention(CollectionConvention convention = CollectionConvention.ListViewNodeEditor)
+        {
+            if (convention == CollectionConvention.ListView || convention == CollectionConvention.ListViewNodeEditor)
+            {
+                ListView = new ConventionListViewConfig<TEntity>(canGoToNodeEditor: convention == CollectionConvention.ListViewNodeEditor);
+            }
+            if (convention == CollectionConvention.ListViewNodeEditor)
+            {
+                NodeEditor = new ConventionNodeEditorConfig<TEntity>();
+            }
+            if (convention == CollectionConvention.ListEditor)
+            {
+                ListEditor = new ConventionListEditorConfig<TEntity>();
+            }
+
+            return this;
         }
     }
 }
