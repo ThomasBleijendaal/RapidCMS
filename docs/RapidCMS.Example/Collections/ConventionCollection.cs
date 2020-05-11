@@ -13,6 +13,18 @@ namespace RapidCMS.Example.Collections
             config.AddCollection<ConventionalPerson, JsonRepository<ConventionalPerson>>("person-convention", "People (by convention)", collection =>
             {
                 collection.SetTreeView(x => x.Name);
+
+                // The convention system resolves the configuration based on the [Display]-attributes placed on the properties of the model of this collection.
+                // It uses the EditorTypeHelper.TryFindDefaultEditorType to resolve the best matching editor for the property.
+                //
+                // - The ListEditor will display a list editor with columns for every column with a [Display] attribute and use its Name and Description
+                //   for displaying the name and description.
+                //
+                // - The ListView+NodeEditor will display a list view with columns for each column with a [Display] attribute with a defined ShortName.
+                //   The corresponding node editor will display an editor with fields for each the properties that sport a [Display] attribute, and uses
+                //   the Name and Description of said attribute.
+                //
+                // - The ListView will only display a readonly list view without edit options.
                 collection.ConfigureByConvention(CollectionConvention.ListViewNodeEditor);
             });
         }
