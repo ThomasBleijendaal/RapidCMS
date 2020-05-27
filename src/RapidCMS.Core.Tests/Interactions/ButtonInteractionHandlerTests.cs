@@ -10,7 +10,7 @@ using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Interactions;
-using RapidCMS.Core.Models.Request;
+using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Tests.Services.Dispatchers;
 using System;
 using System.Linq.Expressions;

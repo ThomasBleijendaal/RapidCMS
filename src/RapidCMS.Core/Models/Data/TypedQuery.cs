@@ -33,6 +33,8 @@ namespace RapidCMS.Core.Models.Data
 
         public string? SearchTerm => _query.SearchTerm;
 
+        public int? ActiveTab => _query.ActiveTab;
+
         public bool MoreDataAvailable => _query.MoreDataAvailable;
 
         public Expression<Func<TEntity, bool>>? DataViewExpression => _query.DataView?.QueryExpression as Expression<Func<TEntity, bool>>;
@@ -40,6 +42,11 @@ namespace RapidCMS.Core.Models.Data
         public void HasMoreData(bool hasMoreData)
         {
             _query.HasMoreData(hasMoreData);
+        }
+
+        public void SetDataView(IDataView dataView)
+        {
+            _query.SetDataView(dataView);
         }
 
         public IQueryable<TEntity> ApplyDataView(IQueryable<TEntity> queryable)

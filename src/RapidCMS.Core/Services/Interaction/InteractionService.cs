@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Core.Services.Persistence
@@ -18,15 +18,7 @@ namespace RapidCMS.Core.Services.Persistence
         }
 
         public Task<TResponse> InteractAsync<TRequest, TResponse>(TRequest request, ViewState state)
-        {
-            if (_dispatchers.FirstOrDefault(x => x.GetType().GetInterfaces().Any(i => i == typeof(IInteractionDispatcher<TRequest, TResponse>))) is IInteractionDispatcher<TRequest, TResponse> dispatcher)
-            {
-                return dispatcher.InvokeAsync(request, state.PageState);
-            }
-            else
-            {
-                throw new InvalidOperationException();
-            }
-        }
+            => _dispatchers.GetTypeFromList<IInteractionDispatcher<TRequest, TResponse>>()?.InvokeAsync(request, state.PageState)
+            ?? throw new InvalidOperationException("Could not find the correct interaction dispatcher.");
     }
 }

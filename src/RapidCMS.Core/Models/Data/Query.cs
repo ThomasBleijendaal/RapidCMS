@@ -43,12 +43,12 @@ namespace RapidCMS.Core.Models.Data
             OrderBys = orderBys;
         }
 
-        public int? ActiveTab { get; private set; }
-
         public int Skip { get; private set; }
         public int Take { get; private set; }
 
         public string? SearchTerm { get; private set; }
+
+        public int? ActiveTab { get; private set; }
 
         public bool MoreDataAvailable { get; private set; } = false;
     }

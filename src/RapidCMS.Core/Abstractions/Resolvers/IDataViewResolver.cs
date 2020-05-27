@@ -10,6 +10,6 @@ namespace RapidCMS.Core.Abstractions.Resolvers
     internal interface IDataViewResolver
     {
         Task<IEnumerable<IDataView>> GetDataViewsAsync(ICollectionSetup collection);
-        Task ApplyDataViewToQueryAsync(Query query, ICollectionSetup collection);
+        Task ApplyDataViewToQueryAsync(IQuery query, ICollectionSetup collection);
     }
 }

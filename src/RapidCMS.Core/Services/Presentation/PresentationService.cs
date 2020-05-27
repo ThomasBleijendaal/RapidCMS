@@ -1,47 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Forms;
-using RapidCMS.Core.Models.Request;
+using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Core.Services.Presentation
 {
     internal class PresentationService : IPresentationService
     {
-        private readonly IPresenationDispatcher<GetEntitiesRequestModel, ListContext> _getEntitiesDispatcher;
-        private readonly IPresenationDispatcher<GetEntityRequestModel, EditContext> _getEntityDispatcher;
-        private readonly IPresenationDispatcher<string, IEnumerable<ITypeRegistration>> _getPageDispatcher;
+        private readonly IEnumerable<IPresentationDispatcher> _dispatchers;
 
         public PresentationService(
-            IPresenationDispatcher<GetEntitiesRequestModel, ListContext> getEntitiesDispatcher,
-            IPresenationDispatcher<GetEntityRequestModel, EditContext> getEntityDispatcher,
-            IPresenationDispatcher<string, IEnumerable<ITypeRegistration>> getPageDispatcher)
+            IEnumerable<IPresentationDispatcher> dispatchers)
         {
-            _getEntitiesDispatcher = getEntitiesDispatcher;
-            _getEntityDispatcher = getEntityDispatcher;
-            _getPageDispatcher = getPageDispatcher;
+            _dispatchers = dispatchers;
         }
 
-        public Task<ListContext> GetEntitiesAsync(GetEntitiesOfParentRequestModel request)
-        {
-            return _getEntitiesDispatcher.GetAsync(request);
-        }
+        public Task<TResult> GetEntitiesAsync<TRequest, TResult>(TRequest request) where TResult : class
+            => _dispatchers.GetTypeFromList<IPresentationDispatcher<TRequest, TResult>>()?.GetAsync(request)
+                ?? throw new InvalidOperationException();
 
-        public Task<ListContext> GetEntitiesAsync(GetEntitiesRequestModel request)
-        {
-            return _getEntitiesDispatcher.GetAsync(request);
-        }
-
-        public Task<EditContext> GetEntityAsync(GetEntityRequestModel request)
-        {
-            return _getEntityDispatcher.GetAsync(request);
-        }
+        public Task<TResult> GetEntityAsync<TRequest, TResult>(TRequest request) where TResult : class
+            => _dispatchers.GetTypeFromList<IPresentationDispatcher<TRequest, TResult>>()?.GetAsync(request)
+                ?? throw new InvalidOperationException();
 
         public Task<IEnumerable<ITypeRegistration>> GetPageAsync(string pageAlias)
-        {
-            return _getPageDispatcher.GetAsync(pageAlias);
-        }
+            => _dispatchers.GetTypeFromList<IPresentationDispatcher<string, IEnumerable<ITypeRegistration>>>()?.GetAsync(pageAlias)
+            ?? throw new InvalidOperationException();
     }
 }

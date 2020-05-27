@@ -4,7 +4,7 @@ using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Abstractions.Services
 {
-    internal interface IParentService
+    public interface IParentService
     {
         Task<IParent?> GetParentAsync(ParentPath? parentPath);
     }

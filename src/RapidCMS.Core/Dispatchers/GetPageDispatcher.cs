@@ -7,7 +7,7 @@ using RapidCMS.Core.Abstractions.Setup;
 
 namespace RapidCMS.Core.Dispatchers
 {
-    internal class GetPageDispatcher : IPresenationDispatcher<string, IEnumerable<ITypeRegistration>>
+    internal class GetPageDispatcher : IPresentationDispatcher<string, IEnumerable<ITypeRegistration>>
     {
         private readonly ISetupResolver<IPageSetup> _pageResolver;
 

@@ -6,12 +6,12 @@ using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Dispatchers;
+using RapidCMS.Core.Dispatchers.Form;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Data;
-using RapidCMS.Core.Models.Request;
+using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Services.Concurrency;
 using System;
@@ -23,7 +23,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
 {
     public class GetEntityDispatcherTests
     {
-        private IPresenationDispatcher<GetEntityRequestModel, EditContext> _subject = default!;
+        private IPresentationDispatcher<GetEntityRequestModel, EditContext> _subject = default!;
 
         private Mock<ICollectionResolver> _collectionResolver = default!;
         private Mock<IRepository> _repository = default!;

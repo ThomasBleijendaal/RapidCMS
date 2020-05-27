@@ -5,7 +5,13 @@ using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Abstractions.Forms
 {
-    public interface IEditContext<TEntity> where TEntity : IEntity
+    public interface IEditContext
+    {
+
+    }
+
+    public interface IEditContext<TEntity> : IEditContext
+        where TEntity : IEntity
     {
         UsageType UsageType { get; }
         EntityState EntityState { get; }

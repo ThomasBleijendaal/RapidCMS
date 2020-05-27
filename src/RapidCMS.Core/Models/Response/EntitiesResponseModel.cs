@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
-using RapidCMS.Core.Forms;
+using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Core.Models.Response
 {
     public class EntitiesResponseModel
     {
-        internal List<EditContext> EditContexts { get; set; } = default!;
+        public IEnumerable<IEntity> Entities { get; set; } = default!;
+
+        public bool MoreDataAvailable { get; set; }
     }
 }

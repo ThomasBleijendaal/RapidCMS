@@ -6,12 +6,13 @@ using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Dispatchers;
+using RapidCMS.Core.Dispatchers.Form;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Data;
-using RapidCMS.Core.Models.Request;
+using RapidCMS.Core.Models.Request.Api;
+using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Services.Concurrency;
 using System;
@@ -26,7 +27,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
 
     public class GetEntitiesDispatcherTests
     {
-        private IPresenationDispatcher<GetEntitiesRequestModel, ListContext> _subject = default!;
+        private IPresentationDispatcher<Models.Request.Form.GetEntitiesRequestModel, ListContext> _subject = default!;
 
         private Mock<ICollectionResolver> _collectionResolver = default!;
         private Mock<IRepository> _repository = default!;
@@ -110,7 +111,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public void WhenRequestHasCollectionAlias_ThenCollectionResolverIsUsedToFetchCollectionWithThatAlias(string alias)
         {
             // act
-            _subject.GetAsync(new GetEntitiesRequestModel { UsageType = UsageType.New, CollectionAlias = alias });
+            _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { UsageType = UsageType.New, CollectionAlias = alias });
 
             // assert
             _collectionResolver.Verify(x => x.GetCollection(It.Is<string>(x => x == alias)));
@@ -121,7 +122,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public void WhenRequestHasCollectionAlias_ThenRepositoryResolverIsUsedToFetchRepositoryWithCollectionThatHasThatAlias(string alias)
         {
             // act
-            _subject.GetAsync(new GetEntitiesRequestModel { UsageType = UsageType.New, CollectionAlias = alias });
+            _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { UsageType = UsageType.New, CollectionAlias = alias });
 
             // assert
             _repositoryResolver.Verify(x => x.GetRepository(It.Is<CollectionSetup>(x => x.Alias == alias)));
@@ -142,7 +143,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public void WhenRequestMade_ThenRepositoryShouldBeUsedToFetchProtoEntity()
         {
             // act
-            _subject.GetAsync(new GetEntitiesRequestModel { CollectionAlias = "name" });
+            _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { CollectionAlias = "name" });
 
             // assert
             _repository.Verify(x => x.NewAsync(It.IsAny<IParent>(), It.IsAny<Type>()));
@@ -159,7 +160,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public void WhenRequestMade_ThenAuthServiceShouldBeUsedToValidateActionAgainstProtoEntity(UsageType usageType)
         {
             // act
-            _subject.GetAsync(new GetEntitiesRequestModel { CollectionAlias = "name", UsageType = usageType });
+            _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { CollectionAlias = "name", UsageType = usageType });
 
             // assert
             _authService.Verify(x => x.EnsureAuthorizedUserAsync(It.Is<UsageType>(x => x == usageType), It.Is<IEntity>(x => x == _protoEntity)));
@@ -188,7 +189,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // act
             var related = new RelatedEntity(new DefaultEntityVariant());
             var query = new Query();
-            _subject.GetAsync(new GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
+            _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
 
             // assert
             _repository.Verify(x => x.GetAllNonRelatedAsync(It.Is<IRelated>(x => x == related), It.Is<IQuery>(x => x == query)));
@@ -205,7 +206,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // act
             var related = new RelatedEntity(new DefaultEntityVariant());
             var query = new Query();
-            _subject.GetAsync(new GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
+            _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
 
             // assert
             _repository.Verify(x => x.GetAllRelatedAsync(It.Is<IRelated>(x => x == related), It.Is<IQuery>(x => x == query)));
@@ -217,7 +218,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public void WhenRequestingToPerformUnsupportedAction_ThenInvalidOperationShouldBeThrown(UsageType usageType)
         {
             // act & assert
-            Assert.ThrowsAsync(typeof(NotImplementedException), () => _subject.GetAsync(new GetEntitiesRequestModel { UsageType = usageType, CollectionAlias = "alias" }));
+            Assert.ThrowsAsync(typeof(NotImplementedException), () => _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { UsageType = usageType, CollectionAlias = "alias" }));
         }
 
         [TestCase(UsageType.Edit, UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.Edit, null)]
@@ -243,7 +244,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // act
             var related = new RelatedEntity(new DefaultEntityVariant());
             var query = new Query();
-            var response = await _subject.GetAsync(new GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
+            var response = await _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
 
             // assert
             Assert.AreEqual(expectedUsageTypes1, response.EditContexts.ElementAtOrDefault(0)?.UsageType ?? 0);
@@ -261,7 +262,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         {
             // act & assert
             var query = new Query();
-            Assert.ThrowsAsync(typeof(NotImplementedException), () => _subject.GetAsync(new GetEntitiesRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias"}));
+            Assert.ThrowsAsync(typeof(NotImplementedException), () => _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias"}));
         }
     }
 }

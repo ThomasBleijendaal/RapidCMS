@@ -8,7 +8,7 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Interactions;
 using RapidCMS.Core.Models.Config;
-using RapidCMS.Core.Models.Request;
+using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Tests.Services.Dispatchers;
 using System;

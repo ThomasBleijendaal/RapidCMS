@@ -86,6 +86,13 @@ namespace RapidCMS.Core.Extensions
             return sources.Where(x => x != null).SelectMany(x => x);
         }
 
+        public static T? GetTypeFromList<T>(this IEnumerable<object> elements)
+            where T : class
+        {
+            return elements
+                .FirstOrDefault(x => x.GetType().GetInterfaces().Any(i => i == typeof(T))) as T;
+        }
+
         public class Group<TKey, TElement> : IGrouping<TKey, TElement>
         {
             public Group(TKey key, List<TElement> elements)

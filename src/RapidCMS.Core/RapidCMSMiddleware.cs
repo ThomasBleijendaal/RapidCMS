@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading;
 using Blazor.FileReader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -17,12 +15,13 @@ using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Dispatchers;
+using RapidCMS.Core.Dispatchers.Form;
 using RapidCMS.Core.Factories;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Interactions;
 using RapidCMS.Core.Models.Config;
-using RapidCMS.Core.Models.Request;
+using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Resolvers.Buttons;
@@ -30,7 +29,6 @@ using RapidCMS.Core.Resolvers.Convention;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Resolvers.Repositories;
 using RapidCMS.Core.Resolvers.Setup;
-using RapidCMS.Core.Services.Auth;
 using RapidCMS.Core.Services.Concurrency;
 using RapidCMS.Core.Services.Exceptions;
 using RapidCMS.Core.Services.Messages;
@@ -43,17 +41,12 @@ using RapidCMS.Core.Services.Tree;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class RapidCMSMiddleware
+    public static partial class RapidCMSMiddleware
     {
-        public static IServiceCollection AddRapidCMS(this IServiceCollection services, Action<ICmsConfig>? config = null)
+        private static IServiceCollection AddRapidCMSCore(this IServiceCollection services, CmsConfig rootConfig)
         {
-            var rootConfig = new CmsConfig();
-            config?.Invoke(rootConfig);
-
             services.AddSingleton(rootConfig);
             services.AddSingleton<ICmsConfig>(rootConfig);
-
-            // var cmsSetup = new CmsSetup(rootConfig);
 
             services.AddSingleton<ICms, CmsSetup>();
             services.AddSingleton(x => (ILogin)x.GetService(typeof(ICms)));
@@ -67,7 +60,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig>, TypeRegistrationSetupResolver>();
             services.AddSingleton<ISetupResolver<IEntityVariantSetup, EntityVariantConfig>, EntityVariantSetupResolver>();
             services.AddSingleton<ISetupResolver<TreeViewSetup, TreeViewConfig>, TreeViewSetupResolver>();
-
             services.AddSingleton<ISetupResolver<PaneSetup, PaneConfig>, PaneSetupResolver>();
             services.AddSingleton<ISetupResolver<ListSetup, ListConfig>, ListSetupResolver>();
             services.AddSingleton<ISetupResolver<NodeSetup, NodeConfig>, NodeSetupResolver>();
@@ -86,16 +78,16 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
             }
 
+            services.AddTransient<IEditContextFactory, EditContextWrapperFactory>();
             services.AddTransient<IUIResolverFactory, UIResolverFactory>();
 
             services.AddTransient<IButtonActionHandlerResolver, ButtonActionHandlerResolver>();
             services.AddTransient<IDataProviderResolver, DataProviderResolver>();
-            services.AddTransient<IDataViewResolver, DataViewResolver>();
             services.AddTransient<IRepositoryResolver, RepositoryResolver>();
 
-            services.AddTransient<IPresenationDispatcher<GetEntityRequestModel, EditContext>, GetEntityDispatcher>();
-            services.AddTransient<IPresenationDispatcher<GetEntitiesRequestModel, ListContext>, GetEntitiesDispatcher>();
-            services.AddTransient<IPresenationDispatcher<string, IEnumerable<ITypeRegistration>>, GetPageDispatcher>();
+            services.AddTransient<IPresentationDispatcher, GetEntityDispatcher>();
+            services.AddTransient<IPresentationDispatcher, GetEntitiesDispatcher>();
+            services.AddTransient<IPresentationDispatcher, GetPageDispatcher>();
             services.AddTransient<IPresentationService, PresentationService>();
 
             services.AddTransient<IInteractionDispatcher, EntityInteractionDispatcher>();
@@ -104,7 +96,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IDragInteraction, DragInteraction>();
             services.AddTransient<IInteractionService, InteractionService>();
 
-            services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IConcurrencyService, ConcurrencyService>();
             services.AddSingleton<IExceptionService, ExceptionService>();
             services.AddScoped<IMessageService, MessageService>();
@@ -121,13 +112,12 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // UI requirements
             services.AddHttpContextAccessor();
-            services.AddScoped<HttpContextAccessor>();
+            services.AddScoped<HttpContextAccessor>(); // <-- why?
 
+            // TODO: fix
             services.AddHttpClient();
-            services.AddScoped<HttpClient>();
 
-            // Semaphore for repositories
-            services.AddSingleton(serviceProvider => new SemaphoreSlim(rootConfig.Advanced.SemaphoreCount, rootConfig.Advanced.SemaphoreCount));
+            //services.AddScoped<HttpClient>(); // <-- why?
 
             services.AddFileReaderService();
 
@@ -141,6 +131,17 @@ namespace Microsoft.Extensions.DependencyInjection
             app.ApplicationServices.GetService<ICms>().IsDevelopment = isDevelopment;
 
             return app;
+        }
+
+        [Obsolete("Use AddRapidCMSServer or AddRapidCMSWebAssembly to indicate which deployment strategy you use. This method defaults to the serverside variant and will be removed in the future.")]
+        public static IServiceCollection AddRapidCMS(this IServiceCollection services, Action<ICmsConfig>? config = null)
+            => services.AddRapidCMSServer(config);
+
+        private static CmsConfig GetRootConfig(Action<ICmsConfig>? config = null)
+        {
+            var rootConfig = new CmsConfig();
+            config?.Invoke(rootConfig);
+            return rootConfig;
         }
     }
 }

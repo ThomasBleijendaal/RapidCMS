@@ -1,0 +1,27 @@
+﻿@inherits BaseSidePane
+
+<h3>Are you sure you want to reset all passwords?</h3>
+
+<div class="buttonbar">
+    <button class="btn btn-danger" @onclick=ResetPasswordsAsync>Yes</button>
+    <button class="btn btn-dark" @onclick=Cancel>No</button>
+</div>
+
+@code {
+    // Side panes can Inject any dependency they require, and even modify data based upon user actions
+    // You have access to the EditContext, so you can even edit the entity on which this pane was opened.
+
+    async Task ResetPasswordsAsync()
+    {
+        // do something usefull
+
+        // CrudType Refresh refreshes the data in the view
+        ButtonClicked(CrudType.Refresh);
+    }
+
+    void Cancel()
+    {
+        // CrudType None does nothing
+        ButtonClicked(CrudType.None);
+    }
+}

@@ -48,7 +48,7 @@ namespace RapidCMS.Core.Tests.Services.Auth
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _httpContextAccessor.Setup(x => x.HttpContext.User).Returns(_user);
 
-            _subject = new AuthService(
+            _subject = new ServerSideAuthService(
                 _buttonActionHandlerResolver.Object,
                 _httpContextAccessor.Object,
                 _serviceProvider.Object);

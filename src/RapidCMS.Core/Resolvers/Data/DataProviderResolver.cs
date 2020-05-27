@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
+using RapidCMS.Core.Repositories;
 using RapidCMS.Core.Validators;
 
 namespace RapidCMS.Core.Resolvers.Data
@@ -46,6 +47,7 @@ namespace RapidCMS.Core.Resolvers.Data
                     }
 
                     var provider = new CollectionDataProvider(
+                        new RepositoryContext(collectionRelation.CollectionAlias),
                         repo,
                         collectionRelation.RelatedEntityType,
 

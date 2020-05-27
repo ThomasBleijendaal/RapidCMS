@@ -9,7 +9,10 @@ namespace RapidCMS.Core.Abstractions.Data
         int Take { get; }
         string? SearchTerm { get; }
 
+        int? ActiveTab { get; }
+
         void HasMoreData(bool hasMoreData);
+        void SetDataView(IDataView dataView);
 
         bool MoreDataAvailable { get; }
     }

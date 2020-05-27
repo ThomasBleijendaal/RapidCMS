@@ -3,6 +3,7 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Services.Parent
 {
@@ -29,7 +30,8 @@ namespace RapidCMS.Core.Services.Parent
 
             foreach (var (collectionAlias, id) in parentPath)
             {
-                var entity = await _repositoryResolver.GetRepository(collectionAlias).GetByIdAsync(id, parent);
+                var repositoryContext = new RepositoryContext(collectionAlias);
+                var entity = await _repositoryResolver.GetRepository(collectionAlias).GetByIdAsync(repositoryContext, id, parent);
                 if (entity == null)
                 {
                     break;

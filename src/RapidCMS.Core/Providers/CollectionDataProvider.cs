@@ -13,6 +13,7 @@ namespace RapidCMS.Core.Providers
 {
     internal class CollectionDataProvider : IRelationDataCollection, IDisposable
     {
+        private readonly IRepositoryContext _repositoryContext;
         private readonly IRepository _repository;
         private readonly Type _relatedEntityType;
         private readonly IPropertyMetadata _property;
@@ -31,6 +32,7 @@ namespace RapidCMS.Core.Providers
         private ICollection<object>? _relatedIds;
 
         public CollectionDataProvider(
+            IRepositoryContext repositoryContext,
             IRepository repository,
             Type relatedEntityType,
             IPropertyMetadata property,
@@ -40,6 +42,7 @@ namespace RapidCMS.Core.Providers
             IEnumerable<IExpressionMetadata> labelProperties,
             IMemoryCache memoryCache)
         {
+            _repositoryContext = repositoryContext ?? throw new ArgumentNullException(nameof(repository));
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _relatedEntityType = relatedEntityType ?? throw new ArgumentNullException(nameof(relatedEntityType));
             _property = property ?? throw new ArgumentNullException(nameof(property));
@@ -123,7 +126,7 @@ namespace RapidCMS.Core.Providers
             {
                 entry.AddExpirationToken(_repository.ChangeToken);
 
-                return _repository.GetAllAsync(parent, Query.Default());
+                return _repository.GetAllAsync(_repositoryContext, parent, Query.Default());
             });
 
             _elements = entities

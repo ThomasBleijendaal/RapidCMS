@@ -408,14 +408,15 @@ table td {
         text-align: right;
     }
 
-    table td.draghandle {
+    table tr[draggable=true] td {
         cursor: grab;
-        width: 10px;
-        background: repeating-linear-gradient( -45deg, #ced4da, #ced4da 2px, #fff 2px, #fff 4px );
+        /*width: 10px;*/
+        /*background: repeating-linear-gradient( -45deg, #ced4da, #ced4da 2px, #fff 2px, #fff 4px );*/
     }
 
 table tr.dragged td {
     background: #ccc;
+    cursor: move !important;
 }
 
 table tr.modified td {

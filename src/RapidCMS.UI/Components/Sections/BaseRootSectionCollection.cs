@@ -8,7 +8,7 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs;
-using RapidCMS.Core.Models.Request;
+using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.UI.Models;
@@ -99,7 +99,7 @@ namespace RapidCMS.UI.Components.Sections
             }
 
             var request = CurrentState.Related != null
-                ? (GetEntitiesRequestModel)new GetEntitiesOfRelationRequestModel
+                ? (GetEntitiesRequestModel)new Core.Models.Request.Form.GetEntitiesOfRelationRequestModel
                 {
                     CollectionAlias = CurrentState.CollectionAlias,
                     Query = query,
@@ -114,7 +114,7 @@ namespace RapidCMS.UI.Components.Sections
                     UsageType = CurrentState.UsageType
                 };
 
-            var listContext = await PresentationService.GetEntitiesAsync(request);
+            var listContext = await PresentationService.GetEntitiesAsync<GetEntitiesRequestModel, ListContext>(request);
 
             await SetSectionsAsync(listContext);
 
@@ -151,9 +151,9 @@ namespace RapidCMS.UI.Components.Sections
 
             var newSections = await Sections.ToListAsync(async x =>
             {
-                if (reloadEntityIds.Contains(x.editContext.Entity.Id))
+                if (reloadEntityIds.Contains<string>(x.editContext.Entity.Id))
                 {
-                    var reloadedEditContext = await PresentationService.GetEntityAsync(new GetEntityRequestModel
+                    var reloadedEditContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, EditContext>(new GetEntityRequestModel
                     {
                         CollectionAlias = x.editContext.CollectionAlias,
                         Id = x.editContext.Entity.Id,
@@ -206,7 +206,7 @@ namespace RapidCMS.UI.Components.Sections
             try
             {
                 var command = (CurrentState.Related != null)
-                    ? await InteractionService.InteractAsync<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistRelatedEntityRequestModel
+                    ? await InteractionService.InteractAsync<Core.Models.Request.Form.PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>(new Core.Models.Request.Form.PersistRelatedEntityRequestModel
                     {
                         ActionId = args.ViewModel.ButtonId,
                         CustomData = args.Data,
