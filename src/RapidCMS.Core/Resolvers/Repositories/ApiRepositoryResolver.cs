@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Models.Config;
+using RapidCMS.Core.Models.Config.Api;
 
 namespace RapidCMS.Core.Resolvers.Repositories
 {

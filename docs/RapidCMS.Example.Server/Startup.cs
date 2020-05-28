@@ -38,7 +38,7 @@ namespace RapidCMS.Example.Server
             services.AddSingleton<BaseRepository<TagGroup>, JsonRepository<TagGroup>>();
             services.AddSingleton<BaseRepository<Tag>, JsonRepository<Tag>>();
 
-            services.AddSingleton<MappedBaseRepository<MappedEntity, DatabaseEntity>, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
+            services.AddSingleton<BaseMappedRepository<MappedEntity, DatabaseEntity>, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
             services.AddSingleton<IConverter<MappedEntity, DatabaseEntity>, Mapper>();
             services.AddSingleton<DatabaseEntityDataViewBuilder>();
 

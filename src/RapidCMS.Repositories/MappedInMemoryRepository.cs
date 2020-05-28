@@ -21,7 +21,7 @@ namespace RapidCMS.Repositories
     /// simplifying the use of data views in these repositories.
     /// </summary>
     /// <typeparam name="TCmsEntity">Entity to store</typeparam>
-    public class MappedInMemoryRepository<TCmsEntity, TEntity> : MappedBaseRepository<TCmsEntity, TEntity>
+    public class MappedInMemoryRepository<TCmsEntity, TEntity> : BaseMappedRepository<TCmsEntity, TEntity>
         where TCmsEntity : class, IEntity, new()
         where TEntity : class, IEntity, ICloneable, new()
     {
@@ -57,7 +57,6 @@ namespace RapidCMS.Repositories
             var dataQuery = GetListForParent(parent).AsQueryable();
 
             dataQuery = query.ApplyDataView(dataQuery);
-            dataQuery = query.ApplyOrder(dataQuery);
 
             if (query.SearchTerm != null)
             {

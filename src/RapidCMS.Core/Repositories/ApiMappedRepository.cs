@@ -16,12 +16,13 @@ using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Repositories.ApiBridge
 {
-    public class ApiRepository<TEntity> : BaseRepository<TEntity>
+    public class ApiMappedRepository<TEntity, TDatabaseEntity> : BaseMappedRepository<TEntity, TDatabaseEntity>
         where TEntity : class, IEntity
+        where TDatabaseEntity : class
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public ApiRepository(
+        public ApiMappedRepository(
             IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
@@ -30,7 +31,7 @@ namespace RapidCMS.Repositories.ApiBridge
         public override Task DeleteAsync(IRepositoryContext context, string id, IParent? parent)
             => DoRequestAsync(context, CreateRequest(HttpMethod.Delete, $"entity/{id}", new DeleteModel(parent)));
 
-        public override async Task<IEnumerable<TEntity>> GetAllAsync(IRepositoryContext context, IParent? parent, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>> GetAllAsync(IRepositoryContext context, IParent? parent, IQuery<TDatabaseEntity> query)
         {
             var results = await DoRequestAsync<EntitiesModel<TEntity>>(context, CreateRequest(HttpMethod.Post, "all", new ParentQueryModel(parent, query)));
             if (results == default)
@@ -43,7 +44,7 @@ namespace RapidCMS.Repositories.ApiBridge
             return results.Entities;
         }
 
-        public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TDatabaseEntity> query)
         {
             var results = await DoRequestAsync<EntitiesModel<TEntity>>(context, CreateRequest(HttpMethod.Post, "all/related", new RelatedQueryModel(related, query)));
             if (results == default)
@@ -56,7 +57,7 @@ namespace RapidCMS.Repositories.ApiBridge
             return results.Entities;
         }
 
-        public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TDatabaseEntity> query)
         {
             var results = await DoRequestAsync<EntitiesModel<TEntity>>(context, CreateRequest(HttpMethod.Post, "all/nonrelated", new RelatedQueryModel(related, query)));
             if (results == default)

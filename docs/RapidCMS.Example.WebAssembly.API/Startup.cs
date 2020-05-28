@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RapidCMS.Example.Shared.Data;
+using RapidCMS.Example.Shared.DataViews;
 using RapidCMS.Repositories;
 
 namespace RapidCMS.Example.WebAssembly.API
@@ -25,19 +26,22 @@ namespace RapidCMS.Example.WebAssembly.API
             services.AddScoped<JsonRepository<User>>();
             services.AddScoped<JsonRepository<TagGroup>>();
             services.AddScoped<JsonRepository<Tag>>();
+            services.AddSingleton<MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
+            services.AddSingleton<IConverter<MappedEntity, DatabaseEntity>, Mapper>();
+            services.AddSingleton<DatabaseEntityDataViewBuilder>();
 
             services.AddRapidCMSApi(config =>
             {
                 // TODO: missing configurations:
-                // - update name to AddCollection to be inline with the rest
-                // - DataView / DataViewBuilder
-                // - 
+                // - OrderBy
                 config.RegisterRepository<Person, JsonRepository<Person>>("person");
                 config.RegisterRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>("person-convention");
                 config.RegisterRepository<Country, JsonRepository<Country>>("country");
                 config.RegisterRepository<User, JsonRepository<User>>("user");
                 config.RegisterRepository<TagGroup, JsonRepository<TagGroup>>("taggroup");
                 config.RegisterRepository<Tag, JsonRepository<Tag>>("tag");
+                config.RegisterRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>("mapped")
+                    .SetDataViewBuilder<DatabaseEntityDataViewBuilder>();
 
                 config.AllowAnonymousUser();
             });

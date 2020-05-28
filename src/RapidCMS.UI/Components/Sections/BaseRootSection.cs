@@ -84,6 +84,10 @@ namespace RapidCMS.UI.Components.Sections
 
         private async Task LoadDataAsync(IEnumerable<string>? entityIds = null)
         {
+            // TODO: investigate whether its good to clear the Buttons, Sections and PageContents first
+            // there is a tiny timing difference when on WebAssembly and a node view to list view shows
+            // the node view in the list view for a short period of time
+
             if (CurrentState?.PageType == PageType.Node)
             {
                 await LoadNodeDataAsync();

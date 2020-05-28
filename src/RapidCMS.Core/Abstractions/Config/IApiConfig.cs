@@ -17,6 +17,15 @@
         /// <typeparam name="TRepository"></typeparam>
         /// <param name="collectionAlias"></param>
         /// <returns></returns>
-        IApiConfig RegisterRepository<TEntity, TRepository>(string collectionAlias);
+        IApiCollectionConfig RegisterRepository<TEntity, TRepository>(string collectionAlias);
+
+        /// <summary>
+        /// Registers a mapped repository to be bound to a specific collection alias
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <typeparam name="TRepository"></typeparam>
+        /// <param name="collectionAlias"></param>
+        /// <returns></returns>
+        IApiCollectionConfig RegisterRepository<TEntity, TMappedEntity, TRepository>(string collectionAlias);
     }
 }

@@ -19,7 +19,7 @@ namespace RapidCMS.Core.Repositories
     /// </summary>
     /// <typeparam name="TEntity">Type of the entity used in the views</typeparam>
     /// <typeparam name="TDatabaseEntity">Type of the entity in the backing store</typeparam>
-    public abstract class MappedBaseRepository<TEntity, TDatabaseEntity> : IRepository
+    public abstract class BaseMappedRepository<TEntity, TDatabaseEntity> : IRepository
         where TEntity : class, IEntity
         where TDatabaseEntity : class
     {

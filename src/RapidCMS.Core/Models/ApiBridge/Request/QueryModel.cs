@@ -10,6 +10,7 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
         public int Skip { get; set; }
         public int Take { get; set; }
         public string? SearchTerm { get; set; }
+        public int? ActiveTab { get; set; }
 
         public string? VariantTypeName { get; set; }
 
@@ -18,7 +19,7 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
         {
             get
             {
-                return Create(Take, 1 + Skip / Math.Max(1, Take), SearchTerm, 0);
+                return Create(Take, 1 + Skip / Math.Max(1, Take), SearchTerm, ActiveTab);
             }
         }
     }

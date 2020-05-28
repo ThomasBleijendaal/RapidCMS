@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Resolvers;
@@ -19,7 +20,7 @@ using RapidCMS.Core.Controllers;
 using RapidCMS.Core.Conventions;
 using RapidCMS.Core.Dispatchers.Api;
 using RapidCMS.Core.Factories;
-using RapidCMS.Core.Models.Config;
+using RapidCMS.Core.Models.Config.Api;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Resolvers.Repositories;
@@ -29,6 +30,7 @@ using RapidCMS.Core.Services.Exceptions;
 using RapidCMS.Core.Services.Parent;
 using RapidCMS.Core.Services.Persistence;
 using RapidCMS.Core.Services.Presentation;
+using RapidCMS.Repositories.ApiBridge;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -88,7 +90,21 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IEditContextFactory, EditContextWrapperFactory>();
 
             var controllersToAdd = rootConfig.Collections.ToDictionary(
-                kv => typeof(ApiRepositoryController<,>).MakeGenericType(kv.Value.EntityType, kv.Value.RepositoryType).GetTypeInfo(),
+                kv =>
+                {
+                    if (kv.Value.DatabaseType == default)
+                    {
+                        return typeof(ApiRepositoryController<,>)
+                            .MakeGenericType(kv.Value.EntityType, kv.Value.RepositoryType)
+                            .GetTypeInfo();
+                    }
+                    else
+                    {
+                        return typeof(MappedApiRepositoryController<,,>)
+                            .MakeGenericType(kv.Value.EntityType, kv.Value.DatabaseType, kv.Value.RepositoryType)
+                            .GetTypeInfo();
+                    } 
+                },
                 kv => kv.Key);
 
             _controllerFeatureProvider = new CollectionControllerFeatureProvider(controllersToAdd.Keys);

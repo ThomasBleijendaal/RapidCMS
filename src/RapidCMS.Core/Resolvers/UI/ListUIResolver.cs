@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.EqualityComparers;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
@@ -17,7 +16,6 @@ namespace RapidCMS.Core.Resolvers.UI
     internal class ListUIResolver : BaseUIResolver, IListUIResolver
     {
         private readonly ListSetup _list;
-        private readonly ICollectionSetup _collection;
         private readonly IDataViewResolver _dataViewResolver;
         private readonly Dictionary<Type, IEnumerable<FieldUI>> _fieldsPerType = new Dictionary<Type, IEnumerable<FieldUI>>();
 
@@ -25,7 +23,6 @@ namespace RapidCMS.Core.Resolvers.UI
 
         public ListUIResolver(
             ListSetup list,
-            ICollectionSetup collection,
             IDataProviderResolver dataProviderService,
             IDataViewResolver dataViewResolver,
             IButtonActionHandlerResolver buttonActionHandlerResolver,
@@ -33,7 +30,6 @@ namespace RapidCMS.Core.Resolvers.UI
             IHttpContextAccessor httpContextAccessor) : base(dataProviderService, buttonActionHandlerResolver, authService, httpContextAccessor)
         {
             _list = list;
-            _collection = collection;
             _dataViewResolver = dataViewResolver;
 
             _list.Panes?.ForEach(pane =>
@@ -74,7 +70,6 @@ namespace RapidCMS.Core.Resolvers.UI
         public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(EditContext editContext)
         {
             var type = editContext.Entity.GetType();
-
             return await _list.Panes
                 .Where(pane => pane.VariantType.IsSameTypeOrDerivedFrom(type))
                 .ToListAsync(pane => GetSectionUIAsync(pane, editContext));
@@ -82,8 +77,7 @@ namespace RapidCMS.Core.Resolvers.UI
 
         public async Task<IEnumerable<TabUI>?> GetTabsAsync(EditContext editContext)
         {
-            var data = await _dataViewResolver.GetDataViewsAsync(_collection);
-
+            var data = await _dataViewResolver.GetDataViewsAsync(editContext.CollectionAlias);
             return data.ToList(x => new TabUI(x.Id) { Label = x.Label });
         }
     }
