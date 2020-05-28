@@ -3,7 +3,6 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
-using RapidCMS.Repositories;
 
 namespace RapidCMS.Example.Shared.Collections
 {
@@ -42,7 +41,7 @@ namespace RapidCMS.Example.Shared.Collections
                     // a list editor takes precedence over a list view, so when navigating to the Person collection, this view will be displayed
                     .SetListEditor(editor =>
                     {
-                        editor.SetPageSize(2);
+                        editor.SetPageSize(20);
 
                         // adding Up to the button bar allows the user to get to the level above the current page (base upon the tree)
                         // this button will be hidden automatically when the user is at the root
@@ -100,7 +99,13 @@ namespace RapidCMS.Example.Shared.Collections
 
                             // it is allowed to use DisplayType fields in Editors, so some readonly data can easily be displayed
                             section.AddField(x => x.Name).SetType(DisplayType.Label);
-                            section.AddField(x => x.Email);
+
+                            // if properties are in nested objects (like owned entities in EF), the editors support those as well
+                            // flagging such property with [ValidateObject] will have the nested object validated as well
+                            section.AddField(x => x.Details.Email)
+                            // by default, all the properties will be combined to form the Name of the property (DetailsEmail in this example)
+                            // so using SetName this can be set to something more user friendly
+                                .SetName("Email");
                         });
 
                         // you can even have sections specifically for an entity type.
@@ -116,7 +121,7 @@ namespace RapidCMS.Example.Shared.Collections
                             section.VisibleWhen((person, state) => state == EntityState.IsExisting);
 
                             // there are many types of editors available, and even custom types can be used
-                            section.AddField(x => x.Bio).SetType(EditorType.TextArea);
+                            section.AddField(x => x.Details.Bio).SetType(EditorType.TextArea).SetName("Bio");
                         });
 
                         editor.AddSection(section =>
@@ -133,7 +138,7 @@ namespace RapidCMS.Example.Shared.Collections
                                     config.SetElementIdProperty(x => x.Id);
 
                                     // because a single label is often not enough, you can add more properties to make the labels for each option
-                                    config.SetElementDisplayProperties(x => x.Name, x => $"{x.Id} - {x.Email}");
+                                    config.SetElementDisplayProperties(x => x.Name, x => $"{x.Id} - {x.Details.Email}");
 
                                     // sets the entity that is currently edited as parent for the repository to get elements for this field
                                     config.SetEntityAsParent();
@@ -158,12 +163,12 @@ namespace RapidCMS.Example.Shared.Collections
                             // you can use the availablep DisplayType's, or create your own Razor components (must be derived from BaseDisplay)
                             section.AddField(x => x.Id.ToString()).SetName("ID").SetType(DisplayType.Pre);
                             section.AddField(x => x.Name).SetType(DisplayType.Label);
-                            section.AddField(x => x.Email).SetType(typeof(EmailDisplay));
+                            section.AddField(x => x.Details.Email).SetType(typeof(EmailDisplay));
                         });
 
                         view.AddSection(section =>
                         {
-                            section.AddField(x => x.Bio);
+                            section.AddField(x => x.Details.Bio);
                         });
                     });
 

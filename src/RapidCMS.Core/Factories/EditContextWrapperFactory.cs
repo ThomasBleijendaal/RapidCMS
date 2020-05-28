@@ -24,14 +24,14 @@ namespace RapidCMS.Core.Factories
             return (IEditContext)instance;
         }
 
-        public IEditContext GetEditContextWrapper(UsageType usageType, EntityState entityState, IEntity updatedEntity, IEntity? currentEntity, IParent? parent)
+        public IEditContext GetEditContextWrapper(UsageType usageType, EntityState entityState, IEntity updatedEntity, IEntity referenceEntity, IParent? parent)
         {
             var contextType = typeof(ApiEditContextWrapper<>).MakeGenericType(updatedEntity.GetType());
             var instance = Activator.CreateInstance(contextType,
                 usageType,
                 entityState,
                 updatedEntity,
-                currentEntity,
+                referenceEntity,
                 parent,
                 _serviceProvider);
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Blazor.FileReader;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
@@ -23,6 +24,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IAuthService, ServerSideAuthService>();
 
             services.AddTransient<IDataViewResolver, FormDataViewResolver>();
+
+            services.AddFileReaderService();
 
             // Semaphore for repositories
             services.AddSingleton(serviceProvider => new SemaphoreSlim(rootConfig.Advanced.SemaphoreCount, rootConfig.Advanced.SemaphoreCount));

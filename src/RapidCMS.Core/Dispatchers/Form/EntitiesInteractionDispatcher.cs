@@ -11,6 +11,7 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Form;
@@ -116,6 +117,10 @@ namespace RapidCMS.Core.Dispatchers.Form
                             EditContext = editContext,
                             ListContext = request.ListContext
                         };
+                        if (!editContext.IsValid())
+                        {
+                            throw new InvalidEntityException();
+                        }
 
                         await _buttonInteraction.ValidateButtonInteractionAsync(innerRequest);
 

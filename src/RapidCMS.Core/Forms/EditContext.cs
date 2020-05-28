@@ -10,8 +10,6 @@ namespace RapidCMS.Core.Forms
 {
     public sealed class EditContext
     {
-        private readonly FormState _formState;
-
         internal EditContext(
             string collectionAlias,
             IEntity entity,
@@ -24,8 +22,10 @@ namespace RapidCMS.Core.Forms
             Parent = parent;
             UsageType = usageType;
 
-            _formState = new FormState(Entity, serviceProvider);
+            FormState = new FormState(Entity, serviceProvider);
         }
+
+        internal readonly FormState FormState;
 
         public string CollectionAlias { get; private set; }
         public IEntity Entity { get; private set; }
@@ -77,11 +77,11 @@ namespace RapidCMS.Core.Forms
         {
             ValidateModel();
 
-            return !_formState.GetValidationMessages().Any();
+            return !FormState.GetValidationMessages().Any();
         }
 
         public bool IsModified() 
-            => _formState.GetPropertyStates().Any(x => x.IsModified);
+            => FormState.GetPropertyStates().Any(x => x.IsModified);
 
         public bool IsModified(IPropertyMetadata property) 
             => GetPropertyState(property)!.IsModified;
@@ -114,26 +114,26 @@ namespace RapidCMS.Core.Forms
         }
 
         public IEnumerable<string> GetStrayValidationMessages()
-            => _formState.GetStrayValidationMessages();
+            => FormState.GetStrayValidationMessages();
 
         internal PropertyState? GetPropertyState(IPropertyMetadata property, bool createWhenNotFound = true)
-            => _formState.GetPropertyState(property, createWhenNotFound);
+            => FormState.GetPropertyState(property, createWhenNotFound);
 
         internal PropertyState? GetPropertyState(string propertyName)
-            => _formState.GetPropertyState(propertyName);
+            => FormState.GetPropertyState(propertyName);
 
         private void ValidateModel()
         {
-            _formState.ValidateModel();
+            FormState.ValidateModel();
 
-            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !_formState.GetValidationMessages().Any()));
+            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !FormState.GetValidationMessages().Any()));
         }
 
         private void ValidateProperty(IPropertyMetadata property)
         {
-            _formState.ValidateProperty(property);
+            FormState.ValidateProperty(property);
 
-            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !_formState.GetValidationMessages().Any()));
+            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !FormState.GetValidationMessages().Any()));
         }
     }
 }

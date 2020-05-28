@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using RapidCMS.Core.Abstractions.Config;
-using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Resolvers;
@@ -20,6 +19,7 @@ using RapidCMS.Core.Controllers;
 using RapidCMS.Core.Conventions;
 using RapidCMS.Core.Dispatchers.Api;
 using RapidCMS.Core.Factories;
+using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Models.Config.Api;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Resolvers.Data;
@@ -30,7 +30,6 @@ using RapidCMS.Core.Services.Exceptions;
 using RapidCMS.Core.Services.Parent;
 using RapidCMS.Core.Services.Persistence;
 using RapidCMS.Core.Services.Presentation;
-using RapidCMS.Repositories.ApiBridge;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -103,9 +102,20 @@ namespace Microsoft.Extensions.DependencyInjection
                         return typeof(MappedApiRepositoryController<,,>)
                             .MakeGenericType(kv.Value.EntityType, kv.Value.DatabaseType, kv.Value.RepositoryType)
                             .GetTypeInfo();
-                    } 
+                    }
                 },
                 kv => kv.Key);
+
+            if (rootConfig.FileUploadHandlers.Any())
+            {
+                foreach (var handler in rootConfig.FileUploadHandlers)
+                {
+                    var type = typeof(ApiFileUploadController<>).MakeGenericType(handler).GetTypeInfo();
+                    var alias = ApiFileUploadHandler.GetFileUploaderAlias(type);
+
+                    controllersToAdd.Add(type, alias);
+                }
+            }
 
             _controllerFeatureProvider = new CollectionControllerFeatureProvider(controllersToAdd.Keys);
             _routeConvention = new CollectionControllerRouteConvention(controllersToAdd);

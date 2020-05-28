@@ -7,7 +7,8 @@ namespace RapidCMS.Core.Abstractions.Handlers
 {
     public interface IFileUploadHandler
     {
-        IEnumerable<string> ValidateFile(IFileInfo fileInfo);
+        Task<IEnumerable<string>> ValidateFileAsync(IFileInfo fileInfo);
+
         Task<object> SaveFileAsync(IFileInfo fileInfo, Stream stream);
     }
 }

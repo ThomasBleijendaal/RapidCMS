@@ -99,7 +99,7 @@ namespace RapidCMS.UI.Components.Sections
             }
 
             var request = CurrentState.Related != null
-                ? (GetEntitiesRequestModel)new Core.Models.Request.Form.GetEntitiesOfRelationRequestModel
+                ? (GetEntitiesRequestModel)new GetEntitiesOfRelationRequestModel
                 {
                     CollectionAlias = CurrentState.CollectionAlias,
                     Query = query,
@@ -139,6 +139,11 @@ namespace RapidCMS.UI.Components.Sections
 
         private async Task SetSectionsAsync(ListContext listContext)
         {
+            if (UIResolver == null)
+            {
+                return;
+            }
+
             Sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
         }
 
@@ -151,7 +156,7 @@ namespace RapidCMS.UI.Components.Sections
 
             var newSections = await Sections.ToListAsync(async x =>
             {
-                if (reloadEntityIds.Contains<string>(x.editContext.Entity.Id))
+                if (reloadEntityIds.Contains<string>(x.editContext.Entity.Id!))
                 {
                     var reloadedEditContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, EditContext>(new GetEntityRequestModel
                     {
@@ -206,7 +211,7 @@ namespace RapidCMS.UI.Components.Sections
             try
             {
                 var command = (CurrentState.Related != null)
-                    ? await InteractionService.InteractAsync<Core.Models.Request.Form.PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>(new Core.Models.Request.Form.PersistRelatedEntityRequestModel
+                    ? await InteractionService.InteractAsync<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistRelatedEntityRequestModel
                     {
                         ActionId = args.ViewModel.ButtonId,
                         CustomData = args.Data,

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Blazor.FileReader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -118,8 +117,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddHttpClient();
 
             //services.AddScoped<HttpClient>(); // <-- why?
-
-            services.AddFileReaderService();
 
             services.AddMemoryCache();
 

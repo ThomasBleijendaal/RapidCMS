@@ -8,6 +8,7 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.State;
@@ -95,8 +96,13 @@ namespace RapidCMS.Core.Dispatchers.Form
                     break;
 
                 case CrudType.Update:
-                    var updateWrapper = _editContextFactory.GetEditContextWrapper(request.EditContext);
-                    await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(repositoryContext, updateWrapper));
+                    var updateContext = _editContextFactory.GetEditContextWrapper(request.EditContext);
+                    if (!updateContext.IsValid())
+                    {
+                        throw new InvalidEntityException();
+                    }
+
+                    await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(repositoryContext, updateContext));
 
                     if (request.EditContext.IsReordered())
                     {
@@ -108,8 +114,13 @@ namespace RapidCMS.Core.Dispatchers.Form
                     break;
 
                 case CrudType.Insert:
-                    var insertWrapper = _editContextFactory.GetEditContextWrapper(request.EditContext);
-                    var newEntity = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.InsertAsync(repositoryContext, insertWrapper));
+                    var insertContext = _editContextFactory.GetEditContextWrapper(request.EditContext);
+                    if (!insertContext.IsValid())
+                    {
+                        throw new InvalidEntityException();
+                    }
+
+                    var newEntity = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.InsertAsync(repositoryContext, insertContext));
                     if (newEntity == null)
                     {
                         throw new Exception("Inserting the new entity failed.");

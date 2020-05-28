@@ -58,7 +58,7 @@ namespace RapidCMS.Core.Tests.PropertyMetadata
             var data = PropertyMetadataHelper.GetPropertyMetadata(func) as IFullPropertyMetadata;
 
             Assert.IsNotNull(data);
-            Assert.AreEqual("BasicTest", data.PropertyName);
+            Assert.AreEqual("Basic.Test", data.PropertyName);
             Assert.AreEqual("Test Value", data.Getter(instance));
             Assert.AreEqual(typeof(string), data.PropertyType);
             Assert.AreEqual(typeof(ParentClass), data.ObjectType);
@@ -77,7 +77,7 @@ namespace RapidCMS.Core.Tests.PropertyMetadata
             var data = PropertyMetadataHelper.GetPropertyMetadata(func) as IFullPropertyMetadata;
 
             Assert.IsNotNull(data);
-            Assert.AreEqual("BasicId", data.PropertyName);
+            Assert.AreEqual("Basic.Id", data.PropertyName);
             Assert.AreEqual(1, data.Getter(instance));
             Assert.AreEqual(typeof(int), data.PropertyType);
             Assert.AreEqual(typeof(ParentClass), data.ObjectType);
@@ -356,7 +356,7 @@ namespace RapidCMS.Core.Tests.PropertyMetadata
             var data = PropertyMetadataHelper.GetPropertyMetadata(func);
 
             Assert.IsNotNull(data);
-            Assert.AreEqual("BasicNullableTest", data.PropertyName);
+            Assert.AreEqual("Basic.NullableTest", data.PropertyName);
             Assert.AreEqual("Test Value", data.Getter(instance));
             Assert.AreEqual(typeof(string), data.PropertyType);
             Assert.AreEqual(typeof(ParentClass), data.ObjectType);
@@ -437,6 +437,25 @@ namespace RapidCMS.Core.Tests.PropertyMetadata
         }
 
         [Test]
+        public void PropertyFingerprintEquality4()
+        {
+            Expression<Func<ParentClass, string>> func1 = (ParentClass z) => z.Basic.Test;
+            var data1 = PropertyMetadataHelper.GetPropertyMetadata(func1);
+
+            var data2 = PropertyMetadataHelper.GetPropertyMetadata(typeof(ParentClass),
+                new[] { typeof(ParentClass).GetProperty(nameof(ParentClass.Basic)) }, typeof(BasicClass).GetProperty(nameof(BasicClass.Test)));
+
+            var data3 = PropertyMetadataHelper.GetPropertyMetadata(typeof(ParentClass), "Basic.Test");
+
+            Assert.IsNotNull(data1.Fingerprint);
+            Assert.IsNotNull(data2.Fingerprint);
+            Assert.IsNotNull(data3.Fingerprint);
+            Assert.AreEqual(data1.Fingerprint, data2.Fingerprint);
+            Assert.AreEqual(data2.Fingerprint, data3.Fingerprint);
+            Assert.AreEqual(data1.Fingerprint, data3.Fingerprint);
+        }
+
+        [Test]
         public void SelfAsProperty()
         {
             var instance = new RecursiveClass { Name = "Self" };
@@ -470,6 +489,63 @@ namespace RapidCMS.Core.Tests.PropertyMetadata
 
             Assert.IsNotNull(data);
             Assert.AreEqual("Parent", ((RecursiveClass)data.Getter(instance)).Name);
+        }
+
+        [Test]
+        public void PropertyFromProperty()
+        {
+            var expected = "string";
+            var instance = new BasicClass { Test = expected };
+
+            var property = typeof(BasicClass).GetProperty(nameof(BasicClass.Test));
+
+            var data = PropertyMetadataHelper.GetPropertyMetadata(instance.GetType(), property);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual(nameof(BasicClass.Test), data.PropertyName);
+            Assert.AreEqual(expected, data.Getter(instance));
+        }
+
+        [Test]
+        public void PropertyFromProperties()
+        {
+            var expected = "string";
+            var instance = new ParentClass { Basic = new BasicClass { Test = expected } };
+
+            var property1 = typeof(ParentClass).GetProperty(nameof(ParentClass.Basic));
+            var property2 = typeof(BasicClass).GetProperty(nameof(BasicClass.Test));
+
+            var data = PropertyMetadataHelper.GetPropertyMetadata(instance.GetType(), new[] { property1 }, property2);
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual($"{nameof(ParentClass.Basic)}.{nameof(BasicClass.Test)}", data.PropertyName);
+            Assert.AreEqual(expected, data.Getter(instance));
+        }
+
+        [Test]
+        public void PropertyFromPropertyName()
+        {
+            var expected = "string";
+            var instance = new BasicClass { Test = expected };
+
+            var data = PropertyMetadataHelper.GetPropertyMetadata(instance.GetType(), "Test");
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual(nameof(BasicClass.Test), data.PropertyName);
+            Assert.AreEqual(expected, data.Getter(instance));
+        }
+
+        [Test]
+        public void PropertyFromNestedPropertyName()
+        {
+            var expected = "string";
+            var instance = new ParentClass { Basic = new BasicClass { Test = expected } };
+
+            var data = PropertyMetadataHelper.GetPropertyMetadata(instance.GetType(), "Basic.Test");
+
+            Assert.IsNotNull(data);
+            Assert.AreEqual($"{nameof(ParentClass.Basic)}.{nameof(BasicClass.Test)}", data.PropertyName);
+            Assert.AreEqual(expected, data.Getter(instance));
         }
 
         class BasicClass

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
 
@@ -10,10 +11,17 @@ namespace RapidCMS.Core.Models.Config.Api
     {
         internal bool AllowAnonymousUsage { get; set; } = false;
         internal Dictionary<string, ApiCollectionConfig> Collections { get; set; } = new Dictionary<string, ApiCollectionConfig>();
+        internal List<Type> FileUploadHandlers { get; set; } = new List<Type>();
 
         public IApiConfig AllowAnonymousUser()
         {
             AllowAnonymousUsage = true;
+            return this;
+        }
+
+        public IApiConfig RegisterFileUploadHandler<THandler>() where THandler : IFileUploadHandler
+        {
+            FileUploadHandlers.Add(typeof(THandler));
             return this;
         }
 

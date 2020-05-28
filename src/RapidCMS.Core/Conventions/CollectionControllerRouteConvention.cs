@@ -7,7 +7,7 @@ namespace RapidCMS.Core.Conventions
     public class CollectionControllerRouteConvention : IControllerModelConvention
     {
         public const string RouteTemplatePrefix = "/api/_rapidcms/";
-        public const string CollectionAliasKey = "__rapidCMSCollectionAlias";
+        public const string AliasKey = "__rapidCMSAlias";
 
         private readonly IReadOnlyDictionary<TypeInfo, string> _controllers;
 
@@ -20,15 +20,15 @@ namespace RapidCMS.Core.Conventions
         {
             var type = controller.ControllerType;
 
-            if (_controllers.TryGetValue(type, out var collectionAlias))
+            if (_controllers.TryGetValue(type, out var alias))
             {
-                controller.Properties.Add(CollectionAliasKey, collectionAlias);
+                controller.Properties.Add(AliasKey, alias);
 
                 controller.Selectors.Add(new SelectorModel
                 {
                     AttributeRouteModel = new AttributeRouteModel
                     {
-                        Template = $"{RouteTemplatePrefix}{collectionAlias}"
+                        Template = $"{RouteTemplatePrefix}{alias}"
                     }
                 });
             }

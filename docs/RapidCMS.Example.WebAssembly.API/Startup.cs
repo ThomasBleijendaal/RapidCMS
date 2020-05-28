@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.DataViews;
+using RapidCMS.Example.Shared.Handlers;
 using RapidCMS.Repositories;
 
 namespace RapidCMS.Example.WebAssembly.API
@@ -30,6 +31,9 @@ namespace RapidCMS.Example.WebAssembly.API
             services.AddSingleton<IConverter<MappedEntity, DatabaseEntity>, Mapper>();
             services.AddSingleton<DatabaseEntityDataViewBuilder>();
 
+            services.AddTransient<Base64TextFileUploadHandler>();
+            services.AddTransient<Base64ImageUploadHandler>();
+
             services.AddRapidCMSApi(config =>
             {
                 // TODO: missing configurations:
@@ -37,11 +41,14 @@ namespace RapidCMS.Example.WebAssembly.API
                 config.RegisterRepository<Person, JsonRepository<Person>>("person");
                 config.RegisterRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>("person-convention");
                 config.RegisterRepository<Country, JsonRepository<Country>>("country");
-                config.RegisterRepository<User, JsonRepository<User>>("user");
+                // config.RegisterRepository<User, JsonRepository<User>>("user");
                 config.RegisterRepository<TagGroup, JsonRepository<TagGroup>>("taggroup");
                 config.RegisterRepository<Tag, JsonRepository<Tag>>("tag");
                 config.RegisterRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>("mapped")
                     .SetDataViewBuilder<DatabaseEntityDataViewBuilder>();
+
+                config.RegisterFileUploadHandler<Base64TextFileUploadHandler>();
+                config.RegisterFileUploadHandler<Base64ImageUploadHandler>();
 
                 config.AllowAnonymousUser();
             });

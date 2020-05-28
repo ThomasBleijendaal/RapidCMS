@@ -6,10 +6,15 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Exceptions;
+using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Metadata;
 
 namespace RapidCMS.Core.Helpers
 {
+    /// <summary>
+    /// Static helper for a lot of Expression magic
+    /// </summary>
     internal static class PropertyMetadataHelper
     {
         /// <summary>
@@ -122,7 +127,7 @@ namespace RapidCMS.Core.Helpers
                         parameterTAsType,
                         (parameter, method) => Expression.Call(parameter, method));
 
-                var name = string.Join("", names);
+                var name = string.Join(".", names);
 
                 var getter = ConvertToGetterViaMethod(parameterT, getValueMethod, instanceExpression);
                 if (getter == null)
@@ -181,6 +186,8 @@ namespace RapidCMS.Core.Helpers
 
         /// <summary>
         /// Converts a given subject and property info to PropertyMetadataHelper.
+        /// 
+        /// Converts (obj, A) to (obj) => obj.A
         /// </summary>
         /// <param name="subject"></param>
         /// <param name="propertyInfo"></param>
@@ -189,10 +196,87 @@ namespace RapidCMS.Core.Helpers
         {
             var parameter = Expression.Parameter(subject);
             var property = Expression.Property(parameter, propertyInfo);
+            if (property == null)
+            {
+                throw new InvalidOperationException("Could not get property from subject");
+            }
+
             var delegateType = typeof(Func<,>).MakeGenericType(subject, propertyInfo.PropertyType);
             var lambda = Expression.Lambda(delegateType, property, parameter);
 
             return GetPropertyMetadata(lambda);
+        }
+
+        /// <summary>
+        /// Converts a given subject and chained properties to PropertyMetadataHelper
+        /// 
+        /// Converts (obj, [A,B], C) to (obj) => obj.A.B.C
+        /// </summary>
+        /// <param name="subject"></param>
+        /// <param name="objectProperties"></param>
+        /// <param name="propertyInfo"></param>
+        /// <returns></returns>
+        public static IPropertyMetadata? GetPropertyMetadata(Type subject, IEnumerable<PropertyInfo>? objectProperties, PropertyInfo propertyInfo)
+        {
+            if (!(objectProperties?.Any() ?? false))
+            {
+                return GetPropertyMetadata(subject, propertyInfo);
+            }
+
+            // given infos: [A, B], C
+            // get to expression: C(B(A(subject)))
+
+            var parameter = Expression.Parameter(subject);
+            if (!(objectProperties
+                .Union(new[] { propertyInfo })
+                .Aggregate((Expression)parameter, (param, prop) => Expression.Property(param, prop)) is MemberExpression nestedProperty))
+            {
+                throw new InvalidOperationException("Could not get nested property from subject");
+            }
+
+            var delegateType = typeof(Func<,>).MakeGenericType(subject, propertyInfo.PropertyType);
+            var lambda = Expression.Lambda(delegateType, nestedProperty, parameter);
+
+            return GetPropertyMetadata(lambda);
+        }
+
+        /// <summary>
+        /// Converts a given subject and property name to PropertyMetadataHelper
+        /// 
+        /// Converts (obj, "A.B.C") to (obj) => obj.A.B.C
+        /// </summary>
+        /// <param name="subject"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        public static IPropertyMetadata? GetPropertyMetadata(Type subject, string propertyName)
+        {
+            try
+            {
+                var properties = propertyName
+                    .Split('.')
+                    .RecursiveSelect(subject, (property, @object) =>
+                    {
+                        var objectProperty = @object.GetProperty(property);
+                        if (objectProperty == null)
+                        {
+                            throw new NotFoundException($"Property {property} not found on {@object}.");
+                        }
+
+                        return (objectProperty.PropertyType, objectProperty);
+                    })
+                    .ToList();
+
+                if (properties == null || properties.Count == 0)
+                {
+                    return default;
+                }
+
+                return GetPropertyMetadata(subject, properties.SkipLast(1), properties.Last());
+            }
+            catch
+            {
+                return default;
+            }
         }
 
         private static Func<object, object>? ConvertToGetterViaMethod(ParameterExpression parameterT, MethodInfo getValueMethod, Expression instanceExpression)
@@ -277,9 +361,9 @@ namespace RapidCMS.Core.Helpers
         {
             var fingerprint = expression switch
             {
-                LambdaExpression lambda => $"{GetFingerprint(lambda.Body)}{lambda.Body.Type.ToString()}",
-                MethodCallExpression call => $"{string.Join("", call.Arguments.Select(x => GetFingerprint(x)))}{call.Type.ToString()}",
-                ParameterExpression param => $"{param.IsByRef}{param.Type.ToString()}",
+                LambdaExpression lambda => $"{GetFingerprint(lambda.Body)}{lambda.Body.Type}",
+                MethodCallExpression call => $"{string.Join("", call.Arguments.Select(x => GetFingerprint(x)))}{call.Type}",
+                ParameterExpression param => $"{param.IsByRef}{param.Type}",
                 MemberExpression member => $"{member.Member.Name}{GetFingerprint(member.Expression)}",
                 _ => expression.Type.ToString(),
             };

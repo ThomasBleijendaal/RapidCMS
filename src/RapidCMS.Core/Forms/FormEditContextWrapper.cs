@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
 
@@ -28,6 +30,8 @@ namespace RapidCMS.Core.Forms
 
         public IParent? Parent => _editContext.Parent;
 
+        public ModelStateDictionary ValidationErrors => _editContext.FormState.ModelState;
+
         public IRelationContainer GetRelationContainer() 
             => new RelationContainer(_editContext.DataProviders.Select(x => x.GenerateRelation()).SelectNotNull(x => x));
 
@@ -36,6 +40,9 @@ namespace RapidCMS.Core.Forms
 
         public bool? IsModified(string propertyName) 
             => GetPropertyState(propertyName)?.IsModified;
+
+        public bool IsValid()
+            => _editContext.IsValid();
 
         public bool? IsValid<TValue>(Expression<Func<TEntity, TValue>> property) 
             => GetPropertyState(GetMetadata(property))?.GetValidationMessages().Any() == false;
@@ -49,10 +56,28 @@ namespace RapidCMS.Core.Forms
         public bool? WasValidated(string propertyName) 
             => GetPropertyState(propertyName)?.WasValidated;
 
-        internal PropertyState? GetPropertyState(IPropertyMetadata property) 
+        public bool? Validate<TValue>(Expression<Func<TEntity, TValue>> property)
+        {
+            // make sure it will be validated
+            _editContext.NotifyPropertyIncludedInForm(GetMetadata(property));
+            return IsValid(property);
+        }
+
+        public void EnforceCompleteValidation()
+        {
+            // add all properties to the form state
+            _editContext.FormState.PopulateAllPropertyStates();
+
+            if (!IsValid())
+            {
+                throw new InvalidEntityException();
+            }
+        }
+
+        private PropertyState? GetPropertyState(IPropertyMetadata property) 
             => _editContext.GetPropertyState(property, false);
 
-        internal PropertyState? GetPropertyState(string propertyName)
+        private PropertyState? GetPropertyState(string propertyName)
             => _editContext.GetPropertyState(propertyName);
 
         private IPropertyMetadata GetMetadata<TValue>(Expression<Func<TEntity, TValue>> property)

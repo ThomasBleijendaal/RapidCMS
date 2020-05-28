@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace RapidCMS.Core.Abstractions.Data
 {
-    // TODO: paginate etc
+    // TODO: paginate, search etc
     public interface IDataCollection
     {
         /// <summary>

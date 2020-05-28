@@ -42,7 +42,8 @@ namespace RapidCMS.Core.Dispatchers.Api
 
             var subjectParent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Subject.ParentPath));
 
-            var subjectEntity = await subjectRepository.GetByIdAsync(repositoryContext, request.Subject.Id, subjectParent) ?? throw new NotFoundException("Subject entity was not found");
+            var subjectEntity = await subjectRepository.GetByIdAsync(repositoryContext, request.Subject.Id, subjectParent)
+                ?? throw new NotFoundException("Subject entity was not found");
 
             await _authService.EnsureAuthorizedUserAsync(Operations.Update, subjectEntity);
 

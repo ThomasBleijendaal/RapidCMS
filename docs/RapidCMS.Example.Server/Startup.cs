@@ -10,6 +10,7 @@ using RapidCMS.Example.Shared.DataViews;
 using RapidCMS.Example.Shared.Handlers;
 using RapidCMS.Repositories;
 using RapidCMS.Core.Repositories;
+using RapidCMS.Core.Abstractions.Handlers;
 
 namespace RapidCMS.Example.Server
 {
@@ -43,8 +44,11 @@ namespace RapidCMS.Example.Server
             services.AddSingleton<DatabaseEntityDataViewBuilder>();
 
             services.AddSingleton<RandomNameActionHandler>();
-            services.AddSingleton<Base64TextFileUploadHandler>();
-            services.AddSingleton<Base64ImageUploadHandler>();
+
+            // although it's not required to add your own interfaces to the upload handlers, the Server and WebAssembly examples use the
+            // same collection configuration, so the DI configuration dictates what handler is used in each case
+            services.AddSingleton<ITextUploadHandler, Base64TextFileUploadHandler>();
+            services.AddSingleton<IImageUploadHandler, Base64ImageUploadHandler>();
 
             services.AddRapidCMSServer(config =>
             {

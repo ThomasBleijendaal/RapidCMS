@@ -4,7 +4,6 @@ using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.Handlers;
-using RapidCMS.Repositories;
 using RapidCMS.UI.Components.Editors;
 using RapidCMS.UI.Components.Preview;
 
@@ -23,7 +22,7 @@ namespace RapidCMS.Example.Shared.Collections
                     .SetListEditor(editor =>
                     {
                         // you can control the number of entities on a single page
-                        editor.SetPageSize(2);
+                        editor.SetPageSize(20);
 
                         editor.AddDefaultButton(DefaultButtonType.Return);
                         editor.AddDefaultButton(DefaultButtonType.New);
@@ -70,16 +69,21 @@ namespace RapidCMS.Example.Shared.Collections
 
                                 // some default editors (like FileUploadEditor) require custom components, so they must be added using their full classname
                                 // NoPreview is a default component indicating this upload editor has no preview of the file
-                                //section.AddField(x => x.FileBase64).SetType(typeof(FileUploadEditor<Base64TextFileUploadHandler, NoPreview>))
-                                //    .SetName("User file");
+
+                                // the file upload handler is different between ServerSide and WebAssembly, so only its interface is added here
+                                // and via DI the correct handler is resolved. it's also allowed to reference the correct handler here (for example: Base64TextFileUploadHandler)
+                                // to allow for per input configuration
+                                // AND dependency injection in Blazor has trouble resolving generic types (like ApiFileUploadHandler<Base64TextFileUploadHandler>) so it's better
+                                // to reference simple interfaces or types
+                                section.AddField(x => x.FileBase64).SetType(typeof(FileUploadEditor<ITextUploadHandler, NoPreview>))
+                                    .SetName("User file");
 
                                 // ImagePreview is a custom component derived from BasePreview to display the uploaded image
-                                //section.AddField(x => x.ProfilePictureBase64).SetType(typeof(FileUploadEditor<Base64ImageUploadHandler, ImagePreview>))
-                                //    .SetName("User picture");
+                                section.AddField(x => x.ProfilePictureBase64).SetType(typeof(FileUploadEditor<IImageUploadHandler, ImagePreview>))
+                                    .SetName("User picture");
 
                                 section.AddField(x => x.Integer).SetType(EditorType.Numeric);
                                 section.AddField(x => x.Double).SetType(EditorType.Numeric);
-
                             });
                     });
             });

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Repositories;
 
 namespace RapidCMS.Repositories
 {
@@ -43,6 +44,24 @@ namespace RapidCMS.Repositories
             catch { }
 
             ChangeToken.RegisterChangeCallback(UpdateStorageAsync, default);
+        }
+
+        public override async Task<IEnumerable<TEntity>> GetAllAsync(IRepositoryContext context, IParent? parent, IQuery<TEntity> query)
+        {
+            await _initializationTask;
+            return await base.GetAllAsync(context, parent, query);
+        }
+
+        public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TEntity> query)
+        {
+            await _initializationTask;
+            return await base.GetAllNonRelatedAsync(context, related, query);
+        }
+
+        public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TEntity> query)
+        {
+            await _initializationTask;
+            return await base.GetAllRelatedAsync(context, related, query);
         }
     }
 }

@@ -86,6 +86,17 @@ namespace RapidCMS.Core.Extensions
             return sources.Where(x => x != null).SelectMany(x => x);
         }
 
+        public static IEnumerable<TResult> RecursiveSelect<TSource, TSeed, TResult>(this IEnumerable<TSource> source, TSeed seed, Func<TSource, TSeed, (TSeed, TResult)> walkFunction)
+        {
+            var previous = seed;
+            foreach (var element in source)
+            {
+                var (newPrevious, result) = walkFunction.Invoke(element, previous);
+                previous = newPrevious;
+                yield return result;
+            }
+        }
+
         public static T? GetTypeFromList<T>(this IEnumerable<object> elements)
             where T : class
         {

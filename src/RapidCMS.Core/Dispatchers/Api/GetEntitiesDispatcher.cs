@@ -44,7 +44,8 @@ namespace RapidCMS.Core.Dispatchers.Api
             {
                 var relatedRepository = _repositoryResolver.GetRepository(relatedRequest.Related.CollectionAlias ?? throw new ArgumentNullException());
                 var relatedRepositoryContext = new RepositoryContext(relatedRequest.Related.CollectionAlias);
-                var relatedEntity = await relatedRepository.GetByIdAsync(relatedRepositoryContext, relatedRequest.Related.Id ?? throw new ArgumentNullException(), default) ?? throw new NotFoundException("Could not find related entity");
+                var relatedEntity = await relatedRepository.GetByIdAsync(relatedRepositoryContext, relatedRequest.Related.Id ?? throw new ArgumentNullException(), default) 
+                    ?? throw new NotFoundException("Could not find related entity");
                 related = new RelatedEntity(relatedEntity, relatedRequest.Related.CollectionAlias);
             }
 

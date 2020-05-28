@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Blazor.FileReader;
-using RapidCMS.Core.Abstractions.Handlers;
 
 namespace RapidCMS.Example.Shared.Handlers
 {
-    public class Base64TextFileUploadHandler : IFileUploadHandler
+    public class Base64TextFileUploadHandler : ITextUploadHandler
     {
         public async Task<object> SaveFileAsync(IFileInfo fileInfo, Stream stream)
         {
@@ -23,18 +22,22 @@ namespace RapidCMS.Example.Shared.Handlers
             }
         }
 
-        public IEnumerable<string> ValidateFile(IFileInfo fileInfo)
+        public Task<IEnumerable<string>> ValidateFileAsync(IFileInfo fileInfo)
         {
+            var errors = new List<string>();
+
             // you'd probably want to make this check more thorough as it's trusting completely trusting the user input
             if (fileInfo.Type != "text/plain")
             {
-                yield return "Only .txt files are allowed.";
+                errors.Add("Only .txt files are allowed.");
             }
 
             if (fileInfo.Size > 10 * 1024)
             {
-                yield return "Max upload size is 10KB.";
+                errors.Add("Max upload size is 10KB.");
             }
+
+            return Task.FromResult((IEnumerable<string>)errors);
         }
     }
 }

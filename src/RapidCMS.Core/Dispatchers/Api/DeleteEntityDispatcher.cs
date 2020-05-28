@@ -41,7 +41,8 @@ namespace RapidCMS.Core.Dispatchers.Api
 
             var subjectRepository = _repositoryResolver.GetRepository(request.Descriptor.CollectionAlias);
             var repositoryContext = new RepositoryContext(request.Descriptor.CollectionAlias);
-            var subjectEntity = await subjectRepository.GetByIdAsync(repositoryContext, request.Descriptor.Id, parent) ?? throw new NotFoundException("Could not find entity to delete");
+            var subjectEntity = await subjectRepository.GetByIdAsync(repositoryContext, request.Descriptor.Id, parent) 
+                ?? throw new NotFoundException("Could not find entity to delete");
 
             await _authService.EnsureAuthorizedUserAsync(Operations.Delete, subjectEntity);
 

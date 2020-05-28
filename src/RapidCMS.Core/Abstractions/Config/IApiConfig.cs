@@ -1,4 +1,7 @@
-﻿namespace RapidCMS.Core.Abstractions.Config
+﻿using RapidCMS.Core.Abstractions.Handlers;
+using RapidCMS.Core.Handlers;
+
+namespace RapidCMS.Core.Abstractions.Config
 {
     public interface IApiConfig
     {
@@ -27,5 +30,8 @@
         /// <param name="collectionAlias"></param>
         /// <returns></returns>
         IApiCollectionConfig RegisterRepository<TEntity, TMappedEntity, TRepository>(string collectionAlias);
+
+        IApiConfig RegisterFileUploadHandler<THandler>()
+            where THandler : IFileUploadHandler;
     }
 }

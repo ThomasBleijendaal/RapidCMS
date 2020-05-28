@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Core.Models.Data
@@ -51,5 +52,9 @@ namespace RapidCMS.Core.Models.Data
         public int? ActiveTab { get; private set; }
 
         public bool MoreDataAvailable { get; private set; } = false;
+
+        public IDataView? ActiveDataView => DataView;
+
+        public IEnumerable<IOrderBy> ActiveOrderBys => OrderBys ?? Enumerable.Empty<IOrderBy>();
     }
 }

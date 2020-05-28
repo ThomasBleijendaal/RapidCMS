@@ -38,41 +38,58 @@ namespace RapidCMS.Core.Dispatchers.Api
             if (string.IsNullOrWhiteSpace(request.Descriptor.CollectionAlias))
             {
                 throw new ArgumentNullException();
-            } 
+            }
 
             var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Descriptor.ParentPath));
 
             var subjectRepository = _repositoryResolver.GetRepository(request.Descriptor.CollectionAlias);
             var repositoryContext = new RepositoryContext(request.Descriptor.CollectionAlias);
-            var subjectEntity = (request.Descriptor.Id == null) ? default : await subjectRepository.GetByIdAsync(repositoryContext, request.Descriptor.Id, parent);
+            var referenceEntity = (request.EntityState == EntityState.IsExisting)
+                ? await subjectRepository.GetByIdAsync(repositoryContext, request.Descriptor.Id ?? throw new InvalidOperationException("Cannot modify entity without giving an Id."), parent)
+                : await subjectRepository.NewAsync(repositoryContext, parent, request.Entity.GetType());
 
-            if (subjectEntity == null && request.EntityState == EntityState.IsExisting)
+            if (referenceEntity == null)
             {
-                throw new NotFoundException("Could not find entity");
+                throw new NotFoundException("Reference entity is null");
             }
 
             var usageType = UsageType.Node | (request.EntityState == EntityState.IsNew ? UsageType.New : UsageType.Edit);
 
             await _authService.EnsureAuthorizedUserAsync(usageType, request.Entity);
 
-            var editContext = _editContextFactory.GetEditContextWrapper(usageType, request.EntityState, request.Entity, subjectEntity, parent);
+            var editContext = _editContextFactory.GetEditContextWrapper(usageType, request.EntityState, request.Entity, referenceEntity, parent);
 
-            if (request.EntityState == EntityState.IsNew)
+            try
             {
-                return new NewEntityApiCommandResponseModel
+                if (!editContext.IsValid())
                 {
-                    NewEntity = await subjectRepository.InsertAsync(repositoryContext, editContext)
-                };
-            }
-            else if (request.EntityState == EntityState.IsExisting)
-            {
-                await subjectRepository.UpdateAsync(repositoryContext, editContext);
+                    throw new InvalidEntityException();
+                }
 
-                return new ApiCommandResponseModel();
+                if (request.EntityState == EntityState.IsNew)
+                {
+                    return new ApiPersistEntityResponseModel
+                    {
+                        NewEntity = await subjectRepository.InsertAsync(repositoryContext, editContext)
+                    };
+                }
+                else if (request.EntityState == EntityState.IsExisting)
+                {
+                    await subjectRepository.UpdateAsync(repositoryContext, editContext);
+
+                    return new ApiCommandResponseModel();
+                }
+                else
+                {
+                    throw new InvalidOperationException("Invalid usage type");
+                }
             }
-            else
+            catch (InvalidEntityException)
             {
-                throw new InvalidOperationException("Invalid usage type");
+                return new ApiPersistEntityResponseModel
+                {
+                    ValidationErrors = editContext.ValidationErrors
+                };
             }
         }
     }

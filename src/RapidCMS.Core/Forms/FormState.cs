@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms.Validation;
+using RapidCMS.Core.Helpers;
+using RapidCMS.Core.Models.Metadata;
 using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Forms
@@ -32,7 +36,7 @@ namespace RapidCMS.Core.Forms
             foreach (var message in _messages)
             {
                 yield return message;
-            } 
+            }
             foreach (var message in _fieldStates.SelectMany(x => x.GetValidationMessages()))
             {
                 yield return message;
@@ -55,6 +59,73 @@ namespace RapidCMS.Core.Forms
             foreach (var fieldState in _fieldStates)
             {
                 fieldState.ClearMessages();
+            }
+        }
+
+        public ModelStateDictionary ModelState
+        {
+            get
+            {
+                var state = new ModelStateDictionary();
+
+                _fieldStates.ForEach(fs => fs.GetValidationMessages().ForEach(message => state.AddModelError(fs.Property.PropertyName, message)));
+                _messages.ForEach(m => state.AddModelError(string.Empty, m));
+
+                return state;
+            }
+        }
+
+        public void PopulatePropertyStatesUsingReferenceEntity(IEntity reference)
+        {
+            GetPropertyMetadatas(reference).ForEach(property =>
+            {
+                if ((property.PropertyType.IsValueType || 
+                    property.PropertyType == typeof(string)) && 
+                    !Equals(property.Getter(reference), property.Getter(_entity)))
+                {
+                    GetPropertyState(property)!.IsModified = true;
+                }
+            });
+        }
+
+        public void PopulateAllPropertyStates()
+        {
+            GetPropertyMetadatas(_entity).ForEach(property => GetPropertyState(property, createWhenNotFound: true));
+        }
+
+        private IEnumerable<IPropertyMetadata> GetPropertyMetadatas(IEntity reference, IEnumerable<PropertyInfo>? objectGetters = default)
+        {
+            Func<object, object> getObject;
+            if (objectGetters == null)
+            {
+                getObject = (root) => root;
+            }
+            else
+            {
+                getObject = (root) => objectGetters.Aggregate(root, (@obj, objectGetter) => objectGetter.GetValue(@obj));
+            }
+
+            var properties = getObject(reference).GetType().GetProperties();
+
+            foreach (var property in properties)
+            {
+                var validateObjectAttribute = property.GetCustomAttribute<ValidateObjectAttribute>();
+                if (validateObjectAttribute != null)
+                {
+                    // only venture into nested objects when the model wants them validated
+                    foreach (var nestedPropertyMetadata in GetPropertyMetadatas(reference, (objectGetters ?? new PropertyInfo[] { }).Union(new[] { property })))
+                    {
+                        yield return nestedPropertyMetadata;
+                    }
+                }
+
+                var propertyMetadata = PropertyMetadataHelper.GetPropertyMetadata(reference.GetType(), objectGetters, property);
+                if (propertyMetadata == null)
+                {
+                    continue;
+                }
+
+                yield return propertyMetadata;
             }
         }
 
@@ -92,7 +163,6 @@ namespace RapidCMS.Core.Forms
             foreach (var result in results)
             {
                 var strayError = true;
-
                 result.MemberNames.ForEach(name =>
                 {
                     GetPropertyState(name)?.AddMessage(result.ErrorMessage);
@@ -144,7 +214,6 @@ namespace RapidCMS.Core.Forms
             try
             {
                 // even though this says Try, and therefore it should not throw an error, IT DOES when a given property is not part of Entity
-                Validator.TryValidateProperty(property.Getter(_entity), context, results);
                 Validator.TryValidateProperty(property.Getter(_entity), context, results);
             }
             catch { }
