@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\RapidCMS.Api.WebApi\RapidCMS.Api.WebApi.csproj" />
     <ProjectReference Include="..\RapidCMS.Example.Shared\RapidCMS.Example.Shared.csproj" />
   </ItemGroup>
 

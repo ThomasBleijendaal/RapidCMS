@@ -12,7 +12,7 @@ namespace RapidCMS.Example.Shared.Collections
         {
             config.AddCollection<ConventionalPerson, BaseRepository<ConventionalPerson>>("person-convention", "People (by convention)", collection =>
             {
-                collection.SetTreeView(x => x.Name);
+                collection.SetTreeView(EntityVisibilty.Visible, x => x.Name);
 
                 // The convention system resolves the configuration based on the [Display]-attributes placed on the properties of the model of this collection.
                 // It uses the EditorTypeHelper.TryFindDefaultEditorType to resolve the best matching editor for the property.
@@ -25,7 +25,27 @@ namespace RapidCMS.Example.Shared.Collections
                 //   the Name and Description of said attribute.
                 //
                 // - The ListView will only display a readonly list view without edit options.
-                collection.ConfigureByConvention(CollectionConvention.ListViewNodeEditor);
+                collection.ConfigureByConvention(CollectionConvention.ListEditor);
+
+                // There are three combo's that should be used:
+                // - collection.SetTreeView(EntityVisibilty.Visible, x => x.Property);
+                // - collection.ConfigureByConvention(CollectionConvention.ListViewNodeEditor);
+
+                // There are three combo's that should be used:
+                // - collection.SetTreeView(EntityVisibilty.Hidden, x => x.Property);
+                // - collection.ConfigureByConvention(CollectionConvention.ListView);
+
+                // There are three combo's that should be used:
+                // - collection.SetTreeView(EntityVisibilty.Visible, x => x.Property);
+                // - collection.ConfigureByConvention(CollectionConvention.ListViewNodeView);
+
+                // There are three combo's that should be used:
+                // - collection.SetTreeView(EntityVisibilty.Hidden, x => x.Property);
+                // - collection.ConfigureByConvention(CollectionConvention.ListEditor);
+
+
+                // Sub collections are added to the node view / node editor when there are collections.
+                collection.AddSelfAsRecursiveCollection();
             });
         }
     }

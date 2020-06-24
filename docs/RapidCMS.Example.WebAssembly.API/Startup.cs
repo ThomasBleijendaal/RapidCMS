@@ -36,12 +36,9 @@ namespace RapidCMS.Example.WebAssembly.API
 
             services.AddRapidCMSApi(config =>
             {
-                // TODO: missing configurations:
-                // - OrderBy
                 config.RegisterRepository<Person, JsonRepository<Person>>("person");
                 config.RegisterRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>("person-convention");
                 config.RegisterRepository<Country, JsonRepository<Country>>("country");
-                // config.RegisterRepository<User, JsonRepository<User>>("user");
                 config.RegisterRepository<TagGroup, JsonRepository<TagGroup>>("taggroup");
                 config.RegisterRepository<Tag, JsonRepository<Tag>>("tag");
                 config.RegisterRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>("mapped")
@@ -57,14 +54,15 @@ namespace RapidCMS.Example.WebAssembly.API
             services
                 .AddControllers(config =>
                 {
+                    // to allow for automatic setup of the repository controllers, the route convention must be added here
                     config.Conventions.AddRapidCMSRouteConvention();
                 })
                 .AddNewtonsoftJson()
                 .ConfigureApplicationPartManager(configure =>
                 {
+                    // and for each route convention a controller should be added the feature provider
                     configure.FeatureProviders.AddRapidCMSControllerFeatureProvider();
                 });
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

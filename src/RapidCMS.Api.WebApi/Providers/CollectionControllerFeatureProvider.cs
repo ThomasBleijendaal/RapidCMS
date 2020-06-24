@@ -3,7 +3,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
-namespace RapidCMS.Core.Providers
+namespace RapidCMS.Api.WebApi.Providers
 {
     public class CollectionControllerFeatureProvider : IApplicationFeatureProvider<ControllerFeature>
     {

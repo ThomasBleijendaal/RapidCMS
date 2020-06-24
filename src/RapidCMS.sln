@@ -34,6 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{89191FB4-6
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.WebAssembly.API", "..\docs\RapidCMS.Example.WebAssembly.API\RapidCMS.Example.WebAssembly.API.csproj", "{55D3BA00-92BE-4E5A-92DC-232959C7B8D7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Api.WebApi", "RapidCMS.Api.WebApi\RapidCMS.Api.WebApi.csproj", "{184E1BAB-DA87-4E04-93F5-E69448B4562A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +74,10 @@ Global
 		{55D3BA00-92BE-4E5A-92DC-232959C7B8D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55D3BA00-92BE-4E5A-92DC-232959C7B8D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55D3BA00-92BE-4E5A-92DC-232959C7B8D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{184E1BAB-DA87-4E04-93F5-E69448B4562A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{184E1BAB-DA87-4E04-93F5-E69448B4562A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{184E1BAB-DA87-4E04-93F5-E69448B4562A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{184E1BAB-DA87-4E04-93F5-E69448B4562A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +91,7 @@ Global
 		{F8FDC033-2DE9-4336-8320-3DABD9FDA154} = {D5C8E316-AA29-4FB7-A99D-F1047DCC10BE}
 		{9217968B-A732-4C71-A9B6-B3B2759F0829} = {D5C8E316-AA29-4FB7-A99D-F1047DCC10BE}
 		{55D3BA00-92BE-4E5A-92DC-232959C7B8D7} = {D5C8E316-AA29-4FB7-A99D-F1047DCC10BE}
+		{184E1BAB-DA87-4E04-93F5-E69448B4562A} = {FAEBCE99-5CCB-4BBF-AAF3-9CE51FABD871}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A24D735F-6ECC-4089-B6BF-DB09B1FCB7D8}

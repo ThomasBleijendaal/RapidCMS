@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Blazor.FileReader;
 using Newtonsoft.Json;
 using RapidCMS.Core.Abstractions.Handlers;
-using RapidCMS.Core.Controllers;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Response;
 
@@ -18,7 +17,7 @@ namespace RapidCMS.Core.Handlers
     {
         public static string GetFileUploaderAlias(Type handlerType)
         {
-            var type = (handlerType.IsGenericType && handlerType.GetGenericTypeDefinition().In(typeof(ApiFileUploadHandler<>), typeof(ApiFileUploadController<>)))
+            var type = (handlerType.IsGenericType && handlerType.GetGenericTypeDefinition().Name.StartsWith("ApiFileUpload"))
                 ? handlerType.GetGenericArguments().FirstOrDefault()
                 : handlerType;
 

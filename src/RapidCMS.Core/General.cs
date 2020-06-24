@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 [assembly: InternalsVisibleTo("RapidCMS.Repositories")]
+[assembly: InternalsVisibleTo("RapidCMS.Api.WebApi")]
 
 namespace RapidCMS.Core
 {

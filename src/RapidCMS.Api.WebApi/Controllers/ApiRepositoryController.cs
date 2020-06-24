@@ -2,9 +2,10 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RapidCMS.Api.WebApi.Conventions;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Conventions;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Models.ApiBridge.Request;
@@ -12,19 +13,17 @@ using RapidCMS.Core.Models.ApiBridge.Response;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.State;
-using RapidCMS.Core.Repositories;
 
-namespace RapidCMS.Core.Controllers
+namespace RapidCMS.Api.WebApi.Controllers
 {
-    public class MappedApiRepositoryController<TEntity, TDatabaseEntity, TRepository> : ControllerBase
+    internal class ApiRepositoryController<TEntity, TRepository> : ControllerBase
         where TEntity : class, IEntity
-        where TDatabaseEntity : class
-        where TRepository : BaseMappedRepository<TEntity, TDatabaseEntity>
+        where TRepository : IRepository
     {
         private readonly IPresentationService _presentationService;
         private readonly IInteractionService _interactionService;
 
-        public MappedApiRepositoryController(
+        public ApiRepositoryController(
             IPresentationService presentationService,
             IInteractionService interactionService)
         {
@@ -37,10 +36,7 @@ namespace RapidCMS.Core.Controllers
             get => (string)ControllerContext.ActionDescriptor.Properties[CollectionControllerRouteConvention.AliasKey];
         }
 
-        // TODO: validation?
-        // TODO: parentId + IQuery + variant + pagination
         // TODO: remove all logic and put it in a general class for reuse to support things like Azure Functions
-        // TODO: mapped variation?
 
         [HttpPost("entity/{id}")]
         public async Task<ActionResult<IEntity>> GetByIdAsync(string id, [FromBody] ParentQueryModel query)
@@ -84,7 +80,7 @@ namespace RapidCMS.Core.Controllers
                     CollectionAlias = CollectionAlias,
                     ParentPath = query.ParentPath,
                     UsageType = UsageType.List | UsageType.Edit,
-                    Query = query.GetQuery<TDatabaseEntity>()
+                    Query = query.GetQuery<TEntity>()
                 });
 
                 return Ok(new EntitiesModel<IEntity>
@@ -112,7 +108,7 @@ namespace RapidCMS.Core.Controllers
                 {
                     CollectionAlias = CollectionAlias,
                     UsageType = UsageType.List | UsageType.Edit,
-                    Query = query.GetQuery<TDatabaseEntity>(),
+                    Query = query.GetQuery<TEntity>(),
                     Related = new EntityDescriptor
                     {
                         CollectionAlias = query.Related.CollectionAlias,
@@ -145,7 +141,7 @@ namespace RapidCMS.Core.Controllers
                 {
                     CollectionAlias = CollectionAlias,
                     UsageType = UsageType.List | UsageType.Add,
-                    Query = query.GetQuery<TDatabaseEntity>(),
+                    Query = query.GetQuery<TEntity>(),
                     Related = new EntityDescriptor
                     {
                         CollectionAlias = query.Related.CollectionAlias,

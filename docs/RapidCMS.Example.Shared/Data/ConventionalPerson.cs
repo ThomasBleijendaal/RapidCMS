@@ -15,7 +15,7 @@ namespace RapidCMS.Example.Shared.Data
         [Display(Name = "Email", Description = "The email of the person")]
         public string? Email { get; set; }
 
-        [Display(Name = "Biography", Description = "The biography of the persion")]
+        [Display(Name = "Biography", Description = "The biography of the person")]
         public string? Bio { get; set; }
 
         string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? "0"); }

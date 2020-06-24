@@ -2,7 +2,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace RapidCMS.Core.Conventions
+namespace RapidCMS.Api.WebApi.Conventions
 {
     public class CollectionControllerRouteConvention : IControllerModelConvention
     {

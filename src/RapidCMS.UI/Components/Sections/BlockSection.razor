@@ -41,7 +41,7 @@
                 var state = new PageStateModel
                 {
                     PageType = PageType.Collection,
-                    UsageType = EditContext.UsageType.HasFlag(UsageType.View) ? UsageType.View : UsageType.Edit,
+                    UsageType = subCollection.FindSupportedUsageType(EditContext.UsageType),
 
                     CollectionAlias = subCollection.CollectionAlias,
                     ParentPath = parentPath
@@ -58,7 +58,7 @@
                 var state = new PageStateModel
                 {
                     PageType = PageType.Collection,
-                    UsageType = EditContext.UsageType.HasFlag(UsageType.View) ? UsageType.View : UsageType.Edit,
+                    UsageType = relatedCollection.FindSupportedUsageType(EditContext.UsageType),
 
                     CollectionAlias = relatedCollection.CollectionAlias,
                     Related = related

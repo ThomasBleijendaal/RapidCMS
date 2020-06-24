@@ -9,7 +9,7 @@ using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
 
-namespace RapidCMS.Core.Controllers
+namespace RapidCMS.Api.WebApi.Controllers
 {
     [ApiController]
     internal class ApiFileUploadController<THandler> : ControllerBase

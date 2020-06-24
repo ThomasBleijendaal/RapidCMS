@@ -1,4 +1,5 @@
 ﻿using System;
+using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Setup
 {
@@ -12,5 +13,7 @@ namespace RapidCMS.Core.Models.Setup
 
         internal int Index { get; set; }
         internal string CollectionAlias { get; set; }
+
+        internal UsageType SupportsUsageType { get; set; }
     }
 }

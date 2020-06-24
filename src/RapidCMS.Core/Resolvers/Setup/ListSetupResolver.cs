@@ -34,7 +34,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             if (config is IIsConventionBased isConventionBasedConfig)
             {
-                config = _conventionListConfigResolver.ResolveByConvention(config.BaseType, isConventionBasedConfig.GetFeatures());
+                config = _conventionListConfigResolver.ResolveByConvention(config.BaseType, isConventionBasedConfig.GetFeatures(), collection);
             }
 
             var cacheable = true;

@@ -8,6 +8,7 @@ namespace RapidCMS.Core.Models.UI
         internal SubCollectionUI(SubCollectionListSetup subCollection) : base((x, state) => state == EntityState.IsExisting, (x, y) => false)
         {
             CollectionAlias = subCollection.CollectionAlias;
+            SupportsUsageType = subCollection.SupportsUsageType;
         }
 
         public string CollectionAlias { get; private set; }
