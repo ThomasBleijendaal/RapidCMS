@@ -24,7 +24,7 @@ namespace RapidCMS.Core.Extensions
 
             foreach (var element in source.Select(asyncSelector))
             {
-                result.Add(await element);
+                result.Add(await element.ConfigureAwait(false));
             }
 
             return result;
@@ -36,7 +36,7 @@ namespace RapidCMS.Core.Extensions
 
             foreach (var element in source)
             {
-                result.Add(await element);
+                result.Add(await element.ConfigureAwait(false));
             }
 
             return result;
@@ -73,7 +73,7 @@ namespace RapidCMS.Core.Extensions
         {
             foreach (var element in source)
             {
-                if (await conditionalCast.Invoke(element) is TResult result)
+                if (await conditionalCast.Invoke(element).ConfigureAwait(false) is TResult result)
                 {
                     yield return result;
                 }

@@ -62,7 +62,7 @@ namespace RapidCMS.Core.Dispatchers.Form
             var repository = _repositoryResolver.GetRepository(collection);
             var repositoryContext = new RepositoryContext(request.ListContext.CollectionAlias);
 
-            var (crudType, entityVariant) = await _buttonInteraction.ValidateButtonInteractionAsync(request);
+            var (crudType, entityVariant) = await _buttonInteraction.ValidateButtonInteractionAsync(request).ConfigureAwait(false);
 
             switch (crudType)
             {
@@ -122,17 +122,17 @@ namespace RapidCMS.Core.Dispatchers.Form
                             throw new InvalidEntityException();
                         }
 
-                        await _buttonInteraction.ValidateButtonInteractionAsync(innerRequest);
+                        await _buttonInteraction.ValidateButtonInteractionAsync(innerRequest).ConfigureAwait(false);
 
                         if (editContext.IsModified())
                         {
                             var wrapper = _editContextFactory.GetEditContextWrapper(editContext);
-                            await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(repositoryContext, wrapper));
+                            await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(repositoryContext, wrapper)).ConfigureAwait(false);
                         }
                         if (editContext.IsReordered())
                         {
                             await _concurrencyService.EnsureCorrectConcurrencyAsync(
-                                () => repository.ReorderAsync(repositoryContext, editContext.ReorderedBeforeId, editContext.Entity.Id!, editContext.Parent));
+                                () => repository.ReorderAsync(repositoryContext, editContext.ReorderedBeforeId, editContext.Entity.Id!, editContext.Parent)).ConfigureAwait(false);
                         }
 
                         affectedEntities.Add(editContext.Entity);
@@ -202,7 +202,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                     throw new InvalidOperationException();
             }
 
-            await _buttonInteraction.CompleteButtonInteractionAsync(request);
+            await _buttonInteraction.CompleteButtonInteractionAsync(request).ConfigureAwait(false);
 
             return response;
         }

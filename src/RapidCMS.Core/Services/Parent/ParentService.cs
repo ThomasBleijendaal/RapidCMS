@@ -31,7 +31,7 @@ namespace RapidCMS.Core.Services.Parent
             foreach (var (collectionAlias, id) in parentPath)
             {
                 var repositoryContext = new RepositoryContext(collectionAlias);
-                var entity = await _repositoryResolver.GetRepository(collectionAlias).GetByIdAsync(repositoryContext, id, parent);
+                var entity = await _repositoryResolver.GetRepository(collectionAlias).GetByIdAsync(repositoryContext, id, parent).ConfigureAwait(false);
                 if (entity == null)
                 {
                     break;

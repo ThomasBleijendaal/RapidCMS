@@ -46,7 +46,7 @@ namespace RapidCMS.Core.Dispatchers.Api
 
             var repository = _repositoryResolver.GetRepository(request.Subject.CollectionAlias ?? throw new ArgumentNullException());
 
-            var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Subject.ParentPath));
+            var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Subject.ParentPath)).ConfigureAwait(false);
             var entityVariant = request.Subject.VariantAlias == null ? default : _entityVariantResolver.ResolveSetup(request.Subject.VariantAlias);
 
             var repositoryContext = new RepositoryContext(request.Subject.CollectionAlias);
@@ -65,7 +65,7 @@ namespace RapidCMS.Core.Dispatchers.Api
                 throw new InvalidOperationException($"UsageType {request.UsageType} is invalid for this method");
             }
 
-            var entity = await action.Invoke();
+            var entity = await action.Invoke().ConfigureAwait(false);
             if (entity == null)
             {
                 throw new NotFoundException("Failed to get entity for given id");

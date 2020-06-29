@@ -38,21 +38,21 @@ namespace RapidCMS.Core.Dispatchers.Api
             var subjectRepository = _repositoryResolver.GetRepository(request.CollectionAlias);
             var repositoryContext = new RepositoryContext(request.CollectionAlias);
 
-            var parent = request is GetEntitiesOfParentRequestModel parentRequest ? await _parentService.GetParentAsync(ParentPath.TryParse(parentRequest.ParentPath)) : default;
+            var parent = request is GetEntitiesOfParentRequestModel parentRequest ? await _parentService.GetParentAsync(ParentPath.TryParse(parentRequest.ParentPath)).ConfigureAwait(false) : default;
             var related = default(IRelated);
             if (request is GetEntitiesOfRelationRequestModel relatedRequest)
             {
                 var relatedRepository = _repositoryResolver.GetRepository(relatedRequest.Related.CollectionAlias ?? throw new ArgumentNullException());
                 var relatedRepositoryContext = new RepositoryContext(relatedRequest.Related.CollectionAlias);
-                var relatedEntity = await relatedRepository.GetByIdAsync(relatedRepositoryContext, relatedRequest.Related.Id ?? throw new ArgumentNullException(), default) 
+                var relatedEntity = await relatedRepository.GetByIdAsync(relatedRepositoryContext, relatedRequest.Related.Id ?? throw new ArgumentNullException(), default).ConfigureAwait(false)
                     ?? throw new NotFoundException("Could not find related entity");
                 related = new RelatedEntity(relatedEntity, relatedRequest.Related.CollectionAlias);
             }
 
-            var protoEntity = await subjectRepository.NewAsync(repositoryContext, parent, default);
+            var protoEntity = await subjectRepository.NewAsync(repositoryContext, parent, default).ConfigureAwait(false);
 
-            await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity);
-            await _dataViewResolver.ApplyDataViewToQueryAsync(request.Query, request.CollectionAlias);
+            await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity).ConfigureAwait(false);
+            await _dataViewResolver.ApplyDataViewToQueryAsync(request.Query, request.CollectionAlias).ConfigureAwait(false);
 
             var action = (request.UsageType & ~(UsageType.List | UsageType.Root | UsageType.NotRoot)) switch
             {
@@ -68,7 +68,7 @@ namespace RapidCMS.Core.Dispatchers.Api
                 throw new InvalidOperationException($"UsageType {request.UsageType} is invalid for this method");
             }
 
-            var entities = await action.Invoke();
+            var entities = await action.Invoke().ConfigureAwait(false);
 
             return new EntitiesResponseModel
             {

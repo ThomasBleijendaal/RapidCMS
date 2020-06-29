@@ -60,7 +60,7 @@ namespace RapidCMS.Core.Providers
             _entity = entity;
             _parent = parent;
 
-            await SetElementsAsync();
+            await SetElementsAsync().ConfigureAwait(false);
 
             var data = _relatedElementsGetter?.Getter(_property.Getter(entity)) ?? _property.Getter(entity);
             if (data is ICollection<IEntity> entityCollection)
@@ -102,7 +102,7 @@ namespace RapidCMS.Core.Providers
             _eventHandle?.Dispose();
             _eventHandle = _repository.ChangeToken.RegisterChangeCallback(async x =>
             {
-                await SetElementsAsync();
+                await SetElementsAsync().ConfigureAwait(false);
 
                 OnDataChange?.Invoke(this, new EventArgs());
 
@@ -127,7 +127,7 @@ namespace RapidCMS.Core.Providers
                 entry.AddExpirationToken(_repository.ChangeToken);
 
                 return _repository.GetAllAsync(_repositoryContext, parent, Query.Default());
-            });
+            }).ConfigureAwait(false);
 
             _elements = entities
                 .Select(entity => (IElement)new Element

@@ -40,22 +40,22 @@ namespace RapidCMS.Core.Dispatchers.Api
             var relatedRepository = _repositoryResolver.GetRepository(request.Related.CollectionAlias);
             var repositoryContext = new RepositoryContext(request.Related.CollectionAlias);
 
-            var subjectEntity = await subjectRepository.GetByIdAsync(repositoryContext, request.Subject.Id, default)
+            var subjectEntity = await subjectRepository.GetByIdAsync(repositoryContext, request.Subject.Id, default).ConfigureAwait(false)
                 ?? throw new NotFoundException("Subject entity was not found");
-            var relatedEntity = await relatedRepository.GetByIdAsync(repositoryContext, request.Related.Id, default)
+            var relatedEntity = await relatedRepository.GetByIdAsync(repositoryContext, request.Related.Id, default).ConfigureAwait(false)
                 ?? throw new NotFoundException("Related entity was not found");
 
             var related = new RelatedEntity(relatedEntity, request.Related.CollectionAlias);
 
             if (request.Action == PersistRelatedEntityRequestModel.Actions.Add)
             {
-                await _authService.EnsureAuthorizedUserAsync(Operations.Add, subjectEntity);
-                await subjectRepository.AddAsync(repositoryContext, related, request.Subject.Id);
+                await _authService.EnsureAuthorizedUserAsync(Operations.Add, subjectEntity).ConfigureAwait(false);
+                await subjectRepository.AddAsync(repositoryContext, related, request.Subject.Id).ConfigureAwait(false);
             }
             else if (request.Action == PersistRelatedEntityRequestModel.Actions.Remove)
             {
-                await _authService.EnsureAuthorizedUserAsync(Operations.Remove, subjectEntity);
-                await subjectRepository.AddAsync(repositoryContext, related, request.Subject.Id);
+                await _authService.EnsureAuthorizedUserAsync(Operations.Remove, subjectEntity).ConfigureAwait(false);
+                await subjectRepository.AddAsync(repositoryContext, related, request.Subject.Id).ConfigureAwait(false);
             }
 
             return new ApiCommandResponseModel();

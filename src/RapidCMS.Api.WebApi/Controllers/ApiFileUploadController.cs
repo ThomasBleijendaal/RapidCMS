@@ -25,7 +25,7 @@ namespace RapidCMS.Api.WebApi.Controllers
         [HttpPost("file/validate")]
         public async Task<ActionResult<FileUploadValidationResponseModel>> ValidateFileAsync([FromForm] UploadFileRequestModel fileInfo)
         {
-            var messages = await _handler.ValidateFileAsync(fileInfo);
+            var messages = await _handler.ValidateFileAsync(fileInfo).ConfigureAwait(false);
             if (messages.Any())
             {
                 return new FileUploadValidationResponseModel { ErrorMessages = messages };
@@ -41,7 +41,7 @@ namespace RapidCMS.Api.WebApi.Controllers
             {
                 try
                 {
-                    var result = await _handler.SaveFileAsync(fileInfo, downloadedFile);
+                    var result = await _handler.SaveFileAsync(fileInfo, downloadedFile).ConfigureAwait(false);
                     return new FileUploadResponseModel { Result = result };
                 }
                 catch { }

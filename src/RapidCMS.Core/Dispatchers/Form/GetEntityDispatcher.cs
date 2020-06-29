@@ -52,7 +52,7 @@ namespace RapidCMS.Core.Dispatchers.Form
             var repository = _repositoryResolver.GetRepository(collection);
             var repositoryContext = new RepositoryContext(request.CollectionAlias);
 
-            var parent = await _parentService.GetParentAsync(request.ParentPath);
+            var parent = await _parentService.GetParentAsync(request.ParentPath).ConfigureAwait(false);
 
             var action = (request.UsageType & ~(UsageType.Node | UsageType.Root | UsageType.NotRoot)) switch
             {
@@ -68,13 +68,13 @@ namespace RapidCMS.Core.Dispatchers.Form
                 throw new InvalidOperationException($"UsageType {request.UsageType} is invalid for this method");
             }
 
-            var entity = await _concurrencyService.EnsureCorrectConcurrencyAsync(action);
+            var entity = await _concurrencyService.EnsureCorrectConcurrencyAsync(action).ConfigureAwait(false);
             if (entity == null)
             {
                 throw new Exception("Failed to get entity for given id(s)");
             }
 
-            await _authService.EnsureAuthorizedUserAsync(request.UsageType, entity);
+            await _authService.EnsureAuthorizedUserAsync(request.UsageType, entity).ConfigureAwait(false);
 
             return new EditContext(request.CollectionAlias, entity, parent, request.UsageType | UsageType.Node, _serviceProvider);
         }

@@ -37,7 +37,7 @@ namespace RapidCMS.Core.Services.Auth
 
         public async Task EnsureAuthorizedUserAsync(UsageType usageType, IEntity entity)
         {
-            if (!await IsUserAuthorizedAsync(usageType, entity))
+            if (!await IsUserAuthorizedAsync(usageType, entity).ConfigureAwait(false))
             {
                 throw new UnauthorizedAccessException();
             }
@@ -50,14 +50,14 @@ namespace RapidCMS.Core.Services.Auth
             var authorizationChallenge = await authorizationService.AuthorizeAsync(
                 _httpContextAccessor.HttpContext.User,
                 entity,
-                operation);
+                operation).ConfigureAwait(false);
 
             return authorizationChallenge.Succeeded;
         }
 
         public async Task EnsureAuthorizedUserAsync(OperationAuthorizationRequirement operation, IEntity entity)
         {
-            if (!await IsUserAuthorizedAsync(operation, entity))
+            if (!await IsUserAuthorizedAsync(operation, entity).ConfigureAwait(false))
             {
                 throw new UnauthorizedAccessException();
             }
@@ -72,7 +72,7 @@ namespace RapidCMS.Core.Services.Auth
 
         public async Task EnsureAuthorizedUserAsync(EditContext editContext, IButtonSetup button)
         {
-            if (!await IsUserAuthorizedAsync(editContext, button))
+            if (!await IsUserAuthorizedAsync(editContext, button).ConfigureAwait(false))
             {
                 throw new UnauthorizedAccessException();
             }

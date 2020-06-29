@@ -25,7 +25,7 @@ namespace RapidCMS.Core.Resolvers.Data
 
         public async Task ApplyDataViewToQueryAsync(IQuery query, string collectionAlias)
         {
-            var dataViews = await GetDataViewsAsync(collectionAlias);
+            var dataViews = await GetDataViewsAsync(collectionAlias).ConfigureAwait(false);
             var dataView = dataViews.FirstOrDefault(x => x.Id == query.ActiveTab)
                     ?? dataViews.FirstOrDefault();
 

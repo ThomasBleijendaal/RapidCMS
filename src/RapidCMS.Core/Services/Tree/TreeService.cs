@@ -53,10 +53,10 @@ namespace RapidCMS.Core.Services.Tree
                     throw new InvalidOperationException($"Failed to get collection for given alias ({alias}).");
                 }
 
-                var parent = await _parentService.GetParentAsync(parentPath);
+                var parent = await _parentService.GetParentAsync(parentPath).ConfigureAwait(false);
                 var repositoryContext = new RepositoryContext(collection.Alias);
 
-                var testEntity = await _repositoryResolver.GetRepository(collection).NewAsync(repositoryContext, parent, collection.EntityVariant.Type);
+                var testEntity = await _repositoryResolver.GetRepository(collection).NewAsync(repositoryContext, parent, collection.EntityVariant.Type).ConfigureAwait(false);
 
                 var tree = new TreeCollectionUI(collection.Alias, collection.Name)
                 {
@@ -66,7 +66,7 @@ namespace RapidCMS.Core.Services.Tree
                     DefaultOpenEntities = collection.TreeView?.DefaultOpenEntities ?? false
                 };
 
-                if (collection.ListEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, testEntity))
+                if (collection.ListEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, testEntity).ConfigureAwait(false))
                 {
                     tree.State = new PageStateModel
                     {
@@ -76,7 +76,7 @@ namespace RapidCMS.Core.Services.Tree
                         UsageType = UsageType.Edit
                     };
                 }
-                else if (collection.ListView != null && await _authService.IsUserAuthorizedAsync(Operations.Read, testEntity))
+                else if (collection.ListView != null && await _authService.IsUserAuthorizedAsync(Operations.Read, testEntity).ConfigureAwait(false))
                 {
                     tree.State = new PageStateModel
                     {
@@ -119,13 +119,13 @@ namespace RapidCMS.Core.Services.Tree
                 throw new InvalidOperationException($"Failed to get collection for given alias ({alias}).");
             }
 
-            var parent = await _parentService.GetParentAsync(parentPath);
+            var parent = await _parentService.GetParentAsync(parentPath).ConfigureAwait(false);
 
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
             {
                 var query = Query.Create(pageSize, pageNr, default, default);
                 var repositoryContext = new RepositoryContext(collection.Alias);
-                var entities = await _repositoryResolver.GetRepository(collection).GetAllAsync(repositoryContext, parent, query);
+                var entities = await _repositoryResolver.GetRepository(collection).GetAllAsync(repositoryContext, parent, query).ConfigureAwait(false);
 
                 var list = await entities.ToListAsync(async entity =>
                 {
@@ -140,7 +140,7 @@ namespace RapidCMS.Core.Services.Tree
                         DefaultOpenCollections = collection.TreeView?.DefaultOpenCollections ?? false
                     };
 
-                    if (collection.NodeEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, entity))
+                    if (collection.NodeEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, entity).ConfigureAwait(false))
                     {
                         node.State = new PageStateModel
                         {
@@ -152,7 +152,7 @@ namespace RapidCMS.Core.Services.Tree
                             VariantAlias = entityVariant.Alias
                         };
                     }
-                    else if (collection.ListView != null && await _authService.IsUserAuthorizedAsync(Operations.Read, entity))
+                    else if (collection.ListView != null && await _authService.IsUserAuthorizedAsync(Operations.Read, entity).ConfigureAwait(false))
                     {
                         node.State = new PageStateModel
                         {
@@ -166,7 +166,7 @@ namespace RapidCMS.Core.Services.Tree
                     }
 
                     return node;
-                });
+                }).ConfigureAwait(false);
 
                 return new TreeNodesUI(list.Take(pageSize).ToList(), query.MoreDataAvailable);
             }

@@ -40,13 +40,13 @@ namespace RapidCMS.Core.Handlers
 
         public async Task<object> SaveFileAsync(IFileInfo fileInfo, Stream stream)
         {
-            var response = await DoRequestAsync<FileUploadResponseModel>(CreateRequest("file", fileInfo, stream));
+            var response = await DoRequestAsync<FileUploadResponseModel>(CreateRequest("file", fileInfo, stream)).ConfigureAwait(false);
             return response?.Result ?? new object();
         }
 
         public async Task<IEnumerable<string>> ValidateFileAsync(IFileInfo fileInfo)
         {
-            var response = await DoRequestAsync<FileUploadValidationResponseModel>(CreateRequest("file/validate", fileInfo));
+            var response = await DoRequestAsync<FileUploadValidationResponseModel>(CreateRequest("file/validate", fileInfo)).ConfigureAwait(false);
             return response?.ErrorMessages ?? Enumerable.Empty<string>();
         }
 
@@ -82,7 +82,7 @@ namespace RapidCMS.Core.Handlers
                     $".AddRapidCMSFileUploadApiHttpClient<THandler>([..]) and configure its BaseAddress correctly.");
             }
 
-            var response = await httpClient.SendAsync(request);
+            var response = await httpClient.SendAsync(request).ConfigureAwait(false);
             return response.StatusCode switch
             {
                 HttpStatusCode.OK => response,
@@ -97,13 +97,13 @@ namespace RapidCMS.Core.Handlers
         private async Task<TResult?> DoRequestAsync<TResult>(HttpRequestMessage request)
             where TResult : class
         {
-            var response = await DoRequestAsync(request);
+            var response = await DoRequestAsync(request).ConfigureAwait(false);
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
                 return default;
             }
 
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonConvert.DeserializeObject<TResult>(json);
         }
     }

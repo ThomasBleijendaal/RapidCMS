@@ -52,7 +52,6 @@ namespace RapidCMS.UI.Components.Editors
             }
             catch
             {
-                throw;
                 validationMessages = new[] { "Failed to validate file." };
             }
 
@@ -83,7 +82,6 @@ namespace RapidCMS.UI.Components.Editors
                 }
                 catch
                 {
-                    throw;
                     validationMessages = new[] { "Failed to upload file." };
                 }
             }

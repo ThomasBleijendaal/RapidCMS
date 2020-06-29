@@ -28,7 +28,7 @@ namespace RapidCMS.Core.Resolvers.Data
 
             if (collection.DataViewBuilder != null || collection.DataViews?.Count > 0)
             {
-                var dataViews = await GetDataViewsAsync(collection);
+                var dataViews = await GetDataViewsAsync(collection).ConfigureAwait(false);
                 var dataView = dataViews.FirstOrDefault(x => x.Id == query.ActiveTab)
                     ?? dataViews.FirstOrDefault();
 

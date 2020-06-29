@@ -32,7 +32,7 @@ namespace RapidCMS.Core.Resolvers.UI
                 return Enumerable.Empty<ButtonUI>();
             }
 
-            return await GetButtonsAsync(_node.Buttons, editContext);
+            return await GetButtonsAsync(_node.Buttons, editContext).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(EditContext editContext)
@@ -46,7 +46,8 @@ namespace RapidCMS.Core.Resolvers.UI
 
             return await _node.Panes
                 .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(type))
-                .ToListAsync(pane => GetSectionUIAsync(pane, editContext));
+                .ToListAsync(pane => GetSectionUIAsync(pane, editContext))
+                .ConfigureAwait(false);
         }
     }
 }

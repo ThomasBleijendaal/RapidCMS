@@ -52,7 +52,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         ParentPath = query.ParentPath,
                     },
                     UsageType = UsageType.Node | UsageType.Edit
-                });
+                }).ConfigureAwait(false);
 
                 return Ok(entity);
             }
@@ -81,7 +81,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                     ParentPath = query.ParentPath,
                     UsageType = UsageType.List | UsageType.Edit,
                     Query = query.GetQuery<TEntity>()
-                });
+                }).ConfigureAwait(false);
 
                 return Ok(new EntitiesModel<IEntity>
                 {
@@ -114,7 +114,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         CollectionAlias = query.Related.CollectionAlias,
                         Id = query.Related.Id
                     }
-                });
+                }).ConfigureAwait(false);
 
                 return Ok(new EntitiesModel<IEntity>
                 {
@@ -147,7 +147,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         CollectionAlias = query.Related.CollectionAlias,
                         Id = query.Related.Id
                     }
-                });
+                }).ConfigureAwait(false);
 
                 return Ok(new EntitiesModel<IEntity>
                 {
@@ -179,7 +179,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         VariantAlias = query.VariantTypeName
                     },
                     UsageType = UsageType.Node | UsageType.New
-                });
+                }).ConfigureAwait(false);
 
                 return Ok(entity);
             }
@@ -211,7 +211,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                     },
                     Entity = editContextModel.Entity,
                     EntityState = EntityState.IsNew
-                }, ViewState.Api);
+                }, ViewState.Api).ConfigureAwait(false);
 
                 return response switch
                 {
@@ -253,7 +253,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                     },
                     Entity = editContextModel.Entity,
                     EntityState = EntityState.IsExisting
-                }, ViewState.Api);
+                }, ViewState.Api).ConfigureAwait(false);
 
                 return response switch
                 {
@@ -292,7 +292,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         Id = id,
                         ParentPath = delete.ParentPath
                     }
-                }, ViewState.Api);
+                }, ViewState.Api).ConfigureAwait(false);
 
                 return Ok();
             }
@@ -328,7 +328,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         Id = relate.Id
                     },
                     Action = PersistRelatedEntityRequestModel.Actions.Add
-                }, ViewState.Api);
+                }, ViewState.Api).ConfigureAwait(false);
 
                 return Ok();
             }
@@ -364,7 +364,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         Id = relate.Id
                     },
                     Action = PersistRelatedEntityRequestModel.Actions.Remove
-                }, ViewState.Api);
+                }, ViewState.Api).ConfigureAwait(false);
 
                 return Ok();
             }
@@ -396,7 +396,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         CollectionAlias = CollectionAlias,
                         ParentPath = reorder.Subject.ParentPath
                     }
-                }, ViewState.Api);
+                }, ViewState.Api).ConfigureAwait(false);
 
                 return Ok();
             }

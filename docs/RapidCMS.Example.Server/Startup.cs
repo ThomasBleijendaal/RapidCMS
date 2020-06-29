@@ -10,7 +10,6 @@ using RapidCMS.Example.Shared.DataViews;
 using RapidCMS.Example.Shared.Handlers;
 using RapidCMS.Repositories;
 using RapidCMS.Core.Repositories;
-using RapidCMS.Core.Abstractions.Handlers;
 
 namespace RapidCMS.Example.Server
 {

@@ -49,13 +49,13 @@ namespace RapidCMS.Core.Dispatchers.Form
             var repository = _repositoryResolver.GetRepository(collection);
             var repositoryContext = new RepositoryContext(request.CollectionAlias);
 
-            var parent = request is GetEntitiesOfParentRequestModel parentRequest ? await _parentService.GetParentAsync(parentRequest.ParentPath) : default;
+            var parent = request is GetEntitiesOfParentRequestModel parentRequest ? await _parentService.GetParentAsync(parentRequest.ParentPath).ConfigureAwait(false) : default;
             var relatedEntity = (request as GetEntitiesOfRelationRequestModel)?.Related;
 
-            var protoEntity = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.NewAsync(repositoryContext, parent, collection.EntityVariant.Type));
+            var protoEntity = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.NewAsync(repositoryContext, parent, collection.EntityVariant.Type)).ConfigureAwait(false);
 
-            await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity);
-            await _dataViewResolver.ApplyDataViewToQueryAsync(request.Query, request.CollectionAlias);
+            await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity).ConfigureAwait(false);
+            await _dataViewResolver.ApplyDataViewToQueryAsync(request.Query, request.CollectionAlias).ConfigureAwait(false);
 
             var action = (request.UsageType & ~(UsageType.List | UsageType.Root | UsageType.NotRoot)) switch
             {
@@ -71,7 +71,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                 throw new InvalidOperationException($"UsageType {request.UsageType} is invalid for this method");
             }
 
-            var existingEntities = await _concurrencyService.EnsureCorrectConcurrencyAsync(action);
+            var existingEntities = await _concurrencyService.EnsureCorrectConcurrencyAsync(action).ConfigureAwait(false);
             var protoEditContext = new EditContext(request.CollectionAlias, protoEntity, parent, request.UsageType | UsageType.List, _serviceProvider);
 
             return new ListContext(
