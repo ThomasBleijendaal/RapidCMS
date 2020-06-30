@@ -22,6 +22,6 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
             SearchTerm = query.SearchTerm;
         }
 
-        public EntityDescriptorModel Related { get; set; }
+        public EntityDescriptorModel Related { get; set; } = default!;
     }
 }

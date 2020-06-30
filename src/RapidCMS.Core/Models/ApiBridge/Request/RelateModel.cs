@@ -16,8 +16,8 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
             };
         }
 
-        public string Id { get; set; }
+        public string Id { get; set; } = default!;
 
-        public EntityDescriptorModel Related { get; set; }
+        public EntityDescriptorModel Related { get; set; } = default!;
     }
 }

@@ -11,7 +11,6 @@ namespace RapidCMS.Example.Shared.Collections
         // CRUD editor for simple POCO with recursive sub collections
         public static void AddPersonCollection(this ICmsConfig config)
         {
-            // TODO: switch repository
             config.AddCollection<Person, BaseRepository<Person>>("person", "People", collection =>
             {
                 collection

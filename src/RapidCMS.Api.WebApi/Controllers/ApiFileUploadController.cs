@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Blazor.FileReader;
@@ -39,21 +38,28 @@ namespace RapidCMS.Api.WebApi.Controllers
         {
             if (DoesFileMatchFileInfo(fileInfo, file, out var downloadedFile))
             {
-                try
+                using (downloadedFile)
                 {
-                    var result = await _handler.SaveFileAsync(fileInfo, downloadedFile).ConfigureAwait(false);
-                    return new FileUploadResponseModel { Result = result };
+                    try
+                    {
+                        var result = await _handler.SaveFileAsync(fileInfo, downloadedFile).ConfigureAwait(false);
+                        return new FileUploadResponseModel { Result = result };
+                    }
+                    catch { }
                 }
-                catch { }
             }
 
             return BadRequest();
         }
 
-        // TODO
         private bool DoesFileMatchFileInfo(IFileInfo fileInfo, IFormFile file, out Stream memoryStream)
         {
             memoryStream = file.OpenReadStream();
+
+            if (fileInfo.Size != memoryStream.Length || fileInfo.Name != file.FileName)
+            {
+                return false;
+            }
 
             return true;
         }

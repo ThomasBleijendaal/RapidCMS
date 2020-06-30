@@ -18,6 +18,6 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
 
         public string? BeforeId { get; set; }
 
-        public EntityDescriptorModel Subject { get; set; }
+        public EntityDescriptorModel Subject { get; set; } = default!;
     }
 }

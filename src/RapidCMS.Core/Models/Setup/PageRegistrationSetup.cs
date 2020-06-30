@@ -3,7 +3,6 @@ using RapidCMS.Core.Abstractions.Setup;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    // TODO: constructor
     internal class PageRegistrationSetup : IPageSetup
     {
         public string Name { get; set; } = default!;

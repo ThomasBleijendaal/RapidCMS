@@ -57,7 +57,13 @@ namespace RapidCMS.Core.Dispatchers.Api
 
             await _authService.EnsureAuthorizedUserAsync(usageType, request.Entity).ConfigureAwait(false);
 
-            var editContext = _editContextFactory.GetEditContextWrapper(usageType, request.EntityState, request.Entity, referenceEntity, parent);
+            var editContext = _editContextFactory.GetEditContextWrapper(
+                usageType,
+                request.EntityState, 
+                request.Entity, 
+                referenceEntity, 
+                parent,
+                request.Relations);
 
             try
             {

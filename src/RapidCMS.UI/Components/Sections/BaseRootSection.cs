@@ -29,6 +29,9 @@ namespace RapidCMS.UI.Components.Sections
 
         [Parameter] public bool IsRoot { get; set; }
         [Parameter] public PageStateModel InitialState { get; set; } = default!;
+
+        protected bool StateIsChanging { get; set; } = false;
+
         protected PageStateModel CurrentState => PageState.GetCurrentState()!;
 
         protected IEnumerable<ButtonUI>? Buttons { get; set; }
@@ -84,9 +87,7 @@ namespace RapidCMS.UI.Components.Sections
 
         private async Task LoadDataAsync(IEnumerable<string>? entityIds = null)
         {
-            // TODO: investigate whether its good to clear the Buttons, Sections and PageContents first
-            // there is a tiny timing difference when on WebAssembly and a node view to list view shows
-            // the node view in the list view for a short period of time
+            StateIsChanging = true;
 
             if (CurrentState?.PageType == PageType.Node)
             {
@@ -104,6 +105,8 @@ namespace RapidCMS.UI.Components.Sections
             {
                 await LoadPageDataAsync();
             }
+
+            StateIsChanging = false;
         }
 
         protected void HandleException(Exception ex)

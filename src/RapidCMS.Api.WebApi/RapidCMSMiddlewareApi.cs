@@ -86,7 +86,7 @@ namespace Microsoft.Extensions.DependencyInjection
             // TODO: message service
             services.AddTransient<IParentService, ParentService>();
 
-            services.AddTransient<IEditContextFactory, EditContextWrapperFactory>();
+            services.AddTransient<IEditContextFactory, ApiEditContextWrapperFactory>();
 
             var controllersToAdd = rootConfig.Collections.ToDictionary(
                 kv =>

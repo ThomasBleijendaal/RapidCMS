@@ -1,4 +1,6 @@
-﻿using RapidCMS.Core.Abstractions.Data;
+﻿using System.Collections.Generic;
+using System.Linq;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 
 namespace RapidCMS.Core.Models.ApiBridge.Request
@@ -12,9 +14,28 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
         {
             Entity = editContext.Entity;
             ParentPath = editContext.Parent?.GetParentPath()?.ToPathString();
+
+            var container = editContext.GetRelationContainer();
+            RelationContainer = new RelationContainerModel
+            {
+                Relations = container.Relations.Select(relation =>
+                {
+                    return new RelationModel
+                    {
+                        Elements = relation.RelatedElements.Select(el => el.Id),
+                        PropertyName = relation.Property.PropertyName,
+                        RelatedTypeName = relation.RelatedEntity.AssemblyQualifiedName
+                    };
+                })
+            };
         }
 
-        public TEntity Entity { get; set; }
+        public TEntity Entity { get; set; } = default!;
         public string? ParentPath { get; set; }
+
+        public RelationContainerModel RelationContainer { get; set; } = default!;
+
+        public IEnumerable<(string propertyName, string typeName, IEnumerable<object> elements)> GetRelations()
+            => RelationContainer.Relations.Select(r => (r.PropertyName, r.RelatedTypeName, r.Elements));
     }
 }

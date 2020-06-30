@@ -85,7 +85,6 @@ namespace RapidCMS.Example.WebAssembly
 
             var host = builder.Build();
 
-            // TODO
             var cmsOptions = host.Services.GetService<ICms>();
             cmsOptions.IsDevelopment = true;
 

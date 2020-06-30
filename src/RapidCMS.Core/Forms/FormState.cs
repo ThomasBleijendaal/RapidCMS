@@ -4,13 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms.Validation;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Models.Metadata;
 using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Forms

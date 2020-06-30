@@ -210,7 +210,8 @@ namespace RapidCMS.Api.WebApi.Controllers
                         ParentPath = editContextModel.ParentPath
                     },
                     Entity = editContextModel.Entity,
-                    EntityState = EntityState.IsNew
+                    EntityState = EntityState.IsNew,
+                    Relations = editContextModel.GetRelations()
                 }, ViewState.Api).ConfigureAwait(false);
 
                 return response switch
@@ -252,7 +253,8 @@ namespace RapidCMS.Api.WebApi.Controllers
                         ParentPath = editContextModel.ParentPath
                     },
                     Entity = editContextModel.Entity,
-                    EntityState = EntityState.IsExisting
+                    EntityState = EntityState.IsExisting,
+                    Relations = editContextModel.GetRelations()
                 }, ViewState.Api).ConfigureAwait(false);
 
                 return response switch

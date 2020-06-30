@@ -15,6 +15,7 @@ namespace RapidCMS.Core.Forms
         where TEntity : class, IEntity
     {
         private readonly FormState _formState;
+        private readonly IRelationContainer _relationContainer;
 
         public ApiEditContextWrapper(
             UsageType usageType,
@@ -22,13 +23,14 @@ namespace RapidCMS.Core.Forms
             TEntity entity,
             TEntity referenceEntity,
             IParent? parent,
+            IRelationContainer relationContainer,
             IServiceProvider serviceProvider)
         {
             UsageType = usageType;
             EntityState = entityState;
             Entity = entity;
             Parent = parent;
-
+            _relationContainer = relationContainer;
             _formState = new FormState(entity, serviceProvider);
             _formState.PopulatePropertyStatesUsingReferenceEntity(referenceEntity);
         }
@@ -40,11 +42,7 @@ namespace RapidCMS.Core.Forms
 
         public ModelStateDictionary ValidationErrors => _formState.ModelState;
 
-        public IRelationContainer GetRelationContainer()
-        {
-            // TODO TODO TODO
-            return new RelationContainer(Enumerable.Empty<IRelation>());
-        }
+        public IRelationContainer GetRelationContainer() => _relationContainer;
 
         public bool? IsModified<TValue>(Expression<Func<TEntity, TValue>> property)
             => GetPropertyState(GetMetadata(property))?.IsModified;

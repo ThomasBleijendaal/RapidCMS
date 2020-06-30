@@ -77,7 +77,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
             }
 
-            services.AddTransient<IEditContextFactory, EditContextWrapperFactory>();
+            services.AddTransient<IEditContextFactory, FormEditContextWrapperFactory>();
             services.AddTransient<IUIResolverFactory, UIResolverFactory>();
 
             services.AddTransient<IButtonActionHandlerResolver, ButtonActionHandlerResolver>();
