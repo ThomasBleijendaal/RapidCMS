@@ -4,14 +4,15 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    
-    <Version>2.1.1</Version>
-    
+
+    <Version>3.0.1-beta</Version>
+
     <Authors>Thomas Bleijendaal</Authors>
     <Company>Thomas Bleijendaal</Company>
     <Description>Example repositories for RapidCMS.
 
-RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS purely from code.</Description>
+RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS purely from code.
+</Description>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RepositoryUrl>https://github.com/ThomasBleijendaal/RapidCMS</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
@@ -19,6 +20,9 @@ RapidCMS is a Blazor framework which allows you to build a responsive and flexib
     <PackageTags>Blazor, CMS</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>2020</Copyright>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +36,7 @@ RapidCMS is a Blazor framework which allows you to build a responsive and flexib
     <PackageReference Include="Blazored.LocalStorage" Version="2.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
