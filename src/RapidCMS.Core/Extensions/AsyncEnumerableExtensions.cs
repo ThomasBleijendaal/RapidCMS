@@ -48,7 +48,7 @@ namespace RapidCMS.Core.Extensions
 
             foreach (var element in source)
             {
-                result.Add(keySelector(element), await asyncValueSelector(element));
+                result.Add(keySelector(element), await asyncValueSelector(element).ConfigureAwait(false));
             }
 
             return result;

@@ -1,0 +1,14 @@
+﻿@inherits BaseButton
+
+@using RapidCMS.UI.Components.Buttons
+
+<button type="button" class="btn btn-outline-primary" @onclick="DoItAsync">
+    <i class="icon ion-md-@(Model.Icon ?? "expand")"></i> @Model.Label
+</button>
+
+@code {
+    private async void DoItAsync()
+    {
+        await ButtonClickAsync();
+    }
+}

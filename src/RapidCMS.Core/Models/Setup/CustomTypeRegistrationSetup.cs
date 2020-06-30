@@ -4,7 +4,6 @@ using RapidCMS.Core.Abstractions.Setup;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    // TODO: constructor
     internal class CustomTypeRegistrationSetup : ITypeRegistration
     {
         internal Type Type { get; set; } = default!;

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,7 +44,48 @@ namespace RapidCMS.UI.Components.Editors
             }
 
             var fileInfo = await file.ReadFileInfoAsync();
-            var validationMessages = FileUploadHandler.ValidateFile(fileInfo);
+
+            IEnumerable<string> validationMessages;
+            try
+            {
+                validationMessages = await FileUploadHandler.ValidateFileAsync(fileInfo);
+            }
+            catch
+            {
+                validationMessages = new[] { "Failed to validate file." };
+            }
+
+            if (!validationMessages.Any())
+            {
+                try
+                {
+                    using var uploadedFile = await UploadFileToTempFileAsync(file, 8192, fileInfo.Size, (completion) =>
+                    {
+                        Console.WriteLine(completion);
+
+                        if (completion - UploadCompletion > 1)
+                        {
+                            UploadCompletion = completion;
+                            StateHasChanged();
+                        }
+                    });
+
+                    UploadCompletion = 0.0;
+                    StateHasChanged();
+
+                    var value = await FileUploadHandler.SaveFileAsync(fileInfo, uploadedFile);
+
+                    SetValueFromObject(value);
+
+                    EditContext.NotifyPropertyFinished(Property);
+                    EditContext.NotifyPropertyChanged(Property);
+                }
+                catch
+                {
+                    validationMessages = new[] { "Failed to upload file." };
+                }
+            }
+
             if (validationMessages.Any())
             {
                 foreach (var message in validationMessages)
@@ -52,28 +95,10 @@ namespace RapidCMS.UI.Components.Editors
 
                 EditContext.NotifyPropertyFinished(Property);
 
+                UploadCompletion = 0.0;
                 StateHasChanged();
                 return;
             }
-
-            using var uploadedFile = await UploadFileToTempFileAsync(file, 8192, fileInfo.Size, (completion) =>
-            {
-                if (completion - UploadCompletion > 1)
-                {
-                    UploadCompletion = completion;
-                    StateHasChanged();
-                }
-            });
-
-            UploadCompletion = 0.0;
-            StateHasChanged();
-
-            var value = await FileUploadHandler.SaveFileAsync(fileInfo, uploadedFile);
-
-            SetValueFromObject(value);
-
-            EditContext.NotifyPropertyFinished(Property);
-            EditContext.NotifyPropertyChanged(Property);
         }
 
         protected virtual async Task<Stream> UploadFileToTempFileAsync(

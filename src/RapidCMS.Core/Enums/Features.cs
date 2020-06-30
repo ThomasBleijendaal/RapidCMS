@@ -6,7 +6,9 @@ namespace RapidCMS.Core.Enums
     public enum Features
     {
         None = 0,
-        CanGoToEdit = 1,
-        CanEdit = 2
+        CanGoToView = 1,
+        CanGoToEdit = 2,
+        CanView = 4,
+        CanEdit = 8
     }
 }

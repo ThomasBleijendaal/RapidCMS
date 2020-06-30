@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Config;
 
@@ -16,33 +17,18 @@ namespace RapidCMS.Core.Resolvers.Convention
             _fieldConfigResolver = fieldConfigResolver;
         }
 
-        public NodeConfig ResolveByConvention(Type subject, Features features)
+        public NodeConfig ResolveByConvention(Type subject, Features features, ICollectionSetup? collection)
         {
-            var nodeButtons = new List<ButtonConfig>()
+            var result = new NodeConfig(subject);
+
+            if (features.HasFlag(Features.CanView) || features.HasFlag(Features.CanEdit))
             {
-                new DefaultButtonConfig
+                result.Buttons.Add(new DefaultButtonConfig
                 {
                     ButtonType = DefaultButtonType.Up
-                },
-                new DefaultButtonConfig
-                {
-                    ButtonType = DefaultButtonType.SaveExisting
-                },
-                new DefaultButtonConfig
-                {
-                    ButtonType = DefaultButtonType.SaveNew
-                },
-                new DefaultButtonConfig
-                {
-                    ButtonType = DefaultButtonType.Delete
-                }
-            };
-            
-            var result = new NodeConfig(subject)
-            { 
-                BaseType = subject,
-                Buttons = nodeButtons,
-                Panes = new List<PaneConfig>
+                });
+
+                result.Panes = new List<PaneConfig>
                 {
                     new PaneConfig(subject)
                     {
@@ -50,8 +36,40 @@ namespace RapidCMS.Core.Resolvers.Convention
                         Fields = _fieldConfigResolver.GetFields(subject, features).ToList(),
                         VariantType = subject
                     }
+                };
+            }
+
+            if (features.HasFlag(Features.CanEdit))
+            {
+                result.Buttons.AddRange(new[] {
+                    new DefaultButtonConfig
+                    {
+                        ButtonType = DefaultButtonType.SaveExisting
+                    },
+                    new DefaultButtonConfig
+                    {
+                        ButtonType = DefaultButtonType.SaveNew
+                    },
+                    new DefaultButtonConfig
+                    {
+                        ButtonType = DefaultButtonType.Delete
+                    }
+                });
+            }
+
+            if (collection?.Collections.Any() ?? false)
+            {
+                foreach (var subCollection in collection.Collections)
+                {
+                    result.Panes.Add(new PaneConfig(subject)
+                    {
+                        SubCollectionLists = new List<CollectionListConfig>
+                        {
+                            new CollectionListConfig(subCollection.Alias)
+                        }
+                    });
                 }
-            };
+            }
 
             return result;
         }

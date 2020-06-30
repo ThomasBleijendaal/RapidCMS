@@ -6,10 +6,4 @@ namespace RapidCMS.Core.Enums
         IsNew,
         IsExisting
     }
-
-    public enum ReorderedState
-    {
-        Unmodified,
-        Reordered
-    }
 }

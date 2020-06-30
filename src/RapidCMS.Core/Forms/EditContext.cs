@@ -1,42 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Forms.Validation;
 using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Forms
 {
-
     public sealed class EditContext
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly FormState _formState = new FormState();
-        private readonly List<PropertyState> _fieldStates = new List<PropertyState>();
-
-
-        internal EditContext(string collectionAlias, IEntity entity, IParent? parent, UsageType usageType, IServiceProvider serviceProvider)
+        internal EditContext(
+            string collectionAlias,
+            IEntity entity,
+            IParent? parent,
+            UsageType usageType,
+            IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             CollectionAlias = collectionAlias ?? throw new ArgumentNullException(nameof(collectionAlias));
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             Parent = parent;
             UsageType = usageType;
+
+            FormState = new FormState(Entity, serviceProvider);
         }
+
+        internal readonly FormState FormState;
 
         public string CollectionAlias { get; private set; }
         public IEntity Entity { get; private set; }
         public IParent? Parent { get; private set; }
         public UsageType UsageType { get; private set; }
-
+         
         public ReorderedState ReorderedState { get; private set; }
         internal string? ReorderedBeforeId { get; private set; }
         public EntityState EntityState => UsageType.HasFlag(UsageType.New) ? EntityState.IsNew : EntityState.IsExisting;
-
 
         internal List<DataProvider> DataProviders = new List<DataProvider>();
 
@@ -79,33 +77,23 @@ namespace RapidCMS.Core.Forms
         {
             ValidateModel();
 
-            return !HasValidationMessages();
+            return !FormState.GetValidationMessages().Any();
         }
 
-        public bool IsModified()
-        {
-            return _fieldStates.Any(x => x.IsModified);
-        }
+        public bool IsModified() 
+            => FormState.GetPropertyStates().Any(x => x.IsModified);
 
-        public bool IsModified(IPropertyMetadata property)
-        {
-            return GetPropertyState(property)!.IsModified;
-        }
+        public bool IsModified(IPropertyMetadata property) 
+            => GetPropertyState(property)!.IsModified;
 
-        public bool IsReordered()
-        {
-            return ReorderedState == ReorderedState.Reordered;
-        }
+        public bool IsReordered() 
+            => ReorderedState == ReorderedState.Reordered;
 
-        public bool IsValid(IPropertyMetadata property)
-        {
-            return !GetPropertyState(property)!.GetValidationMessages().Any();
-        }
+        public bool IsValid(IPropertyMetadata property) 
+            => !GetPropertyState(property)!.GetValidationMessages().Any();
 
         public bool WasValidated(IPropertyMetadata property)
-        {
-            return GetPropertyState(property)!.WasValidated;
-        }
+            => GetPropertyState(property)!.WasValidated;
 
         public void AddValidationMessage(IPropertyMetadata property, string message)
         {
@@ -126,170 +114,26 @@ namespace RapidCMS.Core.Forms
         }
 
         public IEnumerable<string> GetStrayValidationMessages()
-        {
-            return _formState.GetValidationMessages();
-        }
-
-        private bool HasValidationMessages()
-        {
-            return _formState.GetValidationMessages().Any() || _fieldStates.Any(x => x.GetValidationMessages().Any());
-        }
+            => FormState.GetStrayValidationMessages();
 
         internal PropertyState? GetPropertyState(IPropertyMetadata property, bool createWhenNotFound = true)
-        {
-            var fieldState = _fieldStates.SingleOrDefault(x => x.Property.Fingerprint == property.Fingerprint);
-            if (fieldState == null)
-            {
-                if (!createWhenNotFound)
-                {
-                    return default;
-                }
-
-                fieldState = new PropertyState(property);
-                _fieldStates.Add(fieldState);
-            }
-
-            return fieldState;
-        }
+            => FormState.GetPropertyState(property, createWhenNotFound);
 
         internal PropertyState? GetPropertyState(string propertyName)
-        {
-            return _fieldStates.SingleOrDefault(field => field.Property.PropertyName == propertyName);
-        }
-
-        private void ClearAllFieldStates()
-        {
-            _formState.ClearMessages();
-
-            foreach (var fieldState in _fieldStates)
-            {
-                fieldState.ClearMessages();
-            }
-        }
+            => FormState.GetPropertyState(propertyName);
 
         private void ValidateModel()
         {
-            var results = GetValidationResultsForModel();
+            FormState.ValidateModel();
 
-            foreach (var result in results)
-            {
-                var strayError = true;
-
-                result.MemberNames.ForEach(name =>
-                {
-                    GetPropertyState(name)?.AddMessage(result.ErrorMessage);
-                    strayError = false;
-                });
-
-                if (strayError)
-                {
-                    _formState.AddMessage(result.ErrorMessage);
-                }
-            }
-
-            _fieldStates.ForEach(x => x.WasValidated = true);
-
-            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !HasValidationMessages()));
+            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !FormState.GetValidationMessages().Any()));
         }
 
         private void ValidateProperty(IPropertyMetadata property)
         {
-            IEnumerable<ValidationResult> results;
+            FormState.ValidateProperty(property);
 
-            // when a property must be validated which is not part of the entity (like a nested object)
-            // validate the complete model, but only keep the results of that property
-            if (Entity.GetType().GetProperty(property.PropertyName) == null)
-            {
-                results = GetValidationResultsForModel().Where(x => x.MemberNames.Contains(property.PropertyName));
-            }
-            else
-            {
-                results = GetValidationResultsForProperty(property);
-            }
-
-            var state = GetPropertyState(property)!;
-            state.ClearMessages();
-            state.WasValidated = true;
-
-            foreach (var result in results)
-            {
-                state.AddMessage(result.ErrorMessage);
-            }
-
-            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !HasValidationMessages()));
-        }
-
-        private IEnumerable<ValidationResult> GetValidationResultsForProperty(IPropertyMetadata property)
-        {
-            var results = new List<ValidationResult>();
-            var context = new ValidationContext(Entity, _serviceProvider, null)
-            {
-                MemberName = property.PropertyName
-            };
-
-            try
-            {
-                // even though this says Try, and therefore it should not throw an error, IT DOES when a given property is not part of Entity
-                Validator.TryValidateProperty(property.Getter(Entity), context, results);
-            }
-            catch { }
-
-            foreach (var result in DataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(Entity, _serviceProvider)))
-            {
-                results.Add(result);
-            }
-
-            return results;
-        }
-
-        private IEnumerable<ValidationResult> GetValidationResultsForModel()
-        {
-            var context = new ValidationContext(Entity, _serviceProvider, null);
-            var results = new List<ValidationResult>();
-
-            try
-            {
-                // even though this says Try, and therefore it should not throw an error, IT DOES when a given property is not part of Entity
-                Validator.TryValidateObject(Entity, context, results, true);
-            }
-            catch { }
-
-            ClearAllFieldStates();
-
-            _fieldStates
-                .Where(kv => kv.IsBusy)
-                .ForEach(kv => results.Add(new ValidationResult(
-                    $"The {kv.Property.PropertyName} field indicates it is performing an asynchronous task which must be awaited.",
-                    new[] { kv.Property.PropertyName })));
-
-            foreach (var result in DataProviders.SelectMany(p => p.Validate(Entity, _serviceProvider)))
-            {
-                results.Add(result);
-            }
-
-            return FlattenCompositeValidationResults(results);
-        }
-
-        private IEnumerable<ValidationResult> FlattenCompositeValidationResults(IEnumerable<ValidationResult> results, string? memberNamePrefix = null)
-        {
-            foreach (var result in results)
-            {
-                if (result is CompositeValidationResult composite)
-                {
-                    foreach (var nestedResult in FlattenCompositeValidationResults(composite.Results, composite.MemberName))
-                    {
-                        yield return nestedResult;
-                    }
-                }
-                else if (string.IsNullOrWhiteSpace(memberNamePrefix))
-                {
-                    yield return result;
-                }
-                else
-                {
-                    yield return new ValidationResult(result.ErrorMessage, result.MemberNames.Select(x => $"{memberNamePrefix}{x}"));
-                }
-            }
+            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !FormState.GetValidationMessages().Any()));
         }
     }
 }

@@ -9,13 +9,21 @@ namespace RapidCMS.Core.Abstractions.Data
         int Take { get; }
         string? SearchTerm { get; }
 
+        int? ActiveTab { get; }
+
+        /// <summary>
+        /// Call this method to indicate whether there is more data for the next page
+        /// </summary>
+        /// <param name="hasMoreData"></param>
         void HasMoreData(bool hasMoreData);
 
-        bool MoreDataAvailable { get; }
-    }
+        void SetDataView(IDataView dataView);
 
-    public interface IQuery<TEntity> : IQuery
-    {
+        /// <summary>
+        /// True when the repository has called HasModeData(true)
+        /// </summary>
+        bool MoreDataAvailable { get; }
+
         /// <summary>
         /// Gets the active dataview selected by the user. Use ApplyDataView to apply the QueryExpression to your IQueryable.
         /// 
@@ -29,7 +37,10 @@ namespace RapidCMS.Core.Abstractions.Data
         /// Use this property to determine what the active order by instructions are, when your repository does not support IQueryable.
         /// </summary>
         IEnumerable<IOrderBy> ActiveOrderBys { get; }
+    }
 
+    public interface IQuery<TEntity> : IQuery
+    {
         /// <summary>
         /// Method that applies the effective data view selected by the user. 
         /// </summary>

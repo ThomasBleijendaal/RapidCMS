@@ -16,11 +16,11 @@ namespace RapidCMS.Core.Services.Concurrency
 
         public async Task EnsureCorrectConcurrencyAsync(Func<Task> function)
         {
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync().ConfigureAwait(false);
 
             try
             {
-                await function.Invoke();
+                await function.Invoke().ConfigureAwait(false);
             }
             finally
             {
@@ -30,11 +30,11 @@ namespace RapidCMS.Core.Services.Concurrency
 
         public async Task<T> EnsureCorrectConcurrencyAsync<T>(Func<Task<T>> function)
         {
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync().ConfigureAwait(false);
 
             try
             {
-                return await function.Invoke();
+                return await function.Invoke().ConfigureAwait(false);
             }
             finally
             {

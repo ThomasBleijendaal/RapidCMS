@@ -7,8 +7,8 @@ namespace RapidCMS.UI.Components
 {
     public abstract class EditContextComponentBase : ComponentBase, IDisposable
     {
-        [CascadingParameter(Name = "EditContext")] private EditContext CascadedEditContext { get; set; }
-        protected EditContext EditContext { get; set; }
+        [CascadingParameter(Name = "EditContext")] private EditContext CascadedEditContext { get; set; } = default!;
+        protected EditContext EditContext { get; set; } = default!;
 
         public override Task SetParametersAsync(ParameterView parameters)
         {

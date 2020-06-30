@@ -63,6 +63,7 @@
 
     public void Dispose()
     {
+        State = null;
         NavigationState.LocationChanged -= OnLocationChanged;
     }
 

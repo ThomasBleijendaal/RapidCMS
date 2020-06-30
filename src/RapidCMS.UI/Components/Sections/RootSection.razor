@@ -1,5 +1,6 @@
 ﻿@inherits BaseRootSection
 
+@if (!StateIsChanging) {
 @if (CurrentState?.PageType == PageType.Node)
 {
     @if (EditContext == null)
@@ -93,4 +94,5 @@ else if (CurrentState?.PageType == PageType.Unauthorized)
 else if (CurrentState?.PageType == PageType.Error)
 {
     <ErrorSection />
+}
 }

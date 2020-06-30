@@ -11,6 +11,8 @@ namespace RapidCMS.Core.Services.Exceptions
 
         public void StoreException(Exception ex)
         {
+            Console.WriteLine(ex);
+
             OnException?.Invoke(default, ex);
 
             _ex = ex ?? throw new ArgumentNullException(nameof(ex));

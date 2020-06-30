@@ -63,6 +63,7 @@ else
         try
         {
             UI = await TreeService.GetCollectionAsync(CollectionAlias, ParentPath);
+
             NodesVisible = UI?.DefaultOpenEntities ?? false;
         }
         catch (Exception ex)

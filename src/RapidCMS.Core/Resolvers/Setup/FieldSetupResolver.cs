@@ -16,7 +16,6 @@ namespace RapidCMS.Core.Resolvers.Setup
                 throw new ArgumentNullException(nameof(collection));
             }
 
-            // TODO: move logic out of constructors?
             return new ResolvedSetup<FieldSetup>(config switch
             {
                 _ when config.EditorType == EditorType.Custom && config.Property != null => new CustomPropertyFieldSetup(config, config.CustomType!),

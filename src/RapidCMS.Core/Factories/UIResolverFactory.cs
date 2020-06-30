@@ -62,7 +62,7 @@ namespace RapidCMS.Core.Factories
                 throw new InvalidOperationException($"Failed to get UI configuration from collection {collectionAlias} for action {usageType}");
             }
 
-            IListUIResolver listUI = new ListUIResolver(list, collection, _dataProviderResolver, _dataViewResolver, _buttonActionHandlerResolver, _authService, _httpContextAccessor);
+            IListUIResolver listUI = new ListUIResolver(list, _dataProviderResolver, _dataViewResolver, _buttonActionHandlerResolver, _authService, _httpContextAccessor);
 
             return Task.FromResult(listUI);
         }

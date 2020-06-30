@@ -3,7 +3,8 @@
     public enum CollectionConvention
     {
         ListView = 1,
-        ListViewNodeEditor = 2,
-        ListEditor = 3
+        ListViewNodeView = 2,
+        ListViewNodeEditor = 3,
+        ListEditor = 4
     }
 }

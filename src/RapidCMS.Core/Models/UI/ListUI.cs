@@ -6,7 +6,6 @@ using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.UI
 {
-    // TODO: constructor?
     public class ListUI
     {
         public ListType ListType { get; internal set; }
@@ -20,8 +19,7 @@ namespace RapidCMS.Core.Models.UI
         public int PageSize { get; internal set; }
         public bool SearchBarVisible { get; internal set; }
         public bool Reorderable { get; internal set; }
-
-        // TODO: join with unique fields?
+        
         public IEnumerable<IOrderBy>? OrderBys => CommonFields?
             .Where(x => x.OrderByExpression != null)
             .Select(x => new OrderBy(x.SortDescending, x.OrderByExpression!, x.Property, x.Expression));

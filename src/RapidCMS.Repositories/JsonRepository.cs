@@ -23,17 +23,27 @@ namespace RapidCMS.Repositories
                     Directory.CreateDirectory(Folder());
                 }
 
-                var fileContents = File.ReadAllText(JsonFileName());
-                if (!string.IsNullOrWhiteSpace(fileContents))
+                lock (_lock)
                 {
-                    _data = JsonConvert.DeserializeObject<Dictionary<string, List<TEntity>>>(fileContents);
+                    var dataFileContents = File.ReadAllText(DataJsonFileName());
+                    if (!string.IsNullOrWhiteSpace(dataFileContents))
+                    {
+                        _data = JsonConvert.DeserializeObject<Dictionary<string, List<TEntity>>>(dataFileContents);
+                    }
+
+                    var relationsFileContents = File.ReadAllText(RelationsJsonFileName());
+                    if (!string.IsNullOrWhiteSpace(relationsFileContents))
+                    {
+                        _relations = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(relationsFileContents);
+                    }
                 }
             }
             catch
             {
                 try
                 {
-                    File.Delete(JsonFileName());
+                    File.Delete(DataJsonFileName());
+                    File.Delete(RelationsJsonFileName());
                 }
                 catch { }
             }
@@ -46,17 +56,20 @@ namespace RapidCMS.Repositories
             return "./bin/";
         }
 
-        private static string JsonFileName()
-        {
-            return $"{Folder()}{typeof(TEntity).FullName}.json";
-        }
+        private static string DataJsonFileName() => $"{Folder()}{typeof(TEntity).FullName}.json";
+        private static string RelationsJsonFileName() => $"{Folder()}{typeof(TEntity).FullName}.relations.json";
+
+        private static object _lock = new object();
 
         private void UpdateJson(object? obj)
         {
             try
             {
-                var json = JsonConvert.SerializeObject(_data);
-                File.WriteAllText(JsonFileName(), json);
+                lock (_lock)
+                {
+                    File.WriteAllText(DataJsonFileName(), JsonConvert.SerializeObject(_data));
+                    File.WriteAllText(RelationsJsonFileName(), JsonConvert.SerializeObject(_relations));
+                }
             }
             catch { }
 

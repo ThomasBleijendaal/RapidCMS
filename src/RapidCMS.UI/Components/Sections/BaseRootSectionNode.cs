@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using RapidCMS.Core.Forms;
-using RapidCMS.Core.Models.Request;
+using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.UI.Models;
 
@@ -20,7 +20,7 @@ namespace RapidCMS.UI.Components.Sections
                     throw new InvalidOperationException();
                 }
 
-                var editContext = await PresentationService.GetEntityAsync(new GetEntityRequestModel
+                var editContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, EditContext>(new GetEntityRequestModel
                 {
                     CollectionAlias = CurrentState.CollectionAlias,
                     Id = CurrentState.Id,

@@ -29,6 +29,9 @@ namespace RapidCMS.UI.Components.Sections
 
         [Parameter] public bool IsRoot { get; set; }
         [Parameter] public PageStateModel InitialState { get; set; } = default!;
+
+        protected bool StateIsChanging { get; set; } = false;
+
         protected PageStateModel CurrentState => PageState.GetCurrentState()!;
 
         protected IEnumerable<ButtonUI>? Buttons { get; set; }
@@ -84,6 +87,8 @@ namespace RapidCMS.UI.Components.Sections
 
         private async Task LoadDataAsync(IEnumerable<string>? entityIds = null)
         {
+            StateIsChanging = true;
+
             if (CurrentState?.PageType == PageType.Node)
             {
                 await LoadNodeDataAsync();
@@ -100,6 +105,8 @@ namespace RapidCMS.UI.Components.Sections
             {
                 await LoadPageDataAsync();
             }
+
+            StateIsChanging = false;
         }
 
         protected void HandleException(Exception ex)

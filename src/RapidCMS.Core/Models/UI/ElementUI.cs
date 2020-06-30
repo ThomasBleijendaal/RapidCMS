@@ -13,5 +13,19 @@ namespace RapidCMS.Core.Models.UI
 
         public Func<object, EntityState, bool> IsVisible { get; private set; }
         public Func<object, EntityState, bool> IsDisabled { get; private set; }
+
+        internal UsageType SupportsUsageType { get; set; }
+
+        public UsageType FindSupportedUsageType(UsageType requestedUsageType)
+        {
+            if (SupportsUsageType.HasFlag(requestedUsageType))
+            {
+                return requestedUsageType;
+            }
+            else
+            {
+                return SupportsUsageType;
+            }
+        }
     }
 }

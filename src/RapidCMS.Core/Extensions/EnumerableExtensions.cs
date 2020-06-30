@@ -24,7 +24,7 @@ namespace RapidCMS.Core.Extensions
 
             foreach (var element in source.Select(asyncSelector))
             {
-                result.Add(await element);
+                result.Add(await element.ConfigureAwait(false));
             }
 
             return result;
@@ -36,7 +36,7 @@ namespace RapidCMS.Core.Extensions
 
             foreach (var element in source)
             {
-                result.Add(await element);
+                result.Add(await element.ConfigureAwait(false));
             }
 
             return result;
@@ -73,7 +73,7 @@ namespace RapidCMS.Core.Extensions
         {
             foreach (var element in source)
             {
-                if (await conditionalCast.Invoke(element) is TResult result)
+                if (await conditionalCast.Invoke(element).ConfigureAwait(false) is TResult result)
                 {
                     yield return result;
                 }
@@ -84,6 +84,24 @@ namespace RapidCMS.Core.Extensions
             where T : class
         {
             return sources.Where(x => x != null).SelectMany(x => x);
+        }
+
+        public static IEnumerable<TResult> RecursiveSelect<TSource, TSeed, TResult>(this IEnumerable<TSource> source, TSeed seed, Func<TSource, TSeed, (TSeed, TResult)> walkFunction)
+        {
+            var previous = seed;
+            foreach (var element in source)
+            {
+                var (newPrevious, result) = walkFunction.Invoke(element, previous);
+                previous = newPrevious;
+                yield return result;
+            }
+        }
+
+        public static T? GetTypeFromList<T>(this IEnumerable<object> elements)
+            where T : class
+        {
+            return elements
+                .FirstOrDefault(x => x.GetType().GetInterfaces().Any(i => i == typeof(T))) as T;
         }
 
         public class Group<TKey, TElement> : IGrouping<TKey, TElement>

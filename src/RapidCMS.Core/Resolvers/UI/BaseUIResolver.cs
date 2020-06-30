@@ -40,7 +40,7 @@ namespace RapidCMS.Core.Resolvers.UI
                 {
                     var handler = _buttonActionHandlerResolver.GetButtonActionHandler(button);
                     if (handler.IsCompatible(button, editContext) && 
-                        await _authService.IsUserAuthorizedAsync(editContext, button))
+                        await _authService.IsUserAuthorizedAsync(editContext, button).ConfigureAwait(false))
                     {
                         return new ButtonUI(handler, button, editContext);
                     }
@@ -49,7 +49,7 @@ namespace RapidCMS.Core.Resolvers.UI
                         return default;
                     }
                 })
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
 
         protected internal async Task<SectionUI> GetSectionUIAsync(PaneSetup pane, EditContext editContext)
@@ -77,7 +77,7 @@ namespace RapidCMS.Core.Resolvers.UI
 
             return new SectionUI(pane.IsVisible)
             {
-                Buttons = await GetButtonsAsync(pane.Buttons, editContext),
+                Buttons = await GetButtonsAsync(pane.Buttons, editContext).ConfigureAwait(false),
                 CustomType = pane.CustomType,
                 Label = pane.Label,
 

@@ -1,7 +1,11 @@
 ﻿@inherits Microsoft.AspNetCore.Components.LayoutComponentBase
 
 <div class="login">
-    @if (CustomLoginScreen != null)
+    @if (Body != null)
+    {
+        @Body
+    }
+    else if (CustomLoginScreen != null)
     {
         @CustomLoginScreen
     }

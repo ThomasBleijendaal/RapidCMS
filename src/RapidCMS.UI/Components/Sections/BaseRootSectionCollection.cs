@@ -8,7 +8,7 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs;
-using RapidCMS.Core.Models.Request;
+using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.UI.Models;
@@ -114,7 +114,7 @@ namespace RapidCMS.UI.Components.Sections
                     UsageType = CurrentState.UsageType
                 };
 
-            var listContext = await PresentationService.GetEntitiesAsync(request);
+            var listContext = await PresentationService.GetEntitiesAsync<GetEntitiesRequestModel, ListContext>(request);
 
             await SetSectionsAsync(listContext);
 
@@ -139,6 +139,11 @@ namespace RapidCMS.UI.Components.Sections
 
         private async Task SetSectionsAsync(ListContext listContext)
         {
+            if (UIResolver == null)
+            {
+                return;
+            }
+
             Sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
         }
 
@@ -151,9 +156,9 @@ namespace RapidCMS.UI.Components.Sections
 
             var newSections = await Sections.ToListAsync(async x =>
             {
-                if (reloadEntityIds.Contains(x.editContext.Entity.Id))
+                if (reloadEntityIds.Contains<string>(x.editContext.Entity.Id!))
                 {
-                    var reloadedEditContext = await PresentationService.GetEntityAsync(new GetEntityRequestModel
+                    var reloadedEditContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, EditContext>(new GetEntityRequestModel
                     {
                         CollectionAlias = x.editContext.CollectionAlias,
                         Id = x.editContext.Entity.Id,

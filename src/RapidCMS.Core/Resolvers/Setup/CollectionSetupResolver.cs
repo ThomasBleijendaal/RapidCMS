@@ -6,7 +6,6 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
-using RapidCMS.Core.Models.Config.Convention;
 using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
@@ -103,6 +102,8 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             var cacheable = true;
 
+            collection.Collections = _treeElementResolver.ResolveSetup(config.CollectionsAndPages, collection).CheckIfCachable(ref cacheable).ToList();
+
             collection.EntityVariant = _entityVariantResolver.ResolveSetup(config.EntityVariant, collection).CheckIfCachable(ref cacheable);
             if (config.SubEntityVariants.Any())
             {
@@ -116,8 +117,6 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             collection.NodeView = config.NodeView == null ? null : _nodeResolver.ResolveSetup(config.NodeView, collection).CheckIfCachable(ref cacheable);
             collection.NodeEditor = config.NodeEditor == null ? null : _nodeResolver.ResolveSetup(config.NodeEditor, collection).CheckIfCachable(ref cacheable);
-
-            collection.Collections = _treeElementResolver.ResolveSetup(config.CollectionsAndPages, collection).CheckIfCachable(ref cacheable).ToList();
 
             return new ResolvedSetup<CollectionSetup>(collection, cacheable);
         }

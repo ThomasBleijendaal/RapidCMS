@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\RapidCMS.Repositories\RapidCMS.Repositories.csproj" />
+    <ProjectReference Include="..\..\src\RapidCMS.UI\RapidCMS.UI.csproj" />
+    <ProjectReference Include="..\RapidCMS.Example.Shared\RapidCMS.Example.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

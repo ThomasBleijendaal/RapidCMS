@@ -7,16 +7,18 @@ namespace RapidCMS.Core.Models.Config.Convention
     internal class ConventionListViewConfig<TEntity> : ListConfig, IIsConventionBased
         where TEntity : IEntity
     {
-        public ConventionListViewConfig(bool canGoToNodeEditor) : base(typeof(TEntity))
+        public ConventionListViewConfig(bool canGoToNodeEditor, bool canGoToNodeView) : base(typeof(TEntity))
         {
             CanGoToNodeEditor = canGoToNodeEditor;
+            CanGoToNodeView = canGoToNodeView;
         }
 
         public bool CanGoToNodeEditor { get; }
+        public bool CanGoToNodeView { get; }
 
         public Features GetFeatures()
         {
-            return CanGoToNodeEditor ? Features.CanGoToEdit : Features.None;
+            return CanGoToNodeEditor ? Features.CanGoToEdit : CanGoToNodeView ? Features.CanGoToView : Features.None;
         }   
     }
 }
