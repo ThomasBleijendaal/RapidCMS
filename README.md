@@ -27,6 +27,11 @@ or browse the [Example Project](https://github.com/ThomasBleijendaal/RapidCMS/tr
 Since it is a bit hard to demonstrate a CMS on the internet without having the publicly accessible
 CMS be absolutely vandalised, [this page features some screenshots displaying the features that are currently supported](SCREENSHOTS.md).
 
+## Demo
+
+A demo of the WebAssembly variant of the CMS (running the 3.0 beta) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
+This uses a repository that saves its data to the local storage of the browser.
+
 ---
 
 ## Simple collection
