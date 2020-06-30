@@ -22,15 +22,15 @@ fully replace the default UI libary and only use the core of RapidCMS.
 7. Start building your CMS using by expanding `config => {}`. Read the introduction below to get a sense of what is possible,
 or browse the [Example Project](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/docs/RapidCMS.Example) to see all the options.
 
-## Screenshots
-
-Since it is a bit hard to demonstrate a CMS on the internet without having the publicly accessible
-CMS be absolutely vandalised, [this page features some screenshots displaying the features that are currently supported](SCREENSHOTS.md).
-
 ## Demo
 
 A demo of the WebAssembly variant of the CMS (running the 3.0 beta) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
-This uses a repository that saves its data to the local storage of the browser.
+This uses a repository that saves its data to the local storage of the browser. 
+
+## Screenshots
+
+The WebAssembly demo will be expanded, but until then [this page features some screenshots displaying the features that are currently supported](SCREENSHOTS.md).
+
 
 ---
 
