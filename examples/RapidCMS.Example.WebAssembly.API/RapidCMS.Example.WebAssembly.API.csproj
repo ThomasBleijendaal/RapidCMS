@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\RapidCMS.Api.WebApi\RapidCMS.Api.WebApi.csproj" />
+    <ProjectReference Include="..\RapidCMS.Example.Shared\RapidCMS.Example.Shared.csproj" />
+  </ItemGroup>
+
+
+</Project>

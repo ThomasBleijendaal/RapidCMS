@@ -11,17 +11,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Core", "RapidCMS.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Core.Tests", "RapidCMS.Core.Tests\RapidCMS.Core.Tests.csproj", "{23AF0F32-2AA6-45F3-8106-683BA6896118}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.Server", "..\docs\RapidCMS.Example.Server\RapidCMS.Example.Server.csproj", "{C208D591-422D-4F78-953B-B10D4D8E6AB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.Server", "..\examples\RapidCMS.Example.Server\RapidCMS.Example.Server.csproj", "{C208D591-422D-4F78-953B-B10D4D8E6AB6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{D5C8E316-AA29-4FB7-A99D-F1047DCC10BE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{D5C8E316-AA29-4FB7-A99D-F1047DCC10BE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FAEBCE99-5CCB-4BBF-AAF3-9CE51FABD871}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{A1ABBF0C-890B-43E6-AD6D-F1897CA205B6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.Shared", "..\docs\RapidCMS.Example.Shared\RapidCMS.Example.Shared.csproj", "{F8FDC033-2DE9-4336-8320-3DABD9FDA154}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.Shared", "..\examples\RapidCMS.Example.Shared\RapidCMS.Example.Shared.csproj", "{F8FDC033-2DE9-4336-8320-3DABD9FDA154}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.WebAssembly", "..\docs\RapidCMS.Example.WebAssembly\RapidCMS.Example.WebAssembly.csproj", "{9217968B-A732-4C71-A9B6-B3B2759F0829}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.WebAssembly", "..\examples\RapidCMS.Example.WebAssembly\RapidCMS.Example.WebAssembly.csproj", "{9217968B-A732-4C71-A9B6-B3B2759F0829}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{89191FB4-6106-4A7E-82B2-7A2577F67D07}"
 	ProjectSection(SolutionItems) = preProject
@@ -32,9 +32,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{89191FB4-6
 		..\SCREENSHOTS.md = ..\SCREENSHOTS.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.WebAssembly.API", "..\docs\RapidCMS.Example.WebAssembly.API\RapidCMS.Example.WebAssembly.API.csproj", "{55D3BA00-92BE-4E5A-92DC-232959C7B8D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.WebAssembly.API", "..\examples\RapidCMS.Example.WebAssembly.API\RapidCMS.Example.WebAssembly.API.csproj", "{55D3BA00-92BE-4E5A-92DC-232959C7B8D7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Api.WebApi", "RapidCMS.Api.WebApi\RapidCMS.Api.WebApi.csproj", "{184E1BAB-DA87-4E04-93F5-E69448B4562A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.Github", "..\examples\RapidCMS.Example.Github\RapidCMS.Example.Github.csproj", "{9776D10E-DC7E-4929-9800-25C5568E6497}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +80,10 @@ Global
 		{184E1BAB-DA87-4E04-93F5-E69448B4562A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{184E1BAB-DA87-4E04-93F5-E69448B4562A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{184E1BAB-DA87-4E04-93F5-E69448B4562A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9776D10E-DC7E-4929-9800-25C5568E6497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9776D10E-DC7E-4929-9800-25C5568E6497}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9776D10E-DC7E-4929-9800-25C5568E6497}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9776D10E-DC7E-4929-9800-25C5568E6497}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +98,7 @@ Global
 		{9217968B-A732-4C71-A9B6-B3B2759F0829} = {D5C8E316-AA29-4FB7-A99D-F1047DCC10BE}
 		{55D3BA00-92BE-4E5A-92DC-232959C7B8D7} = {D5C8E316-AA29-4FB7-A99D-F1047DCC10BE}
 		{184E1BAB-DA87-4E04-93F5-E69448B4562A} = {FAEBCE99-5CCB-4BBF-AAF3-9CE51FABD871}
+		{9776D10E-DC7E-4929-9800-25C5568E6497} = {D5C8E316-AA29-4FB7-A99D-F1047DCC10BE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A24D735F-6ECC-4089-B6BF-DB09B1FCB7D8}
