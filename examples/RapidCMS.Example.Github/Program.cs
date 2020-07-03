@@ -113,7 +113,7 @@ namespace RapidCMS.Example.Github
                                 section.AddField(x => x.Bio).SetType(EditorType.TextArea);
                             });
 
-                            editor.AddSection(typeof(SimplePersonCollection));
+                            editor.AddSection(typeof(SortPersonCollection));
                         });
                 });
 
