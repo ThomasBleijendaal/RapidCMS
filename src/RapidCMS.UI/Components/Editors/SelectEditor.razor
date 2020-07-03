@@ -3,7 +3,6 @@
 @if (Options != null)
 {
     var index = 0;
-    var group = Guid.NewGuid().ToString();
 
     var value = GetValueAsObject();
 
@@ -23,7 +22,7 @@
                                    name=@group
                                    checked=@(option.Id.Equals(value))
                                    disabled=@IsDisabled
-                                   @onchange=@(async args=> SetValueFromObject(option.Id)) />
+                                   @onchange=@(async args => SetValueFromObject(option.Id)) />
                             @option.Labels.First()
                         </label>
                     </div>
@@ -49,16 +48,15 @@
 }
 @code {
 
+    private string group = Guid.NewGuid().ToString().Replace("-", "");
+
     private IEnumerable<IElement>? Options;
 
     protected override async Task OnInitializedAsync()
     {
         if (DataCollection != null)
         {
-            DataCollection.OnDataChange += async (s, a) =>
-            {
-                await InvokeAsync(() => UpdateOptionsAsync());
-            };
+            DataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
 
             await DataCollection.SetEntityAsync(Entity, Parent);
             await UpdateOptionsAsync();
@@ -72,7 +70,10 @@
             return;
         }
 
-        Options = await DataCollection.GetAvailableElementsAsync();
-        StateHasChanged();
+        await InvokeAsync(async () =>
+        {
+            Options = await DataCollection.GetAvailableElementsAsync();
+            StateHasChanged();
+        });
     }
 }

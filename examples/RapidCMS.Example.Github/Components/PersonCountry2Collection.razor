@@ -1,0 +1,91 @@
+﻿@inherits RapidCMS.UI.Components.Sections.BaseSection
+
+<div class="content">
+    <pre>
+config.AddCollection&lt;CountryPerson, LocalStorageRepository&lt;CountryPerson>>("person-with-countries", "Person With Countries", collection =>
+{
+    collection
+        .SetTreeView(x => x.Name)
+        .SetListView(view =>
+        {
+            view.AddDefaultButton(DefaultButtonType.New);
+
+            view.AddRow(row =>
+            {
+                row.AddField(p => p.Id).SetName("ID");
+                row.AddField(p => p.Name);
+
+                row.AddDefaultButton(DefaultButtonType.Edit);
+            });
+        })
+        .SetNodeEditor(editor =>
+        {
+            editor.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+            editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
+
+            editor.AddDefaultButton(DefaultButtonType.Delete);
+
+            editor.AddSection(section =>
+            {
+                section.AddField(x => x.Id).SetType(EditorType.Readonly);
+                section.AddField(x => x.Name);
+                section.AddField(x => x.Email);
+
+                section.AddField(x => x.FavouriteCountryId1)
+                    .SetName("Favourite country (based on sub collection)")
+                    .SetType(EditorType.Select)
+                    .SetCollectionRelation&lt;Country, LocalStorageRepository&lt;Country>>(field =>
+                    {
+                        field.SetElementDisplayProperties(x => x.Name);
+                        field.SetElementIdProperty(x => x.Id);
+                        field.SetEntityAsParent();
+                    });
+
+                section.AddField(x => x.FavouriteCountryId2)
+                    .SetName("Favourite country (based on country collection)")
+                    .SetType(EditorType.Select)
+                    .SetCollectionRelation&lt;Country, LocalStorageRepository&lt;Country>>(field =>
+                    {
+                        field.SetElementDisplayProperties(x => x.Name);
+                        field.SetElementIdProperty(x => x.Id);
+                    });
+            });
+
+            editor.AddSection(section =>
+            {
+                section.AddField(x => x.Bio).SetType(EditorType.TextArea);
+            });
+
+            editor.AddSection(section =>
+            {
+                section.VisibleWhen((person, state) => state == EntityState.IsExisting);
+
+                section.AddSubCollectionList("countries-under-person");
+            });
+
+            editor.AddSection(typeof(PersonCountry2Collection));
+        });
+
+    collection.AddSubCollection&lt;Country, LocalStorageRepository&lt;Country>>("countries-under-person", "Countries", config =>
+    {
+        config.SetTreeView(EntityVisibilty.Hidden, x => x.Name);
+
+        config.SetListEditor(listEditor =>
+        {
+            listEditor.AddDefaultButton(DefaultButtonType.New);
+            listEditor.AddDefaultButton(DefaultButtonType.Return);
+
+            listEditor.AddSection(row =>
+            {
+                row.AddField(p => p.Id).SetType(DisplayType.Label);
+                row.AddField(p => p.Name);
+
+                row.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+                row.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
+                row.AddDefaultButton(DefaultButtonType.Delete);
+            });
+        });
+    });
+});
+</pre>
+</div>

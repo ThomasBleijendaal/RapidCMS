@@ -1,35 +1,115 @@
 ﻿@inherits RapidCMS.UI.Components.Sections.BaseSection
 
 <div class="content">
-    <p>Click on the collections on the left to explore the features of RapidCMS. 
-    The editor of each collection contains the required configuration to create the views and editors.</p>
+    <p>
+        Click on the collections on the left to explore the features of RapidCMS.
+        The editor of each collection contains the required configuration to create the views and editors.
+    </p>
 
     <p>To fully explore the complete code of this example, explore the "examples/RapidCMS.Example.Github" project.</p>
 
+    <p>
+        NOTE: The repositories backing these examples save their data in json objects in the local storage of your browser.
+        Because it's not a real database, some corners were cut to simulate some functionality. Therefore, do not use these
+        example repositories a base, but write them yourself from scratch by deriving from <code>BaseRepository</code> or
+        <code>BaseMappedRepository</code>.
+    </p>
+
+    <hr />
 
     <dl>
         <dt>Person</dt>
         <dd>Simple collection with a ListView and NodeEditor.</dd>
 
+        <dt>Sortable Person</dt>
+        <dd>
+            Same data source as person, but now the ListView supports reordering the data. A default sort can be configured to help
+            the user the first time they open the collection.
+        </dd>
+
         <dt>Country</dt>
         <dd>Simple collection with a ListEditor to directly edit each entity. A NodeView was provided to view the code required.</dd>
 
         <dt>Validation Person</dt>
-        <dd>Simple collection with a ListView and NodeEditor, but with an entity which has various validation attributes. RapidCMS supports
+        <dd>
+            Simple collection with a ListView and NodeEditor, but with an entity which has various validation attributes. RapidCMS supports
             built-in and custom validation attributes, so complex validation is possible. Using <code>[ValidateObject]</code> RapidCMS even goes
-            into nested objects and validate them too, which can be quite useful for OwnedObjects and such.</dd>
+            into nested objects and validate them too, which can be quite useful for OwnedObjects and such.
+        </dd>
 
-        <dt>Person With Countries</dt>
-        <dd>This collection demonstrates one of the key features of RapidCMS, and that is that this uses an inline defined sub collection
+        <dt>Person with Inline Countries</dt>
+        <dd>
+            This collection demonstrates one of the key features of RapidCMS, and that is that this uses an inline defined sub collection
             for countries that have a person as parent class. The Country repository saves these countries under each Person, so each
             Person has a seperate set of Countries. This is comparable to a one-to-many relation in which the sub objects are not shared
-            between the parents (like folders and files). </dd>
+            between the parents (like folders and files). The sub collection is also not available in the tree on the left, because it is
+            inline.
+        </dd>
 
         <dt>Recursive Person</dt>
-        <dd>It's also possible to define a collection as a sub-collection of itself, using <code>collection.AddSelfAsRecursiveCollection()</code>. This
-            enables for deep nesting of objects (like a file-system). This example uses a convention-based editor, so no configuration is required. 
-            The corresponding entity is annotated with <code>DisplayAttribute</code>s which specify which property should be visible.</dd>
+        <dd>
+            It's also possible to define a collection as a sub-collection of itself, using <code>collection.AddSelfAsRecursiveCollection()</code>. This
+            enables for deep nesting of objects (like a file-system), and the tree on the left also allows for deep navigation.
+            This example uses a convention-based editor, so no configuration is required. The corresponding entity is annotated with
+            <code>DisplayAttribute</code>s which specify which property should be visible.
+        </dd>
 
+        <dt>Person with Countries</dt>
+        <dd>
+            Just like "Person with Inline Countries", this collection consists of Person entities with Country sub-entities. But because
+            the country collection is defined as a real sub collection, it shows up in the tree and editors like dropdowns and selects
+            can be populated with data from those sub collections.
+        </dd>
 
+        <dt>Countries With Static Data Views</dt>
+        <dd>
+            Another useful feature is Data Views. These can be defined staticly (or in the next example dynamically) and are send to the
+            backing repository as an expression so they can be used in Entity Framework and executed on the database.
+        </dd>
+
+        <dt>Countries With Dynamic Data Views</dt>
+        <dd>
+            Dynamic Data Views require a <code>DataViewBuilder</code> which can generate the data views based on some logic you provide.
+            These can be really useful in making the CMS easy to use, and specific to your needs. The example returns a set of hardcoded
+            data views, but as DI is available for the builder, you can inject the db context and do some aggregate query to fetch a set
+            of useful views.
+        </dd>
+
+        <dt>Person With Relations</dt>
+        <dd>
+            This collection allows the user to add or remove Countries to a Person entity using a many-to-many relation. It contains
+            a multi-select allowing the user to pick multipe Countries.
+        </dd>
+
+        <dt>Person With Relations Collections</dt>
+        <dd>
+            This collection allows the user to add or remove Countries to a Person entity using a many-to-many relation. It contains
+            a relation collection list, which allows you to not only add or remove, but also create, update and delete Countries while
+            in the Person entity.
+        </dd>
+    </dl>
+
+    <hr />
+
+    <p>There are more features within RapidCMS:</p>
+
+    <dl>
+        <dt>Multiple sub collections</dt>
+        <dd>
+            There are no limits in RapidCMS for collection nesting, collections can contain multiple sub-collections, and sub-collections
+            can contain sub-collections. It's probably easier to create a very nested CMS that is incomprehensible than impossible.
+        </dd>
+
+        <dt>Multiple lists on a single page</dt>
+        <dd>
+            There are no limits in RapidCMS for adding and nesting lists. It's possible to add a ListEditor to each row of a ListEditor.
+            It could be useful, but it can easily make the CMS too complicated.
+        </dd>
+
+        <dt>Authentication &amp; authorization</dt>
+        <dd>
+            Both are supported and fully configurable, please read <a href="https://github.com/ThomasBleijendaal/RapidCMS/blob/master/AUTH.md">AUTH.md</a>
+            for more info.
+        </dd>
     </dl>
 </div>

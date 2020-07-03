@@ -1,0 +1,36 @@
+﻿@inherits RapidCMS.UI.Components.Sections.BaseSection
+
+<div class="content">
+    <pre>
+config.AddCollection&lt;Country, LocalStorageRepository&lt;Country>>("static-data-view-country", "Countries With Static Data Views", collection =>
+{
+    collection
+        .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
+        .AddDataView("Countries A-K", x => Regex.IsMatch(x.Name, "^[A-K]", RegexOptions.IgnoreCase))
+        .AddDataView("Countries L-Z", x => Regex.IsMatch(x.Name, "^[L-Z]", RegexOptions.IgnoreCase))
+        .SetListEditor(editor =>
+        {
+            editor.AddDefaultButton(DefaultButtonType.New);
+            editor.AddDefaultButton(DefaultButtonType.Return);
+
+            editor.AddSection(row =>
+            {
+                row.AddField(p => p.Id).SetType(DisplayType.Label);
+                row.AddField(p => p.Name);
+
+                row.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+                row.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
+                row.AddDefaultButton(DefaultButtonType.View, "View code");
+                row.AddDefaultButton(DefaultButtonType.Delete);
+            });
+
+        })
+        .SetNodeView(view =>
+        {
+            view.AddDefaultButton(DefaultButtonType.Up);
+
+            view.AddSection(typeof(SimpleCountryCollection));
+        });
+});
+</pre>
+</div>

@@ -77,14 +77,16 @@ namespace RapidCMS.Repositories
         {
             var ids = _relations.Where(x => x.Value.Contains(related.Entity.Id!)).Select(x => x.Key);
 
-            return Task.FromResult(_data.SelectMany(x => x.Value).Where(x => ids.Contains(x.Id!)))!;
+            // relations only work on the root collection (for simplicity)
+            return Task.FromResult(GetListForParent(default).Where(x => ids.Contains(x.Id!)))!;
         }
 
         public override Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TEntity> query)
         {
             var ids = _relations.Where(x => x.Value.Contains(related.Entity.Id!)).Select(x => x.Key);
 
-            return Task.FromResult(_data.SelectMany(x => x.Value).Where(x => !ids.Contains(x.Id!)))!;
+            // relations only work on the root collection (for simplicity)
+            return Task.FromResult(GetListForParent(default).Where(x => !ids.Contains(x.Id!)))!;
         }
 
         public override Task<TEntity?> GetByIdAsync(IRepositoryContext context, string id, IParent? parent)
@@ -188,10 +190,12 @@ namespace RapidCMS.Repositories
                     {
                         if (r.Property is IFullPropertyMetadata fp)
                         {
+                            // this is pretty ugly
                             var inMemoryRepo = _serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(r.RelatedEntity)) as IRepository;
                             var jsonRepo = _serviceProvider.GetService(typeof(JsonRepository<>).MakeGenericType(r.RelatedEntity)) as IRepository;
+                            var lsRepo = _serviceProvider.GetService(typeof(LocalStorageRepository<>).MakeGenericType(r.RelatedEntity)) as IRepository;
 
-                            var repo = inMemoryRepo ?? jsonRepo;
+                            var repo = inMemoryRepo ?? jsonRepo ?? lsRepo;
 
                             if (repo != null)
                             {

@@ -1,0 +1,60 @@
+﻿@inherits RapidCMS.UI.Components.Sections.BaseSection
+
+<div class="content">
+    <pre>
+config.AddCollection&lt;RelatablePerson, LocalStorageRepository&lt;RelatablePerson>>("person-relation", "Person With Relations", collection =>
+{
+    collection
+        .SetTreeView(x => x.Name)
+        .SetListView(view =>
+        {
+            view.AddDefaultButton(DefaultButtonType.New);
+
+            view.AddRow(row =>
+            {
+                row.AddField(p => p.Id).SetName("ID");
+                row.AddField(p => p.Name);
+
+                row.AddDefaultButton(DefaultButtonType.Edit);
+            });
+        })
+        .SetNodeEditor(editor =>
+        {
+            editor.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+            editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
+
+            editor.AddDefaultButton(DefaultButtonType.Delete);
+
+            editor.AddSection(section =>
+            {
+                section.AddField(x => x.Id).SetType(EditorType.Readonly);
+                section.AddField(x => x.Name);
+                section.AddField(x => x.Email);
+            });
+
+            editor.AddSection(section =>
+            {
+                section.AddField(x => x.Bio).SetType(EditorType.TextArea);
+            });
+
+            editor.AddSection(section =>
+            {
+                section.VisibleWhen((entity, state) => state == EntityState.IsExisting);
+
+                section.AddField(x => x.Countries)
+                    .SetType(EditorType.MultiSelect)
+                    .SetCollectionRelation&lt;Country, string>(
+                        countries => countries.Select(x => x.Id),
+                        "country",
+                        relation =>
+                        {
+                            relation.SetElementDisplayProperties(x => x.Name);
+                            relation.SetElementIdProperty(x => x.Id);
+                        });
+            });
+
+            editor.AddSection(typeof(PersonCountry3Collection));
+        });
+});
+</pre>
+</div>

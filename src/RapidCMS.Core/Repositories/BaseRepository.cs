@@ -182,10 +182,12 @@ namespace RapidCMS.Core.Repositories
         async Task IRepository.AddAsync(IRepositoryContext context, IRelated related, string id)
         {
             await AddAsync(context, related, id).ConfigureAwait(false);
+            NotifyUpdate();
         }
         async Task IRepository.RemoveAsync(IRepositoryContext context, IRelated related, string id)
         {
             await RemoveAsync(context, related, id).ConfigureAwait(false);
+            NotifyUpdate();
         }
 
         async Task IRepository.ReorderAsync(IRepositoryContext context, string? beforeId, string id, IParent? parent)

@@ -25,11 +25,16 @@ namespace RapidCMS.Repositories
 
         private async Task InitializationTaskAsync()
         {
-            var storage = await _localStorage.GetItemAsync<Dictionary<string, List<TEntity>>>(GetType().FullName);
-
-            if (storage != null)
+            var dataStorage = await _localStorage.GetItemAsync<Dictionary<string, List<TEntity>>>(GetType().FullName);
+            if (dataStorage != null)
             {
-                _data = storage;
+                _data = dataStorage;
+            }
+
+            var relationStorage = await _localStorage.GetItemAsync<Dictionary<string, List<string>>>($"{GetType().FullName}-relation");
+            if (relationStorage != null)
+            {
+                _relations = relationStorage;
             }
 
             UpdateStorageAsync(null);
@@ -40,6 +45,7 @@ namespace RapidCMS.Repositories
             try
             {
                 await _localStorage.SetItemAsync(GetType().FullName, _data);
+                await _localStorage.SetItemAsync($"{GetType().FullName}-relation", _relations);
             }
             catch { }
 

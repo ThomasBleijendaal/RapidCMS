@@ -124,7 +124,7 @@ public class Person : IEntity, ICloneable
 After that change, the project should be able to build, and if we hit `F5` the following
 UI should appear:
 
-![CMS](docs/images/docs1.png)
+![CMS](examples/images/docs1.png)
 
 Okay, it's something, but a lot of stuff is still missing. But let's go over what the current code
 is doing, and then continue on making the CMS work correctly.
@@ -226,12 +226,12 @@ config.AddCollection<Person>("person", "Person", collection =>
 
 Much better:
 
-![CMS](docs/images/docs2.png)
+![CMS](examples/images/docs2.png)
 
 As you can see, I have taken the liberty to add a `NodeEditor`, so you there is a proper
 editor set up for editing an entity:
 
-![CMS](docs/images/docs3.png)
+![CMS](examples/images/docs3.png)
 
 ### Buttons
 
@@ -274,19 +274,19 @@ the primary screens which can be used to create your own CMS with.
 
 #### ListView
 
-![CMS](docs/images/listview.png)
+![CMS](examples/images/listview.png)
 
 #### ListEditor
 
-![CMS](docs/images/listeditor.png)
+![CMS](examples/images/listeditor.png)
 
 #### NodeView
 
-![CMS](docs/images/nodeview.png)
+![CMS](examples/images/nodeview.png)
 
 #### NodeEditor
 
-![CMS](docs/images/nodeeditor.png)
+![CMS](examples/images/nodeeditor.png)
 
 ---
 
@@ -333,7 +333,7 @@ collection which all use the same repository. Only the `collectionAlias` of each
 
 ## ListView features
 
-![CMS](docs/images/listview.png)
+![CMS](examples/images/listview.png)
 
 A `ListView` is a table, by which you can specify what the columns of the table should be, what buttons should be usable at the
 top of the table, and at each row. Furthermore, it is possible to specify whether the search bar should be visible, and what kind of
@@ -341,21 +341,21 @@ data views should be used.
 
 ## ListEditor features
 
-![CMS](docs/images/listeditor.png)
+![CMS](examples/images/listeditor.png)
 
 A `ListEditor` is quite similar to a `ListView`, but in the list editor each column of the table is a form field, so its easy to
 edit multiple entities at once.
 
 ## NodeEditor / NodeView features
 
-![CMS](docs/images/nodeeditor.png)
+![CMS](examples/images/nodeeditor.png)
 
 A `NodeEditor` is a page which displays a form for editing a entity. A node editor can consist of mulitple sections, so you can
 logically group related entities, or have specific specialisations for various entity subtypes. Using `.VisibleWhen` on sections or
 editors, it's possible to show or hide editors or sections based what the user inputs. Using `.DisabledWhen` allows you to configure
 when editors are disabled.
 
-![CMS](docs/images/nodeview.png)
+![CMS](examples/images/nodeview.png)
 
 A `NodeView` is similar to its editor counterpart, but in the view everything is readonly and cannot be edited.
 

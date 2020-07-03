@@ -3,7 +3,6 @@
 @if (Options != null && SelectedOptions != null)
 {
     var index = 0;
-    var group = Guid.NewGuid().ToString();
 
     <div class="form-control form-control-select-list @(CssHelper.GetValidationClass(State))">
         @foreach (var option in Options)
@@ -51,6 +50,8 @@
 }
 @code {
 
+    private string group = Guid.NewGuid().ToString().Replace("-", "");
+
     private IEnumerable<IElement>? Options;
     private IEnumerable<IElement>? SelectedOptions;
 
@@ -58,10 +59,7 @@
     {
         if (RelationDataCollection != null)
         {
-            RelationDataCollection.OnDataChange += async (s, a) =>
-            {
-                await InvokeAsync(() => UpdateOptionsAsync());
-            };
+            RelationDataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
 
             await RelationDataCollection.SetEntityAsync(Entity, Parent);
             await UpdateOptionsAsync();
@@ -77,8 +75,11 @@
             return;
         }
 
-        Options = await RelationDataCollection.GetAvailableElementsAsync();
-        StateHasChanged();
+        await InvokeAsync(async () =>
+        {
+            Options = await RelationDataCollection.GetAvailableElementsAsync();
+            StateHasChanged();
+        });
     }
 
     private async Task OnChangeAsync(ChangeEventArgs e, object value)

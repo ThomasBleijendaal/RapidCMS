@@ -1,0 +1,70 @@
+﻿@inherits RapidCMS.UI.Components.Sections.BaseSection
+
+<div class="content">
+    <pre>
+config.AddCollection&lt;RelatablePerson, LocalStorageRepository&lt;RelatablePerson>>("person-relation-collection", "Person With Relations Collection", collection =>
+{
+    collection
+        .SetTreeView(x => x.Name)
+        .SetListView(view =>
+        {
+            view.AddDefaultButton(DefaultButtonType.New);
+
+            view.AddRow(row =>
+            {
+                row.AddField(p => p.Id).SetName("ID");
+                row.AddField(p => p.Name);
+
+                row.AddDefaultButton(DefaultButtonType.Edit);
+            });
+        })
+        .SetNodeEditor(editor =>
+        {
+            editor.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+            editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
+
+            editor.AddDefaultButton(DefaultButtonType.Delete);
+
+            editor.AddSection(section =>
+            {
+                section.AddField(x => x.Id).SetType(EditorType.Readonly);
+                section.AddField(x => x.Name);
+                section.AddField(x => x.Email);
+            });
+
+            editor.AddSection(section =>
+            {
+                section.AddField(x => x.Bio).SetType(EditorType.TextArea);
+            });
+
+            editor.AddSection(section =>
+            {
+                section.VisibleWhen((entity, state) => state == EntityState.IsExisting);
+                section.AddRelatedCollectionList&lt;Country, LocalStorageRepository&lt;Country>>(relation =>
+                {
+                    relation.SetListEditor(listEditor =>
+                    {
+                        listEditor.AddDefaultButton(DefaultButtonType.Return);
+                        listEditor.AddDefaultButton(DefaultButtonType.Add);
+                        listEditor.AddDefaultButton(DefaultButtonType.New);
+
+                        listEditor.AddSection(row =>
+                        {
+                            row.AddField(p => p.Id).SetType(DisplayType.Label);
+                            row.AddField(p => p.Name);
+
+                            row.AddDefaultButton(DefaultButtonType.Pick, isPrimary: true);
+                            row.AddDefaultButton(DefaultButtonType.Remove, isPrimary: true);
+                            row.AddDefaultButton(DefaultButtonType.SaveExisting);
+                            row.AddDefaultButton(DefaultButtonType.SaveNew);
+                            row.AddDefaultButton(DefaultButtonType.Delete);
+                        });
+                    });
+                });
+            });
+
+            editor.AddSection(typeof(PersonCountry4Collection));
+        });
+});
+</pre>
+</div>

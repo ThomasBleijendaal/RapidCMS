@@ -1,0 +1,44 @@
+﻿@inherits RapidCMS.UI.Components.Sections.BaseSection
+
+<div class="content">
+    <pre>
+config.AddCollection&lt;Country, LocalStorageRepository&lt;Country>>("dynamic-data-view-country", "Countries With Dynamic Data Views", collection =>
+{
+    collection
+        .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
+        .SetDataViewBuilder&lt;CountryDataViewBuilder>()
+        .SetListEditor(editor =>
+        {
+            editor.AddDefaultButton(DefaultButtonType.New);
+            editor.AddDefaultButton(DefaultButtonType.Return);
+
+            editor.AddSection(row =>
+            {
+                row.AddField(p => p.Id).SetType(DisplayType.Label);
+                row.AddField(p => p.Name);
+
+                row.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+                row.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
+                row.AddDefaultButton(DefaultButtonType.View, "View code");
+                row.AddDefaultButton(DefaultButtonType.Delete);
+            });
+
+        })
+        .SetNodeView(view =>
+        {
+            view.AddDefaultButton(DefaultButtonType.Up);
+
+            view.AddSection(typeof(SimpleCountryCollection));
+        });
+});
+</pre>
+    <pre>
+internal class CountryDataViewBuilder : DataViewBuilder&lt;Country>
+{   
+    public override Task&lt;IEnumerable&lt;DataView&lt;Country>>> GetDataViewsAsync()
+    {
+        return Task.FromResult(Enumerable.Range(1, 10).Select(index => new DataView&lt;Country>(index, $"{index}-letter country", x => x.Name.Length == index)));
+    }
+}
+</pre>
+</div>
