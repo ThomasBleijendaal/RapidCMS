@@ -6,12 +6,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="obj\**" />
+    <Compile Remove="publish\**" />
+    <Content Remove="obj\**" />
+    <Content Remove="publish\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <EmbeddedResource Remove="publish\**" />
+    <None Remove="obj\**" />
+    <None Remove="publish\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\thoma\.nuget\packages\rapidcms.ui\3.0.1-beta\contentFiles\any\netstandard2.1\obj\Release\netstandard2.1\staticwebassets\RapidCMS.UI.StaticWebAssets.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.0" PrivateAssets="all" />
-    <PackageReference Include="RapidCMS.Repositories" Version="3.0.1-beta" />
-    <PackageReference Include="RapidCMS.UI" Version="3.0.1-beta" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\RapidCMS.Repositories\RapidCMS.Repositories.csproj" />
+    <ProjectReference Include="..\..\src\RapidCMS.UI\RapidCMS.UI.csproj" />
   </ItemGroup>
 
 </Project>

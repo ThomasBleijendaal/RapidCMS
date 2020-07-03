@@ -1,0 +1,35 @@
+﻿@inherits RapidCMS.UI.Components.Sections.BaseSection
+
+<div class="content">
+    <p>Click on the collections on the left to explore the features of RapidCMS. 
+    The editor of each collection contains the required configuration to create the views and editors.</p>
+
+    <p>To fully explore the complete code of this example, explore the "examples/RapidCMS.Example.Github" project.</p>
+
+
+    <dl>
+        <dt>Person</dt>
+        <dd>Simple collection with a ListView and NodeEditor.</dd>
+
+        <dt>Country</dt>
+        <dd>Simple collection with a ListEditor to directly edit each entity. A NodeView was provided to view the code required.</dd>
+
+        <dt>Validation Person</dt>
+        <dd>Simple collection with a ListView and NodeEditor, but with an entity which has various validation attributes. RapidCMS supports
+            built-in and custom validation attributes, so complex validation is possible. Using <code>[ValidateObject]</code> RapidCMS even goes
+            into nested objects and validate them too, which can be quite useful for OwnedObjects and such.</dd>
+
+        <dt>Person With Countries</dt>
+        <dd>This collection demonstrates one of the key features of RapidCMS, and that is that this uses an inline defined sub collection
+            for countries that have a person as parent class. The Country repository saves these countries under each Person, so each
+            Person has a seperate set of Countries. This is comparable to a one-to-many relation in which the sub objects are not shared
+            between the parents (like folders and files). </dd>
+
+        <dt>Recursive Person</dt>
+        <dd>It's also possible to define a collection as a sub-collection of itself, using <code>collection.AddSelfAsRecursiveCollection()</code>. This
+            enables for deep nesting of objects (like a file-system). This example uses a convention-based editor, so no configuration is required. 
+            The corresponding entity is annotated with <code>DisplayAttribute</code>s which specify which property should be visible.</dd>
+
+
+    </dl>
+</div>

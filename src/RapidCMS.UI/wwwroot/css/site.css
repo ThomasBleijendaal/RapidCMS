@@ -370,7 +370,6 @@ a.current-page {
 
 pre.col-form-label {
     height: auto !important;
-    padding: .5rem;
 }
 
 .input-group-prepend *, .input-group-append * {
@@ -408,11 +407,11 @@ table td {
         text-align: right;
     }
 
-    table tr[draggable=true] td {
-        cursor: grab;
-        /*width: 10px;*/
-        /*background: repeating-linear-gradient( -45deg, #ced4da, #ced4da 2px, #fff 2px, #fff 4px );*/
-    }
+table tr[draggable=true] td {
+    cursor: grab;
+    /*width: 10px;*/
+    /*background: repeating-linear-gradient( -45deg, #ced4da, #ced4da 2px, #fff 2px, #fff 4px );*/
+}
 
 table tr.dragged td {
     background: #ccc;
@@ -429,6 +428,7 @@ table tr.dropover td {
 
 pre {
     background: #f0f0f0;
+    padding: .5rem;
 }
 
 .pagination {

@@ -18,13 +18,15 @@ namespace RapidCMS.Core.Models.UI
 
         public UsageType FindSupportedUsageType(UsageType requestedUsageType)
         {
-            if (SupportsUsageType.HasFlag(requestedUsageType))
+            if (requestedUsageType.HasFlag(SupportsUsageType))
             {
                 return requestedUsageType;
             }
             else
             {
-                return SupportsUsageType;
+                // The SupportUsageType is only Edit or View, so remove those from requested type and add the supported
+                // so it won't mess with Node / List UsageTypes
+                return (requestedUsageType & ~(UsageType.Edit | UsageType.View)) | SupportsUsageType;
             }
         }
     }

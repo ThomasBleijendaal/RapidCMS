@@ -21,10 +21,11 @@ namespace RapidCMS.Core.Resolvers.Convention
                     var displayAttribute = property.GetCustomAttribute<DisplayAttribute>();
                     if (displayAttribute != null)
                     {
-                        if (features.HasFlag(Features.CanEdit) || !string.IsNullOrEmpty(displayAttribute.ShortName))
+                        if ((features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(displayAttribute.Name)) || 
+                            (!features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(displayAttribute.ShortName)))
                         {
                             return (property, displayAttribute);
-                        }
+                        }   
                     }
 
                     return default;

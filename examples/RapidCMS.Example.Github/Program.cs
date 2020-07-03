@@ -1,8 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Enums;
+using RapidCMS.Example.Github.Components;
+using RapidCMS.Example.Github.Entities;
 using RapidCMS.Repositories;
 
 namespace RapidCMS.Example.Github
@@ -18,10 +21,15 @@ namespace RapidCMS.Example.Github
 
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddScoped<LocalStorageRepository<Person>>();
+            builder.Services.AddScoped<LocalStorageRepository<Country>>();
+            builder.Services.AddScoped<LocalStorageRepository<ValidationPerson>>();
+            builder.Services.AddScoped<LocalStorageRepository<ConventionPerson>>();
 
             builder.Services.AddRapidCMSWebAssembly(config =>
             {
                 config.AllowAnonymousUser();
+
+                config.Dashboard.AddSection(typeof(Dashboard));
 
                 config.AddCollection<Person, LocalStorageRepository<Person>>("person", "Person", collection =>
                 {
@@ -33,7 +41,7 @@ namespace RapidCMS.Example.Github
 
                             view.AddRow(row =>
                             {
-                                row.AddField(p => p.Id.ToString()).SetName("ID");
+                                row.AddField(p => p.Id).SetName("ID");
                                 row.AddField(p => p.Name);
 
                                 row.AddDefaultButton(DefaultButtonType.Edit);
@@ -57,7 +65,149 @@ namespace RapidCMS.Example.Github
                             {
                                 section.AddField(x => x.Bio).SetType(EditorType.TextArea);
                             });
+
+                            editor.AddSection(typeof(SimplePersonCollection));
                         });
+                });
+
+                config.AddCollection<Country, LocalStorageRepository<Country>>("country", "Countries", collection =>
+                {
+                    collection
+                        .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
+                        .SetListEditor(editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.New);
+                            editor.AddDefaultButton(DefaultButtonType.Return);
+
+                            editor.AddSection(row =>
+                            {
+                                row.AddField(p => p.Id).SetType(DisplayType.Label);
+                                row.AddField(p => p.Name);
+
+                                row.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+                                row.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
+                                row.AddDefaultButton(DefaultButtonType.View, "View code");
+                                row.AddDefaultButton(DefaultButtonType.Delete);
+                            });
+
+                        })
+                        .SetNodeView(view =>
+                        {
+                            view.AddDefaultButton(DefaultButtonType.Up);
+
+                            view.AddSection(typeof(SimpleCountryCollection));
+                        });
+                });
+
+                config.AddCollection<ValidationPerson, LocalStorageRepository<ValidationPerson>>("validation-person", "Validation Person", collection =>
+                {
+                    collection
+                        .SetTreeView(x => x.Name)
+                        .SetListView(view =>
+                        {
+                            view.AddDefaultButton(DefaultButtonType.New);
+
+                            view.AddRow(row =>
+                            {
+                                row.AddField(p => p.Id).SetName("ID");
+                                row.AddField(p => p.Name);
+
+                                row.AddDefaultButton(DefaultButtonType.Edit);
+                            });
+                        })
+                        .SetNodeEditor(editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+                            editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
+
+                            editor.AddDefaultButton(DefaultButtonType.Delete);
+
+                            editor.AddSection(section =>
+                            {
+                                section.AddField(x => x.Id).SetType(EditorType.Readonly);
+                                section.AddField(x => x.Name);
+                                section.AddField(x => x.Email);
+                            });
+
+                            editor.AddSection(section =>
+                            {
+                                section.AddField(x => x.Bio).SetType(EditorType.TextArea);
+                            });
+
+                            editor.AddSection(typeof(SimplePersonCollection));
+                        });
+                });
+
+                config.AddCollection<Person, LocalStorageRepository<Person>>("person-with-countries", "Person With Countries", collection =>
+                {
+                    collection
+                        .SetTreeView(x => x.Name)
+                        .SetListView(view =>
+                        {
+                            view.AddDefaultButton(DefaultButtonType.New);
+
+                            view.AddRow(row =>
+                            {
+                                row.AddField(p => p.Id).SetName("ID");
+                                row.AddField(p => p.Name);
+
+                                row.AddDefaultButton(DefaultButtonType.Edit);
+                            });
+                        })
+                        .SetNodeEditor(editor =>
+                        {
+                            editor.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+                            editor.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
+
+                            editor.AddDefaultButton(DefaultButtonType.Delete);
+
+                            editor.AddSection(section =>
+                            {
+                                section.AddField(x => x.Id).SetType(EditorType.Readonly);
+                                section.AddField(x => x.Name);
+                                section.AddField(x => x.Email);
+                            });
+
+                            editor.AddSection(section =>
+                            {
+                                section.AddField(x => x.Bio).SetType(EditorType.TextArea);
+                            });
+
+                            editor.AddSection(section =>
+                            {
+                                section.VisibleWhen((person, state) => state == EntityState.IsExisting);
+
+                                section.AddSubCollectionList<Country, LocalStorageRepository<Country>>(subCollection =>
+                                {
+                                    subCollection.SetListEditor(listEditor =>
+                                    {
+                                        listEditor.AddDefaultButton(DefaultButtonType.New);
+                                        listEditor.AddDefaultButton(DefaultButtonType.Return);
+
+                                        listEditor.AddSection(row =>
+                                        {
+                                            row.AddField(p => p.Id).SetType(DisplayType.Label);
+                                            row.AddField(p => p.Name);
+
+                                            row.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
+                                            row.AddDefaultButton(DefaultButtonType.SaveNew, isPrimary: true);
+                                            row.AddDefaultButton(DefaultButtonType.Delete);
+                                        });
+                                    });
+                                });
+                            });
+
+                            editor.AddSection(typeof(PersonCountryCollection));
+                        });
+                });
+
+                config.AddCollection<ConventionPerson, LocalStorageRepository<ConventionPerson>>("recursive-person", "Recursive Person", collection =>
+                {
+                    collection
+                        .SetTreeView(x => x.Name)
+                        .ConfigureByConvention(CollectionConvention.ListViewNodeEditor);
+
+                    collection.AddSelfAsRecursiveCollection();
                 });
             });
 

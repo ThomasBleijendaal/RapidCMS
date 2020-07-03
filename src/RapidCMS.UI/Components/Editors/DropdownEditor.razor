@@ -62,8 +62,11 @@
             return;
         }
 
-        Options = await DataCollection.GetAvailableElementsAsync();
-        StateHasChanged();
+        await InvokeAsync(async () =>
+        {
+            Options = await DataCollection.GetAvailableElementsAsync();
+            StateHasChanged();
+        });
     }
 
     private void OnChange(ChangeEventArgs args)

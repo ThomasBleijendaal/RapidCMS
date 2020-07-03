@@ -12,7 +12,7 @@ namespace RapidCMS.Core.Resolvers.Setup
         {
             return new ResolvedSetup<RelatedCollectionListSetup>(new RelatedCollectionListSetup(config.Index, config.CollectionAlias)
             {
-                SupportsUsageType = (collection?.ListEditor != null ? UsageType.Edit : 0) | (collection?.ListView != null ? UsageType.View : 0)
+                SupportsUsageType = (config?.ListEditor != null ? UsageType.Edit : 0) | (config?.ListView != null ? UsageType.View : 0)
             }, true);
         }
     }
