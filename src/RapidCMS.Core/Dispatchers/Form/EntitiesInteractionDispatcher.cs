@@ -71,7 +71,10 @@ namespace RapidCMS.Core.Dispatchers.Form
                     {
                         throw new InvalidOperationException($"Button of type {CrudType.Create} must have an EntityVariant.");
                     }
-                    if (response is ListViewCommandResponseModel)
+
+                    var currentState = pageState.GetCurrentState();
+
+                    if (response is ListViewCommandResponseModel || ShouldFallbackToNavigatingToNodeEditor(collection, currentState))
                     {
                         pageState.PushState(new PageStateModel
                         {
@@ -85,8 +88,6 @@ namespace RapidCMS.Core.Dispatchers.Form
                     }
                     else
                     {
-                        var currentState = pageState.GetCurrentState();
-
                         pageState.PushState(new PageStateModel
                         {
                             PageType = PageType.Collection,
@@ -205,6 +206,11 @@ namespace RapidCMS.Core.Dispatchers.Form
             await _buttonInteraction.CompleteButtonInteractionAsync(request).ConfigureAwait(false);
 
             return response;
+        }
+
+        private static bool ShouldFallbackToNavigatingToNodeEditor(ICollectionSetup collection, PageStateModel? currentState)
+        {
+            return currentState?.UsageType == (UsageType.Node | UsageType.Edit) && collection.ListEditor == null && collection.NodeEditor != null;
         }
     }
 }

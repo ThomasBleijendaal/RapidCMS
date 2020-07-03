@@ -63,6 +63,7 @@ namespace RapidCMS.Core.Resolvers.Convention
                 {
                     result.Panes.Add(new PaneConfig(subject)
                     {
+                        IsVisible = (entity, state) => state == EntityState.IsExisting,
                         SubCollectionLists = new List<CollectionListConfig>
                         {
                             new CollectionListConfig(subCollection.Alias)
