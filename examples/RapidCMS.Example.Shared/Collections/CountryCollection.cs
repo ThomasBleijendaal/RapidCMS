@@ -21,7 +21,7 @@ namespace RapidCMS.Example.Shared.Collections
                         view.AddDefaultButton(DefaultButtonType.New);
 
                         view.SetPageSize(10);
-
+                        
                         view
                             .AddRow(row =>
                             {

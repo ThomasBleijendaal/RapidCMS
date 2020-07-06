@@ -1,15 +1,18 @@
 ﻿@inherits RapidCMS.UI.Components.Sections.BaseSection
 
 <div class="content">
-<pre>
+    <pre>
 config.AddCollection&lt;Country, LocalStorageRepository&lt;Country>>("country", "Countries", collection =>
 {
     collection
         .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
         .SetListEditor(editor =>
         {
+            editor.AllowReordering(true);
+
             editor.AddDefaultButton(DefaultButtonType.New);
             editor.AddDefaultButton(DefaultButtonType.Return);
+            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
 
             editor.AddSection(row =>
             {

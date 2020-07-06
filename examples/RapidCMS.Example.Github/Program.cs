@@ -123,8 +123,11 @@ namespace RapidCMS.Example.Github
                         .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
                         .SetListEditor(editor =>
                         {
+                            editor.AllowReordering(true);
+
                             editor.AddDefaultButton(DefaultButtonType.New);
                             editor.AddDefaultButton(DefaultButtonType.Return);
+                            editor.AddDefaultButton(DefaultButtonType.SaveExisting);
 
                             editor.AddSection(row =>
                             {

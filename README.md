@@ -1,6 +1,7 @@
 # RapidCMS
 
 [![#](https://img.shields.io/nuget/vpre/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
+[![#](https://img.shields.io/nuget/v/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
 
 RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS
 purely from code. It provides a basic set of editors and controls, next to allowing building your own blazor components
@@ -11,21 +12,61 @@ Since RapidCMS runs as an element within your ASP.NET Core application, you have
 authentication, authorization, additional endpoints like Api controllers, Mvc controllers, and Razor pages. You can even
 fully replace the default UI libary and only use the core of RapidCMS.
 
+## Demo
+
+A demo of the WebAssembly variant of the CMS (running the 3.0 beta) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
+This uses a repository that saves its data to the local storage of the browser. 
+
 ## TL:DR;
+
+### Server-side RapidCMS
 
 1. Create a new ASP.NET Core Blazor Server-App project.
 2. Install NuGet-package: `RapidCMS.UI`.
 3. Add `services.AddRapidCMS(config => { config.AllowAnonymousUser(); })` at the end of `ConfigureServices` in `Startup.cs`.
 4. Replace the `<Router>` in `App.razor` with `<RapidCMS.UI.Components.Router.RapidCmsRouter />`.
-5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `_Host.cshtml` with `<link href="_content/rapidcms.ui/css/site.css" rel="stylesheet" />` and remove any other css. Add `<script src="_framework/blazor.server.js"></script>` at the end of the body tag.
+5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `_Host.cshtml` with `<link href="_content/RapidCMS.UI/css/site.css" rel="stylesheet" />` and remove any other css. Add `<script src="_content/rapidcms.ui/js/interop.js"></script>` at the end of the body tag.
 6. Hit `F5`: you're now running a completely empty RapidCMS instance. 
-7. Start building your CMS using by expanding `config => {}`. Read the introduction below to get a sense of what is possible,
-or browse the [Example Project](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/docs/RapidCMS.Example) to see all the options.
+7. Start building your CMS by expanding `config => {}`. Read the introduction below to get a sense of what is possible,
+or browse the [Examples](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/examples) to see all the options.
 
-## Demo
+### Client-side RapidCMS
 
-A demo of the WebAssembly variant of the CMS (running the 3.0 beta) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
-This uses a repository that saves its data to the local storage of the browser. 
+1. Create new ASP.NET Core Blazor WebAssembly project.
+2. Install NuGet-package: `RapidCMS.UI`.
+3. Add `builder.Services.AddAuthorizationCore();` and `builder.Services.AddRapidCMSWebAssembly(config => { config.AllowAnonymousUser(); })` before the last line of `Main` in `Program.cs`.
+4. Replace the contents of `App.razor` with `<RapidCMS.UI.Components.Router.RapidCmsRouter />`.
+5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `index.html` with `<link href="_content/RapidCMS.UI/css/site.css" rel="stylesheet" />` and remove any other css.
+6. Hit `F5`: you're now running a completely empty RapidCMS instance.
+7. Start building your CMS by expanding `config => {}`. Read the introduction below to get a sense of what is possible,
+or browse the [Examples](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/examples) to see all the options.
+
+### Companion API for client-side RapidCMS (optional)
+
+1. Create a new ASP.NET Core Api project.
+2. Install NuGet-package: `RapidCMS.Api.WebApi` and `Microsoft.AspNetCore.Mvc.NewtonsoftJson`.
+3. Add the following block of code to `ConfigureServices` in `Startup.cs`:
+
+```c#
+services.AddRapidCMSApi(config => {});
+services
+    .AddControllers(config =>
+    {
+        // to allow for automatic setup of the repository controllers, the route convention must be added here
+        config.Conventions.AddRapidCMSRouteConvention();
+    })
+    .AddNewtonsoftJson()
+    .ConfigureApplicationPartManager(configure =>
+    {
+        // and for each route convention a controller should be added the feature provider
+        configure.FeatureProviders.AddRapidCMSControllerFeatureProvider();
+    });
+```
+
+4. Hit `F5`: you're now running a completely empty RapidCMS companion Api instance.
+5. Start building your CMS Api by expanding `config => {}`. [Explore the examples](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/examples/RapidCMS.Example.WebAssembly.API)
+to get a sense on how to build such Api and get it working with your RapidCMS WebAssembly instance.
+
 
 ---
 
@@ -540,7 +581,7 @@ the collection which provides the related entities, in this case the country col
 how the related elements should be displayed in the editor. 
 
 In contrast to the one-to-many case, the backing field is an expression which only gets a value, but does not allow to set the value.
-In order to make it possible to save which entities are selected, the `IRelationContainer` in the `InsertAsync` or `UpdateAsync` methods on
+In order to make it possible to save which entities are selected, the relation container of the `editContext` in the `InsertAsync` or `UpdateAsync` methods on
 the `IRepository` contain the selected entities. An example of how this container can be used can be seen in the following code:
 
 ```c#
@@ -548,13 +589,13 @@ public class PersonRepository
 {
     // [..]
 
-    public override async Task UpdateAsync(int id, IParent? parent, PersonEntity entity, IRelationContainer? relations)
+    public override async Task UpdateAsync(IRepositoryContext context, IEditContext<Person> editContext)
     {
         // this example uses ef core
-        var dbEntity = await _dbContext.Persons.Include(x => x.Countries).FirstOrDefaultAsync(x => x.Id == id);
+        var dbEntity = await _dbContext.Persons.Include(x => x.Countries).FirstOrDefaultAsync(x => x.Id == editContext.Entity.Id);
 
         // get the related entities from the editor by using the type of the related entites, and the type of its id
-        var newCountries = relations.GetRelatedElementIdsFor<CountryEntity, int>();
+        var newCountries = editContext.GetRelationContainer().GetRelatedElementIdsFor<CountryEntity, int>();
 
         // check if existed on the editor
         if (newCountries != null) 
@@ -566,7 +607,7 @@ public class PersonRepository
             }
 
             // add entities which are now selected
-            foreach (var countryId in newCountries.Where(id => !dbEntity.Countries.Select(x => x.CountryId.Value).Contains(id)).ToList())
+            foreach (var countryId in newCountries.Where(id => !dbEntity.Countries.Select(x => x.CountryId.Value).Contains(editContext.Entity.Id)).ToList())
             {
                 dbEntity.Countries.Add(new PersonCountryEntity { CountryId = countryId });
             }
@@ -586,7 +627,7 @@ You can add data views to a collection, which results in tabs at the top of the 
 create multiple views to your collection, so the user can find an entity more easily. You add them by calling `.AddDataView` on
 your collection:
 
-```
+```c#
 collection
     .AddDataView("All", x => true)
     .AddDataView("Even IDs", x => x.Id % 2 == 0)
@@ -594,13 +635,43 @@ collection
 ```
 
 The query expression of the selected data view is given to your `IRepository` in the `IQuery<T>` parameter of the `GetAllAsync` method
-(and `GetAllRelatedAsync` and `GetAllNonRelatedAsync` as well).
+(and `GetAllRelatedAsync` and `GetAllNonRelatedAsync` as well). It can be easily applied to your queryable by calling `ApplyDataView`.
+
+## Sortable columns
+
+If you configure a column in a List to be sortable, users can easily reorder the list:
+
+```c#
+row.AddField(p => p.Name).SetOrderByExpression(p => p.Name, OrderByType.Ascending);
+```
+
+You can specify its default ordering, and the expression on how this column must be sorted. This expression will be applied to your
+queryable in the repository by calling `ApplyOrder` on the `IQuery<T>` object in the `GetAllAsync`, `GetAllRelatedAsync` and `GetAllNonRelatedAsync`
+methods. The expression will be applied using by calling `OrderBy` or `OrderByDescending`, and because its applied as an expression, it
+can be converted to sql and executed in the database.
 
 ## Search
 
-Just as data views, the users search term is passed into your `IRepository` via the `IQuery<T>` parameter of the `GetAllAsync` method.
-The `SearchTerm` is a nullable string, so first check whether the users is searching for something, and then implement your own search
-algorithm. 
+Just as data views, the users search term is passed into your `IRepository` via the `IQuery<T>` parameter of the `GetAllAsync` (and 
+`GetAllRelatedAsync` and `GetAllNonRelatedAsync` as well) method. The `SearchTerm` is a nullable string, so first check whether the users 
+is searching for something, and then implement your own search algorithm. 
+
+## Reordering data
+
+If you configure a ListEditor to allow reordering, users can modify the order in which the data is stored in the database:
+
+```c#
+collection
+    // [..]
+    .SetListEditor(editor =>
+    {
+        editor.AllowReordering(true);
+        // [..]
+    });
+```
+
+The repository backing this collection must implement `ReorderAsync`, and this method will receive the id of the entity that must be reordered,
+and the id of the entity it should be inserted before. 
 
 ## Implementing a repository
 
@@ -612,6 +683,8 @@ TL;DR:
 2. Attach it to a collection using `collection.SetRepository<YourRepo>()`.
 
 When you want to support Relations, override these four virtual methods: `GetAllRelatedAsync`, `GetAllNonRelatedAsync`, `AddAsync`, and `RemoveAsync`.
+
+When you want to support Reordering, override `ReorderAsync`.
 
 ### Some best practices (not exhaustive)
 

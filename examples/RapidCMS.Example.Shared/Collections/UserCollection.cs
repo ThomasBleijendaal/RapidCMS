@@ -21,6 +21,8 @@ namespace RapidCMS.Example.Shared.Collections
                     .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
                     .SetListEditor(editor =>
                     {
+                        editor.AllowReordering(true);
+
                         // you can control the number of entities on a single page
                         editor.SetPageSize(20);
 
