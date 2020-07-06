@@ -83,7 +83,8 @@ namespace RapidCMS.Core.Dispatchers.Form
 
                             CollectionAlias = request.ListContext.CollectionAlias,
                             VariantAlias = entityVariant.Alias,
-                            ParentPath = request.ListContext.Parent?.GetParentPath()
+                            ParentPath = request.ListContext.Parent?.GetParentPath(),
+                            Related = request.Related
                         });
                     }
                     else
@@ -93,15 +94,17 @@ namespace RapidCMS.Core.Dispatchers.Form
                             PageType = PageType.Collection,
                             UsageType = UsageType.New,
 
+
                             CollectionAlias = request.ListContext.CollectionAlias,
                             VariantAlias = entityVariant.Alias,
                             ParentPath = request.ListContext.Parent?.GetParentPath(),
+                            Related = request.Related,
 
                             // is this the best place here?
                             ActiveTab = currentState?.ActiveTab,
                             CurrentPage = currentState?.CurrentPage ?? 1,
                             MaxPage = currentState?.MaxPage,
-                            SearchTerm = currentState?.SearchTerm,
+                            SearchTerm = currentState?.SearchTerm
                         });
                     }
                     break;
