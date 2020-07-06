@@ -690,8 +690,8 @@ When you want to support Reordering, override `ReorderAsync`.
 
 - *Always* return entities from entity framework DbSet with `.AsNoTracking()`.
 - *Always* support all the features from `IQuery<T>`; that is supporting `Skip` and `Take` for paginating, calling `MoreDataAvailable` and pass in
-a `true` when there is more, and a `false` when there is not. Furthermore, support searching by checking `SearchTerm` and always use the `DataViewExpression` 
-when it is set.
+a `true` when there is more, and a `false` when there is not. Furthermore, support searching by checking `SearchTerm`, and always `ApplyDataView` and `ApplyOrder`
+to your `IQueryable<T>` that you build in your repository to fetch the data.
 - Use `IMessageService` to send messages to the user when an entity has been saved etc.
 
 ## Creating custom editors
