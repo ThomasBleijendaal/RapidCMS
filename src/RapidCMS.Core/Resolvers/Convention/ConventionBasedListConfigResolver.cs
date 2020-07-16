@@ -31,6 +31,11 @@ namespace RapidCMS.Core.Resolvers.Convention
                 {
                     ButtonType = DefaultButtonType.Return
                 });
+                listButtons.Add(new DefaultButtonConfig
+                {
+                    ButtonType = DefaultButtonType.SaveExisting,
+                    Label = "Update all"
+                });
             };
             var paneButtons = new List<ButtonConfig>();
             if (features.HasFlag(Features.CanGoToView))
