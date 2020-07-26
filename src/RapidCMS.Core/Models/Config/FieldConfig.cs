@@ -139,7 +139,7 @@ namespace RapidCMS.Core.Models.Config
                 throw new InvalidOperationException("Cannot add CollectionRelation to Editor with no support for RelationType.One / RelationType.Many");
             }
 
-            var config = new CollectionRelationConfig<TEntity, TRelatedEntity>(collectionAlias);
+            var config = new RepositoryRelationConfig<TEntity, TRelatedEntity>(collectionAlias);
 
             configure.Invoke(config);
 
@@ -156,7 +156,7 @@ namespace RapidCMS.Core.Models.Config
                 throw new InvalidOperationException("Cannot add CollectionRelation to Editor with no support for RelationType.One / RelationType.Many");
             }
 
-            var config = new CollectionRelationConfig<TEntity, TRelatedEntity>(typeof(TRelatedRepository));
+            var config = new RepositoryRelationConfig<TEntity, TRelatedEntity>(typeof(TRelatedRepository));
 
             configure.Invoke(config);
 
@@ -174,7 +174,7 @@ namespace RapidCMS.Core.Models.Config
             }
 
             var relatedElementsGetter = PropertyMetadataHelper.GetPropertyMetadata(relatedElements);
-            var config = new CollectionRelationConfig<TEntity, TRelatedEntity>(collectionAlias, relatedElementsGetter ?? throw new InvalidExpressionException(nameof(relatedElements)));
+            var config = new RepositoryRelationConfig<TEntity, TRelatedEntity>(collectionAlias, relatedElementsGetter ?? throw new InvalidExpressionException(nameof(relatedElements)));
 
             configure.Invoke(config);
 
@@ -192,7 +192,7 @@ namespace RapidCMS.Core.Models.Config
             }
 
             var relatedElementsGetter = PropertyMetadataHelper.GetPropertyMetadata(relatedElements);
-            var config = new CollectionRelationConfig<TEntity, TRelatedEntity>(typeof(TRelatedRepository), relatedElementsGetter ?? throw new InvalidExpressionException(nameof(relatedElements)));
+            var config = new RepositoryRelationConfig<TEntity, TRelatedEntity>(typeof(TRelatedRepository), relatedElementsGetter ?? throw new InvalidExpressionException(nameof(relatedElements)));
 
             configure.Invoke(config);
 

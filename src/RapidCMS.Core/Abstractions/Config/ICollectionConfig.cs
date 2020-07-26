@@ -11,6 +11,8 @@ namespace RapidCMS.Core.Abstractions.Config
     {
         IEnumerable<ITreeElementConfig> CollectionsAndPages { get; }
 
+        IEnumerable<Type> RepositoryTypes { get; }
+
         bool Recursive { get; }
     }
 

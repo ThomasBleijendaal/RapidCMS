@@ -4,13 +4,13 @@ namespace RapidCMS.Core.Models.Data
 {
     internal class ParentEntity : IParent
     {
-        private readonly string _collectionAlias;
+        private readonly string _repositoryAlias;
 
-        public ParentEntity(IParent? parent, IEntity entity, string collectionAlias)
+        public ParentEntity(IParent? parent, IEntity entity, string repositoryAlias)
         {
             Parent = parent;
             Entity = entity;
-            _collectionAlias = collectionAlias;
+            _repositoryAlias = repositoryAlias;
         }
 
         public IParent? Parent { get; }
@@ -18,7 +18,7 @@ namespace RapidCMS.Core.Models.Data
 
         public ParentPath? GetParentPath()
         {
-            return ParentPath.AddLevel(Parent?.GetParentPath(), _collectionAlias, Entity.Id!);
+            return ParentPath.AddLevel(Parent?.GetParentPath(), _repositoryAlias, Entity.Id!);
         }
     }
 }

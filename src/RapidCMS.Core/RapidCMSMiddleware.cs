@@ -16,11 +16,9 @@ using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Dispatchers;
 using RapidCMS.Core.Dispatchers.Form;
 using RapidCMS.Core.Factories;
-using RapidCMS.Core.Forms;
 using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Interactions;
 using RapidCMS.Core.Models.Config;
-using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Resolvers.Buttons;
@@ -83,6 +81,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IButtonActionHandlerResolver, ButtonActionHandlerResolver>();
             services.AddTransient<IDataProviderResolver, DataProviderResolver>();
             services.AddTransient<IRepositoryResolver, RepositoryResolver>();
+            services.AddSingleton<IRepositoryTypeResolver, CmsRepositoryTypeResolver>();
 
             services.AddTransient<IPresentationDispatcher, GetEntityDispatcher>();
             services.AddTransient<IPresentationDispatcher, GetEntitiesDispatcher>();

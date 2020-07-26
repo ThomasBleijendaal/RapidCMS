@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Models.Config;
@@ -7,20 +7,12 @@ namespace RapidCMS.Core.Models.Setup
 {
     internal class CmsSetup : ICms, ILogin
     {
-        private readonly ISetupResolver<IPageSetup> _pageResolver;
-        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
-        private readonly ISetupResolver<IEnumerable<ITreeElementSetup>> _treeElementsResolver;
         private readonly ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig> _typeRegistrationSetupResolver;
 
-        public CmsSetup(CmsConfig config,
-            ISetupResolver<IPageSetup> pageResolver,
-            ISetupResolver<ICollectionSetup> collectionResolver,
-            ISetupResolver<IEnumerable<ITreeElementSetup>> treeElementsResolver,
+        public CmsSetup(
+            CmsConfig config,
             ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig> typeRegistrationSetupResolver)
         {
-            _pageResolver = pageResolver;
-            _collectionResolver = collectionResolver;
-            _treeElementsResolver = treeElementsResolver;
             _typeRegistrationSetupResolver = typeRegistrationSetupResolver;
 
             // TODO: resolve?

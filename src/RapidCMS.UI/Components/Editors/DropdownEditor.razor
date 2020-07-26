@@ -8,7 +8,7 @@
             value="@SelectedIndex">
         @if (IsNullable)
         {
-            <option value="-1"></option>
+            <option value="-1">&nbsp;</option>
         }
         @foreach (var (option, index) in Options.Select((o, i) => (o, i)))
         {
@@ -40,7 +40,7 @@
 
             var value = GetValueAsObject();
 
-            await DataCollection.SetEntityAsync(Entity, Parent);
+            await DataCollection.SetEntityAsync(EditContext, Parent);
             await UpdateOptionsAsync();
 
             var list = Options?.ToList();

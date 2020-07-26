@@ -3,22 +3,28 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
-using RapidCMS.Core.Repositories;
 using RapidCMS.Core.Validators;
 
 namespace RapidCMS.Core.Resolvers.Data
 {
     internal class DataProviderResolver : IDataProviderResolver
     {
+        private readonly ISetupResolver<ICollectionSetup> _collectionSetupResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IMemoryCache _memoryCache;
         private readonly IServiceProvider _serviceProvider;
 
-        public DataProviderResolver(IRepositoryResolver repositoryResolver, IMemoryCache memoryCache, IServiceProvider serviceProvider)
+        public DataProviderResolver(
+            ISetupResolver<ICollectionSetup> collectionSetupResolver,
+            IRepositoryResolver repositoryResolver,
+            IMemoryCache memoryCache,
+            IServiceProvider serviceProvider)
         {
+            _collectionSetupResolver = collectionSetupResolver;
             _repositoryResolver = repositoryResolver;
             _memoryCache = memoryCache;
             _serviceProvider = serviceProvider;
@@ -33,21 +39,20 @@ namespace RapidCMS.Core.Resolvers.Data
 
             switch (propertyField.Relation)
             {
-                case CollectionRelationSetup collectionRelation:
+                case RepositoryRelationSetup collectionRelation:
 
-                    var repo = collectionRelation.RelatedRepositoryType != null
-                        ? _repositoryResolver.GetRepository(collectionRelation.RelatedRepositoryType)
-                        : collectionRelation.CollectionAlias != null
-                        ? _repositoryResolver.GetRepository(collectionRelation.CollectionAlias)
-                        : default;
+                    var repo = collectionRelation.RepositoryAlias != null
+                            ? _repositoryResolver.GetRepository(collectionRelation.RepositoryAlias)
+                            : collectionRelation.CollectionAlias != null
+                                ? _repositoryResolver.GetRepository(_collectionSetupResolver.ResolveSetup(collectionRelation.CollectionAlias))
+                                : default;
 
                     if (repo == null)
                     {
-                        throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrectly configure relation, cannot find repository for collection alias {(collectionRelation.CollectionAlias ?? collectionRelation.RelatedRepositoryType?.FullName)}.");
+                        throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrectly configure relation, cannot find repository for alias {(collectionRelation.CollectionAlias ?? collectionRelation.RepositoryAlias)}.");
                     }
 
                     var provider = new CollectionDataProvider(
-                        new RepositoryContext(collectionRelation.CollectionAlias),
                         repo,
                         collectionRelation.RelatedEntityType,
 
@@ -55,6 +60,7 @@ namespace RapidCMS.Core.Resolvers.Data
                         collectionRelation.RelatedElementsGetter,
 
                         collectionRelation.RepositoryParentSelector,
+                        collectionRelation.EntityAsParent,
                         collectionRelation.IdProperty,
                         collectionRelation.DisplayProperties,
 

@@ -11,29 +11,30 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Exceptions;
+using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.ApiBridge.Request;
 using RapidCMS.Core.Models.ApiBridge.Response;
 using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Repositories.ApiBridge
 {
-    public class ApiRepository<TEntity> : BaseRepository<TEntity>
+    public class ApiRepository<TEntity, TCorrespondingRepository> : BaseRepository<TEntity>
         where TEntity : class, IEntity
+        where TCorrespondingRepository : IRepository
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public ApiRepository(
-            IHttpClientFactory httpClientFactory)
+        public ApiRepository(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
         }
 
-        public override Task DeleteAsync(IRepositoryContext context, string id, IParent? parent)
-            => DoRequestAsync(context, CreateRequest(HttpMethod.Delete, $"entity/{id}", new DeleteModel(parent)));
+        public override Task DeleteAsync(string id, IParent? parent)
+            => DoRequestAsync(CreateRequest(HttpMethod.Delete, $"entity/{id}", new DeleteModel(parent)));
 
-        public override async Task<IEnumerable<TEntity>> GetAllAsync(IRepositoryContext context, IParent? parent, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query)
         {
-            var results = await DoRequestAsync<EntitiesModel<TEntity>>(context, CreateRequest(HttpMethod.Post, "all", new ParentQueryModel(parent, query))).ConfigureAwait(false);
+            var results = await DoRequestAsync<EntitiesModel<TEntity>>(CreateRequest(HttpMethod.Post, "all", new ParentQueryModel(parent, query))).ConfigureAwait(false);
             if (results == default)
             {
                 return Enumerable.Empty<TEntity>();
@@ -44,9 +45,9 @@ namespace RapidCMS.Repositories.ApiBridge
             return results.Entities;
         }
 
-        public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IQuery<TEntity> query)
         {
-            var results = await DoRequestAsync<EntitiesModel<TEntity>>(context, CreateRequest(HttpMethod.Post, "all/related", new RelatedQueryModel(related, query))).ConfigureAwait(false);
+            var results = await DoRequestAsync<EntitiesModel<TEntity>>(CreateRequest(HttpMethod.Post, "all/related", new RelatedQueryModel(related, query))).ConfigureAwait(false);
             if (results == default)
             {
                 return Enumerable.Empty<TEntity>();
@@ -57,9 +58,9 @@ namespace RapidCMS.Repositories.ApiBridge
             return results.Entities;
         }
 
-        public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TEntity> query)
         {
-            var results = await DoRequestAsync<EntitiesModel<TEntity>>(context, CreateRequest(HttpMethod.Post, "all/nonrelated", new RelatedQueryModel(related, query))).ConfigureAwait(false);
+            var results = await DoRequestAsync<EntitiesModel<TEntity>>(CreateRequest(HttpMethod.Post, "all/nonrelated", new RelatedQueryModel(related, query))).ConfigureAwait(false);
             if (results == default)
             {
                 return Enumerable.Empty<TEntity>();
@@ -70,26 +71,26 @@ namespace RapidCMS.Repositories.ApiBridge
             return results.Entities;
         }
 
-        public override Task<TEntity?> GetByIdAsync(IRepositoryContext context, string id, IParent? parent)
-            => DoRequestAsync<TEntity>(context, CreateRequest(HttpMethod.Post, $"entity/{id}", new ParentQueryModel(parent)));
+        public override Task<TEntity?> GetByIdAsync(string id, IParent? parent)
+            => DoRequestAsync<TEntity>(CreateRequest(HttpMethod.Post, $"entity/{id}", new ParentQueryModel(parent)));
 
-        public override Task<TEntity?> InsertAsync(IRepositoryContext context, IEditContext<TEntity> editContext)
-            => DoRequestAsync<TEntity>(context, CreateRequest(HttpMethod.Post, "entity", new EditContextModel<TEntity>(editContext)));
+        public override Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext)
+            => DoRequestAsync<TEntity>(CreateRequest(HttpMethod.Post, "entity", new EditContextModel<TEntity>(editContext)));
 
-        public override async Task<TEntity> NewAsync(IRepositoryContext context, IParent? parent, Type? variantType = null)
-            => await DoRequestAsync<TEntity>(context, CreateRequest(HttpMethod.Post, "new", new ParentQueryModel(parent, variantType))).ConfigureAwait(false) ?? throw new NotFoundException("Could not create new entity.");
+        public override async Task<TEntity> NewAsync(IParent? parent, Type? variantType = null)
+            => await DoRequestAsync<TEntity>(CreateRequest(HttpMethod.Post, "new", new ParentQueryModel(parent, variantType))).ConfigureAwait(false) ?? throw new NotFoundException("Could not create new entity.");
 
-        public override Task UpdateAsync(IRepositoryContext context, IEditContext<TEntity> editContext)
-            => DoRequestAsync(context, CreateRequest(HttpMethod.Put, $"entity/{editContext.Entity.Id}", new EditContextModel<TEntity>(editContext)));
+        public override Task UpdateAsync(IEditContext<TEntity> editContext)
+            => DoRequestAsync(CreateRequest(HttpMethod.Put, $"entity/{editContext.Entity.Id}", new EditContextModel<TEntity>(editContext)));
 
-        public override Task AddAsync(IRepositoryContext context, IRelated related, string id)
-            => DoRequestAsync(context, CreateRequest(HttpMethod.Post, $"relate", new RelateModel(related, id)));
+        public override Task AddAsync(IRelated related, string id)
+            => DoRequestAsync(CreateRequest(HttpMethod.Post, $"relate", new RelateModel(related, id)));
 
-        public override Task RemoveAsync(IRepositoryContext context, IRelated related, string id)
-            => DoRequestAsync(context, CreateRequest(HttpMethod.Delete, $"relate", new RelateModel(related, id)));
+        public override Task RemoveAsync(IRelated related, string id)
+            => DoRequestAsync(CreateRequest(HttpMethod.Delete, $"relate", new RelateModel(related, id)));
 
-        public override Task ReorderAsync(IRepositoryContext context, string? beforeId, string id, IParent? parent)
-            => DoRequestAsync(context, CreateRequest(HttpMethod.Post, $"reorder", new ReorderModel(beforeId, id, parent)));
+        public override Task ReorderAsync(string? beforeId, string id, IParent? parent)
+            => DoRequestAsync(CreateRequest(HttpMethod.Post, $"reorder", new ReorderModel(beforeId, id, parent)));
 
         private HttpRequestMessage CreateRequest(HttpMethod method, string url)
         {
@@ -109,18 +110,18 @@ namespace RapidCMS.Repositories.ApiBridge
             return request;
         }
 
-        private async Task<HttpResponseMessage> DoRequestAsync(IRepositoryContext context, HttpRequestMessage request)
+        private async Task<HttpResponseMessage> DoRequestAsync(HttpRequestMessage request)
         {
-            if (string.IsNullOrWhiteSpace(context?.CollectionAlias))
-            {
-                throw new InvalidOperationException($"ApiRepository's can only be used from contexts where the CollectionAlias is known.");
-            }
+            var entityType = typeof(TEntity).FullName;
+            var repoType = typeof(TCorrespondingRepository).FullName;
 
-            var httpClient = _httpClientFactory.CreateClient(context.CollectionAlias);
+            var alias = AliasHelper.GetRepositoryAlias(typeof(ApiRepository<TEntity, TCorrespondingRepository>));
+
+            var httpClient = _httpClientFactory.CreateClient(alias);
             if (httpClient.BaseAddress == default)
             {
-                throw new InvalidOperationException($"Please configure an HttpClient for the collection '{context.CollectionAlias}' using " +
-                    $".{nameof(RapidCMSMiddleware.AddRapidCMSRepositoryApiHttpClient)}([..]) and configure its BaseAddress correctly.");
+                throw new InvalidOperationException($"Please configure an HttpClient for the repository '{alias}' using " +
+                    $".{nameof(RapidCMSMiddleware.AddRapidCMSApiRepository)}([..]) and configure its BaseAddress correctly.");
             }
 
             var response = await httpClient.SendAsync(request).ConfigureAwait(false);
@@ -135,12 +136,12 @@ namespace RapidCMS.Repositories.ApiBridge
             };
         }
 
-        private async Task<TResult?> DoRequestAsync<TResult>(IRepositoryContext context, HttpRequestMessage request)
+        private async Task<TResult?> DoRequestAsync<TResult>(HttpRequestMessage request)
             where TResult : class
         {
             try
             {
-                var response = await DoRequestAsync(context, request).ConfigureAwait(false);
+                var response = await DoRequestAsync(request).ConfigureAwait(false);
                 var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 return JsonConvert.DeserializeObject<TResult>(json);
             }

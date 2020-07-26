@@ -38,7 +38,7 @@
                     {
                         @foreach (var (subCollection, _) in node.Collections)
                         {
-                            <Collections CollectionAlias=@subCollection ParentPath=@(ParentPath.AddLevel(ParentPath, CollectionAlias, node.Id)) />
+                            <Collections CollectionAlias=@subCollection ParentPath=@(ParentPath.AddLevel(ParentPath, node.RepositoryAlias, node.Id)) />
                         }
                     }
                 </ul>

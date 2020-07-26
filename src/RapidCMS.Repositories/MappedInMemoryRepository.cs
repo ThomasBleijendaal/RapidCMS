@@ -45,14 +45,14 @@ namespace RapidCMS.Repositories
             return _data[pId];
         }
 
-        public override Task DeleteAsync(IRepositoryContext context, string id, IParent? parent)
+        public override Task DeleteAsync(string id, IParent? parent)
         {
             GetListForParent(parent).RemoveAll(x => x.Id == id);
 
             return Task.CompletedTask;
         }
 
-        public override Task<IEnumerable<TCmsEntity>> GetAllAsync(IRepositoryContext context, IParent? parent, IQuery<TEntity> query)
+        public override Task<IEnumerable<TCmsEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query)
         {
             var dataQuery = GetListForParent(parent).AsQueryable();
 
@@ -77,7 +77,7 @@ namespace RapidCMS.Repositories
             return Task.FromResult(data); 
         }
 
-        public override Task<TCmsEntity?> GetByIdAsync(IRepositoryContext context, string id, IParent? parent)
+        public override Task<TCmsEntity?> GetByIdAsync(string id, IParent? parent)
         {
             var entity = (TEntity?)GetListForParent(parent).FirstOrDefault(x => x.Id == id)?.Clone();
             if (entity == null)
@@ -88,7 +88,7 @@ namespace RapidCMS.Repositories
             return Task.FromResult(_converter.Convert(entity))!;
         }
 
-        public override Task<TCmsEntity?> InsertAsync(IRepositoryContext context, IEditContext<TCmsEntity> editContext)
+        public override Task<TCmsEntity?> InsertAsync(IEditContext<TCmsEntity> editContext)
         {
             editContext.Entity.Id = new Random().Next(0, int.MaxValue).ToString();
 
@@ -99,12 +99,12 @@ namespace RapidCMS.Repositories
             return Task.FromResult( _converter.Convert((TEntity)entity.Clone()))!;
         }
 
-        public override Task<TCmsEntity> NewAsync(IRepositoryContext context, IParent? parent, Type? variantType = null)
+        public override Task<TCmsEntity> NewAsync(IParent? parent, Type? variantType = null)
         {
             return Task.FromResult(new TCmsEntity());
         }
 
-        public override Task UpdateAsync(IRepositoryContext context, IEditContext<TCmsEntity> editContext)
+        public override Task UpdateAsync(IEditContext<TCmsEntity> editContext)
         {
             var list = GetListForParent(editContext.Parent);
 

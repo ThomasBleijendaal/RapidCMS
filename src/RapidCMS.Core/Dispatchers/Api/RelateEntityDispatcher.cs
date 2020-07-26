@@ -9,7 +9,6 @@ using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
-using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Dispatchers.Api
 {
@@ -28,34 +27,33 @@ namespace RapidCMS.Core.Dispatchers.Api
 
         public async Task<ApiCommandResponseModel> InvokeAsync(PersistRelatedEntityRequestModel request, IPageState pageState)
         {
-            if (string.IsNullOrWhiteSpace(request.Subject.CollectionAlias) ||
+            if (string.IsNullOrWhiteSpace(request.Subject.RepositoryAlias) ||
                 string.IsNullOrWhiteSpace(request.Subject.Id) ||
-                string.IsNullOrWhiteSpace(request.Related.CollectionAlias) ||
+                string.IsNullOrWhiteSpace(request.Related.RepositoryAlias) ||
                 string.IsNullOrWhiteSpace(request.Related.Id))
             {
                 throw new ArgumentNullException();
             }
 
-            var subjectRepository = _repositoryResolver.GetRepository(request.Subject.CollectionAlias);
-            var relatedRepository = _repositoryResolver.GetRepository(request.Related.CollectionAlias);
-            var repositoryContext = new RepositoryContext(request.Related.CollectionAlias);
+            var subjectRepository = _repositoryResolver.GetRepository(request.Subject.RepositoryAlias);
+            var relatedRepository = _repositoryResolver.GetRepository(request.Related.RepositoryAlias);
 
-            var subjectEntity = await subjectRepository.GetByIdAsync(repositoryContext, request.Subject.Id, default).ConfigureAwait(false)
+            var subjectEntity = await subjectRepository.GetByIdAsync(request.Subject.Id, default).ConfigureAwait(false)
                 ?? throw new NotFoundException("Subject entity was not found");
-            var relatedEntity = await relatedRepository.GetByIdAsync(repositoryContext, request.Related.Id, default).ConfigureAwait(false)
+            var relatedEntity = await relatedRepository.GetByIdAsync(request.Related.Id, default).ConfigureAwait(false)
                 ?? throw new NotFoundException("Related entity was not found");
 
-            var related = new RelatedEntity(relatedEntity, request.Related.CollectionAlias);
+            var related = new RelatedEntity(relatedEntity, request.Related.RepositoryAlias);
 
             if (request.Action == PersistRelatedEntityRequestModel.Actions.Add)
             {
                 await _authService.EnsureAuthorizedUserAsync(Operations.Add, subjectEntity).ConfigureAwait(false);
-                await subjectRepository.AddAsync(repositoryContext, related, request.Subject.Id).ConfigureAwait(false);
+                await subjectRepository.AddAsync(related, request.Subject.Id).ConfigureAwait(false);
             }
             else if (request.Action == PersistRelatedEntityRequestModel.Actions.Remove)
             {
                 await _authService.EnsureAuthorizedUserAsync(Operations.Remove, subjectEntity).ConfigureAwait(false);
-                await subjectRepository.AddAsync(repositoryContext, related, request.Subject.Id).ConfigureAwait(false);
+                await subjectRepository.AddAsync(related, request.Subject.Id).ConfigureAwait(false);
             }
 
             return new ApiCommandResponseModel();

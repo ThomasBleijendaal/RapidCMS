@@ -3,7 +3,7 @@
     public class EntityDescriptorModel
     {
         public string? Id { get; set; }
-        public string? CollectionAlias { get; set; }
+        public string? RepositoryAlias { get; set; }
         public string? ParentPath { get; set; }
     }
 }

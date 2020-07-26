@@ -8,23 +8,11 @@ using System.Threading.Tasks;
 using Blazor.FileReader;
 using Newtonsoft.Json;
 using RapidCMS.Core.Abstractions.Handlers;
-using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Response;
 
 namespace RapidCMS.Core.Handlers
 {
-    public static class ApiFileUploadHandler
-    {
-        public static string GetFileUploaderAlias(Type handlerType)
-        {
-            var type = (handlerType.IsGenericType && handlerType.GetGenericTypeDefinition().Name.StartsWith("ApiFileUpload"))
-                ? handlerType.GetGenericArguments().FirstOrDefault()
-                : handlerType;
-
-            return type?.Name.ToUrlFriendlyString() ?? "unknown-file-handler";
-        }
-    }
-
     public class ApiFileUploadHandler<THandler> : IFileUploadHandler
         where THandler : IFileUploadHandler
     {
@@ -35,7 +23,7 @@ namespace RapidCMS.Core.Handlers
             IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _handlerAlias = ApiFileUploadHandler.GetFileUploaderAlias(typeof(THandler));
+            _handlerAlias = AliasHelper.GetFileUploaderAlias(typeof(THandler));
         }
 
         public async Task<object> SaveFileAsync(IFileInfo fileInfo, Stream stream)

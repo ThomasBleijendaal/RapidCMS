@@ -7,22 +7,24 @@ using Microsoft.Extensions.Caching.Memory;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Enums;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Providers
 {
     internal class CollectionDataProvider : IRelationDataCollection, IDisposable
     {
-        private readonly IRepositoryContext _repositoryContext;
         private readonly IRepository _repository;
         private readonly Type _relatedEntityType;
         private readonly IPropertyMetadata _property;
         private readonly IPropertyMetadata? _relatedElementsGetter;
         private readonly IPropertyMetadata? _repositoryParentSelector;
+        private readonly bool _entityAsParent;
         private readonly IPropertyMetadata _idProperty;
         private readonly IEnumerable<IExpressionMetadata> _labelProperties;
         private readonly IMemoryCache _memoryCache;
-        private IEntity? _entity;
+        private EditContext? _editContext;
         private IParent? _parent;
 
         private IDisposable? _eventHandle;
@@ -32,22 +34,22 @@ namespace RapidCMS.Core.Providers
         private ICollection<object>? _relatedIds;
 
         public CollectionDataProvider(
-            IRepositoryContext repositoryContext,
             IRepository repository,
             Type relatedEntityType,
             IPropertyMetadata property,
             IPropertyMetadata? relatedElementsGetter,
             IPropertyMetadata? repositoryParentSelector,
+            bool entityAsParent,
             IPropertyMetadata idProperty,
             IEnumerable<IExpressionMetadata> labelProperties,
             IMemoryCache memoryCache)
         {
-            _repositoryContext = repositoryContext ?? throw new ArgumentNullException(nameof(repository));
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _relatedEntityType = relatedEntityType ?? throw new ArgumentNullException(nameof(relatedEntityType));
             _property = property ?? throw new ArgumentNullException(nameof(property));
             _relatedElementsGetter = relatedElementsGetter;
             _repositoryParentSelector = repositoryParentSelector;
+            _entityAsParent = entityAsParent;
             _idProperty = idProperty ?? throw new ArgumentNullException(nameof(idProperty));
             _labelProperties = labelProperties ?? throw new ArgumentNullException(nameof(labelProperties));
             _memoryCache = memoryCache;
@@ -55,14 +57,14 @@ namespace RapidCMS.Core.Providers
 
         public event EventHandler? OnDataChange;
 
-        public async Task SetEntityAsync(IEntity entity, IParent? parent)
+        public async Task SetEntityAsync(EditContext editContext, IParent? parent)
         {
-            _entity = entity;
+            _editContext = editContext;
             _parent = parent;
 
             await SetElementsAsync().ConfigureAwait(false);
 
-            var data = _relatedElementsGetter?.Getter(_property.Getter(entity)) ?? _property.Getter(entity);
+            var data = _relatedElementsGetter?.Getter(_property.Getter(_editContext.Entity)) ?? _property.Getter(_editContext.Entity);
             if (data is ICollection<IEntity> entityCollection)
             {
                 _relatedIds = entityCollection.Select(x => (object)x.Id!).ToList();
@@ -86,7 +88,6 @@ namespace RapidCMS.Core.Providers
             else
             {
                 return;
-                // throw new InvalidOperationException("Failed to convert relation property to ICollection<object>");
             }
 
             UpdateRelatedElements();
@@ -94,7 +95,7 @@ namespace RapidCMS.Core.Providers
 
         private async Task SetElementsAsync()
         {
-            if (_entity == null)
+            if (_editContext == null)
             {
                 return;
             }
@@ -110,30 +111,28 @@ namespace RapidCMS.Core.Providers
 
             var parent = default(IParent?);
 
-            if (_repositoryParentSelector != null)
+            if (_entityAsParent && _editContext.EntityState != EntityState.IsNew)
             {
-                // a bit weird (see CollectionRelationConfig)
-                if (_repositoryParentSelector.ObjectType == typeof(ValueTuple<IParent?, IEntity>))
-                {
-                    parent = _repositoryParentSelector.Getter.Invoke((_parent, _entity)) as IParent;
-                }
-                else if (_parent != null)
-                {
-                    parent = _repositoryParentSelector.Getter.Invoke(_parent) as IParent;
-                }
+                parent = new ParentEntity(_editContext.Parent, _editContext.Entity, _editContext.RepositoryAlias);
             }
-            var entities = await _memoryCache.GetOrCreateAsync(new { _repository, parent }, (entry) =>
+
+            if (_repositoryParentSelector != null && _parent != null)
+            {
+                parent = _repositoryParentSelector.Getter.Invoke(_parent) as IParent;
+            }
+
+            var entities = await _memoryCache.GetOrCreateAsync(new { _repository, parent }, async (entry) =>
             {
                 entry.AddExpirationToken(_repository.ChangeToken);
 
-                return _repository.GetAllAsync(_repositoryContext, parent, Query.Default());
+                return await _repository.GetAllAsync(parent, Query.Default());
             }).ConfigureAwait(false);
 
             _elements = entities
                 .Select(entity => (IElement)new Element
                 {
                     Id = _idProperty.Getter(entity),
-                    Labels = _labelProperties.Select(x => x.StringGetter(entity))
+                    Labels = _labelProperties.Select(x => x.StringGetter(entity)).ToList()
                 })
                 .ToList();
         }

@@ -36,12 +36,12 @@ namespace RapidCMS.Example.WebAssembly.API
 
             services.AddRapidCMSApi(config =>
             {
-                config.RegisterRepository<Person, JsonRepository<Person>>("person");
-                config.RegisterRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>("person-convention");
-                config.RegisterRepository<Country, JsonRepository<Country>>("country");
-                config.RegisterRepository<TagGroup, JsonRepository<TagGroup>>("taggroup");
-                config.RegisterRepository<Tag, JsonRepository<Tag>>("tag");
-                config.RegisterRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>("mapped")
+                config.RegisterRepository<Person, JsonRepository<Person>>();
+                config.RegisterRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>();
+                config.RegisterRepository<Country, JsonRepository<Country>>();
+                config.RegisterRepository<TagGroup, JsonRepository<TagGroup>>();
+                config.RegisterRepository<Tag, JsonRepository<Tag>>();
+                config.RegisterRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>()
                     .SetDataViewBuilder<DatabaseEntityDataViewBuilder>();
 
                 config.RegisterFileUploadHandler<Base64TextFileUploadHandler>();

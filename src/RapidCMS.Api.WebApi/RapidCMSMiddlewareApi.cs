@@ -20,7 +20,7 @@ using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Dispatchers.Api;
 using RapidCMS.Core.Factories;
-using RapidCMS.Core.Handlers;
+using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Config.Api;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Resolvers.Repositories;
@@ -56,7 +56,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             var rootConfig = GetRootConfig(config);
 
-            services.AddSingleton(rootConfig);
+            services.AddSingleton<IApiConfig>(rootConfig);
 
             services.AddHttpContextAccessor();
 
@@ -69,7 +69,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ISetupResolver<IEntityVariantSetup>, GlobalEntityVariantSetupResolver>();
 
             services.AddTransient<IDataViewResolver, ApiDataViewResolver>();
-            services.AddTransient<IRepositoryResolver, ApiRepositoryResolver>();
+            services.AddTransient<IRepositoryResolver, RepositoryResolver>();
+            services.AddSingleton<IRepositoryTypeResolver, ApiRepositoryTypeResolver>();
 
             services.AddTransient<IPresentationDispatcher, GetEntityDispatcher>();
             services.AddTransient<IPresentationDispatcher, GetEntitiesDispatcher>();
@@ -88,30 +89,30 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddTransient<IEditContextFactory, ApiEditContextWrapperFactory>();
 
-            var controllersToAdd = rootConfig.Collections.ToDictionary(
-                kv =>
+            var controllersToAdd = rootConfig.Repositories.ToDictionary(
+                repository =>
                 {
-                    if (kv.Value.DatabaseType == default)
+                    if (repository.DatabaseType == default)
                     {
                         return typeof(ApiRepositoryController<,>)
-                            .MakeGenericType(kv.Value.EntityType, kv.Value.RepositoryType)
+                            .MakeGenericType(repository.EntityType, repository.RepositoryType)
                             .GetTypeInfo();
                     }
                     else
                     {
                         return typeof(MappedApiRepositoryController<,,>)
-                            .MakeGenericType(kv.Value.EntityType, kv.Value.DatabaseType, kv.Value.RepositoryType)
+                            .MakeGenericType(repository.EntityType, repository.DatabaseType, repository.RepositoryType)
                             .GetTypeInfo();
                     }
                 },
-                kv => kv.Key);
+                kv => kv.Alias);
 
             if (rootConfig.FileUploadHandlers.Any())
             {
                 foreach (var handler in rootConfig.FileUploadHandlers)
                 {
                     var type = typeof(ApiFileUploadController<>).MakeGenericType(handler).GetTypeInfo();
-                    var alias = ApiFileUploadHandler.GetFileUploaderAlias(type);
+                    var alias = AliasHelper.GetFileUploaderAlias(type);
 
                     controllersToAdd.Add(type, alias);
                 }

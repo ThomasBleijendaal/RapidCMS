@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace RapidCMS.Core.Extensions
 {
@@ -12,7 +14,6 @@ namespace RapidCMS.Core.Extensions
                 return "";
             }
 
-            const int maxlen = 80;
             var len = title.Length;
             var prevdash = false;
             var sb = new StringBuilder(len);
@@ -49,10 +50,6 @@ namespace RapidCMS.Core.Extensions
                     {
                         prevdash = false;
                     }
-                }
-                if (i == maxlen)
-                {
-                    break;
                 }
             }
 
@@ -140,6 +137,15 @@ namespace RapidCMS.Core.Extensions
             {
                 return "";
             }
+        }
+
+        private readonly static SHA1CryptoServiceProvider Sha1 = new SHA1CryptoServiceProvider();
+        private readonly static char[] Padding = { '=' };
+
+        public static string ToSha1Base64String(this string text)
+        {
+            return Convert.ToBase64String(Sha1.ComputeHash(Encoding.UTF8.GetBytes(text)))
+                .TrimEnd(Padding).Replace('+', '-').Replace('/', '_');
         }
     }
 }

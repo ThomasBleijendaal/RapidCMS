@@ -355,8 +355,6 @@ namespace RapidCMS.Core.Helpers
             }
         }
 
-        private readonly static SHA1CryptoServiceProvider Sha1 = new SHA1CryptoServiceProvider();
-
         private static string GetFingerprint(Expression expression)
         {
             var fingerprint = expression switch
@@ -368,7 +366,7 @@ namespace RapidCMS.Core.Helpers
                 _ => expression.Type.ToString(),
             };
 
-            return Convert.ToBase64String(Sha1.ComputeHash(Encoding.UTF8.GetBytes(fingerprint)));
+            return fingerprint.ToSha1Base64String();
         }
     }
 }

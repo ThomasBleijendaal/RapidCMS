@@ -17,7 +17,6 @@ using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.State;
-using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Dispatchers.Form
 {
@@ -60,7 +59,6 @@ namespace RapidCMS.Core.Dispatchers.Form
         {
             var collection = _collectionResolver.ResolveSetup(request.ListContext.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
-            var repositoryContext = new RepositoryContext(request.ListContext.CollectionAlias);
 
             var (crudType, entityVariant) = await _buttonInteraction.ValidateButtonInteractionAsync(request).ConfigureAwait(false);
 
@@ -131,12 +129,12 @@ namespace RapidCMS.Core.Dispatchers.Form
                         if (editContext.IsModified())
                         {
                             var wrapper = _editContextFactory.GetEditContextWrapper(editContext);
-                            await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(repositoryContext, wrapper)).ConfigureAwait(false);
+                            await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(wrapper)).ConfigureAwait(false);
                         }
                         if (editContext.IsReordered())
                         {
                             await _concurrencyService.EnsureCorrectConcurrencyAsync(
-                                () => repository.ReorderAsync(repositoryContext, editContext.ReorderedBeforeId, editContext.Entity.Id!, editContext.Parent)).ConfigureAwait(false);
+                                () => repository.ReorderAsync(editContext.ReorderedBeforeId, editContext.Entity.Id!, editContext.Parent)).ConfigureAwait(false);
                         }
 
                         affectedEntities.Add(editContext.Entity);

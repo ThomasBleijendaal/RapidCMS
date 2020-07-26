@@ -12,6 +12,8 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
         public int Skip { get; set; }
         public int Take { get; set; }
         public string? SearchTerm { get; set; }
+
+        [Obsolete("Do not use ActiveTab for determining which data view should be send, but send the data view expresison like the order by")]
         public int? ActiveTab { get; set; }
 
         // TODO: protect this variable more

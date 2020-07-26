@@ -41,14 +41,14 @@ namespace RapidCMS.Repositories
             return _data[pId];
         }
 
-        public override Task DeleteAsync(IRepositoryContext context, string id, IParent? parent)
+        public override Task DeleteAsync(string id, IParent? parent)
         {
             GetListForParent(parent).RemoveAll(x => x.Id == id);
 
             return Task.CompletedTask;
         }
 
-        public override Task<IEnumerable<TEntity>> GetAllAsync(IRepositoryContext context, IParent? parent, IQuery<TEntity> query)
+        public override Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query)
         {
             var dataQuery = GetListForParent(parent).AsQueryable();
 
@@ -73,7 +73,7 @@ namespace RapidCMS.Repositories
             return Task.FromResult(data);
         }
 
-        public override Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TEntity> query)
+        public override Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IQuery<TEntity> query)
         {
             var ids = _relations.Where(x => x.Value.Contains(related.Entity.Id!)).Select(x => x.Key);
 
@@ -81,7 +81,7 @@ namespace RapidCMS.Repositories
             return Task.FromResult(GetListForParent(default).Where(x => ids.Contains(x.Id!)))!;
         }
 
-        public override Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TEntity> query)
+        public override Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TEntity> query)
         {
             var ids = _relations.Where(x => x.Value.Contains(related.Entity.Id!)).Select(x => x.Key);
 
@@ -89,30 +89,30 @@ namespace RapidCMS.Repositories
             return Task.FromResult(GetListForParent(default).Where(x => !ids.Contains(x.Id!)))!;
         }
 
-        public override Task<TEntity?> GetByIdAsync(IRepositoryContext context, string id, IParent? parent)
+        public override Task<TEntity?> GetByIdAsync(string id, IParent? parent)
         {
             return Task.FromResult((TEntity?)GetListForParent(parent).FirstOrDefault(x => x.Id == id)?.Clone());
         }
 
-        public override async Task<TEntity?> InsertAsync(IRepositoryContext context, IEditContext<TEntity> editContext)
+        public override async Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext)
         {
             editContext.Entity.Id = new Random().Next(0, int.MaxValue).ToString();
 
-            await HandleRelationsAsync(context, editContext.Entity, editContext.GetRelationContainer());
+            await HandleRelationsAsync(editContext.Entity, editContext.GetRelationContainer());
 
             GetListForParent(editContext.Parent).Add(editContext.Entity);
 
             return (TEntity)editContext.Entity.Clone();
         }
 
-        public override Task<TEntity> NewAsync(IRepositoryContext context, IParent? parent, Type? variantType = null)
+        public override Task<TEntity> NewAsync(IParent? parent, Type? variantType = null)
         {
             return Task.FromResult(new TEntity());
         }
 
         // using editContext overload of UpdateAsync, you can access the state of the edit form
         // with this, you can check whether fields were edited (using editContext.IsModified(..)) 
-        public override async Task UpdateAsync(IRepositoryContext context, IEditContext<TEntity> editContext)
+        public override async Task UpdateAsync(IEditContext<TEntity> editContext)
         {
             var list = GetListForParent(editContext.Parent);
 
@@ -120,13 +120,13 @@ namespace RapidCMS.Repositories
 
             var newEntity = (TEntity)editContext.Entity.Clone();
 
-            await HandleRelationsAsync(context, newEntity, editContext.GetRelationContainer());
+            await HandleRelationsAsync(newEntity, editContext.GetRelationContainer());
 
             list.Insert(index, newEntity);
             list.RemoveAt(index + 1);
         }
 
-        public override Task ReorderAsync(IRepositoryContext context, string? beforeId, string id, IParent? parent)
+        public override Task ReorderAsync(string? beforeId, string id, IParent? parent)
         {
             var parentId = parent?.Entity.Id ?? string.Empty;
 
@@ -150,7 +150,7 @@ namespace RapidCMS.Repositories
             return Task.CompletedTask;
         }
 
-        public override Task AddAsync(IRepositoryContext context, IRelated related, string id)
+        public override Task AddAsync(IRelated related, string id)
         {
             if (!_relations.ContainsKey(id))
             {
@@ -162,7 +162,7 @@ namespace RapidCMS.Repositories
             return Task.CompletedTask;
         }
 
-        public override Task RemoveAsync(IRepositoryContext context, IRelated related, string id)
+        public override Task RemoveAsync(IRelated related, string id)
         {
             if (!_relations.ContainsKey(id))
             {
@@ -174,7 +174,7 @@ namespace RapidCMS.Repositories
             return Task.CompletedTask;
         }
 
-        private async Task HandleRelationsAsync(IRepositoryContext context, TEntity entity, IRelationContainer? relations)
+        private async Task HandleRelationsAsync(TEntity entity, IRelationContainer? relations)
         {
             // this is some generic code to handle relations very genericly
             // please do not use in production (and you can't, since you cannot access IRepository)
@@ -203,7 +203,7 @@ namespace RapidCMS.Repositories
                                     .Select(x => x.Id.ToString())
                                     .ToListAsync(async id =>
                                     {
-                                        var entity = await repo.GetByIdAsync(context, id, null);
+                                        var entity = await repo.GetByIdAsync(id, null);
                                         return entity;
                                     });
 

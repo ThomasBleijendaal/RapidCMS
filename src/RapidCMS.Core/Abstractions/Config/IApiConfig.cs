@@ -1,5 +1,8 @@
-﻿using RapidCMS.Core.Abstractions.Handlers;
-using RapidCMS.Core.Handlers;
+﻿using System;
+using System.Collections.Generic;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Handlers;
+using RapidCMS.Core.Abstractions.Repositories;
 
 namespace RapidCMS.Core.Abstractions.Config
 {
@@ -7,31 +10,42 @@ namespace RapidCMS.Core.Abstractions.Config
     {
         /// <summary>
         /// Use this to allow anonymous users to fully use your Api. This adds a very permissive AuthorizationHandler that allows everything by anyone. 
-        /// 
-        /// Do not use in production.
         /// </summary>
         /// <returns></returns>
         IApiConfig AllowAnonymousUser();
 
         /// <summary>
-        /// Registers a repository to be bound to a specific collection alias
+        /// Registers a repository and creates a Controller for it
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
         /// <typeparam name="TRepository"></typeparam>
-        /// <param name="collectionAlias"></param>
         /// <returns></returns>
-        IApiCollectionConfig RegisterRepository<TEntity, TRepository>(string collectionAlias);
+        IApiRepositoryConfig RegisterRepository<TEntity, TRepository>()
+            where TEntity : class, IEntity
+            where TRepository : IRepository;
 
         /// <summary>
-        /// Registers a mapped repository to be bound to a specific collection alias
+        /// Registers a mapped repository and creates a Controller for it
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
         /// <typeparam name="TRepository"></typeparam>
-        /// <param name="collectionAlias"></param>
         /// <returns></returns>
-        IApiCollectionConfig RegisterRepository<TEntity, TMappedEntity, TRepository>(string collectionAlias);
+        IApiRepositoryConfig RegisterRepository<TEntity, TMappedEntity, TRepository>()
+            where TEntity : class, IEntity
+            where TMappedEntity : class
+            where TRepository : IRepository;
 
+        /// <summary>
+        /// Registers a file handler and creates a Controller for it
+        /// </summary>
+        /// <typeparam name="THandler"></typeparam>
+        /// <returns></returns>
         IApiConfig RegisterFileUploadHandler<THandler>()
             where THandler : IFileUploadHandler;
+
+        /// <summary>
+        /// Returns the registered repositories
+        /// </summary>
+        IEnumerable<IApiRepositoryConfig> Repositories { get; }
     }
 }

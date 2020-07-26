@@ -10,7 +10,6 @@ using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
-using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Dispatchers.Api
 {
@@ -35,30 +34,28 @@ namespace RapidCMS.Core.Dispatchers.Api
 
         public async Task<EntitiesResponseModel> GetAsync(GetEntitiesRequestModel request)
         {
-            var subjectRepository = _repositoryResolver.GetRepository(request.CollectionAlias);
-            var repositoryContext = new RepositoryContext(request.CollectionAlias);
+            var subjectRepository = _repositoryResolver.GetRepository(request.RepositoryAlias);
 
             var parent = request is GetEntitiesOfParentRequestModel parentRequest ? await _parentService.GetParentAsync(ParentPath.TryParse(parentRequest.ParentPath)).ConfigureAwait(false) : default;
             var related = default(IRelated);
             if (request is GetEntitiesOfRelationRequestModel relatedRequest)
             {
-                var relatedRepository = _repositoryResolver.GetRepository(relatedRequest.Related.CollectionAlias ?? throw new ArgumentNullException());
-                var relatedRepositoryContext = new RepositoryContext(relatedRequest.Related.CollectionAlias);
-                var relatedEntity = await relatedRepository.GetByIdAsync(relatedRepositoryContext, relatedRequest.Related.Id ?? throw new ArgumentNullException(), default).ConfigureAwait(false)
+                var relatedRepository = _repositoryResolver.GetRepository(relatedRequest.Related.RepositoryAlias ?? throw new ArgumentNullException());
+                var relatedEntity = await relatedRepository.GetByIdAsync(relatedRequest.Related.Id ?? throw new ArgumentNullException(), default).ConfigureAwait(false)
                     ?? throw new NotFoundException("Could not find related entity");
-                related = new RelatedEntity(relatedEntity, relatedRequest.Related.CollectionAlias);
+                related = new RelatedEntity(relatedEntity, relatedRequest.Related.RepositoryAlias);
             }
 
-            var protoEntity = await subjectRepository.NewAsync(repositoryContext, parent, default).ConfigureAwait(false);
+            var protoEntity = await subjectRepository.NewAsync(parent, default).ConfigureAwait(false);
 
             await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity).ConfigureAwait(false);
-            await _dataViewResolver.ApplyDataViewToQueryAsync(request.Query, request.CollectionAlias).ConfigureAwait(false);
+            await _dataViewResolver.ApplyDataViewToQueryAsync(request.Query, request.RepositoryAlias).ConfigureAwait(false);
 
             var action = (request.UsageType & ~(UsageType.List | UsageType.Root | UsageType.NotRoot)) switch
             {
-                UsageType.Add when related != null => () => subjectRepository.GetAllNonRelatedAsync(repositoryContext, related, request.Query),
-                _ when related != null => () => subjectRepository.GetAllRelatedAsync(repositoryContext, related, request.Query),
-                _ when related == null => () => subjectRepository.GetAllAsync(repositoryContext, parent, request.Query),
+                UsageType.Add when related != null => () => subjectRepository.GetAllNonRelatedAsync(related, request.Query),
+                _ when related != null => () => subjectRepository.GetAllRelatedAsync(related, request.Query),
+                _ when related == null => () => subjectRepository.GetAllAsync(parent, request.Query),
 
                 _ => default(Func<Task<IEnumerable<IEntity>>>)
             };

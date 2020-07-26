@@ -8,10 +8,10 @@ using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.State;
 using RapidCMS.Core.Models.UI;
-using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Services.Tree
 {
@@ -54,9 +54,8 @@ namespace RapidCMS.Core.Services.Tree
                 }
 
                 var parent = await _parentService.GetParentAsync(parentPath).ConfigureAwait(false);
-                var repositoryContext = new RepositoryContext(collection.Alias);
-
-                var testEntity = await _repositoryResolver.GetRepository(collection).NewAsync(repositoryContext, parent, collection.EntityVariant.Type).ConfigureAwait(false);
+                
+                var testEntity = await _repositoryResolver.GetRepository(collection).NewAsync(parent, collection.EntityVariant.Type).ConfigureAwait(false);
 
                 var tree = new TreeCollectionUI(collection.Alias, collection.Name)
                 {
@@ -124,8 +123,7 @@ namespace RapidCMS.Core.Services.Tree
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
             {
                 var query = Query.Create(pageSize, pageNr, default, default);
-                var repositoryContext = new RepositoryContext(collection.Alias);
-                var entities = await _repositoryResolver.GetRepository(collection).GetAllAsync(repositoryContext, parent, query).ConfigureAwait(false);
+                var entities = await _repositoryResolver.GetRepository(collection).GetAllAsync(parent, query).ConfigureAwait(false);
 
                 var list = await entities.ToListAsync(async entity =>
                 {
@@ -133,6 +131,7 @@ namespace RapidCMS.Core.Services.Tree
 
                     var node = new TreeNodeUI(
                         entity.Id!,
+                        collection.RepositoryAlias,
                         collection.TreeView.Name!.StringGetter.Invoke(entity),
                         collection.Collections.ToList(subCollection => (subCollection.Alias, PageType.Collection)))
                     {
@@ -178,7 +177,8 @@ namespace RapidCMS.Core.Services.Tree
 
         public IDisposable SubscribeToRepositoryUpdates(string alias, Func<Task> asyncCallback)
         {
-            return _repositoryResolver.GetRepository(alias).ChangeToken.RegisterChangeCallback((x) => asyncCallback.Invoke(), null);
+            var collection = _collectionResolver.ResolveSetup(alias);
+            return _repositoryResolver.GetRepository(collection).ChangeToken.RegisterChangeCallback((x) => asyncCallback.Invoke(), null);
         }
 
         public TreeRootUI GetRoot()
@@ -186,7 +186,7 @@ namespace RapidCMS.Core.Services.Tree
             var collections = _treeElementResolver.ResolveSetup()
                 .ToList(x => (x.Alias, x.Type));
 
-            return new TreeRootUI("-1", _cms.SiteName, collections)
+            return new TreeRootUI("-1", AliasHelper.GetRepositoryAlias(typeof(object)), _cms.SiteName, collections)
             {
                 State = new PageStateModel
                 {

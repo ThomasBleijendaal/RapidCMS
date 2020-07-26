@@ -41,6 +41,11 @@ namespace RapidCMS.Core.Models.Config
             get => _collections.Union(InlineCollections);
         }
 
+        public IEnumerable<Type> RepositoryTypes
+        {
+            get => new[] { RepositoryType }.Union(_collections.Union(InlineCollections).SelectMany(x => x.RepositoryTypes));
+        }
+
         private IEnumerable<CollectionConfig> InlineCollections
         {
             get

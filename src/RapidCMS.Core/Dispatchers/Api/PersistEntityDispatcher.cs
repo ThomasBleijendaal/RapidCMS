@@ -10,7 +10,6 @@ using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
-using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Dispatchers.Api
 {
@@ -35,18 +34,17 @@ namespace RapidCMS.Core.Dispatchers.Api
 
         public async Task<ApiCommandResponseModel> InvokeAsync(PersistEntityRequestModel request, IPageState pageState)
         {
-            if (string.IsNullOrWhiteSpace(request.Descriptor.CollectionAlias))
+            if (string.IsNullOrWhiteSpace(request.Descriptor.RepositoryAlias))
             {
                 throw new ArgumentNullException();
             }
 
             var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Descriptor.ParentPath)).ConfigureAwait(false);
 
-            var subjectRepository = _repositoryResolver.GetRepository(request.Descriptor.CollectionAlias);
-            var repositoryContext = new RepositoryContext(request.Descriptor.CollectionAlias);
+            var subjectRepository = _repositoryResolver.GetRepository(request.Descriptor.RepositoryAlias);
             var referenceEntity = (request.EntityState == EntityState.IsExisting)
-                ? await subjectRepository.GetByIdAsync(repositoryContext, request.Descriptor.Id ?? throw new InvalidOperationException("Cannot modify entity without giving an Id."), parent).ConfigureAwait(false)
-                : await subjectRepository.NewAsync(repositoryContext, parent, request.Entity.GetType()).ConfigureAwait(false);
+                ? await subjectRepository.GetByIdAsync(request.Descriptor.Id ?? throw new InvalidOperationException("Cannot modify entity without giving an Id."), parent).ConfigureAwait(false)
+                : await subjectRepository.NewAsync(parent, request.Entity.GetType()).ConfigureAwait(false);
 
             if (referenceEntity == null)
             {
@@ -76,12 +74,12 @@ namespace RapidCMS.Core.Dispatchers.Api
                 {
                     return new ApiPersistEntityResponseModel
                     {
-                        NewEntity = await subjectRepository.InsertAsync(repositoryContext, editContext).ConfigureAwait(false)
+                        NewEntity = await subjectRepository.InsertAsync(editContext).ConfigureAwait(false)
                     };
                 }
                 else if (request.EntityState == EntityState.IsExisting)
                 {
-                    await subjectRepository.UpdateAsync(repositoryContext, editContext).ConfigureAwait(false);
+                    await subjectRepository.UpdateAsync(editContext).ConfigureAwait(false);
 
                     return new ApiCommandResponseModel();
                 }

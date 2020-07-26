@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
@@ -10,7 +9,6 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Api;
-using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Dispatchers.Api
 {
@@ -44,18 +42,16 @@ namespace RapidCMS.Core.Dispatchers.Api
                 throw new InvalidOperationException($"Cannot New Node when id is not null");
             }
 
-            var repository = _repositoryResolver.GetRepository(request.Subject.CollectionAlias ?? throw new ArgumentNullException());
+            var repository = _repositoryResolver.GetRepository(request.Subject.RepositoryAlias ?? throw new ArgumentNullException());
 
             var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Subject.ParentPath)).ConfigureAwait(false);
             var entityVariant = request.Subject.VariantAlias == null ? default : _entityVariantResolver.ResolveSetup(request.Subject.VariantAlias);
 
-            var repositoryContext = new RepositoryContext(request.Subject.CollectionAlias);
-
             var action = (request.UsageType & ~(UsageType.Node | UsageType.Root | UsageType.NotRoot)) switch
             {
-                UsageType.View => () => repository.GetByIdAsync(repositoryContext, request.Subject.Id!, parent),
-                UsageType.Edit => () => repository.GetByIdAsync(repositoryContext, request.Subject.Id!, parent),
-                UsageType.New => () => repository.NewAsync(repositoryContext, parent, entityVariant?.Type)!,
+                UsageType.View => () => repository.GetByIdAsync(request.Subject.Id!, parent),
+                UsageType.Edit => () => repository.GetByIdAsync(request.Subject.Id!, parent),
+                UsageType.New => () => repository.NewAsync(parent, entityVariant?.Type)!,
 
                 _ => default(Func<Task<IEntity?>>)
             };

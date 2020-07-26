@@ -36,7 +36,7 @@
             }
             else if (element is SubCollectionUI subCollection)
             {
-                var parentPath = ParentPath.AddLevel(EditContext.Parent?.GetParentPath(), EditContext.CollectionAlias, EditContext.Entity.Id!);
+                var parentPath = ParentPath.AddLevel(EditContext.Parent?.GetParentPath(), EditContext.RepositoryAlias, EditContext.Entity.Id!);
 
                 var state = new PageStateModel
                 {

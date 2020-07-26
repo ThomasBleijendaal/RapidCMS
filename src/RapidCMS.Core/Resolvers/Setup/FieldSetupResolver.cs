@@ -9,6 +9,13 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class FieldSetupResolver : ISetupResolver<FieldSetup, FieldConfig>
     {
+        private readonly IRepositoryTypeResolver _repositoryTypeResolver;
+
+        public FieldSetupResolver(IRepositoryTypeResolver repositoryTypeResolver)
+        {
+            _repositoryTypeResolver = repositoryTypeResolver;
+        }
+
         public IResolvedSetup<FieldSetup> ResolveSetup(FieldConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
@@ -16,15 +23,38 @@ namespace RapidCMS.Core.Resolvers.Setup
                 throw new ArgumentNullException(nameof(collection));
             }
 
-            return new ResolvedSetup<FieldSetup>(config switch
+            var setup = config switch
             {
-                _ when config.EditorType == EditorType.Custom && config.Property != null => new CustomPropertyFieldSetup(config, config.CustomType!),
-                _ when config.EditorType != EditorType.None && config.Property != null => new PropertyFieldSetup(config),
-                _ when config.DisplayType != DisplayType.None && config.Property != null => new ExpressionFieldSetup(config, config.Property),
-                _ when config.DisplayType == DisplayType.Custom && config.Expression != null => new CustomExpressionFieldSetup(config, config.Expression, config.CustomType!),
-                _ when config.DisplayType != DisplayType.None && config.Expression != null => new ExpressionFieldSetup(config, config.Expression),
+                _ when config.EditorType == EditorType.Custom && config.Property != null => (FieldSetup)new CustomPropertyFieldSetup(config, config.CustomType!),
+                _ when config.EditorType != EditorType.None && config.Property != null => (FieldSetup)new PropertyFieldSetup(config),
+                _ when config.DisplayType != DisplayType.None && config.Property != null => (FieldSetup)new ExpressionFieldSetup(config, config.Property),
+                _ when config.DisplayType == DisplayType.Custom && config.Expression != null => (FieldSetup)new CustomExpressionFieldSetup(config, config.Expression, config.CustomType!),
+                _ when config.DisplayType != DisplayType.None && config.Expression != null => (FieldSetup)new ExpressionFieldSetup(config, config.Expression),
                 _ => throw new InvalidOperationException()
-            }, true);
+            };
+
+            if (config.Relation != null && setup is PropertyFieldSetup propertySetup)
+            {
+                propertySetup.Relation = config.Relation switch
+                {
+                    RepositoryRelationConfig collectionConfig => (RelationSetup)new RepositoryRelationSetup(
+                        collectionConfig.RepositoryType == null ? null : _repositoryTypeResolver.GetAlias(collectionConfig.RepositoryType),
+                        collectionConfig.CollectionAlias,
+                        collectionConfig.RelatedEntityType!,
+                        collectionConfig.IdProperty!,
+                        collectionConfig.DisplayProperties!)
+                    {
+                        RepositoryParentSelector = collectionConfig.RepositoryParentProperty,
+                        EntityAsParent = collectionConfig.EntityAsParent,
+                        RelatedElementsGetter = collectionConfig.RelatedElementsGetter
+                    },
+                    DataProviderRelationConfig dataProviderConfig => (RelationSetup)new DataProviderRelationSetup(
+                        dataProviderConfig.DataCollectionType),
+                    _ => throw new InvalidOperationException("Invalid RelationConfig")
+                };
+            }
+
+            return new ResolvedSetup<FieldSetup>(setup, true);
         }
     }
 }

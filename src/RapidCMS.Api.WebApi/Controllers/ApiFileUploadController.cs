@@ -5,7 +5,7 @@ using Blazor.FileReader;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RapidCMS.Core.Abstractions.Handlers;
-using RapidCMS.Core.Models.Request.Api;
+using RapidCMS.Core.Models.ApiBridge.Request;
 using RapidCMS.Core.Models.Response;
 
 namespace RapidCMS.Api.WebApi.Controllers
@@ -22,7 +22,7 @@ namespace RapidCMS.Api.WebApi.Controllers
         }
 
         [HttpPost("file/validate")]
-        public async Task<ActionResult<FileUploadValidationResponseModel>> ValidateFileAsync([FromForm] UploadFileRequestModel fileInfo)
+        public async Task<ActionResult<FileUploadValidationResponseModel>> ValidateFileAsync([FromForm] UploadFileModel fileInfo)
         {
             var messages = await _handler.ValidateFileAsync(fileInfo).ConfigureAwait(false);
             if (messages.Any())
@@ -34,7 +34,7 @@ namespace RapidCMS.Api.WebApi.Controllers
         }
 
         [HttpPost("file")]
-        public async Task<ActionResult<FileUploadResponseModel>> SaveFileAsync([FromForm] UploadFileRequestModel fileInfo, [FromForm(Name = "file")] IFormFile file)
+        public async Task<ActionResult<FileUploadResponseModel>> SaveFileAsync([FromForm] UploadFileModel fileInfo, [FromForm(Name = "file")] IFormFile file)
         {
             if (DoesFileMatchFileInfo(fileInfo, file, out var downloadedFile))
             {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Repositories;
 
 namespace RapidCMS.Repositories
 {
@@ -52,22 +51,22 @@ namespace RapidCMS.Repositories
             ChangeToken.RegisterChangeCallback(UpdateStorageAsync, default);
         }
 
-        public override async Task<IEnumerable<TEntity>> GetAllAsync(IRepositoryContext context, IParent? parent, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query)
         {
             await _initializationTask;
-            return await base.GetAllAsync(context, parent, query);
+            return await base.GetAllAsync(parent, query);
         }
 
-        public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TEntity> query)
         {
             await _initializationTask;
-            return await base.GetAllNonRelatedAsync(context, related, query);
+            return await base.GetAllNonRelatedAsync(related, query);
         }
 
-        public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IQuery<TEntity> query)
         {
             await _initializationTask;
-            return await base.GetAllRelatedAsync(context, related, query);
+            return await base.GetAllRelatedAsync(related, query);
         }
     }
 }

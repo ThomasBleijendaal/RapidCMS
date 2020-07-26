@@ -32,7 +32,7 @@ namespace RapidCMS.Api.WebApi.Controllers
             _interactionService = interactionService;
         }
 
-        public string CollectionAlias
+        public string RepositoryAlias
         {
             get => (string)ControllerContext.ActionDescriptor.Properties[CollectionControllerRouteConvention.AliasKey];
         }
@@ -48,7 +48,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                 {
                     Subject = new EntityDescriptor
                     {
-                        CollectionAlias = CollectionAlias,
+                        RepositoryAlias = RepositoryAlias,
                         Id = id,
                         ParentPath = query.ParentPath,
                     },
@@ -78,7 +78,7 @@ namespace RapidCMS.Api.WebApi.Controllers
             {
                 var response = await _presentationService.GetEntitiesAsync<GetEntitiesRequestModel, EntitiesResponseModel>(new GetEntitiesOfParentRequestModel
                 {
-                    CollectionAlias = CollectionAlias,
+                    RepositoryAlias = RepositoryAlias,
                     ParentPath = query.ParentPath,
                     UsageType = UsageType.List | UsageType.Edit,
                     Query = query.GetQuery<TDatabaseEntity>()
@@ -107,12 +107,12 @@ namespace RapidCMS.Api.WebApi.Controllers
             {
                 var response = await _presentationService.GetEntitiesAsync<GetEntitiesRequestModel, EntitiesResponseModel>(new GetEntitiesOfRelationRequestModel
                 {
-                    CollectionAlias = CollectionAlias,
+                    RepositoryAlias = RepositoryAlias,
                     UsageType = UsageType.List | UsageType.Edit,
                     Query = query.GetQuery<TDatabaseEntity>(),
                     Related = new EntityDescriptor
                     {
-                        CollectionAlias = query.Related.CollectionAlias,
+                        RepositoryAlias = query.Related.RepositoryAlias,
                         Id = query.Related.Id
                     }
                 }).ConfigureAwait(false);
@@ -140,12 +140,12 @@ namespace RapidCMS.Api.WebApi.Controllers
             {
                 var response = await _presentationService.GetEntitiesAsync<GetEntitiesRequestModel, EntitiesResponseModel>(new GetEntitiesOfRelationRequestModel
                 {
-                    CollectionAlias = CollectionAlias,
+                    RepositoryAlias = RepositoryAlias,
                     UsageType = UsageType.List | UsageType.Add,
                     Query = query.GetQuery<TDatabaseEntity>(),
                     Related = new EntityDescriptor
                     {
-                        CollectionAlias = query.Related.CollectionAlias,
+                        RepositoryAlias = query.Related.RepositoryAlias,
                         Id = query.Related.Id
                     }
                 }).ConfigureAwait(false);
@@ -175,7 +175,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                 {
                     Subject = new EntityDescriptor
                     {
-                        CollectionAlias = CollectionAlias,
+                        RepositoryAlias = RepositoryAlias,
                         ParentPath = query.ParentPath,
                         VariantAlias = query.VariantTypeName
                     },
@@ -207,7 +207,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                 {
                     Descriptor = new EntityDescriptor
                     {
-                        CollectionAlias = CollectionAlias,
+                        RepositoryAlias = RepositoryAlias,
                         ParentPath = editContextModel.ParentPath
                     },
                     Entity = editContextModel.Entity,
@@ -249,7 +249,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                 {
                     Descriptor = new EntityDescriptor
                     {
-                        CollectionAlias = CollectionAlias,
+                        RepositoryAlias = RepositoryAlias,
                         Id = id,
                         ParentPath = editContextModel.ParentPath
                     },
@@ -291,7 +291,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                 {
                     Descriptor = new EntityDescriptor
                     {
-                        CollectionAlias = CollectionAlias,
+                        RepositoryAlias = RepositoryAlias,
                         Id = id,
                         ParentPath = delete.ParentPath
                     }
@@ -322,12 +322,12 @@ namespace RapidCMS.Api.WebApi.Controllers
                 {
                     Related = new EntityDescriptor
                     {
-                        CollectionAlias = relate.Related.CollectionAlias,
+                        RepositoryAlias = relate.Related.RepositoryAlias,
                         Id = relate.Related.Id
                     },
                     Subject = new EntityDescriptor
                     {
-                        CollectionAlias = CollectionAlias,
+                        RepositoryAlias = RepositoryAlias,
                         Id = relate.Id
                     },
                     Action = PersistRelatedEntityRequestModel.Actions.Add
@@ -358,12 +358,12 @@ namespace RapidCMS.Api.WebApi.Controllers
                 {
                     Related = new EntityDescriptor
                     {
-                        CollectionAlias = relate.Related.CollectionAlias,
+                        RepositoryAlias = relate.Related.RepositoryAlias,
                         Id = relate.Related.Id
                     },
                     Subject = new EntityDescriptor
                     {
-                        CollectionAlias = CollectionAlias,
+                        RepositoryAlias = RepositoryAlias,
                         Id = relate.Id
                     },
                     Action = PersistRelatedEntityRequestModel.Actions.Remove
@@ -396,7 +396,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                     Subject = new EntityDescriptor
                     {
                         Id = reorder.Subject.Id,
-                        CollectionAlias = CollectionAlias,
+                        RepositoryAlias = RepositoryAlias,
                         ParentPath = reorder.Subject.ParentPath
                     }
                 }, ViewState.Api).ConfigureAwait(false);

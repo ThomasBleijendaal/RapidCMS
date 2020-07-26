@@ -12,12 +12,14 @@ namespace RapidCMS.Core.Forms
     {
         internal EditContext(
             string collectionAlias,
+            string repositoryAlias,
             IEntity entity,
             IParent? parent,
             UsageType usageType,
             IServiceProvider serviceProvider)
         {
             CollectionAlias = collectionAlias ?? throw new ArgumentNullException(nameof(collectionAlias));
+            RepositoryAlias = repositoryAlias ?? throw new ArgumentNullException(nameof(repositoryAlias));
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             Parent = parent;
             UsageType = usageType;
@@ -28,6 +30,7 @@ namespace RapidCMS.Core.Forms
         internal readonly FormState FormState;
 
         public string CollectionAlias { get; private set; }
+        public string RepositoryAlias { get; private set; }
         public IEntity Entity { get; private set; }
         public IParent? Parent { get; private set; }
         public UsageType UsageType { get; private set; }

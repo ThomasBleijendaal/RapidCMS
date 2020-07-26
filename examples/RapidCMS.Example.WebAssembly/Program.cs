@@ -28,24 +28,20 @@ namespace RapidCMS.Example.WebAssembly
 
             builder.Services.AddAuthorizationCore();
 
-            builder.Services.AddScoped<BaseRepository<Person>, ApiRepository<Person>>();
-            builder.Services.AddRapidCMSRepositoryApiHttpClient<Person>(_baseUri, "person");
-            builder.Services.AddScoped<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson>>();
-            builder.Services.AddRapidCMSRepositoryApiHttpClient<ConventionalPerson>(_baseUri, "person-convention");
-            builder.Services.AddScoped<BaseRepository<Country>, ApiRepository<Country>>();
-            builder.Services.AddRapidCMSRepositoryApiHttpClient<Country>(_baseUri, "country");
-            builder.Services.AddScoped<BaseRepository<TagGroup>, ApiRepository<TagGroup>>();
-            builder.Services.AddRapidCMSRepositoryApiHttpClient<TagGroup>(_baseUri, "taggroup");
-            builder.Services.AddScoped<BaseRepository<Tag>, ApiRepository<Tag>>();
-            builder.Services.AddRapidCMSRepositoryApiHttpClient<Tag>(_baseUri, "tag");
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>>(_baseUri);
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>>(_baseUri);
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<Country>, ApiRepository<Country, JsonRepository<Country>>>(_baseUri);
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup, JsonRepository<TagGroup>>>(_baseUri);
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<Tag>, ApiRepository<Tag, JsonRepository<Tag>>>(_baseUri);
 
             // with LocalStorageRepository collections can store their data in the local storage of
             // the user, making personalisation quite easy
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddScoped<BaseRepository<User>, LocalStorageRepository<User>>();
 
-            builder.Services.AddSingleton<BaseMappedRepository<MappedEntity, DatabaseEntity>, ApiMappedRepository<MappedEntity, DatabaseEntity>>();
-            builder.Services.AddRapidCMSRepositoryApiHttpClient<MappedEntity, DatabaseEntity>(_baseUri, "mapped");
+            builder.Services.AddRapidCMSApiRepository<
+                BaseMappedRepository<MappedEntity, DatabaseEntity>,
+                ApiMappedRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>>(_baseUri);
             builder.Services.AddSingleton<DatabaseEntityDataViewBuilder>();
 
             builder.Services.AddSingleton<RandomNameActionHandler>();

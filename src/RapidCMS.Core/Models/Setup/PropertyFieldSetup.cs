@@ -1,7 +1,5 @@
 ﻿using System;
-using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
@@ -12,11 +10,6 @@ namespace RapidCMS.Core.Models.Setup
         {
             Property = field.Property ?? throw new ArgumentNullException(nameof(field.Property));
             EditorType = field.EditorType;
-
-            if (field.Relation != null)
-            {
-                Relation = ConfigProcessingHelper.ProcessRelation(field.Relation);
-            }
         }
         
         internal EditorType EditorType { get; set; } = EditorType.Readonly;

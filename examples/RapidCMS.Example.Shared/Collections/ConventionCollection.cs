@@ -25,7 +25,7 @@ namespace RapidCMS.Example.Shared.Collections
                 //   the Name and Description of said attribute.
                 //
                 // - The ListView will only display a readonly list view without edit options.
-                collection.ConfigureByConvention(CollectionConvention.ListEditor);
+                collection.ConfigureByConvention(CollectionConvention.ListViewNodeEditor);
 
                 // There are three combo's that should be used:
                 // - collection.SetTreeView(EntityVisibilty.Visible, x => x.Property);

@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Handlers;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Exceptions;
-using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Helpers;
+using RapidCMS.Repositories.ApiBridge;
 
 namespace RapidCMS.Core.Models.Config.Api
 {
     internal class ApiConfig : IApiConfig
     {
         internal bool AllowAnonymousUsage { get; set; } = false;
-        internal Dictionary<string, ApiCollectionConfig> Collections { get; set; } = new Dictionary<string, ApiCollectionConfig>();
+        internal List<ApiRepositoryConfig> Repositories { get; set; } = new List<ApiRepositoryConfig>();
         internal List<Type> FileUploadHandlers { get; set; } = new List<Type>();
+
+        IEnumerable<IApiRepositoryConfig> IApiConfig.Repositories => Repositories;
 
         public IApiConfig AllowAnonymousUser()
         {
@@ -25,41 +31,50 @@ namespace RapidCMS.Core.Models.Config.Api
             return this;
         }
 
-        public IApiCollectionConfig RegisterRepository<TEntity, TRepository>(string collectionAlias)
+        public IApiRepositoryConfig RegisterRepository<TEntity, TRepository>()
+            where TEntity : class, IEntity
+            where TRepository : IRepository
         {
-            if (collectionAlias != collectionAlias.ToUrlFriendlyString())
+            var fullType = typeof(ApiRepository<TEntity, TRepository>);
+            var alias = AliasHelper.GetRepositoryAlias(fullType);
+
+            if (Repositories.Any(x => x.Alias == alias))
             {
-                throw new ArgumentException($"Use lowercase, hyphened strings as alias for collections, '{collectionAlias.ToUrlFriendlyString()}' instead of '{collectionAlias}'.");
-            }
-            if (Collections.ContainsKey(collectionAlias))
-            {
-                throw new NotUniqueException(nameof(collectionAlias));
+                throw new NotUniqueException(nameof(TRepository));
             }
 
-            return Collections[collectionAlias] = new ApiCollectionConfig
+            var config = new ApiRepositoryConfig
             {
+                Alias = alias,
                 EntityType = typeof(TEntity),
                 RepositoryType = typeof(TRepository)
             };
+            Repositories.Add(config);
+            return config;
         }
 
-        public IApiCollectionConfig RegisterRepository<TEntity, TMappedEntity, TRepository>(string collectionAlias)
+        public IApiRepositoryConfig RegisterRepository<TEntity, TMappedEntity, TRepository>()
+            where TEntity : class, IEntity
+            where TMappedEntity : class
+            where TRepository : IRepository
         {
-            if (collectionAlias != collectionAlias.ToUrlFriendlyString())
+            var fullType = typeof(ApiMappedRepository<TEntity, TMappedEntity, TRepository>);
+            var alias = AliasHelper.GetRepositoryAlias(fullType);
+
+            if (Repositories.Any(x => x.Alias == alias))
             {
-                throw new ArgumentException($"Use lowercase, hyphened strings as alias for collections, '{collectionAlias.ToUrlFriendlyString()}' instead of '{collectionAlias}'.");
-            }
-            if (Collections.ContainsKey(collectionAlias))
-            {
-                throw new NotUniqueException(nameof(collectionAlias));
+                throw new NotUniqueException(nameof(TRepository));
             }
 
-            return Collections[collectionAlias] = new ApiCollectionConfig
+            var config = new ApiRepositoryConfig
             {
+                Alias = alias,
                 EntityType = typeof(TEntity),
                 DatabaseType = typeof(TMappedEntity),
                 RepositoryType = typeof(TRepository)
             };
+            Repositories.Add(config);
+            return config;
         }
     }
 }

@@ -58,7 +58,7 @@
         {
             DataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
 
-            await DataCollection.SetEntityAsync(Entity, Parent);
+            await DataCollection.SetEntityAsync(EditContext, Parent);
             await UpdateOptionsAsync();
         }
     }

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Repositories.ApiBridge;
 
 namespace RapidCMS.Core.Models.Config
 {
@@ -32,6 +29,9 @@ namespace RapidCMS.Core.Models.Config
         internal CustomTypeRegistrationConfig? CustomLoginStatusRegistration { get; set; }
 
         IEnumerable<ITreeElementConfig> ICollectionConfig.CollectionsAndPages => CollectionsAndPages;
+
+        IEnumerable<Type> ICollectionConfig.RepositoryTypes 
+            => CollectionsAndPages.SelectNotNull(c => c as ICollectionConfig).SelectMany(c => c.RepositoryTypes);
 
         public List<ITreeElementConfig> CollectionsAndPages { get; set; } = new List<ITreeElementConfig>
         {

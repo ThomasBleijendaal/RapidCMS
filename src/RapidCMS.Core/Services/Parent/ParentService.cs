@@ -3,7 +3,6 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Models.Data;
-using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Services.Parent
 {
@@ -11,15 +10,14 @@ namespace RapidCMS.Core.Services.Parent
     {
         private readonly IRepositoryResolver _repositoryResolver;
 
-        public ParentService(
-            IRepositoryResolver repositoryResolver)
+        public ParentService(IRepositoryResolver repositoryResolver)
         {
             _repositoryResolver = repositoryResolver;
         }
 
         public async Task<IParent?> GetParentAsync(ParentPath? parentPath)
         {
-            // TODO: heavily cache this. traversing the collection tree per call is very expensive
+            // TODO: heavily cache this. traversing the parent tree per call could be very expensive (and is now possible)
 
             var parent = default(ParentEntity);
 
@@ -28,16 +26,16 @@ namespace RapidCMS.Core.Services.Parent
                 return parent;
             }
 
-            foreach (var (collectionAlias, id) in parentPath)
+            foreach (var (repositoryAlias, id) in parentPath)
             {
-                var repositoryContext = new RepositoryContext(collectionAlias);
-                var entity = await _repositoryResolver.GetRepository(collectionAlias).GetByIdAsync(repositoryContext, id, parent).ConfigureAwait(false);
+                var repo = _repositoryResolver.GetRepository(repositoryAlias);
+                var entity = await repo.GetByIdAsync(id, parent).ConfigureAwait(false);
                 if (entity == null)
                 {
                     break;
                 }
 
-                parent = new ParentEntity(parent, entity, collectionAlias);
+                parent = new ParentEntity(parent, entity, repositoryAlias);
             }
 
             return parent;

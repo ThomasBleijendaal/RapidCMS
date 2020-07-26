@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Providers
@@ -45,7 +46,7 @@ namespace RapidCMS.Core.Providers
             return Task.FromResult(list.AsEnumerable());
         }
 
-        public Task SetEntityAsync(IEntity entity, IParent? parent)
+        public Task SetEntityAsync(EditContext editContext, IParent? parent)
         {
             return Task.CompletedTask;
         }

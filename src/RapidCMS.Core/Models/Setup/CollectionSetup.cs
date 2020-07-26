@@ -13,14 +13,14 @@ namespace RapidCMS.Core.Models.Setup
             string? icon,
             string name,
             string alias,
-            Type? repositoryType,
+            string repositoryAlias,
             bool isRecursive = false,
-            bool isResolverCachable = true)
+            bool isResolverCachable = true) // TODO
         {
             Icon = icon;
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
-            RepositoryType = repositoryType;
+            RepositoryAlias = repositoryAlias ?? throw new ArgumentNullException(nameof(repositoryAlias));
 
             Recursive = isRecursive;
         }
@@ -28,6 +28,7 @@ namespace RapidCMS.Core.Models.Setup
         public string? Icon { get; private set; }
         public string Name { get; private set; }
         public string Alias { get; private set; }
+        public string RepositoryAlias { get; private set; }
         public bool Recursive { get; private set; }
 
         public List<ITreeElementSetup> Collections { get; set; } = new List<ITreeElementSetup>();
@@ -54,8 +55,6 @@ namespace RapidCMS.Core.Models.Setup
             return SubEntityVariants?.FirstOrDefault(x => x.Type == entity.GetType())
                 ?? EntityVariant;
         }
-
-        public Type? RepositoryType { get; private set; }
 
         public TreeViewSetup? TreeView { get; set; }
 

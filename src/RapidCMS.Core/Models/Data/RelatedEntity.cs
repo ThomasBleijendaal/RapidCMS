@@ -5,18 +5,18 @@ namespace RapidCMS.Core.Models.Data
 {
     public class RelatedEntity : IRelated
     {
-        public RelatedEntity(IEntity relatedEntity, string collectionAlias)
+        public RelatedEntity(IEntity relatedEntity, string repositoryAlias)
         {
             Entity = relatedEntity;
-            CollectionAlias = collectionAlias;
+            RepositoryAlias = repositoryAlias;
         }
 
-        public RelatedEntity(EditContext editContext) : this(editContext.Entity, editContext.CollectionAlias)
+        public RelatedEntity(EditContext editContext) : this(editContext.Entity, editContext.RepositoryAlias)
         {
 
         }
 
         public IEntity Entity { get; private set; }
-        public string CollectionAlias { get; private set; }
+        public string RepositoryAlias { get; private set; }
     }
 }

@@ -9,6 +9,7 @@ namespace RapidCMS.Core.Abstractions.Setup
     {
         string? Icon { get; }
         string Alias { get; }
+        string RepositoryAlias { get; }
         string Name { get; }
         bool Recursive { get; }
 
@@ -22,8 +23,6 @@ namespace RapidCMS.Core.Abstractions.Setup
 
         IEntityVariantSetup GetEntityVariant(string? alias);
         IEntityVariantSetup GetEntityVariant(IEntity entity);
-
-        Type? RepositoryType { get; }
 
         TreeViewSetup? TreeView { get; }
 

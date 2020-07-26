@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Blazor.FileReader;
 
-namespace RapidCMS.Core.Models.Request.Api
+namespace RapidCMS.Core.Models.ApiBridge.Request
 {
-    public class UploadFileRequestModel : IFileInfo
+    public class UploadFileModel : IFileInfo
     {
         [Required]
         public string Name { get; set; } = default!;
@@ -19,7 +19,8 @@ namespace RapidCMS.Core.Models.Request.Api
 
         public long? LastModified { get; set; }
 
-        public DateTime? LastModifiedDate { 
+        public DateTime? LastModifiedDate
+        {
             get => DateTimeOffset.FromUnixTimeMilliseconds(LastModified ?? 0).UtcDateTime;
             set => LastModified = !value.HasValue ? 0 : new DateTimeOffset(value.Value).ToUnixTimeMilliseconds();
         }

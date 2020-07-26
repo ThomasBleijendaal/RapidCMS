@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
@@ -17,6 +19,7 @@ namespace RapidCMS.Core.Resolvers.Setup
         private readonly ISetupResolver<TreeViewSetup, TreeViewConfig> _treeViewResolver;
         private readonly ISetupResolver<ListSetup, ListConfig> _listResolver;
         private readonly ISetupResolver<NodeSetup, NodeConfig> _nodeResolver;
+        private readonly IRepositoryTypeResolver _repositoryTypeResolver;
 
         private Dictionary<string, CollectionConfig> _collectionMap { get; set; } = new Dictionary<string, CollectionConfig>();
         private Dictionary<string, CollectionSetup> _cachedCollectionMap { get; set; } = new Dictionary<string, CollectionSetup>();
@@ -26,13 +29,15 @@ namespace RapidCMS.Core.Resolvers.Setup
             ISetupResolver<IEntityVariantSetup, EntityVariantConfig> entityVariantResolver,
             ISetupResolver<TreeViewSetup, TreeViewConfig> treeViewResolver,
             ISetupResolver<ListSetup, ListConfig> listResolver,
-            ISetupResolver<NodeSetup, NodeConfig> nodeResolver)
+            ISetupResolver<NodeSetup, NodeConfig> nodeResolver,
+            IRepositoryTypeResolver repositoryTypeResolver)
         {
             _treeElementResolver = treeElementResolver;
             _entityVariantResolver = entityVariantResolver;
             _treeViewResolver = treeViewResolver;
             _listResolver = listResolver;
             _nodeResolver = nodeResolver;
+            _repositoryTypeResolver = repositoryTypeResolver;
             Initialize(cmsConfig);
         }
 
@@ -60,7 +65,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
         ICollectionSetup ISetupResolver<ICollectionSetup>.ResolveSetup()
         {
-            throw new InvalidOperationException("Cannot collection page without alias.");
+            throw new InvalidOperationException("Cannot resolve collection or page without alias.");
         }
 
         ICollectionSetup ISetupResolver<ICollectionSetup>.ResolveSetup(string alias)
@@ -88,11 +93,13 @@ namespace RapidCMS.Core.Resolvers.Setup
 
         private IResolvedSetup<CollectionSetup> ConvertConfig(CollectionConfig config)
         {
+            var repositoryAlias = _repositoryTypeResolver.GetAlias(config.RepositoryType);
+
             var collection = new CollectionSetup(
                 config.Icon,
                 config.Name,
                 config.Alias,
-                config.RepositoryType,
+                repositoryAlias,
                 isRecursive: config.Recursive,
                 isResolverCachable: true) // TODO
             {

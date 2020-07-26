@@ -2,14 +2,13 @@
 using System.Threading;
 using Blazor.FileReader;
 using RapidCMS.Core.Abstractions.Config;
-using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Handlers;
+using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Services.Auth;
-using RapidCMS.Repositories.ApiBridge;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -40,36 +39,23 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Adds a plain HttpClient for the given collection which is hosted at the given baseAddress.
-        /// The ApiRepository uses this HttpClient to communicate to the server.
+        /// Adds the repository as scoped service and adds a plain HttpClient for the given repository.
         /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
+        /// <typeparam name="TIRepository"></typeparam>
+        /// <typeparam name="TRepository"></typeparam>
         /// <param name="services"></param>
-        /// <param name="baseAddress">Base address of the api, for example: https://example.com</param>
-        /// <param name="collectionAlias"></param>
+        /// <param name="baseUri"></param>
         /// <returns></returns>
-        public static IHttpClientBuilder AddRapidCMSRepositoryApiHttpClient<TEntity>(this IServiceCollection services, Uri baseUri, string collectionAlias)
-            where TEntity : class, IEntity
+        public static IHttpClientBuilder AddRapidCMSApiRepository<TIRepository, TRepository>(this IServiceCollection services, Uri baseUri)
+            where TIRepository : class
+            where TRepository : class, TIRepository
         {
-            return services.AddHttpClient<ApiRepository<TEntity>>(collectionAlias)
-                .ConfigureHttpClient(x => x.BaseAddress = new Uri(baseUri, $"api/_rapidcms/{collectionAlias}/"));
-        }
+            var alias = AliasHelper.GetRepositoryAlias(typeof(TRepository));
 
-        /// <summary>
-        /// Adds a plain HttpClient for the given collection which is hosted at the given baseAddress.
-        /// The ApiMappedRepository uses this HttpClient to communicate to the server.
-        /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
-        /// <param name="services"></param>
-        /// <param name="baseAddress">Base address of the api, for example: https://example.com</param>
-        /// <param name="collectionAlias"></param>
-        /// <returns></returns>
-        public static IHttpClientBuilder AddRapidCMSRepositoryApiHttpClient<TEntity, TDatabaseEntity>(this IServiceCollection services, Uri baseUri, string collectionAlias)
-            where TEntity : class, IEntity
-            where TDatabaseEntity : class
-        {
-            return services.AddHttpClient<ApiMappedRepository<TEntity, TDatabaseEntity>>(collectionAlias)
-                .ConfigureHttpClient(x => x.BaseAddress = new Uri(baseUri, $"api/_rapidcms/{collectionAlias}/"));
+            services.AddScoped<TIRepository, TRepository>();
+
+            return services.AddHttpClient(alias)
+                .ConfigureHttpClient(x => x.BaseAddress = new Uri(baseUri, $"api/_rapidcms/{alias}/"));
         }
 
         /// <summary>
@@ -84,7 +70,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IHttpClientBuilder AddRapidCMSFileUploadApiHttpClient<THandler>(this IServiceCollection services, Uri baseUri)
             where THandler : IFileUploadHandler
         {
-            var alias = ApiFileUploadHandler.GetFileUploaderAlias(typeof(THandler));
+            var alias = AliasHelper.GetFileUploaderAlias(typeof(THandler));
 
             return services.AddHttpClient<ApiFileUploadHandler<THandler>>(alias)
                 .ConfigureHttpClient(x => x.BaseAddress = new Uri(baseUri, $"api/_rapidcms/{alias}/"));

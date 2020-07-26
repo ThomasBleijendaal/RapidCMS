@@ -7,7 +7,6 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.ChangeToken;
-using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Repositories
@@ -27,7 +26,7 @@ namespace RapidCMS.Core.Repositories
         /// <param name="id"></param>
         /// <param name="parent"></param>
         /// <returns></returns>
-        public abstract Task<TEntity?> GetByIdAsync(IRepositoryContext context, string id, IParent? parent);
+        public abstract Task<TEntity?> GetByIdAsync(string id, IParent? parent);
 
         /// <summary>
         /// This method gets all entities belonging to the given parent(s) and query instructions (paging / search).
@@ -35,7 +34,7 @@ namespace RapidCMS.Core.Repositories
         /// <param name="parent"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public abstract Task<IEnumerable<TEntity>> GetAllAsync(IRepositoryContext context, IParent? parent, IQuery<TEntity> query);
+        public abstract Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query);
 
         /// <summary>
         /// This method gets all entities that are related to the given entity and query instruction (paging / search).
@@ -43,7 +42,7 @@ namespace RapidCMS.Core.Repositories
         /// <param name="related"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TEntity> query)
+        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IQuery<TEntity> query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllRelatedAsync)} on the {GetType()}.");
 
         /// <summary>
@@ -52,7 +51,7 @@ namespace RapidCMS.Core.Repositories
         /// <param name="related"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRepositoryContext context, IRelated related, IQuery<TEntity> query)
+        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TEntity> query)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllNonRelatedAsync)} on the {GetType()}.");
 
         /// <summary>
@@ -61,7 +60,7 @@ namespace RapidCMS.Core.Repositories
         /// <param name="parent"></param>
         /// <param name="variantType"></param>
         /// <returns></returns>
-        public abstract Task<TEntity> NewAsync(IRepositoryContext context, IParent? parent, Type? variantType = null);
+        public abstract Task<TEntity> NewAsync(IParent? parent, Type? variantType = null);
 
         /// <summary>
         /// This method inserts a new entity in the database.
@@ -72,7 +71,7 @@ namespace RapidCMS.Core.Repositories
         /// </summary>
         /// <param name="editContext"></param>
         /// <returns></returns>
-        public abstract Task<TEntity?> InsertAsync(IRepositoryContext context, IEditContext<TEntity> editContext);
+        public abstract Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext);
 
         /// <summary>
         /// This method updates an existing entity in the database.
@@ -83,7 +82,7 @@ namespace RapidCMS.Core.Repositories
         /// </summary>
         /// <param name="editContext"></param>
         /// <returns></returns>
-        public abstract Task UpdateAsync(IRepositoryContext context, IEditContext<TEntity> editContext);
+        public abstract Task UpdateAsync(IEditContext<TEntity> editContext);
 
         /// <summary>
         /// This method deletes an existing entity in the database.
@@ -91,7 +90,7 @@ namespace RapidCMS.Core.Repositories
         /// <param name="id"></param>
         /// <param name="parent"></param>
         /// <returns></returns>
-        public abstract Task DeleteAsync(IRepositoryContext context, string id, IParent? parent);
+        public abstract Task DeleteAsync(string id, IParent? parent);
 
         /// <summary>
         /// This methods adds an releated entity to the entity that corresponds with the given id. 
@@ -100,7 +99,7 @@ namespace RapidCMS.Core.Repositories
         /// <param name="related"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual Task AddAsync(IRepositoryContext context, IRelated related, string id)
+        public virtual Task AddAsync(IRelated related, string id)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(AddAsync)} on the {GetType()}.");
 
         /// <summary>
@@ -110,7 +109,7 @@ namespace RapidCMS.Core.Repositories
         /// <param name="related"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual Task RemoveAsync(IRepositoryContext context, IRelated related, string id)
+        public virtual Task RemoveAsync(IRelated related, string id)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(RemoveAsync)} on the {GetType()}.");
 
         /// <summary>
@@ -121,7 +120,7 @@ namespace RapidCMS.Core.Repositories
         /// <param name="id"></param>
         /// <param name="parent"></param>
         /// <returns></returns>
-        public virtual Task ReorderAsync(IRepositoryContext context, string? beforeId, string id, IParent? parent)
+        public virtual Task ReorderAsync(string? beforeId, string id, IParent? parent)
             => throw new NotImplementedException($"In order to use reordering in list editors, implement {nameof(ReorderAsync)} on the {GetType()}.");
 
         protected internal CmsChangeToken _repositoryChangeToken = new CmsChangeToken();
@@ -135,64 +134,64 @@ namespace RapidCMS.Core.Repositories
             currentToken.HasChanged = true;
         }
 
-        async Task<IEntity?> IRepository.GetByIdAsync(IRepositoryContext context, string id, IParent? parent)
+        async Task<IEntity?> IRepository.GetByIdAsync(string id, IParent? parent)
         {
-            return await GetByIdAsync(context, id, parent).ConfigureAwait(false);
+            return await GetByIdAsync(id, parent).ConfigureAwait(false);
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllAsync(IRepositoryContext context, IParent? parent, IQuery query)
+        async Task<IEnumerable<IEntity>> IRepository.GetAllAsync(IParent? parent, IQuery query)
         {
-            return (await GetAllAsync(context, parent, TypedQuery<TEntity>.Convert(query)).ConfigureAwait(false)).Cast<IEntity>();
+            return (await GetAllAsync(parent, TypedQuery<TEntity>.Convert(query)).ConfigureAwait(false)).Cast<IEntity>();
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllRelatedAsync(IRepositoryContext context, IRelated related, IQuery query)
+        async Task<IEnumerable<IEntity>> IRepository.GetAllRelatedAsync(IRelated related, IQuery query)
         {
-            return (await GetAllRelatedAsync(context, related, TypedQuery<TEntity>.Convert(query)).ConfigureAwait(false))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+            return (await GetAllRelatedAsync(related, TypedQuery<TEntity>.Convert(query)).ConfigureAwait(false))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
         }
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllNonRelatedAsync(IRepositoryContext context, IRelated related, IQuery query)
+        async Task<IEnumerable<IEntity>> IRepository.GetAllNonRelatedAsync(IRelated related, IQuery query)
         {
-            return (await GetAllNonRelatedAsync(context, related, TypedQuery<TEntity>.Convert(query)).ConfigureAwait(false))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+            return (await GetAllNonRelatedAsync(related, TypedQuery<TEntity>.Convert(query)).ConfigureAwait(false))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
         }
 
-        async Task<IEntity> IRepository.NewAsync(IRepositoryContext context, IParent? parent, Type? variantType)
+        async Task<IEntity> IRepository.NewAsync(IParent? parent, Type? variantType)
         {
-            return await NewAsync(context, parent, variantType).ConfigureAwait(false);
+            return await NewAsync(parent, variantType).ConfigureAwait(false);
         }
 
-        async Task<IEntity?> IRepository.InsertAsync(IRepositoryContext context, IEditContext editContext)
+        async Task<IEntity?> IRepository.InsertAsync(IEditContext editContext)
         {
-            var data = await InsertAsync(context, (IEditContext<TEntity>)editContext).ConfigureAwait(false) as IEntity;
+            var data = await InsertAsync((IEditContext<TEntity>)editContext).ConfigureAwait(false) as IEntity;
             NotifyUpdate();
             return data;
         }
 
-        async Task IRepository.UpdateAsync(IRepositoryContext context, IEditContext editContext)
+        async Task IRepository.UpdateAsync(IEditContext editContext)
         {
-            await UpdateAsync(context, (IEditContext<TEntity>)editContext).ConfigureAwait(false);
+            await UpdateAsync((IEditContext<TEntity>)editContext).ConfigureAwait(false);
             NotifyUpdate();
         }
 
-        async Task IRepository.DeleteAsync(IRepositoryContext context, string id, IParent? parent)
+        async Task IRepository.DeleteAsync(string id, IParent? parent)
         {
-            await DeleteAsync(context, id, parent).ConfigureAwait(false);
+            await DeleteAsync(id, parent).ConfigureAwait(false);
             NotifyUpdate();
         }
 
-        async Task IRepository.AddAsync(IRepositoryContext context, IRelated related, string id)
+        async Task IRepository.AddAsync(IRelated related, string id)
         {
-            await AddAsync(context, related, id).ConfigureAwait(false);
+            await AddAsync(related, id).ConfigureAwait(false);
             NotifyUpdate();
         }
-        async Task IRepository.RemoveAsync(IRepositoryContext context, IRelated related, string id)
+        async Task IRepository.RemoveAsync(IRelated related, string id)
         {
-            await RemoveAsync(context, related, id).ConfigureAwait(false);
+            await RemoveAsync(related, id).ConfigureAwait(false);
             NotifyUpdate();
         }
 
-        async Task IRepository.ReorderAsync(IRepositoryContext context, string? beforeId, string id, IParent? parent)
+        async Task IRepository.ReorderAsync(string? beforeId, string id, IParent? parent)
         {
-            await ReorderAsync(context, beforeId, id, parent).ConfigureAwait(false);
+            await ReorderAsync(beforeId, id, parent).ConfigureAwait(false);
             NotifyUpdate();
         }
     }

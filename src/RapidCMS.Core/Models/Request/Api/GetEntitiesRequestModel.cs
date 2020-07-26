@@ -6,7 +6,7 @@ namespace RapidCMS.Core.Models.Request.Api
     public class GetEntitiesRequestModel
     {
         public UsageType UsageType { get; set; }
-        public string CollectionAlias { get; set; } = default!;
+        public string RepositoryAlias { get; set; } = default!;
         public IQuery Query { get; set; } = default!;
     }
 }

@@ -8,28 +8,22 @@ namespace RapidCMS.Core.Resolvers.Repositories
 {
     internal class RepositoryResolver : IRepositoryResolver
     {
-        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
+        private readonly IRepositoryTypeResolver _repositoryTypeResolver;
         private readonly IServiceProvider _serviceProvider;
 
-        public RepositoryResolver(ISetupResolver<ICollectionSetup> collectionResolver, IServiceProvider serviceProvider)
+        public RepositoryResolver(IRepositoryTypeResolver repositoryTypeResolver, IServiceProvider serviceProvider)
         {
-            _collectionResolver = collectionResolver;
+            _repositoryTypeResolver = repositoryTypeResolver;
             _serviceProvider = serviceProvider;
         }
 
         IRepository IRepositoryResolver.GetRepository(ICollectionSetup collection)
-        {
-            return (IRepository)_serviceProvider.GetRequiredService(collection.RepositoryType);
-        }
+            => (this as IRepositoryResolver).GetRepository(collection.RepositoryAlias);
 
-        IRepository IRepositoryResolver.GetRepository(string collectionAlias)
-        {
-            return (this as IRepositoryResolver).GetRepository(_collectionResolver.ResolveSetup(collectionAlias));
-        }
+        IRepository IRepositoryResolver.GetRepository(string repositoryAlias)
+            => (this as IRepositoryResolver).GetRepository(_repositoryTypeResolver.GetType(repositoryAlias));
 
-        IRepository IRepositoryResolver.GetRepository(Type repositoryType)
-        {
-            return (IRepository)_serviceProvider.GetRequiredService(repositoryType);
-        }
+        IRepository IRepositoryResolver.GetRepository(Type repositoryType) 
+            => (IRepository)_serviceProvider.GetRequiredService(repositoryType);
     }
 }

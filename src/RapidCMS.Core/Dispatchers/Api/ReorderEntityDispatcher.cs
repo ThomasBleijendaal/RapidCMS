@@ -9,7 +9,6 @@ using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
-using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Core.Dispatchers.Api
 {
@@ -31,23 +30,22 @@ namespace RapidCMS.Core.Dispatchers.Api
 
         public async Task<ApiCommandResponseModel> InvokeAsync(PersistReorderRequestModel request, IPageState pageState)
         {
-            if (string.IsNullOrWhiteSpace(request.Subject.CollectionAlias) ||
+            if (string.IsNullOrWhiteSpace(request.Subject.RepositoryAlias) ||
                 string.IsNullOrWhiteSpace(request.Subject.Id))
             {
                 throw new ArgumentNullException();
             }
 
-            var subjectRepository = _repositoryResolver.GetRepository(request.Subject.CollectionAlias);
-            var repositoryContext = new RepositoryContext(request.Subject.CollectionAlias);
-
+            var subjectRepository = _repositoryResolver.GetRepository(request.Subject.RepositoryAlias);
+            
             var subjectParent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Subject.ParentPath)).ConfigureAwait(false);
 
-            var subjectEntity = await subjectRepository.GetByIdAsync(repositoryContext, request.Subject.Id, subjectParent).ConfigureAwait(false)
+            var subjectEntity = await subjectRepository.GetByIdAsync(request.Subject.Id, subjectParent).ConfigureAwait(false)
                 ?? throw new NotFoundException("Subject entity was not found");
 
             await _authService.EnsureAuthorizedUserAsync(Operations.Update, subjectEntity).ConfigureAwait(false);
 
-            await subjectRepository.ReorderAsync(repositoryContext, request.BeforeId, request.Subject.Id, subjectParent).ConfigureAwait(false);
+            await subjectRepository.ReorderAsync(request.BeforeId, request.Subject.Id, subjectParent).ConfigureAwait(false);
 
             return new ApiCommandResponseModel();
         }

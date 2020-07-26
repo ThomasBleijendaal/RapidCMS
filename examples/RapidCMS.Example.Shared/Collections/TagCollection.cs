@@ -30,6 +30,7 @@ namespace RapidCMS.Example.Shared.Collections
                             {
                                 section.AddDefaultButton(DefaultButtonType.SaveExisting);
                                 section.AddDefaultButton(DefaultButtonType.SaveNew);
+                                section.AddDefaultButton(DefaultButtonType.Delete);
 
                                 section.AddField(x => x.Name);
 
