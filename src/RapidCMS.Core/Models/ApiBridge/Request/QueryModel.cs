@@ -13,17 +13,19 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
         public int Take { get; set; }
         public string? SearchTerm { get; set; }
 
-        [Obsolete("Do not use ActiveTab for determining which data view should be send, but send the data view expresison like the order by")]
         public int? ActiveTab { get; set; }
 
-        // TODO: protect this variable more
-        public string? VariantTypeName { get; set; }
+        public string? VariantAlias { get; set; }
+
+        public string? CollectionAlias { get; set; }
 
         public IEnumerable<OrderModel>? OrderBys { get; set; }
 
         public IQuery GetQuery<TEntity>()
         {
             var query = Create(Take, 1 + Skip / Math.Max(1, Take), SearchTerm, ActiveTab);
+
+            query.CollectionAlias = CollectionAlias;
 
             if (OrderBys != null)
             {

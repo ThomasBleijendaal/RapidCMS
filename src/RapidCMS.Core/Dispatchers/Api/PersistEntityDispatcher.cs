@@ -39,12 +39,12 @@ namespace RapidCMS.Core.Dispatchers.Api
                 throw new ArgumentNullException();
             }
 
-            var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Descriptor.ParentPath)).ConfigureAwait(false);
+            var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Descriptor.ParentPath));
 
             var subjectRepository = _repositoryResolver.GetRepository(request.Descriptor.RepositoryAlias);
             var referenceEntity = (request.EntityState == EntityState.IsExisting)
-                ? await subjectRepository.GetByIdAsync(request.Descriptor.Id ?? throw new InvalidOperationException("Cannot modify entity without giving an Id."), parent).ConfigureAwait(false)
-                : await subjectRepository.NewAsync(parent, request.Entity.GetType()).ConfigureAwait(false);
+                ? await subjectRepository.GetByIdAsync(request.Descriptor.Id ?? throw new InvalidOperationException("Cannot modify entity without giving an Id."), parent)
+                : await subjectRepository.NewAsync(parent, request.Entity.GetType());
 
             if (referenceEntity == null)
             {
@@ -53,7 +53,7 @@ namespace RapidCMS.Core.Dispatchers.Api
 
             var usageType = UsageType.Node | (request.EntityState == EntityState.IsNew ? UsageType.New : UsageType.Edit);
 
-            await _authService.EnsureAuthorizedUserAsync(usageType, request.Entity).ConfigureAwait(false);
+            await _authService.EnsureAuthorizedUserAsync(usageType, request.Entity);
 
             var editContext = _editContextFactory.GetEditContextWrapper(
                 usageType,
@@ -74,12 +74,12 @@ namespace RapidCMS.Core.Dispatchers.Api
                 {
                     return new ApiPersistEntityResponseModel
                     {
-                        NewEntity = await subjectRepository.InsertAsync(editContext).ConfigureAwait(false)
+                        NewEntity = await subjectRepository.InsertAsync(editContext)
                     };
                 }
                 else if (request.EntityState == EntityState.IsExisting)
                 {
-                    await subjectRepository.UpdateAsync(editContext).ConfigureAwait(false);
+                    await subjectRepository.UpdateAsync(editContext);
 
                     return new ApiCommandResponseModel();
                 }

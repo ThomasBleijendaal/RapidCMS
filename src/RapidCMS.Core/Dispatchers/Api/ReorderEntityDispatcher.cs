@@ -38,14 +38,14 @@ namespace RapidCMS.Core.Dispatchers.Api
 
             var subjectRepository = _repositoryResolver.GetRepository(request.Subject.RepositoryAlias);
             
-            var subjectParent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Subject.ParentPath)).ConfigureAwait(false);
+            var subjectParent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Subject.ParentPath));
 
-            var subjectEntity = await subjectRepository.GetByIdAsync(request.Subject.Id, subjectParent).ConfigureAwait(false)
+            var subjectEntity = await subjectRepository.GetByIdAsync(request.Subject.Id, subjectParent)
                 ?? throw new NotFoundException("Subject entity was not found");
 
-            await _authService.EnsureAuthorizedUserAsync(Operations.Update, subjectEntity).ConfigureAwait(false);
+            await _authService.EnsureAuthorizedUserAsync(Operations.Update, subjectEntity);
 
-            await subjectRepository.ReorderAsync(request.BeforeId, request.Subject.Id, subjectParent).ConfigureAwait(false);
+            await subjectRepository.ReorderAsync(request.BeforeId, request.Subject.Id, subjectParent);
 
             return new ApiCommandResponseModel();
         }

@@ -5,6 +5,8 @@ namespace RapidCMS.Core.Models.UI
 {
     public class TreeCollectionUI
     {
+        public static TreeCollectionUI None = new TreeCollectionUI("empty", "empty");
+
         public TreeCollectionUI(string alias, string name)
         {
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));

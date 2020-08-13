@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
@@ -17,16 +17,16 @@ namespace RapidCMS.Core.Services.Auth
     internal class ServerSideAuthService : IAuthService
     {
         private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly IServiceProvider _serviceProvider;
 
         public ServerSideAuthService(
             IButtonActionHandlerResolver buttonActionHandlerResolver,
-            IHttpContextAccessor httpContextAccessor,
+            AuthenticationStateProvider authenticationStateProvider,
             IServiceProvider serviceProvider)
         {
             _buttonActionHandlerResolver = buttonActionHandlerResolver;
-            _httpContextAccessor = httpContextAccessor;
+            _authenticationStateProvider = authenticationStateProvider;
             _serviceProvider = serviceProvider;
         }
 
@@ -37,7 +37,7 @@ namespace RapidCMS.Core.Services.Auth
 
         public async Task EnsureAuthorizedUserAsync(UsageType usageType, IEntity entity)
         {
-            if (!await IsUserAuthorizedAsync(usageType, entity).ConfigureAwait(false))
+            if (!await IsUserAuthorizedAsync(usageType, entity))
             {
                 throw new UnauthorizedAccessException();
             }
@@ -47,17 +47,17 @@ namespace RapidCMS.Core.Services.Auth
         {
             var authorizationService = _serviceProvider.GetService<IAuthorizationService>();
 
-            var authorizationChallenge = await authorizationService.AuthorizeAsync(
-                _httpContextAccessor.HttpContext.User,
-                entity,
-                operation).ConfigureAwait(false);
+            var state = await _authenticationStateProvider.GetAuthenticationStateAsync();
+            var user = state.User;
+
+            var authorizationChallenge = await authorizationService.AuthorizeAsync(user, entity, operation);
 
             return authorizationChallenge.Succeeded;
         }
 
         public async Task EnsureAuthorizedUserAsync(OperationAuthorizationRequirement operation, IEntity entity)
         {
-            if (!await IsUserAuthorizedAsync(operation, entity).ConfigureAwait(false))
+            if (!await IsUserAuthorizedAsync(operation, entity))
             {
                 throw new UnauthorizedAccessException();
             }
@@ -72,7 +72,7 @@ namespace RapidCMS.Core.Services.Auth
 
         public async Task EnsureAuthorizedUserAsync(EditContext editContext, IButtonSetup button)
         {
-            if (!await IsUserAuthorizedAsync(editContext, button).ConfigureAwait(false))
+            if (!await IsUserAuthorizedAsync(editContext, button))
             {
                 throw new UnauthorizedAccessException();
             }

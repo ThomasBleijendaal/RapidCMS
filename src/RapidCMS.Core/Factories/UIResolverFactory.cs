@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
@@ -17,22 +16,19 @@ namespace RapidCMS.Core.Factories
         private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
         private readonly IDataViewResolver _dataViewResolver;
         private readonly IAuthService _authService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UIResolverFactory(
             ISetupResolver<ICollectionSetup> collectionResolver,
             IDataProviderResolver dataProviderResolver,
             IButtonActionHandlerResolver buttonActionHandlerResolver,
             IDataViewResolver dataViewResolver,
-            IAuthService authService,
-            IHttpContextAccessor httpContextAccessor)
+            IAuthService authService)
         {
             _collectionResolver = collectionResolver;
             _dataProviderResolver = dataProviderResolver;
             _buttonActionHandlerResolver = buttonActionHandlerResolver;
             _dataViewResolver = dataViewResolver;
             _authService = authService;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public Task<INodeUIResolver> GetNodeUIResolverAsync(UsageType usageType, string collectionAlias)
@@ -46,7 +42,7 @@ namespace RapidCMS.Core.Factories
                 throw new InvalidOperationException($"Failed to get UI configuration from collection {collectionAlias} for action {usageType}");
             }
 
-            INodeUIResolver nodeUI = new NodeUIResolver(node, _dataProviderResolver, _buttonActionHandlerResolver,  _authService, _httpContextAccessor);
+            INodeUIResolver nodeUI = new NodeUIResolver(node, _dataProviderResolver, _buttonActionHandlerResolver,  _authService);
 
             return Task.FromResult(nodeUI);
         }
@@ -62,7 +58,7 @@ namespace RapidCMS.Core.Factories
                 throw new InvalidOperationException($"Failed to get UI configuration from collection {collectionAlias} for action {usageType}");
             }
 
-            IListUIResolver listUI = new ListUIResolver(list, _dataProviderResolver, _dataViewResolver, _buttonActionHandlerResolver, _authService, _httpContextAccessor);
+            IListUIResolver listUI = new ListUIResolver(list, _dataProviderResolver, _dataViewResolver, _buttonActionHandlerResolver, _authService);
 
             return Task.FromResult(listUI);
         }

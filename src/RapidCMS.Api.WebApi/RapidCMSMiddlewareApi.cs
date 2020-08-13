@@ -65,6 +65,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.AddSingleton<IAuthorizationHandler, AllowAllAuthorizationHandler>();
                 services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
             }
+            else
+            {
+                services.AddSingleton<AuthenticationStateProvider, HttpContextAuthenticationStateProvider>();
+            }
 
             services.AddSingleton<ISetupResolver<IEntityVariantSetup>, GlobalEntityVariantSetupResolver>();
 

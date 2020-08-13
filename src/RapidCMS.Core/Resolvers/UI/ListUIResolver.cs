@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.EqualityComparers;
@@ -26,8 +25,7 @@ namespace RapidCMS.Core.Resolvers.UI
             IDataProviderResolver dataProviderService,
             IDataViewResolver dataViewResolver,
             IButtonActionHandlerResolver buttonActionHandlerResolver,
-            IAuthService authService,
-            IHttpContextAccessor httpContextAccessor) : base(dataProviderService, buttonActionHandlerResolver, authService, httpContextAccessor)
+            IAuthService authService) : base(dataProviderService, buttonActionHandlerResolver, authService)
         {
             _list = list;
             _dataViewResolver = dataViewResolver;
@@ -48,7 +46,7 @@ namespace RapidCMS.Core.Resolvers.UI
                 return Enumerable.Empty<ButtonUI>();
             }
 
-            return await GetButtonsAsync(_list.Buttons, editContext).ConfigureAwait(false);
+            return await GetButtonsAsync(_list.Buttons, editContext);
         }
 
         public ListUI GetListDetails()
@@ -73,12 +71,12 @@ namespace RapidCMS.Core.Resolvers.UI
             return await _list.Panes
                 .Where(pane => pane.VariantType.IsSameTypeOrDerivedFrom(type))
                 .ToListAsync(pane => GetSectionUIAsync(pane, editContext))
-                .ConfigureAwait(false);
+                ;
         }
 
         public async Task<IEnumerable<TabUI>?> GetTabsAsync(EditContext editContext)
         {
-            var data = await _dataViewResolver.GetDataViewsAsync(editContext.CollectionAlias).ConfigureAwait(false);
+            var data = await _dataViewResolver.GetDataViewsAsync(editContext.CollectionAlias);
             return data.ToList(x => new TabUI(x.Id) { Label = x.Label });
         }
     }

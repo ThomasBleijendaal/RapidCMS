@@ -21,7 +21,7 @@ namespace RapidCMS.Core.Tests.ParentPathTests
             var path = parent.GetParentPath();
 
             // assert
-            Assert.AreEqual("test1:1", path.ToPathString());
+            Assert.AreEqual("test1:1", path!.ToPathString());
         }
 
         [Test]
@@ -36,7 +36,7 @@ namespace RapidCMS.Core.Tests.ParentPathTests
             var path = parent.GetParentPath();
 
             // assert
-            Assert.AreEqual("test2:2;test1:1", path.ToPathString());
+            Assert.AreEqual("test2:2;test1:1", path!.ToPathString());
         }
 
         [Test]
@@ -53,12 +53,12 @@ namespace RapidCMS.Core.Tests.ParentPathTests
             var path = parent.GetParentPath();
 
             // assert
-            Assert.AreEqual("test3:3;test2:2;test1:1", path.ToPathString());
+            Assert.AreEqual("test3:3;test2:2;test1:1", path!.ToPathString());
         }
 
         public class Entity : IEntity
         {
-            public string Id { get; set; }
+            public string? Id { get; set; }
         }
     }
 }

@@ -50,6 +50,8 @@ namespace RapidCMS.UI.Components.Sections
 
         protected async Task ButtonOnClickAsync(ButtonClickEventArgs args)
         {
+            StateIsChanging = true;
+
             try
             {
                 if (args.ViewModel == null)
@@ -70,6 +72,8 @@ namespace RapidCMS.UI.Components.Sections
             {
                 HandleException(ex);
             }
+
+            StateIsChanging = false;
         }
     }
 }

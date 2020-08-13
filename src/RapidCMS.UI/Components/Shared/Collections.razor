@@ -1,52 +1,52 @@
 ﻿@inject ITreeService TreeService
 
-@if (UI == null)
-{
-    <li>Loading tree..</li>
-}
-else if (!string.IsNullOrWhiteSpace(error))
+@if (!string.IsNullOrWhiteSpace(error))
 {
     <li>@error</li>
 }
+else if (UI == null)
+{
+    <li>Loading tree..</li>
+}
 else if (UI.RootVisible)
 {
-    <li class="nav-item">
-        @if (UI.EntitiesVisible)
-        {
-            <button @onclick="@((MouseEventArgs e) => NodesVisible = !NodesVisible)" class="toggle">
-                @if (NodesVisible)
-                {
-                    <i class="icon ion-md-arrow-dropdown"></i>
-                }
-                else
-                {
-                    <i class="icon ion-md-arrow-dropright"></i>
-                }
-            </button>
-        }
-        else
-        {
-            <button class="toggle" disabled>
-                <i class="icon"></i>
-            </button>
-        }
+<li class="nav-item">
+    @if (UI.EntitiesVisible)
+    {
+        <button @onclick="@((MouseEventArgs e) => NodesVisible = !NodesVisible)" class="toggle">
+            @if (NodesVisible)
+            {
+                <i class="icon ion-md-arrow-dropdown"></i>
+            }
+            else
+            {
+                <i class="icon ion-md-arrow-dropright"></i>
+            }
+        </button>
+    }
+    else
+    {
+        <button class="toggle" disabled>
+            <i class="icon"></i>
+        </button>
+    }
 
-        @if (UI.State != null)
-        {
-            <NavigationLink NewState="@UI.State"><i class="icon ion-md-@UI.Icon"></i> @UI.Name</NavigationLink>
-        }
-        else
-        {
-            <a href="/unauthorized" class="disabled"><i class="icon ion-md-lock"></i> @UI.Name</a>
-        }
+    @if (UI.State != null)
+    {
+        <NavigationLink NewState="@UI.State"><i class="icon ion-md-@UI.Icon"></i> @UI.Name</NavigationLink>
+    }
+    else
+    {
+        <a href="/unauthorized" class="disabled"><i class="icon ion-md-lock"></i> @UI.Name</a>
+    }
 
-        @if (NodesVisible)
-        {
-            <Nodes CollectionAlias=@CollectionAlias ParentPath=@ParentPath />
-        }
-    </li>
+    @if (NodesVisible)
+    {
+        <Nodes CollectionAlias=@CollectionAlias ParentPath=@ParentPath />
+    }
+</li>
 }
-else
+else if (UI != TreeCollectionUI.None)
 {
     <Nodes CollectionAlias=@CollectionAlias ParentPath=@ParentPath />
 }
@@ -65,6 +65,10 @@ else
             UI = await TreeService.GetCollectionAsync(CollectionAlias, ParentPath);
 
             NodesVisible = UI?.DefaultOpenEntities ?? false;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            UI = TreeCollectionUI.None;
         }
         catch (Exception ex)
         {

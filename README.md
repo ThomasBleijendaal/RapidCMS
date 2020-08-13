@@ -4,17 +4,18 @@
 [![#](https://img.shields.io/nuget/v/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
 
 RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS
-purely from code. It provides a basic set of editors and controls, next to allowing building your own blazor components
-for every editor, button, pane, and dashboard section. If you provide the repositories for data and the configuration for
-the UI, RapidCMS renders a complete CMS according to your specification.
+purely from code. It provides a basic set of editors and controls, next to allowing you to build your own blazor components
+for every editor, button, pane, page and dashboard section. You provide the repositories for data and configuration for
+the UI and RapidCMS renders a complete CMS according to your specification.
 
 Since RapidCMS runs as an element within your ASP.NET Core application, you have full control of the DI container, data repositories,
-authentication, authorization, additional endpoints like Api controllers, Mvc controllers, and Razor pages. You can even
-fully replace the default UI libary and only use the core of RapidCMS.
+authentication, authorization, additional endpoints like Api controllers, Mvc controllers, and Razor pages. If RapidCMS does not supply
+a feature you need, you're not stuck but can build it your own and use it just as if it was build it. You can even fully replace the 
+default UI libary and only use the core of RapidCMS.
 
 ## Demo
 
-A demo of the WebAssembly variant of the CMS (running the 3.0 beta) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
+A demo of the WebAssembly variant of the CMS (running version 3.1) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
 This uses a repository that saves its data to the local storage of the browser. 
 
 ## TL:DR;
@@ -67,6 +68,10 @@ services
 5. Start building your CMS Api by expanding `config => {}`. [Explore the examples](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/examples/RapidCMS.Example.WebAssembly.API)
 to get a sense on how to build such Api and get it working with your RapidCMS WebAssembly instance.
 
+### Useful docs
+
+- [Server-side RapidCMS authentication configuration](AUTHserver.md)
+- [Client-side RapidCMS authentication configuration](AUTHclient.md)
 
 ---
 
@@ -198,7 +203,8 @@ The `AuthorizationHandler` is part of the [ASP.NET Core Authorization Infrastruc
 
 There is no standard authentication support out of the box, so you have to do everything to have your
 uses sign in. But there are already some great resources [for adding Azure AD support to blazor](https://devblogs.microsoft.com/aspnet/configuring-a-server-side-blazor-app-with-azure-app-configuration/),
-so it's easy to get it working. See [this page about adding authentication](AUTH.md) for more information.
+so it's easy to get it working. See [this page about adding authentication](AUTHserver.md) or for
+[webassembly variant](AUTHclient.md) for more information.
 
 ### Collections
 

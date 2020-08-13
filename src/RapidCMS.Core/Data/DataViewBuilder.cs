@@ -12,7 +12,7 @@ namespace RapidCMS.Core.Data
 
         async Task<IEnumerable<IDataView>> IDataViewBuilder.GetDataViewsAsync()
         {
-            var elements = await GetDataViewsAsync().ConfigureAwait(false);
+            var elements = await GetDataViewsAsync();
             return elements.AsEnumerable<IDataView>();
         }
     }

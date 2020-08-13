@@ -9,7 +9,7 @@ namespace RapidCMS.Core.Authorization
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, OperationAuthorizationRequirement requirement, IEntity resource)
         {
-            if (context.User.Identity.AuthenticationType == null)
+            if (context.User.Identity.AuthenticationType == "anonymous")
             {
                 context.Succeed(requirement);
             }

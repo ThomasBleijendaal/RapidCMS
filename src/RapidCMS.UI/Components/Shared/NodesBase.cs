@@ -12,6 +12,7 @@ namespace RapidCMS.UI.Components.Shared
         private IDisposable? _nodeEventHandle;
 
         [Inject] protected ITreeService TreeService { get; set; } = default!;
+        [Inject] protected IRepositoryEventService RepositoryEventService { get; set; } = default!;
         [Inject] protected IPageState PageState { get; set; } = default!;
 
         [Parameter] public string CollectionAlias { get; set; } = default!;
@@ -20,16 +21,17 @@ namespace RapidCMS.UI.Components.Shared
 
         protected override void OnInitialized()
         {
-            OnNodesUpdate();
+            SetupOnNodesUpdate();
         }
 
-        private void OnNodesUpdate()
+        private void SetupOnNodesUpdate()
         {
             _nodeEventHandle?.Dispose();
-            _nodeEventHandle = TreeService.SubscribeToRepositoryUpdates(CollectionAlias, async () =>
+            _nodeEventHandle = RepositoryEventService.SubscribeToRepositoryUpdates(CollectionAlias, async () =>
             {
                 await InvokeAsync(() => OnNodesUpdateAsync());
-                OnNodesUpdate();
+
+                SetupOnNodesUpdate();
             });
         }
 
@@ -38,7 +40,6 @@ namespace RapidCMS.UI.Components.Shared
         public void Dispose()
         {
             _nodeEventHandle?.Dispose();
-            //_navEventHandle?.Dispose();
         }
     }
 }

@@ -25,7 +25,8 @@ namespace RapidCMS.Core.Resolvers.Convention
             {
                 listButtons.Add(new DefaultButtonConfig
                 {
-                    ButtonType = DefaultButtonType.New
+                    ButtonType = DefaultButtonType.New,
+                    Label = !(collection?.SubEntityVariants?.Any() ?? false) ? null : "New {0}"
                 });
                 listButtons.Add(new DefaultButtonConfig
                 {

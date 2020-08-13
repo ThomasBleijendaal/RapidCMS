@@ -12,8 +12,7 @@ namespace RapidCMS.Core.Services.Presentation
     {
         private readonly IEnumerable<IPresentationDispatcher> _dispatchers;
 
-        public PresentationService(
-            IEnumerable<IPresentationDispatcher> dispatchers)
+        public PresentationService(IEnumerable<IPresentationDispatcher> dispatchers)
         {
             _dispatchers = dispatchers;
         }

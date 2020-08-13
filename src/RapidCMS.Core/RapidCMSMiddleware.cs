@@ -102,6 +102,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IParentService, ParentService>();
             services.AddScoped<ISidePaneService, SidePaneService>();
             services.AddTransient<ITreeService, TreeService>();
+            services.AddTransient<IRepositoryEventService, RepositoryEventService>();
 
             services.AddScoped<DefaultButtonActionHandler>();
             services.AddScoped(typeof(OpenPaneButtonActionHandler<>));

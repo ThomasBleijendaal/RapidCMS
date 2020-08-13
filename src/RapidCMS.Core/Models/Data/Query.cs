@@ -9,12 +9,13 @@ namespace RapidCMS.Core.Models.Data
         internal IDataView? DataView;
         internal IEnumerable<IOrderBy>? OrderBys;
 
-        public static Query Default()
+        public static Query Default(string? collectionAlias = default)
         {
             return new Query
             {
                 Skip = 0,
-                Take = 1000
+                Take = 1000,
+                CollectionAlias = collectionAlias
             };
         }
 
@@ -56,5 +57,7 @@ namespace RapidCMS.Core.Models.Data
         public IDataView? ActiveDataView => DataView;
 
         public IEnumerable<IOrderBy> ActiveOrderBys => OrderBys ?? Enumerable.Empty<IOrderBy>();
+
+        public string? CollectionAlias { get; set; }
     }
 }

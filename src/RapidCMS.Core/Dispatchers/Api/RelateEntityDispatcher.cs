@@ -38,22 +38,22 @@ namespace RapidCMS.Core.Dispatchers.Api
             var subjectRepository = _repositoryResolver.GetRepository(request.Subject.RepositoryAlias);
             var relatedRepository = _repositoryResolver.GetRepository(request.Related.RepositoryAlias);
 
-            var subjectEntity = await subjectRepository.GetByIdAsync(request.Subject.Id, default).ConfigureAwait(false)
+            var subjectEntity = await subjectRepository.GetByIdAsync(request.Subject.Id, default)
                 ?? throw new NotFoundException("Subject entity was not found");
-            var relatedEntity = await relatedRepository.GetByIdAsync(request.Related.Id, default).ConfigureAwait(false)
+            var relatedEntity = await relatedRepository.GetByIdAsync(request.Related.Id, default)
                 ?? throw new NotFoundException("Related entity was not found");
 
             var related = new RelatedEntity(relatedEntity, request.Related.RepositoryAlias);
 
             if (request.Action == PersistRelatedEntityRequestModel.Actions.Add)
             {
-                await _authService.EnsureAuthorizedUserAsync(Operations.Add, subjectEntity).ConfigureAwait(false);
-                await subjectRepository.AddAsync(related, request.Subject.Id).ConfigureAwait(false);
+                await _authService.EnsureAuthorizedUserAsync(Operations.Add, subjectEntity);
+                await subjectRepository.AddAsync(related, request.Subject.Id);
             }
             else if (request.Action == PersistRelatedEntityRequestModel.Actions.Remove)
             {
-                await _authService.EnsureAuthorizedUserAsync(Operations.Remove, subjectEntity).ConfigureAwait(false);
-                await subjectRepository.AddAsync(related, request.Subject.Id).ConfigureAwait(false);
+                await _authService.EnsureAuthorizedUserAsync(Operations.Remove, subjectEntity);
+                await subjectRepository.AddAsync(related, request.Subject.Id);
             }
 
             return new ApiCommandResponseModel();

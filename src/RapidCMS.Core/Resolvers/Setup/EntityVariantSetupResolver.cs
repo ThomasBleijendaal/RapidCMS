@@ -1,7 +1,7 @@
 ﻿using System;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 
@@ -18,12 +18,12 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             if (config == default)
             {
-                return new ResolvedSetup<IEntityVariantSetup>( EntityVariantSetup.Undefined, true);
-            } 
+                return new ResolvedSetup<IEntityVariantSetup>(EntityVariantSetup.Undefined, true);
+            }
             else
             {
                 return new ResolvedSetup<IEntityVariantSetup>(
-                    new EntityVariantSetup(config.Name, config.Icon, config.Type, config.Type.Name.ToUrlFriendlyString()),
+                    new EntityVariantSetup(config.Name, config.Icon, config.Type, AliasHelper.GetEntityVariantAlias(config.Type)),
                     true);
             }
         }

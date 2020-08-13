@@ -1,0 +1,17 @@
+﻿@if (CustomElement != null)
+{
+    @CustomElement
+}
+else
+{
+    <h4>User login required</h4>
+    <p>
+        Configure a login component using <code>config.SetCustomLoginScreen(typeof(YourLoginControl))</code>, or
+        use <code>config.AllowAnonymousUser()</code> to allow any user.
+    </p>
+}
+
+@code {
+    [Parameter]
+    public RenderFragment? CustomElement { get; set; }
+}

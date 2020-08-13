@@ -24,6 +24,7 @@ namespace RapidCMS.Core.Tests.Forms
             _subject = new EditContext(
                 "alias",
                 "repoAlias",
+                "variantAlias",
                 new Entity { Id = "1" },
                 default,
                 UsageType.Edit,
@@ -79,6 +80,7 @@ namespace RapidCMS.Core.Tests.Forms
             _subject = new EditContext(
                 "alias",
                 "repoAlias",
+                "variantAlias",
                 new Entity { },
                 default,
                 UsageType.Edit,
@@ -95,6 +97,7 @@ namespace RapidCMS.Core.Tests.Forms
             _subject = new EditContext(
                 "alias",
                 "repoAlias",
+                "variantAlias",
                 new Entity { },
                 default,
                 UsageType.Edit,
@@ -112,6 +115,7 @@ namespace RapidCMS.Core.Tests.Forms
             _subject = new EditContext(
                 "alias",
                 "repoAlias",
+                "variantAlias",
                 new Entity { Id = "123" },
                 default,
                 UsageType.Edit,
@@ -129,6 +133,7 @@ namespace RapidCMS.Core.Tests.Forms
             _subject = new EditContext(
                 "alias",
                 "repoAlias",
+                "variantAlias",
                 new Entity { },
                 default,
                 UsageType.Edit,
@@ -145,6 +150,7 @@ namespace RapidCMS.Core.Tests.Forms
             _subject = new EditContext(
                 "alias",
                 "repoAlias",
+                "variantAlias",
                 new Entity { },
                 default,
                 UsageType.Edit,
@@ -162,6 +168,7 @@ namespace RapidCMS.Core.Tests.Forms
             _subject = new EditContext(
                 "alias",
                 "repoAlias",
+                "variantAlias",
                 new Entity { Id = "123" },
                 default,
                 UsageType.Edit,

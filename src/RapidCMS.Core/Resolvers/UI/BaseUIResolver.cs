@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
@@ -18,18 +17,15 @@ namespace RapidCMS.Core.Resolvers.UI
         private readonly IDataProviderResolver _dataProviderResolver;
         private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
         protected readonly IAuthService _authService;
-        protected readonly IHttpContextAccessor _httpContextAccessor;
 
         protected BaseUIResolver(
             IDataProviderResolver dataProviderResolver,
             IButtonActionHandlerResolver buttonActionHandlerResolver,
-            IAuthService authService,
-            IHttpContextAccessor httpContextAccessor)
+            IAuthService authService)
         {
             _dataProviderResolver = dataProviderResolver;
             _buttonActionHandlerResolver = buttonActionHandlerResolver;
             _authService = authService;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         protected async Task<List<ButtonUI>> GetButtonsAsync(IEnumerable<IButtonSetup> buttons, EditContext editContext)
@@ -40,7 +36,7 @@ namespace RapidCMS.Core.Resolvers.UI
                 {
                     var handler = _buttonActionHandlerResolver.GetButtonActionHandler(button);
                     if (handler.IsCompatible(button, editContext) && 
-                        await _authService.IsUserAuthorizedAsync(editContext, button).ConfigureAwait(false))
+                        await _authService.IsUserAuthorizedAsync(editContext, button))
                     {
                         return new ButtonUI(handler, button, editContext);
                     }
@@ -49,7 +45,7 @@ namespace RapidCMS.Core.Resolvers.UI
                         return default;
                     }
                 })
-                .ToListAsync().ConfigureAwait(false);
+                .ToListAsync();
         }
 
         protected internal async Task<SectionUI> GetSectionUIAsync(PaneSetup pane, EditContext editContext)
@@ -77,7 +73,7 @@ namespace RapidCMS.Core.Resolvers.UI
 
             return new SectionUI(pane.IsVisible)
             {
-                Buttons = await GetButtonsAsync(pane.Buttons, editContext).ConfigureAwait(false),
+                Buttons = await GetButtonsAsync(pane.Buttons, editContext),
                 CustomType = pane.CustomType,
                 Label = pane.Label,
 

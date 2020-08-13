@@ -36,15 +36,15 @@ namespace RapidCMS.Core.Dispatchers.Api
                 throw new ArgumentNullException();
             }
 
-            var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Descriptor.ParentPath)).ConfigureAwait(false);
+            var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Descriptor.ParentPath));
 
             var subjectRepository = _repositoryResolver.GetRepository(request.Descriptor.RepositoryAlias);
-            var subjectEntity = await subjectRepository.GetByIdAsync(request.Descriptor.Id, parent).ConfigureAwait(false)
+            var subjectEntity = await subjectRepository.GetByIdAsync(request.Descriptor.Id, parent)
                 ?? throw new NotFoundException("Could not find entity to delete");
 
-            await _authService.EnsureAuthorizedUserAsync(Operations.Delete, subjectEntity).ConfigureAwait(false);
+            await _authService.EnsureAuthorizedUserAsync(Operations.Delete, subjectEntity);
 
-            await subjectRepository.DeleteAsync(request.Descriptor.Id, parent).ConfigureAwait(false);
+            await subjectRepository.DeleteAsync(request.Descriptor.Id, parent);
 
             return new ApiCommandResponseModel();
         }

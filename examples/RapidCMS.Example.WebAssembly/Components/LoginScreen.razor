@@ -1,0 +1,23 @@
+﻿@inject NavigationManager Navigation
+
+<h4>Hi!</h4>
+
+<p>Please sign in to access the CMS.</p>
+
+<hr />
+
+<a class="btn btn-primary" href="#" @onclick="BeginLogin">Login via Active Directory</a>
+
+@if (action != null)
+{
+    <RemoteAuthenticatorView Action="@action" />
+}
+
+@code {
+    string? action;
+
+    private void BeginLogin(MouseEventArgs args)
+    {
+        action = "login";
+    }
+}

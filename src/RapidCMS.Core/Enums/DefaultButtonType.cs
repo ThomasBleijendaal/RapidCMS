@@ -25,7 +25,7 @@ namespace RapidCMS.Core.Enums
         Delete,
 
         [DefaultIconLabel(icon: "create", label: "Edit")]
-        [Actions(UsageType.List, UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.View)]
+        [Actions(UsageType.List | UsageType.View, UsageType.List | UsageType.Add, UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.View)]
         Edit,
 
         [DefaultIconLabel(icon: "search", label: "View")]

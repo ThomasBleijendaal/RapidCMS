@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 
@@ -10,9 +12,18 @@ namespace RapidCMS.Core.Factories
 {
     internal class FormEditContextWrapperFactory : IEditContextFactory
     {
+        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
+
+        public FormEditContextWrapperFactory(ISetupResolver<ICollectionSetup> collectionResolver)
+        {
+            _collectionResolver = collectionResolver;
+        }
+
         public IEditContext GetEditContextWrapper(EditContext editContext)
         {
-            var contextType = typeof(FormEditContextWrapper<>).MakeGenericType(editContext.Entity.GetType());
+            var collection = _collectionResolver.ResolveSetup(editContext.CollectionAlias);
+
+            var contextType = typeof(FormEditContextWrapper<>).MakeGenericType(collection.EntityVariant.Type);
             var instance = Activator.CreateInstance(contextType, editContext);
 
             return (IEditContext)instance;

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Extensions;
@@ -19,8 +18,7 @@ namespace RapidCMS.Core.Resolvers.UI
             NodeSetup node,
             IDataProviderResolver dataProviderService,
             IButtonActionHandlerResolver buttonActionHandlerResolver,
-            IAuthService authService, 
-            IHttpContextAccessor httpContextAccessor) : base(dataProviderService, buttonActionHandlerResolver, authService, httpContextAccessor)
+            IAuthService authService) : base(dataProviderService, buttonActionHandlerResolver, authService)
         {
             _node = node;
         }
@@ -32,7 +30,7 @@ namespace RapidCMS.Core.Resolvers.UI
                 return Enumerable.Empty<ButtonUI>();
             }
 
-            return await GetButtonsAsync(_node.Buttons, editContext).ConfigureAwait(false);
+            return await GetButtonsAsync(_node.Buttons, editContext);
         }
 
         public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(EditContext editContext)
@@ -47,7 +45,7 @@ namespace RapidCMS.Core.Resolvers.UI
             return await _node.Panes
                 .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(type))
                 .ToListAsync(pane => GetSectionUIAsync(pane, editContext))
-                .ConfigureAwait(false);
+                ;
         }
     }
 }

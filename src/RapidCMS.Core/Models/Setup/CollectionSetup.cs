@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Core.Models.Setup
@@ -47,7 +48,7 @@ namespace RapidCMS.Core.Models.Setup
             }
             else
             {
-                return SubEntityVariants.First(x => x.Alias == alias);
+                return SubEntityVariants.FirstOrDefault(x => x.Alias == alias) ?? throw new InvalidOperationException($"Entity variant with alias {alias} does not exist.");
             }
         }
         public IEntityVariantSetup GetEntityVariant(IEntity entity)

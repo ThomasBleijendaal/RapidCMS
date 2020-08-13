@@ -20,6 +20,8 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
             Skip = query.Skip;
             Take = query.Take;
             SearchTerm = query.SearchTerm;
+
+            CollectionAlias = query.CollectionAlias;
         }
 
         public EntityDescriptorModel Related { get; set; } = default!;

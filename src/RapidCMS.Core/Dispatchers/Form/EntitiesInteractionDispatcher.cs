@@ -60,7 +60,7 @@ namespace RapidCMS.Core.Dispatchers.Form
             var collection = _collectionResolver.ResolveSetup(request.ListContext.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
-            var (crudType, entityVariant) = await _buttonInteraction.ValidateButtonInteractionAsync(request).ConfigureAwait(false);
+            var (crudType, entityVariant) = await _buttonInteraction.ValidateButtonInteractionAsync(request);
 
             switch (crudType)
             {
@@ -124,17 +124,17 @@ namespace RapidCMS.Core.Dispatchers.Form
                             throw new InvalidEntityException();
                         }
 
-                        await _buttonInteraction.ValidateButtonInteractionAsync(innerRequest).ConfigureAwait(false);
+                        await _buttonInteraction.ValidateButtonInteractionAsync(innerRequest);
 
                         if (editContext.IsModified())
                         {
                             var wrapper = _editContextFactory.GetEditContextWrapper(editContext);
-                            await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(wrapper)).ConfigureAwait(false);
+                            await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(wrapper));
                         }
                         if (editContext.IsReordered())
                         {
                             await _concurrencyService.EnsureCorrectConcurrencyAsync(
-                                () => repository.ReorderAsync(editContext.ReorderedBeforeId, editContext.Entity.Id!, editContext.Parent)).ConfigureAwait(false);
+                                () => repository.ReorderAsync(editContext.ReorderedBeforeId, editContext.Entity.Id!, editContext.Parent));
                         }
 
                         affectedEntities.Add(editContext.Entity);
@@ -204,7 +204,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                     throw new InvalidOperationException();
             }
 
-            await _buttonInteraction.CompleteButtonInteractionAsync(request).ConfigureAwait(false);
+            await _buttonInteraction.CompleteButtonInteractionAsync(request);
 
             return response;
         }

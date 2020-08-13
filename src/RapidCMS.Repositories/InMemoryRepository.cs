@@ -29,7 +29,7 @@ namespace RapidCMS.Repositories
             _serviceProvider = serviceProvider;
         }
 
-        private List<TEntity> GetListForParent(IParent? parent)
+        protected List<TEntity> GetListForParent(IParent? parent)
         {
             var pId = parent?.Entity.Id ?? string.Empty;
 
@@ -107,6 +107,11 @@ namespace RapidCMS.Repositories
 
         public override Task<TEntity> NewAsync(IParent? parent, Type? variantType = null)
         {
+            if (variantType != null)
+            {
+                return Task.FromResult((TEntity)Activator.CreateInstance(variantType));
+            }
+
             return Task.FromResult(new TEntity());
         }
 

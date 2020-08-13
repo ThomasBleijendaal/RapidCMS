@@ -25,7 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.WebAssembl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{89191FB4-6106-4A7E-82B2-7A2577F67D07}"
 	ProjectSection(SolutionItems) = preProject
-		..\AUTH.md = ..\AUTH.md
+		..\AUTHclient.md = ..\AUTHclient.md
+		..\AUTHserver.md = ..\AUTHserver.md
 		..\.github\workflows\dotnetcore.yml = ..\.github\workflows\dotnetcore.yml
 		..\LICENSE.md = ..\LICENSE.md
 		..\README.md = ..\README.md

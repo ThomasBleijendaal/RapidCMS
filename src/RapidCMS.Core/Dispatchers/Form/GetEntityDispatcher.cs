@@ -48,33 +48,34 @@ namespace RapidCMS.Core.Dispatchers.Form
             }
 
             var collection = _collectionResolver.ResolveSetup(request.CollectionAlias);
+            var variant = collection.GetEntityVariant(request.VariantAlias);
             var repository = _repositoryResolver.GetRepository(collection);
             
-            var parent = await _parentService.GetParentAsync(request.ParentPath).ConfigureAwait(false);
+            var parent = await _parentService.GetParentAsync(request.ParentPath);
 
             var action = (request.UsageType & ~(UsageType.Node | UsageType.Root | UsageType.NotRoot)) switch
             {
                 UsageType.View => () => repository.GetByIdAsync(request.Id!, parent),
                 UsageType.Edit => () => repository.GetByIdAsync(request.Id!, parent),
-                UsageType.New => () => repository.NewAsync(parent, collection.GetEntityVariant(request.VariantAlias).Type)!,
+                UsageType.New => () => repository.NewAsync(parent, variant.Type)!,
 
                 _ => default(Func<Task<IEntity?>>)
-            };
+            }; 
 
             if (action == default)
             {
                 throw new InvalidOperationException($"UsageType {request.UsageType} is invalid for this method");
             }
 
-            var entity = await _concurrencyService.EnsureCorrectConcurrencyAsync(action).ConfigureAwait(false);
+            var entity = await _concurrencyService.EnsureCorrectConcurrencyAsync(action);
             if (entity == null)
             {
                 throw new Exception("Failed to get entity for given id(s)");
             }
 
-            await _authService.EnsureAuthorizedUserAsync(request.UsageType, entity).ConfigureAwait(false);
+            await _authService.EnsureAuthorizedUserAsync(request.UsageType, entity);
 
-            return new EditContext(request.CollectionAlias, collection.RepositoryAlias, entity, parent, request.UsageType | UsageType.Node, _serviceProvider);
+            return new EditContext(request.CollectionAlias, collection.RepositoryAlias, request.VariantAlias, entity, parent, request.UsageType | UsageType.Node, _serviceProvider);
         }
     }
 }

@@ -53,7 +53,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         ParentPath = query.ParentPath,
                     },
                     UsageType = UsageType.Node | UsageType.Edit
-                }).ConfigureAwait(false);
+                });
 
                 return Ok(entity);
             }
@@ -82,7 +82,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                     ParentPath = query.ParentPath,
                     UsageType = UsageType.List | UsageType.Edit,
                     Query = query.GetQuery<TDatabaseEntity>()
-                }).ConfigureAwait(false);
+                });
 
                 return Ok(new EntitiesModel<IEntity>
                 {
@@ -115,7 +115,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         RepositoryAlias = query.Related.RepositoryAlias,
                         Id = query.Related.Id
                     }
-                }).ConfigureAwait(false);
+                });
 
                 return Ok(new EntitiesModel<IEntity>
                 {
@@ -148,7 +148,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         RepositoryAlias = query.Related.RepositoryAlias,
                         Id = query.Related.Id
                     }
-                }).ConfigureAwait(false);
+                });
 
                 return Ok(new EntitiesModel<IEntity>
                 {
@@ -177,10 +177,10 @@ namespace RapidCMS.Api.WebApi.Controllers
                     {
                         RepositoryAlias = RepositoryAlias,
                         ParentPath = query.ParentPath,
-                        VariantAlias = query.VariantTypeName
+                        VariantAlias = query.VariantAlias
                     },
                     UsageType = UsageType.Node | UsageType.New
-                }).ConfigureAwait(false);
+                });
 
                 return Ok(entity);
             }
@@ -213,7 +213,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                     Entity = editContextModel.Entity,
                     EntityState = EntityState.IsNew,
                     Relations = editContextModel.GetRelations()
-                }, ViewState.Api).ConfigureAwait(false);
+                }, ViewState.Api);
 
                 return response switch
                 {
@@ -256,7 +256,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                     Entity = editContextModel.Entity,
                     EntityState = EntityState.IsExisting,
                     Relations = editContextModel.GetRelations()
-                }, ViewState.Api).ConfigureAwait(false);
+                }, ViewState.Api);
 
                 return response switch
                 {
@@ -295,7 +295,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         Id = id,
                         ParentPath = delete.ParentPath
                     }
-                }, ViewState.Api).ConfigureAwait(false);
+                }, ViewState.Api);
 
                 return Ok();
             }
@@ -331,7 +331,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         Id = relate.Id
                     },
                     Action = PersistRelatedEntityRequestModel.Actions.Add
-                }, ViewState.Api).ConfigureAwait(false);
+                }, ViewState.Api);
 
                 return Ok();
             }
@@ -367,7 +367,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         Id = relate.Id
                     },
                     Action = PersistRelatedEntityRequestModel.Actions.Remove
-                }, ViewState.Api).ConfigureAwait(false);
+                }, ViewState.Api);
 
                 return Ok();
             }
@@ -399,7 +399,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                         RepositoryAlias = RepositoryAlias,
                         ParentPath = reorder.Subject.ParentPath
                     }
-                }, ViewState.Api).ConfigureAwait(false);
+                }, ViewState.Api);
 
                 return Ok();
             }

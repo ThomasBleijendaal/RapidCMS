@@ -17,8 +17,10 @@ using RapidCMS.Core.Models.UI;
 
 namespace RapidCMS.UI.Components.Sections
 {
-    public abstract partial class BaseRootSection : ComponentBase
+    public abstract partial class BaseRootSection : ComponentBase, IDisposable
     {
+        private IDisposable? _disposableHandle;
+
         [Inject] private IExceptionService ExceptionService { get; set; } = default!;
         [Inject] protected IPageState PageState { get; set; } = default!;
         [Inject] protected IMessageService MessageService { get; set; } = default!;
@@ -26,6 +28,7 @@ namespace RapidCMS.UI.Components.Sections
         [Inject] protected IPresentationService PresentationService { get; set; } = default!;
         [Inject] protected IInteractionService InteractionService { get; set; } = default!;
         [Inject] protected IUIResolverFactory UIResolverFactory { get; set; } = default!;
+        [Inject] protected IRepositoryEventService RepositoryEventService { get; set; } = default!;
 
         [Parameter] public bool IsRoot { get; set; }
         [Parameter] public PageStateModel InitialState { get; set; } = default!;
@@ -86,9 +89,7 @@ namespace RapidCMS.UI.Components.Sections
         }
 
         private async Task LoadDataAsync(IEnumerable<string>? entityIds = null)
-        {
-            StateIsChanging = true;
-
+        {   
             if (CurrentState?.PageType == PageType.Node)
             {
                 await LoadNodeDataAsync();
@@ -106,7 +107,27 @@ namespace RapidCMS.UI.Components.Sections
                 await LoadPageDataAsync();
             }
 
-            StateIsChanging = false;
+            SetupOnNodesUpdate();
+        }
+
+        private void SetupOnNodesUpdate()
+        {
+            _disposableHandle?.Dispose();
+
+            if (CurrentState == null || CurrentState.CollectionAlias == null || !CurrentState.UsageType.HasFlag(UsageType.View))
+            { 
+                return;
+            }
+
+            _disposableHandle = RepositoryEventService.SubscribeToRepositoryUpdates(CurrentState.CollectionAlias, async () =>
+            {
+                if (!StateIsChanging)
+                {
+                    await InvokeAsync(() => LoadDataAsync());
+                }
+                
+                SetupOnNodesUpdate();
+            });
         }
 
         protected void HandleException(Exception ex)
@@ -148,6 +169,11 @@ namespace RapidCMS.UI.Components.Sections
 
                 builder.CloseComponent();
             };
+        }
+
+        public void Dispose()
+        {
+            _disposableHandle?.Dispose();
         }
     }
 }

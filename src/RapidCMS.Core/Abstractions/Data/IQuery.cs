@@ -37,6 +37,8 @@ namespace RapidCMS.Core.Abstractions.Data
         /// Use this property to determine what the active order by instructions are, when your repository does not support IQueryable.
         /// </summary>
         IEnumerable<IOrderBy> ActiveOrderBys { get; }
+
+        string? CollectionAlias { get; }
     }
 
     public interface IQuery<TEntity> : IQuery

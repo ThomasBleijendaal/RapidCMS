@@ -19,7 +19,7 @@ namespace RapidCMS.Core.Tests.ParentPathTests
             var path = ParentPath.TryParse("test:123");
 
             // assert
-            Assert.AreEqual("test:123", path.ToPathString());
+            Assert.AreEqual("test:123", path!.ToPathString());
         }
 
         [Test]
@@ -32,7 +32,7 @@ namespace RapidCMS.Core.Tests.ParentPathTests
             var newPath = ParentPath.AddLevel(path, "test2", "1234");
 
             // assert
-            Assert.AreEqual("test:123", path.ToPathString());
+            Assert.AreEqual("test:123", path!.ToPathString());
             Assert.AreEqual("test:123;test2:1234", newPath.ToPathString());
         }
 
@@ -59,7 +59,7 @@ namespace RapidCMS.Core.Tests.ParentPathTests
             var (newPath, collectionAlias, id) = ParentPath.RemoveLevel(path);
 
             // assert
-            Assert.AreEqual("test:123;test2:1234", path.ToPathString());
+            Assert.AreEqual("test:123;test2:1234", path!.ToPathString());
             Assert.AreEqual("test:123", newPath.ToPathString());
             Assert.AreEqual("test2", collectionAlias);
             Assert.AreEqual("1234", id);

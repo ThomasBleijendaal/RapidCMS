@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Threading;
 using Blazor.FileReader;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Helpers;
+using RapidCMS.Core.Models.ApiBridge;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Services.Auth;
 
@@ -25,17 +29,27 @@ namespace Microsoft.Extensions.DependencyInjection
             var rootConfig = GetRootConfig(config);
 
             services.AddTransient<IAuthService, WebAssemblyAuthService>();
-
-            // TODO: implement proper API driver dataviewresolver
             services.AddTransient<IDataViewResolver, FormDataViewResolver>();
 
-            // TODO
-            // Semaphore for repositories
+            // TODO: Semaphore for repositories
             services.AddSingleton(serviceProvider => new SemaphoreSlim(rootConfig.Advanced.SemaphoreCount, rootConfig.Advanced.SemaphoreCount));
 
             services.AddFileReaderService();
 
             return services.AddRapidCMSCore(rootConfig);
+        }
+
+        /// <summary>
+        /// Adds the repository as scoped service and adds a plain HttpClient for the given repository.
+        /// </summary>
+        /// <typeparam name="TRepository"></typeparam>
+        /// <param name="services"></param>
+        /// <param name="baseUri"></param>
+        /// <returns></returns>
+        public static IHttpClientBuilder AddRapidCMSApiRepository<TRepository>(this IServiceCollection services, Uri baseUri)
+            where TRepository : class
+        {
+            return services.AddRapidCMSApiRepository<TRepository, TRepository>(baseUri);
         }
 
         /// <summary>
@@ -59,6 +73,25 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Adds the MessageHandler which adds AccessTokens to HttClient-requests to ApiRepository calls to the baseUrl. 
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="baseUrl"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddRapidCMSApiTokenAuthorization(this IServiceCollection services, Func<string> baseUrl)
+        {
+            services.AddTransient(sp =>
+            {
+                var provider = sp.GetService<IAccessTokenProvider>();
+                var manager = sp.GetService<NavigationManager>();
+
+                return new TokenAuthorizationMessageHandler(provider, manager, baseUrl.Invoke());
+            });
+
+            return services;
+        }
+
+        /// <summary>
         /// Adds a plain HttpClient for the given file upload handler which is hosted at the given baseAddress.
         /// The ApiFileHandler uses this HttpClient to communicate to the server.
         /// </summary>
@@ -75,5 +108,6 @@ namespace Microsoft.Extensions.DependencyInjection
             return services.AddHttpClient<ApiFileUploadHandler<THandler>>(alias)
                 .ConfigureHttpClient(x => x.BaseAddress = new Uri(baseUri, $"api/_rapidcms/{alias}/"));
         }
+
     }
 }

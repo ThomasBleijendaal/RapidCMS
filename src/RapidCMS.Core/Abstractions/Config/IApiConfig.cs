@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Repositories;
@@ -44,8 +43,21 @@ namespace RapidCMS.Core.Abstractions.Config
             where THandler : IFileUploadHandler;
 
         /// <summary>
+        /// Adds a data view builder under the collectionAlias. Data view builders allow for creating dynamic data views.
+        /// </summary>
+        /// <typeparam name="TDataViewBuilder"></typeparam>
+        /// <returns></returns>
+        IApiConfig RegisterDataViewBuilder<TDataViewBuilder>(string collectionAlias)
+            where TDataViewBuilder : IDataViewBuilder;
+
+        /// <summary>
         /// Returns the registered repositories
         /// </summary>
         IEnumerable<IApiRepositoryConfig> Repositories { get; }
+
+        /// <summary>
+        /// Returns the registered data views
+        /// </summary>
+        IEnumerable<IApiDataViewBuilderConfig> DataViews { get; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -142,10 +143,37 @@ namespace RapidCMS.Core.Extensions
         private readonly static SHA1CryptoServiceProvider Sha1 = new SHA1CryptoServiceProvider();
         private readonly static char[] Padding = { '=' };
 
-        public static string ToSha1Base64String(this string text)
+        public static string ToSha1Base64String(this string text, string? salt = default)
         {
-            return Convert.ToBase64String(Sha1.ComputeHash(Encoding.UTF8.GetBytes(text)))
-                .TrimEnd(Padding).Replace('+', '-').Replace('/', '_');
+            return Sha1.ComputeHash(Encoding.UTF8.GetBytes($"{text}{salt}")).ToBase64String();
+        }
+
+        public static string ToBase64String(this string text)
+        {
+            return Encoding.UTF8.GetBytes(text).ToBase64String();
+        }
+
+        private static string ToBase64String(this byte[] text)
+        {
+            return Convert.ToBase64String(text)
+                .TrimEnd(Padding)
+                .Replace('+', '-')
+                .Replace('/', '_');
+        }
+
+        public static string FromBase64String(this string text)
+        {
+            var preString = text?.Replace('-', '+').Replace('_', '/');
+
+            if (string.IsNullOrWhiteSpace(preString))
+            {
+                return string.Empty;
+            }
+
+            var originalString = Encoding.UTF8.GetString(
+                Convert.FromBase64String($"{preString}{string.Join("", Enumerable.Repeat(Padding.First(), preString.Length % 4))}"));
+
+            return originalString;
         }
     }
 }

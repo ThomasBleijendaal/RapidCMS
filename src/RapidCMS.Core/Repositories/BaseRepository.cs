@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Primitives;
@@ -127,7 +128,7 @@ namespace RapidCMS.Core.Repositories
 
         public IChangeToken ChangeToken => _repositoryChangeToken;
 
-        protected internal void NotifyUpdate()
+        public void NotifyUpdate()
         {
             var currentToken = _repositoryChangeToken;
             _repositoryChangeToken = new CmsChangeToken();
@@ -136,62 +137,62 @@ namespace RapidCMS.Core.Repositories
 
         async Task<IEntity?> IRepository.GetByIdAsync(string id, IParent? parent)
         {
-            return await GetByIdAsync(id, parent).ConfigureAwait(false);
+            return await GetByIdAsync(id, parent);
         }
 
         async Task<IEnumerable<IEntity>> IRepository.GetAllAsync(IParent? parent, IQuery query)
         {
-            return (await GetAllAsync(parent, TypedQuery<TEntity>.Convert(query)).ConfigureAwait(false)).Cast<IEntity>();
+            return (await GetAllAsync(parent, TypedQuery<TEntity>.Convert(query))).Cast<IEntity>();
         }
 
         async Task<IEnumerable<IEntity>> IRepository.GetAllRelatedAsync(IRelated related, IQuery query)
         {
-            return (await GetAllRelatedAsync(related, TypedQuery<TEntity>.Convert(query)).ConfigureAwait(false))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+            return (await GetAllRelatedAsync(related, TypedQuery<TEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
         }
 
         async Task<IEnumerable<IEntity>> IRepository.GetAllNonRelatedAsync(IRelated related, IQuery query)
         {
-            return (await GetAllNonRelatedAsync(related, TypedQuery<TEntity>.Convert(query)).ConfigureAwait(false))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+            return (await GetAllNonRelatedAsync(related, TypedQuery<TEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
         }
 
         async Task<IEntity> IRepository.NewAsync(IParent? parent, Type? variantType)
         {
-            return await NewAsync(parent, variantType).ConfigureAwait(false);
+            return await NewAsync(parent, variantType);
         }
 
         async Task<IEntity?> IRepository.InsertAsync(IEditContext editContext)
         {
-            var data = await InsertAsync((IEditContext<TEntity>)editContext).ConfigureAwait(false) as IEntity;
+            var data = await InsertAsync((IEditContext<TEntity>)editContext) as IEntity;
             NotifyUpdate();
             return data;
         }
 
         async Task IRepository.UpdateAsync(IEditContext editContext)
         {
-            await UpdateAsync((IEditContext<TEntity>)editContext).ConfigureAwait(false);
+            await UpdateAsync((IEditContext<TEntity>)editContext);
             NotifyUpdate();
         }
 
         async Task IRepository.DeleteAsync(string id, IParent? parent)
         {
-            await DeleteAsync(id, parent).ConfigureAwait(false);
+            await DeleteAsync(id, parent);
             NotifyUpdate();
         }
 
         async Task IRepository.AddAsync(IRelated related, string id)
         {
-            await AddAsync(related, id).ConfigureAwait(false);
+            await AddAsync(related, id);
             NotifyUpdate();
         }
         async Task IRepository.RemoveAsync(IRelated related, string id)
         {
-            await RemoveAsync(related, id).ConfigureAwait(false);
+            await RemoveAsync(related, id);
             NotifyUpdate();
         }
 
         async Task IRepository.ReorderAsync(string? beforeId, string id, IParent? parent)
         {
-            await ReorderAsync(beforeId, id, parent).ConfigureAwait(false);
+            await ReorderAsync(beforeId, id, parent);
             NotifyUpdate();
         }
     }

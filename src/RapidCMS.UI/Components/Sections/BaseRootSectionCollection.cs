@@ -15,7 +15,7 @@ using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Components.Sections
 {
-    public abstract partial class BaseRootSection
+    public abstract partial class BaseRootSection 
     {
         protected ListContext? ListContext { get; set; }
 
@@ -92,6 +92,7 @@ namespace RapidCMS.UI.Components.Sections
         protected async Task<ListContext> LoadSectionsAsync()
         {
             var query = Query.Create(ListUI!.PageSize, CurrentState.CurrentPage, CurrentState.SearchTerm, CurrentState.ActiveTab);
+            query.CollectionAlias = CurrentState.CollectionAlias;
 
             if (ListUI.OrderBys != null)
             {
@@ -104,14 +105,16 @@ namespace RapidCMS.UI.Components.Sections
                     CollectionAlias = CurrentState.CollectionAlias,
                     Query = query,
                     Related = CurrentState.Related,
-                    UsageType = CurrentState.UsageType
+                    UsageType = CurrentState.UsageType,
+                    VariantAlias = CurrentState.VariantAlias
                 }
                 : (GetEntitiesRequestModel)new GetEntitiesOfParentRequestModel
                 {
                     CollectionAlias = CurrentState.CollectionAlias,
                     ParentPath = CurrentState.ParentPath,
                     Query = query,
-                    UsageType = CurrentState.UsageType
+                    UsageType = CurrentState.UsageType,
+                    VariantAlias = CurrentState.VariantAlias
                 };
 
             var listContext = await PresentationService.GetEntitiesAsync<GetEntitiesRequestModel, ListContext>(request);
@@ -179,6 +182,8 @@ namespace RapidCMS.UI.Components.Sections
 
         protected async Task ListButtonOnClickAsync(ButtonClickEventArgs args)
         {
+            StateIsChanging = true;
+
             try
             {
                 if (CurrentState == null)
@@ -204,10 +209,14 @@ namespace RapidCMS.UI.Components.Sections
             {
                 HandleException(ex);
             }
+
+            StateIsChanging = false;
         }
 
         protected async Task NodeButtonOnClickAsync(ButtonClickEventArgs args)
         {
+            StateIsChanging = true;
+
             try
             {
                 var command = (CurrentState.Related != null)
@@ -231,6 +240,8 @@ namespace RapidCMS.UI.Components.Sections
             {
                 HandleException(ex);
             }
+
+            StateIsChanging = false;
         }
 
         protected async Task OnRowDraggedAsync(RowDragEventArgs args)

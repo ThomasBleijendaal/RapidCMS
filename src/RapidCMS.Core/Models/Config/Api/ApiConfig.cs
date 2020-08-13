@@ -15,9 +15,11 @@ namespace RapidCMS.Core.Models.Config.Api
     {
         internal bool AllowAnonymousUsage { get; set; } = false;
         internal List<ApiRepositoryConfig> Repositories { get; set; } = new List<ApiRepositoryConfig>();
+        internal List<IApiDataViewBuilderConfig> DataViews { get; set; } = new List<IApiDataViewBuilderConfig>();
         internal List<Type> FileUploadHandlers { get; set; } = new List<Type>();
 
         IEnumerable<IApiRepositoryConfig> IApiConfig.Repositories => Repositories;
+        IEnumerable<IApiDataViewBuilderConfig> IApiConfig.DataViews => DataViews;
 
         public IApiConfig AllowAnonymousUser()
         {
@@ -75,6 +77,23 @@ namespace RapidCMS.Core.Models.Config.Api
             };
             Repositories.Add(config);
             return config;
+        }
+
+        public IApiConfig RegisterDataViewBuilder<TDataViewBuilder>(string collectionAlias)
+             where TDataViewBuilder : IDataViewBuilder
+        {
+            if (DataViews.Any(x => x.Alias == collectionAlias))
+            {
+                throw new NotUniqueException(nameof(collectionAlias));
+            }
+
+            DataViews.Add(new ApiDataViewBuilderConfig
+            {
+                Alias = collectionAlias,
+                DataViewBuilder = typeof(TDataViewBuilder)
+            });
+
+            return this;
         }
     }
 }
