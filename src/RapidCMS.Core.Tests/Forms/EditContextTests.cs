@@ -13,7 +13,6 @@ using System.Linq.Expressions;
 
 namespace RapidCMS.Core.Tests.Forms
 {
-    // TODO: expand tests with CompositeValidationResult 
     public class EditContextTests
     {
         private FormEditContext _subject = default!;

@@ -16,8 +16,9 @@ using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Api.WebApi.Controllers
 {
-    internal class ApiRepositoryController<TEntity, TRepository> : ControllerBase
+    public class ApiRepositoryController<TEntity, TDatabaseEntity, TRepository> : ControllerBase
         where TEntity : class, IEntity
+        where TDatabaseEntity : class
         where TRepository : IRepository
     {
         private readonly IPresentationService _presentationService;
@@ -80,7 +81,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                     RepositoryAlias = RepositoryAlias,
                     ParentPath = query.ParentPath,
                     UsageType = UsageType.List | UsageType.Edit,
-                    Query = query.GetQuery<TEntity>()
+                    Query = query.GetQuery<TDatabaseEntity>()
                 });
 
                 return Ok(new EntitiesModel<IEntity>
@@ -108,7 +109,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                 {
                     RepositoryAlias = RepositoryAlias,
                     UsageType = UsageType.List | UsageType.Edit,
-                    Query = query.GetQuery<TEntity>(),
+                    Query = query.GetQuery<TDatabaseEntity>(),
                     Related = new EntityDescriptor
                     {
                         RepositoryAlias = query.Related.RepositoryAlias,
@@ -141,7 +142,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                 {
                     RepositoryAlias = RepositoryAlias,
                     UsageType = UsageType.List | UsageType.Add,
-                    Query = query.GetQuery<TEntity>(),
+                    Query = query.GetQuery<TDatabaseEntity>(),
                     Related = new EntityDescriptor
                     {
                         RepositoryAlias = query.Related.RepositoryAlias,
