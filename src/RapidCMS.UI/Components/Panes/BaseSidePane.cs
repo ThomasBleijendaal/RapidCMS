@@ -9,7 +9,7 @@ namespace RapidCMS.UI.Components.Panes
     {
         [Inject] private ISidePaneService SidePaneService { get; set; }
 
-        [Parameter] public EditContext EditContext { get; set; }
+        [Parameter] public FormEditContext EditContext { get; set; }
         [Parameter] public ButtonContext ButtonContext { get; set; }
         [Parameter] public CrudType? DefaultCrudType { get; set; }
 

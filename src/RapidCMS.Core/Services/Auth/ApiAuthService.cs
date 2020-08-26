@@ -59,12 +59,12 @@ namespace RapidCMS.Core.Services.Auth
             }
         }
 
-        public Task<bool> IsUserAuthorizedAsync(EditContext editContext, IButtonSetup button)
+        public Task<bool> IsUserAuthorizedAsync(FormEditContext editContext, IButtonSetup button)
         {
             throw new NotImplementedException("This method is not implemented in ApiAuthService as it makes no sense here.");
         }
 
-        public async Task EnsureAuthorizedUserAsync(EditContext editContext, IButtonSetup button)
+        public async Task EnsureAuthorizedUserAsync(FormEditContext editContext, IButtonSetup button)
         {
             if (!await IsUserAuthorizedAsync(editContext, button))
             {

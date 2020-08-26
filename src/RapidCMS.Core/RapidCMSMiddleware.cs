@@ -53,7 +53,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>>, TreeElementsSetupResolver>();
             services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>, TreeElementSetupResolver>();
 
-            // TODO: fix not having corresponding interface for either class
             services.AddSingleton<ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig>, TypeRegistrationSetupResolver>();
             services.AddSingleton<ISetupResolver<IEntityVariantSetup, EntityVariantConfig>, EntityVariantSetupResolver>();
             services.AddSingleton<ISetupResolver<TreeViewSetup, TreeViewConfig>, TreeViewSetupResolver>();
@@ -111,12 +110,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // UI requirements
             services.AddHttpContextAccessor();
-            services.AddScoped<HttpContextAccessor>(); // <-- why?
-
-            // TODO: fix
             services.AddHttpClient();
-
-            //services.AddScoped<HttpClient>(); // <-- why?
 
             services.AddMemoryCache();
 

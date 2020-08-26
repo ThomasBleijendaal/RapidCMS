@@ -5,7 +5,7 @@ namespace RapidCMS.Core.Abstractions.Interactions
     public interface IEditorButtonInteractionRequestModel
     {
         string ActionId { get; }
-        EditContext EditContext { get; }
+        FormEditContext EditContext { get; }
         object? CustomData { get; }
     }
 }

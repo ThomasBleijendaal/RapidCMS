@@ -23,7 +23,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
 {
     public class GetEntityDispatcherTests
     {
-        private IPresentationDispatcher<GetEntityRequestModel, EditContext> _subject = default!;
+        private IPresentationDispatcher<GetEntityRequestModel, FormEditContext> _subject = default!;
 
         private Mock<ISetupResolver<ICollectionSetup>> _collectionResolver = default!;
         private Mock<IRepository> _repository = default!;

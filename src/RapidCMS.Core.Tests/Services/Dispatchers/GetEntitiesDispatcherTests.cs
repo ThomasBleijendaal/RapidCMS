@@ -22,8 +22,6 @@ using System.Threading.Tasks;
 
 namespace RapidCMS.Core.Tests.Services.Dispatchers
 {
-    // TODO: write tests for refactor of ProcessDataViewAsync
-
     public class GetEntitiesDispatcherTests
     {
         private IPresentationDispatcher<Models.Request.Form.GetEntitiesRequestModel, ListContext> _subject = default!;

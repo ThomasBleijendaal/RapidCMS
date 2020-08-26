@@ -24,7 +24,7 @@ namespace RapidCMS.Core.Providers
         private readonly IPropertyMetadata _idProperty;
         private readonly IEnumerable<IExpressionMetadata> _labelProperties;
         private readonly IMemoryCache _memoryCache;
-        private EditContext? _editContext;
+        private FormEditContext? _editContext;
         private IParent? _parent;
 
         private IDisposable? _eventHandle;
@@ -57,7 +57,7 @@ namespace RapidCMS.Core.Providers
 
         public event EventHandler? OnDataChange;
 
-        public async Task SetEntityAsync(EditContext editContext, IParent? parent)
+        public async Task SetEntityAsync(FormEditContext editContext, IParent? parent)
         {
             _editContext = editContext;
             _parent = parent;

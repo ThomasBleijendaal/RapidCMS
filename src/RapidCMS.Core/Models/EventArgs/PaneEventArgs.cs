@@ -7,7 +7,7 @@ namespace RapidCMS.Core.Models.EventArgs
 {
     public sealed class PaneEventArgs
     {
-        public PaneEventArgs(Type paneType, Task returnTask, EditContext editContext, ButtonContext buttonContext, CrudType? defaultCrudType)
+        public PaneEventArgs(Type paneType, Task returnTask, FormEditContext editContext, ButtonContext buttonContext, CrudType? defaultCrudType)
         {
             PaneType = paneType ?? throw new ArgumentNullException(nameof(paneType));
             ReturnTask = returnTask ?? throw new ArgumentNullException(nameof(returnTask));
@@ -18,7 +18,7 @@ namespace RapidCMS.Core.Models.EventArgs
 
         public Type PaneType { get; set; }
         public Task ReturnTask { get; set; }
-        public EditContext EditContext { get; set; }
+        public FormEditContext EditContext { get; set; }
         public ButtonContext ButtonContext { get; set; }
         public CrudType? DefaultCrudType { get; set; }
     }

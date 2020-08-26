@@ -8,8 +8,8 @@ namespace RapidCMS.Core.Abstractions.Resolvers
     public interface IListUIResolver
     {
         ListUI GetListDetails();
-        Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(EditContext editContext);
-        Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(EditContext editContext);
-        Task<IEnumerable<TabUI>?> GetTabsAsync(EditContext editContext);
+        Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(FormEditContext editContext);
+        Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(FormEditContext editContext);
+        Task<IEnumerable<TabUI>?> GetTabsAsync(FormEditContext editContext);
     }
 }

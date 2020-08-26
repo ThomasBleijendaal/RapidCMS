@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Blazor.FileReader;
+using Tewr.Blazor.FileReader;
 
 namespace RapidCMS.Core.Models.ApiBridge.Request
 {
@@ -26,5 +26,7 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
         }
 
         public Dictionary<string, object> NonStandardProperties { get; set; } = default!;
+
+        public IFilePositionInfo PositionInfo => throw new InvalidOperationException("Not supported in ApiFileHandler");
     }
 }

@@ -6,7 +6,7 @@ namespace RapidCMS.Core.Models.UI
 {
     public class CustomPropertyFieldUI : PropertyFieldUI
     {
-        internal CustomPropertyFieldUI(CustomPropertyFieldSetup field, DataProvider? dataProvider) : base(field, dataProvider)
+        internal CustomPropertyFieldUI(CustomPropertyFieldSetup field, FormDataProvider? dataProvider) : base(field, dataProvider)
         {
             CustomType = field.CustomType;
         }

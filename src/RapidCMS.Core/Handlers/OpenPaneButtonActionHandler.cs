@@ -15,7 +15,7 @@ namespace RapidCMS.Core.Handlers
             _sidePaneService = sidePaneService;
         }
 
-        public override Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, EditContext editContext, ButtonContext context)
+        public override Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context)
         {
             return _sidePaneService.HandlePaneAsync(typeof(TSidePane), editContext, context, button.DefaultCrudType);
         }

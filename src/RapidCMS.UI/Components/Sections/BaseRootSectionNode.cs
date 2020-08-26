@@ -9,43 +9,30 @@ namespace RapidCMS.UI.Components.Sections
 {
     public abstract partial class BaseRootSection
     {
-        protected EditContext? EditContext { get; set; }
-
         protected async Task LoadNodeDataAsync()
         {
-            try
+            if (CurrentState == null)
             {
-                if (CurrentState == null)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                var editContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, EditContext>(new GetEntityRequestModel
-                {
-                    CollectionAlias = CurrentState.CollectionAlias,
-                    Id = CurrentState.Id,
-                    ParentPath = CurrentState.ParentPath,
-                    UsageType = CurrentState.UsageType,
-                    VariantAlias = CurrentState.VariantAlias
-                });
-
-                var resolver = await UIResolverFactory.GetNodeUIResolverAsync(CurrentState.UsageType, CurrentState.CollectionAlias);
-
-                Buttons = await resolver.GetButtonsForEditContextAsync(editContext);
-                Sections = new[] { (editContext, await resolver.GetSectionsForEditContextAsync(editContext)) };
-
-                EditContext = editContext;
-
-                EditContext.OnFieldChanged += (s, a) => StateHasChanged();
-
-                StateHasChanged();
+                throw new InvalidOperationException();
             }
-            catch
+
+            var editContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, FormEditContext>(new GetEntityRequestModel
             {
-                EditContext = null;
+                CollectionAlias = CurrentState.CollectionAlias,
+                Id = CurrentState.Id,
+                ParentPath = CurrentState.ParentPath,
+                UsageType = CurrentState.UsageType,
+                VariantAlias = CurrentState.VariantAlias
+            });
 
-                throw;
-            }
+            var resolver = await UIResolverFactory.GetNodeUIResolverAsync(CurrentState.UsageType, CurrentState.CollectionAlias);
+
+            Buttons = await resolver.GetButtonsForEditContextAsync(editContext);
+            Sections = new[] { (editContext, await resolver.GetSectionsForEditContextAsync(editContext)) };
+
+            editContext.OnFieldChanged += (s, a) => StateHasChanged();
+
+            StateHasChanged();
         }
 
         protected async Task ButtonOnClickAsync(ButtonClickEventArgs args)

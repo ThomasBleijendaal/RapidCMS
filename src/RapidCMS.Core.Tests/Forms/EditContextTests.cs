@@ -15,13 +15,13 @@ namespace RapidCMS.Core.Tests.Forms
     // TODO: expand tests with CompositeValidationResult 
     public class EditContextTests
     {
-        private EditContext _subject = default!;
+        private FormEditContext _subject = default!;
         private ServiceCollection _serviceCollection = new ServiceCollection();
 
         [SetUp]
         public void Setup()
         {
-            _subject = new EditContext(
+            _subject = new FormEditContext(
                 "alias",
                 "repoAlias",
                 "variantAlias",
@@ -77,7 +77,7 @@ namespace RapidCMS.Core.Tests.Forms
         public void WhenEntityIsInvalidButNotTouched_ThenEditContextIsValid()
         {
             // arrange
-            _subject = new EditContext(
+            _subject = new FormEditContext(
                 "alias",
                 "repoAlias",
                 "variantAlias",
@@ -94,7 +94,7 @@ namespace RapidCMS.Core.Tests.Forms
         public void WhenEntityIsInvalidButTouched_ThenEditContextIsInvalid()
         {
             // arrange
-            _subject = new EditContext(
+            _subject = new FormEditContext(
                 "alias",
                 "repoAlias",
                 "variantAlias",
@@ -112,7 +112,7 @@ namespace RapidCMS.Core.Tests.Forms
         public void WhenEntityIsValidAndTouched_ThenEditContextIsValid()
         {
             // arrange
-            _subject = new EditContext(
+            _subject = new FormEditContext(
                 "alias",
                 "repoAlias",
                 "variantAlias",
@@ -130,7 +130,7 @@ namespace RapidCMS.Core.Tests.Forms
         public void WhenPropertyIsInvalidButNotTouched_ThenEditContextIsValid()
         {
             // arrange
-            _subject = new EditContext(
+            _subject = new FormEditContext(
                 "alias",
                 "repoAlias",
                 "variantAlias",
@@ -147,7 +147,7 @@ namespace RapidCMS.Core.Tests.Forms
         public void WhenPropertyIsInvalidButTouched_ThenEditContextIsInvalid()
         {
             // arrange
-            _subject = new EditContext(
+            _subject = new FormEditContext(
                 "alias",
                 "repoAlias",
                 "variantAlias",
@@ -165,7 +165,7 @@ namespace RapidCMS.Core.Tests.Forms
         public void WhenPropertyIsValidAndTouched_ThenEditContextIsValid()
         {
             // arrange
-            _subject = new EditContext(
+            _subject = new FormEditContext(
                 "alias",
                 "repoAlias",
                 "variantAlias",

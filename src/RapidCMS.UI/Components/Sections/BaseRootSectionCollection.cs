@@ -161,12 +161,13 @@ namespace RapidCMS.UI.Components.Sections
             {
                 if (reloadEntityIds.Contains<string>(x.editContext.Entity.Id!))
                 {
-                    var reloadedEditContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, EditContext>(new GetEntityRequestModel
+                    var reloadedEditContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, FormEditContext>(new GetEntityRequestModel
                     {
                         CollectionAlias = x.editContext.CollectionAlias,
                         Id = x.editContext.Entity.Id,
                         ParentPath = x.editContext.Parent?.GetParentPath(),
-                        UsageType = x.editContext.UsageType
+                        UsageType = x.editContext.UsageType,
+                        VariantAlias = x.editContext.EntityVariantAlias
                     });
 
                     return (reloadedEditContext, await UIResolver.GetSectionsForEditContextAsync(reloadedEditContext));

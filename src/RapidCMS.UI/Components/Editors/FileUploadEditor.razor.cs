@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Blazor.FileReader;
+using Tewr.Blazor.FileReader;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.UI.Components.Preview;

@@ -5,6 +5,6 @@ namespace RapidCMS.Core.Abstractions.Resolvers
 {
     internal interface IDataProviderResolver
     {
-        DataProvider? GetDataProvider(FieldSetup field);
+        FormDataProvider? GetDataProvider(FieldSetup field);
     }
 }

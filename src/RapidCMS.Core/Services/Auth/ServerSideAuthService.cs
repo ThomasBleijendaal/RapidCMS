@@ -63,14 +63,14 @@ namespace RapidCMS.Core.Services.Auth
             }
         }
 
-        public Task<bool> IsUserAuthorizedAsync(EditContext editContext, IButtonSetup button)
+        public Task<bool> IsUserAuthorizedAsync(FormEditContext editContext, IButtonSetup button)
         {
             var handler = _buttonActionHandlerResolver.GetButtonActionHandler(button);
 
             return IsUserAuthorizedAsync(handler.GetOperation(button, editContext), editContext.Entity);
         }
 
-        public async Task EnsureAuthorizedUserAsync(EditContext editContext, IButtonSetup button)
+        public async Task EnsureAuthorizedUserAsync(FormEditContext editContext, IButtonSetup button)
         {
             if (!await IsUserAuthorizedAsync(editContext, button))
             {

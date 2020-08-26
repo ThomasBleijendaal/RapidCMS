@@ -50,7 +50,7 @@ namespace RapidCMS.Core.Factories
         public Task<IListUIResolver> GetListUIResolverAsync(UsageType usageType, string collectionAlias)
         {
             var collection = _collectionResolver.ResolveSetup(collectionAlias);
-            var list = usageType == UsageType.List || usageType.HasFlag(UsageType.Add) // TODO: why is this add here?
+            var list = usageType == UsageType.List
                 ? collection.ListView ?? collection.ListEditor
                 : collection.ListEditor ?? collection.ListView;
             if (list == null)

@@ -8,13 +8,13 @@ namespace RapidCMS.Core.Abstractions.Handlers
 {
     public interface IButtonActionHandler
     {
-        OperationAuthorizationRequirement GetOperation(IButton button, EditContext editContext);
+        OperationAuthorizationRequirement GetOperation(IButton button, FormEditContext editContext);
 
-        bool IsCompatible(IButton button, EditContext editContext);
-        bool ShouldAskForConfirmation(IButton button, EditContext editContext);
-        bool RequiresValidForm(IButton button, EditContext editContext);
+        bool IsCompatible(IButton button, FormEditContext editContext);
+        bool ShouldAskForConfirmation(IButton button, FormEditContext editContext);
+        bool RequiresValidForm(IButton button, FormEditContext editContext);
 
-        Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, EditContext editContext, ButtonContext context);
-        Task ButtonClickAfterRepositoryActionAsync(IButton button, EditContext editContext, ButtonContext context);
+        Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context);
+        Task ButtonClickAfterRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context);
     }
 }

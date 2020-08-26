@@ -19,7 +19,7 @@ namespace RapidCMS.Core.Factories
             _collectionResolver = collectionResolver;
         }
 
-        public IEditContext GetEditContextWrapper(EditContext editContext)
+        public IEditContext GetEditContextWrapper(FormEditContext editContext)
         {
             var collection = _collectionResolver.ResolveSetup(editContext.CollectionAlias);
 

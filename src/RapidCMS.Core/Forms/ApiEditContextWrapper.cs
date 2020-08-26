@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -8,6 +9,7 @@ using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Helpers;
+using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Forms
 {
@@ -16,6 +18,7 @@ namespace RapidCMS.Core.Forms
     {
         private readonly FormState _formState;
         private readonly IRelationContainer _relationContainer;
+        private readonly IEnumerable<IDataValidationProvider> _dataValidationProviders;
 
         public ApiEditContextWrapper(
             UsageType usageType,
@@ -33,6 +36,8 @@ namespace RapidCMS.Core.Forms
             _relationContainer = relationContainer;
             _formState = new FormState(entity, serviceProvider);
             _formState.PopulatePropertyStatesUsingReferenceEntity(referenceEntity);
+
+            _dataValidationProviders = _relationContainer.Relations.Select(relation => new ApiDataProvider(relation)).ToList();
         }
 
         public UsageType UsageType { get; }
@@ -52,7 +57,7 @@ namespace RapidCMS.Core.Forms
 
         public bool IsValid()
         {
-            _formState.ValidateModel();
+            _formState.ValidateModel(_dataValidationProviders);
 
             return !_formState.GetValidationMessages().Any();
         }
@@ -76,7 +81,7 @@ namespace RapidCMS.Core.Forms
             // force add property to the formState
             _formState.GetPropertyState(metadata, createWhenNotFound: true);
 
-            _formState.ValidateProperty(metadata);
+            _formState.ValidateProperty(metadata, _dataValidationProviders);
 
             return _formState.GetPropertyState(metadata)?.GetValidationMessages().Any()
                 ?? throw new InvalidOperationException("Given expression could not be valided.");

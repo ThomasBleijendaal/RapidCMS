@@ -196,9 +196,9 @@ namespace RapidCMS.Repositories
                         if (r.Property is IFullPropertyMetadata fp)
                         {
                             // this is pretty ugly
-                            var inMemoryRepo = _serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(r.RelatedEntity)) as IRepository;
-                            var jsonRepo = _serviceProvider.GetService(typeof(JsonRepository<>).MakeGenericType(r.RelatedEntity)) as IRepository;
-                            var lsRepo = _serviceProvider.GetService(typeof(LocalStorageRepository<>).MakeGenericType(r.RelatedEntity)) as IRepository;
+                            var inMemoryRepo = _serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(r.RelatedEntityType)) as IRepository;
+                            var jsonRepo = _serviceProvider.GetService(typeof(JsonRepository<>).MakeGenericType(r.RelatedEntityType)) as IRepository;
+                            var lsRepo = _serviceProvider.GetService(typeof(LocalStorageRepository<>).MakeGenericType(r.RelatedEntityType)) as IRepository;
 
                             var repo = inMemoryRepo ?? jsonRepo ?? lsRepo;
 

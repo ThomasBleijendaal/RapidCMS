@@ -11,7 +11,7 @@ using RapidCMS.Core.Models.Request.Form;
 
 namespace RapidCMS.Core.Dispatchers.Form
 {
-    internal class GetEntityDispatcher : IPresentationDispatcher<GetEntityRequestModel, EditContext>
+    internal class GetEntityDispatcher : IPresentationDispatcher<GetEntityRequestModel, FormEditContext>
     {
         private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
@@ -36,7 +36,7 @@ namespace RapidCMS.Core.Dispatchers.Form
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<EditContext> GetAsync(GetEntityRequestModel request)
+        public async Task<FormEditContext> GetAsync(GetEntityRequestModel request)
         {
             if (string.IsNullOrWhiteSpace(request.Id) && (request.UsageType.HasFlag(UsageType.View) || request.UsageType.HasFlag(UsageType.Edit)))
             {
@@ -75,7 +75,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
             await _authService.EnsureAuthorizedUserAsync(request.UsageType, entity);
 
-            return new EditContext(request.CollectionAlias, collection.RepositoryAlias, request.VariantAlias, entity, parent, request.UsageType | UsageType.Node, _serviceProvider);
+            return new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, request.VariantAlias, entity, parent, request.UsageType | UsageType.Node, _serviceProvider);
         }
     }
 }

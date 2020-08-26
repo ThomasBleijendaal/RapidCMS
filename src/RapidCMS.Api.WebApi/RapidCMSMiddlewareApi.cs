@@ -88,7 +88,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddTransient<IAuthService, ApiAuthService>();
             services.AddSingleton<IExceptionService, ExceptionService>();
-            // TODO: message service
             services.AddTransient<IParentService, ParentService>();
 
             services.AddTransient<IEditContextFactory, ApiEditContextWrapperFactory>();

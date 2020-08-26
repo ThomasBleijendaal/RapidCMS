@@ -30,7 +30,7 @@ namespace RapidCMS.Core.Resolvers.Data
             _serviceProvider = serviceProvider;
         }
 
-        public DataProvider? GetDataProvider(FieldSetup field)
+        public FormDataProvider? GetDataProvider(FieldSetup field)
         {
             if (!(field is PropertyFieldSetup propertyField && propertyField.Relation != null))
             {
@@ -66,16 +66,16 @@ namespace RapidCMS.Core.Resolvers.Data
 
                         _memoryCache);
 
-                    var validator = new CollectionDataValidator(propertyField.Property!);
+                    var validator = new RelationValidationAttributeValidator(propertyField.Property!);
 
-                    return new DataProvider(
+                    return new FormDataProvider(
                         propertyField.Property!,
                         provider,
                         validator);
 
                 case DataProviderRelationSetup dataProviderRelation:
 
-                    return new DataProvider(propertyField.Property!, _serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType), default);
+                    return new FormDataProvider(propertyField.Property!, _serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType), default);
 
                 default:
                     throw new InvalidOperationException();

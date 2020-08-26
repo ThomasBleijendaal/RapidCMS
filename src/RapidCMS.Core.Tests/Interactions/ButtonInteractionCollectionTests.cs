@@ -53,7 +53,7 @@ namespace RapidCMS.Core.Tests.Interactions
             // arrange
             var request = new PersistEntityRequestModel()
             {
-                EditContext = new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object)
+                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object)
             };
 
             // act
@@ -69,7 +69,7 @@ namespace RapidCMS.Core.Tests.Interactions
             // arrange
             var request = new PersistEntityRequestModel()
             {
-                EditContext = new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object)
+                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object)
             };
 
             // act
@@ -87,7 +87,7 @@ namespace RapidCMS.Core.Tests.Interactions
             {
                 ListContext = new ListContext(
                     "alias",
-                    new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -109,7 +109,7 @@ namespace RapidCMS.Core.Tests.Interactions
             {
                 ListContext = new ListContext(
                     "alias",
-                    new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -131,7 +131,7 @@ namespace RapidCMS.Core.Tests.Interactions
             {
                 ListContext = new ListContext(
                     "alias",
-                    new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,

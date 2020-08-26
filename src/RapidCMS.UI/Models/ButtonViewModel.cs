@@ -7,7 +7,7 @@ namespace RapidCMS.UI.Models
     {
         public event EventHandler<ButtonClickEventArgs>? OnClick;
 
-        public void NotifyClick(EditContext editContext, object? customData)
+        public void NotifyClick(FormEditContext editContext, object? customData)
         {
             OnClick?.Invoke(this, new ButtonClickEventArgs
             {

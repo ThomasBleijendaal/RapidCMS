@@ -27,7 +27,7 @@ namespace RapidCMS.Core.Factories
             _entityVariantResolver = entityVariantResolver;
         }
 
-        public IEditContext GetEditContextWrapper(EditContext editContext)
+        public IEditContext GetEditContextWrapper(FormEditContext editContext)
         {
             var contextType = typeof(FormEditContextWrapper<>).MakeGenericType(editContext.Entity.GetType());
             var instance = Activator.CreateInstance(contextType, editContext);

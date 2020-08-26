@@ -31,7 +31,7 @@ namespace RapidCMS.Core.Tests.Repositories
             {
                 notified = true;
             }, default);
-            var editContext = new EditContext("alias", "repo", "entity", new Entity { Id = "123" }, default, default, _serviceProvider.Object);
+            var editContext = new FormEditContext("alias", "repo", "entity", new Entity { Id = "123" }, default, default, _serviceProvider.Object);
             var wrapper = new FormEditContextWrapper<Entity>(editContext);
 
             // act
@@ -50,7 +50,7 @@ namespace RapidCMS.Core.Tests.Repositories
             {
                 notified = true;
             }, default);
-            var editContext = new EditContext("alias", "repo", "entity", new Entity { Id = "123" }, default, default, _serviceProvider.Object);
+            var editContext = new FormEditContext("alias", "repo", "entity", new Entity { Id = "123" }, default, default, _serviceProvider.Object);
             var wrapper = new FormEditContextWrapper<Entity>(editContext);
 
             // act

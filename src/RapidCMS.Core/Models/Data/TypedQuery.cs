@@ -66,6 +66,8 @@ namespace RapidCMS.Core.Models.Data
                 return queryable;
             }
 
+            PreventLinkerToRemoveTheseMethodsFromQueryable();
+
             var first = true;
             foreach (var orderBy in _query.OrderBys)
             {
@@ -109,5 +111,17 @@ namespace RapidCMS.Core.Models.Data
         public IEnumerable<IOrderBy> ActiveOrderBys => _query.OrderBys ?? Enumerable.Empty<OrderBy>();
 
         public string? CollectionAlias => _query.CollectionAlias;
+
+        /// <summary>
+        /// The Linker incorrectly removes these methods from Queryable 
+        /// </summary>
+        private static void PreventLinkerToRemoveTheseMethodsFromQueryable()
+        {
+            var query = new[] { "a" }.AsQueryable();
+            var orderedQuery = Queryable.OrderBy(query, x => x);
+            orderedQuery = Queryable.OrderByDescending(orderedQuery, x => x);
+            orderedQuery = Queryable.ThenBy(orderedQuery, x => x);
+            orderedQuery = Queryable.ThenByDescending(orderedQuery, x => x);
+        }
     }
 }

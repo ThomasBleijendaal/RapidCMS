@@ -71,10 +71,12 @@ namespace RapidCMS.Example.WebAssembly
             builder.Services.AddSingleton<RandomNameActionHandler>();
 
             builder.Services.AddTransient<ITextUploadHandler, Base64ApiTextUploadHandler>();
-            builder.Services.AddRapidCMSFileUploadApiHttpClient<Base64TextFileUploadHandler>(BaseUri);
+            builder.Services.AddRapidCMSFileUploadApiHttpClient<Base64TextFileUploadHandler>(BaseUri)
+                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
             builder.Services.AddTransient<IImageUploadHandler, Base64ApiImageUploadHandler>();
-            builder.Services.AddRapidCMSFileUploadApiHttpClient<Base64ImageUploadHandler>(BaseUri);
-
+            builder.Services.AddRapidCMSFileUploadApiHttpClient<Base64ImageUploadHandler>(BaseUri)
+                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+            
             if (ConfigureAuthentication)
             {
                 ConfigureADAuthentication(builder);

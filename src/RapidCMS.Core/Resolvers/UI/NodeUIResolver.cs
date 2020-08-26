@@ -23,7 +23,7 @@ namespace RapidCMS.Core.Resolvers.UI
             _node = node;
         }
 
-        public async Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(EditContext editContext)
+        public async Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(FormEditContext editContext)
         {
             if (_node.Buttons == null)
             {
@@ -33,7 +33,7 @@ namespace RapidCMS.Core.Resolvers.UI
             return await GetButtonsAsync(_node.Buttons, editContext);
         }
 
-        public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(EditContext editContext)
+        public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(FormEditContext editContext)
         {
             if (_node.Panes == null)
             {

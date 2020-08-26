@@ -76,8 +76,8 @@ namespace RapidCMS.Core.Dispatchers.Form
             }
 
             var existingEntities = await _concurrencyService.EnsureCorrectConcurrencyAsync(action);
-            var protoEditContext = new EditContext(request.CollectionAlias, collection.RepositoryAlias, collection.EntityVariant.Alias, protoEntity, parent, request.UsageType | UsageType.List, _serviceProvider);
-            var newEditContext = new EditContext(request.CollectionAlias, collection.RepositoryAlias, variant.Alias, newEntity, parent, request.UsageType | UsageType.Node, _serviceProvider);
+            var protoEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, collection.EntityVariant.Alias, protoEntity, parent, request.UsageType | UsageType.List, _serviceProvider);
+            var newEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, variant.Alias, newEntity, parent, request.UsageType | UsageType.Node, _serviceProvider);
 
             return new ListContext(
                 request.CollectionAlias,
@@ -88,22 +88,22 @@ namespace RapidCMS.Core.Dispatchers.Form
                 _serviceProvider);
         }
 
-        private List<EditContext> ConvertEditContexts(
+        private List<FormEditContext> ConvertEditContexts(
             GetEntitiesRequestModel request,
-            EditContext protoEditContext,
-            EditContext newEditContext,
+            FormEditContext protoEditContext,
+            FormEditContext newEditContext,
             IEnumerable<IEntity> existingEntities)
         {
             if (request.UsageType.HasFlag(UsageType.Add))
             {
                 return existingEntities
-                    .Select(ent => new EditContext(protoEditContext, ent, UsageType.Node | UsageType.Pick, _serviceProvider))
+                    .Select(ent => new FormEditContext(protoEditContext, ent, UsageType.Node | UsageType.Pick, _serviceProvider))
                     .ToList();
             }
             else if (request.UsageType.HasFlag(UsageType.Edit) || request.UsageType.HasFlag(UsageType.New))
             {
                 var entities = existingEntities
-                    .Select(ent => new EditContext(protoEditContext, ent, UsageType.Node | UsageType.Edit, _serviceProvider))
+                    .Select(ent => new FormEditContext(protoEditContext, ent, UsageType.Node | UsageType.Edit, _serviceProvider))
                     .ToList();
 
                 if (request.UsageType.HasFlag(UsageType.New))
@@ -116,7 +116,7 @@ namespace RapidCMS.Core.Dispatchers.Form
             else if (request.UsageType.HasFlag(UsageType.View))
             {
                 return existingEntities
-                    .Select(ent => new EditContext(protoEditContext, ent, UsageType.Node | UsageType.View, _serviceProvider))
+                    .Select(ent => new FormEditContext(protoEditContext, ent, UsageType.Node | UsageType.View, _serviceProvider))
                     .ToList();
             }
             else

@@ -15,7 +15,6 @@ namespace RapidCMS.Core.Models.Setup
         {
             _typeRegistrationSetupResolver = typeRegistrationSetupResolver;
 
-            // TODO: resolve?
             SiteName = config.SiteName;
             IsDevelopment = config.IsDevelopment;
 

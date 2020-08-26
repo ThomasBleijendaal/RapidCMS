@@ -33,12 +33,12 @@ namespace RapidCMS.Core.Forms
 
         public IReadOnlyList<IElement>? GetRelatedElementsFor<TRelatedEntity>() where TRelatedEntity : IEntity
         {
-            return Relations.FirstOrDefault(x => x.RelatedEntity == typeof(TRelatedEntity))?.RelatedElements ?? default;
+            return Relations.FirstOrDefault(x => x.RelatedEntityType == typeof(TRelatedEntity))?.RelatedElements ?? default;
         }
 
         public IReadOnlyList<TId>? GetRelatedElementIdsFor<TRelatedEntity, TId>() where TRelatedEntity : IEntity
         {
-            return Relations.FirstOrDefault(x => x.RelatedEntity == typeof(TRelatedEntity))?.RelatedElementIdsAs<TId>() ?? default;
+            return Relations.FirstOrDefault(x => x.RelatedEntityType == typeof(TRelatedEntity))?.RelatedElementIdsAs<TId>() ?? default;
         }
     }
 }

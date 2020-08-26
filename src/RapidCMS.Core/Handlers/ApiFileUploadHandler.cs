@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Blazor.FileReader;
+using Tewr.Blazor.FileReader;
 using Newtonsoft.Json;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Helpers;

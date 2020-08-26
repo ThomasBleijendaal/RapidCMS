@@ -2,6 +2,7 @@
 using System.Linq;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Helpers;
 
 namespace RapidCMS.Core.Models.ApiBridge.Request
 {
@@ -24,7 +25,7 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
                     {
                         Elements = relation.RelatedElements.Select(el => el.Id),
                         PropertyName = relation.Property.PropertyName,
-                        RelatedTypeName = relation.RelatedEntity.AssemblyQualifiedName
+                        VariantAlias = AliasHelper.GetEntityVariantAlias(relation.RelatedEntityType)
                     };
                 })
             };
@@ -35,7 +36,7 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
 
         public RelationContainerModel RelationContainer { get; set; } = default!;
 
-        public IEnumerable<(string propertyName, string typeName, IEnumerable<object> elements)> GetRelations()
-            => RelationContainer.Relations.Select(r => (r.PropertyName, r.RelatedTypeName, r.Elements));
+        public IEnumerable<(string propertyName, string variantAlias, IEnumerable<object> elements)> GetRelations()
+            => RelationContainer.Relations.Select(r => (r.PropertyName, r.VariantAlias, r.Elements));
     }
 }

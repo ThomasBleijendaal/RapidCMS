@@ -14,7 +14,7 @@ namespace RapidCMS.Core.Services.SidePane
         public event EventHandler<PaneEventArgs>? OnPaneRequested;
         public event EventHandler? OnPaneFinished;
 
-        public Task<CrudType> HandlePaneAsync(Type pane, EditContext editContext, ButtonContext buttonContext, CrudType? defaultCrudType)
+        public Task<CrudType> HandlePaneAsync(Type pane, FormEditContext editContext, ButtonContext buttonContext, CrudType? defaultCrudType)
         {
             var args = new PaneEventArgs(pane, _tcs.Task, editContext, buttonContext, defaultCrudType);
 

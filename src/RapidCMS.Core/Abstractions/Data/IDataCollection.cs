@@ -5,7 +5,6 @@ using RapidCMS.Core.Forms;
 
 namespace RapidCMS.Core.Abstractions.Data
 {
-    // TODO: paginate, search etc
     public interface IDataCollection
     {
         /// <summary>
@@ -14,7 +13,7 @@ namespace RapidCMS.Core.Abstractions.Data
         /// <param name="editContext">EditContext for which this data collection is used.</param>
         /// <param name="parent">The parent(s) of the entity.</param>
         /// <returns></returns>
-        Task SetEntityAsync(EditContext editContext, IParent? parent);
+        Task SetEntityAsync(FormEditContext editContext, IParent? parent);
 
         /// <summary>
         /// This method is called when the editor which this data collection requests elements to display.

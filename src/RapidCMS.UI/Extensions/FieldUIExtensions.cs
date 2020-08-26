@@ -10,7 +10,7 @@ namespace RapidCMS.UI.Extensions
 {
     public static class FieldUIExtensions
     {
-        public static RenderFragment? ToRenderFragment(this FieldUI field, EditContext editContext)
+        public static RenderFragment? ToRenderFragment(this FieldUI field, FormEditContext editContext)
         {
             if (field is CustomExpressionFieldUI customExpressionField)
             {

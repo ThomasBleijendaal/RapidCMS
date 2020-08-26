@@ -1,98 +1,98 @@
 ﻿@inherits BaseRootSection
 
-@if (!StateIsChanging) {
-@if (CurrentState?.PageType == PageType.Node)
+@if (!StateIsChanging)
 {
-    @if (EditContext == null)
+    @if (CurrentState?.PageType == PageType.Node)
     {
-        <div class="content">
-            <p>Loading..</p>
-        </div>
-    }
-    else
-    {
-        <CascadingEditContext EditContext=@EditContext>
-            <ButtonBar Buttons="Buttons" OnButtonClick="ButtonOnClickAsync" />
-
-            <EditContextStrayErrors />
-
-            @if (Sections != null && Sections.Any())
+        @if (Sections == null || !Sections.Any())
+        {
+            <div class="content">
+                <p>Loading..</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var mainSection in Sections)
             {
-                // TODO: this could be better
-                @foreach (var section in Sections.First().sections)
-                {
-                    var renderFragment = section.ToRenderFragment();
+                <CascadingEditContext EditContext=@mainSection.editContext>
+                    <ButtonBar Buttons="Buttons" OnButtonClick="ButtonOnClickAsync" />
 
-                    if (renderFragment != null)
+                    <EditContextStrayErrors />
+
+                    @foreach (var section in mainSection.sections)
                     {
-                        @renderFragment
+                        var renderFragment = section.ToRenderFragment();
+
+                        if (renderFragment != null)
+                        {
+                            @renderFragment
+                        }
+                        else
+                        {
+                            <BlockSection Section="section" OnButtonClick="ButtonOnClickAsync" />
+                        }
                     }
-                    else
-                    {
-                        <BlockSection Section="section" OnButtonClick="ButtonOnClickAsync" />
-                    }
+                </CascadingEditContext>
+            }
+        }
+    }
+    else if (CurrentState?.PageType == PageType.Collection)
+    {
+        @if (ListContext == null || ListUI == null)
+        {
+            <div class="content">
+                <p>Loading..</p>
+            </div>
+        }
+        else
+        {
+            <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
+                <Tabbar Tabs="Tabs"
+                        SearchBarVisible="ListUI.SearchBarVisible"
+                        State="CurrentState"
+                        OnSearch="SearchAsync"
+                        OnTabChange="TabChangeAsync" />
+                <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
+            </CascadingEditContext>
+
+            @if (Sections != null)
+            {
+                @if (ListUI.ListType == ListType.Table)
+                {
+                    <TableSection UI="ListUI"
+                                  Sections="Sections"
+                                  CurrentPage="CurrentState.CurrentPage"
+                                  MaxPage="CurrentState.MaxPage"
+                                  OnButtonClick="NodeButtonOnClickAsync"
+                                  OnRowDragged="OnRowDraggedAsync"
+                                  OnPageChanged="PageChangedAsync" />
+                }
+                else if (ListUI.ListType == ListType.Block)
+                {
+                    <BlocksSection Sections="Sections"
+                                   CurrentPage="CurrentState.CurrentPage"
+                                   MaxPage="CurrentState.MaxPage"
+                                   OnButtonClick="NodeButtonOnClickAsync"
+                                   OnPageChanged="PageChangedAsync" />
                 }
             }
-        </CascadingEditContext>
-    }
-}
-else if (CurrentState?.PageType == PageType.Collection)
-{
-    @if (ListContext == null || ListUI == null)
-    {
-        <div class="content">
-            <p>Loading..</p>
-        </div>
-    }
-    else
-    {
-        <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
-            <Tabbar Tabs="Tabs"
-                    SearchBarVisible="ListUI.SearchBarVisible"
-                    State="CurrentState"
-                    OnSearch="SearchAsync"
-                    OnTabChange="TabChangeAsync" />
-            <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
-        </CascadingEditContext>
-
-        @if (Sections != null)
-        {
-            @if (ListUI.ListType == ListType.Table)
-            {
-                <TableSection UI="ListUI"
-                              Sections="Sections"
-                              CurrentPage="CurrentState.CurrentPage"
-                              MaxPage="CurrentState.MaxPage"
-                              OnButtonClick="NodeButtonOnClickAsync"
-                              OnRowDragged="OnRowDraggedAsync"
-                              OnPageChanged="PageChangedAsync" />
-            }
-            else if (ListUI.ListType == ListType.Block)
-            {
-                <BlocksSection Sections="Sections"
-                               CurrentPage="CurrentState.CurrentPage"
-                               MaxPage="CurrentState.MaxPage"
-                               OnButtonClick="NodeButtonOnClickAsync"
-                               OnPageChanged="PageChangedAsync" />
-            }
         }
     }
-}
-else if ((CurrentState?.PageType == PageType.Page || CurrentState?.PageType == PageType.Dashboard) && PageContents != null)
-{
-    <CascadingValue Name="Embedded" Value="true">
-        @foreach (var section in PageContents)
-        {
-            @RenderType(section);
-        }
-    </CascadingValue>
-}
-else if (CurrentState?.PageType == PageType.Unauthorized)
-{
-    <UnauthorizedSection />
-}
-else if (CurrentState?.PageType == PageType.Error)
-{
-    <ErrorSection />
-}
+    else if ((CurrentState?.PageType == PageType.Page || CurrentState?.PageType == PageType.Dashboard) && PageContents != null)
+    {
+        <CascadingValue Name="Embedded" Value="true">
+            @foreach (var section in PageContents)
+            {
+                @RenderType(section);
+            }
+        </CascadingValue>
+    }
+    else if (CurrentState?.PageType == PageType.Unauthorized)
+    {
+        <UnauthorizedSection />
+    }
+    else if (CurrentState?.PageType == PageType.Error)
+    {
+        <ErrorSection />
+    }
 }

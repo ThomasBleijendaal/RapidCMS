@@ -72,8 +72,7 @@ namespace RapidCMS.Core.Interactions
         {
             var (handler, button) = FindButtonHandler(request.ListContext.CollectionAlias, request.ActionId);
 
-            // TODO: this can cause an Update action be validated on the root, while it applies to the children (which is also checked)
-            // this could lead to invalid rejection of action
+            // NOTE: this might check too much or reject because of the wrong reasons.
             await _authService.EnsureAuthorizedUserAsync(request.ListContext.ProtoEditContext, button);
 
             var context = new ButtonContext(request.ListContext.Parent, request.CustomData);

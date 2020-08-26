@@ -28,7 +28,7 @@ namespace RapidCMS.Core.Resolvers.UI
             _authService = authService;
         }
 
-        protected async Task<List<ButtonUI>> GetButtonsAsync(IEnumerable<IButtonSetup> buttons, EditContext editContext)
+        protected async Task<List<ButtonUI>> GetButtonsAsync(IEnumerable<IButtonSetup> buttons, FormEditContext editContext)
         {
             return await buttons
                 .GetAllButtons()
@@ -48,7 +48,7 @@ namespace RapidCMS.Core.Resolvers.UI
                 .ToListAsync();
         }
 
-        protected internal async Task<SectionUI> GetSectionUIAsync(PaneSetup pane, EditContext editContext)
+        protected internal async Task<SectionUI> GetSectionUIAsync(PaneSetup pane, FormEditContext editContext)
         {
             var fields = pane.Fields.Select(field =>
             {
@@ -85,7 +85,7 @@ namespace RapidCMS.Core.Resolvers.UI
             };
         }
 
-        protected FieldUI GetField(FieldSetup field, DataProvider? dataProvider)
+        protected FieldUI GetField(FieldSetup field, FormDataProvider? dataProvider)
         {
             return field switch
             {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Blazor.FileReader;
+using Tewr.Blazor.FileReader;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;

@@ -73,7 +73,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // arrange
             var request = new PersistEntityRequestModel
             {
-                EditContext = new EditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, _serviceProviderMock.Object)
+                EditContext = new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, _serviceProviderMock.Object)
             };
 
             // act
@@ -90,7 +90,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // arrange
             var request = new PersistEntityRequestModel
             {
-                EditContext = new EditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, _serviceProviderMock.Object)
+                EditContext = new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, _serviceProviderMock.Object)
             };
 
             // act
@@ -107,7 +107,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // arrange
             var request = new PersistEntityRequestModel
             {
-                EditContext = new EditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, _serviceProviderMock.Object)
+                EditContext = new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, _serviceProviderMock.Object)
             };
 
             // act
@@ -124,7 +124,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // arrange
             var request = new PersistEntityRequestModel
             {
-                EditContext = new EditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, _serviceProviderMock.Object)
+                EditContext = new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, _serviceProviderMock.Object)
             };
 
             // act
@@ -141,7 +141,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // arrange
             var request = new PersistEntityRequestModel
             {
-                EditContext = new EditContext("alias", "alias", "alias", new DefaultEntityVariant(), default, UsageType.Add, _serviceProviderMock.Object)
+                EditContext = new FormEditContext("alias", "alias", "alias", new DefaultEntityVariant(), default, UsageType.Add, _serviceProviderMock.Object)
             };
             _buttonInteraction.Setup(x => x.ValidateButtonInteractionAsync(It.IsAny<IEditorButtonInteractionRequestModel>())).ReturnsAsync(crudType);
 

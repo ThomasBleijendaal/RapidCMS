@@ -26,9 +26,6 @@ namespace RapidCMS.Core.Forms
             _serviceProvider = serviceProvider;
         }
 
-        // TODO
-        internal List<DataProvider> DataProviders = new List<DataProvider>();
-
         public IEnumerable<string> GetValidationMessages()
         {
             foreach (var message in _messages)
@@ -154,9 +151,9 @@ namespace RapidCMS.Core.Forms
             return fieldState;
         }
 
-        public void ValidateModel()
+        public void ValidateModel(IEnumerable<IDataValidationProvider>? dataProviders)
         {
-            var results = GetValidationResultsForModel();
+            var results = GetValidationResultsForModel(dataProviders);
 
             foreach (var result in results)
             {
@@ -176,7 +173,7 @@ namespace RapidCMS.Core.Forms
             _fieldStates.ForEach(x => x.WasValidated = true);
         }
 
-        public void ValidateProperty(IPropertyMetadata property)
+        public void ValidateProperty(IPropertyMetadata property, IEnumerable<IDataValidationProvider>? dataProviders)
         {
             IEnumerable<ValidationResult> results;
 
@@ -184,11 +181,11 @@ namespace RapidCMS.Core.Forms
             // validate the complete model, but only keep the results of that property
             if (_entity.GetType().GetProperty(property.PropertyName) == null)
             {
-                results = GetValidationResultsForModel().Where(x => x.MemberNames.Contains(property.PropertyName));
+                results = GetValidationResultsForModel(dataProviders).Where(x => x.MemberNames.Contains(property.PropertyName));
             }
             else
             {
-                results = GetValidationResultsForProperty(property);
+                results = GetValidationResultsForProperty(property, dataProviders);
             }
 
             var state = GetPropertyState(property)!;
@@ -201,7 +198,7 @@ namespace RapidCMS.Core.Forms
             }
         }
 
-        private IEnumerable<ValidationResult> GetValidationResultsForProperty(IPropertyMetadata property)
+        private IEnumerable<ValidationResult> GetValidationResultsForProperty(IPropertyMetadata property, IEnumerable<IDataValidationProvider>? dataProviders)
         {
             var results = new List<ValidationResult>();
             var context = new ValidationContext(_entity, _serviceProvider, null)
@@ -216,15 +213,18 @@ namespace RapidCMS.Core.Forms
             }
             catch { }
 
-            foreach (var result in DataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(_entity, _serviceProvider)))
+            if (dataProviders != null)
             {
-                results.Add(result);
+                foreach (var result in dataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(_entity, _serviceProvider)))
+                {
+                    results.Add(result);
+                }
             }
 
             return results;
         }
 
-        private IEnumerable<ValidationResult> GetValidationResultsForModel()
+        private IEnumerable<ValidationResult> GetValidationResultsForModel(IEnumerable<IDataValidationProvider>? dataProviders)
         {
             var context = new ValidationContext(_entity, _serviceProvider, null);
             var results = new List<ValidationResult>();
@@ -244,9 +244,12 @@ namespace RapidCMS.Core.Forms
                     $"The {kv.Property.PropertyName} field indicates it is performing an asynchronous task which must be awaited.",
                     new[] { kv.Property.PropertyName })));
 
-            foreach (var result in DataProviders.SelectMany(p => p.Validate(_entity, _serviceProvider)))
+            if (dataProviders != null)
             {
-                results.Add(result);
+                foreach (var result in dataProviders.SelectMany(p => p.Validate(_entity, _serviceProvider)))
+                {
+                    results.Add(result);
+                }
             }
 
             return FlattenCompositeValidationResults(results);

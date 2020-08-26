@@ -46,7 +46,7 @@ namespace RapidCMS.Core.Providers
             return Task.FromResult(list.AsEnumerable());
         }
 
-        public Task SetEntityAsync(EditContext editContext, IParent? parent)
+        public Task SetEntityAsync(FormEditContext editContext, IParent? parent)
         {
             return Task.CompletedTask;
         }

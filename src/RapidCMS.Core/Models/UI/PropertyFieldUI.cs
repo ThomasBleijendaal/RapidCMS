@@ -8,7 +8,7 @@ namespace RapidCMS.Core.Models.UI
 {
     public class PropertyFieldUI : FieldUI
     {
-        internal PropertyFieldUI(PropertyFieldSetup field, DataProvider? dataProvider) : base(field)
+        internal PropertyFieldUI(PropertyFieldSetup field, FormDataProvider? dataProvider) : base(field)
         {
             Type = field.EditorType;
             Property = field.Property;

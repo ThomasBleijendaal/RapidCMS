@@ -9,9 +9,9 @@ using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Providers
 {
-    internal class DataProvider
+    internal class FormDataProvider : IDataValidationProvider
     {
-        internal DataProvider(IPropertyMetadata property, IDataCollection collection, IRelationValidator? validator)
+        internal FormDataProvider(IPropertyMetadata property, IDataCollection collection, IRelationValidator? validator)
         {
             Property = property ?? throw new ArgumentNullException(nameof(property));
             Collection = collection ?? throw new ArgumentNullException(nameof(collection));

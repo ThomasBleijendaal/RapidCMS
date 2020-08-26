@@ -8,7 +8,7 @@ namespace RapidCMS.Core.Abstractions.Factories
 {
     internal interface IEditContextFactory
     {
-        IEditContext GetEditContextWrapper(EditContext editContext);
+        IEditContext GetEditContextWrapper(FormEditContext editContext);
         IEditContext GetEditContextWrapper(
             UsageType usageType, 
             EntityState entityState, 

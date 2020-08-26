@@ -51,7 +51,7 @@ namespace RapidCMS.Core.Tests.Interactions
             var request = new PersistEntityRequestModel()
             {
                 ActionId = buttonId,
-                EditContext = new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object)
+                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object)
             };
 
             // act
@@ -69,7 +69,7 @@ namespace RapidCMS.Core.Tests.Interactions
             var request = new PersistEntityRequestModel()
             {
                 ActionId = buttonId,
-                EditContext = new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object)
+                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object)
             };
             _collection.Setup(x => x.FindButton(It.IsAny<string>())).Returns(default(ButtonSetup));
 
@@ -82,7 +82,7 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenUsedEditorButtonCanBeFound_ThenAuthServiceShouldBeConsulted(string buttonId)
         {
             // arrange
-            var editContext = new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object);
             var request = new PersistEntityRequestModel()
             {
                 ActionId = buttonId,
@@ -94,7 +94,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _authService.Verify(x => x.EnsureAuthorizedUserAsync(It.Is<EditContext>(x => x == editContext), It.Is<ButtonSetup>(x => x.ButtonId == buttonId)));
+            _authService.Verify(x => x.EnsureAuthorizedUserAsync(It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonSetup>(x => x.ButtonId == buttonId)));
         }
 
         [TestCase("abc")]
@@ -107,7 +107,7 @@ namespace RapidCMS.Core.Tests.Interactions
                 ActionId = buttonId,
                 ListContext = new ListContext(
                     "alias",
-                    new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -131,7 +131,7 @@ namespace RapidCMS.Core.Tests.Interactions
                 ActionId = buttonId,
                 ListContext = new ListContext(
                     "alias",
-                    new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -148,14 +148,14 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenUsedEditorInListButtonCanBeFound_ThenAuthServiceShouldBeConsulted(string buttonId)
         {
             // arrange
-            var editContext = new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object);
             var request = new PersistEntityCollectionRequestModel()
             {
                 ActionId = buttonId,
                 EditContext = editContext,
                 ListContext = new ListContext(
                     "alias",
-                    new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -167,7 +167,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _authService.Verify(x => x.EnsureAuthorizedUserAsync(It.Is<EditContext>(x => x == editContext), It.Is<ButtonSetup>(x => x.ButtonId == buttonId)));
+            _authService.Verify(x => x.EnsureAuthorizedUserAsync(It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonSetup>(x => x.ButtonId == buttonId)));
         }
 
         [TestCase("abc")]
@@ -180,7 +180,7 @@ namespace RapidCMS.Core.Tests.Interactions
                 ActionId = buttonId,
                 ListContext = new ListContext(
                     "alias",
-                    new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -204,7 +204,7 @@ namespace RapidCMS.Core.Tests.Interactions
                 ActionId = buttonId,
                 ListContext = new ListContext(
                     "alias",
-                    new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -221,7 +221,7 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenUsedListButtonCanBeFound_ThenAuthServiceShouldBeConsulted(string buttonId)
         {
             // arrange
-            var editContext = new EditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, _serviceProvider.Object);
             var request = new PersistEntitiesRequestModel()
             {
                 ActionId = buttonId,
@@ -239,7 +239,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _authService.Verify(x => x.EnsureAuthorizedUserAsync(It.Is<EditContext>(x => x == editContext), It.Is<ButtonSetup>(x => x.ButtonId == buttonId)));
+            _authService.Verify(x => x.EnsureAuthorizedUserAsync(It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonSetup>(x => x.ButtonId == buttonId)));
         }
     }
 }

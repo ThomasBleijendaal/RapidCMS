@@ -15,9 +15,9 @@ namespace RapidCMS.Core.Forms
     public class FormEditContextWrapper<TEntity> : IEditContext<TEntity>
         where TEntity : IEntity
     {
-        private readonly EditContext _editContext;
+        private readonly FormEditContext _editContext;
 
-        public FormEditContextWrapper(EditContext editContext)
+        public FormEditContextWrapper(FormEditContext editContext)
         {
             _editContext = editContext;
         }

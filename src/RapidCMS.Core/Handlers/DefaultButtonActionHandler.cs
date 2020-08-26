@@ -13,12 +13,12 @@ namespace RapidCMS.Core.Handlers
 {
     internal class DefaultButtonActionHandler : IButtonActionHandler
     {
-        public Task ButtonClickAfterRepositoryActionAsync(IButton button, EditContext editContext, ButtonContext context)
+        public Task ButtonClickAfterRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context)
         {
             return Task.CompletedTask;
         }
 
-        public virtual Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, EditContext editContext, ButtonContext context)
+        public virtual Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context)
         {
             return button.DefaultButtonType switch
             {
@@ -36,7 +36,7 @@ namespace RapidCMS.Core.Handlers
             };
         }
 
-        public OperationAuthorizationRequirement GetOperation(IButton button, EditContext editContext)
+        public OperationAuthorizationRequirement GetOperation(IButton button, FormEditContext editContext)
         {
             switch (button.DefaultButtonType)
             {
@@ -66,18 +66,18 @@ namespace RapidCMS.Core.Handlers
             }
         }
 
-        public bool IsCompatible(IButton button, EditContext editContext)
+        public bool IsCompatible(IButton button, FormEditContext editContext)
         {
             var usages = button.DefaultButtonType.GetCustomAttribute<ActionsAttribute>()?.Usages;
             return usages?.Any(x => editContext.UsageType.HasFlag(x)) ?? false;
         }
 
-        public bool RequiresValidForm(IButton button, EditContext editContext)
+        public bool RequiresValidForm(IButton button, FormEditContext editContext)
         {
             return button.DefaultButtonType.GetCustomAttribute<ValidFormAttribute>() != null;
         }
 
-        public bool ShouldAskForConfirmation(IButton button, EditContext editContext)
+        public bool ShouldAskForConfirmation(IButton button, FormEditContext editContext)
         {
             return button.DefaultButtonType.GetCustomAttribute<ConfirmAttribute>() != null;
         }

@@ -7,7 +7,7 @@ namespace RapidCMS.Core.Models.UI
 {
     public class ButtonUI
     {
-        internal ButtonUI(IButtonActionHandler handler, IButtonSetup button, EditContext editContext)
+        internal ButtonUI(IButtonActionHandler handler, IButtonSetup button, FormEditContext editContext)
         {
             ButtonId = button.ButtonId ?? throw new ArgumentNullException(nameof(button.ButtonId));
 

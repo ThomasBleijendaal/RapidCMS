@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using Blazor.FileReader;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using RapidCMS.Core.Abstractions.Config;
@@ -10,9 +9,9 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Models.ApiBridge;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Services.Auth;
+using Tewr.Blazor.FileReader;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -31,7 +30,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IAuthService, WebAssemblyAuthService>();
             services.AddTransient<IDataViewResolver, FormDataViewResolver>();
 
-            // TODO: Semaphore for repositories
             services.AddSingleton(serviceProvider => new SemaphoreSlim(rootConfig.Advanced.SemaphoreCount, rootConfig.Advanced.SemaphoreCount));
 
             services.AddFileReaderService();

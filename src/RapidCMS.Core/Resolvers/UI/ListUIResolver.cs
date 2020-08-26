@@ -39,7 +39,7 @@ namespace RapidCMS.Core.Resolvers.UI
             });
         }
 
-        public async Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(EditContext editContext)
+        public async Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(FormEditContext editContext)
         {
             if (_list.Buttons == null)
             {
@@ -65,7 +65,7 @@ namespace RapidCMS.Core.Resolvers.UI
             };
         }
 
-        public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(EditContext editContext)
+        public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(FormEditContext editContext)
         {
             var type = editContext.Entity.GetType();
             return await _list.Panes
@@ -74,7 +74,7 @@ namespace RapidCMS.Core.Resolvers.UI
                 ;
         }
 
-        public async Task<IEnumerable<TabUI>?> GetTabsAsync(EditContext editContext)
+        public async Task<IEnumerable<TabUI>?> GetTabsAsync(FormEditContext editContext)
         {
             var data = await _dataViewResolver.GetDataViewsAsync(editContext.CollectionAlias);
             return data.ToList(x => new TabUI(x.Id) { Label = x.Label });

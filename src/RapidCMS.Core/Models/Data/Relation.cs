@@ -10,12 +10,12 @@ namespace RapidCMS.Core.Models.Data
     {
         public Relation(Type relatedEntity, IPropertyMetadata property, IReadOnlyList<IElement> relatedElements)
         {
-            RelatedEntity = relatedEntity ?? throw new ArgumentNullException(nameof(relatedEntity));
+            RelatedEntityType = relatedEntity ?? throw new ArgumentNullException(nameof(relatedEntity));
             Property = property ?? throw new ArgumentNullException(nameof(property));
             RelatedElements = relatedElements ?? throw new ArgumentNullException(nameof(relatedElements));
         }
 
-        public Type RelatedEntity { get; private set; }
+        public Type RelatedEntityType { get; private set; }
 
         public IPropertyMetadata Property { get; private set; }
 

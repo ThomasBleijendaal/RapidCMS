@@ -37,6 +37,11 @@ namespace RapidCMS.Example.Shared.Data
                     NameC1 = c.NameC1,
                     NameC2 = c.NameC2,
                     NameC3 = c.NameC3
+                },
+                EntityVariantBase @base => new EntityVariantBase
+                {
+                    Id = @base.Id,
+                    Name = @base.Name
                 }
             };
         }

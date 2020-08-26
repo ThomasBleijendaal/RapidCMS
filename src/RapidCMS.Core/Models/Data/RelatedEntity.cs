@@ -11,7 +11,7 @@ namespace RapidCMS.Core.Models.Data
             RepositoryAlias = repositoryAlias;
         }
 
-        public RelatedEntity(EditContext editContext) : this(editContext.Entity, editContext.RepositoryAlias)
+        public RelatedEntity(FormEditContext editContext) : this(editContext.Entity, editContext.RepositoryAlias)
         {
 
         }

@@ -20,7 +20,7 @@ namespace RapidCMS.Core.Services.Auth
             return Task.CompletedTask;
         }
 
-        public Task EnsureAuthorizedUserAsync(EditContext editContext, IButtonSetup button)
+        public Task EnsureAuthorizedUserAsync(FormEditContext editContext, IButtonSetup button)
         {
             return Task.CompletedTask;
         }
@@ -35,7 +35,7 @@ namespace RapidCMS.Core.Services.Auth
             return Task.FromResult(true);
         }
 
-        public Task<bool> IsUserAuthorizedAsync(EditContext editContext, IButtonSetup button)
+        public Task<bool> IsUserAuthorizedAsync(FormEditContext editContext, IButtonSetup button)
         {
             return Task.FromResult(true);
         }

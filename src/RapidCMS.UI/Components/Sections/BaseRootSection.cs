@@ -38,7 +38,7 @@ namespace RapidCMS.UI.Components.Sections
         protected PageStateModel CurrentState => PageState.GetCurrentState()!;
 
         protected IEnumerable<ButtonUI>? Buttons { get; set; }
-        protected IEnumerable<(EditContext editContext, IEnumerable<SectionUI> sections)>? Sections { get; set; }
+        protected IEnumerable<(FormEditContext editContext, IEnumerable<SectionUI> sections)>? Sections { get; set; }
         protected IEnumerable<ITypeRegistration>? PageContents { get; set; }
 
         protected ViewState CurrentViewState => new ViewState(PageState);
@@ -70,7 +70,6 @@ namespace RapidCMS.UI.Components.Sections
                 Tabs = null;
                 UIResolver = null;
                 ListUI = null;
-                EditContext = null;
                 PageContents = null;
 
                 PageState.ResetState(InitialState);
