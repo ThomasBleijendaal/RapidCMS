@@ -1,6 +1,5 @@
 # RapidCMS
 
-[![#](https://img.shields.io/nuget/vpre/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
 [![#](https://img.shields.io/nuget/v/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
 
 RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS
@@ -441,7 +440,9 @@ public class Person : IEntity
     public Country Country { get; set; }
     public int? CountryId { get; set; }
 }
+```
 
+```c#
 public class Country : IEntity
 {
     public int Id { get; set; }
@@ -507,7 +508,9 @@ public class Person : IEntity
 
     public ICollection<PersonCountry> Countries { get; set; }
 }
+```
 
+```c#
 public class PersonCountry
 {
     public int? CountryId { get; set; }
@@ -516,7 +519,9 @@ public class PersonCountry
     public int? PersonId { get; set; }
     public Person Person { get; set; }
 }
+```
 
+```c#
 public class Country : IEntity
 {
     public int Id { get; set; }
