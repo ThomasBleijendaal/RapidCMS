@@ -14,7 +14,7 @@ namespace RapidCMS.Core.Forms.Validation
 
             if (results.Count != 0)
             {
-                var compositeResults = new CompositeValidationResult($"Validation for {validationContext.DisplayName} failed!", validationContext.DisplayName);
+                var compositeResults = new CompositeValidationResult($"Validation for {validationContext.DisplayName} failed!", validationContext.MemberName);
                 results.ForEach(compositeResults.AddResult);
 
                 return compositeResults;

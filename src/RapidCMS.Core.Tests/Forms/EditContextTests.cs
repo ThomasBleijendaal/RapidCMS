@@ -1,14 +1,15 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Linq.Expressions;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Forms.Validation;
 using RapidCMS.Core.Helpers;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace RapidCMS.Core.Tests.Forms
 {
@@ -234,12 +235,63 @@ namespace RapidCMS.Core.Tests.Forms
             Assert.AreEqual("Error", _subject.GetValidationMessages(_property).First());
         }
 
+        [Test]
+        public void WhenNestedPropertyIsTouched_ThenPropertyIsValidated()
+        {
+            // act
+            _subject.NotifyPropertyChanged(_nestedProperty);
+
+            // assert
+            Assert.IsTrue(_subject.WasValidated(_nestedProperty));
+            Assert.IsFalse(_subject.IsValid(_nestedProperty));
+        }
+
+        [Test]
+        public void WhenNestedPropertyIsTouchedAndValid_ThenPropertyIsValidatedAndValid()
+        {
+            // arrange
+            _subject = new FormEditContext(
+                "alias",
+                "repoAlias",
+                "variantAlias",
+                new Entity { Id = "123", Nested = new Entity.NestedObject { Data = "456" } },
+                default,
+                UsageType.Edit,
+                _serviceCollection.BuildServiceProvider());
+
+            // act
+            _subject.NotifyPropertyChanged(_nestedProperty);
+
+            // assert
+            Assert.IsTrue(_subject.WasValidated(_nestedProperty));
+            Assert.IsTrue(_subject.IsValid(_nestedProperty));
+        }
+
+        [Test]
+        public void WhenNestedPropertyIsNotTouched_ThenPropertyIsNotValidated()
+        {
+            // assert
+            Assert.IsFalse(_subject.WasValidated(_nestedProperty));
+            Assert.IsTrue(_subject.IsValid(_nestedProperty));
+        }
+
         private readonly Expression<Func<Entity, string?>> _getId = x => x.Id;
+        private readonly Expression<Func<Entity, string?>> _getNestedData = x => x.Nested.Data;
         private IPropertyMetadata _property => PropertyMetadataHelper.GetPropertyMetadata(_getId)!;
+        private IPropertyMetadata _nestedProperty => PropertyMetadataHelper.GetPropertyMetadata(_getNestedData)!;
         public class Entity : IEntity
         {
             [Required]
             public string? Id { get; set; }
+
+            [ValidateObject]
+            public NestedObject Nested { get; set; } = new NestedObject();
+
+            public class NestedObject
+            {
+                [Required]
+                public string? Data { get; set; }
+            }
         }
     }
 }

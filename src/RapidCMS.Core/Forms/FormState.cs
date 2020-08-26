@@ -272,7 +272,7 @@ namespace RapidCMS.Core.Forms
                 }
                 else
                 {
-                    yield return new ValidationResult(result.ErrorMessage, result.MemberNames.Select(x => $"{memberNamePrefix}{x}"));
+                    yield return new ValidationResult(result.ErrorMessage, result.MemberNames.Select(x => $"{memberNamePrefix}.{x}"));
                 }
             }
         }
