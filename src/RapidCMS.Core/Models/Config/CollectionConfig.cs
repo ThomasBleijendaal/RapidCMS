@@ -219,7 +219,7 @@ namespace RapidCMS.Core.Models.Config
                 icon,
                 name,
                 typeof(TRepository),
-                new EntityVariantConfig(typeof(TEntity).Name, typeof(TEntity)));
+                new EntityVariantConfig(typeof(TSubEntity).Name, typeof(TSubEntity)));
 
             configure.Invoke(configReceiver);
 
