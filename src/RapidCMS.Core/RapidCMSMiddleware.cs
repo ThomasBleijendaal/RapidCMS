@@ -24,6 +24,7 @@ using RapidCMS.Core.Providers;
 using RapidCMS.Core.Resolvers.Buttons;
 using RapidCMS.Core.Resolvers.Convention;
 using RapidCMS.Core.Resolvers.Data;
+using RapidCMS.Core.Resolvers.Language;
 using RapidCMS.Core.Resolvers.Repositories;
 using RapidCMS.Core.Resolvers.Setup;
 using RapidCMS.Core.Services.Concurrency;
@@ -67,6 +68,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IConventionBasedResolver<ListConfig>, ConventionBasedListConfigResolver>();
             services.AddSingleton<IConventionBasedResolver<NodeConfig>, ConventionBasedNodeConfigResolver>();
             services.AddSingleton<IFieldConfigResolver, FieldConfigResolver>();
+            services.AddSingleton<ILanguageResolver, LanguageResolver>();
 
             if (rootConfig.AllowAnonymousUsage)
             {

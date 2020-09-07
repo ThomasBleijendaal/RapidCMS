@@ -15,6 +15,12 @@ namespace RapidCMS.Core.Resolvers.Setup
     internal class ButtonSetupResolver : ISetupResolver<IButtonSetup, ButtonConfig>
     {
         private static readonly IEnumerable<ButtonSetup> EmptySubButtons = Enumerable.Empty<ButtonSetup>();
+        private readonly ILanguageResolver _languageResolver;
+
+        public ButtonSetupResolver(ILanguageResolver languageResolver)
+        {
+            _languageResolver = languageResolver;
+        }
 
         public IResolvedSetup<IButtonSetup> ResolveSetup(ButtonConfig config, ICollectionSetup? collection = default)
         {
@@ -29,7 +35,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             {
                 Buttons = EmptySubButtons,
 
-                Label = config.Label ?? @default?.Label ?? "Button",
+                Label = _languageResolver.ResolveText(config.Label ?? @default?.Label ?? "Button"),
                 Icon = config.Icon ?? @default?.Icon ?? "",
                 IsPrimary = config.IsPrimary,
 
@@ -53,7 +59,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                     button.Buttons = collection.SubEntityVariants.ToList(variant =>
                         new ButtonSetup
                         {
-                            Label = string.Format(button.Label ?? variant.Name, variant.Name),
+                            Label = _languageResolver.ResolveText(string.Format(button.Label ?? variant.Name, variant.Name)),
                             Icon = variant.Icon ?? @default?.Icon ?? "",
                             IsPrimary = config.IsPrimary,
                             ButtonId = $"{config.Id}-{variant.Alias}",

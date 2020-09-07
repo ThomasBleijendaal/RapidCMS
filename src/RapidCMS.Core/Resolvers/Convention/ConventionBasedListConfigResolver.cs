@@ -11,10 +11,14 @@ namespace RapidCMS.Core.Resolvers.Convention
     internal class ConventionBasedListConfigResolver : IConventionBasedResolver<ListConfig>
     {
         private readonly IFieldConfigResolver _fieldConfigResolver;
+        private readonly ILanguageResolver _languageResolver;
 
-        public ConventionBasedListConfigResolver(IFieldConfigResolver fieldConfigResolver)
+        public ConventionBasedListConfigResolver(
+            IFieldConfigResolver fieldConfigResolver,
+            ILanguageResolver languageResolver)
         {
             _fieldConfigResolver = fieldConfigResolver;
+            _languageResolver = languageResolver;
         }
 
         public ListConfig ResolveByConvention(Type subject, Features features, ICollectionSetup? collection)
@@ -26,7 +30,7 @@ namespace RapidCMS.Core.Resolvers.Convention
                 listButtons.Add(new DefaultButtonConfig
                 {
                     ButtonType = DefaultButtonType.New,
-                    Label = !(collection?.SubEntityVariants?.Any() ?? false) ? null : "New {0}"
+                    Label = !(collection?.SubEntityVariants?.Any() ?? false) ? null : _languageResolver.ResolveText("New {0}")
                 });
                 listButtons.Add(new DefaultButtonConfig
                 {
@@ -35,7 +39,7 @@ namespace RapidCMS.Core.Resolvers.Convention
                 listButtons.Add(new DefaultButtonConfig
                 {
                     ButtonType = DefaultButtonType.SaveExisting,
-                    Label = "Update all"
+                    Label = _languageResolver.ResolveText("Update all")
                 });
             };
             var paneButtons = new List<ButtonConfig>();

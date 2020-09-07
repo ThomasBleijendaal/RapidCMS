@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Forms;
 using RapidCMS.UI.Models;
 
@@ -9,6 +10,8 @@ namespace RapidCMS.UI.Components.Buttons
     public class BaseButton : EditContextComponentBase
     {
         [Inject] private IJSRuntime JsRuntime { get; set; }
+
+        [Inject] private ILanguageResolver LanguageResolver { get; set; }
 
         [Parameter] public ButtonViewModel Model { get; set; }
 
@@ -21,8 +24,7 @@ namespace RapidCMS.UI.Components.Buttons
                 return;
             }
 
-            // TODO: make message configurable
-            if (!Model.ShouldConfirm || await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?"))
+            if (!Model.ShouldConfirm || await JsRuntime.InvokeAsync<bool>("confirm", LanguageResolver.ResolveText("Are you sure?")))
             {
                 Model.NotifyClick(EditContext, customData);
             }
