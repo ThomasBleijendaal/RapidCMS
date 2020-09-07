@@ -183,8 +183,6 @@ namespace RapidCMS.UI.Components.Sections
 
         protected async Task ListButtonOnClickAsync(ButtonClickEventArgs args)
         {
-            StateIsChanging = true;
-
             try
             {
                 if (CurrentState == null)
@@ -210,14 +208,10 @@ namespace RapidCMS.UI.Components.Sections
             {
                 HandleException(ex);
             }
-
-            StateIsChanging = false;
         }
 
         protected async Task NodeButtonOnClickAsync(ButtonClickEventArgs args)
         {
-            StateIsChanging = true;
-
             try
             {
                 var command = (CurrentState.Related != null)
@@ -241,8 +235,6 @@ namespace RapidCMS.UI.Components.Sections
             {
                 HandleException(ex);
             }
-
-            StateIsChanging = false;
         }
 
         protected async Task OnRowDraggedAsync(RowDragEventArgs args)

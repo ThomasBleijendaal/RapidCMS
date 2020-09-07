@@ -47,6 +47,8 @@ namespace RapidCMS.UI.Components.Sections
         {
             try
             {
+                StateIsChanging = true;
+
                 if (response.NoOp)
                 {
                     return;
@@ -57,6 +59,10 @@ namespace RapidCMS.UI.Components.Sections
             catch (Exception ex)
             {
                 HandleException(ex);
+            }
+            finally
+            {
+                StateIsChanging = false;
             }
         }
 
