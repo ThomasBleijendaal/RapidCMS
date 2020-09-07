@@ -372,6 +372,20 @@ entities underneath each collection and sub collection.
 There is no restriction to how many collection you want to add, or which repositories they use. Its totally possible to add multiple
 collection which all use the same repository. Only the `collectionAlias` of each collection must be unique.
 
+## Collection configuration by convention
+
+The convention system resolves the configuration based on the `[Display]`-attributes placed on the properties of the model of a collection.
+It uses the `EditorTypeHelper.TryFindDefaultEditorType` to resolve the best matching editor for the property. It can be configured by
+`collection.ConfigureByConvention(CollectionConvention.[..])` and specify which of the view should be enabled.
+
+The List views will display a list with columns for every column with a `[Display]` attribute and use its `ShortName` and `Description`
+for displaying the name and description. If the `Order` property is set to `1` then the column will be enabled to be reordered, and start
+with in ascending order, if it's set to `-1` then the column will be sortable and start in descending order. Setting the `ResourceType` property
+to a valid `BaseEditor`
+
+The Node views will display a list editor with columns for every column with a `[Display]` attribute and use its `Name` and `Description`
+for displaying the name and description.
+
 ## ListView features
 
 ![CMS](examples/images/listview.png)

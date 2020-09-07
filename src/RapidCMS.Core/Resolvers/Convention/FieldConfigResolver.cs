@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Config;
+using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Core.Resolvers.Convention
 {
@@ -21,26 +23,50 @@ namespace RapidCMS.Core.Resolvers.Convention
                     var displayAttribute = property.GetCustomAttribute<DisplayAttribute>();
                     if (displayAttribute != null)
                     {
-                        if ((features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(displayAttribute.Name)) || 
+                        if ((features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(displayAttribute.Name)) ||
                             (!features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(displayAttribute.ShortName)))
                         {
                             return (property, displayAttribute);
-                        }   
+                        }
                     }
 
                     return default;
                 })
                 .Where(x => x != default)
-                .Select((data, index) => new FieldConfig
+                .Select((data, index) =>
                 {
-                    Description = features.HasFlag(Features.CanEdit) ? data.displayAttribute.Description : default,
-                    DisplayType = features.HasFlag(Features.CanEdit) ? DisplayType.None : DisplayType.Label,
-                    EditorType = !features.HasFlag(Features.CanEdit) ? EditorType.None : EditorTypeHelper.TryFindDefaultEditorType(data.property.PropertyType),
-                    Index = !data.displayAttribute.GetOrder().HasValue ? index : data.displayAttribute.Order,
-                    IsDisabled = (object x, EntityState y) => false,
-                    IsVisible = (object x, EntityState y) => true,
-                    Name = features.HasFlag(Features.CanEdit) ? data.displayAttribute.Name : data.displayAttribute.ShortName,
-                    Property = PropertyMetadataHelper.GetPropertyMetadata(subject, data.property)
+                    if (data.displayAttribute.ResourceType?.IsSameTypeOrDerivedFrom(typeof(ComponentBase)) == false)
+                    {
+                        throw new InvalidOperationException("ResourceType of [Display] must be a valid BaseEditor derived component.");
+                    }
+
+                    var propertyMetadata = PropertyMetadataHelper.GetPropertyMetadata(subject, data.property);
+
+                    var displayType = features.HasFlag(Features.CanEdit) ? DisplayType.None : DisplayType.Label;
+                    var editorType = !features.HasFlag(Features.CanEdit) ? EditorType.None
+                        : data.displayAttribute.ResourceType != null ? EditorType.Custom
+                        : EditorTypeHelper.TryFindDefaultEditorType(data.property.PropertyType);
+                    var customType = editorType == EditorType.Custom ? data.displayAttribute.ResourceType : null;
+
+                    return new FieldConfig
+                    {
+                        Description = features.HasFlag(Features.CanEdit) ? data.displayAttribute.Description : default,
+                        DefaultOrder = data.displayAttribute.GetOrder() switch
+                        {
+                            1 => OrderByType.Ascending,
+                            -1 => OrderByType.Descending,
+                            _ => OrderByType.None
+                        },
+                        CustomType = customType,
+                        DisplayType = displayType,
+                        EditorType = editorType,
+                        Index = !data.displayAttribute.GetOrder().HasValue ? index : data.displayAttribute.Order,
+                        IsDisabled = (object x, EntityState y) => false,
+                        IsVisible = (object x, EntityState y) => true,
+                        Name = features.HasFlag(Features.CanEdit) ? data.displayAttribute.Name : data.displayAttribute.ShortName,
+                        OrderByExpression = data.displayAttribute.GetOrder() == 0 ? null : propertyMetadata,
+                        Property = propertyMetadata,
+                    };
                 });
         }
     }
