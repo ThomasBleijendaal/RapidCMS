@@ -10,6 +10,7 @@ namespace RapidCMS.Core.Models.UI
         {
             Description = field.Description;
             Name = field.Name;
+            Placeholder = field.Placeholder;
             Expression = field.Expression;
             Property = field.Property;
             OrderByExpression = field.OrderByExpression;
@@ -18,6 +19,7 @@ namespace RapidCMS.Core.Models.UI
 
         public string? Name { get; private set; }
         public string? Description { get; private set; }
+        public string? Placeholder { get; private set; }
 
         public bool IsSortable() => OrderByExpression != null;
 

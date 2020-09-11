@@ -9,7 +9,6 @@ namespace RapidCMS.Example.Shared.Data
     {
         public int Id { get; set; }
 
-        
         [Display(Name = "Email", Description = "The email of the person", ShortName = "Email", Order = -1)]
         public string? Email { get; set; }
         

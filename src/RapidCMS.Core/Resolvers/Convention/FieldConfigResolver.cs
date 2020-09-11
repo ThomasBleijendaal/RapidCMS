@@ -65,6 +65,7 @@ namespace RapidCMS.Core.Resolvers.Convention
                         IsVisible = (object x, EntityState y) => true,
                         Name = features.HasFlag(Features.CanEdit) ? data.displayAttribute.Name : data.displayAttribute.ShortName,
                         OrderByExpression = data.displayAttribute.GetOrder() == 0 ? null : propertyMetadata,
+                        Placeholder = data.displayAttribute.GetPrompt(),
                         Property = propertyMetadata,
                     };
                 });

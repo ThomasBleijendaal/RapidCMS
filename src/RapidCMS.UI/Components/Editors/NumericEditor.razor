@@ -10,6 +10,7 @@
            disabled=@IsDisabled
            @onchange=@SetValue
            type="number"
+           placeholder=@Placeholder
            step="@(OnlyAllowNaturalNumbers() ? "1" : "any")"
            class="form-control @(CssHelper.GetValidationClass(State))" />
 

@@ -12,6 +12,7 @@ namespace RapidCMS.Core.Models.Setup
             Index = field.Index;
             Description = field.Description;
             Name = field.Name;
+            Placeholder = field.Placeholder;
             Property = field.Property;
             Expression = field.Expression;
             OrderByExpression = field.OrderByExpression;
@@ -24,6 +25,7 @@ namespace RapidCMS.Core.Models.Setup
         
         internal string? Name { get; set; }
         internal string? Description { get; set; }
+        internal string? Placeholder { get; set; }
 
         internal IPropertyMetadata? Property { get; set; }
         internal IExpressionMetadata? Expression { get; set; }

@@ -13,6 +13,7 @@
        disabled=@IsDisabled
        @onchange=@(args => SetValueFromString((string)args.Value))
        class="form-control @(CssHelper.GetValidationClass(State))"
+       placeholder=@Placeholder
        type="date" />
 
 @foreach (var message in GetValidationMessages())

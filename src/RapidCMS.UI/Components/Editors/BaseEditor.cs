@@ -13,14 +13,16 @@ namespace RapidCMS.UI.Components.Editors
     {
         protected ValidationState State { get; private set; }
 
-        [Parameter] public IEntity Entity { get; set; }
+        [Parameter] public IEntity Entity { get; set; } = default!;
         [Parameter] public IParent? Parent { get; set; }
 
         [Parameter] public EntityState EntityState { get; set; }
 
-        [Parameter] public IPropertyMetadata Property { get; set; }
+        [Parameter] public IPropertyMetadata Property { get; set; } = default!;
 
         [Parameter] public Func<object, EntityState, bool>? IsDisabledFunc { get; set; }
+
+        [Parameter] public string? Placeholder { get; set; }
 
         protected bool IsDisabled => IsDisabledFunc?.Invoke(Entity, EntityState) ?? false; 
 

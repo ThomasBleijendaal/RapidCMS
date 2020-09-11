@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.UI;
@@ -20,10 +21,7 @@ namespace RapidCMS.UI.Extensions
 
                     builder.OpenComponent(0, editorType);
 
-                    builder.AddAttribute(1, nameof(BaseDisplay.Entity), editContext.Entity);
-                    builder.AddAttribute(2, nameof(BaseDisplay.EntityState), editContext.EntityState);
-                    builder.AddAttribute(3, nameof(BaseDisplay.Parent), editContext.Parent);
-                    builder.AddAttribute(4, nameof(BaseDisplay.Expression), customExpressionField.Expression);
+                    builder.AddAttributes(editContext, customExpressionField);
 
                     builder.CloseComponent();
                 };
@@ -46,10 +44,7 @@ namespace RapidCMS.UI.Extensions
                 {
                     builder.OpenComponent(0, displayType);
 
-                    builder.AddAttribute(1, nameof(BaseDisplay.Entity), editContext.Entity);
-                    builder.AddAttribute(2, nameof(BaseDisplay.EntityState), editContext.EntityState);
-                    builder.AddAttribute(3, nameof(BaseDisplay.Parent), editContext.Parent);
-                    builder.AddAttribute(4, nameof(BaseDisplay.Expression), expressionField.Expression);
+                    builder.AddAttributes(editContext, expressionField);
 
                     builder.CloseComponent();
                 };
@@ -62,15 +57,11 @@ namespace RapidCMS.UI.Extensions
 
                     builder.OpenComponent(0, editorType);
 
-                    builder.AddAttribute(1, nameof(BaseEditor.Entity), editContext.Entity);
-                    builder.AddAttribute(2, nameof(BaseEditor.EntityState), editContext.EntityState);
-                    builder.AddAttribute(3, nameof(BaseEditor.Parent), editContext.Parent);
-                    builder.AddAttribute(4, nameof(BaseEditor.Property), customPropertyField.Property);
-                    builder.AddAttribute(5, nameof(BaseEditor.IsDisabledFunc), customPropertyField.IsDisabled);
+                    builder.AddAttributes(editContext, customPropertyField);
 
                     if (editorType.IsSubclassOf(typeof(BaseDataEditor)))
                     {
-                        builder.AddAttribute(6, nameof(BaseDataEditor.DataCollection), customPropertyField.DataCollection);
+                        builder.AddAttribute(7, nameof(BaseDataEditor.DataCollection), customPropertyField.DataCollection);
                     }
 
                     builder.CloseComponent();
@@ -99,19 +90,16 @@ namespace RapidCMS.UI.Extensions
                 return builder =>
                 {
                     builder.OpenComponent(0, editorType);
-                    builder.AddAttribute(1, nameof(BaseEditor.Entity), editContext.Entity);
-                    builder.AddAttribute(2, nameof(BaseEditor.EntityState), editContext.EntityState);
-                    builder.AddAttribute(3, nameof(BaseEditor.Parent), editContext.Parent);
-                    builder.AddAttribute(4, nameof(BaseEditor.Property), propertyField.Property);
-                    builder.AddAttribute(5, nameof(BaseEditor.IsDisabledFunc), propertyField.IsDisabled);
+
+                    builder.AddAttributes(editContext, propertyField);
 
                     if (editorType.IsSubclassOf(typeof(BaseDataEditor)))
                     {
-                        builder.AddAttribute(6, nameof(BaseDataEditor.DataCollection), propertyField.DataCollection);
+                        builder.AddAttribute(7, nameof(BaseDataEditor.DataCollection), propertyField.DataCollection);
                     }
                     if (editorType.IsSubclassOf(typeof(BaseRelationEditor)))
                     {
-                        builder.AddAttribute(7, nameof(BaseRelationEditor.DataCollection), propertyField.DataCollection);
+                        builder.AddAttribute(8, nameof(BaseRelationEditor.DataCollection), propertyField.DataCollection);
                     }
                     builder.CloseComponent();
                 };
@@ -120,6 +108,24 @@ namespace RapidCMS.UI.Extensions
             {
                 throw new InvalidOperationException();
             }
+        }
+
+        private static void AddAttributes(this RenderTreeBuilder builder, FormEditContext editContext, ExpressionFieldUI expressionField)
+        {
+            builder.AddAttribute(1, nameof(BaseDisplay.Entity), editContext.Entity);
+            builder.AddAttribute(2, nameof(BaseDisplay.EntityState), editContext.EntityState);
+            builder.AddAttribute(3, nameof(BaseDisplay.Parent), editContext.Parent);
+            builder.AddAttribute(4, nameof(BaseDisplay.Expression), expressionField.Expression);
+        }
+
+        private static void AddAttributes(this RenderTreeBuilder builder, FormEditContext editContext, PropertyFieldUI propertyField)
+        {
+            builder.AddAttribute(1, nameof(BaseEditor.Entity), editContext.Entity);
+            builder.AddAttribute(2, nameof(BaseEditor.EntityState), editContext.EntityState);
+            builder.AddAttribute(3, nameof(BaseEditor.Parent), editContext.Parent);
+            builder.AddAttribute(4, nameof(BaseEditor.Property), propertyField.Property);
+            builder.AddAttribute(5, nameof(BaseEditor.IsDisabledFunc), propertyField.IsDisabled);
+            builder.AddAttribute(6, nameof(BaseEditor.Placeholder), propertyField.Placeholder);
         }
     }
 }

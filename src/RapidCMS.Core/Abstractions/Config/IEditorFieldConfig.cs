@@ -7,23 +7,12 @@ using RapidCMS.Core.Abstractions.Repositories;
 
 namespace RapidCMS.Core.Abstractions.Config
 {
-    public interface IEditorFieldConfig<TEntity, TValue> : IHasOrderBy<TEntity, IEditorFieldConfig<TEntity, TValue>>
+    public interface IEditorFieldConfig<TEntity, TValue>
+        : IHasOrderBy<TEntity, IEditorFieldConfig<TEntity, TValue>>,
+        IHasNameDescription<IEditorFieldConfig<TEntity, TValue>>,
+        IHasPlaceholder<IEditorFieldConfig<TEntity, TValue>>
         where TEntity : IEntity
     {
-        /// <summary>
-        /// Sets the name of this field, used in table and list views.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        IEditorFieldConfig<TEntity, TValue> SetName(string name);
-
-        /// <summary>
-        /// Sets the description of this field, displayed under the name.
-        /// </summary>
-        /// <param name="description"></param>
-        /// <returns></returns>
-        IEditorFieldConfig<TEntity, TValue> SetDescription(string description);
-
         /// <summary>
         /// Sets the type of build-in editor used for this field.
         /// </summary>

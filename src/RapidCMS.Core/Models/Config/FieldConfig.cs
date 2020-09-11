@@ -18,6 +18,7 @@ namespace RapidCMS.Core.Models.Config
 
         internal string? Name { get; set; }
         internal string? Description { get; set; }
+        internal string? Placeholder { get; set; }
 
         internal Func<object, EntityState, bool> IsVisible { get; set; } = (x, y) => true;
         internal Func<object, EntityState, bool> IsDisabled { get; set; } = (x, y) => false;
@@ -35,16 +36,19 @@ namespace RapidCMS.Core.Models.Config
         internal OrderByType DefaultOrder { get; set; }
     }
 
-    internal class FieldConfig<TEntity, TValue> : FieldConfig, IDisplayFieldConfig<TEntity, TValue>, IEditorFieldConfig<TEntity, TValue>
+    internal class FieldConfig<TEntity, TValue> 
+        : FieldConfig, 
+        IDisplayFieldConfig<TEntity, TValue>, 
+        IEditorFieldConfig<TEntity, TValue>
         where TEntity : IEntity
     {
-        IDisplayFieldConfig<TEntity, TValue> IDisplayFieldConfig<TEntity, TValue>.SetName(string name)
+        IDisplayFieldConfig<TEntity, TValue> IHasNameDescription<IDisplayFieldConfig<TEntity, TValue>>.SetName(string name)
         {
             Name = name;
             return this;
         }
 
-        IDisplayFieldConfig<TEntity, TValue> IDisplayFieldConfig<TEntity, TValue>.SetDescription(string description)
+        IDisplayFieldConfig<TEntity, TValue> IHasNameDescription<IDisplayFieldConfig<TEntity, TValue>>.SetDescription(string description)
         {
             Description = description;
             return this;
@@ -84,15 +88,21 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
-        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetName(string name)
+        IEditorFieldConfig<TEntity, TValue> IHasNameDescription<IEditorFieldConfig<TEntity, TValue>>.SetName(string name)
         {
             Name = name;
             return this;
         }
 
-        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetDescription(string description)
+        IEditorFieldConfig<TEntity, TValue> IHasNameDescription<IEditorFieldConfig<TEntity, TValue>>.SetDescription(string description)
         {
             Description = description;
+            return this;
+        }
+
+        IEditorFieldConfig<TEntity, TValue> IHasPlaceholder<IEditorFieldConfig<TEntity, TValue>>.SetPlaceholder(string placeholder)
+        {
+            Placeholder = placeholder;
             return this;
         }
 
