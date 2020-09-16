@@ -59,6 +59,14 @@ namespace RapidCMS.Core.Services.Tree
 
             var testEntity = await _repositoryResolver.GetRepository(collection).NewAsync(parent, collection.EntityVariant.Type);
 
+            var canEdit = collection.ListEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, testEntity);
+            var canView = collection.ListView != null && await _authService.IsUserAuthorizedAsync(Operations.Read, testEntity);
+
+            if (!canEdit && !canView)
+            {
+                return TreeCollectionUI.None;
+            }
+
             var tree = new TreeCollectionUI(collection.Alias, collection.Name)
             {
                 EntitiesVisible = collection.TreeView?.EntityVisibility == EntityVisibilty.Visible,
@@ -67,7 +75,7 @@ namespace RapidCMS.Core.Services.Tree
                 DefaultOpenEntities = collection.TreeView?.DefaultOpenEntities ?? false
             };
 
-            if (collection.ListEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, testEntity))
+            if (canEdit)
             {
                 tree.State = new PageStateModel
                 {
@@ -77,7 +85,7 @@ namespace RapidCMS.Core.Services.Tree
                     UsageType = UsageType.Edit
                 };
             }
-            else if (collection.ListView != null && await _authService.IsUserAuthorizedAsync(Operations.Read, testEntity))
+            else if (canView)
             {
                 tree.State = new PageStateModel
                 {
@@ -124,8 +132,16 @@ namespace RapidCMS.Core.Services.Tree
                 query.CollectionAlias = alias;
                 var entities = await _repositoryResolver.GetRepository(collection).GetAllAsync(parent, query);
 
-                var list = await entities.ToListAsync(async entity =>
+                var list = await entities.SelectNotNullAsync(async entity =>
                 {
+                    var canEdit = collection.NodeEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, entity);
+                    var canView = collection.ListView != null && await _authService.IsUserAuthorizedAsync(Operations.Read, entity);
+
+                    if (!canEdit && !canView)
+                    {
+                        return null;
+                    }
+
                     var entityVariant = collection.GetEntityVariant(entity);
 
                     var node = new TreeNodeUI(
@@ -138,7 +154,7 @@ namespace RapidCMS.Core.Services.Tree
                         DefaultOpenCollections = collection.TreeView?.DefaultOpenCollections ?? false
                     };
 
-                    if (collection.NodeEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, entity))
+                    if (canEdit)
                     {
                         node.State = new PageStateModel
                         {
@@ -150,7 +166,7 @@ namespace RapidCMS.Core.Services.Tree
                             VariantAlias = entityVariant.Alias
                         };
                     }
-                    else if (collection.ListView != null && await _authService.IsUserAuthorizedAsync(Operations.Read, entity))
+                    else if (canView)
                     {
                         node.State = new PageStateModel
                         {
@@ -164,7 +180,7 @@ namespace RapidCMS.Core.Services.Tree
                     }
 
                     return node;
-                });
+                }).ToListAsync();
 
                 return new TreeNodesUI(list.Take(pageSize).ToList(), query.MoreDataAvailable);
             }
