@@ -112,15 +112,14 @@ In order to start specifying how the UI for this entity, head to your `Startup.c
 
 ```c#
 services.AddScoped<InMemoryRepository<Person>>();
-services.AddRapidCMS(config =>
+services.AddRapidCMSServer(config =>
 {
     config.AllowAnonymousUser();
 
-    config.AddCollection<Person>("person", "Person", collection =>
+    config.AddCollection<Person, InMemoryRepository<Person>>("person", "Person", collection =>
     {
         collection
             .SetTreeView(x => x.Name)
-            .SetRepository<InMemoryRepository<Person>>()
             .SetListView(view =>
             {
                 view.AddRow(row =>
@@ -179,7 +178,8 @@ services.AddScoped<InMemoryRepository<Person>>();
 ```
 
 There is no abstraction magic, or default repository implementation, so you need to create your own
-repositories which you must derive from `BaseRepository` or `MappedBaseRepository`.
+repositories which you must derive from `BaseRepository` or `MappedBaseRepository` (or, when really required,
+have it implement `IRepository`).
 
 #### Entity Framework Core Repositories
 
@@ -187,7 +187,7 @@ Be aware that EF Core based repositories must be added with an `Transient` lifet
 the corresponding `DbContext`. Due to the current UI setup, multiple queries towards the same `DbContext` 
 can be fired simultaniously from multiple threads, which will result in DbContext threading issues. By 
 setting the lifetime scope to `Transient`, every user of these repositories will have their own instance, 
-fixing the multiple threads issue. 
+fixing the multiple threads issue.
 
 ### Authorization
 
@@ -226,11 +226,10 @@ have to specifiy them yourself.
 So let's add some buttons, and get this CMS fully working:
 
 ```c#
-config.AddCollection<Person>("person", "Person", collection =>
+config.AddCollection<Person, InMemoryRepository<Person>>("person", "Person", collection =>
 {
     collection
         .SetTreeView(x => x.Name)
-        .SetRepository<InMemoryRepository<Person>>()
         .SetListView(view =>
         {
             view.AddDefaultButton(DefaultButtonType.New);
@@ -338,10 +337,10 @@ tree, and since it is a tree, it is possible to nest collections. Every collecti
 set of collections underneath it:
 
 ```c#
-config.AddCollection<Entity>("some-collection", "Some Collection", collection => {
+config.AddCollection<Entity, Repository>("some-collection", "Some Collection", collection => {
     // [..]
 
-    collection.AddCollection<SubEntity>("some-sub-collection", "Sub Collection", subCollection => {
+    collection.AddSubCollection<SubEntity, SubRepository>("some-sub-collection", "Sub Collection", subCollection => {
         // [..]
 
         // you can add another layer here
@@ -375,13 +374,15 @@ collection which all use the same repository. Only the `collectionAlias` of each
 ## Collection configuration by convention
 
 The convention system resolves the configuration based on the `[Display]`-attributes placed on the properties of the model of a collection.
-It uses the `EditorTypeHelper.TryFindDefaultEditorType` to resolve the best matching editor for the property. It can be configured by
-`collection.ConfigureByConvention(CollectionConvention.[..])` and specify which of the view should be enabled.
+It can be configured by `collection.ConfigureByConvention(CollectionConvention.[..])` and specify which of the view should be enabled.
+
+It uses the `EditorTypeHelper.TryFindDefaultEditorType` to resolve the best matching editor for the property, like `TextBoxEditor` for strings
+and `NumbericEditors` from integers. You can use `ResourceType` to override it and specify any valid editor component 
+(see `RapidCMS.UI.Components.Editors` for available default editors, or derive from `BasePropertyEditor` to make your own).
 
 The List views will display a list with columns for every column with a `[Display]` attribute and use its `ShortName` and `Description`
 for displaying the name and description. If the `Order` property is set to `1` then the column will be enabled to be reordered, and start
-with in ascending order, if it's set to `-1` then the column will be sortable and start in descending order. Setting the `ResourceType` property
-to a valid `BaseEditor`
+with in ascending order, if it's set to `-1` then the column will be sortable and start in descending order.
 
 The Node views will display a list editor with columns for every column with a `[Display]` attribute and use its `Name` and `Description`
 for displaying the name and description.
@@ -424,7 +425,16 @@ a list in a node:
     // [..]
     .SetNodeEditor(editor => {
         editor.AddSection(section => {
-            section.AddSubCollectionListEditor<SubEntity>("sub-collection");
+            section.AddSubCollectionList("sub-collection");
+
+            // or
+
+            section.AddSubCollectionList<SubEntity, SubRepository>(config => 
+            {
+                // depending whether it is used inside the SetNodeView or SetNodeEditor
+                config.SetListView(/* regular list view config */)
+                config.SetListEditor(/* regular list editor config */)
+            });
         });
     });
     // [..]
@@ -433,6 +443,8 @@ a list in a node:
 Using the `collectionAlias`, you can specify which collection must be used (in this case, `"sub-collection"`). You must also specify
 what kind of entity the sub collection uses. The configuration of the `ListEditor` of the sub collection, which you specified when you 
 defined the collection, is to render the list. 
+
+Using the `SetListEditor` variant, you can specify the sub collection inline, and tailor it to your need for this particular embedding.
 
 ## Relations
 
@@ -490,15 +502,15 @@ be used as `id`, and which gets stored in `CountryId`. `.SetElementDisplayProper
 which are used in the UI, so the user can clearly make their choice. 
 
 There are several additional methods available for controlling how the related collection fetches its data. By using `SetEntityAsParent` or
-`SetRepositoryParent`, you can control what the repository of the related collection uses as parent. The `PersonCollection` in the `RapidCMS.Example`
+`SetRepositoryParent`, you can control what the repository of the related collection uses as parent. The `PersonCollection` in the `RapidCMS.Example.Server`
 project demonstrates how this works.
 
 
 #### DataCollection
 
 Instead of using `SetCollectionRelation` it's also possible to use `SetDataCollection`, and pass in a `IDataCollection`. This allows
-you to add dropdowns or select boxes with data coming from a `IDataCollection`. This data collection can get its data from any source,
-and the build-in `EnumDataProvider` uses a `Enum` to generate a list of options:
+you to add dropdowns or select boxes with data coming from a `IDataCollection`. This data collection can get its data from any source;
+the build-in `EnumDataProvider` uses a `Enum` to generate a list of options:
 
 ```c#
  pane.AddField(f => f.State)
@@ -558,17 +570,25 @@ via the following code:
 ```c#
 editor.AddSection(pane =>
 {
-    pane.AddRelatedCollectionListEditor<CountryEntity>("related-country-collection");
+    pane.AddRelatedCollectionList("related-country-collection");
+
+    // or
+    
+    pane.AddRelatedCollectionList<SubEntity, SubRepository>(config => 
+    {
+        // depending whether it is used inside the SetNodeView or SetNodeEditor
+        config.SetListView(/* regular list view config */)
+        config.SetListEditor(/* regular list editor config */)
+    });
 });
 ```
 
-Just as `AddSubCollectionListView`, the configuration for this list is fetched from the `"related-country-collection"` collection. Next
+Just as `AddRelatedCollectionList`, the configuration for this list is fetched from the `"related-country-collection"` collection. Next
 to that, you are also required to implement `GetAllRelatedAsync`, `GetAllNonRelatedAsync`, `AddAsync`, and `RemoveAsync` methods on
 the _related_ repository, so in this case it is the repository of `"related-country-collection"`. Further more, the related collection
-must have a `ListView` _and_ a `ListEditor`, by which the list view is used for picking entities, and the list editor for listing the
-related entities. Do not forget to add a `DefaultButtonType.Pick` button on each row in the `ListView`, a `DefaultButtonType.Add` on the
-`ListEditor`, and a `DefaultButtonType.Remove` on each row in the `ListEditor`, to support adding and picking unrelated entities and removing
-related entities.
+must have a `ListView` or a `ListEditor`, by which the list view is used for picking entities, and the list editor for listing the
+related entities. Do not forget to add a `DefaultButtonType.Pick`, `DefaultButtonType.Add`, and a `DefaultButtonType.Remove` on each row 
+of the `ListView` / `ListEditor`, to support adding and picking unrelated entities and removing (not deleting) related entities.
 
 The related collection editor is just another list editor, so it's possible to edit the related entities from the node editor which
 implemented the related collection editor. And if that is not allowed, use readonly editors, or use the Editor variant for the many-to-many
@@ -696,7 +716,8 @@ collection
 ```
 
 The repository backing this collection must implement `ReorderAsync`, and this method will receive the id of the entity that must be reordered,
-and the id of the entity it should be inserted before. 
+and the id of the entity it should be inserted before. Don't forget to add a `DefaultButtonType.SaveExisting` to the list view to allow the
+user to save their new order.
 
 ## Implementing a repository
 
@@ -725,7 +746,8 @@ TODO: documentation
 
 TL;DR:
 
-1. Create a custom editor and have it `@inherit BaseEditor`.
+1. Create a custom editor and have it `@inherit BaseEditor` (or `BasePropertyEditor`, `BaseDataEditor`, `BaseRelationEditor`, based on what you want to
+achieve. Look at the default editors to see what base class you need).
 2. Have a field use your editor by calling `editor.AddField(x => x.Prop).SetType(typeof(YourCustomEditor))`.
 
 ## Creating custom buttons
