@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms.Validation;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Forms
 {
@@ -63,8 +61,8 @@ namespace RapidCMS.Core.Forms
             {
                 var state = new ModelStateDictionary();
 
-                _fieldStates.ForEach(fs => fs.GetValidationMessages().ForEach(message => state.AddModelError(fs.Property.PropertyName, message)));
-                _messages.ForEach(m => state.AddModelError(string.Empty, m));
+                _fieldStates.ForEach(fs => fs.GetValidationMessages().ForEach(message => state.Add(fs.Property.PropertyName, message)));
+                _messages.ForEach(m => state.Add(string.Empty, m));
 
                 return state;
             }

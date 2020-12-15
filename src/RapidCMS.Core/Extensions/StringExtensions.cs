@@ -140,12 +140,12 @@ namespace RapidCMS.Core.Extensions
             }
         }
 
-        private readonly static SHA1CryptoServiceProvider Sha1 = new SHA1CryptoServiceProvider();
         private readonly static char[] Padding = { '=' };
 
         public static string ToSha1Base64String(this string text, string? salt = default)
         {
-            return Sha1.ComputeHash(Encoding.UTF8.GetBytes($"{text}{salt}")).ToBase64String();
+            // TODO: resolve this with a IEncryptionProvider
+            return Encoding.UTF8.GetBytes($"{text}{salt}").ToBase64String();
         }
 
         public static string ToBase64String(this string text)
