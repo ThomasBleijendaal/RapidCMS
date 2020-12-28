@@ -9,11 +9,11 @@ namespace RapidCMS.UI.Components.Buttons
 {
     public class BaseButton : EditContextComponentBase
     {
-        [Inject] private IJSRuntime JsRuntime { get; set; }
+        [Inject] private IJSRuntime JsRuntime { get; set; } = default!;
 
-        [Inject] private ILanguageResolver LanguageResolver { get; set; }
+        [Inject] private ILanguageResolver LanguageResolver { get; set; } = default!;
 
-        [Parameter] public ButtonViewModel Model { get; set; }
+        [Parameter] public ButtonViewModel Model { get; set; } = default!;
 
         protected bool FormIsValid { get; private set; }
 
@@ -26,7 +26,7 @@ namespace RapidCMS.UI.Components.Buttons
 
             if (!Model.ShouldConfirm || await JsRuntime.InvokeAsync<bool>("confirm", LanguageResolver.ResolveText("Are you sure?")))
             {
-                Model.NotifyClick(EditContext, customData);
+                Model.NotifyClick(EditContext!, customData);
             }
         }
 

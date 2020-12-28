@@ -18,9 +18,9 @@ namespace RapidCMS.Example.Shared.DataViews
             {
                 // when the user selects this dataview (by clicking on the corresponding tab)
                 // the expression is given to the repository, so it can use that expression to perform the correct query
-                new DataView<DatabaseEntity>(1, "[A-K]", x => Regex.IsMatch(x.Name, "^[A-K]")),
-                new DataView<DatabaseEntity>(2, "[L-Z]", x => Regex.IsMatch(x.Name, "^[L-Z]")),
-                new DataView<DatabaseEntity>(3, "[other]", x => Regex.IsMatch(x.Name, "^[^A-Z]"))
+                new DataView<DatabaseEntity>(1, "[A-K]", x => Regex.IsMatch(x.Name ?? string.Empty, "^[A-K]")),
+                new DataView<DatabaseEntity>(2, "[L-Z]", x => Regex.IsMatch(x.Name ?? string.Empty, "^[L-Z]")),
+                new DataView<DatabaseEntity>(3, "[other]", x => Regex.IsMatch(x.Name ?? string.Empty, "^[^A-Z]"))
             };
 
             return Task.FromResult(list.AsEnumerable());

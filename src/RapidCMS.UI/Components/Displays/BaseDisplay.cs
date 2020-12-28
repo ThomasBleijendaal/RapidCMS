@@ -7,12 +7,12 @@ namespace RapidCMS.UI.Components.Displays
 {
     public class BaseDisplay : ComponentBase
     {
-        [Parameter] public IEntity Entity { get; set; }
+        [Parameter] public IEntity Entity { get; set; } = default!;
         [Parameter] public IParent? Parent { get; set; }
 
         [Parameter] public EntityState EntityState { get; set; }
 
-        [Parameter] public IExpressionMetadata Expression { get; set; }
+        [Parameter] public IExpressionMetadata Expression { get; set; } = default!;
 
         protected string GetValueAsString()
         {

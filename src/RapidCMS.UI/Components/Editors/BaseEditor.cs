@@ -41,7 +41,7 @@ namespace RapidCMS.UI.Components.Editors
             return EditContext.GetValidationMessages(Property);
         }
 
-        private void ValidationStateChangeHandler(object sender, ValidationStateChangedEventArgs eventArgs)
+        private void ValidationStateChangeHandler(object? sender, ValidationStateChangedEventArgs eventArgs)
         {
             var state = ValidationState.None;
 

@@ -135,7 +135,7 @@ namespace RapidCMS.Example.WebAssembly
 
             var host = builder.Build();
 
-            var cmsOptions = host.Services.GetService<ICms>();
+            var cmsOptions = host.Services.GetRequiredService<ICms>();
             cmsOptions.IsDevelopment = true;
 
             await host.RunAsync();

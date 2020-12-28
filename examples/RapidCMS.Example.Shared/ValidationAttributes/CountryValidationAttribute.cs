@@ -8,7 +8,7 @@ namespace RapidCMS.Example.Shared.ValidationAttributes
     {
         public override bool RequiresValidationContext => true;
 
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
             if (value is Country country)
             {
@@ -18,7 +18,7 @@ namespace RapidCMS.Example.Shared.ValidationAttributes
                 }
             }
 
-            return ValidationResult.Success;
+            return ValidationResult.Success!;
         }
     }
 
@@ -26,7 +26,7 @@ namespace RapidCMS.Example.Shared.ValidationAttributes
     {
         public override bool RequiresValidationContext => true;
 
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
             if (value is CountryMetadata metadata)
             {
@@ -36,7 +36,7 @@ namespace RapidCMS.Example.Shared.ValidationAttributes
                 }
             }
 
-            return ValidationResult.Success;
+            return ValidationResult.Success!;
         }
     }
 }

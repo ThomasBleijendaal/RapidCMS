@@ -10,7 +10,7 @@
 </div>
 
 @code {
-    [Inject] private IMessageService MessageService { get; set; }
+    [Inject] private IMessageService MessageService { get; set; } = default!;
 
     protected override void OnInitialized()
     {

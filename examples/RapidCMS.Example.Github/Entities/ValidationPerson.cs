@@ -7,19 +7,19 @@ namespace RapidCMS.Example.Github.Entities
 {
     internal class ValidationPerson : IEntity, ICloneable
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [Required]
         [MinLength(10)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [EmailAddress]
         [Required]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [Required]
         [BioValidation]
-        public string Bio { get; set; }
+        public string? Bio { get; set; }
 
         public object Clone()
         {

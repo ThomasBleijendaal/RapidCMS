@@ -17,9 +17,9 @@ namespace RapidCMS.UI.Models
             });
         }
 
-        public string Label { get; set; }
-        public string Icon { get; set; }
-        public string ButtonId { get; set; }
+        public string Label { get; set; } = default!;
+        public string Icon { get; set; } = default!;
+        public string ButtonId { get; set; } = default!;
 
         public bool ShouldConfirm { get; set; }
         public bool IsPrimary { get; set; }

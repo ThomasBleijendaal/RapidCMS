@@ -125,7 +125,7 @@ namespace RapidCMS.UI.Components.Sections
             {
                 CurrentState.MaxPage = CurrentState.CurrentPage;
 
-                if (CurrentState.CurrentPage > 1 && !Sections.Any())
+                if (CurrentState.CurrentPage > 1 && Sections?.Any() != true)
                 {
                     CurrentState.CurrentPage--;
                     CurrentState.MaxPage = null;
