@@ -47,7 +47,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ICmsConfig>(rootConfig);
 
             services.AddSingleton<ICms, CmsSetup>();
-            services.AddSingleton(x => (ILogin)x.GetService(typeof(ICms)));
+            services.AddSingleton(x => (ILogin)x.GetRequiredService(typeof(ICms)));
 
             services.AddSingleton<ISetupResolver<IPageSetup>, PageSetupResolver>();
             services.AddSingleton<ISetupResolver<ICollectionSetup>, CollectionSetupResolver>();
@@ -121,7 +121,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IApplicationBuilder UseRapidCMS(this IApplicationBuilder app, bool isDevelopment = false)
         {
-            app.ApplicationServices.GetService<ICms>().IsDevelopment = isDevelopment;
+            app.ApplicationServices.GetRequiredService<ICms>().IsDevelopment = isDevelopment;
 
             return app;
         }

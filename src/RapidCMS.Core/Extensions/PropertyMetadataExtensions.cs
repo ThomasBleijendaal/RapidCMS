@@ -11,9 +11,10 @@ namespace RapidCMS.Core.Extensions
             return property.ObjectType
                 .GetProperties()
                 .FirstOrDefault(x => x.Name == property.PropertyName)
-                .GetCustomAttributes(true)
+                ?.GetCustomAttributes(true)
                 .Where(x => x.GetType().IsSameTypeOrDerivedFrom(typeof(T)))
-                .Cast<T>();
+                .Cast<T>()
+                ?? Enumerable.Empty<T>();
         }
     }
 }

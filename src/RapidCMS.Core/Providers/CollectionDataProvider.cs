@@ -158,7 +158,10 @@ namespace RapidCMS.Core.Providers
 
         public Task AddElementAsync(IElement option)
         {
-            _relatedElements?.Add(_elements.First(x => x.Id == option.Id));
+            if (_elements != null)
+            {
+                _relatedElements?.Add(_elements.First(x => x.Id == option.Id));
+            }
 
             return Task.CompletedTask;
         }
@@ -171,7 +174,10 @@ namespace RapidCMS.Core.Providers
         public Task SetElementAsync(IElement option)
         {
             _relatedElements?.Clear();
-            _relatedElements?.Add(_elements.First(x => x.Id == option.Id));
+            if (_elements != null)
+            {
+                _relatedElements?.Add(_elements.First(x => x.Id == option.Id));
+            }
 
             return Task.CompletedTask;
         }

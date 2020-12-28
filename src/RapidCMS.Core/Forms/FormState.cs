@@ -95,7 +95,7 @@ namespace RapidCMS.Core.Forms
             }
             else
             {
-                getObject = (root) => objectGetters.Aggregate(root, (@obj, objectGetter) => objectGetter.GetValue(@obj));
+                getObject = (root) => objectGetters.Aggregate(root, (@obj, objectGetter) => objectGetter.GetValue(@obj)!);
             }
 
             var properties = getObject(reference).GetType().GetProperties();
@@ -158,13 +158,13 @@ namespace RapidCMS.Core.Forms
                 var strayError = true;
                 result.MemberNames.ForEach(name =>
                 {
-                    GetPropertyState(name)?.AddMessage(result.ErrorMessage);
+                    GetPropertyState(name)?.AddMessage(result.ErrorMessage ?? "Unknown error");
                     strayError = false;
                 });
 
                 if (strayError)
                 {
-                    _messages.Add(result.ErrorMessage);
+                    _messages.Add(result.ErrorMessage ?? "Unknown error");
                 }
             }
 
@@ -192,7 +192,7 @@ namespace RapidCMS.Core.Forms
 
             foreach (var result in results)
             {
-                state.AddMessage(result.ErrorMessage);
+                state.AddMessage(result.ErrorMessage ?? "Unknown error");
             }
         }
 

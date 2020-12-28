@@ -30,7 +30,7 @@ namespace RapidCMS.Core.Providers
                     list.Add(new Element
                     {
                         Id = value,
-                        Labels = new[] { attribute.Name }
+                        Labels = new[] { attribute.Name ?? string.Empty }
                     });
                 }
                 else
