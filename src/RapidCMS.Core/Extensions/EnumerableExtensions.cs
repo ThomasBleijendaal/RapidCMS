@@ -83,7 +83,7 @@ namespace RapidCMS.Core.Extensions
         public static IEnumerable<T> MergeAll<T>(params IEnumerable<T>?[] sources)
             where T : class
         {
-            return sources.Where(x => x != null).SelectMany(x => x);
+            return sources.Where(x => x != null).SelectMany(x => x!);
         }
 
         public static IEnumerable<TResult> RecursiveSelect<TSource, TSeed, TResult>(this IEnumerable<TSource> source, TSeed seed, Func<TSource, TSeed, (TSeed, TResult)> walkFunction)

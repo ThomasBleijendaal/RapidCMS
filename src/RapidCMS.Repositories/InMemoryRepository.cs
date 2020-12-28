@@ -57,7 +57,7 @@ namespace RapidCMS.Repositories
             if (query.SearchTerm != null)
             {
                 // this is not a very useful search function, but it's just an example
-                dataQuery = dataQuery.Where(x => x.Id.Contains(query.SearchTerm));
+                dataQuery = dataQuery.Where(x => x.Id != null && x.Id.Contains(query.SearchTerm));
             }
 
             dataQuery = query.ApplyOrder(dataQuery);
@@ -109,7 +109,7 @@ namespace RapidCMS.Repositories
         {
             if (variantType != null)
             {
-                return Task.FromResult((TEntity)Activator.CreateInstance(variantType));
+                return Task.FromResult((TEntity)Activator.CreateInstance(variantType)!);
             }
 
             return Task.FromResult(new TEntity());
@@ -208,7 +208,7 @@ namespace RapidCMS.Repositories
                                     .Select(x => x.Id.ToString())
                                     .ToListAsync(async id =>
                                     {
-                                        var entity = await repo.GetByIdAsync(id, null);
+                                        var entity = await repo.GetByIdAsync(id!, null);
                                         return entity;
                                     });
 

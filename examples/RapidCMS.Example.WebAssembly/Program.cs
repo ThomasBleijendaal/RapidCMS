@@ -21,13 +21,13 @@ namespace RapidCMS.Example.WebAssembly
 {
     public class Program
     {
-        private const bool ConfigureAuthentication = true;
+        private const bool ConfigureAuthentication = false;
         private static readonly Uri BaseUri = new Uri("https://localhost:5003");
 
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("app");
+            builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddAuthorizationCore();
 
@@ -135,7 +135,7 @@ namespace RapidCMS.Example.WebAssembly
 
             var host = builder.Build();
 
-            var cmsOptions = host.Services.GetService<ICms>();
+            var cmsOptions = host.Services.GetRequiredService<ICms>();
             cmsOptions.IsDevelopment = true;
 
             await host.RunAsync();

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
@@ -362,11 +360,11 @@ namespace RapidCMS.Core.Helpers
                 LambdaExpression lambda => $"{GetFingerprint(lambda.Body)}{lambda.Body.Type}",
                 MethodCallExpression call => $"{string.Join("", call.Arguments.Select(x => GetFingerprint(x)))}{call.Type}",
                 ParameterExpression param => $"{param.IsByRef}{param.Type}",
-                MemberExpression member => $"{member.Member.Name}{GetFingerprint(member.Expression)}",
+                MemberExpression member => $"{member.Member.Name}{(member.Expression == null ? "" : GetFingerprint(member.Expression))}",
                 _ => expression.Type.ToString(),
             };
 
-            return fingerprint.ToSha1Base64String();
+            return fingerprint.ToSha256Base64String();
         }
     }
 }

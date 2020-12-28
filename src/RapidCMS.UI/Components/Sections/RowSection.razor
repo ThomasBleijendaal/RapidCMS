@@ -27,7 +27,7 @@
                     {
                         if (element is FieldUI field)
                         {
-                            var name = (field as ExpressionFieldUI)?.Expression.PropertyName ?? (field as PropertyFieldUI)?.Property.PropertyName;
+                            var name = (field as ExpressionFieldUI)?.Expression?.PropertyName ?? (field as PropertyFieldUI)?.Property?.PropertyName;
                             if (name == null)
                             {
                                 continue;

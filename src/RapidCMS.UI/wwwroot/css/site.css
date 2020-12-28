@@ -23,7 +23,7 @@ thead td:hover .icon {
     color: #444;
 }
 
-app {
+#app, app {
     position: relative;
     display: flex;
     flex-direction: column;

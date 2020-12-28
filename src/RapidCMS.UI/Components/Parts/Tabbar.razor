@@ -21,7 +21,7 @@
                            placeholder="Search.."
                            class="form-control"
                            value="@searchTerm"
-                           @onchange="(args) => Search((string)args.Value)" />
+                           @onchange="(args) => Search(((string?)args.Value) ?? string.Empty)" />
                     <div class="input-group-append">
                         <button class="btn" 
                                 @onclick="(args) => { searchTerm = string.Empty; Search(string.Empty); }">

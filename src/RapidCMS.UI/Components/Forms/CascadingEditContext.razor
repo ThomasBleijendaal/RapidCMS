@@ -3,6 +3,6 @@
 </CascadingValue>
 
 @code {
-    [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public FormEditContext EditContext { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; } = default!;
+    [Parameter] public FormEditContext EditContext { get; set; } = default!;
 }

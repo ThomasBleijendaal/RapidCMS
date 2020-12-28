@@ -25,7 +25,7 @@
 @code  {
     private void SetValue(ChangeEventArgs args)
     {
-        var normalized = Regex.Replace((string)args.Value, "[^0-9\\.]", "");
+        var normalized = Regex.Replace((((string?)args.Value) ?? string.Empty), "[^0-9\\.]", "");
 
         if (Nullable.GetUnderlyingType(Property.PropertyType) == null && string.IsNullOrWhiteSpace(normalized))
         {

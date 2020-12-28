@@ -6,19 +6,19 @@ namespace RapidCMS.Example.Github.Entities
 {
     internal class ConventionPerson : IEntity, ICloneable
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [Display(Name = "Name", ShortName = "Name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [Display(Name = "Email")]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [Display(Name = "Bio", Description = "If this field gets longer than 50, the summary on the ListView will get truncated.")]
-        public string Bio { get; set; }
+        public string? Bio { get; set; }
 
         [Display(ShortName = "Bio summary")]
-        public string ShortBio => Bio?.Substring(0, Math.Min(Bio?.Length ?? 0, 50));
+        public string? ShortBio => Bio?.Substring(0, Math.Min(Bio?.Length ?? 0, 50));
 
         public object Clone()
         {

@@ -12,8 +12,8 @@ namespace RapidCMS.UI.Extensions
             return new ButtonViewModel
             {
                 ButtonId = button.ButtonId,
-                Icon = button.Icon,
-                Label = button.Label,
+                Icon = button.Icon ?? "",
+                Label = button.Label ?? "",
                 ShouldConfirm = button.ShouldConfirm,
                 IsPrimary = button.IsPrimary,
                 RequiresValidForm = button.RequiresValidForm

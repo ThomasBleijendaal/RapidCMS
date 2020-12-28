@@ -32,7 +32,7 @@ namespace RapidCMS.Core.Factories
             var contextType = typeof(FormEditContextWrapper<>).MakeGenericType(editContext.Entity.GetType());
             var instance = Activator.CreateInstance(contextType, editContext);
 
-            return (IEditContext)instance;
+            return instance as IEditContext ?? throw new InvalidOperationException("Cannot create FormEditContextWrapper");
         }
 
         public IEditContext GetEditContextWrapper(
@@ -69,7 +69,7 @@ namespace RapidCMS.Core.Factories
                 container,
                 _serviceProvider);
 
-            return (IEditContext)instance;
+            return instance as IEditContext ?? throw new InvalidOperationException("Cannot create ApiEditContextWrapper");
         }
     }
 }

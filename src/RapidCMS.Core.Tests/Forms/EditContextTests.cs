@@ -274,14 +274,14 @@ namespace RapidCMS.Core.Tests.Forms
             Assert.IsTrue(_subject.IsValid(_nestedProperty));
         }
 
-        private readonly Expression<Func<Entity, string?>> _getId = x => x.Id;
-        private readonly Expression<Func<Entity, string?>> _getNestedData = x => x.Nested.Data;
+        private readonly Expression<Func<Entity, string>> _getId = x => x.Id;
+        private readonly Expression<Func<Entity, string>> _getNestedData = x => x.Nested.Data;
         private IPropertyMetadata _property => PropertyMetadataHelper.GetPropertyMetadata(_getId)!;
         private IPropertyMetadata _nestedProperty => PropertyMetadataHelper.GetPropertyMetadata(_getNestedData)!;
         public class Entity : IEntity
         {
             [Required]
-            public string? Id { get; set; }
+            public string Id { get; set; }
 
             [ValidateObject]
             public NestedObject Nested { get; set; } = new NestedObject();
@@ -289,7 +289,7 @@ namespace RapidCMS.Core.Tests.Forms
             public class NestedObject
             {
                 [Required]
-                public string? Data { get; set; }
+                public string Data { get; set; }
             }
         }
     }

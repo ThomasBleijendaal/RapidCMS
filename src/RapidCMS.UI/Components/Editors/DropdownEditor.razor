@@ -71,13 +71,13 @@
 
     private void OnChange(ChangeEventArgs args)
     {
-        var index = int.Parse((string)args.Value);
+        var index = int.Parse(((string?)args.Value) ?? "");
 
         if (index == -1)
         {
-            SetValueFromObject(default);
+            SetValueFromObject(default!);
         }
-        else
+        else if (Options != null)
         {
             SetValueFromObject(Options.ElementAt(index).Id);
         }

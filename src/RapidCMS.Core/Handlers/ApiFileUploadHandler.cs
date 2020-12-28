@@ -42,15 +42,15 @@ namespace RapidCMS.Core.Handlers
         {
             var content = new MultipartFormDataContent
             {
-                { new StringContent(fileInfo.LastModified?.ToString()), nameof(IFileInfo.LastModified) },
-                { new StringContent(fileInfo.Name?.ToString()), nameof(IFileInfo.Name) },
-                { new StringContent(fileInfo.Size.ToString()), nameof(IFileInfo.Size) },
-                { new StringContent(fileInfo.Type?.ToString()), nameof(IFileInfo.Type) }
+                { new StringContent(fileInfo.LastModified?.ToString() ?? ""), nameof(IFileInfo.LastModified) },
+                { new StringContent(fileInfo.Name?.ToString() ?? ""), nameof(IFileInfo.Name) },
+                { new StringContent(fileInfo.Size.ToString() ?? ""), nameof(IFileInfo.Size) },
+                { new StringContent(fileInfo.Type?.ToString() ?? ""), nameof(IFileInfo.Type) }
             };
 
             if (stream != null)
             {
-                content.Add(new StreamContent(stream), "file", fileInfo.Name);
+                content.Add(new StreamContent(stream), "file", fileInfo.Name ?? "");
             }
 
             var request = new HttpRequestMessage(HttpMethod.Post, url)

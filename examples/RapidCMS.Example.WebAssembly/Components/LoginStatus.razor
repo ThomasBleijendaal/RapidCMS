@@ -5,7 +5,7 @@
 
 <AuthorizeView>
     <div>
-        <div class="btn btn-primary"><i class="icon ion-md-contact"></i> Hi, @context.User.Identity.Name!</div>
+        <div class="btn btn-primary"><i class="icon ion-md-contact"></i> Hi, @context.User.Identity?.Name!</div>
         <a class="btn btn-primary" href="#" @onclick="BeginLogout">Logout</a>
     </div>
 </AuthorizeView>

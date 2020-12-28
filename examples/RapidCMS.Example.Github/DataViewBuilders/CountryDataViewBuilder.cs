@@ -11,7 +11,7 @@ namespace RapidCMS.Example.Github.DataViewBuilders
     {   
         public override Task<IEnumerable<DataView<Country>>> GetDataViewsAsync()
         {
-            return Task.FromResult(Enumerable.Range(1, 10).Select(index => new DataView<Country>(index, $"{index}-letter country", x => x.Name.Length == index)));
+            return Task.FromResult(Enumerable.Range(1, 10).Select(index => new DataView<Country>(index, $"{index}-letter country", x => x.Name != null && x.Name.Length == index)));
         }
     }
 }

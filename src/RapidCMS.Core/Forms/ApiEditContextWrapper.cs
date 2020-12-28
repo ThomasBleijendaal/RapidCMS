@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Metadata;

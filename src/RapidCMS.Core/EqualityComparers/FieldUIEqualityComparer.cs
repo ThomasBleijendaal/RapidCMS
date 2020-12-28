@@ -5,9 +5,9 @@ namespace RapidCMS.Core.EqualityComparers
 {
     internal class FieldUIEqualityComparer : IEqualityComparer<FieldUI>
     {
-        public bool Equals(FieldUI x, FieldUI y)
+        public bool Equals(FieldUI? x, FieldUI? y)
         {
-            return x.Name?.Equals(y.Name) ?? false;
+            return x?.Name?.Equals(y?.Name) ?? false;
         }
 
         public int GetHashCode(FieldUI obj)

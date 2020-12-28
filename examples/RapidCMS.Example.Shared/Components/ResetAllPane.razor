@@ -11,12 +11,14 @@
     // Side panes can Inject any dependency they require, and even modify data based upon user actions
     // You have access to the EditContext, so you can even edit the entity on which this pane was opened.
 
-    async Task ResetPasswordsAsync()
+    Task ResetPasswordsAsync()
     {
         // do something usefull
 
         // CrudType Refresh refreshes the data in the view
         ButtonClicked(CrudType.Refresh);
+
+        return Task.CompletedTask;
     }
 
     void Cancel()

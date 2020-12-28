@@ -80,8 +80,8 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddTransient(sp =>
             {
-                var provider = sp.GetService<IAccessTokenProvider>();
-                var manager = sp.GetService<NavigationManager>();
+                var provider = sp.GetRequiredService<IAccessTokenProvider>();
+                var manager = sp.GetRequiredService<NavigationManager>();
 
                 return new TokenAuthorizationMessageHandler(provider, manager, baseUrl.Invoke());
             });

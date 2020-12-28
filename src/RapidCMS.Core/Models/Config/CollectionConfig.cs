@@ -59,7 +59,7 @@ namespace RapidCMS.Core.Models.Config
 
                 var referencedInlineCollections = referencedCollections
                     .Where(x => x != null)
-                    .SelectMany(x => x)
+                    .SelectMany(x => x!)
                     .Where(x => x.RepositoryType != null);
 
                 return referencedInlineCollections

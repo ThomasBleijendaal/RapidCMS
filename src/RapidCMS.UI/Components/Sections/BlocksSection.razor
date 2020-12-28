@@ -33,9 +33,9 @@
 </div>
 
 @code {
-    [Parameter] public IEnumerable<(FormEditContext editContext, IEnumerable<SectionUI> sections)> Sections { get; set; }
+    [Parameter] public IEnumerable<(FormEditContext editContext, IEnumerable<SectionUI> sections)> Sections { get; set; } = default!;
     [Parameter] public EventCallback<ButtonClickEventArgs> OnButtonClick { get; set; }
-    
+
     [Parameter] public int CurrentPage { get; set; }
     [Parameter] public int? MaxPage { get; set; }
     [Parameter] public EventCallback<int> OnPageChanged { get; set; }

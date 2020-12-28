@@ -1,6 +1,6 @@
 ﻿<CascadingValue Value="@CustomLoginStatus" Name="CustomLoginStatus">
     <CascadingAuthenticationState>
-        <Router AppAssembly="typeof(RapidCmsRouter).Assembly">
+        <Router AppAssembly="typeof(RapidCmsRouter).Assembly" PreferExactMatches="true">
             <Found Context="routeData">
                 <AuthorizeView>
                     <Authorized>
@@ -8,7 +8,7 @@
                     </Authorized>
                     <NotAuthorized>
                         <LayoutView Layout="typeof(EmptyLayout)">
-                            <LoginPage CustomElement="CustomLoginScreen" />
+                            <LoginPage CustomElement="CustomLoginScreen!" />
                         </LayoutView>
                     </NotAuthorized>
                 </AuthorizeView>
@@ -25,7 +25,7 @@
                     </Authorized>
                     <NotAuthorized>
                         <LayoutView Layout="typeof(EmptyLayout)">
-                            <LoginPage CustomElement="CustomLoginScreen" />
+                            <LoginPage CustomElement="CustomLoginScreen!" />
                         </LayoutView>
                     </NotAuthorized>
                 </AuthorizeView>

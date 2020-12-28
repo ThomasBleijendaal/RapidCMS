@@ -17,7 +17,7 @@ namespace RapidCMS.Example.Github
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("app");
+            builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddAuthorizationCore();
 
@@ -350,8 +350,8 @@ namespace RapidCMS.Example.Github
                 {
                     collection
                         .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
-                        .AddDataView("Countries A-K", x => Regex.IsMatch(x.Name, "^[A-K]", RegexOptions.IgnoreCase))
-                        .AddDataView("Countries L-Z", x => Regex.IsMatch(x.Name, "^[L-Z]", RegexOptions.IgnoreCase))
+                        .AddDataView("Countries A-K", x => Regex.IsMatch(x.Name ?? string.Empty, "^[A-K]", RegexOptions.IgnoreCase))
+                        .AddDataView("Countries L-Z", x => Regex.IsMatch(x.Name ?? string.Empty, "^[L-Z]", RegexOptions.IgnoreCase))
                         .SetListEditor(editor =>
                         {
                             editor.AddDefaultButton(DefaultButtonType.New);
@@ -449,7 +449,7 @@ namespace RapidCMS.Example.Github
                                 section.AddField(x => x.Countries)
                                     .SetType(EditorType.MultiSelect)
                                     .SetCollectionRelation<Country, string>(
-                                        countries => countries.Select(x => x.Id),
+                                        countries => countries.Select(x => x.Id ?? string.Empty),
                                         "country",
                                         relation =>
                                         {

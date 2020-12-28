@@ -6,7 +6,7 @@ namespace RapidCMS.Core.Abstractions.State
     public interface INavigationState
     {
         void ResetState(PageStateModel newState);
-        void NotifyLocationChanged(PageStateModel newState, bool forceReload = true);
+        void NotifyLocationChanged(PageStateModel newState);
 
         event EventHandler<PageStateModel>? LocationChanged;
     }
