@@ -24,7 +24,6 @@ namespace RapidCMS.Core.Models.State
         public bool Equals(PageStateModel? other)
         {
             return PageType == other?.PageType &&
-                UsageType == other?.UsageType &&
                 CollectionAlias == other?.CollectionAlias &&
                 ParentPath?.ToPathString() == other?.ParentPath?.ToPathString() &&
                 Id == other?.Id;
