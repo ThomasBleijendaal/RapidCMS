@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Components.Forms;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
@@ -63,6 +64,11 @@ namespace RapidCMS.Core.Forms
         public event EventHandler<FieldChangedEventArgs>? OnFieldChanged;
 
         public event EventHandler<ValidationStateChangedEventArgs>? OnValidationStateChanged;
+
+        public static implicit operator EditContext(FormEditContext editContext)
+        {
+            return new EditContext(editContext.Entity);
+        }
 
         public void NotifyReordered(string? beforeId)
         {
