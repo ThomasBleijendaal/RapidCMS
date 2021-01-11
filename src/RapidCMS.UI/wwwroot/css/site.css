@@ -359,7 +359,7 @@ a.current-page {
     border-radius: 0;
 }
 
-    .btn .icon {
+    .btn .icon, .btn .spinner-border {
         margin-right: .5rem;
     }
 

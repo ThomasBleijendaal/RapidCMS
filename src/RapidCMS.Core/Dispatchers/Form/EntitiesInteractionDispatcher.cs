@@ -211,7 +211,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
         private static bool ShouldFallbackToNavigatingToNodeEditor(ICollectionSetup collection, PageStateModel? currentState)
         {
-            return currentState?.UsageType == (UsageType.Node | UsageType.Edit) && collection.ListEditor == null && collection.NodeEditor != null;
+            return collection.NodeEditor != null;
         }
     }
 }

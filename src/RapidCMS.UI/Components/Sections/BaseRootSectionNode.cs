@@ -27,8 +27,17 @@ namespace RapidCMS.UI.Components.Sections
 
             var resolver = await UIResolverFactory.GetNodeUIResolverAsync(CurrentState.UsageType, CurrentState.CollectionAlias);
 
-            Buttons = await resolver.GetButtonsForEditContextAsync(editContext);
-            Sections = new[] { (editContext, await resolver.GetSectionsForEditContextAsync(editContext)) };
+            var buttons = await resolver.GetButtonsForEditContextAsync(editContext);
+            var sections = new[] { (editContext, await resolver.GetSectionsForEditContextAsync(editContext)) };
+
+            Buttons = buttons;
+            Sections = sections;
+
+            ListContext = null;
+            Tabs = null;
+            UIResolver = null;
+            ListUI = null;
+            PageContents = null;
 
             editContext.OnFieldChanged += (s, a) => StateHasChanged();
 

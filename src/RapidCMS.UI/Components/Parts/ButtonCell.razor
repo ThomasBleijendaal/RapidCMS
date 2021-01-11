@@ -4,8 +4,7 @@
         @foreach (var button in Buttons)
         {
             var model = button.ToViewModel();
-
-            model.OnClick += async (sender, args) => await OnButtonClick.InvokeAsync(args);
+            model.OnClick = OnButtonClick;
 
             @button.ToRenderFragment(model);
         }

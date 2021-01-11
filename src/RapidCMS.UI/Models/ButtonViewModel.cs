@@ -1,20 +1,27 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Forms;
 
 namespace RapidCMS.UI.Models
 {
     public class ButtonViewModel
     {
-        public event EventHandler<ButtonClickEventArgs>? OnClick;
+        public EventCallback<ButtonClickEventArgs>? OnClick { get; set; }
 
-        public void NotifyClick(FormEditContext editContext, object? customData)
+        public async Task NotifyClickAsync(FormEditContext editContext, object? customData)
         {
-            OnClick?.Invoke(this, new ButtonClickEventArgs
+            var task = OnClick?.InvokeAsync(new ButtonClickEventArgs
             {
                 ViewModel = this,
                 EditContext = editContext,
                 Data = customData
             });
+
+            if (task != null)
+            {
+                await task;
+            }
         }
 
         public string Label { get; set; } = default!;

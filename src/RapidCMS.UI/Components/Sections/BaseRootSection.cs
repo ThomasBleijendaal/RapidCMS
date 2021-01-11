@@ -176,6 +176,11 @@ namespace RapidCMS.UI.Components.Sections
             };
         }
 
+        protected override bool ShouldRender()
+        {
+            return !StateIsChanging;
+        }
+
         public void Dispose()
         {
             _disposableHandle?.Dispose();

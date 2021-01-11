@@ -17,16 +17,29 @@ namespace RapidCMS.UI.Components.Buttons
 
         protected bool FormIsValid { get; private set; }
 
+        protected bool IsDisabled { get; set; }
+
         protected async Task ButtonClickAsync(object? customData = null)
         {
-            if (Model.RequiresValidForm && !(EditContext?.IsValid() ?? true))
+            try
             {
-                return;
-            }
+                IsDisabled = true;
+                StateHasChanged();
 
-            if (!Model.ShouldConfirm || await JsRuntime.InvokeAsync<bool>("confirm", LanguageResolver.ResolveText("Are you sure?")))
+                if (Model.RequiresValidForm && !(EditContext?.IsValid() ?? true))
+                {
+                    return;
+                }
+
+                if (!Model.ShouldConfirm || await JsRuntime.InvokeAsync<bool>("confirm", LanguageResolver.ResolveText("Are you sure?")))
+                {
+                    await Model.NotifyClickAsync(EditContext!, customData);
+                }
+            }
+            finally
             {
-                Model.NotifyClick(EditContext!, customData);
+                IsDisabled = false;
+                StateHasChanged();
             }
         }
 
