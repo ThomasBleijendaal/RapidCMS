@@ -17,6 +17,7 @@ namespace RapidCMS.UI.Components.Editors
         [Parameter] public IParent? Parent { get; set; }
 
         [Parameter] public EntityState EntityState { get; set; }
+        [Parameter] public ListType DisplayType { get; set; }
 
         [Parameter] public IPropertyMetadata Property { get; set; } = default!;
 

@@ -153,7 +153,7 @@ namespace RapidCMS.Repositories
             return Task.CompletedTask;
         }
 
-        public override Task AddAsync(IRelated related, string id, IParent? parent)
+        public override Task AddAsync(IRelated related, string id)
         {
             if (!_relations.ContainsKey(id))
             {
@@ -165,7 +165,7 @@ namespace RapidCMS.Repositories
             return Task.CompletedTask;
         }
 
-        public override Task RemoveAsync(IRelated related, string id, IParent? parent)
+        public override Task RemoveAsync(IRelated related, string id)
         {
             if (!_relations.ContainsKey(id))
             {

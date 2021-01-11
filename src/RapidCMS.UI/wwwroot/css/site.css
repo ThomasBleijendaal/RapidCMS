@@ -417,9 +417,15 @@ pre.col-form-label {
 }
 
 .form-control-select-list {
-    height: 150px;
+    min-height: 30px;
+    height: auto;
+    max-height: 150px;
     overflow: auto;
+    padding-bottom: 1rem;
 }
+    .form-control-select-list.block {
+        max-height: 300px;
+    }
 
 small {
     color: #888;

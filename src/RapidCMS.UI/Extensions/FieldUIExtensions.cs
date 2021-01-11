@@ -11,7 +11,7 @@ namespace RapidCMS.UI.Extensions
 {
     public static class FieldUIExtensions
     {
-        public static RenderFragment? ToRenderFragment(this FieldUI field, FormEditContext editContext)
+        public static RenderFragment? ToRenderFragment(this FieldUI field, FormEditContext editContext, ListType usedInDisplayType)
         {
             if (field is CustomExpressionFieldUI customExpressionField)
             {
@@ -21,7 +21,7 @@ namespace RapidCMS.UI.Extensions
 
                     builder.OpenComponent(0, editorType);
 
-                    builder.AddAttributes(editContext, customExpressionField);
+                    builder.AddAttributes(editContext, customExpressionField, usedInDisplayType);
 
                     builder.CloseComponent();
                 };
@@ -44,7 +44,7 @@ namespace RapidCMS.UI.Extensions
                 {
                     builder.OpenComponent(0, displayType);
 
-                    builder.AddAttributes(editContext, expressionField);
+                    builder.AddAttributes(editContext, expressionField, usedInDisplayType);
 
                     builder.CloseComponent();
                 };
@@ -57,7 +57,7 @@ namespace RapidCMS.UI.Extensions
 
                     builder.OpenComponent(0, editorType);
 
-                    builder.AddAttributes(editContext, customPropertyField);
+                    builder.AddAttributes(editContext, customPropertyField, usedInDisplayType);
 
                     if (editorType.IsSubclassOf(typeof(BaseDataEditor)))
                     {
@@ -91,7 +91,7 @@ namespace RapidCMS.UI.Extensions
                 {
                     builder.OpenComponent(0, editorType);
 
-                    builder.AddAttributes(editContext, propertyField);
+                    builder.AddAttributes(editContext, propertyField, usedInDisplayType);
 
                     if (editorType.IsSubclassOf(typeof(BaseDataEditor)))
                     {
@@ -110,15 +110,16 @@ namespace RapidCMS.UI.Extensions
             }
         }
 
-        private static void AddAttributes(this RenderTreeBuilder builder, FormEditContext editContext, ExpressionFieldUI expressionField)
+        private static void AddAttributes(this RenderTreeBuilder builder, FormEditContext editContext, ExpressionFieldUI expressionField, ListType displayType)
         {
             builder.AddAttribute(1, nameof(BaseDisplay.Entity), editContext.Entity);
             builder.AddAttribute(2, nameof(BaseDisplay.EntityState), editContext.EntityState);
             builder.AddAttribute(3, nameof(BaseDisplay.Parent), editContext.Parent);
             builder.AddAttribute(4, nameof(BaseDisplay.Expression), expressionField.Expression);
+            builder.AddAttribute(5, nameof(BaseDisplay.DisplayType), displayType);
         }
 
-        private static void AddAttributes(this RenderTreeBuilder builder, FormEditContext editContext, PropertyFieldUI propertyField)
+        private static void AddAttributes(this RenderTreeBuilder builder, FormEditContext editContext, PropertyFieldUI propertyField, ListType displayType)
         {
             builder.AddAttribute(1, nameof(BaseEditor.Entity), editContext.Entity);
             builder.AddAttribute(2, nameof(BaseEditor.EntityState), editContext.EntityState);
@@ -126,6 +127,7 @@ namespace RapidCMS.UI.Extensions
             builder.AddAttribute(4, nameof(BaseEditor.Property), propertyField.Property);
             builder.AddAttribute(5, nameof(BaseEditor.IsDisabledFunc), propertyField.IsDisabled);
             builder.AddAttribute(6, nameof(BaseEditor.Placeholder), propertyField.Placeholder);
+            builder.AddAttribute(6, nameof(BaseEditor.DisplayType), displayType);
         }
     }
 }

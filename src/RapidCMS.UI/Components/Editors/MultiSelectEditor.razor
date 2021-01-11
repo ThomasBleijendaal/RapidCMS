@@ -4,7 +4,7 @@
 {
     var index = 0;
 
-    <div class="form-control form-control-select-list @(CssHelper.GetValidationClass(State))">
+    <div class="form-control form-control-select-list @(CssHelper.GetDisplayModifier(DisplayType)) @(CssHelper.GetValidationClass(State))">
         @foreach (var option in Options)
         {
             index++;
