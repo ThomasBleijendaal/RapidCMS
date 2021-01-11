@@ -132,7 +132,7 @@ thead td:hover .icon {
 .sidepane {
     width: 450px;
     height: calc(100vh - 3.5rem);
-    position: absolute;
+    position: fixed;
     right: 0;
     top: 3.5rem;
     border-left: 2px solid #b8b8b8;
@@ -140,7 +140,12 @@ thead td:hover .icon {
     padding: 2rem;
     box-shadow: rgba(0,0,0,0.2) -2px -2px 6px;
     z-index: 100;
+    overflow-y: auto;
 }
+
+    .sidepane .sidepane-section{
+        margin-bottom: 2rem;
+    }
 
     .sidepane .buttonbar {
         margin-top: 4rem;
