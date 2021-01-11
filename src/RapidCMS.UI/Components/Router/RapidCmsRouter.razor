@@ -1,6 +1,6 @@
 ﻿<CascadingValue Value="@CustomLoginStatus" Name="CustomLoginStatus">
     <CascadingAuthenticationState>
-        <Router AppAssembly="typeof(RapidCmsRouter).Assembly" PreferExactMatches="true">
+        <Router AppAssembly="typeof(RapidCmsRouter).Assembly" AdditionalAssemblies="AdditionalAssemblies" PreferExactMatches="true">
             <Found Context="routeData">
                 <AuthorizeView>
                     <Authorized>
@@ -11,6 +11,9 @@
                             <LoginPage CustomElement="CustomLoginScreen!" />
                         </LayoutView>
                     </NotAuthorized>
+                    <Authorizing>
+                        <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
+                    </Authorizing>
                 </AuthorizeView>
             </Found>
             <NotFound>
@@ -40,6 +43,9 @@
 
     [Inject]
     private ILogin LoginRegistration { get; set; } = default!;
+
+    [Parameter]
+    public IEnumerable<Assembly>? AdditionalAssemblies { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {

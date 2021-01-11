@@ -51,7 +51,7 @@
                             <td>
                                 @if (field.IsVisible(EditContext.Entity, EditContext.EntityState))
                                 {
-                                    @field.ToRenderFragment(EditContext)
+                                    @field.ToRenderFragment(EditContext, ListType.Table)
                                 }
                             </td>
                         }

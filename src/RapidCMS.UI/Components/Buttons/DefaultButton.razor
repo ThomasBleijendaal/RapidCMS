@@ -1,7 +1,18 @@
 ﻿@inherits BaseButton
 
-<button type="button" 
-        class="btn @(Model.IsPrimary ? "btn-primary" : (Model.ShouldConfirm) ? "btn-danger" : "btn-light")" 
-        @onclick=@(async (MouseEventArgs a) => await ButtonClickAsync())>
-    <i class="icon ion-md-@Model.Icon"></i> @Model.Label
+<button type="button"
+        class="btn @(Model.IsPrimary ? "btn-primary" : (Model.ShouldConfirm) ? "btn-danger" : "btn-light")"
+        @onclick=@(async (MouseEventArgs a) => await ButtonClickAsync())
+        disabled=@IsDisabled>
+    @if (IsDisabled)
+    {
+        <div class="spinner-border spinner-border-sm" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    }
+    else
+    {
+        <i class="icon ion-md-@Model.Icon"></i>
+    }
+    @Model.Label
 </button>

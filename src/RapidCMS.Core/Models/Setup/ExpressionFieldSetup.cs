@@ -11,11 +11,13 @@ namespace RapidCMS.Core.Models.Setup
         internal ExpressionFieldSetup(FieldConfig field, IExpressionMetadata expression) : base(field)
         {
             Expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            DisplayType = field.DisplayType;
         }
 
         internal ExpressionFieldSetup(FieldConfig field, IPropertyMetadata expression) : base(field)
         {
             Expression = PropertyMetadataHelper.GetExpressionMetadata(expression ?? throw new ArgumentNullException(nameof(expression)));
+            DisplayType = field.DisplayType;
         }
         
         internal DisplayType DisplayType { get; set; } = DisplayType.Label;

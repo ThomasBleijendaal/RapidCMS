@@ -184,7 +184,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public void WhenRequestingToGetEntitiesToAddToTheRelatedEntity_ThenRepositoryShouldBeQueriedToGetNonRelatedEntities(UsageType usageType)
         {
             // act
-            var related = new RelatedEntity(new DefaultEntityVariant(), "alias");
+            var related = new RelatedEntity(default, new DefaultEntityVariant(), "alias");
             var query = new Query();
             _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
 
@@ -201,7 +201,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public void WhenRequestingToGetEntitiesRelatedToRelatedEntity_ThenRepositoryShouldBeQueriedToGetNonRelatedEntities(UsageType usageType)
         {
             // act
-            var related = new RelatedEntity(new DefaultEntityVariant(), "alias");
+            var related = new RelatedEntity(default, new DefaultEntityVariant(), "alias");
             var query = new Query();
             _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
 
@@ -239,7 +239,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public async Task WhenRequestingToGetEntitiesRelatedToRelatedEntity_ThenListOfEntitiesShouldBeReturnedWithCorrectUsageTypesAsync(UsageType usageType, UsageType expectedUsageTypes1, UsageType expectedUsageTypes2, UsageType expectedUsageTypes3, UsageType expectedUsageTypes4)
         {
             // act
-            var related = new RelatedEntity(new DefaultEntityVariant(), "alias");
+            var related = new RelatedEntity(default, new DefaultEntityVariant(), "alias");
             var query = new Query();
             var response = await _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
 

@@ -63,7 +63,7 @@ thead td:hover .icon {
 .main {
     flex: 1;
     margin-top: 4.5rem;
-    margin-left: 450px;
+    margin-left: 100px;
 }
 
     .main .messages {
@@ -80,7 +80,7 @@ thead td:hover .icon {
         }
 
 .sidebar {
-    width: 450px;
+    width: 100px;
     position: fixed;
     top: 3.5rem;
     height: 100vh;
@@ -88,6 +88,35 @@ thead td:hover .icon {
     border-right: 1px solid #c8c8c8;
     background-color: #e0e0e0;
     padding-top: 1rem;
+}
+
+@media(min-width: 600px) {
+    .sidebar {
+        width: 150px;
+    }
+
+    .main {
+        margin-left: 150px;
+    }
+}
+@media(min-width: 1000px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .main {
+        margin-left: 200px;
+    }
+}
+
+@media(min-width: 1200px) {
+    .sidebar {
+        width: 300px;
+    }
+
+    .main {
+        margin-left: 300px;
+    }
 }
 
     .sidebar ul {
@@ -103,7 +132,7 @@ thead td:hover .icon {
 .sidepane {
     width: 450px;
     height: calc(100vh - 3.5rem);
-    position: absolute;
+    position: fixed;
     right: 0;
     top: 3.5rem;
     border-left: 2px solid #b8b8b8;
@@ -111,7 +140,12 @@ thead td:hover .icon {
     padding: 2rem;
     box-shadow: rgba(0,0,0,0.2) -2px -2px 6px;
     z-index: 100;
+    overflow-y: auto;
 }
+
+    .sidepane .sidepane-section{
+        margin-bottom: 2rem;
+    }
 
     .sidepane .buttonbar {
         margin-top: 4rem;
@@ -330,7 +364,7 @@ a.current-page {
     border-radius: 0;
 }
 
-    .btn .icon {
+    .btn .icon, .btn .spinner-border {
         margin-right: .5rem;
     }
 
@@ -383,9 +417,15 @@ pre.col-form-label {
 }
 
 .form-control-select-list {
-    height: 150px;
+    min-height: 30px;
+    height: auto;
+    max-height: 150px;
     overflow: auto;
+    padding-bottom: 1rem;
 }
+    .form-control-select-list.block {
+        max-height: 300px;
+    }
 
 small {
     color: #888;

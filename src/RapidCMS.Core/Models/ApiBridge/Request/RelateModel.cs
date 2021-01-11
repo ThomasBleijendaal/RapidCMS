@@ -12,7 +12,8 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
             Related = new EntityDescriptorModel
             {
                 RepositoryAlias = related.RepositoryAlias,
-                Id = related.Entity.Id!
+                Id = related.Entity.Id!,
+                ParentPath = related.Parent?.GetParentPath()?.ToPathString()
             };
         }
 

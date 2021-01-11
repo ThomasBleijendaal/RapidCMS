@@ -11,6 +11,7 @@ namespace RapidCMS.UI.Components.Displays
         [Parameter] public IParent? Parent { get; set; }
 
         [Parameter] public EntityState EntityState { get; set; }
+        [Parameter] public ListType DisplayType { get; set; } 
 
         [Parameter] public IExpressionMetadata Expression { get; set; } = default!;
 

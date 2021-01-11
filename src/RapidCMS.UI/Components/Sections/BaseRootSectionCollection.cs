@@ -44,11 +44,15 @@ namespace RapidCMS.UI.Components.Sections
 
                     var listContext = await LoadSectionsAsync();
 
-                    Buttons = await UIResolver.GetButtonsForEditContextAsync(listContext.ProtoEditContext);
-                    Tabs = await UIResolver.GetTabsAsync(listContext.ProtoEditContext);
+                    var buttons = await UIResolver.GetButtonsForEditContextAsync(listContext.ProtoEditContext);
+                    var tabs = await UIResolver.GetTabsAsync(listContext.ProtoEditContext);
 
+                    Buttons = buttons;
+                    Tabs = tabs;
                     ListContext = listContext;
                     Sections?.ForEach(x => x.editContext.OnFieldChanged += (s, a) => StateHasChanged());
+
+                    PageContents = null;
                 }
 
                 StateHasChanged();

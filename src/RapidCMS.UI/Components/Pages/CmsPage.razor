@@ -1,5 +1,7 @@
 ﻿@implements IDisposable
 
+@attribute [Authorize]
+
 @page "/"
 @page "/page/{CollectionAlias}"
 @page "/collection/{Action}/{CollectionAlias}"
@@ -11,7 +13,9 @@
 
 @if (State != null)
 {
-    <RootSection InitialState="State" IsRoot="true" />
+    <AuthorizeView>
+        <RootSection InitialState="State" IsRoot="true" />
+    </AuthorizeView>
 }
 
 @code {

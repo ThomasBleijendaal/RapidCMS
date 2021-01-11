@@ -16,13 +16,16 @@ namespace RapidCMS.Core.Dispatchers.Api
     {
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IAuthService _authService;
+        private readonly IParentService _parentService;
 
         public RelateEntityDispatcher(
             IRepositoryResolver repositoryResolver,
-            IAuthService authService)
+            IAuthService authService,
+            IParentService parentService)
         {
             _repositoryResolver = repositoryResolver;
             _authService = authService;
+            _parentService = parentService;
         }
 
         public async Task<ApiCommandResponseModel> InvokeAsync(PersistRelatedEntityRequestModel request, IPageState pageState)
@@ -42,8 +45,9 @@ namespace RapidCMS.Core.Dispatchers.Api
                 ?? throw new NotFoundException("Subject entity was not found");
             var relatedEntity = await relatedRepository.GetByIdAsync(request.Related.Id, default)
                 ?? throw new NotFoundException("Related entity was not found");
+            var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Related.ParentPath));
 
-            var related = new RelatedEntity(relatedEntity, request.Related.RepositoryAlias);
+            var related = new RelatedEntity(parent, relatedEntity, request.Related.RepositoryAlias);
 
             if (request.Action == PersistRelatedEntityRequestModel.Actions.Add)
             {

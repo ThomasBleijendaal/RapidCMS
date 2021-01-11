@@ -44,8 +44,7 @@ namespace RapidCMS.Core.Resolvers.UI
 
             return await _node.Panes
                 .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(type))
-                .ToListAsync(pane => GetSectionUIAsync(pane, editContext))
-                ;
+                .ToListAsync(pane => GetSectionUIAsync(pane, editContext));
         }
     }
 }

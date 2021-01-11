@@ -22,5 +22,15 @@ namespace RapidCMS.UI.Helpers
                 _ => ""
             };
         }
+
+        public static string GetDisplayModifier(ListType type)
+        {
+            return type switch
+            {
+                ListType.Block => "block",
+                ListType.Table => "table",
+                _ => ""
+            };
+        }
     }
 }

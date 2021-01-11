@@ -36,14 +36,17 @@ namespace RapidCMS.Core.Dispatchers.Api
         {
             var subjectRepository = _repositoryResolver.GetRepository(request.RepositoryAlias);
 
-            var parent = request is GetEntitiesOfParentRequestModel parentRequest ? await _parentService.GetParentAsync(ParentPath.TryParse(parentRequest.ParentPath)) : default;
+            var parentPath = request is GetEntitiesOfParentRequestModel parentRequest ? parentRequest.ParentPath 
+                : request is GetEntitiesOfRelationRequestModel relationRequest ? relationRequest.Related.ParentPath 
+                : default;
+            var parent = await _parentService.GetParentAsync(ParentPath.TryParse(parentPath));
             var related = default(IRelated);
             if (request is GetEntitiesOfRelationRequestModel relatedRequest)
             {
                 var relatedRepository = _repositoryResolver.GetRepository(relatedRequest.Related.RepositoryAlias ?? throw new ArgumentNullException());
                 var relatedEntity = await relatedRepository.GetByIdAsync(relatedRequest.Related.Id ?? throw new ArgumentNullException(), default)
                     ?? throw new NotFoundException("Could not find related entity");
-                related = new RelatedEntity(relatedEntity, relatedRequest.Related.RepositoryAlias);
+                related = new RelatedEntity(parent, relatedEntity, relatedRequest.Related.RepositoryAlias);
             }
 
             var protoEntity = await subjectRepository.NewAsync(parent, default);
