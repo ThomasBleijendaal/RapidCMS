@@ -77,16 +77,14 @@ namespace RapidCMS.Repositories
         {
             var ids = _relations.Where(x => x.Value.Contains(related.Entity.Id!)).Select(x => x.Key);
 
-            // relations only work on the root collection (for simplicity)
-            return Task.FromResult(GetListForParent(default).Where(x => ids.Contains(x.Id!)))!;
+            return Task.FromResult(GetListForParent(related.Parent).Where(x => ids.Contains(x.Id!)))!;
         }
 
         public override Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TEntity> query)
         {
             var ids = _relations.Where(x => x.Value.Contains(related.Entity.Id!)).Select(x => x.Key);
-
-            // relations only work on the root collection (for simplicity)
-            return Task.FromResult(GetListForParent(default).Where(x => !ids.Contains(x.Id!)))!;
+            
+            return Task.FromResult(GetListForParent(related.Parent).Where(x => !ids.Contains(x.Id!)))!;
         }
 
         public override Task<TEntity?> GetByIdAsync(string id, IParent? parent)
@@ -155,7 +153,7 @@ namespace RapidCMS.Repositories
             return Task.CompletedTask;
         }
 
-        public override Task AddAsync(IRelated related, string id)
+        public override Task AddAsync(IRelated related, string id, IParent? parent)
         {
             if (!_relations.ContainsKey(id))
             {
@@ -167,7 +165,7 @@ namespace RapidCMS.Repositories
             return Task.CompletedTask;
         }
 
-        public override Task RemoveAsync(IRelated related, string id)
+        public override Task RemoveAsync(IRelated related, string id, IParent? parent)
         {
             if (!_relations.ContainsKey(id))
             {

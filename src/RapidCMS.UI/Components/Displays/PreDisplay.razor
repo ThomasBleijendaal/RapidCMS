@@ -1,3 +1,17 @@
 ﻿@inherits BaseDisplay
 
-<pre class="col-form-label">@GetValueAsString()</pre>
+<pre class="col-form-label">@value</pre>
+
+@code {
+    private string? value { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        value = @GetValueAsString();
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            value = " ";
+        }
+    }
+} 
