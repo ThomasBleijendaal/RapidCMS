@@ -1,72 +1,69 @@
 @inherits BaseSection
 
-<div class="content">
-    <table class="table">
-        <thead>
-            <tr>
-                @{
-                    if (CollapseEmptyCells && UI.CommonFields != null)
+<table class="table">
+    <thead>
+        <tr>
+            @{
+                if (CollapseEmptyCells && UI.CommonFields != null)
+                {
+                    foreach (var field in UI.CommonFields)
                     {
-                        foreach (var field in UI.CommonFields)
-                        {
-                            <HeaderCell Field="field" OnPageChanged="@OnPageChanged" />
-                        }
-
-                        if (UI.MaxUniqueFieldsInSingleEntity - UI.CommonFields.Count > 0)
-                        {
-                            <td colspan=@(UI.MaxUniqueFieldsInSingleEntity - UI.CommonFields.Count)></td>
-                        }
-                    }
-                    else if (UI.UniqueFields != null)
-                    {
-                        foreach (var field in UI.UniqueFields)
-                        {
-                            <HeaderCell Field="field" />
-                        }
+                        <HeaderCell Field="field" OnPageChanged="@OnPageChanged" />
                     }
 
-                    if (UI.SectionsHaveButtons)
+                    if (UI.MaxUniqueFieldsInSingleEntity - UI.CommonFields.Count > 0)
                     {
-                        <td class="button-cell"></td>
+                        <td colspan=@(UI.MaxUniqueFieldsInSingleEntity - UI.CommonFields.Count)></td>
                     }
                 }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var (context, sections) in Sections)
-            {
-                <CascadingEditContext EditContext=@context>
-                    @foreach (var section in sections)
+                else if (UI.UniqueFields != null)
+                {
+                    foreach (var field in UI.UniqueFields)
                     {
-                        <RowSection Section="section"
-                                    UI="UI"
-                                    OnButtonClick="OnButtonClick"
-                                    DragInteraction="DragInteraction"/>
+                        <HeaderCell Field="field" />
                     }
-                </CascadingEditContext>
-            }
+                }
 
-            @if (!Sections.Any())
-            {
-                <tr>
-                    <td colspan="99">&nbsp;</td>
-                </tr>
+                if (UI.SectionsHaveButtons)
+                {
+                    <td class="button-cell"></td>
+                }
             }
-            else
-            {
-                <tr
-                    @ondragenter="(args) => DragInteraction.EndZoneDragEnter(args, SectionId)"
-                    class="@(DragInteraction.IsDraggedOverEndZone(SectionId) ? "dropover" : "")">
-                    <td colspan="99">&nbsp;</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var (context, sections) in Sections)
+        {
+            <CascadingEditContext EditContext=@context>
+                @foreach (var section in sections)
+                {
+                    <RowSection Section="section"
+                                UI="UI"
+                                OnButtonClick="OnButtonClick"
+                                DragInteraction="DragInteraction" />
+                }
+            </CascadingEditContext>
+        }
 
-    <Paginator CurrentPage="@CurrentPage"
-               MaxPage="@MaxPage"
-               OnPageChanged="@OnPageChanged" />
-</div>
+        @if (!Sections.Any())
+        {
+            <tr>
+                <td colspan="99">&nbsp;</td>
+            </tr>
+        }
+        else
+        {
+            <tr @ondragenter="(args) => DragInteraction.EndZoneDragEnter(args, SectionId)"
+                class="dropzone @(DragInteraction.IsDraggedOverEndZone(SectionId) ? "dropover" : "")">
+                <td colspan="99">&nbsp;</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<Paginator CurrentPage="@CurrentPage"
+           MaxPage="@MaxPage"
+           OnPageChanged="@OnPageChanged" />
 
 @code {
     private bool CollapseEmptyCells => UI.EmptyVariantColumnVisibility == EmptyVariantColumnVisibility.Collapse;
@@ -79,7 +76,7 @@
     [Parameter] public int CurrentPage { get; set; }
     [Parameter] public int? MaxPage { get; set; }
     [Parameter] public EventCallback<int> OnPageChanged { get; set; }
-    
+
     [Inject] private IDragInteraction DragInteraction { get; set; } = default!;
 
     protected override void OnInitialized()

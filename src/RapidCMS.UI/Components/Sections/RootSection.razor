@@ -4,79 +4,79 @@
 {
     @if (CurrentState?.PageType == PageType.Node)
     {
-        @if (Sections == null || !Sections.Any())
-        {
-            <div class="content">
-                <p>Loading..</p>
-            </div>
-        }
-        else
-        {
-            @foreach (var mainSection in Sections)
+        <div class="content">
+            @if (Sections == null || !Sections.Any())
             {
-                <CascadingEditContext EditContext=@mainSection.editContext>
-                    <ButtonBar Buttons="Buttons" OnButtonClick="ButtonOnClickAsync" />
-
-                    <EditContextStrayErrors />
-
-                    @foreach (var section in mainSection.sections)
-                    {
-                        var renderFragment = section.ToRenderFragment();
-
-                        if (renderFragment != null)
-                        {
-                            @renderFragment
-                        }
-                        else
-                        {
-                            <BlockSection Section="section" OnButtonClick="ButtonOnClickAsync" />
-                        }
-                    }
-                </CascadingEditContext>
+                <p>Loading..</p>
             }
-        }
+            else
+            {
+                @foreach (var mainSection in Sections)
+                {
+                    <CascadingEditContext EditContext=@mainSection.editContext>
+                        <ButtonBar Buttons="Buttons" OnButtonClick="ButtonOnClickAsync" />
+
+                        <EditContextStrayErrors />
+
+                        @foreach (var section in mainSection.sections)
+                        {
+                            var renderFragment = section.ToRenderFragment();
+
+                            if (renderFragment != null)
+                            {
+                                @renderFragment
+                            }
+                            else
+                            {
+                                <BlockSection Section="section" OnButtonClick="ButtonOnClickAsync" />
+                            }
+                        }
+                    </CascadingEditContext>
+                }
+            }
+        </div>
     }
     else if (CurrentState?.PageType == PageType.Collection)
     {
-        @if (ListContext == null || ListUI == null)
-        {
-            <div class="content">
-                <p>Loading..</p>
-            </div>
-        }
-        else
-        {
-            <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
-                <Tabbar Tabs="Tabs"
-                        SearchBarVisible="ListUI.SearchBarVisible"
-                        State="CurrentState"
-                        OnSearch="SearchAsync"
-                        OnTabChange="TabChangeAsync" />
-                <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
-            </CascadingEditContext>
-
-            @if (Sections != null)
+        <div class="content">
+            @if (ListContext == null || ListUI == null)
             {
-                @if (ListUI.ListType == ListType.Table)
+                <p>Loading..</p>
+            }
+            else
+            {
+                <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
+                    <Tabbar Tabs="Tabs"
+                            SearchBarVisible="ListUI.SearchBarVisible"
+                            State="CurrentState"
+                            OnSearch="SearchAsync"
+                            OnTabChange="TabChangeAsync" />
+                    <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
+                </CascadingEditContext>
+
+                @if (Sections != null)
                 {
-                    <TableSection UI="ListUI"
-                                  Sections="Sections"
-                                  CurrentPage="CurrentState.CurrentPage"
-                                  MaxPage="CurrentState.MaxPage"
-                                  OnButtonClick="NodeButtonOnClickAsync"
-                                  OnRowDragged="OnRowDraggedAsync"
-                                  OnPageChanged="PageChangedAsync" />
-                }
-                else if (ListUI.ListType == ListType.Block)
-                {
-                    <BlocksSection Sections="Sections"
-                                   CurrentPage="CurrentState.CurrentPage"
-                                   MaxPage="CurrentState.MaxPage"
-                                   OnButtonClick="NodeButtonOnClickAsync"
-                                   OnPageChanged="PageChangedAsync" />
+                    @if (ListUI.ListType == ListType.Table)
+                    {
+                        <TableSection UI="ListUI"
+                                      Sections="Sections"
+                                      CurrentPage="CurrentState.CurrentPage"
+                                      MaxPage="CurrentState.MaxPage"
+                                      OnButtonClick="NodeButtonOnClickAsync"
+                                      OnRowDragged="OnRowDraggedAsync"
+                                      OnPageChanged="PageChangedAsync" />
+                    }
+                    else if (ListUI.ListType == ListType.Block)
+                    {
+                        <BlocksSection Sections="Sections"
+                                       CurrentPage="CurrentState.CurrentPage"
+                                       MaxPage="CurrentState.MaxPage"
+                                       OnButtonClick="NodeButtonOnClickAsync"
+                                       OnPageChanged="PageChangedAsync" />
+                    }
                 }
             }
-        }
+        </div>
     }
     else if ((CurrentState?.PageType == PageType.Page || CurrentState?.PageType == PageType.Dashboard) && PageContents != null)
     {
