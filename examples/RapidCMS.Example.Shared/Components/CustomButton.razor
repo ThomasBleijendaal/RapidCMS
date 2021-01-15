@@ -3,7 +3,7 @@
 @using RapidCMS.UI.Components.Buttons
 
 <button type="button" class="btn btn-dark" @onclick="DoItAsync">
-    <i class="icon ion-md-@(Model.Icon ?? "expand")"></i> @Model.Label
+    <Icon Name="@(Model.Icon ?? "WebComponents")" /> @Model.Label
 </button>
 
 @code {

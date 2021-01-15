@@ -1,5 +1,5 @@
 ﻿@import url('bootstrap/bootstrap.min.css');
-@import url('https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css');
+@import url('https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css');
 
 html, body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -7,10 +7,13 @@ html, body {
     background: #faf9f8;
 }
 
-.icon {
-    font-size: 16px !important;
-    line-height: 18px;
+.ms-Icon {
+    font-size: 14px !important;
+    line-height: 12px;
+    vertical-align: middle;
     background: none !important;
+    margin-right: .4rem;
+    padding-bottom: .2rem;
 }
 
 thead td .icon {

@@ -5,59 +5,59 @@ namespace RapidCMS.Core.Enums
     public enum DefaultButtonType
     {
         // Insert new Entity
-        [DefaultIconLabel(icon: "add", label: "New")]
+        [DefaultIconLabel(icon: "Add", label: "New")]
         [Actions(UsageType.List | UsageType.View, UsageType.List | UsageType.Edit)]
         New = 1,
 
-        [DefaultIconLabel(icon: "save", label: "Insert")]
+        [DefaultIconLabel(icon: "Save", label: "Insert")]
         [Actions(UsageType.New)]
         [ValidForm]
         SaveNew,
 
-        [DefaultIconLabel(icon: "save", label: "Update")]
+        [DefaultIconLabel(icon: "Save", label: "Update")]
         [Actions(UsageType.Edit | UsageType.Node, UsageType.Edit | UsageType.List)]
         [ValidForm]
         SaveExisting,
 
-        [DefaultIconLabel(icon: "trash", label: "Delete")]
+        [DefaultIconLabel(icon: "Delete", label: "Delete")]
         [Actions(UsageType.Edit | UsageType.Node, UsageType.View | UsageType.Node)]
         [Confirm]
         Delete,
 
-        [DefaultIconLabel(icon: "create", label: "Edit")]
+        [DefaultIconLabel(icon: "Edit", label: "Edit")]
         [Actions(UsageType.List | UsageType.View, UsageType.List | UsageType.Add, UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.View)]
         Edit,
 
-        [DefaultIconLabel(icon: "search", label: "View")]
+        [DefaultIconLabel(icon: "View", label: "View")]
         [Actions(UsageType.List, UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.View)]
         View,
 
         // Add existing Entity
-        [DefaultIconLabel(icon: "add", label: "Add")]
+        [DefaultIconLabel(icon: "Add", label: "Add")]
         [Actions(UsageType.List | UsageType.Edit, UsageType.List | UsageType.View)]
         Add,
 
         // Remove existing Entity
-        [DefaultIconLabel(icon: "close", label: "Remove")]
+        [DefaultIconLabel(icon: "Remove", label: "Remove")]
         [Actions(UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.View)]
         Remove,
 
         // Pick existing Entity to Add
-        [DefaultIconLabel(icon: "add", label: "Pick")]
+        [DefaultIconLabel(icon: "Add", label: "Pick")]
         [Actions(UsageType.Node | UsageType.Pick)]
         Pick,
 
         // return from New
-        [DefaultIconLabel(icon: "arrow-back", label: "Return")]
+        [DefaultIconLabel(icon: "Back", label: "Return")]
         [Actions(UsageType.List | UsageType.Add, UsageType.List | UsageType.New, UsageType.List | UsageType.Pick)]
         Return,
 
         // move up in tree
-        [DefaultIconLabel(icon: "arrow-up", label: "Up")]
+        [DefaultIconLabel(icon: "Up", label: "Up")]
         [Actions(UsageType.List | UsageType.NotRoot, UsageType.Node)]
         Up,
 
-        [DefaultIconLabel(icon: "open", label: "[open pane]")]
+        [DefaultIconLabel(icon: "OpenPane", label: "[open pane]")]
         [Actions(UsageType.Node, UsageType.List)]
         OpenPane = 9990
     }

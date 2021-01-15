@@ -30,7 +30,7 @@ namespace RapidCMS.Example.Shared.Collections
                         editor.AddDefaultButton(DefaultButtonType.New);
                         // this pane button opens a sidepane displaying the ResetAllPane Razor component. 
                         // this component must inherit BaseSidePane and allows for more complex flows and confirmations.
-                        editor.AddPaneButton(typeof(ResetAllPane), "Reset all passwords", "trash");
+                        editor.AddPaneButton(typeof(ResetAllPane), "Reset all passwords", "LockSolid");
 
                         // custom buttons are also allowed:
                         // editor.AddCustomButton<TActionHandler>(typeof(ButtonType));

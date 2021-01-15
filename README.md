@@ -217,6 +217,11 @@ The tree is used for navigating around in RapidCMS, and collections which have a
 visible in the tree. For this example, the `Name` property of `Person` is used to display in the tree. Any
 valid expression which returns a string will be valid to be used in the tree.
 
+### Icons
+
+All the icons in the CMS are based on the Fluent UI icons. Use [this site](https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)
+to search for the correct icons that suit your need.
+
 ### Interactions
 
 As you can see, the UI is missing a lot of buttons. A paginator is present, but there is no way of creating,

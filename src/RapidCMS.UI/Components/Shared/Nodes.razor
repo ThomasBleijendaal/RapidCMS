@@ -6,7 +6,7 @@
         @if (PageNr > 1)
         {
             <li class="nav-item">
-                <button @onclick="@((MouseEventArgs e) => OnPageChangeAsync(-1))" class="paginate" title="Previous items" disabled="@Loading"><i class="icon ion-md-arrow-dropup-circle"></i></button>
+                <button @onclick="@((MouseEventArgs e) => OnPageChangeAsync(-1))" class="paginate" title="Previous items" disabled="@Loading"><Icon Name="ChevronUpSmall" /></button>
             </li>
         }
         @foreach (var node in UI.Nodes)
@@ -15,11 +15,11 @@
                 <button @onclick="@((MouseEventArgs e) => CollectionsVisible[node.Id] = !CollectionsVisible[node.Id])" class="toggle">
                     @if (CollectionsVisible[node.Id])
                     {
-                        <i class="icon ion-md-arrow-dropdown"></i>
+                        <Icon Name="ChevronDown" />
                     }
                     else
                     {
-                        <i class="icon ion-md-arrow-dropright"></i>
+                        <Icon Name="ChevronRight" />
                     }
                 </button>
 
@@ -47,7 +47,7 @@
         @if (UI.MoreDataAvailable)
         {
             <li class="nav-item">
-                <button @onclick="@((MouseEventArgs e) => OnPageChangeAsync(1))" class="paginate" title="Next items" disabled="@Loading"><i class="icon ion-md-arrow-dropdown-circle"></i></button>
+                <button @onclick="@((MouseEventArgs e) => OnPageChangeAsync(1))" class="paginate" title="Next items" disabled="@Loading"><Icon Name="ChevronDownSmall" /></button>
             </li>
         }
     </ul>
