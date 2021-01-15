@@ -2,74 +2,72 @@
 
 @if (Section != null && Section.Elements != null && Section.Elements.Any() && EditContext != null && Section.IsVisible(EditContext.Entity, EditContext.EntityState))
 {
-    <div class="content">
-        @if (!string.IsNullOrWhiteSpace(Section.Label))
+    @if (!string.IsNullOrWhiteSpace(Section.Label))
+    {
+        <h2 class="block-header">@Section.Label</h2>
+    }
+
+    @if (Section.Buttons != null && Section.Buttons.Any())
+    {
+        <div class="nested-buttons">
+            <ButtonBar Buttons="Section.Buttons" OnButtonClick="@OnButtonClick" />
+        </div>
+    }
+
+    @foreach (var element in Section.Elements)
+    {
+        if (!element.IsVisible(EditContext.Entity, EditContext.EntityState))
         {
-            <h2 class="block-header">@Section.Label</h2>
+            continue;
         }
 
-        @if (Section.Buttons != null && Section.Buttons.Any())
+        if (element is FieldUI field)
         {
-            <div class="nested-buttons">
-                <ButtonBar Buttons="Section.Buttons" OnButtonClick="@OnButtonClick" />
+            <div class="form-row">
+                <div class="col-2">
+                    <label class="col-form-label">@field.Name</label>
+                    <small class="form-text text-muted">@field.Description</small>
+                </div>
+                <div class="col-10">
+                    @field.ToRenderFragment(EditContext, ListType.Block)
+                </div>
             </div>
         }
-
-        @foreach (var element in Section.Elements)
+        else if (element is SubCollectionUI subCollection)
         {
-            if (!element.IsVisible(EditContext.Entity, EditContext.EntityState))
+            var parentPath = ParentPath.AddLevel(EditContext.Parent?.GetParentPath(), EditContext.RepositoryAlias, EditContext.Entity.Id!);
+
+            var state = new PageStateModel
             {
-                continue;
-            }
+                PageType = PageType.Collection,
+                UsageType = subCollection.FindSupportedUsageType(EditContext.UsageType),
 
-            if (element is FieldUI field)
-            {
-                <div class="form-row">
-                    <div class="col-2">
-                        <label class="col-form-label">@field.Name</label>
-                        <small class="form-text text-muted">@field.Description</small>
-                    </div>
-                    <div class="col-10">
-                        @field.ToRenderFragment(EditContext, ListType.Block)
-                    </div>
-                </div>
-            }
-            else if (element is SubCollectionUI subCollection)
-            {
-                var parentPath = ParentPath.AddLevel(EditContext.Parent?.GetParentPath(), EditContext.RepositoryAlias, EditContext.Entity.Id!);
+                CollectionAlias = subCollection.CollectionAlias,
+                ParentPath = parentPath
+            };
 
-                var state = new PageStateModel
-                {
-                    PageType = PageType.Collection,
-                    UsageType = subCollection.FindSupportedUsageType(EditContext.UsageType),
-
-                    CollectionAlias = subCollection.CollectionAlias,
-                    ParentPath = parentPath
-                };
-
-                <div class="nested-content">
-                    <RootSection InitialState="state" />
-                </div>
-            }
-            else if (element is RelatedCollectionUI relatedCollection)
-            {
-                var related = new RelatedEntity(EditContext);
-
-                var state = new PageStateModel
-                {
-                    PageType = PageType.Collection,
-                    UsageType = relatedCollection.FindSupportedUsageType(EditContext.UsageType),
-
-                    CollectionAlias = relatedCollection.CollectionAlias,
-                    Related = related
-                };
-
-                <div class="nested-content">
-                    <RootSection InitialState="state" />
-                </div>
-            }
+            <div class="nested-content">
+                <RootSection InitialState="state" />
+            </div>
         }
-    </div>
+        else if (element is RelatedCollectionUI relatedCollection)
+        {
+            var related = new RelatedEntity(EditContext);
+
+            var state = new PageStateModel
+            {
+                PageType = PageType.Collection,
+                UsageType = relatedCollection.FindSupportedUsageType(EditContext.UsageType),
+
+                CollectionAlias = relatedCollection.CollectionAlias,
+                Related = related
+            };
+
+            <div class="nested-content">
+                <RootSection InitialState="state" />
+            </div>
+        }
+    }
 }
 
 @code {

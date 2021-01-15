@@ -73,7 +73,7 @@ namespace RapidCMS.Example.Shared.Collections
                                             section.AddDefaultButton(DefaultButtonType.SaveNew);
 
                                             // add custom buttons and action handlers using the following handler
-                                            section.AddCustomButton<RandomNameActionHandler>(typeof(CustomButton), "Create name", "add-circle");
+                                            section.AddCustomButton<RandomNameActionHandler>(typeof(CustomButton), "Create name", "AddTo");
 
                                             section.AddField(x => x.Name);
                                         });

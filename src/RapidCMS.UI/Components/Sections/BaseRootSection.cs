@@ -63,6 +63,7 @@ namespace RapidCMS.UI.Components.Sections
             finally
             {
                 StateIsChanging = false;
+                StateHasChanged();
             }
         }
 

@@ -45,7 +45,7 @@ namespace RapidCMS.Example.Shared.Collections
                     {
                         editor
                             // the Up button allows users to get one level up (based upon the tree)
-                            .AddDefaultButton(DefaultButtonType.Up, "Back to list", "list")
+                            .AddDefaultButton(DefaultButtonType.Up, "Back to list", "Back")
                             .AddDefaultButton(DefaultButtonType.SaveExisting)
                             .AddDefaultButton(DefaultButtonType.SaveNew);
 

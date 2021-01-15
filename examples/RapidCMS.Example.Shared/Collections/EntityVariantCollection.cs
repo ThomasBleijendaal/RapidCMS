@@ -85,6 +85,7 @@ namespace RapidCMS.Example.Shared.Collections
                     .SetNodeEditor(editor =>
                     {
                         editor.AddDefaultButton(DefaultButtonType.Up);
+                        editor.AddDefaultButton(DefaultButtonType.SaveNew);
                         editor.AddDefaultButton(DefaultButtonType.SaveExisting);
 
                         editor.AddSection(generic =>

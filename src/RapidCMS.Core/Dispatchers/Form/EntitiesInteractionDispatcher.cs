@@ -159,7 +159,8 @@ namespace RapidCMS.Core.Dispatchers.Form
                             UsageType = collection.ListEditor == null ? UsageType.View : UsageType.Edit,
 
                             CollectionAlias = request.ListContext.CollectionAlias,
-                            ParentPath = request.ListContext.Parent?.GetParentPath()
+                            ParentPath = request.ListContext.Parent?.GetParentPath(),
+                            Related = request.Related
                         });
                     }
                     break;

@@ -14,7 +14,7 @@ default UI libary and only use the core of RapidCMS.
 
 ## Demo
 
-A demo of the WebAssembly variant of the CMS (running version 3.1) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
+A demo of the WebAssembly variant of the CMS (running version 3.4.0) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
 This uses a repository that saves its data to the local storage of the browser. 
 
 ## TL:DR;
@@ -216,6 +216,11 @@ configured, display the `Id` and `Name`.
 The tree is used for navigating around in RapidCMS, and collections which have a set `TreeView`, will become
 visible in the tree. For this example, the `Name` property of `Person` is used to display in the tree. Any
 valid expression which returns a string will be valid to be used in the tree.
+
+### Icons
+
+All the icons in the CMS are based on the Fluent UI icons. Use [this site](https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)
+to search for the correct icons that suit your need.
 
 ### Interactions
 

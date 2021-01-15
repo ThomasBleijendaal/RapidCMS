@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.State;
-using RapidCMS.Core.Enums;
-using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Core.Services.State
@@ -30,7 +28,7 @@ namespace RapidCMS.Core.Services.State
         {
             if (_currentState.Any())
             {
-                _currentState.Remove(_currentState.Last());
+                _currentState.RemoveAt(_currentState.Count - 1);
             }
 
             NotifyUpdate();
@@ -49,7 +47,7 @@ namespace RapidCMS.Core.Services.State
         {
             if (_currentState.Any())
             {
-                _currentState.Remove(_currentState.Last());
+                _currentState.RemoveAt(_currentState.Count - 1);
             }
             _currentState.Add(replacementState);
 
