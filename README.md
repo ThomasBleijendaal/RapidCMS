@@ -14,7 +14,7 @@ default UI libary and only use the core of RapidCMS.
 
 ## Demo
 
-A demo of the WebAssembly variant of the CMS (running version 3.1) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
+A demo of the WebAssembly variant of the CMS (running version 3.4.0) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
 This uses a repository that saves its data to the local storage of the browser. 
 
 ## TL:DR;
