@@ -38,13 +38,15 @@
     }
     else if (CurrentState?.PageType == PageType.Collection)
     {
-        <div class="content">
-            @if (ListContext == null || ListUI == null)
-            {
+        @if (ListContext == null || ListUI == null || Sections == null)
+        {
+            <div class="content">
                 <p>Loading..</p>
-            }
-            else
-            {
+            </div>
+        }
+        else if (ListUI.ListType == ListType.Table)
+        {
+            <div class="content">
                 <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
                     <Tabbar Tabs="Tabs"
                             SearchBarVisible="ListUI.SearchBarVisible"
@@ -54,29 +56,34 @@
                     <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
                 </CascadingEditContext>
 
-                @if (Sections != null)
-                {
-                    @if (ListUI.ListType == ListType.Table)
-                    {
-                        <TableSection UI="ListUI"
-                                      Sections="Sections"
-                                      CurrentPage="CurrentState.CurrentPage"
-                                      MaxPage="CurrentState.MaxPage"
-                                      OnButtonClick="NodeButtonOnClickAsync"
-                                      OnRowDragged="OnRowDraggedAsync"
-                                      OnPageChanged="PageChangedAsync" />
-                    }
-                    else if (ListUI.ListType == ListType.Block)
-                    {
-                        <BlocksSection Sections="Sections"
-                                       CurrentPage="CurrentState.CurrentPage"
-                                       MaxPage="CurrentState.MaxPage"
-                                       OnButtonClick="NodeButtonOnClickAsync"
-                                       OnPageChanged="PageChangedAsync" />
-                    }
-                }
-            }
-        </div>
+                <TableSection UI="ListUI"
+                              Sections="Sections"
+                              CurrentPage="CurrentState.CurrentPage"
+                              MaxPage="CurrentState.MaxPage"
+                              OnButtonClick="NodeButtonOnClickAsync"
+                              OnRowDragged="OnRowDraggedAsync"
+                              OnPageChanged="PageChangedAsync" />
+            </div>
+        }
+        else if (ListUI.ListType == ListType.Block)
+        {
+            <div class="content buttons-only">
+                <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
+                    <Tabbar Tabs="Tabs"
+                            SearchBarVisible="ListUI.SearchBarVisible"
+                            State="CurrentState"
+                            OnSearch="SearchAsync"
+                            OnTabChange="TabChangeAsync" />
+                    <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
+                </CascadingEditContext>
+            </div>
+
+            <BlocksSection Sections="Sections"
+                           CurrentPage="CurrentState.CurrentPage"
+                           MaxPage="CurrentState.MaxPage"
+                           OnButtonClick="NodeButtonOnClickAsync"
+                           OnPageChanged="PageChangedAsync" />
+        }
     }
     else if ((CurrentState?.PageType == PageType.Page || CurrentState?.PageType == PageType.Dashboard) && PageContents != null)
     {

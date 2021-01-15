@@ -10,6 +10,7 @@ html, body {
 .icon {
     font-size: 16px !important;
     line-height: 18px;
+    background: none !important;
 }
 
 thead td .icon {
@@ -53,7 +54,7 @@ thead td:hover .icon {
 
 .main {
     flex: 1;
-    margin-top: 4.5rem;
+    margin-top: 3.5rem;
     margin-left: 100px;
 }
 
@@ -206,12 +207,12 @@ thead td:hover .icon {
         }
 
 .nav-tabs {
-    margin: 0 1rem;
+    margin: 0 0 1rem;
     border-bottom: 0;
 }
 
     .nav-tabs .nav-item {
-        margin: 0;
+        margin: 0 1rem 0 0;
     }
 
     .nav-tabs .nav-link {
@@ -219,16 +220,23 @@ thead td:hover .icon {
         padding: 0 1rem;
         line-height: 3rem;
         border: 0;
+        border-bottom: 2px solid #fff;
+        color: #323130;
     }
 
         .nav-tabs .nav-link.active {
-            background: #efefef;
-            border: 0;
+            border-bottom: 2px solid #0078d4;
             margin: 0;
+            font-weight: bold;
         }
 
         .nav-tabs .nav-link:hover {
-            border: 0;
+            border-bottom: 2px solid #c7dced;
+            margin: 0;
+        }
+
+        .nav-tabs .nav-link.active:hover {
+            border-bottom: 2px solid #0078d4;
             margin: 0;
         }
 
@@ -247,7 +255,7 @@ thead td:hover .icon {
         }
 
     .nav-tabs.nav-tabs-collapse {
-        margin: .2rem 1.5rem -2.6rem 0rem;
+        margin: .2rem 0rem -2.6rem 0rem;
     }
 
 .nested-content .nav-tabs.nav-tabs-collapse {
@@ -275,7 +283,7 @@ thead td:hover .icon {
     background: #fff;
     padding: 1rem 1rem 1rem 1rem;
     box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132),0 .3px .9px 0 rgba(0,0,0,.108);
-    margin: 0rem 1rem 1rem;
+    margin: 1rem 1rem 1rem;
 }
 
 .top-row {
@@ -287,19 +295,26 @@ thead td:hover .icon {
 .content .top-row {
 }
 
+.content.buttons-only .top-row {
+    margin: 0;
+}
 
 .content .nested-content {
-    margin: 1.1rem -1rem -1rem -1rem;
+    margin: 1rem 0;
     padding-top: 1rem;
     padding-bottom: .5rem;
 }
 
-    .content .nested-content .content {
+    .content .nested-content + .nested-content {
+        border-top: 1px dashed #bebbb8;
+    }
+
+    .content .content {
         box-shadow: 0 3.2px 7.2px 0 rgba(0,0,0,.132),0 .6px 1.8px 0 rgba(0,0,0,.108);
     }
 
 .content .nested-buttons {
-    margin: -1rem -1rem 1rem -1rem;
+    margin: 0 0 2rem 0;
 }
 
     .content .nested-buttons .top-row {
@@ -309,6 +324,7 @@ thead td:hover .icon {
 
 .nested-content:first-of-type {
     margin-top: -1.1rem;
+    border-top: 0;
 }
 
 .nested-content + .form-row {
@@ -372,6 +388,11 @@ a.current-page {
         background: #0078d4;
         color: white;
         border-color: #0078d4;
+    }
+    .btn.btn-dark {
+        background: #4a88ba;
+        color: white;
+        border-color: #4a88ba;
     }
 
     .btn.btn-danger {
@@ -498,7 +519,7 @@ table tr.dragged td {
 }
 
 table tr.modified td {
-    background: #fff0d0;
+    background: #deecf9;
 }
 
 table tr.dropover td {
