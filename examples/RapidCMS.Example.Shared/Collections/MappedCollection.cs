@@ -11,7 +11,7 @@ namespace RapidCMS.Example.Shared.Collections
         // CRUD editor using a mapped repository
         public static void AddMappedCollection(this ICmsConfig config)
         {
-            config.AddCollection<MappedEntity, BaseMappedRepository<MappedEntity, DatabaseEntity>>("mapped", icon: "git-compare", "Mapped entities", collection =>
+            config.AddCollection<MappedEntity, BaseMappedRepository<MappedEntity, DatabaseEntity>>("mapped", "MicrosoftTranslatorLogo", "MagentaPink10", "Mapped entities", collection =>
             {
                 collection
                     .SetTreeView(EntityVisibilty.Hidden, x => x.Name)

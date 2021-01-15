@@ -91,7 +91,7 @@ namespace RapidCMS.Example.Server
                 config.AddCountryCollection();
 
                 // Custom page with either custom Blazor components, or ListViews or ListEditors of collections
-                config.AddPage("beaker", "Some random page", config =>
+                config.AddPage("TestBeakerSolid", "Green10", "Some random page", config =>
                 {
                     config.AddSection(typeof(CustomSection));
                     config.AddSection("country", edit: false);

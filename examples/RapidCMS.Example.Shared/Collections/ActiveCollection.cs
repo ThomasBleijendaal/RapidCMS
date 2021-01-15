@@ -14,7 +14,7 @@ namespace RapidCMS.Example.Shared.Collections
     {
         public static void AddActiveCollection(this ICmsConfig config)
         {
-            config.AddCollection<Counter, BaseRepository<Counter>>("active", icon: "contacts", "Active Counter", collection =>
+            config.AddCollection<Counter, BaseRepository<Counter>>("active", "CommentActive", "Cyan30", "Active Counter", collection =>
             {
                 collection
                     .SetTreeView(x => x.CurrentCount.ToString())

@@ -49,6 +49,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 Name = config.Name,
                 Alias = config.Alias,
                 Icon = config.Icon,
+                Color = config.Color,
                 Sections = _typeRegistrationSetupResolver.ResolveSetup(config.SectionRegistrations).CheckIfCachable(ref cacheable).ToList()
             };
 

@@ -20,10 +20,11 @@ namespace RapidCMS.Core.Models.Config
     {
         protected List<ICollectionConfig> _collections = new List<ICollectionConfig>();
 
-        internal CollectionConfig(string alias, string? icon, string name, Type repositoryType, EntityVariantConfig entityVariant)
+        internal CollectionConfig(string alias, string? icon, string? color, string name, Type repositoryType, EntityVariantConfig entityVariant)
         {
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
             Icon = icon;
+            Color = color;
             Name = name ?? throw new ArgumentNullException(nameof(name));
             RepositoryType = repositoryType ?? throw new ArgumentNullException(nameof(repositoryType));
             EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
@@ -32,6 +33,7 @@ namespace RapidCMS.Core.Models.Config
         public bool Recursive { get; set; }
         public string Alias { get; internal set; }
         internal string? Icon { get; set; }
+        internal string? Color { get; set; }
         internal string Name { get; set; }
 
         internal Type RepositoryType { get; set; }
@@ -66,6 +68,7 @@ namespace RapidCMS.Core.Models.Config
                     .Select(collection => new CollectionConfig(
                         collection.CollectionAlias,
                         default,
+                        default,
                         $"{Name}-{collection.RepositoryType!.Name}",
                         collection.RepositoryType!,
                         new EntityVariantConfig(collection.EntityType!.Name, collection.EntityType, default))
@@ -92,8 +95,8 @@ namespace RapidCMS.Core.Models.Config
     internal class CollectionConfig<TEntity> : CollectionConfig, ICollectionConfig<TEntity>
         where TEntity : IEntity
     {
-        internal CollectionConfig(string alias, string? icon, string name, Type repositoryType, EntityVariantConfig entityVariant)
-            : base(alias, icon, name, repositoryType, entityVariant)
+        internal CollectionConfig(string alias, string? icon, string? color, string name, Type repositoryType, EntityVariantConfig entityVariant)
+            : base(alias, icon, color, name, repositoryType, entityVariant)
         {
         }
 
@@ -192,10 +195,17 @@ namespace RapidCMS.Core.Models.Config
             where TSubEntity : class, IEntity
             where TRepository : IRepository
         {
-            return AddSubCollection<TSubEntity, TRepository>(alias, default, name, configure);
+            return AddSubCollection<TSubEntity, TRepository>(alias, default, default, name, configure);
         }
 
         public ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TSubEntity>> configure)
+            where TSubEntity : class, IEntity
+            where TRepository : IRepository
+        {
+            return AddSubCollection<TSubEntity, TRepository>(alias, icon, default, name, configure);
+        }
+
+        public ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string? icon, string? color, string name, Action<ICollectionConfig<TSubEntity>> configure)
             where TSubEntity : class, IEntity
             where TRepository : IRepository
         {
@@ -217,6 +227,7 @@ namespace RapidCMS.Core.Models.Config
             var configReceiver = new CollectionConfig<TSubEntity>(
                 alias,
                 icon,
+                color,
                 name,
                 typeof(TRepository),
                 new EntityVariantConfig(typeof(TSubEntity).Name, typeof(TSubEntity)));
@@ -230,7 +241,7 @@ namespace RapidCMS.Core.Models.Config
 
         public void AddSelfAsRecursiveCollection()
         {
-            var configReceiver = new CollectionConfig<TEntity>(Alias, Icon, Name, RepositoryType, EntityVariant)
+            var configReceiver = new CollectionConfig<TEntity>(Alias, Icon, Color, Name, RepositoryType, EntityVariant)
             {
                 Recursive = true
             };

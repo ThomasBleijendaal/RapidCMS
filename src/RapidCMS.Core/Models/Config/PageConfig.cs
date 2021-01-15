@@ -10,15 +10,17 @@ namespace RapidCMS.Core.Models.Config
 {
     internal class PageConfig : IPageConfig
     {
-        public PageConfig(string name, string icon, string alias)
+        public PageConfig(string name, string icon, string color, string alias)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Icon = icon ?? throw new ArgumentNullException(nameof(icon));
+            Color = color ?? throw new ArgumentNullException(nameof(color));
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
         }
 
         public string Name { get; set; }
         public string Icon { get; set; }
+        public string Color { get; set; }
         public string Alias { get; set; }
 
         IEnumerable<CustomTypeRegistrationConfig> IPageConfig.SectionRegistrations => SectionRegistrations;

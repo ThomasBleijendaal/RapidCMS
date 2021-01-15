@@ -8,6 +8,7 @@ namespace RapidCMS.Core.Abstractions.Setup
     internal interface ICollectionSetup
     {
         string? Icon { get; }
+        string? Color { get; }
         string Alias { get; }
         string RepositoryAlias { get; }
         string Name { get; }

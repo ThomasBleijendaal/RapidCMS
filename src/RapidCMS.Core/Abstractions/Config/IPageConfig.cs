@@ -24,6 +24,7 @@ namespace RapidCMS.Core.Abstractions.Config
 
         string Name { get; }
         string Icon { get; }
+        string Color { get; }
 
         /// <summary>
         /// Registered sections of the page.

@@ -5,6 +5,7 @@ namespace RapidCMS.Core.Abstractions.Setup
     internal interface IPageSetup
     {
         string Icon { get; }
+        string Color { get; }
         string Name { get; }
         string Alias { get; }
         List<ITypeRegistration> Sections { get; }

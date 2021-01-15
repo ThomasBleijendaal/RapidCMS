@@ -10,7 +10,7 @@ namespace RapidCMS.Example.Shared.Collections
         // CRUD editor with support for
         public static void AddEntityVariantCollection(this ICmsConfig config)
         {
-            config.AddCollection<EntityVariantBase, BaseRepository<EntityVariantBase>>("variants", "Entity Variants", collection =>
+            config.AddCollection<EntityVariantBase, BaseRepository<EntityVariantBase>>("variants", "ProductVariant", "OrangeYellow20", "Entity Variants", collection =>
             {
                 collection
                     // Set showEntities to true to have this collection to fold open on default

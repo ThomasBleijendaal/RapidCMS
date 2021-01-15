@@ -38,11 +38,26 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <typeparam name="TSubEntity">Type of the entity of this sub collection</typeparam>
         /// <typeparam name="TRepository">Type of the repository this sub collection will use</typeparam>
         /// <param name="alias">Alias of the sub collection</param>
-        /// <param name="icon">Icon for this sub collection</param>
+        /// <param name="icon">Icon for this sub collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
         /// <param name="name">Human readable name of this sub collection</param>
         /// <param name="configure"></param>
         /// <returns></returns>
         ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TSubEntity>> configure)
+            where TSubEntity : class, IEntity
+            where TRepository : IRepository;
+
+        /// <summary>
+        /// Adds a sub collection to the current collection.
+        /// </summary>
+        /// <typeparam name="TSubEntity">Type of the entity of this sub collection</typeparam>
+        /// <typeparam name="TRepository">Type of the repository this sub collection will use</typeparam>
+        /// <param name="alias">Alias of the sub collection</param>
+        /// <param name="icon">Icon for this sub collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
+        /// <param name="color">The color of this sub collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/personas)</param>
+        /// <param name="name">Human readable name of this sub collection</param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string? icon, string? color, string name, Action<ICollectionConfig<TSubEntity>> configure)
             where TSubEntity : class, IEntity
             where TRepository : IRepository;
 

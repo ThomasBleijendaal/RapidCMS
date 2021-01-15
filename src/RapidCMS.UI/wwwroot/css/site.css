@@ -176,10 +176,9 @@ thead td:hover .icon {
             color: #ccc;
         }
 
-    .nav-item .icon {
-        width: 2rem;
+    .nav-item .ms-Icon {
         font-size: 1.1rem;
-        vertical-align: middle;
+        padding-bottom: .1rem;
     }
 
     .nav-item a {

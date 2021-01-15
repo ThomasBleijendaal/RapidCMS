@@ -16,6 +16,7 @@ namespace RapidCMS.Core.Models.UI
         public string Alias { get; private set; }
         public string Name { get; private set; }
         public string? Icon { get; internal set; }
+        public string? Color { get; internal set; }
         public PageStateModel? State { get; internal set; }
         public bool DefaultOpenEntities { get; internal set; }
 

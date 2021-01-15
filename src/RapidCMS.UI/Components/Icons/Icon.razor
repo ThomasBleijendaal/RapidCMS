@@ -1,5 +1,6 @@
-﻿<i class="ms-Icon ms-Icon--@Name" aria-hidden="true"></i>
+﻿<i class="ms-Icon ms-Icon--@Name @(string.IsNullOrWhiteSpace(Color) ? "" : $"ms-fontColor-shared{Color}")" aria-hidden="true"></i>
 
 @code {
     [Parameter] public string? Name { get; set; }
+    [Parameter] public string? Color { get; set; }
 }

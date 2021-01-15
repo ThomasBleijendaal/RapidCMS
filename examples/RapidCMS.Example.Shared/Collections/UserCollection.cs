@@ -15,7 +15,7 @@ namespace RapidCMS.Example.Shared.Collections
         public static void AddUserCollection(this ICmsConfig config)
         {
             // the CMS users https://ionicons.com/, so use the name of any Ion Icon as icon for a collection
-            config.AddCollection<User, BaseRepository<User>>("user", icon: "contacts", "Users", collection =>
+            config.AddCollection<User, BaseRepository<User>>("user", "UserFollowed", "BlueMagenta30", "Users", collection =>
             {
                 collection
                     .SetTreeView(EntityVisibilty.Hidden, x => x.Name)

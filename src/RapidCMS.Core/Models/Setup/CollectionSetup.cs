@@ -12,6 +12,7 @@ namespace RapidCMS.Core.Models.Setup
     {
         internal CollectionSetup(
             string? icon,
+            string? color,
             string name,
             string alias,
             string repositoryAlias,
@@ -19,6 +20,7 @@ namespace RapidCMS.Core.Models.Setup
             bool isResolverCachable = true) // TODO
         {
             Icon = icon;
+            Color = color;
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
             RepositoryAlias = repositoryAlias ?? throw new ArgumentNullException(nameof(repositoryAlias));
@@ -27,6 +29,7 @@ namespace RapidCMS.Core.Models.Setup
         }
 
         public string? Icon { get; private set; }
+        public string? Color { get; private set; }
         public string Name { get; private set; }
         public string Alias { get; private set; }
         public string RepositoryAlias { get; private set; }

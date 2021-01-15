@@ -10,7 +10,7 @@ namespace RapidCMS.Example.Shared.Collections
         // CRUD editor for simple POCO based on conventions 
         public static void AddConventionCollection(this ICmsConfig config)
         {
-            config.AddCollection<ConventionalPerson, BaseRepository<ConventionalPerson>>("person-convention", "People (by convention)", collection =>
+            config.AddCollection<ConventionalPerson, BaseRepository<ConventionalPerson>>("person-convention", "Settings", "Green20", "People (by convention)", collection =>
             {
                 collection.SetTreeView(EntityVisibilty.Visible, x => x.Name);
 

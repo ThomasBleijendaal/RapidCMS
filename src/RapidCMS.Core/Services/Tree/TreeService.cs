@@ -72,6 +72,7 @@ namespace RapidCMS.Core.Services.Tree
                 EntitiesVisible = collection.TreeView?.EntityVisibility == EntityVisibilty.Visible,
                 RootVisible = collection.TreeView?.RootVisibility == CollectionRootVisibility.Visible,
                 Icon = collection.Icon ?? "list",
+                Color = collection.Color,
                 DefaultOpenEntities = collection.TreeView?.DefaultOpenEntities ?? false
             };
 
@@ -107,7 +108,7 @@ namespace RapidCMS.Core.Services.Tree
                 throw new InvalidOperationException($"Failed to get page for given alias ({alias}).");
             }
 
-            return Task.FromResult(new TreePageUI(page.Name, page.Icon, new PageStateModel
+            return Task.FromResult(new TreePageUI(page.Name, page.Icon, page.Color, new PageStateModel
             {
                 CollectionAlias = page.Alias,
                 PageType = PageType.Page

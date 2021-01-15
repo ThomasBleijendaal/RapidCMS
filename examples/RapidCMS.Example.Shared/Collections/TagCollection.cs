@@ -12,7 +12,7 @@ namespace RapidCMS.Example.Shared.Collections
     {
         public static void AddTagCollection(this ICmsConfig config)
         {
-            config.AddCollection<TagGroup, BaseRepository<TagGroup>>("taggroup", "Tag groups", collection =>
+            config.AddCollection<TagGroup, BaseRepository<TagGroup>>("taggroup", "Tag", "Gray30", "Tag groups", collection =>
             {
                 collection
                     .SetTreeView(EntityVisibilty.Hidden, x => x.Name)

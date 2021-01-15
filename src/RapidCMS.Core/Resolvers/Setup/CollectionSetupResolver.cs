@@ -97,6 +97,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             var collection = new CollectionSetup(
                 config.Icon,
+                config.Color,
                 config.Name,
                 config.Alias,
                 repositoryAlias,

@@ -25,11 +25,26 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <typeparam name="TEntity">Type of the entity of this collection</typeparam>
         /// <typeparam name="TRepository">Type of the repository this collection will use</typeparam>
         /// <param name="alias">Alias of the collection</param>
-        /// <param name="icon">Icon for this collection</param>
+        /// <param name="icon">Icon for this collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
         /// <param name="name">Human readable name of this collection</param>
         /// <param name="configure"></param>
         /// <returns></returns>
         ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TEntity>> configure)
+            where TEntity : class, IEntity
+            where TRepository : IRepository;
+
+        /// <summary>
+        /// Adds a collection to the CMS.
+        /// </summary>
+        /// <typeparam name="TEntity">Type of the entity of this collection</typeparam>
+        /// <typeparam name="TRepository">Type of the repository this collection will use</typeparam>
+        /// <param name="alias">Alias of the collection</param>
+        /// <param name="icon">Icon for this collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
+        /// <param name="color">The color of this collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/personas)</param>
+        /// <param name="name">Human readable name of this collection</param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string? icon, string? color, string name, Action<ICollectionConfig<TEntity>> configure)
             where TEntity : class, IEntity
             where TRepository : IRepository;
 
@@ -49,6 +64,15 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <param name="configure"></param>
         /// <returns></returns>
         ICmsConfig AddPage(string icon, string name, Action<IPageConfig> configure);
+
+        /// <summary>
+        /// Add a page to the CMS.
+        /// </summary>
+        /// <param name="icon"></param>
+        /// <param name="name"></param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ICmsConfig AddPage(string icon, string color, string name, Action<IPageConfig> configure);
 
         /// <summary>
         /// The CMS homepage.

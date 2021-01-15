@@ -11,11 +11,11 @@ namespace RapidCMS.Example.Shared.Collections
         // CRUD editor with support for one-to-many relation + validation
         public static void AddCountryCollection(this ICmsConfig config)
         {
-            config.AddCollection<Country, BaseRepository<Country>>("country", "Countries", collection =>
+            config.AddCollection<Country, BaseRepository<Country>>("country", "Nav2DMapView", "Blue10", "Countries", collection =>
             {
                 collection
                     // Set showEntities to true to have this collection to fold open on default
-                    .SetTreeView(x => x.Name, showEntitiesOnStartup: true)
+                    .SetTreeView(x => x.Name, showEntitiesOnStartup: false)
                     .SetListView(view =>
                     {
                         view.AddDefaultButton(DefaultButtonType.New);

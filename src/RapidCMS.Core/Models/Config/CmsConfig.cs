@@ -35,7 +35,7 @@ namespace RapidCMS.Core.Models.Config
 
         public List<ITreeElementConfig> CollectionsAndPages { get; set; } = new List<ITreeElementConfig>
         {
-            new PageConfig("Dashboard", "apps", "__dashboard")
+            new PageConfig("Dashboard", "apps", "Gray30", "__dashboard")
         };
 
         public IAdvancedCmsConfig Advanced => AdvancedConfig;
@@ -84,10 +84,17 @@ namespace RapidCMS.Core.Models.Config
             where TEntity : class, IEntity
             where TRepository : IRepository
         {
-            return AddCollection<TEntity, TRepository>(alias, default, name, configure);
+            return AddCollection<TEntity, TRepository>(alias, default, default, name, configure);
         }
 
         public ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TEntity>> configure)
+            where TEntity : class, IEntity
+            where TRepository : IRepository
+        {
+            return AddCollection<TEntity, TRepository>(alias, icon, default, name, configure);
+        }
+
+        public ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string? icon, string? color, string name, Action<ICollectionConfig<TEntity>> configure)
             where TEntity : class, IEntity
             where TRepository : IRepository
         {
@@ -109,6 +116,7 @@ namespace RapidCMS.Core.Models.Config
             var configReceiver = new CollectionConfig<TEntity>(
                 alias,
                 icon,
+                color,
                 name,
                 typeof(TRepository),
                 new EntityVariantConfig(typeof(TEntity).Name, typeof(TEntity)));
@@ -122,10 +130,15 @@ namespace RapidCMS.Core.Models.Config
 
         public ICmsConfig AddPage(string name, Action<IPageConfig> configure)
         {
-            return AddPage("document", name, configure);
+            return AddPage("Document", name, configure);
         }
 
         public ICmsConfig AddPage(string icon, string name, Action<IPageConfig> configure)
+        {
+            return AddPage(icon, "Green10", name, configure);
+        }
+
+        public ICmsConfig AddPage(string icon, string color, string name, Action<IPageConfig> configure)
         {
             var alias = name.ToUrlFriendlyString();
 
@@ -136,7 +149,7 @@ namespace RapidCMS.Core.Models.Config
 
             CollectionAliases.Add(alias);
 
-            var page = new PageConfig(name, icon, alias);
+            var page = new PageConfig(name, icon, color, alias);
 
             configure.Invoke(page);
 
