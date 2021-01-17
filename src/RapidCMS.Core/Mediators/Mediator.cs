@@ -6,9 +6,20 @@ using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Mediators
 {
-    internal class Mediator : IMediator
+    internal class Mediator : IMediator, IDisposable
     {
         private readonly Dictionary<Type, IMediatorEventArgs> _cache = new();
+        private readonly IEnumerable<IMediatorEventConverter> _eventConverters;
+        private bool _disposedValue;
+
+        public Mediator(IEnumerable<IMediatorEventConverter> eventConverters)
+        {
+            _eventConverters = eventConverters;
+            foreach (var converter in _eventConverters)
+            {
+                converter.RegisterConversion(this);
+            }
+        }
 
         public event EventHandler<IMediatorEventArgs>? OnEvent;
 
@@ -24,5 +35,27 @@ namespace RapidCMS.Core.Mediators
 
         public TMediatorEventArgs? GetLatestEventArgs<TMediatorEventArgs>() where TMediatorEventArgs : IMediatorEventArgs
             => _cache.TryGetValue(typeof(TMediatorEventArgs), out var args) ? (TMediatorEventArgs)args : default;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    foreach (var converter in _eventConverters)
+                    {
+                        converter.Dispose();
+                    }
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

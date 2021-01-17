@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Interactions;
+using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
@@ -14,6 +15,7 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.State;
@@ -29,19 +31,22 @@ namespace RapidCMS.Core.Dispatchers.Form
         private readonly IConcurrencyService _concurrencyService;
         private readonly IButtonInteraction _buttonInteraction;
         private readonly IEditContextFactory _editContextFactory;
+        private readonly IMediator _mediator;
 
         public EntitiesInteractionDispatcher(
             ISetupResolver<ICollectionSetup> collectionResolver,
             IRepositoryResolver repositoryResolver,
             IConcurrencyService concurrencyService,
             IButtonInteraction buttonInteraction,
-            IEditContextFactory editContextFactory)
+            IEditContextFactory editContextFactory,
+            IMediator mediator)
         {
             _collectionResolver = collectionResolver;
             _repositoryResolver = repositoryResolver;
             _concurrencyService = concurrencyService;
             _buttonInteraction = buttonInteraction;
             _editContextFactory = editContextFactory;
+            _mediator = mediator;
         }
 
         Task<ListViewCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request, IPageState pageState)
@@ -141,6 +146,13 @@ namespace RapidCMS.Core.Dispatchers.Form
                     }
 
                     response.RefreshIds = affectedEntities.SelectNotNull(x => x.Id);
+
+                    _mediator.NotifyEvent(this, new CollectionRepositoryEventArgs(
+                        collection.Alias,
+                        collection.RepositoryAlias,
+                        request.ListContext.ProtoEditContext.Parent?.GetParentPath(),
+                        response.RefreshIds,
+                        CrudType.Update));
                     break;
 
                 case CrudType.None:

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Repositories;
@@ -25,9 +26,10 @@ namespace RapidCMS.Example.Shared.Collections
 
     public class CounterRepository : InMemoryRepository<Counter>
     {
+        private readonly IMediator _mediator;
         private Timer _timer;
 
-        public CounterRepository(IServiceProvider serviceProvider) : base(serviceProvider)
+        public CounterRepository(IMediator mediator, IServiceProvider serviceProvider) : base(serviceProvider)
         {
             GetListForParent(default).Add(new Counter { Id = "1", CurrentCount = 0 });
 
@@ -36,12 +38,14 @@ namespace RapidCMS.Example.Shared.Collections
                 Increase();
 
             }, default, 400, 400);
+            _mediator = mediator;
         }
 
         public void Increase()
         {
             GetListForParent(default).First().CurrentCount++;
-            NotifyUpdate();
+
+            _mediator.NotifyEvent(this, new RepositoryEventArgs(GetType(), default, "1", CrudType.Update));
         }
     }
 }

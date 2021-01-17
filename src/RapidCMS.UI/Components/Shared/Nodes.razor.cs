@@ -23,7 +23,6 @@ namespace RapidCMS.UI.Components.Shared
         private bool Loading { get; set; }
 
         [Inject] private ITreeService TreeService { get; set; } = default!;
-        [Inject] private IRepositoryEventService RepositoryEventService { get; set; } = default!;
         [Inject] private IMediator Mediator { get; set; } = default!;
 
         [Parameter] public string CollectionAlias { get; set; } = default!;
@@ -33,28 +32,18 @@ namespace RapidCMS.UI.Components.Shared
         protected override void OnInitialized()
         {
             DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(LocationChangedAsync, default));
+            DisposeWhenDisposing(Mediator.RegisterCallback<CollectionRepositoryEventArgs>(RepositoryChangeAsync, default));
         }
 
         protected override async Task OnParametersSetAsync()
         {
-            await OnNodesUpdateAsync();
+            await UpdateNodesAsync();
 
             if (Mediator.GetLatestEventArgs<NavigationEventArgs>() is NavigationEventArgs @event)
             {
                 await LocationChangedAsync(this, @event);
             }
         }
-
-        //private void SetupOnNodesUpdate()
-        //{
-        //    _nodeEventHandle?.Dispose();
-        //    _nodeEventHandle = RepositoryEventService.SubscribeToRepositoryUpdates(CollectionAlias, async () =>
-        //    {
-        //        await InvokeAsync(() => OnNodesUpdateAsync());
-
-        //        SetupOnNodesUpdate();
-        //    });
-        //}
 
         private async Task LocationChangedAsync(object sender, NavigationEventArgs args)
         {
@@ -76,15 +65,23 @@ namespace RapidCMS.UI.Components.Shared
             }
         }
 
+        private async Task RepositoryChangeAsync(object sender, CollectionRepositoryEventArgs args)
+        {
+            if (args.CollectionAlias == CollectionAlias)
+            {
+                await InvokeAsync(async () => await UpdateNodesAsync());
+            }
+        }
+
         private async Task OnPageChangeAsync(int delta)
         {
             Loading = true;
             _pageNr += delta;
-            await OnNodesUpdateAsync();
+            await UpdateNodesAsync();
             Loading = false;
         }
 
-        private async Task OnNodesUpdateAsync()
+        private async Task UpdateNodesAsync()
         {
             var oldNodesVisible = CollectionsVisible;
 
