@@ -187,13 +187,15 @@ namespace RapidCMS.Core.Dispatchers.Form
                 case CrudType.Up:
                     if (pageState.PopState() == null)
                     {
+                        var parentPath = request.EditContext.Parent?.GetParentPath();
                         pageState.ReplaceState(new PageStateModel
                         {
                             PageType = PageType.Collection,
-                            UsageType = collection.ListEditor == null ? UsageType.View : UsageType.Edit,
+                            UsageType = (collection.ListEditor == null ? UsageType.View : UsageType.Edit)
+                             | ((parentPath != null) ? UsageType.NotRoot : UsageType.Root),
 
                             CollectionAlias = request.EditContext.CollectionAlias,
-                            ParentPath = request.EditContext.Parent?.GetParentPath()
+                            ParentPath = parentPath
                         });
                     }
                     break;

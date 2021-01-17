@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.State;
+using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Core.Services.State
@@ -10,11 +12,11 @@ namespace RapidCMS.Core.Services.State
         private bool _updateState = false;
 
         private readonly List<PageStateModel> _currentState = new List<PageStateModel>();
-        private readonly INavigationState _navigationState;
+        private readonly IMediator _mediator;
 
-        public PageState(INavigationState navigationState)
+        public PageState(IMediator mediator)
         {
-            _navigationState = navigationState;
+            _mediator = mediator;
         }
 
         public IEnumerable<PageStateModel> GetCurrentStates()
@@ -67,9 +69,11 @@ namespace RapidCMS.Core.Services.State
 
         private void NotifyUpdate()
         {
-            if (_updateState && _currentState.Any())
+            if (_currentState.Any())
             {
-                _navigationState.NotifyLocationChanged(_currentState.Last());
+                var currentState = _currentState.Last();
+
+                _mediator.NotifyEvent(this, new NavigationEventArgs(currentState, _updateState));
             }
         }
     }

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace RapidCMS.Core.Models.Data
 {
-    public sealed class ParentPath : IEnumerable<(string repositoryAlias, string id)>
+    public sealed class ParentPath : IReadOnlyCollection<(string repositoryAlias, string id)>
     {
         private readonly List<(string repositoryAlias, string id)> _path;
 
@@ -72,5 +72,7 @@ namespace RapidCMS.Core.Models.Data
         {
             return _path.GetEnumerator();
         }
+
+        public int Count => _path.Count;
     }
 }

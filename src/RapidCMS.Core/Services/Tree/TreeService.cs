@@ -67,7 +67,7 @@ namespace RapidCMS.Core.Services.Tree
                 return TreeCollectionUI.None;
             }
 
-            var tree = new TreeCollectionUI(collection.Alias, collection.Name)
+            var tree = new TreeCollectionUI(collection.Alias, collection.RepositoryAlias, collection.Name)
             {
                 EntitiesVisible = collection.TreeView?.EntityVisibility == EntityVisibilty.Visible,
                 RootVisible = collection.TreeView?.RootVisibility == CollectionRootVisibility.Visible,
@@ -83,7 +83,7 @@ namespace RapidCMS.Core.Services.Tree
                     CollectionAlias = collection.Alias,
                     PageType = PageType.Collection,
                     ParentPath = parentPath,
-                    UsageType = UsageType.Edit
+                    UsageType = UsageType.Edit | ((parentPath != null) ? UsageType.NotRoot : UsageType.Root)
                 };
             }
             else if (canView)
@@ -93,7 +93,7 @@ namespace RapidCMS.Core.Services.Tree
                     CollectionAlias = collection.Alias,
                     PageType = PageType.Collection,
                     ParentPath = parentPath,
-                    UsageType = UsageType.View
+                    UsageType = UsageType.View | ((parentPath != null) ? UsageType.NotRoot : UsageType.Root)
                 };
             }
 

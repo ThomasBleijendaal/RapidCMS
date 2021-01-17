@@ -1,8 +1,8 @@
-﻿@inject ITreeService TreeService
+﻿@inherits DisposableComponent  
 
-@if (!string.IsNullOrWhiteSpace(error))
+@if (!string.IsNullOrWhiteSpace(Error))
 {
-    <li>@error</li>
+    <li>@Error</li>
 }
 else if (UI == null)
 {
@@ -51,35 +51,3 @@ else if (UI != TreeCollectionUI.None)
     <Nodes CollectionAlias=@CollectionAlias ParentPath=@ParentPath />
 }
 
-@code {
-
-    bool NodesVisible = false;
-
-    TreeCollectionUI? UI;
-    string? error;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        try
-        {
-            UI = await TreeService.GetCollectionAsync(CollectionAlias, ParentPath);
-
-            NodesVisible = NodesVisible || (UI?.DefaultOpenEntities ?? false);
-        }
-        catch (UnauthorizedAccessException)
-        {
-            UI = TreeCollectionUI.None;
-        }
-        catch (Exception ex)
-        {
-            UI = null;
-            error = ex.Message;
-        }
-
-        StateHasChanged();
-    }
-
-    [Parameter] public string CollectionAlias { get; set; } = default!;
-
-    [Parameter] public ParentPath? ParentPath { get; set; } = null;
-}

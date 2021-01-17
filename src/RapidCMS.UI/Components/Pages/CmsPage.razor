@@ -1,105 +1,18 @@
-﻿@implements IDisposable
+﻿@inherits DisposableComponent
 
-@attribute [Authorize]
+@layout MainLayout
 
 @page "/"
 @page "/page/{CollectionAlias}"
 @page "/collection/{Action}/{CollectionAlias}"
 @page "/collection/{Action}/{Path}/{CollectionAlias}"
+@page "/node/{Action}/{CollectionAlias}/{VariantAlias}"
 @page "/node/{Action}/{CollectionAlias}/{VariantAlias}/{Id}"
 @page "/node/{Action}/{Path}/{CollectionAlias}/{VariantAlias}/{Id}"
-
-@layout MainLayout
 
 @if (State != null)
 {
     <AuthorizeView>
         <RootSection InitialState="State" IsRoot="true" />
     </AuthorizeView>
-}
-
-@code {
-    private PageStateModel? State;
-
-    [Inject] private INavigationState NavigationState { get; set; } = default!;
-    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
-
-    [Parameter] public string Action { get; set; } = default!;
-    [Parameter] public string CollectionAlias { get; set; } = default!;
-    [Parameter] public string VariantAlias { get; set; } = default!;
-    [Parameter] public string? Path { get; set; } = default!;
-    [Parameter] public string? Id { get; set; } = default!;
-
-    protected override void OnParametersSet()
-    {
-        NavigationState.LocationChanged += OnLocationChanged;
-
-        State = null;
-
-        var pageType = GetPageType();
-
-        if (pageType == PageType.Dashboard)
-        {
-            State = new PageStateModel
-            {
-                PageType = PageType.Dashboard
-            };
-        }
-        else
-        {
-            State = new PageStateModel
-            {
-                PageType = pageType,
-                UsageType = GetUsageType(),
-                CollectionAlias = CollectionAlias,
-                Id = Id,
-                ParentPath = ParentPath.TryParse(Path),
-                VariantAlias = VariantAlias
-            };
-        }
-    }
-
-    private void OnLocationChanged(object? sender, PageStateModel newState)
-    {
-        State = newState;
-        StateHasChanged();
-    }
-
-    public void Dispose()
-    {
-        State = null;
-        NavigationState.LocationChanged -= OnLocationChanged;
-    }
-
-    protected UsageType GetUsageType()
-    {
-        var type = Action switch
-        {
-            Constants.Edit => UsageType.Edit,
-            Constants.New => UsageType.New,
-            Constants.Add => UsageType.Add,
-            Constants.View => UsageType.View | ((GetPageType() == PageType.Collection) ? UsageType.List : UsageType.Node),
-            Constants.Pick => UsageType.Pick,
-            _ => (UsageType)0
-        };
-
-        if (Path == null)
-        {
-            type |= UsageType.Root;
-        }
-        else
-        {
-            type |= UsageType.NotRoot;
-        }
-
-        return type;
-    }
-
-    protected PageType GetPageType()
-    {
-        return NavigationManager.Uri.Contains("/collection/") ? PageType.Collection :
-               NavigationManager.Uri.Contains("/node/") ? PageType.Node :
-               NavigationManager.Uri.Contains("/page/") ? PageType.Page :
-               PageType.Dashboard;
-    }
 }

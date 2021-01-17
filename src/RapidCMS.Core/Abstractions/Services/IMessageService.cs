@@ -5,6 +5,7 @@ using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Abstractions.Services
 {
+    [Obsolete("Replace with IMediator")]
     public interface IMessageService
     {
         void AddMessage(MessageType type, string content);

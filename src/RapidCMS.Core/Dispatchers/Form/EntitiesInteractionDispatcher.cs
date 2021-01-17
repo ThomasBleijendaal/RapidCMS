@@ -153,13 +153,15 @@ namespace RapidCMS.Core.Dispatchers.Form
                 case CrudType.Return:
                     if (pageState.PopState() == null)
                     {
+                        var parentPath = request.ListContext.Parent?.GetParentPath();
                         pageState.ReplaceState(new PageStateModel
                         {
                             PageType = PageType.Collection,
-                            UsageType = collection.ListEditor == null ? UsageType.View : UsageType.Edit,
+                            UsageType = (collection.ListEditor == null ? UsageType.View : UsageType.Edit)
+                             | ((parentPath != null) ? UsageType.NotRoot : UsageType.Root),
 
                             CollectionAlias = request.ListContext.CollectionAlias,
-                            ParentPath = request.ListContext.Parent?.GetParentPath(),
+                            ParentPath = parentPath,
                             Related = request.Related
                         });
                     }
@@ -168,21 +170,22 @@ namespace RapidCMS.Core.Dispatchers.Form
                 case CrudType.Up:
                     if (pageState.PopState() == null)
                     {
-                        var (newParentPath, parentCollectionAlias, parentId) = ParentPath.RemoveLevel(request.ListContext.Parent?.GetParentPath());
+                        var (newParentPath, repositoryAlias, parentId) = ParentPath.RemoveLevel(request.ListContext.Parent?.GetParentPath());
 
-                        if (parentCollectionAlias == null)
+                        if (repositoryAlias == null)
                         {
                             break;
                         }
 
-                        var parentCollection = _collectionResolver.ResolveSetup(parentCollectionAlias);
+                        var parentCollection = _collectionResolver.ResolveSetup(repositoryAlias);
 
                         pageState.ReplaceState(new PageStateModel
                         {
                             PageType = PageType.Node,
-                            UsageType = parentCollection.NodeEditor == null ? UsageType.View : UsageType.Edit,
+                            UsageType = (parentCollection.NodeEditor == null ? UsageType.View : UsageType.Edit)
+                             | ((newParentPath != null) ? UsageType.NotRoot : UsageType.Root),
 
-                            CollectionAlias = parentCollectionAlias,
+                            CollectionAlias = parentCollection.Alias,
                             ParentPath = newParentPath,
                             VariantAlias = collection.EntityVariant.Alias,
                             Id = parentId

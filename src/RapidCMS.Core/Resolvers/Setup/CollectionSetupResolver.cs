@@ -74,6 +74,10 @@ namespace RapidCMS.Core.Resolvers.Setup
             {
                 return collectionSetup;
             }
+            else if (_cachedCollectionMap.FirstOrDefault(x => x.Value.RepositoryAlias == alias).Value is CollectionSetup collection)
+            {
+                return collection;
+            }
 
             if (_collectionMap.TryGetValue(alias, out var collectionConfig))
             {
