@@ -59,13 +59,27 @@
     {
         if (RelationDataCollection != null)
         {
-            RelationDataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
+            RelationDataCollection.OnDataChange += UpdateOptionsAsync;
 
             await RelationDataCollection.SetEntityAsync(EditContext, Parent);
             await UpdateOptionsAsync();
 
             SelectedOptions = await RelationDataCollection.GetRelatedElementsAsync();
         }
+    }
+
+    private async void UpdateOptionsAsync(object? sender, EventArgs args)
+    {
+        if (RelationDataCollection == null)
+        {
+            return;
+        }
+
+        await InvokeAsync(async () =>
+        {
+            await UpdateOptionsAsync();
+            StateHasChanged();
+        });
     }
 
     private async Task UpdateOptionsAsync()
@@ -75,11 +89,7 @@
             return;
         }
 
-        await InvokeAsync(async () =>
-        {
-            Options = await RelationDataCollection.GetAvailableElementsAsync();
-            StateHasChanged();
-        });
+        Options = await RelationDataCollection.GetAvailableElementsAsync();
     }
 
     private async Task OnChangeAsync(ChangeEventArgs e, object value)
@@ -96,5 +106,15 @@
         }
 
         EditContext.NotifyPropertyChanged(Property);
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+
+        if (RelationDataCollection != null)
+        {
+            RelationDataCollection.OnDataChange -= UpdateOptionsAsync;
+        }
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Config;
-using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
@@ -74,6 +73,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             {
                 return collectionSetup;
             }
+            // TODO: this can be buggy when multiple collection use the same repo
             else if (_cachedCollectionMap.FirstOrDefault(x => x.Value.RepositoryAlias == alias).Value is CollectionSetup collection)
             {
                 return collection;
@@ -114,6 +114,10 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             var cacheable = true;
 
+            if (!string.IsNullOrWhiteSpace(config.ParentAlias) && _collectionMap.TryGetValue(config.ParentAlias, out var collectionConfig))
+            {
+                collection.Parent = new TreeElementSetup(collectionConfig.Alias, PageType.Collection); // TODO: enum
+            }
             collection.Collections = _treeElementResolver.ResolveSetup(config.CollectionsAndPages, collection).CheckIfCachable(ref cacheable).ToList();
 
             collection.EntityVariant = _entityVariantResolver.ResolveSetup(config.EntityVariant, collection).CheckIfCachable(ref cacheable);

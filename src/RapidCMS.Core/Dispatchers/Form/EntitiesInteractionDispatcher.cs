@@ -189,7 +189,11 @@ namespace RapidCMS.Core.Dispatchers.Form
                             break;
                         }
 
-                        var parentCollection = _collectionResolver.ResolveSetup(repositoryAlias);
+                        var parentCollection = collection.Parent != null && collection.Parent.Type == PageType.Collection ? _collectionResolver.ResolveSetup(collection.Parent.Alias) : default;
+                        if (parentCollection == null)
+                        {
+                            throw new InvalidOperationException("Cannot go Up on collection that is root.");
+                        }
 
                         pageState.ReplaceState(new PageStateModel
                         {

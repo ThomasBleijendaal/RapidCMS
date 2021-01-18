@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Factories;
+using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.State;
@@ -11,24 +12,23 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.State;
 using RapidCMS.Core.Models.UI;
 
 namespace RapidCMS.UI.Components.Sections
 {
-    public abstract partial class BaseRootSection : ComponentBase, IDisposable
+    public abstract partial class BaseRootSection : DisposableComponent
     {
-        private IDisposable? _disposableHandle;
-
         [Inject] private IExceptionService ExceptionService { get; set; } = default!;
         [Inject] protected IPageState PageState { get; set; } = default!;
+        [Inject] protected IMediator Mediator { get; set; } = default!;
         [Inject] protected IMessageService MessageService { get; set; } = default!;
 
         [Inject] protected IPresentationService PresentationService { get; set; } = default!;
         [Inject] protected IInteractionService InteractionService { get; set; } = default!;
         [Inject] protected IUIResolverFactory UIResolverFactory { get; set; } = default!;
-        [Inject] protected IRepositoryEventService RepositoryEventService { get; set; } = default!;
 
         [Parameter] public bool IsRoot { get; set; }
         [Parameter] public PageStateModel InitialState { get; set; } = default!;
@@ -65,6 +65,11 @@ namespace RapidCMS.UI.Components.Sections
                 StateIsChanging = false;
                 StateHasChanged();
             }
+        }
+
+        protected override void OnInitialized()
+        {
+            DisposeWhenDisposing(Mediator.RegisterCallback<CollectionRepositoryEventArgs>(OnRepositoryActionAsync, default));
         }
 
         protected override async Task OnParametersSetAsync()
@@ -112,28 +117,20 @@ namespace RapidCMS.UI.Components.Sections
             {
                 await LoadPageDataAsync();
             }
-
-            SetupOnNodesUpdate();
         }
 
-        private void SetupOnNodesUpdate()
+        private async Task OnRepositoryActionAsync(object sender, CollectionRepositoryEventArgs args)
         {
-            _disposableHandle?.Dispose();
-
-            if (CurrentState == null || CurrentState.CollectionAlias == null || !CurrentState.UsageType.HasFlag(UsageType.View))
-            { 
+            if (CurrentState == null || 
+                CurrentState.CollectionAlias == null || 
+                !CurrentState.UsageType.HasFlag(UsageType.View) || 
+                args.CollectionAlias != CurrentState.CollectionAlias ||
+                StateIsChanging)
+            {
                 return;
             }
 
-            _disposableHandle = RepositoryEventService.SubscribeToRepositoryUpdates(CurrentState.CollectionAlias, async () =>
-            {
-                if (!StateIsChanging)
-                {
-                    await InvokeAsync(() => LoadDataAsync());
-                }
-                
-                SetupOnNodesUpdate();
-            });
+            await InvokeAsync(async () => await LoadDataAsync());
         }
 
         protected void HandleException(Exception ex)
@@ -180,11 +177,6 @@ namespace RapidCMS.UI.Components.Sections
         protected override bool ShouldRender()
         {
             return !StateIsChanging;
-        }
-
-        public void Dispose()
-        {
-            _disposableHandle?.Dispose();
         }
     }
 }

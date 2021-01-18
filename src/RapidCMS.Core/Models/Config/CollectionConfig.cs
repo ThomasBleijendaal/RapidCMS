@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Repositories;
@@ -20,9 +18,10 @@ namespace RapidCMS.Core.Models.Config
     {
         protected List<ICollectionConfig> _collections = new List<ICollectionConfig>();
 
-        internal CollectionConfig(string alias, string? icon, string? color, string name, Type repositoryType, EntityVariantConfig entityVariant)
+        internal CollectionConfig(string alias, string? parentAlias, string? icon, string? color, string name, Type repositoryType, EntityVariantConfig entityVariant)
         {
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
+            ParentAlias = parentAlias;
             Icon = icon;
             Color = color;
             Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -36,7 +35,9 @@ namespace RapidCMS.Core.Models.Config
         internal string? Color { get; set; }
         internal string Name { get; set; }
 
-        internal Type RepositoryType { get; set; }
+        public Type RepositoryType { get; set; }
+
+        public string? ParentAlias { get; set; }
 
         public IEnumerable<ITreeElementConfig> CollectionsAndPages
         {
@@ -67,6 +68,7 @@ namespace RapidCMS.Core.Models.Config
                 return referencedInlineCollections
                     .Select(collection => new CollectionConfig(
                         collection.CollectionAlias,
+                        Alias,
                         default,
                         default,
                         $"{Name}-{collection.RepositoryType!.Name}",
@@ -95,8 +97,8 @@ namespace RapidCMS.Core.Models.Config
     internal class CollectionConfig<TEntity> : CollectionConfig, ICollectionConfig<TEntity>
         where TEntity : IEntity
     {
-        internal CollectionConfig(string alias, string? icon, string? color, string name, Type repositoryType, EntityVariantConfig entityVariant)
-            : base(alias, icon, color, name, repositoryType, entityVariant)
+        internal CollectionConfig(string alias, string? parentAlias, string? icon, string? color, string name, Type repositoryType, EntityVariantConfig entityVariant)
+            : base(alias, parentAlias, icon, color, name, repositoryType, entityVariant)
         {
         }
 
@@ -226,6 +228,7 @@ namespace RapidCMS.Core.Models.Config
 
             var configReceiver = new CollectionConfig<TSubEntity>(
                 alias,
+                Alias,
                 icon,
                 color,
                 name,
@@ -241,7 +244,7 @@ namespace RapidCMS.Core.Models.Config
 
         public void AddSelfAsRecursiveCollection()
         {
-            var configReceiver = new CollectionConfig<TEntity>(Alias, Icon, Color, Name, RepositoryType, EntityVariant)
+            var configReceiver = new CollectionConfig<TEntity>(Alias, Alias, Icon, Color, Name, RepositoryType, EntityVariant)
             {
                 Recursive = true
             };

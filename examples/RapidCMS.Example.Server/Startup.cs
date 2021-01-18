@@ -9,8 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Server.Components;
 using RapidCMS.Example.Shared.AuthorizationHandlers;
@@ -50,7 +48,7 @@ namespace RapidCMS.Example.Server
             services.AddSingleton<BaseRepository<TagGroup>, JsonRepository<TagGroup>>();
             services.AddSingleton<BaseRepository<Tag>, JsonRepository<Tag>>();
             services.AddSingleton<BaseRepository<EntityVariantBase>, InMemoryRepository<EntityVariantBase>>();
-            services.AddSingleton<BaseRepository<Counter>, CounterRepository>();
+            services.AddScoped<BaseRepository<Counter>, CounterRepository>();
 
             services.AddSingleton<BaseMappedRepository<MappedEntity, DatabaseEntity>, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
             services.AddSingleton<IConverter<MappedEntity, DatabaseEntity>, Mapper>();

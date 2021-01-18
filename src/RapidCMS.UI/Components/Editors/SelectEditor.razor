@@ -56,14 +56,14 @@
     {
         if (DataCollection != null)
         {
-            DataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
+            DataCollection.OnDataChange += UpdateOptionsAsync;
 
             await DataCollection.SetEntityAsync(EditContext, Parent);
             await UpdateOptionsAsync();
         }
     }
 
-    private async Task UpdateOptionsAsync()
+    private async void UpdateOptionsAsync(object? sender, EventArgs args)
     {
         if (DataCollection == null)
         {
@@ -75,5 +75,25 @@
             Options = await DataCollection.GetAvailableElementsAsync();
             StateHasChanged();
         });
+    }
+
+    private async Task UpdateOptionsAsync()
+    {
+        if (DataCollection == null)
+        {
+            return;
+        }
+
+        Options = await DataCollection.GetAvailableElementsAsync();
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+
+        if (DataCollection != null)
+        {
+            DataCollection.OnDataChange -= UpdateOptionsAsync;
+        }
     }
 }
