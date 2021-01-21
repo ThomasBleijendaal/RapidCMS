@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Mediators;
 
 namespace RapidCMS.Repositories
 {
@@ -14,7 +15,7 @@ namespace RapidCMS.Repositories
     public class JsonRepository<TEntity> : InMemoryRepository<TEntity>
         where TEntity : class, IEntity, ICloneable, new()
     {
-        public JsonRepository(IServiceProvider serviceProvider) : base(serviceProvider)
+        public JsonRepository(IMediator mediator, IServiceProvider serviceProvider) : base(mediator, serviceProvider)
         {
             try
             {
@@ -72,8 +73,6 @@ namespace RapidCMS.Repositories
                 }
             }
             catch { }
-
-            ChangeToken.RegisterChangeCallback(UpdateJson, default);
         }
     }
 }

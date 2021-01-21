@@ -21,10 +21,8 @@ namespace RapidCMS.UI.Components.Sections
 {
     public abstract partial class BaseRootSection : DisposableComponent
     {
-        [Inject] private IExceptionService ExceptionService { get; set; } = default!;
         [Inject] protected IPageState PageState { get; set; } = default!;
         [Inject] protected IMediator Mediator { get; set; } = default!;
-        [Inject] protected IMessageService MessageService { get; set; } = default!;
 
         [Inject] protected IPresentationService PresentationService { get; set; } = default!;
         [Inject] protected IInteractionService InteractionService { get; set; } = default!;
@@ -58,7 +56,7 @@ namespace RapidCMS.UI.Components.Sections
             }
             catch (Exception ex)
             {
-                HandleException(ex);
+                Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
             }
             finally
             {
@@ -69,7 +67,8 @@ namespace RapidCMS.UI.Components.Sections
 
         protected override void OnInitialized()
         {
-            DisposeWhenDisposing(Mediator.RegisterCallback<CollectionRepositoryEventArgs>(OnRepositoryActionAsync, default));
+            DisposeWhenDisposing(Mediator.RegisterCallback<CollectionRepositoryEventArgs>(OnRepositoryActionAsync));
+            DisposeWhenDisposing(Mediator.RegisterCallback<ExceptionEventArgs>(OnExceptionAsync));
         }
 
         protected override async Task OnParametersSetAsync()
@@ -95,7 +94,7 @@ namespace RapidCMS.UI.Components.Sections
             }
             catch (Exception ex)
             {
-                HandleException(ex);
+                Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
             }
         }
 
@@ -133,22 +132,23 @@ namespace RapidCMS.UI.Components.Sections
             await InvokeAsync(async () => await LoadDataAsync());
         }
 
-        protected void HandleException(Exception ex)
+        private async Task OnExceptionAsync(object sender, ExceptionEventArgs args)
         {
-            if (ex is UnauthorizedAccessException)
+            await InvokeAsync(() =>
             {
-                PageState.ResetState(new PageStateModel { PageType = PageType.Unauthorized });
-            }
-            else if (ex is InvalidEntityException)
-            {
-                MessageService.AddMessage(MessageType.Error, "Failed to perform action, Entity is in invalid state.");
-            }
-            else
-            {
-                ExceptionService.StoreException(ex);
-
-                PageState.ResetState(new PageStateModel { PageType = PageType.Error });
-            }
+                if (args.Exception is UnauthorizedAccessException)
+                {
+                    PageState.ResetState(new PageStateModel { PageType = PageType.Unauthorized });
+                }
+                else if (args.Exception is InvalidEntityException)
+                {
+                    Mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Error, "Failed to perform action, Entity is in invalid state."));
+                }
+                else
+                {
+                    PageState.ResetState(new PageStateModel { PageType = PageType.Error });
+                }
+            });
         }
 
         protected RenderFragment RenderType(ITypeRegistration section)

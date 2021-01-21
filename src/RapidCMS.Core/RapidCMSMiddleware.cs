@@ -31,12 +31,9 @@ using RapidCMS.Core.Resolvers.Language;
 using RapidCMS.Core.Resolvers.Repositories;
 using RapidCMS.Core.Resolvers.Setup;
 using RapidCMS.Core.Services.Concurrency;
-using RapidCMS.Core.Services.Exceptions;
-using RapidCMS.Core.Services.Messages;
 using RapidCMS.Core.Services.Parent;
 using RapidCMS.Core.Services.Persistence;
 using RapidCMS.Core.Services.Presentation;
-using RapidCMS.Core.Services.SidePane;
 using RapidCMS.Core.Services.State;
 using RapidCMS.Core.Services.Tree;
 
@@ -98,11 +95,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IInteractionService, InteractionService>();
 
             services.AddTransient<IConcurrencyService, ConcurrencyService>();
-            services.AddSingleton<IExceptionService, ExceptionService>();
-            services.AddScoped<IMessageService, MessageService>();
             services.AddTransient<IPageState, PageState>();
             services.AddTransient<IParentService, ParentService>();
-            services.AddScoped<ISidePaneService, SidePaneService>();
             services.AddTransient<ITreeService, TreeService>();
 
             services.AddScoped<IMediator, Mediator>();

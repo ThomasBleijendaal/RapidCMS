@@ -1,26 +1,26 @@
-﻿@inject IExceptionService ExceptionService
+﻿@inject IMediator Mediator
 @inject ICms Cms
 
 <div class="content">
     <p><strong>Error</strong></p>
     <p>An errror occured when your request was made.</p>
-    <p><a href="/" class="btn btn-primary">Return to home and start again.</a></p>
+    <p><a href="javascript:window.location.href = '/'" class="btn btn-primary">Return to home and start again.</a></p>
 </div>
 
 @{
     if (Cms.IsDevelopment)
     {
-        var ex = ExceptionService.GetLatestException();
+        var exEvent = Mediator.GetLatestEventArgs<ExceptionEventArgs>();
 
-        if (ex != null)
+        if (exEvent?.Exception != null)
         {
             <div class="content">
-                <p><code>@ex.Message</code></p>
+                <p><code>@exEvent.Exception.Message</code></p>
 
-                <pre>@ex.StackTrace</pre>
+                <pre>@exEvent.Exception.StackTrace</pre>
 
                 @{
-                    var innerException = ex.InnerException;
+                    var innerException = exEvent.Exception.InnerException;
 
                     while (innerException != null)
                     {
@@ -29,6 +29,12 @@
                         innerException = innerException.InnerException;
                     }
                 }
+            </div>
+        }
+        else
+        {
+            <div class="content">
+                <p>No additional exception details are available.</p>
             </div>
         }
     }

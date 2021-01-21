@@ -1,23 +1,22 @@
 ﻿using System.Threading.Tasks;
-using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.EventArgs.Mediators;
 
 namespace RapidCMS.Core.Handlers
 {
     internal class OpenPaneButtonActionHandler<TSidePane> : DefaultButtonActionHandler
     {
-        private readonly ISidePaneService _sidePaneService;
+        private readonly IMediator _mediator;
 
-        public OpenPaneButtonActionHandler(ISidePaneService sidePaneService)
+        public OpenPaneButtonActionHandler(IMediator mediator)
         {
-            _sidePaneService = sidePaneService;
+            _mediator = mediator;
         }
 
-        public override Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context)
-        {
-            return _sidePaneService.HandlePaneAsync(typeof(TSidePane), editContext, context, button.DefaultCrudType);
-        }
+        public override Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context) 
+            => _mediator.NotifyEventAsync(this, new PaneRequestEventArgs(typeof(TSidePane), editContext, context));
     }
 }

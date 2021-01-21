@@ -56,9 +56,9 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
-        public IListViewConfig<TEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null, CrudType? defaultCrudType = null)
+        public IListViewConfig<TEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null)
         {
-            var button = new PaneButtonConfig(paneType, defaultCrudType)
+            var button = new PaneButtonConfig(paneType)
             {
                 Icon = icon,
                 Label = label

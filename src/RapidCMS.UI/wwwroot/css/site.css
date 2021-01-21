@@ -62,17 +62,22 @@ thead td:hover .icon {
 }
 
     .main .messages {
-        min-width: 300px;
-        max-width: 700px;
-        margin: 0px auto;
-        position: relative;
+        width: 450px;
+        position: fixed;
+        top: 4.9rem;
+        right: 1.3rem;
+        z-index: 100000;
     }
 
         .main .messages .message-list {
-            position: absolute;
-            top: 0;
             width: 100%;
         }
+
+            .main .messages .message-list div {
+                border-radius: 0;
+                border: 0px;
+                box-shadow: 0 25.6px 57.6px 0 rgba(0,0,0,.22),0 4.8px 14.4px 0 rgba(0,0,0,.18);
+            }
 
 .sidebar {
     width: 100px;
@@ -311,9 +316,9 @@ thead td:hover .icon {
         border-top: 1px dashed #bebbb8;
     }
 
-    .content .content {
-        box-shadow: 0 3.2px 7.2px 0 rgba(0,0,0,.132),0 .6px 1.8px 0 rgba(0,0,0,.108);
-    }
+.content .content {
+    box-shadow: 0 3.2px 7.2px 0 rgba(0,0,0,.132),0 .6px 1.8px 0 rgba(0,0,0,.108);
+}
 
 .content .nested-buttons {
     margin: 0 0 2rem 0;
@@ -392,6 +397,7 @@ a.current-page {
         color: white;
         border-color: #0078d4;
     }
+
     .btn.btn-dark {
         background: #4a88ba;
         color: white;
@@ -482,9 +488,9 @@ pre.col-form-label {
         max-height: 300px;
     }
 
-    .form-text.text-muted {
-        margin-top: -.25rem;
-    }
+.form-text.text-muted {
+    margin-top: -.25rem;
+}
 
 table thead td {
     border-top: 0 !important;

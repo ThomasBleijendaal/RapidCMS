@@ -24,7 +24,7 @@ namespace RapidCMS.Core.Mediators
         public void RegisterConversion(IMediator mediator)
         {
             _mediator = mediator;
-            _eventHander = mediator.RegisterCallback<RepositoryEventArgs>(ConvertRepositoryEventAsync, default);
+            _eventHander = mediator.RegisterCallback<RepositoryEventArgs>(ConvertRepositoryEventAsync);
         }
 
         private Task ConvertRepositoryEventAsync(object sender, RepositoryEventArgs args)

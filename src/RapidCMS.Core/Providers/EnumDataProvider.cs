@@ -13,7 +13,9 @@ namespace RapidCMS.Core.Providers
     public class EnumDataProvider<TEnum> : IDataCollection
         where TEnum : Enum
     {
+#pragma warning disable CS0067
         public event EventHandler? OnDataChange;
+#pragma warning restore CS0067
 
         public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
         {

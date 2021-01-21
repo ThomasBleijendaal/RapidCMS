@@ -1,11 +1,12 @@
 ﻿using System;
+using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Enums;
 
-namespace RapidCMS.Core.Models.Data
+namespace RapidCMS.Core.Models.EventArgs.Mediators
 {
-    public class Message
+    public class MessageEventArgs : IMediatorEventArgs
     {
-        public Message(MessageType type, string content)
+        public MessageEventArgs(MessageType type, string content)
         {
             Type = type;
             Content = content ?? throw new ArgumentNullException(nameof(content));

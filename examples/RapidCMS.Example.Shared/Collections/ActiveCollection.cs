@@ -29,7 +29,7 @@ namespace RapidCMS.Example.Shared.Collections
         private readonly IMediator _mediator;
         private Timer _timer;
 
-        public CounterRepository(IMediator mediator, IServiceProvider serviceProvider) : base(serviceProvider)
+        public CounterRepository(IMediator mediator, IServiceProvider serviceProvider) : base(mediator, serviceProvider)
         {
             GetListForParent(default).Add(new Counter { Id = "1", CurrentCount = 0 });
 

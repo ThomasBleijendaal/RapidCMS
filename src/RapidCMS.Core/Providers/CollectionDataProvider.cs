@@ -36,7 +36,6 @@ namespace RapidCMS.Core.Providers
         public CollectionDataProvider(
             IRepository repository,
             RepositoryRelationSetup setup,
-
             IPropertyMetadata property,
             IMediator mediator,
             IMemoryCache memoryCache)
@@ -47,7 +46,7 @@ namespace RapidCMS.Core.Providers
             _mediator = mediator;
             _memoryCache = memoryCache;
 
-            _eventHandle = _mediator.RegisterCallback<CollectionRepositoryEventArgs>(OnRepositoryChangeAsync, default);
+            _eventHandle = _mediator.RegisterCallback<CollectionRepositoryEventArgs>(OnRepositoryChangeAsync);
         }
 
         public event EventHandler? OnDataChange;

@@ -30,7 +30,7 @@ namespace RapidCMS.UI.Components.Pages
         {
             base.OnInitialized();
 
-            DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(LocationChangedAsync, null));
+            DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(LocationChangedAsync));
         }
 
         protected override void OnParametersSet()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Mediators;
 
 namespace RapidCMS.Repositories
 {
@@ -15,7 +16,8 @@ namespace RapidCMS.Repositories
 
         public LocalStorageRepository(
             ILocalStorageService localStorage,
-            IServiceProvider serviceProvider) : base(serviceProvider)
+            IMediator mediator,
+            IServiceProvider serviceProvider) : base(mediator, serviceProvider)
         {
             _localStorage = localStorage;
 
@@ -47,8 +49,6 @@ namespace RapidCMS.Repositories
                 await _localStorage.SetItemAsync($"{GetType().FullName}-relation", _relations);
             }
             catch { }
-
-            ChangeToken.RegisterChangeCallback(UpdateStorageAsync, default);
         }
 
         public override async Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query)

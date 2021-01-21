@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Mediators;
-using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Mediators
 {
@@ -30,8 +29,16 @@ namespace RapidCMS.Core.Mediators
             OnEvent?.Invoke(sender, @event);
         }
 
-        public IDisposable RegisterCallback<TMediatorEventArgs>(Func<object, TMediatorEventArgs, Task> callback, ParentPath? filter) where TMediatorEventArgs : IMediatorEventArgs
-            => new MediatorEventFilter<TMediatorEventArgs>(this, callback, filter?.ToPathString());
+        public Task<TResponse> NotifyEventAsync<TResponse>(object sender, IMediatorRequestEventArgs<TResponse> @event)
+        {
+            var handler = new MediatorEventHandler<TResponse>(this);
+
+            return handler.HandleEventAsync(@event);
+        }
+
+        public IDisposable RegisterCallback<TMediatorEventArgs>(Func<object, TMediatorEventArgs, Task> callback)
+                where TMediatorEventArgs : IMediatorEventArgs
+            => new MediatorEventFilter<TMediatorEventArgs>(this, callback);
 
         public TMediatorEventArgs? GetLatestEventArgs<TMediatorEventArgs>() where TMediatorEventArgs : IMediatorEventArgs
             => _cache.TryGetValue(typeof(TMediatorEventArgs), out var args) ? (TMediatorEventArgs)args : default;

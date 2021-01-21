@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
-using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Abstractions.Mediators;
+using RapidCMS.Core.Enums;
+using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Repositories
@@ -26,10 +28,12 @@ namespace RapidCMS.Repositories
         where TEntity : class, IEntity, ICloneable, new()
     {
         protected Dictionary<string, List<TEntity>> _data = new Dictionary<string, List<TEntity>>();
+        private readonly IMediator _mediator;
         private readonly IConverter<TCmsEntity, TEntity> _converter;
 
-        public MappedInMemoryRepository(IConverter<TCmsEntity, TEntity> converter)
+        public MappedInMemoryRepository(IMediator mediator, IConverter<TCmsEntity, TEntity> converter)
         {
+            _mediator = mediator;
             _converter = converter;
         }
 
@@ -48,6 +52,8 @@ namespace RapidCMS.Repositories
         public override Task DeleteAsync(string id, IParent? parent)
         {
             GetListForParent(parent).RemoveAll(x => x.Id == id);
+
+            _mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Success, "Entity deleted."));
 
             return Task.CompletedTask;
         }
@@ -96,6 +102,8 @@ namespace RapidCMS.Repositories
 
             GetListForParent(editContext.Parent).Add(entity);
 
+            _mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Success, "Entity inserted."));
+
             return Task.FromResult( _converter.Convert((TEntity)entity.Clone()))!;
         }
 
@@ -114,6 +122,8 @@ namespace RapidCMS.Repositories
 
             list.Insert(index, newEntity);
             list.RemoveAt(index + 1);
+
+            _mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Success, "Entity updated."));
 
             return Task.CompletedTask;
         }

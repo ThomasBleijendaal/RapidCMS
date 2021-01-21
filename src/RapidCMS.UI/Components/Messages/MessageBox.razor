@@ -1,6 +1,8 @@
-﻿<div class="messages" @onclick="RemoveMessages">
+﻿@inherits DisposableComponent
+
+<div class="messages" @onclick="RemoveMessages">
     <div class="message-list">
-        @foreach (var message in MessageService.Messages)
+        @foreach (var message in Messages)
         {
             <div class="@CssHelper.GetMessageClass(message.Type)" role="alert">
                 @message.Content
@@ -10,24 +12,36 @@
 </div>
 
 @code {
-    [Inject] private IMessageService MessageService { get; set; } = default!;
+    private readonly List<MessageEventArgs> Messages = new List<MessageEventArgs>();
+
+    [Inject] private IMediator Mediator { get; set; } = default!;
 
     protected override void OnInitialized()
     {
-        MessageService.OnNewMessage += async (s, a) =>
+        DisposeWhenDisposing(Mediator.RegisterCallback<MessageEventArgs>(OnMessageAsync));
+    }
+
+    private async Task OnMessageAsync(object sender, MessageEventArgs args)
+    {
+        await InvokeAsync(async () =>
         {
+            Messages.Add(args);
+
             StateHasChanged();
 
-            if (MessageService.Messages.Any())
+            await Task.Delay(3000);
+
+            if (Messages.Contains(args))
             {
-                await Task.Delay(3000);
-                RemoveMessages();
+                Messages.Remove(args);
+
+                StateHasChanged();
             }
-        };
+        });
     }
 
     void RemoveMessages()
     {
-        MessageService.ClearMessages();
+        Messages.Clear();
     }
 }

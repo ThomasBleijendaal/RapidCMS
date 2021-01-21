@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Abstractions.Mediators
 {
@@ -8,9 +7,11 @@ namespace RapidCMS.Core.Abstractions.Mediators
     {
         void NotifyEvent(object sender, IMediatorEventArgs @event);
 
+        Task<TResponse> NotifyEventAsync<TResponse>(object sender, IMediatorRequestEventArgs<TResponse> @event);
+
         event EventHandler<IMediatorEventArgs> OnEvent;
 
-        IDisposable RegisterCallback<TMediatorEventArgs>(Func<object, TMediatorEventArgs, Task> callback, ParentPath? filter)
+        IDisposable RegisterCallback<TMediatorEventArgs>(Func<object, TMediatorEventArgs, Task> callback)
             where TMediatorEventArgs : IMediatorEventArgs;
 
         TMediatorEventArgs? GetLatestEventArgs<TMediatorEventArgs>()

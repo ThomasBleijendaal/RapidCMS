@@ -8,6 +8,7 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs;
+using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.UI;
@@ -210,7 +211,7 @@ namespace RapidCMS.UI.Components.Sections
             }
             catch (Exception ex)
             {
-                HandleException(ex);
+                Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
             }
         }
 
@@ -237,7 +238,7 @@ namespace RapidCMS.UI.Components.Sections
             }
             catch (Exception ex)
             {
-                HandleException(ex);
+                Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
             }
         }
 
@@ -277,7 +278,7 @@ namespace RapidCMS.UI.Components.Sections
             }
             catch (Exception ex)
             {
-                HandleException(ex);
+                Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
             }
         }
 

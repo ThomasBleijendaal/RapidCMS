@@ -1,6 +1,5 @@
 ﻿using System;
 using RapidCMS.Core.Abstractions.Mediators;
-using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Core.Models.EventArgs.Mediators
@@ -21,7 +20,5 @@ namespace RapidCMS.Core.Models.EventArgs.Mediators
 
         public PageStateModel State { get; set; }
         public bool UpdateUrl { get; set; }
-
-        ParentPath? IMediatorEventArgs.ParentPath => State.ParentPath;
     }
 }
