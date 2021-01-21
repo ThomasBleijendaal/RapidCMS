@@ -38,6 +38,8 @@ namespace RapidCMS.Repositories
             {
                 _relations = relationStorage;
             }
+
+            await UpdateStorageAsync();
         }
 
         private async Task UpdateStorageAsync()

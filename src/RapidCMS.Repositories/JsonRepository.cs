@@ -50,6 +50,8 @@ namespace RapidCMS.Repositories
                 }
                 catch { }
             }
+
+            UpdateJson();
         }
 
         private static string Folder()

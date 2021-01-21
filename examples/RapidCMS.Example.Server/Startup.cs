@@ -42,6 +42,7 @@ namespace RapidCMS.Example.Server
             // it's not required to add your repositories under the base repository
             // but this allows the Server and the WebAssembly examples to share the collection configuration
             services.AddScoped<BaseRepository<Person>, JsonRepository<Person>>();
+            services.AddScoped<BaseRepository<Details>, JsonRepository<Details>>();
             services.AddScoped<BaseRepository<ConventionalPerson>, JsonRepository<ConventionalPerson>>();
             services.AddScoped<BaseRepository<Country>, JsonRepository<Country>>();
             services.AddScoped<BaseRepository<User>, JsonRepository<User>>();

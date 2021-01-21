@@ -57,10 +57,17 @@ namespace RapidCMS.Core.Services.Tree
 
             var parent = await _parentService.GetParentAsync(parentPath);
 
-            var testEntity = await _repositoryResolver.GetRepository(collection).NewAsync(parent, collection.EntityVariant.Type);
+            var isList = collection.UsageType.HasFlag(UsageType.List);
+            var isDetails = collection.UsageType.HasFlag(UsageType.Details) && parent?.Entity != null;
 
-            var canEdit = collection.ListEditor != null && await _authService.IsUserAuthorizedAsync(Operations.Update, testEntity);
-            var canView = collection.ListView != null && await _authService.IsUserAuthorizedAsync(Operations.Read, testEntity);
+            var entity = isList
+                ? await _repositoryResolver.GetRepository(collection).NewAsync(parent, collection.EntityVariant.Type)
+                : await _repositoryResolver.GetRepository(collection).GetByIdAsync(parent!.Entity.Id!, parent)
+                    ?? throw new InvalidOperationException($"Failed to get detail entity for given alias ({alias}) -- a detail entity should always exist.");
+
+            var canEdit = (isList && await _authService.IsUserAuthorizedAsync(Operations.Update, entity)) || 
+                (isDetails && await _authService.IsUserAuthorizedAsync(Operations.Update, parent!.Entity));
+            var canView = isList && await _authService.IsUserAuthorizedAsync(Operations.Read, entity);
 
             if (!canEdit && !canView)
             {
@@ -71,20 +78,38 @@ namespace RapidCMS.Core.Services.Tree
             {
                 EntitiesVisible = collection.TreeView?.EntityVisibility == EntityVisibilty.Visible,
                 RootVisible = collection.TreeView?.RootVisibility == CollectionRootVisibility.Visible,
-                Icon = collection.Icon ?? "list",
+                Icon = collection.Icon ?? "Database",
                 Color = collection.Color,
                 DefaultOpenEntities = collection.TreeView?.DefaultOpenEntities ?? false
             };
 
             if (canEdit)
             {
-                tree.State = new PageStateModel
+                if (isList)
                 {
-                    CollectionAlias = collection.Alias,
-                    PageType = PageType.Collection,
-                    ParentPath = parentPath,
-                    UsageType = UsageType.Edit | ((parentPath != null) ? UsageType.NotRoot : UsageType.Root)
-                };
+                    tree.State = new PageStateModel
+                    {
+                        CollectionAlias = collection.Alias,
+                        PageType = PageType.Collection,
+                        ParentPath = parentPath,
+                        UsageType = UsageType.Edit | ((parentPath != null) ? UsageType.NotRoot : UsageType.Root)
+                    };
+                }
+                else if (isDetails)
+                {
+                    var entityVariant = collection.GetEntityVariant(entity);
+
+                    tree.State = new PageStateModel
+                    {
+                        CollectionAlias = collection.Alias,
+                        Id = parent!.Entity.Id,
+                        PageType = PageType.Node,
+                        ParentPath = parentPath,
+                        UsageType = UsageType.Edit,
+                        VariantAlias = entityVariant.Alias
+                    };
+                }
+                
             }
             else if (canView)
             {

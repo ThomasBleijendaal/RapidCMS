@@ -172,6 +172,18 @@ namespace RapidCMS.Example.Shared.Collections
                     });
 
                 collection.AddSelfAsRecursiveCollection();
+
+                collection.AddDetailPage<Details, BaseRepository<Details>>("person-details", "Settings", "Red20", "Details", config =>
+                {
+                    // TODO: comment about creating new details
+                    config.AddDefaultButton(DefaultButtonType.SaveExisting, "Save");
+
+                    config.AddSection(section =>
+                    {
+                        section.AddField(x => x.Title);
+                        section.AddField(x => x.History);
+                    });
+                });
             });
         }
     }

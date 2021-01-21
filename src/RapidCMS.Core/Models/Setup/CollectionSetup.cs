@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Core.Models.Setup
@@ -32,6 +33,8 @@ namespace RapidCMS.Core.Models.Setup
         public string Alias { get; private set; }
         public string RepositoryAlias { get; private set; }
         public bool Recursive { get; private set; }
+
+        public UsageType UsageType { get; set; }
 
         public ITreeElementSetup? Parent { get; set; }
         public List<ITreeElementSetup> Collections { get; set; } = new List<ITreeElementSetup>();
