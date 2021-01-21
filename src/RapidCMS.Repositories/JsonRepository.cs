@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Mediators;
+using RapidCMS.Core.Models.EventArgs.Mediators;
 
 namespace RapidCMS.Repositories
 {
@@ -12,9 +14,11 @@ namespace RapidCMS.Repositories
     /// Use *only* List<TRelatedEntity> properties for relations.
     /// </summary>
     /// <typeparam name="TEntity">Entity to store</typeparam>
-    public class JsonRepository<TEntity> : InMemoryRepository<TEntity>
+    public class JsonRepository<TEntity> : InMemoryRepository<TEntity>, IDisposable
         where TEntity : class, IEntity, ICloneable, new()
     {
+        private readonly IDisposable _disposable;
+
         public JsonRepository(IMediator mediator, IServiceProvider serviceProvider) : base(mediator, serviceProvider)
         {
             try
@@ -49,7 +53,7 @@ namespace RapidCMS.Repositories
                 catch { }
             }
 
-            UpdateJson(default);
+            _disposable = mediator.RegisterCallback<CollectionRepositoryEventArgs>(RepositoryUpdateAsync);
         }
 
         private static string Folder()
@@ -62,7 +66,7 @@ namespace RapidCMS.Repositories
 
         private static object _lock = new object();
 
-        private void UpdateJson(object? obj)
+        private Task RepositoryUpdateAsync(object sender, CollectionRepositoryEventArgs args)
         {
             try
             {
@@ -73,6 +77,13 @@ namespace RapidCMS.Repositories
                 }
             }
             catch { }
+
+            return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+            _disposable.Dispose();
         }
     }
 }

@@ -66,6 +66,7 @@ namespace RapidCMS.Example.Shared.Collections
 
                                         editor.AddDefaultButton(DefaultButtonType.Return);
                                         editor.AddDefaultButton(DefaultButtonType.New);
+                                        editor.AddDefaultButton(DefaultButtonType.SaveExisting, "Update all");
 
                                         editor.AddSection(section =>
                                         {

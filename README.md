@@ -14,7 +14,7 @@ default UI libary and only use the core of RapidCMS.
 
 ## Demo
 
-A demo of the WebAssembly variant of the CMS (running version 3.4.0) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
+A demo of the WebAssembly variant of the CMS (running version 3.4.x) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
 This uses a repository that saves its data to the local storage of the browser. 
 
 ## TL:DR;
@@ -743,7 +743,7 @@ When you want to support Reordering, override `ReorderAsync`.
 - *Always* support all the features from `IQuery<T>`; that is supporting `Skip` and `Take` for paginating, calling `MoreDataAvailable` and pass in
 a `true` when there is more, and a `false` when there is not. Furthermore, support searching by checking `SearchTerm`, and always `ApplyDataView` and `ApplyOrder`
 to your `IQueryable<T>` that you build in your repository to fetch the data.
-- Use `IMessageService` to send messages to the user when an entity has been saved etc.
+- Use `IMediator.NotifyEvent(this, new MessageEventArgs([..]))` to send messages to the user when an entity has been saved etc.
 
 ## Creating custom editors
 
