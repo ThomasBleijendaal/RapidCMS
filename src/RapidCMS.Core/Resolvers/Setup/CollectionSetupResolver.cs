@@ -73,7 +73,6 @@ namespace RapidCMS.Core.Resolvers.Setup
             {
                 return collectionSetup;
             }
-            // TODO: this can be buggy when multiple collection use the same repo
             else if (_cachedCollectionMap.FirstOrDefault(x => x.Value.RepositoryAlias == alias).Value is CollectionSetup collection)
             {
                 return collection;

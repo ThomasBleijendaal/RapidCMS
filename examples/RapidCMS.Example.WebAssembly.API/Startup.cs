@@ -37,7 +37,7 @@ namespace RapidCMS.Example.WebAssembly.API
             services.AddScoped<JsonRepository<TagGroup>>();
             services.AddScoped<JsonRepository<Tag>>();
             services.AddScoped<JsonRepository<EntityVariantBase>>();
-            services.AddSingleton<MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
+            services.AddScoped<MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
             services.AddSingleton<IConverter<MappedEntity, DatabaseEntity>, Mapper>();
             services.AddSingleton<DatabaseEntityDataViewBuilder>();
 

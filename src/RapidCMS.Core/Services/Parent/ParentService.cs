@@ -17,8 +17,6 @@ namespace RapidCMS.Core.Services.Parent
 
         public async Task<IParent?> GetParentAsync(ParentPath? parentPath)
         {
-            // TODO: heavily cache this. traversing the parent tree per call could be very expensive (and is now possible)
-
             var parent = default(ParentEntity);
 
             if (parentPath == null)

@@ -4,8 +4,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Mediators;
-using RapidCMS.Core.Models.EventArgs.Mediators;
 
 namespace RapidCMS.Repositories
 {
@@ -14,11 +14,9 @@ namespace RapidCMS.Repositories
     /// Use *only* List<TRelatedEntity> properties for relations.
     /// </summary>
     /// <typeparam name="TEntity">Entity to store</typeparam>
-    public class JsonRepository<TEntity> : InMemoryRepository<TEntity>, IDisposable
+    public class JsonRepository<TEntity> : InMemoryRepository<TEntity>
         where TEntity : class, IEntity, ICloneable, new()
     {
-        private readonly IDisposable _disposable;
-
         public JsonRepository(IMediator mediator, IServiceProvider serviceProvider) : base(mediator, serviceProvider)
         {
             try
@@ -52,8 +50,6 @@ namespace RapidCMS.Repositories
                 }
                 catch { }
             }
-
-            _disposable = mediator.RegisterCallback<CollectionRepositoryEventArgs>(RepositoryUpdateAsync);
         }
 
         private static string Folder()
@@ -66,7 +62,7 @@ namespace RapidCMS.Repositories
 
         private static object _lock = new object();
 
-        private Task RepositoryUpdateAsync(object sender, CollectionRepositoryEventArgs args)
+        private void UpdateJson()
         {
             try
             {
@@ -77,13 +73,43 @@ namespace RapidCMS.Repositories
                 }
             }
             catch { }
-
-            return Task.CompletedTask;
         }
 
-        public void Dispose()
+        public override async Task AddAsync(IRelated related, string id)
         {
-            _disposable.Dispose();
+            await base.AddAsync(related, id);
+            UpdateJson();
+        }
+
+        public override async Task DeleteAsync(string id, IParent? parent)
+        {
+            await base.DeleteAsync(id, parent);
+            UpdateJson();
+        }
+
+        public override async Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext)
+        {
+            var entity = await base.InsertAsync(editContext);
+            UpdateJson();
+            return entity;
+        }
+
+        public override async Task RemoveAsync(IRelated related, string id)
+        {
+            await base.RemoveAsync(related, id);
+            UpdateJson();
+        }
+
+        public override async Task ReorderAsync(string? beforeId, string id, IParent? parent)
+        {
+            await base.ReorderAsync(beforeId, id, parent);
+            UpdateJson();
+        }
+
+        public override async Task UpdateAsync(IEditContext<TEntity> editContext)
+        {
+            await base.UpdateAsync(editContext);
+            UpdateJson();
         }
     }
 }
