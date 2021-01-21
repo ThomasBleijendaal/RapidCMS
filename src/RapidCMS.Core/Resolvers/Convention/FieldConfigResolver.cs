@@ -61,8 +61,9 @@ namespace RapidCMS.Core.Resolvers.Convention
                         Description = features.HasFlag(Features.CanEdit) ? data.displayAttribute.Description : default,
                         DefaultOrder = data.displayAttribute.GetOrder() switch
                         {
-                            1 => OrderByType.Ascending,
+                            (int)OrderByType.Ascending => OrderByType.Ascending,
                             -1 => OrderByType.Descending,
+                            (int)OrderByType.Descending => OrderByType.Descending,
                             _ => OrderByType.None
                         },
                         CustomType = customType,
