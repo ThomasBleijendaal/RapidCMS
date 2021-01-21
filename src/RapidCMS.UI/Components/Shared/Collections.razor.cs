@@ -57,7 +57,7 @@ namespace RapidCMS.UI.Components.Shared
 
         private async Task LocationChangedAsync(object sender, NavigationEventArgs args)
         {
-            if (sender is NavigationLink || !args.ForceUpdate || UI == null)
+            if (sender is NavigationLink || UI == null)
             {
                 return;
             }

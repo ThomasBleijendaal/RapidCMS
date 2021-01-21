@@ -18,6 +18,11 @@ namespace RapidCMS.Core.Helpers
                 }
             }
 
+            if (typeof(Enum).IsAssignableFrom(editorType))
+            {
+                return EditorType.Select;
+            }
+
             return default;
         }
     }

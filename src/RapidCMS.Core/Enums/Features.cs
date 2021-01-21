@@ -9,6 +9,7 @@ namespace RapidCMS.Core.Enums
         CanGoToView = 1,
         CanGoToEdit = 2,
         CanView = 4,
-        CanEdit = 8
+        CanEdit = 8,
+        IsBlockList = 65536
     }
 }

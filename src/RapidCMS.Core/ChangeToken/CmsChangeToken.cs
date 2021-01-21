@@ -5,6 +5,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace RapidCMS.Core.ChangeToken
 {
+    [Obsolete("Replace with IMediator")]
     public class CmsChangeToken : IChangeToken
     {
         private readonly List<ChangeTokenCallback> _callbacks = new List<ChangeTokenCallback>();

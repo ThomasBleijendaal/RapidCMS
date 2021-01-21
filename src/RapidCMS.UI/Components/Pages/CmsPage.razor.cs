@@ -26,10 +26,15 @@ namespace RapidCMS.UI.Components.Pages
         [Parameter] public string? Path { get; set; } = default!;
         [Parameter] public string? Id { get; set; } = default!;
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(LocationChangedAsync, null));
+        }
+
         protected override void OnParametersSet()
         {
-            DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(LocationChangedAsync, null));
-
             State = null;
 
             var pageType = GetPageType();
@@ -53,11 +58,13 @@ namespace RapidCMS.UI.Components.Pages
                     VariantAlias = VariantAlias
                 };
             }
+
+            Mediator.NotifyEvent(this, new NavigationEventArgs(State, false));
         }
 
         private async Task LocationChangedAsync(object sender, NavigationEventArgs args)
         {
-            if (args.ForceUpdate)
+            if (args.UpdateUrl)
             {
                 await InvokeAsync(async () =>
                 {

@@ -263,9 +263,9 @@ namespace RapidCMS.Core.Models.Config
                     canGoToNodeView: convention == CollectionConvention.ListViewNodeView);
             }
 
-            if (convention == CollectionConvention.ListEditor)
+            if (convention == CollectionConvention.ListEditor || convention == CollectionConvention.ListBlockEditor)
             {
-                ListEditor = new ConventionListEditorConfig<TEntity>();
+                ListEditor = new ConventionListEditorConfig<TEntity>(convention == CollectionConvention.ListBlockEditor ? ListType.Block : ListType.Table);
             }
 
             if (convention == CollectionConvention.ListViewNodeView)

@@ -9,6 +9,7 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Resolvers.Convention
 {
@@ -48,6 +49,9 @@ namespace RapidCMS.Core.Resolvers.Convention
                         : EditorTypeHelper.TryFindDefaultEditorType(data.property.PropertyType);
                     var customType = editorType == EditorType.Custom ? data.displayAttribute.ResourceType : null;
 
+                    var relationConfig = editorType != EditorType.Select ? null :
+                        new DataProviderRelationConfig(typeof(EnumDataProvider<>).MakeGenericType(data.property.PropertyType));
+
                     return new FieldConfig
                     {
                         Description = features.HasFlag(Features.CanEdit) ? data.displayAttribute.Description : default,
@@ -67,6 +71,7 @@ namespace RapidCMS.Core.Resolvers.Convention
                         OrderByExpression = data.displayAttribute.GetOrder() == 0 ? null : propertyMetadata,
                         Placeholder = data.displayAttribute.GetPrompt(),
                         Property = propertyMetadata,
+                        Relation = relationConfig
                     };
                 });
         }

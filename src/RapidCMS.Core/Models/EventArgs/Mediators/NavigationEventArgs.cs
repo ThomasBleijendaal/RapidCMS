@@ -10,17 +10,17 @@ namespace RapidCMS.Core.Models.EventArgs.Mediators
         public NavigationEventArgs(PageStateModel state)
         {
             State = state ?? throw new ArgumentNullException(nameof(state));
-            ForceUpdate = true;
+            UpdateUrl = true;
         }
 
         public NavigationEventArgs(PageStateModel state, bool forceUpdate)
         {
             State = state ?? throw new ArgumentNullException(nameof(state));
-            ForceUpdate = forceUpdate;
+            UpdateUrl = forceUpdate;
         }
 
         public PageStateModel State { get; set; }
-        public bool ForceUpdate { get; set; }
+        public bool UpdateUrl { get; set; }
 
         ParentPath? IMediatorEventArgs.ParentPath => State.ParentPath;
     }
