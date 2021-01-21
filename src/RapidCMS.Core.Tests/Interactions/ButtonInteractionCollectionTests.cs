@@ -32,8 +32,10 @@ namespace RapidCMS.Core.Tests.Interactions
                 .Setup(x => x.ResolveSetup(It.IsAny<string>()))
                 .Returns((string alias) =>
                     new CollectionSetup(default,
+                        default,
                         "name",
                         alias,
+                        default,
                         default)
                     {
                         EntityVariant = new EntityVariantSetup("default", default, typeof(DefaultEntityVariant), "alias")

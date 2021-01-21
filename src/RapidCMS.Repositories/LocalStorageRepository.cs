@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Abstractions.Mediators;
 
 namespace RapidCMS.Repositories
 {
@@ -15,7 +17,8 @@ namespace RapidCMS.Repositories
 
         public LocalStorageRepository(
             ILocalStorageService localStorage,
-            IServiceProvider serviceProvider) : base(serviceProvider)
+            IMediator mediator,
+            IServiceProvider serviceProvider) : base(mediator, serviceProvider)
         {
             _localStorage = localStorage;
 
@@ -35,11 +38,9 @@ namespace RapidCMS.Repositories
             {
                 _relations = relationStorage;
             }
-
-            UpdateStorageAsync(null);
         }
 
-        private async void UpdateStorageAsync(object? obj)
+        private async Task UpdateStorageAsync()
         {
             try
             {
@@ -47,8 +48,6 @@ namespace RapidCMS.Repositories
                 await _localStorage.SetItemAsync($"{GetType().FullName}-relation", _relations);
             }
             catch { }
-
-            ChangeToken.RegisterChangeCallback(UpdateStorageAsync, default);
         }
 
         public override async Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query)
@@ -67,6 +66,49 @@ namespace RapidCMS.Repositories
         {
             await _initializationTask;
             return await base.GetAllRelatedAsync(related, query);
+        }
+
+        public override async Task<TEntity?> GetByIdAsync(string id, IParent? parent)
+        {
+            await _initializationTask;
+            return await base.GetByIdAsync(id, parent);
+        }
+
+        public override async Task AddAsync(IRelated related, string id)
+        {
+            await base.AddAsync(related, id);
+            await UpdateStorageAsync();
+        }
+
+        public override async Task DeleteAsync(string id, IParent? parent)
+        {
+            await base.DeleteAsync(id, parent);
+            await UpdateStorageAsync();
+        }
+
+        public override async Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext)
+        {
+            var entity = await base.InsertAsync(editContext);
+            await UpdateStorageAsync();
+            return entity;
+        }
+
+        public override async Task RemoveAsync(IRelated related, string id)
+        {
+            await base.RemoveAsync(related, id);
+            await UpdateStorageAsync();
+        }
+
+        public override async Task ReorderAsync(string? beforeId, string id, IParent? parent)
+        {
+            await base.ReorderAsync(beforeId, id, parent);
+            await UpdateStorageAsync();
+        }
+
+        public override async Task UpdateAsync(IEditContext<TEntity> editContext)
+        {
+            await base.UpdateAsync(editContext);
+            await UpdateStorageAsync();
         }
     }
 }

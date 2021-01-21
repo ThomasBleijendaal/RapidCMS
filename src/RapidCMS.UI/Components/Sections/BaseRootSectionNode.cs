@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.UI.Models;
@@ -64,7 +65,7 @@ namespace RapidCMS.UI.Components.Sections
             }
             catch (Exception ex)
             {
-                HandleException(ex);
+                Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
             }
         }
     }

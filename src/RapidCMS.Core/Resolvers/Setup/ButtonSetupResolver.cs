@@ -78,7 +78,6 @@ namespace RapidCMS.Core.Resolvers.Setup
             else if (config is PaneButtonConfig paneButton)
             {
                 button.DefaultButtonType = DefaultButtonType.OpenPane;
-                button.DefaultCrudType = paneButton.CrudType;
                 button.ButtonHandlerType = typeof(OpenPaneButtonActionHandler<>).MakeGenericType(paneButton.PaneType);
             }
             else

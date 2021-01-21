@@ -5,13 +5,11 @@ namespace RapidCMS.Core.Models.Config
 {
     internal class PaneButtonConfig : ButtonConfig
     {
-        internal PaneButtonConfig(Type paneType, CrudType? crudType)
+        internal PaneButtonConfig(Type paneType)
         {
             PaneType = paneType ?? throw new ArgumentNullException(nameof(paneType));
-            CrudType = crudType;
         }
 
         internal Type PaneType { get; set; }
-        internal CrudType? CrudType { get; set; }
     }
 }

@@ -3,12 +3,14 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Interactions;
+using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
+using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.State;
@@ -25,19 +27,22 @@ namespace RapidCMS.Core.Dispatchers.Form
         private readonly IConcurrencyService _concurrencyService;
         private readonly IButtonInteraction _buttonInteraction;
         private readonly IEditContextFactory _editContextFactory;
+        private readonly IMediator _mediator;
 
         public EntityInteractionDispatcher(
             ISetupResolver<ICollectionSetup> collectionResolver,
             IRepositoryResolver repositoryResolver,
             IConcurrencyService concurrencyService,
             IButtonInteraction buttonInteraction,
-            IEditContextFactory editContextFactory)
+            IEditContextFactory editContextFactory,
+            IMediator mediator)
         {
             _collectionResolver = collectionResolver;
             _repositoryResolver = repositoryResolver;
             _concurrencyService = concurrencyService;
             _buttonInteraction = buttonInteraction;
             _editContextFactory = editContextFactory;
+            _mediator = mediator;
         }
 
         Task<NodeViewCommandResponseModel> IInteractionDispatcher<PersistEntityRequestModel, NodeViewCommandResponseModel>.InvokeAsync(PersistEntityRequestModel request, IPageState pageState)
@@ -109,6 +114,14 @@ namespace RapidCMS.Core.Dispatchers.Form
                     }
 
                     response.RefreshIds = new[] { request.EditContext.Entity.Id! };
+
+                    _mediator.NotifyEvent(this, new CollectionRepositoryEventArgs(
+                        collection.Alias,
+                        collection.RepositoryAlias,
+                        request.EditContext.Parent?.GetParentPath(),
+                        request.EditContext.Entity.Id,
+                        CrudType.Update));
+
                     break;
 
                 case CrudType.Insert:
@@ -143,6 +156,13 @@ namespace RapidCMS.Core.Dispatchers.Form
                         });
                     }
 
+                    _mediator.NotifyEvent(this, new CollectionRepositoryEventArgs(
+                        collection.Alias,
+                        collection.RepositoryAlias,
+                        request.EditContext.Parent?.GetParentPath(),
+                        request.EditContext.Entity.Id,
+                        CrudType.Insert));
+
                     break;
 
                 case CrudType.Delete:
@@ -163,17 +183,38 @@ namespace RapidCMS.Core.Dispatchers.Form
                         }
                     }
 
+                    _mediator.NotifyEvent(this, new CollectionRepositoryEventArgs(
+                        collection.Alias,
+                        collection.RepositoryAlias,
+                        request.EditContext.Parent?.GetParentPath(),
+                        request.EditContext.Entity.Id,
+                        CrudType.Delete));
+
                     break;
 
                 case CrudType.Pick when request is PersistRelatedEntityRequestModel relationRequest:
 
                     await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.AddAsync(relationRequest.Related, request.EditContext.Entity.Id!));
 
+                    _mediator.NotifyEvent(this, new CollectionRepositoryEventArgs(
+                        collection.Alias,
+                        collection.RepositoryAlias,
+                        request.EditContext.Parent?.GetParentPath(),
+                        request.EditContext.Entity.Id,
+                        CrudType.Pick));
+
                     break;
 
                 case CrudType.Remove when request is PersistRelatedEntityRequestModel relationRequest:
 
                     await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.RemoveAsync(relationRequest.Related, request.EditContext.Entity.Id!));
+
+                    _mediator.NotifyEvent(this, new CollectionRepositoryEventArgs(
+                        collection.Alias,
+                        collection.RepositoryAlias,
+                        request.EditContext.Parent?.GetParentPath(),
+                        request.EditContext.Entity.Id,
+                        CrudType.Remove));
 
                     break;
 
@@ -187,13 +228,15 @@ namespace RapidCMS.Core.Dispatchers.Form
                 case CrudType.Up:
                     if (pageState.PopState() == null)
                     {
+                        var parentPath = request.EditContext.Parent?.GetParentPath();
                         pageState.ReplaceState(new PageStateModel
                         {
                             PageType = PageType.Collection,
-                            UsageType = collection.ListEditor == null ? UsageType.View : UsageType.Edit,
+                            UsageType = (collection.ListEditor == null ? UsageType.View : UsageType.Edit)
+                             | ((parentPath != null) ? UsageType.NotRoot : UsageType.Root),
 
                             CollectionAlias = request.EditContext.CollectionAlias,
-                            ParentPath = request.EditContext.Parent?.GetParentPath()
+                            ParentPath = parentPath
                         });
                     }
                     break;

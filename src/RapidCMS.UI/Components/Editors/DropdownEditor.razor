@@ -34,7 +34,7 @@
     {
         if (DataCollection != null)
         {
-            DataCollection.OnDataChange += async (s, a) => await UpdateOptionsAsync();
+            DataCollection.OnDataChange += UpdateOptionsAsync;
 
             IsNullable = Nullable.GetUnderlyingType(Property.PropertyType) != null;
 
@@ -55,7 +55,7 @@
         }
     }
 
-    private async Task UpdateOptionsAsync()
+    private async void UpdateOptionsAsync(object? sender, EventArgs args)
     {
         if (DataCollection == null)
         {
@@ -64,9 +64,19 @@
 
         await InvokeAsync(async () =>
         {
-            Options = await DataCollection.GetAvailableElementsAsync();
+            await UpdateOptionsAsync();
             StateHasChanged();
         });
+    }
+
+    private async Task UpdateOptionsAsync()
+    {
+        if (DataCollection == null)
+        {
+            return;
+        }
+
+        Options = await DataCollection.GetAvailableElementsAsync();
     }
 
     private void OnChange(ChangeEventArgs args)
@@ -88,6 +98,16 @@
             IsNullable = false;
 
             StateHasChanged();
+        }
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+
+        if (DataCollection != null)
+        {
+            DataCollection.OnDataChange -= UpdateOptionsAsync;
         }
     }
 }

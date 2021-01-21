@@ -1,21 +1,23 @@
-﻿using Microsoft.AspNetCore.Components;
-using RapidCMS.Core.Abstractions.Services;
+﻿using System;
+using Microsoft.AspNetCore.Components;
+using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.EventArgs.Mediators;
 
 namespace RapidCMS.UI.Components.Panes
 {
     public abstract class BaseSidePane : ComponentBase
     {
-        [Inject] private ISidePaneService SidePaneService { get; set; } = default!;
+        [Inject] private IMediator Mediator { get; set; } = default!;
 
         [Parameter] public FormEditContext EditContext { get; set; } = default!;
         [Parameter] public ButtonContext ButtonContext { get; set; } = default!;
-        [Parameter] public CrudType? DefaultCrudType { get; set; }
+        [Parameter] public Guid RequestId { get; set; } = default!;
 
         protected void ButtonClicked(CrudType crudType)
         {
-            SidePaneService.PaneHandled(crudType);
+            Mediator.NotifyEvent(this, new PaneResponseEventArgs(RequestId, crudType));
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Interactions;
+using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
@@ -17,7 +18,9 @@ using RapidCMS.Core.Dispatchers;
 using RapidCMS.Core.Dispatchers.Form;
 using RapidCMS.Core.Factories;
 using RapidCMS.Core.Handlers;
+using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Interactions;
+using RapidCMS.Core.Mediators;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
@@ -28,12 +31,9 @@ using RapidCMS.Core.Resolvers.Language;
 using RapidCMS.Core.Resolvers.Repositories;
 using RapidCMS.Core.Resolvers.Setup;
 using RapidCMS.Core.Services.Concurrency;
-using RapidCMS.Core.Services.Exceptions;
-using RapidCMS.Core.Services.Messages;
 using RapidCMS.Core.Services.Parent;
 using RapidCMS.Core.Services.Persistence;
 using RapidCMS.Core.Services.Presentation;
-using RapidCMS.Core.Services.SidePane;
 using RapidCMS.Core.Services.State;
 using RapidCMS.Core.Services.Tree;
 
@@ -82,7 +82,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IButtonActionHandlerResolver, ButtonActionHandlerResolver>();
             services.AddTransient<IDataProviderResolver, DataProviderResolver>();
             services.AddTransient<IRepositoryResolver, RepositoryResolver>();
-            services.AddSingleton<IRepositoryTypeResolver, CmsRepositoryTypeResolver>();
 
             services.AddTransient<IPresentationDispatcher, GetEntityDispatcher>();
             services.AddTransient<IPresentationDispatcher, GetEntitiesDispatcher>();
@@ -96,19 +95,20 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IInteractionService, InteractionService>();
 
             services.AddTransient<IConcurrencyService, ConcurrencyService>();
-            services.AddSingleton<IExceptionService, ExceptionService>();
-            services.AddScoped<IMessageService, MessageService>();
-            services.AddScoped<INavigationState, NavigationState>();
             services.AddTransient<IPageState, PageState>();
             services.AddTransient<IParentService, ParentService>();
-            services.AddScoped<ISidePaneService, SidePaneService>();
             services.AddTransient<ITreeService, TreeService>();
-            services.AddTransient<IRepositoryEventService, RepositoryEventService>();
+
+            services.AddScoped<IMediator, Mediator>();
 
             services.AddScoped<DefaultButtonActionHandler>();
             services.AddScoped(typeof(OpenPaneButtonActionHandler<>));
 
             services.AddScoped(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
+
+            AddServicesRequiringRepositories(services, rootConfig);
+
+            services.AddScoped<IMediatorEventConverter, RepositoryMediatorEventConverter>();
 
             // UI requirements
             services.AddHttpContextAccessor();
@@ -119,16 +119,63 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
+        private static void AddServicesRequiringRepositories(IServiceCollection services, CmsConfig rootConfig)
+        {
+            var repositoryTypeDictionary = new Dictionary<string, Type>();
+            var reverseRepositoryTypeDictionary = new Dictionary<Type, string>();
+            var collectionAliasDictionary = new Dictionary<string, List<string>>();
+
+            foreach (var collection in rootConfig.CollectionsAndPages.OfType<ICollectionConfig>())
+            {
+                ProcessCollection(collection);
+            }
+
+            services.AddSingleton<IRepositoryTypeResolver>(new CmsRepositoryTypeResolver(repositoryTypeDictionary, reverseRepositoryTypeDictionary));
+            services.AddSingleton<ICollectionAliasResolver>(new CollectionAliasResolver(collectionAliasDictionary));
+
+            void ProcessCollection(ICollectionConfig collection)
+            {
+                var descriptor = services.FirstOrDefault(x => x.ServiceType == collection.RepositoryType);
+                if (descriptor == null)
+                {
+                    throw new InvalidOperationException($"Could not find service descriptor for {collection.RepositoryType}. Please add it to the service collection.");
+                }
+
+                var implementationType = descriptor.ImplementationType;
+                if (implementationType == null)
+                {
+                    throw new InvalidOperationException($"Could not find implementation type for {collection.RepositoryType}. Please add it as type to the service collection.");
+                }
+
+                var repositoryAlias = AliasHelper.GetRepositoryAlias(implementationType);
+
+                repositoryTypeDictionary[repositoryAlias] = collection.RepositoryType;
+                reverseRepositoryTypeDictionary[collection.RepositoryType] = repositoryAlias;
+                if (implementationType != collection.RepositoryType)
+                {
+                    reverseRepositoryTypeDictionary[implementationType] = repositoryAlias;
+                }
+
+
+                if (!collectionAliasDictionary.ContainsKey(repositoryAlias))
+                {
+                    collectionAliasDictionary.Add(repositoryAlias, new List<string>());
+                }
+                collectionAliasDictionary[repositoryAlias].Add(collection.Alias);
+
+                foreach (var subCollection in collection.CollectionsAndPages.OfType<ICollectionConfig>().Where(x => !x.Recursive))
+                {
+                    ProcessCollection(subCollection);
+                }
+            }
+        }
+
         public static IApplicationBuilder UseRapidCMS(this IApplicationBuilder app, bool isDevelopment = false)
         {
             app.ApplicationServices.GetRequiredService<ICms>().IsDevelopment = isDevelopment;
 
             return app;
         }
-
-        [Obsolete("Use AddRapidCMSServer or AddRapidCMSWebAssembly to indicate which deployment strategy you use. This method defaults to the serverside variant and will be removed in the future.")]
-        public static IServiceCollection AddRapidCMS(this IServiceCollection services, Action<ICmsConfig>? config = null)
-            => services.AddRapidCMSServer(config);
 
         private static CmsConfig GetRootConfig(Action<ICmsConfig>? config = null)
         {

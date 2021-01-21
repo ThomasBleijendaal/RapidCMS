@@ -1,9 +1,9 @@
-﻿@inherits NodesBase
+﻿@inherits DisposableComponent
 
 @if (UI != null && CollectionsVisible != null)
 {
     <ul class="nav flex-column">
-        @if (PageNr > 1)
+        @if (_pageNr > 1)
         {
             <li class="nav-item">
                 <button @onclick="@((MouseEventArgs e) => OnPageChangeAsync(-1))" class="paginate" title="Previous items" disabled="@Loading"><Icon Name="ChevronUpSmall" /></button>
@@ -12,17 +12,19 @@
         @foreach (var node in UI.Nodes)
         {
             <li class="nav-item">
-                <button @onclick="@((MouseEventArgs e) => CollectionsVisible[node.Id] = !CollectionsVisible[node.Id])" class="toggle">
-                    @if (CollectionsVisible[node.Id])
-                    {
-                        <Icon Name="ChevronDown" />
-                    }
-                    else
-                    {
-                        <Icon Name="ChevronRight" />
-                    }
-                </button>
-
+                @if (node.Collections.Any())
+                {
+                    <button @onclick="@((MouseEventArgs e) => CollectionsVisible[node.Id] = !CollectionsVisible[node.Id])" class="toggle">
+                        @if (CollectionsVisible[node.Id])
+                        {
+                            <Icon Name="ChevronDown" />
+                        }
+                        else
+                        {
+                            <Icon Name="ChevronRight" />
+                        }
+                    </button>
+                }
 
                 @if (node.State != null)
                 {
@@ -52,67 +54,9 @@
         }
     </ul>
 }
-else if (!string.IsNullOrWhiteSpace(error))
+else if (!string.IsNullOrWhiteSpace(Error))
 {
     <ul class="nav flex-column">
-        <li>@error</li>
+        <li>@Error</li>
     </ul>
-}
-
-@code {
-
-    Dictionary<string, bool>? CollectionsVisible;
-    TreeNodesUI? UI;
-    string? error;
-
-    int PageSize = 25;
-    int PageNr = 1;
-    bool Loading = false;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        await OnNodesUpdateAsync();
-    }
-
-    private async Task OnPageChangeAsync(int delta)
-    {
-        Loading = true;
-        PageNr += delta;
-        await OnNodesUpdateAsync();
-        Loading = false;
-    }
-
-    protected override async Task OnNodesUpdateAsync()
-    {
-        var oldNodesVisible = CollectionsVisible;
-
-        try
-        {
-            UI = await TreeService.GetNodesAsync(CollectionAlias, ParentPath, PageNr, PageSize);
-            if (UI == null)
-            {
-                return;
-            }
-
-            CollectionsVisible = UI.Nodes.ToDictionary(x => x.Id, x => x.DefaultOpenCollections);
-
-            // restore the view state with the new nodes
-            if (oldNodesVisible != null)
-            {
-                foreach (var node in oldNodesVisible.Where(x => x.Value))
-                {
-                    if (CollectionsVisible.ContainsKey(node.Key))
-                    {
-                        CollectionsVisible[node.Key] = true;
-                    }
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            error = ex.Message;
-        }
-
-        StateHasChanged();
-    }
 }

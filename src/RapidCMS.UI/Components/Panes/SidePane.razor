@@ -1,39 +1,9 @@
-﻿@inject ISidePaneService SidePaneService
+﻿@inherits DisposableComponent
 
-@if (SideBar != null)
+@if (Component != null)
 {
     <div class="sidepane" dir="ltr">
-        @SideBar
+        @Component
     </div>
 }
-
-@code {
-    RenderFragment? SideBar;
-
-    protected override void OnInitialized()
-    {
-        SidePaneService.OnPaneRequested += PaneRequested;
-        SidePaneService.OnPaneFinished += PaneFinished;
-    }
-
-    private void PaneRequested(object? sender, PaneEventArgs args)
-    {
-        SideBar = builder =>
-        {
-            builder.OpenComponent(1, args.PaneType);
-            builder.AddAttribute(2, nameof(BaseSidePane.EditContext), args.EditContext);
-            builder.AddAttribute(3, nameof(BaseSidePane.ButtonContext), args.ButtonContext);
-            builder.AddAttribute(4, nameof(BaseSidePane.DefaultCrudType), args.DefaultCrudType);
-            builder.CloseComponent();
-        };
-
-        StateHasChanged();
-    }
-
-    private void PaneFinished(object? sender, EventArgs args)
-    {
-        SideBar = null;
-
-        StateHasChanged();
-    }
-}
+ 

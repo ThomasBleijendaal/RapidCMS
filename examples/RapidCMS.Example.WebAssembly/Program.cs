@@ -66,7 +66,7 @@ namespace RapidCMS.Example.WebAssembly
                 .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
             builder.Services.AddSingleton<DatabaseEntityDataViewBuilder>();
 
-            builder.Services.AddSingleton<BaseRepository<Counter>, CounterRepository>();
+            builder.Services.AddScoped<BaseRepository<Counter>, CounterRepository>();
 
             builder.Services.AddSingleton<RandomNameActionHandler>();
 

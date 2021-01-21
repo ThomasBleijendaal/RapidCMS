@@ -9,8 +9,10 @@ namespace RapidCMS.Core.Abstractions.Config
 {
     public interface ICollectionConfig : ITreeElementConfig
     {
+        string? ParentAlias { get; }
         IEnumerable<ITreeElementConfig> CollectionsAndPages { get; }
 
+        Type RepositoryType { get; }
         IEnumerable<Type> RepositoryTypes { get; }
 
         bool Recursive { get; }

@@ -5,13 +5,16 @@ namespace RapidCMS.Core.Models.Config.Convention
 {
     internal class ConventionListEditorConfig<TEntity> : ListConfig, IIsConventionBased
     {
-        public ConventionListEditorConfig() : base(typeof(TEntity))
+        public ConventionListEditorConfig(ListType type) : base(typeof(TEntity))
         {
+            Type = type;
         }
+
+        public ListType Type { get; }
 
         public Features GetFeatures()
         {
-            return Features.CanEdit;
+            return Features.CanEdit | ((Type == ListType.Block) ? Features.IsBlockList : Features.None);
         }
     }
 }

@@ -9,8 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Server.Components;
 using RapidCMS.Example.Shared.AuthorizationHandlers;
@@ -43,16 +41,16 @@ namespace RapidCMS.Example.Server
 
             // it's not required to add your repositories under the base repository
             // but this allows the Server and the WebAssembly examples to share the collection configuration
-            services.AddSingleton<BaseRepository<Person>, JsonRepository<Person>>();
-            services.AddSingleton<BaseRepository<ConventionalPerson>, JsonRepository<ConventionalPerson>>();
-            services.AddSingleton<BaseRepository<Country>, JsonRepository<Country>>();
-            services.AddSingleton<BaseRepository<User>, JsonRepository<User>>();
-            services.AddSingleton<BaseRepository<TagGroup>, JsonRepository<TagGroup>>();
-            services.AddSingleton<BaseRepository<Tag>, JsonRepository<Tag>>();
-            services.AddSingleton<BaseRepository<EntityVariantBase>, InMemoryRepository<EntityVariantBase>>();
-            services.AddSingleton<BaseRepository<Counter>, CounterRepository>();
+            services.AddScoped<BaseRepository<Person>, JsonRepository<Person>>();
+            services.AddScoped<BaseRepository<ConventionalPerson>, JsonRepository<ConventionalPerson>>();
+            services.AddScoped<BaseRepository<Country>, JsonRepository<Country>>();
+            services.AddScoped<BaseRepository<User>, JsonRepository<User>>();
+            services.AddScoped<BaseRepository<TagGroup>, JsonRepository<TagGroup>>();
+            services.AddScoped<BaseRepository<Tag>, JsonRepository<Tag>>();
+            services.AddScoped<BaseRepository<EntityVariantBase>, InMemoryRepository<EntityVariantBase>>();
+            services.AddScoped<BaseRepository<Counter>, CounterRepository>();
 
-            services.AddSingleton<BaseMappedRepository<MappedEntity, DatabaseEntity>, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
+            services.AddScoped<BaseMappedRepository<MappedEntity, DatabaseEntity>, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
             services.AddSingleton<IConverter<MappedEntity, DatabaseEntity>, Mapper>();
             services.AddSingleton<DatabaseEntityDataViewBuilder>();
 

@@ -14,7 +14,7 @@ default UI libary and only use the core of RapidCMS.
 
 ## Demo
 
-A demo of the WebAssembly variant of the CMS (running version 3.4.0) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
+A demo of the WebAssembly variant of the CMS (running version 3.5.x) can be found here: [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/).
 This uses a repository that saves its data to the local storage of the browser. 
 
 ## TL:DR;
@@ -36,7 +36,7 @@ or browse the [Examples](https://github.com/ThomasBleijendaal/RapidCMS/tree/mast
 2. Install NuGet-package: `RapidCMS.UI`.
 3. Add `builder.Services.AddAuthorizationCore();` and `builder.Services.AddRapidCMSWebAssembly(config => { config.AllowAnonymousUser(); })` before the last line of `Main` in `Program.cs`.
 4. Replace the contents of `App.razor` with `<RapidCMS.UI.Components.Router.RapidCmsRouter />`.
-5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `index.html` with `<link href="_content/RapidCMS.UI/css/site.css" rel="stylesheet" />` and remove any other css.
+5. Replace the `<link href="css/site.css" rel="stylesheet" />` tags in `index.html` with `<link href="_content/RapidCMS.UI/css/site.css" rel="stylesheet" />` and remove any other css. Add `<script src="_content/rapidcms.ui/js/interop.js"></script>` at the end of the body tag.
 6. Hit `F5`: you're now running a completely empty RapidCMS instance.
 7. Start building your CMS by expanding `config => {}`. Read the introduction below to get a sense of what is possible,
 or browse the [Examples](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/examples) to see all the options.
@@ -743,7 +743,7 @@ When you want to support Reordering, override `ReorderAsync`.
 - *Always* support all the features from `IQuery<T>`; that is supporting `Skip` and `Take` for paginating, calling `MoreDataAvailable` and pass in
 a `true` when there is more, and a `false` when there is not. Furthermore, support searching by checking `SearchTerm`, and always `ApplyDataView` and `ApplyOrder`
 to your `IQueryable<T>` that you build in your repository to fetch the data.
-- Use `IMessageService` to send messages to the user when an entity has been saved etc.
+- Use `IMediator.NotifyEvent(this, new MessageEventArgs([..]))` to send messages to the user when an entity has been saved etc.
 
 ## Creating custom editors
 

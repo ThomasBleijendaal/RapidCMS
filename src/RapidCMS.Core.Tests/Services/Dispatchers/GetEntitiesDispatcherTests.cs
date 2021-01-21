@@ -51,9 +51,11 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
                 .Setup(x => x.ResolveSetup(It.IsAny<string>()))
                 .Returns((string alias) =>
                     new CollectionSetup(default,
+                        default,
                         "name",
                         alias,
-                        $"repo-{alias}")
+                        $"repo-{alias}",
+                        default)
                     {
                         EntityVariant = new EntityVariantSetup("default", default, typeof(DefaultEntityVariant), "alias"),
                         SubEntityVariants = new List<IEntityVariantSetup>

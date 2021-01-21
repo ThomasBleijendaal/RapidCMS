@@ -33,8 +33,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <param name="paneType">Type of the razor component</param>
         /// <param name="label">Text to display on the button</param>
         /// <param name="icon">Name of ion icon to use</param>
-        /// <param name="defaultCrudType">Default that is provided to the BaseSideBar derived component, to use when invoking ButtonClicked.</param>
         /// <returns></returns>
-        TReturn AddPaneButton(Type paneType, string? label = null, string? icon = null, CrudType? defaultCrudType = null);
+        TReturn AddPaneButton(Type paneType, string? label = null, string? icon = null);
     }
 }

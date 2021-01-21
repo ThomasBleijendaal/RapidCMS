@@ -24,8 +24,5 @@ namespace RapidCMS.Core.Abstractions.Repositories
         Task RemoveAsync(IRelated related, string id);
 
         Task ReorderAsync(string? beforeId, string id, IParent? parent);
-
-        void NotifyUpdate();
-        IChangeToken ChangeToken { get; }
     }
 }

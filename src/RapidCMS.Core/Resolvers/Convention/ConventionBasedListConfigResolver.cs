@@ -77,7 +77,7 @@ namespace RapidCMS.Core.Resolvers.Convention
             {
                 PageSize = 25,
                 Buttons = listButtons,
-                ListEditorType = ListType.Table,
+                ListEditorType = features.HasFlag(Features.IsBlockList) ? ListType.Block : ListType.Table,
                 Panes = new List<PaneConfig>
                 {
                     new PaneConfig(subject)

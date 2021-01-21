@@ -4,6 +4,7 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Interactions;
+using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
@@ -35,6 +36,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         private IConcurrencyService _concurrencyService = default!;
         private Mock<IButtonInteraction> _buttonInteraction = default!;
         private Mock<IEditContextFactory> _editContextFactory = default!;
+        private Mock<IMediator> _mediator = default!;
 
         [SetUp]
         public void Setup()
@@ -57,13 +59,15 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _concurrencyService = new ConcurrencyService(new SemaphoreSlim(1, 1));
             _buttonInteraction = new Mock<IButtonInteraction>();
             _editContextFactory = new Mock<IEditContextFactory>();
+            _mediator = new Mock<IMediator>();
 
             _subject = new EntityInteractionDispatcher(
                 _collectionResolver.Object,
                 _repositoryResolver.Object,
                 _concurrencyService,
                 _buttonInteraction.Object,
-                _editContextFactory.Object);
+                _editContextFactory.Object,
+                _mediator.Object);
         }
 
         [TestCase("alias1")]

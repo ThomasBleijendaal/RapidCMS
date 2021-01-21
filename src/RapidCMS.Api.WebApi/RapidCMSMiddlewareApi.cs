@@ -14,6 +14,7 @@ using RapidCMS.Api.WebApi.Providers;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
+using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
@@ -21,12 +22,12 @@ using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Dispatchers.Api;
 using RapidCMS.Core.Factories;
 using RapidCMS.Core.Helpers;
+using RapidCMS.Core.Mediators;
 using RapidCMS.Core.Models.Config.Api;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Resolvers.Repositories;
 using RapidCMS.Core.Resolvers.Setup;
 using RapidCMS.Core.Services.Auth;
-using RapidCMS.Core.Services.Exceptions;
 using RapidCMS.Core.Services.Parent;
 using RapidCMS.Core.Services.Persistence;
 using RapidCMS.Core.Services.Presentation;
@@ -87,8 +88,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IInteractionService, InteractionService>();
 
             services.AddTransient<IAuthService, ApiAuthService>();
-            services.AddSingleton<IExceptionService, ExceptionService>();
             services.AddTransient<IParentService, ParentService>();
+
+            services.AddScoped<IMediator, Mediator>();
 
             services.AddTransient<IEditContextFactory, ApiEditContextWrapperFactory>();
 

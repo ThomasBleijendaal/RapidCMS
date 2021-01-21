@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Interactions;
+using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
@@ -14,6 +15,7 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.State;
@@ -29,19 +31,22 @@ namespace RapidCMS.Core.Dispatchers.Form
         private readonly IConcurrencyService _concurrencyService;
         private readonly IButtonInteraction _buttonInteraction;
         private readonly IEditContextFactory _editContextFactory;
+        private readonly IMediator _mediator;
 
         public EntitiesInteractionDispatcher(
             ISetupResolver<ICollectionSetup> collectionResolver,
             IRepositoryResolver repositoryResolver,
             IConcurrencyService concurrencyService,
             IButtonInteraction buttonInteraction,
-            IEditContextFactory editContextFactory)
+            IEditContextFactory editContextFactory,
+            IMediator mediator)
         {
             _collectionResolver = collectionResolver;
             _repositoryResolver = repositoryResolver;
             _concurrencyService = concurrencyService;
             _buttonInteraction = buttonInteraction;
             _editContextFactory = editContextFactory;
+            _mediator = mediator;
         }
 
         Task<ListViewCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request, IPageState pageState)
@@ -141,6 +146,13 @@ namespace RapidCMS.Core.Dispatchers.Form
                     }
 
                     response.RefreshIds = affectedEntities.SelectNotNull(x => x.Id);
+
+                    _mediator.NotifyEvent(this, new CollectionRepositoryEventArgs(
+                        collection.Alias,
+                        collection.RepositoryAlias,
+                        request.ListContext.ProtoEditContext.Parent?.GetParentPath(),
+                        response.RefreshIds,
+                        CrudType.Update));
                     break;
 
                 case CrudType.None:
@@ -153,13 +165,15 @@ namespace RapidCMS.Core.Dispatchers.Form
                 case CrudType.Return:
                     if (pageState.PopState() == null)
                     {
+                        var parentPath = request.ListContext.Parent?.GetParentPath();
                         pageState.ReplaceState(new PageStateModel
                         {
                             PageType = PageType.Collection,
-                            UsageType = collection.ListEditor == null ? UsageType.View : UsageType.Edit,
+                            UsageType = (collection.ListEditor == null ? UsageType.View : UsageType.Edit)
+                             | ((parentPath != null) ? UsageType.NotRoot : UsageType.Root),
 
                             CollectionAlias = request.ListContext.CollectionAlias,
-                            ParentPath = request.ListContext.Parent?.GetParentPath(),
+                            ParentPath = parentPath,
                             Related = request.Related
                         });
                     }
@@ -168,21 +182,26 @@ namespace RapidCMS.Core.Dispatchers.Form
                 case CrudType.Up:
                     if (pageState.PopState() == null)
                     {
-                        var (newParentPath, parentCollectionAlias, parentId) = ParentPath.RemoveLevel(request.ListContext.Parent?.GetParentPath());
+                        var (newParentPath, repositoryAlias, parentId) = ParentPath.RemoveLevel(request.ListContext.Parent?.GetParentPath());
 
-                        if (parentCollectionAlias == null)
+                        if (repositoryAlias == null)
                         {
                             break;
                         }
 
-                        var parentCollection = _collectionResolver.ResolveSetup(parentCollectionAlias);
+                        var parentCollection = collection.Parent != null && collection.Parent.Type == PageType.Collection ? _collectionResolver.ResolveSetup(collection.Parent.Alias) : default;
+                        if (parentCollection == null)
+                        {
+                            throw new InvalidOperationException("Cannot go Up on collection that is root.");
+                        }
 
                         pageState.ReplaceState(new PageStateModel
                         {
                             PageType = PageType.Node,
-                            UsageType = parentCollection.NodeEditor == null ? UsageType.View : UsageType.Edit,
+                            UsageType = (parentCollection.NodeEditor == null ? UsageType.View : UsageType.Edit)
+                             | ((newParentPath != null) ? UsageType.NotRoot : UsageType.Root),
 
-                            CollectionAlias = parentCollectionAlias,
+                            CollectionAlias = parentCollection.Alias,
                             ParentPath = newParentPath,
                             VariantAlias = collection.EntityVariant.Alias,
                             Id = parentId

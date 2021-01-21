@@ -5,9 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Repositories
@@ -22,10 +25,12 @@ namespace RapidCMS.Repositories
     {
         protected Dictionary<string, List<TEntity>> _data = new Dictionary<string, List<TEntity>>();
         protected Dictionary<string, List<string>> _relations = new Dictionary<string, List<string>>();
+        private readonly IMediator _mediator;
         private readonly IServiceProvider _serviceProvider;
 
-        public InMemoryRepository(IServiceProvider serviceProvider)
+        public InMemoryRepository(IMediator mediator, IServiceProvider serviceProvider)
         {
+            _mediator = mediator;
             _serviceProvider = serviceProvider;
         }
 
@@ -44,6 +49,8 @@ namespace RapidCMS.Repositories
         public override Task DeleteAsync(string id, IParent? parent)
         {
             GetListForParent(parent).RemoveAll(x => x.Id == id);
+
+            _mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Success, "Entity deleted."));
 
             return Task.CompletedTask;
         }
@@ -100,6 +107,8 @@ namespace RapidCMS.Repositories
 
             GetListForParent(editContext.Parent).Add(editContext.Entity);
 
+            _mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Success, "Entity created."));
+
             return (TEntity)editContext.Entity.Clone();
         }
 
@@ -127,6 +136,8 @@ namespace RapidCMS.Repositories
 
             list.Insert(index, newEntity);
             list.RemoveAt(index + 1);
+
+            _mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Success, "Entity updated."));
         }
 
         public override Task ReorderAsync(string? beforeId, string id, IParent? parent)
@@ -150,6 +161,8 @@ namespace RapidCMS.Repositories
                 _data[parentId].Insert(index, entity);
             }
 
+            _mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Success, "Entities reordered."));
+
             return Task.CompletedTask;
         }
 
@@ -162,6 +175,8 @@ namespace RapidCMS.Repositories
 
             _relations[id].Add(related.Entity.Id!);
 
+            _mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Success, "Entity added."));
+
             return Task.CompletedTask;
         }
 
@@ -173,6 +188,8 @@ namespace RapidCMS.Repositories
             }
 
             _relations[id].Remove(related.Entity.Id!);
+
+            _mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Success, "Entity removed."));
 
             return Task.CompletedTask;
         }

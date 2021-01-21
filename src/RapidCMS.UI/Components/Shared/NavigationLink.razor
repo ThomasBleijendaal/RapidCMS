@@ -1,19 +1,36 @@
-﻿@implements IDisposable
+﻿@inherits DisposableComponent
 
 <a href="javascript:;" @onclick="OnLinkClick" class="@(_isActive ? "active" : "")">@ChildContent</a>
 
 @code {
     private bool _isActive;
 
-    [Inject] private INavigationState Navigation { get; set; } = default!;
+    [Inject] private IMediator Mediator { get; set; } = default!;
 
     [Parameter] public RenderFragment ChildContent { get; set; } = default!;
 
     [Parameter] public PageStateModel NewState { get; set; } = default!;
 
-    protected override void OnParametersSet()
+    protected override void OnInitialized()
     {
-        Navigation.LocationChanged += OnLocationChanged;
+        DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(LocationChangedAsync));
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Mediator.GetLatestEventArgs<NavigationEventArgs>() is NavigationEventArgs @event)
+        {
+            await LocationChangedAsync(this, @event);
+        }
+    }
+
+    private async Task LocationChangedAsync(object sender, NavigationEventArgs args)
+    {
+        await InvokeAsync(() =>
+        {
+            _isActive = args.State.Equals(NewState);
+            StateHasChanged();
+        });
     }
 
     private void OnLocationChanged(object? sender, PageStateModel model)
@@ -24,11 +41,6 @@
 
     private void OnLinkClick(MouseEventArgs args)
     {
-        Navigation.ResetState(NewState);
-    }
-
-    public void Dispose()
-    {
-        Navigation.LocationChanged -= OnLocationChanged;
+        Mediator.NotifyEvent(this, new NavigationEventArgs(NewState));
     }
 }

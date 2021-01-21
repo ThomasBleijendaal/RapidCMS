@@ -25,7 +25,7 @@ namespace RapidCMS.Core.Models.State
         {
             return PageType == other?.PageType &&
                 CollectionAlias == other?.CollectionAlias &&
-                ParentPath?.ToPathString() == other?.ParentPath?.ToPathString() &&
+                (ParentPath?.ToPathString() ?? "") == (other?.ParentPath?.ToPathString() ?? "") &&
                 Id == other?.Id;
         }
     }
