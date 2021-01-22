@@ -195,17 +195,13 @@ namespace RapidCMS.Core.Models.Config
 
         public ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string name, Action<ICollectionConfig<TSubEntity>> configure)
             where TSubEntity : class, IEntity
-            where TRepository : IRepository
-        {
-            return AddSubCollection<TSubEntity, TRepository>(alias, default, default, name, configure);
-        }
+            where TRepository : IRepository 
+            => AddSubCollection<TSubEntity, TRepository>(alias, default, default, name, configure);
 
         public ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TSubEntity>> configure)
             where TSubEntity : class, IEntity
-            where TRepository : IRepository
-        {
-            return AddSubCollection<TSubEntity, TRepository>(alias, icon, default, name, configure);
-        }
+            where TRepository : IRepository 
+            => AddSubCollection<TSubEntity, TRepository>(alias, icon, default, name, configure);
 
         public ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string? icon, string? color, string name, Action<ICollectionConfig<TSubEntity>> configure)
             where TSubEntity : class, IEntity
@@ -252,9 +248,32 @@ namespace RapidCMS.Core.Models.Config
             _collections.Add(configReceiver);
         }
 
+        public ICollectionDetailPageEditorConfig<TDetailEntity> AddDetailPage<TDetailEntity, TDetailRepository>(string alias, string name, Action<ICollectionDetailPageEditorConfig<TDetailEntity>> configure)
+            where TDetailEntity : IEntity
+            where TDetailRepository : IRepository
+            => AddDetailPage<TDetailEntity, TDetailRepository>(alias, default, default, name, configure);
+
+        public ICollectionDetailPageEditorConfig<TDetailEntity> AddDetailPage<TDetailEntity, TDetailRepository>(string alias, string? icon, string name, Action<ICollectionDetailPageEditorConfig<TDetailEntity>> configure)
+            where TDetailEntity : IEntity
+            where TDetailRepository : IRepository
+            => AddDetailPage<TDetailEntity, TDetailRepository>(alias, icon, default, name, configure);
+
+        public ICollectionDetailPageEditorConfig<TDetailEntity> AddDetailPage<TDetailEntity, TDetailRepository>(string alias, string? icon, string? color, string name, Action<ICollectionDetailPageEditorConfig<TDetailEntity>> configure)
+            where TDetailEntity : IEntity
+            where TDetailRepository : IRepository
+        {
+            var configReceiver = new DetailPageConfig<TDetailEntity>(alias, Alias, icon, color, name, typeof(TDetailRepository), new EntityVariantConfig(typeof(TDetailEntity).Name, typeof(TDetailEntity)));
+
+            configure?.Invoke(configReceiver);
+
+            _collections.Add(configReceiver);
+
+            return configReceiver;
+        }
+
         public ICollectionConfig<TEntity> ConfigureByConvention(CollectionConvention convention = CollectionConvention.ListViewNodeEditor)
         {
-            if (convention == CollectionConvention.ListView || 
+            if (convention == CollectionConvention.ListView ||
                 convention == CollectionConvention.ListViewNodeView ||
                 convention == CollectionConvention.ListViewNodeEditor)
             {
@@ -272,7 +291,7 @@ namespace RapidCMS.Core.Models.Config
             {
                 NodeView = new ConventionNodeViewConfig<TEntity>();
             }
-            
+
             if (convention == CollectionConvention.ListViewNodeEditor)
             {
                 NodeEditor = new ConventionNodeEditorConfig<TEntity>();

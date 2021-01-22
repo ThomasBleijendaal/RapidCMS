@@ -31,6 +31,7 @@ namespace RapidCMS.Example.WebAssembly.API
         {
             // first, add the repositories to the DI
             services.AddScoped<JsonRepository<Person>>();
+            services.AddScoped<JsonRepository<Details>>();
             services.AddScoped<JsonRepository<ConventionalPerson>>();
             services.AddScoped<JsonRepository<Country>>();
             services.AddScoped<JsonRepository<User>>();
@@ -59,6 +60,7 @@ namespace RapidCMS.Example.WebAssembly.API
 
                 // then register the repositories to RapidCMS API, so it can create controllers for them
                 config.RegisterRepository<Person, JsonRepository<Person>>();
+                config.RegisterRepository<Details, JsonRepository<Details>>();
                 config.RegisterRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>();
                 config.RegisterRepository<Country, JsonRepository<Country>>();
                 config.RegisterRepository<TagGroup, JsonRepository<TagGroup>>();

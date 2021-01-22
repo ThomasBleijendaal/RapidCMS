@@ -51,7 +51,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <summary>
         /// Adds a page to the CMS.
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">Human readable name of this page</param>
         /// <param name="configure"></param>
         /// <returns></returns>
         ICmsConfig AddPage(string name, Action<IPageConfig> configure);
@@ -59,8 +59,8 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <summary>
         /// Add a page to the CMS.
         /// </summary>
-        /// <param name="icon"></param>
-        /// <param name="name"></param>
+        /// <param name="icon">Icon for this page (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
+        /// <param name="name">Human readable name of this page</param>
         /// <param name="configure"></param>
         /// <returns></returns>
         ICmsConfig AddPage(string icon, string name, Action<IPageConfig> configure);
@@ -68,8 +68,9 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <summary>
         /// Add a page to the CMS.
         /// </summary>
-        /// <param name="icon"></param>
-        /// <param name="name"></param>
+        /// <param name="icon">Icon for this page (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
+        /// <param name="color">Color of the icon</param>
+        /// <param name="name">Human readable name of this page</param>
         /// <param name="configure"></param>
         /// <returns></returns>
         ICmsConfig AddPage(string icon, string color, string name, Action<IPageConfig> configure);

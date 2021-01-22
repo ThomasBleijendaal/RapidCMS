@@ -41,7 +41,9 @@ namespace RapidCMS.Example.WebAssembly
             // futhtermore, the AddRapidCMSApiRepository allows you to add ApiRepositories which are lined up with a correct HttpClient to 
             // work seamlessly with a repository on the API side of things (See RapidCMS.Example.WebAssembly.API)
             builder.Services.AddRapidCMSApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>>(BaseUri)
-                .If(ConfigureAuthentication,httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<Details>, ApiRepository<Details, JsonRepository<Details>>>(BaseUri)
+                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
             builder.Services.AddRapidCMSApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>>(BaseUri)
                 .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
             builder.Services.AddRapidCMSApiRepository<BaseRepository<Country>, ApiRepository<Country, JsonRepository<Country>>>(BaseUri)
@@ -69,6 +71,7 @@ namespace RapidCMS.Example.WebAssembly
             builder.Services.AddScoped<BaseRepository<Counter>, CounterRepository>();
 
             builder.Services.AddSingleton<RandomNameActionHandler>();
+            builder.Services.AddSingleton<NavigateToPersonHandler>();
 
             builder.Services.AddTransient<ITextUploadHandler, Base64ApiTextUploadHandler>();
             builder.Services.AddRapidCMSFileUploadApiHttpClient<Base64TextFileUploadHandler>(BaseUri)

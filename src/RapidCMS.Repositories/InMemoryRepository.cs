@@ -90,13 +90,21 @@ namespace RapidCMS.Repositories
         public override Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TEntity> query)
         {
             var ids = _relations.Where(x => x.Value.Contains(related.Entity.Id!)).Select(x => x.Key);
-            
+
             return Task.FromResult(GetListForParent(related.Parent).Where(x => !ids.Contains(x.Id!)))!;
         }
 
-        public override Task<TEntity?> GetByIdAsync(string id, IParent? parent)
+        public override async Task<TEntity?> GetByIdAsync(string id, IParent? parent)
         {
-            return Task.FromResult((TEntity?)GetListForParent(parent).FirstOrDefault(x => x.Id == id)?.Clone());
+            var entity = (TEntity?)GetListForParent(parent).FirstOrDefault(x => x.Id == id)?.Clone();
+
+            if (entity == null)
+            {
+                entity = (TEntity?)(await NewAsync(parent, default))?.Clone();
+                entity!.Id = id;
+            }
+
+            return entity;
         }
 
         public override async Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext)
@@ -128,14 +136,21 @@ namespace RapidCMS.Repositories
         {
             var list = GetListForParent(editContext.Parent);
 
-            var index = list.FindIndex(x => x.Id == editContext.Entity.Id);
-
             var newEntity = (TEntity)editContext.Entity.Clone();
 
-            await HandleRelationsAsync(newEntity, editContext.GetRelationContainer());
+            var index = list.FindIndex(x => x.Id == editContext.Entity.Id);
+            if (index == -1)
+            {
+                list.Add(newEntity);
+            }
+            else
+            {
 
-            list.Insert(index, newEntity);
-            list.RemoveAt(index + 1);
+                list.Insert(index, newEntity);
+                list.RemoveAt(index + 1);
+            }
+
+            await HandleRelationsAsync(newEntity, editContext.GetRelationContainer());
 
             _mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Success, "Entity updated."));
         }

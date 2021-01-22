@@ -3,6 +3,7 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
+using RapidCMS.Example.Shared.Handlers;
 
 namespace RapidCMS.Example.Shared.Collections
 {
@@ -92,12 +93,12 @@ namespace RapidCMS.Example.Shared.Collections
                         // an node editor can have multiple sections, which are displayed as seperte blocks
                         editor.AddSection(section =>
                         {
-                            // the DisableWhen expression is evaluated everytime any property of the entity is updated
+                            // the DisableWhen expression is evaluated every time any property of the entity is updated
                             // so this allows you to make response forms which show or hide parts based upon the entity and its state
                             section.AddField(x => x.Id).DisableWhen((person, state) => true);
 
                             // it is allowed to use DisplayType fields in Editors, so some readonly data can easily be displayed
-                            section.AddField(x => x.Name).SetType(DisplayType.Label);
+                            section.AddField(x => x.Name); //.SetType(DisplayType.Label);
 
                             // if properties are in nested objects (like owned entities in EF), the editors support those as well
                             // flagging such property with [ValidateObject] will have the nested object validated as well
@@ -172,6 +173,18 @@ namespace RapidCMS.Example.Shared.Collections
                     });
 
                 collection.AddSelfAsRecursiveCollection();
+
+                collection.AddDetailPage<Details, BaseRepository<Details>>("person-details", "Settings", "Red20", "Details", config =>
+                {
+                    // TODO: comment about creating new details
+                    config.AddDefaultButton(DefaultButtonType.SaveExisting, "Save");
+
+                    config.AddSection(section =>
+                    {
+                        section.AddField(x => x.Title);
+                        section.AddField(x => x.History);
+                    });
+                });
             });
         }
     }

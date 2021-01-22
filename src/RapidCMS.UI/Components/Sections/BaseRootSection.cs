@@ -21,6 +21,7 @@ namespace RapidCMS.UI.Components.Sections
 {
     public abstract partial class BaseRootSection : DisposableComponent
     {
+        [Inject] protected ICms Cms { get; set; } = default!;
         [Inject] protected IPageState PageState { get; set; } = default!;
         [Inject] protected IMediator Mediator { get; set; } = default!;
 
@@ -144,8 +145,12 @@ namespace RapidCMS.UI.Components.Sections
                 {
                     Mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Error, "Failed to perform action, Entity is in invalid state."));
                 }
-                else
+                else if (!Cms.IsDevelopment)
                 {
+                    Mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Error, $"Failed to perform action: {args.Exception.Message}."));
+                }
+                else
+                { 
                     PageState.ResetState(new PageStateModel { PageType = PageType.Error });
                 }
             });

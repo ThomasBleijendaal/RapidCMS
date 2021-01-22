@@ -11,7 +11,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// </summary>
         /// <param name="type">Type of button to add</param>
         /// <param name="label">Text to display on the button</param>
-        /// <param name="icon">Name of ion icon to use</param>
+        /// <param name="icon">Name of ion icon to use (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
         /// <param name="isPrimary">Set to true to make this button to stand out</param>
         /// <returns></returns>
         TReturn AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false);
@@ -22,7 +22,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <typeparam name="TActionHandler">Type of the button action handler</typeparam>
         /// <param name="buttonType">Type of the razor component</param>
         /// <param name="label">Text to display on the button</param>
-        /// <param name="icon">Name of ion icon to use</param>
+        /// <param name="icon">Name of ion icon to use (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
         /// <returns></returns>
         TReturn AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
                where TActionHandler : IButtonActionHandler;
@@ -32,8 +32,11 @@ namespace RapidCMS.Core.Abstractions.Config
         /// </summary>
         /// <param name="paneType">Type of the razor component</param>
         /// <param name="label">Text to display on the button</param>
-        /// <param name="icon">Name of ion icon to use</param>
+        /// <param name="icon">Name of ion icon to use (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
         /// <returns></returns>
         TReturn AddPaneButton(Type paneType, string? label = null, string? icon = null);
+
+        TReturn AddNavigationButton<TNavigationHandler>(string? label = null, string? icon = null)
+            where TNavigationHandler : INavigationHandler;
     }
 }

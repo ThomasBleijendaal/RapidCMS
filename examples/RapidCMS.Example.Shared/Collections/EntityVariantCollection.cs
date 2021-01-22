@@ -15,6 +15,8 @@ namespace RapidCMS.Example.Shared.Collections
                 collection
                     // Set showEntities to true to have this collection to fold open on default
                     .SetTreeView(x => x.Name, showEntitiesOnStartup: true)
+
+                    // entity variants must be based of the same base type, but can introduce form elements for specialised cases
                     .AddEntityVariant<EntityVariantA>("Variant A", "a")
                     .AddEntityVariant<EntityVariantB>("Variant B", "b")
                     .AddEntityVariant<EntityVariantC>("Variant C", "c")

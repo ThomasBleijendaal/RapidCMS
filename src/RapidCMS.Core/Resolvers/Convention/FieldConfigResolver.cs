@@ -43,22 +43,27 @@ namespace RapidCMS.Core.Resolvers.Convention
 
                     var propertyMetadata = PropertyMetadataHelper.GetPropertyMetadata(subject, data.property);
 
+                    var propertyType = data.property.PropertyType.IsGenericType && data.property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>)
+                        ? Nullable.GetUnderlyingType(data.property.PropertyType)!
+                        : data.property.PropertyType;
+
                     var displayType = features.HasFlag(Features.CanEdit) ? DisplayType.None : DisplayType.Label;
                     var editorType = !features.HasFlag(Features.CanEdit) ? EditorType.None
                         : data.displayAttribute.ResourceType != null ? EditorType.Custom
-                        : EditorTypeHelper.TryFindDefaultEditorType(data.property.PropertyType);
+                        : EditorTypeHelper.TryFindDefaultEditorType(propertyType);
                     var customType = editorType == EditorType.Custom ? data.displayAttribute.ResourceType : null;
 
                     var relationConfig = editorType != EditorType.Select ? null :
-                        new DataProviderRelationConfig(typeof(EnumDataProvider<>).MakeGenericType(data.property.PropertyType));
+                        new DataProviderRelationConfig(typeof(EnumDataProvider<>).MakeGenericType(propertyType));
 
                     return new FieldConfig
                     {
                         Description = features.HasFlag(Features.CanEdit) ? data.displayAttribute.Description : default,
                         DefaultOrder = data.displayAttribute.GetOrder() switch
                         {
-                            1 => OrderByType.Ascending,
+                            (int)OrderByType.Ascending => OrderByType.Ascending,
                             -1 => OrderByType.Descending,
+                            (int)OrderByType.Descending => OrderByType.Descending,
                             _ => OrderByType.None
                         },
                         CustomType = customType,

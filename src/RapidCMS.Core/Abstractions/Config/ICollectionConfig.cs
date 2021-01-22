@@ -69,6 +69,51 @@ namespace RapidCMS.Core.Abstractions.Config
         void AddSelfAsRecursiveCollection();
 
         /// <summary>
+        /// Add a detail page to the current collection. A detail page is a NodeEditor with its own entity type and repository, and allow
+        /// for creating specialized editors.
+        /// </summary>
+        /// <typeparam name="TDetailEntity"></typeparam>
+        /// <typeparam name="TDetailRepository"></typeparam>
+        /// <param name="alias">Alias of the detail page</param>
+        /// <param name="name">Human readable name of this detail page</param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ICollectionDetailPageEditorConfig<TDetailEntity> AddDetailPage<TDetailEntity, TDetailRepository>(string alias, string name, Action<ICollectionDetailPageEditorConfig<TDetailEntity>> configure)
+            where TDetailEntity : IEntity
+            where TDetailRepository : IRepository;
+
+        /// <summary>
+        /// Add a detail page to the current collection. A detail page is a NodeEditor with its own entity type and repository, and allow
+        /// for creating specialized editors.
+        /// </summary>
+        /// <typeparam name="TDetailEntity"></typeparam>
+        /// <typeparam name="TDetailRepository"></typeparam>
+        /// <param name="alias">Alias of the detail page</param>
+        /// <param name="icon">Icon for this sub collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
+        /// <param name="name">Human readable name of this detail page</param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ICollectionDetailPageEditorConfig<TDetailEntity> AddDetailPage<TDetailEntity, TDetailRepository>(string alias, string? icon, string name, Action<ICollectionDetailPageEditorConfig<TDetailEntity>> configure)
+            where TDetailEntity : IEntity
+            where TDetailRepository : IRepository;
+
+        /// <summary>
+        /// Add a detail page to the current collection. A detail page is a NodeEditor with its own entity type and repository, and allow
+        /// for creating specialized editors.
+        /// </summary>
+        /// <typeparam name="TDetailEntity"></typeparam>
+        /// <typeparam name="TDetailRepository"></typeparam>
+        /// <param name="alias">Alias of the detail page</param>
+        /// <param name="icon">Icon for this sub collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
+        /// <param name="color">The color of this sub collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/personas)</param>
+        /// <param name="name">Human readable name of this detail page</param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ICollectionDetailPageEditorConfig<TDetailEntity> AddDetailPage<TDetailEntity, TDetailRepository>(string alias, string? icon, string? color, string name, Action<ICollectionDetailPageEditorConfig<TDetailEntity>> configure)
+            where TDetailEntity : IEntity
+            where TDetailRepository : IRepository;
+
+        /// <summary>
         /// Adds a data view to the collection. Data views are displayed as seperate tabs on the collection, and allow
         /// the user to filter the collection data easily.
         /// </summary>
@@ -82,7 +127,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// </summary>
         /// <typeparam name="TDerivedEntity"></typeparam>
         /// <param name="name">Human readable name of this variant</param>
-        /// <param name="icon">Name of ion icon.</param>
+        /// <param name="icon">Name of ion icon. (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
         /// <returns></returns>
         ICollectionConfig<TEntity> AddEntityVariant<TDerivedEntity>(string name, string icon)
             where TDerivedEntity : TEntity;

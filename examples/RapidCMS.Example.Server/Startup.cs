@@ -42,6 +42,7 @@ namespace RapidCMS.Example.Server
             // it's not required to add your repositories under the base repository
             // but this allows the Server and the WebAssembly examples to share the collection configuration
             services.AddScoped<BaseRepository<Person>, JsonRepository<Person>>();
+            services.AddScoped<BaseRepository<Details>, JsonRepository<Details>>();
             services.AddScoped<BaseRepository<ConventionalPerson>, JsonRepository<ConventionalPerson>>();
             services.AddScoped<BaseRepository<Country>, JsonRepository<Country>>();
             services.AddScoped<BaseRepository<User>, JsonRepository<User>>();
@@ -55,6 +56,7 @@ namespace RapidCMS.Example.Server
             services.AddSingleton<DatabaseEntityDataViewBuilder>();
 
             services.AddSingleton<RandomNameActionHandler>();
+            services.AddScoped<NavigateToPersonHandler>();
 
             // although it's not required to add your own interfaces to the upload handlers, the Server and WebAssembly examples use the
             // same collection configuration, so the DI configuration dictates what handler is used in each case

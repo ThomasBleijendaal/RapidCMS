@@ -108,7 +108,8 @@ namespace RapidCMS.Core.Resolvers.Setup
                 isResolverCachable: true) // TODO
             {
                 DataViews = config.DataViews,
-                DataViewBuilder = config.DataViewBuilder
+                DataViewBuilder = config.DataViewBuilder,
+                UsageType = GetCollectionUsage(config)
             };
 
             var cacheable = true;
@@ -134,6 +135,17 @@ namespace RapidCMS.Core.Resolvers.Setup
             collection.NodeEditor = config.NodeEditor == null ? null : _nodeResolver.ResolveSetup(config.NodeEditor, collection).CheckIfCachable(ref cacheable);
 
             return new ResolvedSetup<CollectionSetup>(collection, cacheable);
+        }
+
+        private static UsageType GetCollectionUsage(CollectionConfig config)
+        {
+            var hasDetailsPageUsage = config.GetType().IsGenericType && config.GetType().GetGenericTypeDefinition() == typeof(DetailPageConfig<>);
+            var hasNodeUsage = !hasDetailsPageUsage && (config.NodeEditor != null || config.NodeView != null);
+            var hasCollectionUsage = config.ListEditor != null || config.ListView != null;
+
+            return (hasNodeUsage ? UsageType.Node : UsageType.None) |
+                (hasCollectionUsage ? UsageType.List : UsageType.None) |
+                (hasDetailsPageUsage ? UsageType.Details : UsageType.None);
         }
     }
 }

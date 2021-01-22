@@ -55,6 +55,20 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
+        public INodeViewConfig<TEntity> AddNavigationButton<TNavigationHandler>(string? label = null, string? icon = null)
+            where TNavigationHandler : INavigationHandler
+        {
+            var button = new NavigationButtonConfig(typeof(TNavigationHandler))
+            {
+                Icon = icon,
+                Label = label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
+
         public INodeViewConfig<TEntity> AddSection(Action<IDisplayPaneConfig<TEntity>> configure)
         {
             return AddSection<TEntity>(configure);

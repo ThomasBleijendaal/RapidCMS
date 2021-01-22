@@ -59,6 +59,10 @@ namespace RapidCMS.Core.Enums
 
         [DefaultIconLabel(icon: "OpenPane", label: "[open pane]")]
         [Actions(UsageType.Node, UsageType.List)]
-        OpenPane = 9990
+        OpenPane = 9990,
+
+        [DefaultIconLabel(icon: "NavigateForward", label: "[navigate]")]
+        [Actions(UsageType.Node, UsageType.List)]
+        Navigate = 9991
     }
 }

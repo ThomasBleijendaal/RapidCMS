@@ -122,7 +122,12 @@ namespace RapidCMS.Core.Providers
                 _memoryCache.Remove(cacheKey);
             }
 
-            var entities = await _memoryCache.GetOrCreateAsync(cacheKey, (cacheKey) => _repository.GetAllAsync(parent, Query.Default(_editContext.CollectionAlias)));
+            var entities = await _memoryCache.GetOrCreateAsync(cacheKey, (cacheEntry) =>
+            {
+                cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30);
+
+                return _repository.GetAllAsync(parent, Query.Default(_editContext.CollectionAlias));
+            });
 
             _elements = entities
                 .Select(entity => (IElement)new Element
