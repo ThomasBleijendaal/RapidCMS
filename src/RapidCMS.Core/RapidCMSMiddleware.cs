@@ -103,6 +103,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddScoped<DefaultButtonActionHandler>();
             services.AddScoped(typeof(OpenPaneButtonActionHandler<>));
+            services.AddScoped(typeof(NavigateButtonActionHandler<>));
 
             services.AddScoped(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
 

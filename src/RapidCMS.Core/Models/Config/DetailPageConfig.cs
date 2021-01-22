@@ -36,6 +36,10 @@ namespace RapidCMS.Core.Models.Config
         public INodeEditorConfig<TDetailEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null)
             => _detailNodeEditor.AddPaneButton(paneType, label, icon);
 
+        public INodeEditorConfig<TDetailEntity> AddNavigationButton<TNavigationHandler>(string? label = null, string? icon = null)
+            where TNavigationHandler : INavigationHandler
+            => _detailNodeEditor.AddNavigationButton<TNavigationHandler>(label, icon);
+
         public INodeEditorConfig<TDetailEntity> AddSection(Action<IEditorPaneConfig<TDetailEntity>> configure)
             => _detailNodeEditor.AddSection(configure);
 

@@ -80,6 +80,11 @@ namespace RapidCMS.Core.Resolvers.Setup
                 button.DefaultButtonType = DefaultButtonType.OpenPane;
                 button.ButtonHandlerType = typeof(OpenPaneButtonActionHandler<>).MakeGenericType(paneButton.PaneType);
             }
+            else if (config is NavigationButtonConfig navigationButton)
+            {
+                button.DefaultButtonType = DefaultButtonType.Navigate;
+                button.ButtonHandlerType = typeof(NavigateButtonActionHandler<>).MakeGenericType(navigationButton.HandlerType);
+            }
             else
             {
                 throw new InvalidOperationException();

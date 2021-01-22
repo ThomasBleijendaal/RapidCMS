@@ -35,5 +35,8 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <param name="icon">Name of ion icon to use (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
         /// <returns></returns>
         TReturn AddPaneButton(Type paneType, string? label = null, string? icon = null);
+
+        TReturn AddNavigationButton<TNavigationHandler>(string? label = null, string? icon = null)
+            where TNavigationHandler : INavigationHandler;
     }
 }

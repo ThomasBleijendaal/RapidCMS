@@ -58,6 +58,8 @@ namespace RapidCMS.Core.Services.Tree
             var parent = await _parentService.GetParentAsync(parentPath);
 
             var isList = collection.UsageType.HasFlag(UsageType.List);
+            var isListEditor = collection.ListEditor != null;
+            var isListView = collection.ListView != null;
             var isDetails = collection.UsageType.HasFlag(UsageType.Details) && parent?.Entity != null;
 
             var entity = isList
@@ -65,9 +67,9 @@ namespace RapidCMS.Core.Services.Tree
                 : await _repositoryResolver.GetRepository(collection).GetByIdAsync(parent!.Entity.Id!, parent)
                     ?? throw new InvalidOperationException($"Failed to get detail entity for given alias ({alias}) -- a detail entity should always exist.");
 
-            var canEdit = (isList && await _authService.IsUserAuthorizedAsync(Operations.Update, entity)) || 
+            var canEdit = (isList && isListEditor && await _authService.IsUserAuthorizedAsync(Operations.Update, entity)) || 
                 (isDetails && await _authService.IsUserAuthorizedAsync(Operations.Update, parent!.Entity));
-            var canView = isList && await _authService.IsUserAuthorizedAsync(Operations.Read, entity);
+            var canView = isList && isListView && await _authService.IsUserAuthorizedAsync(Operations.Read, entity);
 
             if (!canEdit && !canView)
             {

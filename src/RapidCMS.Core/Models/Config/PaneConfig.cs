@@ -85,6 +85,19 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
+        public PaneConfig<TEntity> AddNavigationButton<TNavigationHandler>(string? label = null, string? icon = null)
+        {
+            var button = new NavigationButtonConfig(typeof(TNavigationHandler))
+            {
+                Icon = icon,
+                Label = label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
+
         private PaneConfig<TEntity> SetLabel(string label)
         {
             Label = label;
@@ -172,50 +185,35 @@ namespace RapidCMS.Core.Models.Config
             return config;
         }
 
-        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddDefaultButton(DefaultButtonType type, string? label, string? icon, bool isPrimary)
-        {
-            return AddDefaultButton(type, label, icon, isPrimary);
-        }
+        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddDefaultButton(DefaultButtonType type, string? label, string? icon, bool isPrimary) 
+            => AddDefaultButton(type, label, icon, isPrimary);
 
-        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddCustomButton<TActionHandler>(Type buttonType, string? label, string? icon)
-        {
-            return AddCustomButton<TActionHandler>(buttonType, label, icon);
-        }
+        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddCustomButton<TActionHandler>(Type buttonType, string? label, string? icon) 
+            => AddCustomButton<TActionHandler>(buttonType, label, icon);
 
-        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddPaneButton(Type paneType, string? label, string? icon)
-        {
-            return AddPaneButton(paneType, label, icon);
-        }
+        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddPaneButton(Type paneType, string? label, string? icon) 
+            => AddPaneButton(paneType, label, icon);
 
-        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddSubCollectionList(string collectionAlias)
-        {
-            return AddSubCollectionList(collectionAlias);
-        }
+        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddNavigationButton<TNavigationHandler>(string? label, string? icon) 
+            => AddNavigationButton<TNavigationHandler>(label, icon);
 
-        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddSubCollectionList<TSubEntity, TSubRepository>(Action<ISubCollectionListViewConfig<TSubEntity, TSubRepository>>? configure)
-        {
-            return AddSubCollectionList(configure);
-        }
+        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddSubCollectionList(string collectionAlias) 
+            => AddSubCollectionList(collectionAlias);
 
-        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddRelatedCollectionList(string collectionAlias)
-        {
-            return AddRelatedCollectionList(collectionAlias);
-        }
+        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddSubCollectionList<TSubEntity, TSubRepository>(Action<ISubCollectionListViewConfig<TSubEntity, TSubRepository>>? configure) 
+            => AddSubCollectionList(configure);
 
-        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddRelatedCollectionList<TRelatedEntity, TRelatedRepository>(Action<IRelatedCollectionListViewConfig<TRelatedEntity, TRelatedRepository>>? configure)
-        {
-            return AddRelatedCollectionList(configure);
-        }
+        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddRelatedCollectionList(string collectionAlias) 
+            => AddRelatedCollectionList(collectionAlias);
 
-        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.SetLabel(string label)
-        {
-            return SetLabel(label);
-        }
+        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddRelatedCollectionList<TRelatedEntity, TRelatedRepository>(Action<IRelatedCollectionListViewConfig<TRelatedEntity, TRelatedRepository>>? configure) 
+            => AddRelatedCollectionList(configure);
 
-        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.VisibleWhen(Func<TEntity, EntityState, bool> predicate)
-        {
-            return VisibleWhen(predicate);
-        }
+        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.SetLabel(string label) 
+            => SetLabel(label);
+
+        IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.VisibleWhen(Func<TEntity, EntityState, bool> predicate) 
+            => VisibleWhen(predicate);
 
         IEditorFieldConfig<TEntity, TValue> IEditorPaneConfig<TEntity>.AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<IEditorFieldConfig<TEntity, TValue>>? configure)
         {
@@ -235,50 +233,34 @@ namespace RapidCMS.Core.Models.Config
             return config;
         }
 
-        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddDefaultButton(DefaultButtonType type, string? label, string? icon, bool isPrimary)
-        {
-            return AddDefaultButton(type, label, icon, isPrimary);
-        }
+        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddDefaultButton(DefaultButtonType type, string? label, string? icon, bool isPrimary) 
+            => AddDefaultButton(type, label, icon, isPrimary);
 
-        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddCustomButton<TActionHandler>(Type buttonType, string? label, string? icon)
-        {
-            return AddCustomButton<TActionHandler>(buttonType, label, icon);
-        }
+        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddCustomButton<TActionHandler>(Type buttonType, string? label, string? icon) 
+            => AddCustomButton<TActionHandler>(buttonType, label, icon);
 
-        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddPaneButton(Type paneType, string? label, string? icon)
-        {
-            return AddPaneButton(paneType, label, icon);
-        }
+        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddPaneButton(Type paneType, string? label, string? icon) 
+            => AddPaneButton(paneType, label, icon);
 
-        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddSubCollectionList(string collectionAlias)
-        {
-            return AddSubCollectionList(collectionAlias);
-        }
+        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddNavigationButton<TNavigationHandler>(string? label, string? icon) 
+            => AddNavigationButton<TNavigationHandler>(label, icon);
 
-        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddSubCollectionList<TSubEntity, TSubRepository>(Action<ISubCollectionListEditorConfig<TSubEntity, TSubRepository>>? configure)
-        {
-            return AddSubCollectionList(configure);
-        }
+        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddSubCollectionList(string collectionAlias) 
+            => AddSubCollectionList(collectionAlias);
 
-        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddRelatedCollectionList(string collectionAlias)
-        {
-            return AddRelatedCollectionList(collectionAlias);
-        }
+        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddSubCollectionList<TSubEntity, TSubRepository>(Action<ISubCollectionListEditorConfig<TSubEntity, TSubRepository>>? configure) 
+            => AddSubCollectionList(configure);
 
-        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddRelatedCollectionList<TRelatedEntity, TRelatedRepository>(Action<IRelatedCollectionListEditorConfig<TRelatedEntity, TRelatedRepository>>? configure)
-        {
-            return AddRelatedCollectionList(configure);
-        }
+        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddRelatedCollectionList(string collectionAlias) 
+            => AddRelatedCollectionList(collectionAlias);
 
-        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.SetLabel(string label)
-        {
-            return SetLabel(label);
-        }
+        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddRelatedCollectionList<TRelatedEntity, TRelatedRepository>(Action<IRelatedCollectionListEditorConfig<TRelatedEntity, TRelatedRepository>>? configure) 
+            => AddRelatedCollectionList(configure);
 
-        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.VisibleWhen(Func<TEntity, EntityState, bool> predicate)
-        {
-            return VisibleWhen(predicate);
-        }
+        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.SetLabel(string label) 
+            => SetLabel(label);
 
+        IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.VisibleWhen(Func<TEntity, EntityState, bool> predicate) 
+            => VisibleWhen(predicate);
     }
 }

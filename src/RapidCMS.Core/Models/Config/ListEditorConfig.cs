@@ -96,6 +96,20 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
+        public IListEditorConfig<TEntity> AddNavigationButton<TNavigationHandler>(string? label = null, string? icon = null)
+            where TNavigationHandler : INavigationHandler
+        {
+            var button = new NavigationButtonConfig(typeof(TNavigationHandler))
+            {
+                Icon = icon,
+                Label = label
+            };
+
+            Buttons.Add(button);
+
+            return this;
+        }
+
         public IListEditorConfig<TEntity> AddSection(Action<IEditorPaneConfig<TEntity>> configure)
         {
             return AddSection<TEntity>(configure);
