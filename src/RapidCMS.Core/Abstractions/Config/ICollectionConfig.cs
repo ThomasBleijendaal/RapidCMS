@@ -127,7 +127,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// </summary>
         /// <typeparam name="TDerivedEntity"></typeparam>
         /// <param name="name">Human readable name of this variant</param>
-        /// <param name="icon">Name of ion icon.</param>
+        /// <param name="icon">Name of ion icon. (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
         /// <returns></returns>
         ICollectionConfig<TEntity> AddEntityVariant<TDerivedEntity>(string name, string icon)
             where TDerivedEntity : TEntity;
