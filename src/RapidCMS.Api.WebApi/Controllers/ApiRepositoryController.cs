@@ -37,7 +37,7 @@ namespace RapidCMS.Api.WebApi.Controllers
         {
             get => (string)ControllerContext.ActionDescriptor.Properties[CollectionControllerRouteConvention.AliasKey];
         }
-
+        
         [HttpPost("entity/{id}")]
         public async Task<ActionResult<EntityModel<IEntity>>> GetByIdAsync(string id, [FromBody] ParentQueryModel query)
         {

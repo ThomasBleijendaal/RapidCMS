@@ -39,7 +39,7 @@ using RapidCMS.Core.Services.Presentation;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class RapidCMSMiddlewareApi
+    public static class RapidCMSMiddlewareWebApi
     {
         private static IControllerModelConvention? _routeConvention;
         private static IApplicationFeatureProvider<ControllerFeature>? _controllerFeatureProvider;
@@ -53,7 +53,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services"></param>
         /// <param name="config"></param>
         /// <returns></returns>
-        public static IServiceCollection AddRapidCMSApi(this IServiceCollection services, Action<IApiConfig>? config = null)
+        public static IServiceCollection AddRapidCMSWebApi(this IServiceCollection services, Action<IApiConfig>? config = null)
         {
             if (_routeConvention != null || _controllerFeatureProvider != null)
             {
