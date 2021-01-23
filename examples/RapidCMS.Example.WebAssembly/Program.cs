@@ -52,14 +52,13 @@ namespace RapidCMS.Example.WebAssembly
                 .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
             builder.Services.AddRapidCMSApiRepository<BaseRepository<Tag>, ApiRepository<Tag, JsonRepository<Tag>>>(BaseUri)
                 .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>>(BaseUri)
+                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
 
             // with LocalStorageRepository collections can store their data in the local storage of
             // the user, making personalisation quite easy
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddScoped<BaseRepository<User>, LocalStorageRepository<User>>();
-
-            // entity variants are not supported in Api Contexts, so this repository is added as a local storage repository
-            builder.Services.AddScoped<BaseRepository<EntityVariantBase>, LocalStorageRepository<EntityVariantBase>>();
 
             // api repositories can also be mapped
             builder.Services.AddRapidCMSApiRepository<

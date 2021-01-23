@@ -21,6 +21,8 @@ namespace RapidCMS.Api.WebApi.Controllers
             _handler = handler;
         }
 
+        // TODO: move handler alias to route and validate it in a single controller
+
         [HttpPost("file/validate")]
         public async Task<ActionResult<FileUploadValidationResponseModel>> ValidateFileAsync([FromForm] UploadFileModel fileInfo)
         {

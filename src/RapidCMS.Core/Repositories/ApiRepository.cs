@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Converters;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.ApiBridge.Request;
@@ -23,10 +24,14 @@ namespace RapidCMS.Repositories.ApiBridge
         where TCorrespondingRepository : IRepository
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly JsonSerializerSettings _jsonSerializerSettings;
 
         public ApiRepository(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
+            _jsonSerializerSettings = new JsonSerializerSettings();
+
+            _jsonSerializerSettings.Converters.Add(new EntityModelJsonConverter<TEntity>());
         }
 
         public override Task DeleteAsync(string id, IParent? parent)
@@ -42,7 +47,7 @@ namespace RapidCMS.Repositories.ApiBridge
 
             query.HasMoreData(results.MoreDataAvailable);
 
-            return results.Entities;
+            return results.Entities.Select(x => x.Entity);
         }
 
         public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IQuery<TEntity> query)
@@ -55,7 +60,7 @@ namespace RapidCMS.Repositories.ApiBridge
 
             query.HasMoreData(results.MoreDataAvailable);
 
-            return results.Entities;
+            return results.Entities.Select(x => x.Entity);
         }
 
         public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TEntity> query)
@@ -68,17 +73,17 @@ namespace RapidCMS.Repositories.ApiBridge
 
             query.HasMoreData(results.MoreDataAvailable);
 
-            return results.Entities;
+            return results.Entities.Select(x => x.Entity);
         }
 
-        public override Task<TEntity?> GetByIdAsync(string id, IParent? parent)
-            => DoRequestAsync<TEntity>(CreateRequest(HttpMethod.Post, $"entity/{id}", new ParentQueryModel(parent)));
+        public override async Task<TEntity?> GetByIdAsync(string id, IParent? parent)
+            => (await DoRequestAsync<EntityModel<TEntity>>(CreateRequest(HttpMethod.Post, $"entity/{id}", new ParentQueryModel(parent))))?.Entity;
 
-        public override Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext)
-            => DoRequestAsync<TEntity>(CreateRequest(HttpMethod.Post, "entity", new EditContextModel<TEntity>(editContext)));
+        public override async Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext)
+            => (await DoRequestAsync<EntityModel<TEntity>>(CreateRequest(HttpMethod.Post, "entity", new EditContextModel<TEntity>(editContext))))?.Entity;
 
         public override async Task<TEntity> NewAsync(IParent? parent, Type? variantType = null)
-            => await DoRequestAsync<TEntity>(CreateRequest(HttpMethod.Post, "new", new ParentQueryModel(parent, variantType))) ?? throw new NotFoundException("Could not create new entity.");
+            => (await DoRequestAsync<EntityModel<TEntity>>(CreateRequest(HttpMethod.Post, "new", new ParentQueryModel(parent, variantType))))?.Entity ?? throw new NotFoundException("Could not create new entity.");
 
         public override Task UpdateAsync(IEditContext<TEntity> editContext)
             => DoRequestAsync(CreateRequest(HttpMethod.Put, $"entity/{editContext.Entity.Id}", new EditContextModel<TEntity>(editContext)));
@@ -105,7 +110,7 @@ namespace RapidCMS.Repositories.ApiBridge
             }
 
             var request = CreateRequest(method, url);
-            request.Content = new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
+            request.Content = new StringContent(JsonConvert.SerializeObject(content, _jsonSerializerSettings), Encoding.UTF8, "application/json");
 
             return request;
         }
@@ -143,7 +148,7 @@ namespace RapidCMS.Repositories.ApiBridge
             {
                 var response = await DoRequestAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<TResult>(json);
+                var result = JsonConvert.DeserializeObject<TResult>(json, _jsonSerializerSettings);
                 return result;
             }
             catch (NotFoundException)

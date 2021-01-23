@@ -331,3 +331,4 @@ ASALocalRun/
 
 src/RapidCMS.Common/RapidCMS.Common.xml
 bench
+**/local.settings.json
