@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Converters;
-using RapidCMS.Core.Models.ApiBridge.Response;
+using RapidCMS.Core.Models.ApiBridge;
 
 namespace RapidCMS.Core.Tests.JsonConverters
 {

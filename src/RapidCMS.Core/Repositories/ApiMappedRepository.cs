@@ -12,6 +12,7 @@ using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Converters;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Helpers;
+using RapidCMS.Core.Models.ApiBridge;
 using RapidCMS.Core.Models.ApiBridge.Request;
 using RapidCMS.Core.Models.ApiBridge.Response;
 using RapidCMS.Core.Repositories;

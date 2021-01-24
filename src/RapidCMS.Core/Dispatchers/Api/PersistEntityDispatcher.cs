@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
@@ -16,17 +17,20 @@ namespace RapidCMS.Core.Dispatchers.Api
     internal class PersistEntityDispatcher : IInteractionDispatcher<PersistEntityRequestModel, ApiCommandResponseModel>
     {
         private readonly IAuthService _authService;
+        private readonly IEntityVariantResolver _entityVariantResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IParentService _parentService;
         private readonly IEditContextFactory _editContextFactory;
 
         public PersistEntityDispatcher(
             IAuthService authService,
+            IEntityVariantResolver entityVariantResolver,
             IRepositoryResolver repositoryResolver,
             IParentService parentService,
             IEditContextFactory editContextFactory)
         {
             _authService = authService;
+            _entityVariantResolver = entityVariantResolver;
             _repositoryResolver = repositoryResolver;
             _parentService = parentService;
             _editContextFactory = editContextFactory;
@@ -40,6 +44,13 @@ namespace RapidCMS.Core.Dispatchers.Api
             }
 
             var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Descriptor.ParentPath));
+
+            var (repositoryEntityType, entityVariants) = _entityVariantResolver.GetValidVariantsForRepository(request.Descriptor.RepositoryAlias);
+
+            if (repositoryEntityType == null || !(entityVariants?.Contains(request.Entity.GetType()) ?? false))
+            {
+                throw new InvalidOperationException("Invalid entity provided.");
+            }
 
             var subjectRepository = _repositoryResolver.GetRepository(request.Descriptor.RepositoryAlias);
             var referenceEntity = (request.EntityState == EntityState.IsExisting)
@@ -57,7 +68,8 @@ namespace RapidCMS.Core.Dispatchers.Api
 
             var editContext = _editContextFactory.GetEditContextWrapper(
                 usageType,
-                request.EntityState, 
+                request.EntityState,
+                repositoryEntityType,
                 request.Entity, 
                 referenceEntity, 
                 parent,

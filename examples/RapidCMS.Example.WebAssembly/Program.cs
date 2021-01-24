@@ -38,8 +38,12 @@ namespace RapidCMS.Example.WebAssembly
 
             // it's not required to add your repositories under the base repository
             // but this allows the Server and the WebAssembly examples to share the collection configuration
-            // futhtermore, the AddRapidCMSApiRepository allows you to add ApiRepositories which are lined up with a correct HttpClient to 
+
+            // AddRapidCMSApiRepository allows you to add ApiRepositories which are lined up with a correct HttpClient to 
             // work seamlessly with a repository on the API side of things (See RapidCMS.Example.WebAssembly.API)
+
+            // The TokenAuthorizationMessageHandler forwards the auth token from the frontend to the backend, allowing you
+            // to validate the user easily
             builder.Services.AddRapidCMSApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>>(BaseUri)
                 .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
             builder.Services.AddRapidCMSApiRepository<BaseRepository<Details>, ApiRepository<Details, JsonRepository<Details>>>(BaseUri)

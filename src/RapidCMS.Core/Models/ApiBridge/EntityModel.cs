@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using RapidCMS.Core.Helpers;
 
-namespace RapidCMS.Core.Models.ApiBridge.Response
+namespace RapidCMS.Core.Models.ApiBridge
 {
     public static class EntityModel
     {
@@ -29,7 +29,7 @@ namespace RapidCMS.Core.Models.ApiBridge.Response
 
             foreach (var entity in entities)
             {
-                yield return EntityModel.Create(entity);
+                yield return Create(entity);
             }
         }
     }

@@ -32,6 +32,7 @@ namespace RapidCMS.Core.Factories
         public IEditContext GetEditContextWrapper(
             UsageType usageType,
             EntityState entityState,
+            Type repositoryEntityType,
             IEntity updatedEntity,
             IEntity referenceEntity,
             IParent? parent,

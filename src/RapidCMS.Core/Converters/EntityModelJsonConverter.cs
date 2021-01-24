@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Models.ApiBridge.Response;
+using RapidCMS.Core.Models.ApiBridge;
 
 namespace RapidCMS.Core.Converters
 {

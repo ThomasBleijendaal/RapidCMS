@@ -38,6 +38,7 @@ namespace RapidCMS.Core.Factories
         public IEditContext GetEditContextWrapper(
             UsageType usageType,
             EntityState entityState,
+            Type repositoryEntityType,
             IEntity updatedEntity,
             IEntity referenceEntity,
             IParent? parent,
@@ -59,7 +60,7 @@ namespace RapidCMS.Core.Factories
                     r.elements.Select(e => new Element { Id = e, Labels = Enumerable.Empty<string>() }).ToList());
             }));
 
-            var contextType = typeof(ApiEditContextWrapper<>).MakeGenericType(updatedEntity.GetType());
+            var contextType = typeof(ApiEditContextWrapper<>).MakeGenericType(repositoryEntityType);
             var instance = Activator.CreateInstance(contextType,
                 usageType,
                 entityState,

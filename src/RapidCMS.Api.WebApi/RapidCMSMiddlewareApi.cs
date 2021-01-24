@@ -5,13 +5,16 @@ using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Newtonsoft.Json;
 using RapidCMS.Api.WebApi.Controllers;
 using RapidCMS.Api.WebApi.Conventions;
 using RapidCMS.Api.WebApi.Providers;
 using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Mediators;
@@ -19,7 +22,9 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
+using RapidCMS.Core.Converters;
 using RapidCMS.Core.Dispatchers.Api;
+using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Factories;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Mediators;
@@ -38,9 +43,9 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         private static IControllerModelConvention? _routeConvention;
         private static IApplicationFeatureProvider<ControllerFeature>? _controllerFeatureProvider;
+        private static ApiConfig? _rootConfig;
 
-        private static bool _routeConventionInstalled = false;
-        private static bool _controlerFeatureInstalled = false;
+        private static bool _controllersInstalled;
 
         /// <summary>
         /// Use this method to setup the Repository APIs to support RapidCMS WebAssenbly on a separate server.
@@ -55,13 +60,13 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new InvalidOperationException("Cannot call AddRapidCMSApi twice.");
             }
 
-            var rootConfig = GetRootConfig(config);
+            _rootConfig = GetRootConfig(config);
 
-            services.AddSingleton<IApiConfig>(rootConfig);
+            services.AddSingleton<IApiConfig>(_rootConfig);
 
             services.AddHttpContextAccessor();
 
-            if (rootConfig.AllowAnonymousUsage)
+            if (_rootConfig.AllowAnonymousUsage)
             {
                 services.AddSingleton<IAuthorizationHandler, AllowAllAuthorizationHandler>();
                 services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
@@ -94,7 +99,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddTransient<IEditContextFactory, ApiEditContextWrapperFactory>();
 
-            var controllersToAdd = rootConfig.Repositories.ToDictionary(
+            var controllersToAdd = _rootConfig.Repositories.ToDictionary(
                 repository =>
                 {
                     if (repository.DatabaseType == default)
@@ -112,9 +117,21 @@ namespace Microsoft.Extensions.DependencyInjection
                 },
                 kv => kv.Alias);
 
-            if (rootConfig.FileUploadHandlers.Any())
+            var entityVariants = _rootConfig.Repositories.ToDictionary(x => x.Alias, x =>
             {
-                foreach (var handler in rootConfig.FileUploadHandlers)
+                var entityTypes = new[] { x.EntityType }
+                    .Union(x.EntityType.Assembly
+                        .GetTypes()
+                        .Where(t => !t.IsAbstract && t.IsSubclassOf(x.EntityType)))
+                    .ToList();
+                return (x.EntityType, (IReadOnlyList<Type>)entityTypes);
+            });
+
+            services.AddSingleton<IEntityVariantResolver>(new EntityVariantResolver(entityVariants));
+
+            if (_rootConfig.FileUploadHandlers.Any())
+            {
+                foreach (var handler in _rootConfig.FileUploadHandlers)
                 {
                     var type = typeof(ApiFileUploadController<>).MakeGenericType(handler).GetTypeInfo();
                     var alias = AliasHelper.GetFileUploaderAlias(type);
@@ -129,10 +146,44 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
+        public static IMvcBuilder AddRapidCMSControllers(this IServiceCollection services, Action<MvcOptions>? extraConfig = default)
+        {
+            if (_rootConfig == null || _routeConvention == null || _controllerFeatureProvider == null)
+            {
+                throw new InvalidOperationException("Call AddRapidCMSApi() before calling this method.");
+            }
+
+            var builder = services.AddControllers(config =>
+            {
+                config.Conventions.Add(_routeConvention);
+
+                extraConfig?.Invoke(config);
+            }).AddNewtonsoftJson(options =>
+            {
+                foreach (var entityType in _rootConfig.Repositories.Select(x => x.EntityType))
+                {
+                    if (Activator.CreateInstance(typeof(EntityModelJsonConverter<>).MakeGenericType(entityType)) is JsonConverter jsonConverter)
+                    {
+                        options.SerializerSettings.Converters.Add(jsonConverter);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Could not create {nameof(EntityModelJsonConverter<IEntity>)} for {entityType.Name}");
+                    } 
+                }
+            }).ConfigureApplicationPartManager(config =>
+            {
+                config.FeatureProviders.Add(_controllerFeatureProvider);
+            });
+
+            _controllersInstalled = true;
+
+            return builder;
+        }
+
+        [Obsolete("Use AddRapidCMSControllers.")]
         public static void AddRapidCMSRouteConvention(this IList<IApplicationModelConvention> list)
         {
-            _routeConventionInstalled = true;
-
             if (_routeConvention == null)
             {
                 throw new InvalidOperationException("Call AddRapidCMSApi() before calling this method.");
@@ -141,10 +192,9 @@ namespace Microsoft.Extensions.DependencyInjection
             list.Add(_routeConvention);
         }
 
+        [Obsolete("Use AddRapidCMSControllers.")]
         public static void AddRapidCMSControllerFeatureProvider(this IList<IApplicationFeatureProvider> list)
         {
-            _controlerFeatureInstalled = true;
-
             if (_controllerFeatureProvider == null)
             {
                 throw new InvalidOperationException("Call AddRapidCMSApi() before calling this method.");
@@ -162,9 +212,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IApplicationBuilder UseRapidCMSApi(this IApplicationBuilder app, bool isDevelopment = false)
         {
-            if (!_routeConventionInstalled || !_controlerFeatureInstalled)
+            if (!_controllersInstalled)
             {
-                throw new InvalidOperationException($"Configure the convention and feature provider correctly first, using {nameof(AddRapidCMSRouteConvention)}() and ({nameof(AddRapidCMSControllerFeatureProvider)}().");
+                throw new InvalidOperationException($"Configure the convention and feature provider correctly first, using {nameof(AddRapidCMSControllers)}().");
             }
 
             return app;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Enums;
@@ -12,6 +13,7 @@ namespace RapidCMS.Core.Abstractions.Factories
         IEditContext GetEditContextWrapper(
             UsageType usageType, 
             EntityState entityState, 
+            Type repositoryEntityType,
             IEntity updatedEntity, 
             IEntity referenceEntity, 
             IParent? parent,
