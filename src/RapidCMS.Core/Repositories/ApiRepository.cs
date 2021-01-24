@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using RapidCMS.Core.Abstractions.Data;
@@ -25,14 +26,17 @@ namespace RapidCMS.Repositories.ApiBridge
         where TCorrespondingRepository : IRepository
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IMemoryCache _memoryCache;
         private readonly JsonSerializerSettings _jsonSerializerSettings;
+        private readonly string _repositoryAlias;
 
-        public ApiRepository(IHttpClientFactory httpClientFactory)
+        public ApiRepository(IHttpClientFactory httpClientFactory, IMemoryCache memoryCache)
         {
             _httpClientFactory = httpClientFactory;
+            _memoryCache = memoryCache;
             _jsonSerializerSettings = new JsonSerializerSettings();
-
             _jsonSerializerSettings.Converters.Add(new EntityModelJsonConverter<TEntity>());
+            _repositoryAlias = AliasHelper.GetRepositoryAlias(typeof(ApiRepository<TEntity, TCorrespondingRepository>));
         }
 
         public override Task DeleteAsync(string id, IParent? parent)
@@ -118,19 +122,15 @@ namespace RapidCMS.Repositories.ApiBridge
 
         private async Task<HttpResponseMessage> DoRequestAsync(HttpRequestMessage request)
         {
-            var entityType = typeof(TEntity).FullName;
-            var repoType = typeof(TCorrespondingRepository).FullName;
-
-            var alias = AliasHelper.GetRepositoryAlias(typeof(ApiRepository<TEntity, TCorrespondingRepository>));
-
-            var httpClient = _httpClientFactory.CreateClient(alias);
+            var httpClient = _httpClientFactory.CreateClient(_repositoryAlias);
             if (httpClient.BaseAddress == default)
             {
-                throw new InvalidOperationException($"Please configure an HttpClient for the repository '{alias}' using " +
+                throw new InvalidOperationException($"Please configure an HttpClient for the repository '{_repositoryAlias}' using " +
                     $".{nameof(RapidCMSMiddleware.AddRapidCMSApiRepository)}([..]) and configure its BaseAddress correctly.");
             }
 
             var response = await httpClient.SendAsync(request);
+
             return response.StatusCode switch
             {
                 HttpStatusCode.OK => response,
@@ -147,9 +147,20 @@ namespace RapidCMS.Repositories.ApiBridge
         {
             try
             {
+                var cacheKey = $"{_repositoryAlias}-{request.RequestUri}";
+                if (_memoryCache.TryGetValue(cacheKey, out TResult cachedResult))
+                {
+                    return cachedResult;
+                }
                 var response = await DoRequestAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<TResult>(json, _jsonSerializerSettings);
+
+                if (result != null)
+                {
+                    _memoryCache.Set(cacheKey, result, TimeSpan.FromSeconds(1));
+                }
+                
                 return result;
             }
             catch (NotFoundException)
