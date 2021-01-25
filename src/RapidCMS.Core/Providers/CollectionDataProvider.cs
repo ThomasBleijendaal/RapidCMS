@@ -22,7 +22,6 @@ namespace RapidCMS.Core.Providers
         private readonly RepositoryRelationSetup _setup;
         private readonly IPropertyMetadata _property;
         private readonly IMediator _mediator;
-        private readonly IMemoryCache _memoryCache;
 
         private FormEditContext? _editContext;
         private IParent? _parent;
@@ -37,14 +36,12 @@ namespace RapidCMS.Core.Providers
             IRepository repository,
             RepositoryRelationSetup setup,
             IPropertyMetadata property,
-            IMediator mediator,
-            IMemoryCache memoryCache)
+            IMediator mediator)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _setup = setup ?? throw new ArgumentNullException(nameof(setup));
             _property = property ?? throw new ArgumentNullException(nameof(property));
             _mediator = mediator;
-            _memoryCache = memoryCache;
 
             _eventHandle = _mediator.RegisterCallback<CollectionRepositoryEventArgs>(OnRepositoryChangeAsync);
         }
@@ -116,18 +113,7 @@ namespace RapidCMS.Core.Providers
                 parent = _setup.RepositoryParentSelector.Getter.Invoke(_parent) as IParent;
             }
 
-            var cacheKey = $"{_setup.RepositoryAlias}{parent?.GetParentPath()?.ToPathString()}";
-            if (refreshCache)
-            {
-                _memoryCache.Remove(cacheKey);
-            }
-
-            var entities = await _memoryCache.GetOrCreateAsync(cacheKey, (cacheEntry) =>
-            {
-                cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30);
-
-                return _repository.GetAllAsync(parent, Query.Default(_editContext.CollectionAlias));
-            });
+            var entities = await _repository.GetAllAsync(parent, Query.Default(_editContext.CollectionAlias));
 
             _elements = entities
                 .Select(entity => (IElement)new Element

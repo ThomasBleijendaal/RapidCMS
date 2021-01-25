@@ -8,6 +8,7 @@ using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
+using RapidCMS.Core.Models.ApiBridge;
 using RapidCMS.Core.Models.ApiBridge.Request;
 using RapidCMS.Core.Models.ApiBridge.Response;
 using RapidCMS.Core.Models.Request.Api;
@@ -37,10 +38,8 @@ namespace RapidCMS.Api.WebApi.Controllers
             get => (string)ControllerContext.ActionDescriptor.Properties[CollectionControllerRouteConvention.AliasKey];
         }
 
-        // TODO: remove all logic and put it in a general class for reuse to support things like Azure Functions
-
         [HttpPost("entity/{id}")]
-        public async Task<ActionResult<IEntity>> GetByIdAsync(string id, [FromBody] ParentQueryModel query)
+        public async Task<ActionResult<EntityModel<IEntity>>> GetByIdAsync(string id, [FromBody] ParentQueryModel query)
         {
             try
             {
@@ -50,7 +49,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                     UsageType = UsageType.Node | UsageType.Edit
                 });
 
-                return Ok(entity);
+                return Ok(EntityModel.Create(entity));
             }
             catch (NotFoundException)
             {
@@ -81,7 +80,7 @@ namespace RapidCMS.Api.WebApi.Controllers
 
                 return Ok(new EntitiesModel<IEntity>
                 {
-                    Entities = response.Entities,
+                    Entities = EntityModel.Create(response.Entities),
                     MoreDataAvailable = response.MoreDataAvailable
                 });
             }
@@ -110,7 +109,7 @@ namespace RapidCMS.Api.WebApi.Controllers
 
                 return Ok(new EntitiesModel<IEntity>
                 {
-                    Entities = response.Entities,
+                    Entities = EntityModel.Create(response.Entities),
                     MoreDataAvailable = response.MoreDataAvailable
                 });
             }
@@ -139,7 +138,7 @@ namespace RapidCMS.Api.WebApi.Controllers
 
                 return Ok(new EntitiesModel<IEntity>
                 {
-                    Entities = response.Entities,
+                    Entities = EntityModel.Create(response.Entities),
                     MoreDataAvailable = response.MoreDataAvailable
                 });
             }
@@ -154,7 +153,7 @@ namespace RapidCMS.Api.WebApi.Controllers
         }
 
         [HttpPost("new")]
-        public async Task<ActionResult<IEntity>> NewAsync([FromBody] ParentQueryModel query)
+        public async Task<ActionResult<EntityModel<IEntity>>> NewAsync([FromBody] ParentQueryModel query)
         {
             try
             {
@@ -164,7 +163,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                     UsageType = UsageType.Node | UsageType.New
                 });
 
-                return Ok(entity);
+                return Ok(EntityModel.Create(entity));
             }
             catch (NotFoundException)
             {
@@ -181,14 +180,14 @@ namespace RapidCMS.Api.WebApi.Controllers
         }
 
         [HttpPost("entity")]
-        public async Task<ActionResult<IEntity>> InsertAsync([FromBody] EditContextModel<TEntity> editContextModel)
+        public async Task<ActionResult<EntityModel<IEntity>?>> InsertAsync([FromBody] EditContextModel<TEntity> editContextModel)
         {
             try
             {
                 var response = await _interactionService.InteractAsync<PersistEntityRequestModel, ApiCommandResponseModel>(new PersistEntityRequestModel
                 {
-                    Descriptor = new EntityDescriptor(default, RepositoryAlias, editContextModel.ParentPath, default),
-                    Entity = editContextModel.Entity,
+                    Descriptor = new EntityDescriptor(default, RepositoryAlias, editContextModel.ParentPath, editContextModel.EntityModel.VariantAlias),
+                    Entity = editContextModel.EntityModel.Entity,
                     EntityState = EntityState.IsNew,
                     Relations = editContextModel.GetRelations()
                 }, ViewState.Api);
@@ -196,7 +195,7 @@ namespace RapidCMS.Api.WebApi.Controllers
                 return response switch
                 {
                     ApiPersistEntityResponseModel persistResponse when persistResponse.ValidationErrors != null => BadRequest(persistResponse.ValidationErrors),
-                    ApiPersistEntityResponseModel insertResponse when insertResponse.NewEntity != null => Ok(insertResponse.NewEntity),
+                    ApiPersistEntityResponseModel insertResponse when insertResponse.NewEntity != null => Ok(EntityModel.Create(insertResponse.NewEntity)),
                     _ => Ok()
                 };
             }
@@ -225,8 +224,8 @@ namespace RapidCMS.Api.WebApi.Controllers
             {
                 var response = await _interactionService.InteractAsync<PersistEntityRequestModel, ApiCommandResponseModel>(new PersistEntityRequestModel
                 {
-                    Descriptor = new EntityDescriptor(id, RepositoryAlias, editContextModel.ParentPath, default),
-                    Entity = editContextModel.Entity,
+                    Descriptor = new EntityDescriptor(id, RepositoryAlias, editContextModel.ParentPath, editContextModel.EntityModel.VariantAlias),
+                    Entity = editContextModel.EntityModel.Entity,
                     EntityState = EntityState.IsExisting,
                     Relations = editContextModel.GetRelations()
                 }, ViewState.Api);

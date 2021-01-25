@@ -17,6 +17,11 @@ namespace RapidCMS.Repositories
     public class JsonRepository<TEntity> : InMemoryRepository<TEntity>
         where TEntity : class, IEntity, ICloneable, new()
     {
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All
+        };
+
         public JsonRepository(IMediator mediator, IServiceProvider serviceProvider) : base(mediator, serviceProvider)
         {
             try
@@ -31,13 +36,13 @@ namespace RapidCMS.Repositories
                     var dataFileContents = File.ReadAllText(DataJsonFileName());
                     if (!string.IsNullOrWhiteSpace(dataFileContents))
                     {
-                        _data = JsonConvert.DeserializeObject<Dictionary<string, List<TEntity>>>(dataFileContents);
+                        _data = JsonConvert.DeserializeObject<Dictionary<string, List<TEntity>>>(dataFileContents, _jsonSerializerSettings) ?? new();
                     }
 
                     var relationsFileContents = File.ReadAllText(RelationsJsonFileName());
                     if (!string.IsNullOrWhiteSpace(relationsFileContents))
                     {
-                        _relations = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(relationsFileContents);
+                        _relations = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(relationsFileContents, _jsonSerializerSettings) ?? new();
                     }
                 }
             }
@@ -70,8 +75,8 @@ namespace RapidCMS.Repositories
             {
                 lock (_lock)
                 {
-                    File.WriteAllText(DataJsonFileName(), JsonConvert.SerializeObject(_data));
-                    File.WriteAllText(RelationsJsonFileName(), JsonConvert.SerializeObject(_relations));
+                    File.WriteAllText(DataJsonFileName(), JsonConvert.SerializeObject(_data, _jsonSerializerSettings));
+                    File.WriteAllText(RelationsJsonFileName(), JsonConvert.SerializeObject(_relations, _jsonSerializerSettings));
                 }
             }
             catch { }

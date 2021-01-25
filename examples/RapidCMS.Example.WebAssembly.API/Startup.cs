@@ -55,6 +55,8 @@ namespace RapidCMS.Example.WebAssembly.API
             {
                 if (!ConfigureAuthentication)
                 {
+                    // it is highly recommended that you add authentication to your API, but for starting
+                    // quickly the AllowAnonymousUser is also supported in the API. 
                     config.AllowAnonymousUser();
                 }
 
@@ -77,23 +79,15 @@ namespace RapidCMS.Example.WebAssembly.API
             });
 
             services.AddCors();
-            services
-                .AddControllers(config =>
+            // this lines the generic repository controllers up for use by your mvc application, but still gives
+            // you access to the IMvcBuilder and MvcOptions for extra configuration like authentication
+            services.AddRapidCMSControllers(config =>
+            {
+                if (ConfigureAuthentication)
                 {
-                    // to allow for automatic setup of the repository controllers, the route convention must be added here
-                    config.Conventions.AddRapidCMSRouteConvention();
-
-                    if (ConfigureAuthentication)
-                    {
-                        config.Filters.Add(new AuthorizeFilter("default"));
-                    }
-                })
-                .AddNewtonsoftJson()
-                .ConfigureApplicationPartManager(configure =>
-                {
-                    // and for each route convention a controller should be added the feature provider
-                    configure.FeatureProviders.AddRapidCMSControllerFeatureProvider();
-                });
+                    config.Filters.Add(new AuthorizeFilter("default"));
+                }
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

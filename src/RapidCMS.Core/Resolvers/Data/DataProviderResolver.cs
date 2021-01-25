@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Mediators;
@@ -17,20 +16,17 @@ namespace RapidCMS.Core.Resolvers.Data
         private readonly ISetupResolver<ICollectionSetup> _collectionSetupResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IMediator _mediator;
-        private readonly IMemoryCache _memoryCache;
         private readonly IServiceProvider _serviceProvider;
 
         public DataProviderResolver(
             ISetupResolver<ICollectionSetup> collectionSetupResolver,
             IRepositoryResolver repositoryResolver,
             IMediator mediator,
-            IMemoryCache memoryCache,
             IServiceProvider serviceProvider)
         {
             _collectionSetupResolver = collectionSetupResolver;
             _repositoryResolver = repositoryResolver;
             _mediator = mediator;
-            _memoryCache = memoryCache;
             _serviceProvider = serviceProvider;
         }
 
@@ -60,8 +56,7 @@ namespace RapidCMS.Core.Resolvers.Data
                         repo,
                         collectionRelation,
                         propertyField.Property!,
-                        _mediator,
-                        _memoryCache);
+                        _mediator);
 
                     var validator = new RelationValidationAttributeValidator(propertyField.Property!);
 

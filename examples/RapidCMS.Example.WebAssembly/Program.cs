@@ -38,8 +38,12 @@ namespace RapidCMS.Example.WebAssembly
 
             // it's not required to add your repositories under the base repository
             // but this allows the Server and the WebAssembly examples to share the collection configuration
-            // futhtermore, the AddRapidCMSApiRepository allows you to add ApiRepositories which are lined up with a correct HttpClient to 
+
+            // AddRapidCMSApiRepository allows you to add ApiRepositories which are lined up with a correct HttpClient to 
             // work seamlessly with a repository on the API side of things (See RapidCMS.Example.WebAssembly.API)
+
+            // The TokenAuthorizationMessageHandler forwards the auth token from the frontend to the backend, allowing you
+            // to validate the user easily
             builder.Services.AddRapidCMSApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>>(BaseUri)
                 .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
             builder.Services.AddRapidCMSApiRepository<BaseRepository<Details>, ApiRepository<Details, JsonRepository<Details>>>(BaseUri)
@@ -52,14 +56,13 @@ namespace RapidCMS.Example.WebAssembly
                 .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
             builder.Services.AddRapidCMSApiRepository<BaseRepository<Tag>, ApiRepository<Tag, JsonRepository<Tag>>>(BaseUri)
                 .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>>(BaseUri)
+                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
 
             // with LocalStorageRepository collections can store their data in the local storage of
             // the user, making personalisation quite easy
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddScoped<BaseRepository<User>, LocalStorageRepository<User>>();
-
-            // entity variants are not supported in Api Contexts, so this repository is added as a local storage repository
-            builder.Services.AddScoped<BaseRepository<EntityVariantBase>, LocalStorageRepository<EntityVariantBase>>();
 
             // api repositories can also be mapped
             builder.Services.AddRapidCMSApiRepository<

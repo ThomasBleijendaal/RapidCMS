@@ -49,18 +49,7 @@ or browse the [Examples](https://github.com/ThomasBleijendaal/RapidCMS/tree/mast
 
 ```c#
 services.AddRapidCMSApi(config => {});
-services
-    .AddControllers(config =>
-    {
-        // to allow for automatic setup of the repository controllers, the route convention must be added here
-        config.Conventions.AddRapidCMSRouteConvention();
-    })
-    .AddNewtonsoftJson()
-    .ConfigureApplicationPartManager(configure =>
-    {
-        // and for each route convention a controller should be added the feature provider
-        configure.FeatureProviders.AddRapidCMSControllerFeatureProvider();
-    });
+services.AddRapidCMSControllers();
 ```
 
 4. Hit `F5`: you're now running a completely empty RapidCMS companion Api instance.

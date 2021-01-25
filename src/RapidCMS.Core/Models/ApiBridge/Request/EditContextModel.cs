@@ -13,7 +13,7 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
 
         public EditContextModel(IEditContext<TEntity> editContext)
         {
-            Entity = editContext.Entity;
+            EntityModel = ApiBridge.EntityModel.Create(editContext.Entity);
             ParentPath = editContext.Parent?.GetParentPath()?.ToPathString();
 
             var container = editContext.GetRelationContainer();
@@ -31,7 +31,7 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
             };
         }
 
-        public TEntity Entity { get; set; } = default!;
+        public EntityModel<TEntity> EntityModel { get; set; } = default!;
         public string? ParentPath { get; set; }
 
         public RelationContainerModel RelationContainer { get; set; } = default!;
