@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.Github", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bench", "bench", "{1499887F-684A-4D1B-B6D9-4569334D1DBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidCMS.Rewards", "..\bench\RapidCMS.Rewards\RapidCMS.Rewards.csproj", "{1B226835-05B5-43A1-B847-A48C4E3C603A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Rewards", "..\bench\RapidCMS.Rewards\RapidCMS.Rewards.csproj", "{1B226835-05B5-43A1-B847-A48C4E3C603A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

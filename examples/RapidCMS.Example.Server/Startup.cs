@@ -1,14 +1,14 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.AzureAD.UI;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Server.Components;
 using RapidCMS.Example.Shared.AuthorizationHandlers;
@@ -23,7 +23,7 @@ namespace RapidCMS.Example.Server
 {
     public class Startup
     {
-        private const bool ConfigureAuthentication = false;
+        private const bool ConfigureAuthentication = true;
 
         public Startup(IConfiguration configuration)
         {
@@ -68,7 +68,6 @@ namespace RapidCMS.Example.Server
                 ConfigureADAuthentication(services);
                 services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();
             }
-
 
             services.AddRapidCMSServer(config =>
             {
@@ -149,74 +148,37 @@ namespace RapidCMS.Example.Server
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
-                endpoints.MapDefaultControllerRoute();
             });
         }
 
         private void ConfigureADAuthentication(IServiceCollection services)
         {
-            // ***********************************************
-            // For more info on:
-            // Microsoft.AspNetCore.Authentication.AzureAD.UI
-            // see:
-            // https://bit.ly/2Fv6Zxp
-            // This creates a 'virtual' controller 
-            // called 'Account' in an Area called 'AzureAd' that allows the
-            // 'AzureAd/Account/SignIn' and 'AzureAd/Account/SignOut'
-            // links to work
-            services
-                .AddAuthentication(AzureADDefaults.AuthenticationScheme)
-                .AddAzureAD(options => Configuration.Bind("AzureAd", options));
+            // TODO: test if challenge can be put in Page instead of whole microsoft ui package..
+            // TODO: 
 
-            // This configures the 'middleware' pipeline
-            // This is where code to determine what happens
-            // when a person logs in is configured and processed
-            services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+            services
+                .AddAuthentication(options =>
                 {
-                    // Instead of using the default validation 
-                    // (validating against a single issuer value, as we do in
-                    // line of business apps), we inject our own multitenant validation logic
-                    ValidateIssuer = false,
-                    // If the app is meant to be accessed by entire organizations, 
-                    // add your issuer validation logic here.
-                    //IssuerValidator = (issuer, securityToken, validationParameters) => {
-                    //    if (myIssuerValidationLogic(issuer)) return issuer;
-                    //}
-                };
-                options.Events = new OpenIdConnectEvents
+                    options.DefaultScheme = "Cookies";
+                    options.DefaultChallengeScheme = "OpenIdConnect";
+                })
+                .AddCookie("Cookies")
+                .AddOpenIdConnect("OpenIdConnect", options =>
                 {
-                    OnTicketReceived = context =>
+                    Configuration.Bind("AzureAd", options);
+
+                    options.Events.OnSignedOutCallbackRedirect = (ctx) =>
                     {
-                        // If your authentication logic is based on users 
-                        // then add your logic here
+                        ctx.HandleResponse();
+                        ctx.Response.Redirect("/");
                         return Task.CompletedTask;
-                    },
-                    OnAuthenticationFailed = context =>
-                    {
-                        context.Response.Redirect("/Error");
-                        context.HandleResponse(); // Suppress the exception
-                        return Task.CompletedTask;
-                    },
-                    OnSignedOutCallbackRedirect = context =>
-                    {
-                        // This is called when a user logs out
-                        // redirect them back to the main page
-                        context.Response.Redirect("/");
-                        context.HandleResponse();
-                        return Task.CompletedTask;
-                    },
-                    // If your application needs to do authenticate single users, 
-                    // add your user validation below.
-                    //OnTokenValidated = context =>
-                    //{
-                    //    return myUserValidationLogic(context.Ticket.Principal);
-                    //}
-                };
-            });
+                    };
+                });
+
+            services.AddControllersWithViews().AddMicrosoftIdentityUI();
         }
     }
 }

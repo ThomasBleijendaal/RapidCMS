@@ -1,6 +1,7 @@
 ﻿<AuthorizeView>
     <div>
         <div class="btn btn-primary"><Icon Name="Contact" /> Hi, @context.User.Identity?.Name!</div>
-        <a class="btn btn-primary" href="/AzureAD/Account/SignOut?post_logout_redirect_uri=/" target="_top"><Icon Name="SignOut" /> Logout</a>
+        <a class="btn btn-primary" href="/MicrosoftIdentity/Account/SignOut" target="_top"><Icon Name="SignOut" /> Logout</a>
     </div>
+
 </AuthorizeView>
