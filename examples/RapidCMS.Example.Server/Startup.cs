@@ -1,14 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.UI;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Server.Components;
 using RapidCMS.Example.Shared.AuthorizationHandlers;
@@ -148,7 +144,6 @@ namespace RapidCMS.Example.Server
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
@@ -156,9 +151,6 @@ namespace RapidCMS.Example.Server
 
         private void ConfigureADAuthentication(IServiceCollection services)
         {
-            // TODO: test if challenge can be put in Page instead of whole microsoft ui package..
-            // TODO: 
-
             services
                 .AddAuthentication(options =>
                 {
@@ -177,8 +169,6 @@ namespace RapidCMS.Example.Server
                         return Task.CompletedTask;
                     };
                 });
-
-            services.AddControllersWithViews().AddMicrosoftIdentityUI();
         }
     }
 }
