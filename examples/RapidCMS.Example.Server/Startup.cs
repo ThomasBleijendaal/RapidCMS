@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Server.Components;
 using RapidCMS.Example.Shared.AuthorizationHandlers;
@@ -61,7 +63,7 @@ namespace RapidCMS.Example.Server
 
             if (ConfigureAuthentication)
             {
-                ConfigureADAuthentication(services);
+                ConfigureOpenIDConnectAuthentication(services);
                 services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();
             }
 
@@ -149,7 +151,7 @@ namespace RapidCMS.Example.Server
             });
         }
 
-        private void ConfigureADAuthentication(IServiceCollection services)
+        private void ConfigureOpenIDConnectAuthentication(IServiceCollection services)
         {
             services
                 .AddAuthentication(options =>
@@ -160,7 +162,9 @@ namespace RapidCMS.Example.Server
                 .AddCookie("Cookies")
                 .AddOpenIdConnect("OpenIdConnect", options =>
                 {
-                    Configuration.Bind("AzureAd", options);
+                    Configuration.Bind("DevOIDC", options);
+
+                    IdentityModelEventSource.ShowPII = true;
 
                     options.Events.OnSignedOutCallbackRedirect = (ctx) =>
                     {
