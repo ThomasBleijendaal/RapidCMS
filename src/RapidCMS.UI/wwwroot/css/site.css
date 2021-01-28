@@ -321,7 +321,9 @@ thead td:hover .icon {
 }
 
 .content .nested-buttons {
-    margin: 0 0 2rem 0;
+    margin: 2rem 0 2rem 0;
+    border-top: 1px dashed #bebbb8;
+    padding-top: 2rem;
 }
 
     .content .nested-buttons .top-row {

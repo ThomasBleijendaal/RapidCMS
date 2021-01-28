@@ -6,10 +6,12 @@
 
 <hr />
 
-<a class="btn btn-primary" href="#" @onclick="BeginLogin">Login via Active Directory</a>
+<a class="btn btn-primary" href="#" @onclick="BeginLogin">Login via OIDC</a>
 
 @if (action != null)
 {
+    <hr />
+
     <RemoteAuthenticatorView Action="@action" />
 }
 

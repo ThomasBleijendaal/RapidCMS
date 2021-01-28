@@ -31,7 +31,8 @@ be added to `appsettings.json`.
     "MetadataAddress": "http://[authority url]/[tenant-id]/.well-known/openid-configuration",
     "ClientId": "[client-id]",
     "TokenValidationParameters": {
-        "NameClaimType": "name" // sets User.Identity.Name to use the "name"-claim
+        "NameClaimType": "name", // sets User.Identity.Name to use the "name"-claim
+        "ValidIssuer": "[authority url]/[tenant-id]/" // that trailing slash can sometimes be on the iss-claim (talking to you AAD)
     }
 }
 ```

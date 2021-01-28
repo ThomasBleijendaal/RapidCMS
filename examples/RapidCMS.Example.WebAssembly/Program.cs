@@ -21,7 +21,7 @@ namespace RapidCMS.Example.WebAssembly
 {
     public class Program
     {
-        private const bool ConfigureAuthentication = false;
+        private const bool ConfigureAuthentication = true;
         private static readonly Uri BaseUri = new Uri("https://localhost:5003");
 
         public static async Task Main(string[] args)
@@ -29,6 +29,7 @@ namespace RapidCMS.Example.WebAssembly
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
+            builder.Services.AddAuthenticationCore();
             builder.Services.AddAuthorizationCore();
 
             if (ConfigureAuthentication)
@@ -44,20 +45,20 @@ namespace RapidCMS.Example.WebAssembly
 
             // The TokenAuthorizationMessageHandler forwards the auth token from the frontend to the backend, allowing you
             // to validate the user easily
-            builder.Services.AddRapidCMSApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>>(BaseUri)
-                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            builder.Services.AddRapidCMSApiRepository<BaseRepository<Details>, ApiRepository<Details, JsonRepository<Details>>>(BaseUri)
-                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            builder.Services.AddRapidCMSApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>>(BaseUri)
-                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            builder.Services.AddRapidCMSApiRepository<BaseRepository<Country>, ApiRepository<Country, JsonRepository<Country>>>(BaseUri)
-                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            builder.Services.AddRapidCMSApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup, JsonRepository<TagGroup>>>(BaseUri)
-                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            builder.Services.AddRapidCMSApiRepository<BaseRepository<Tag>, ApiRepository<Tag, JsonRepository<Tag>>>(BaseUri)
-                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            builder.Services.AddRapidCMSApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>>(BaseUri)
-                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+            //builder.Services.AddRapidCMSApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>>(BaseUri)
+            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+            //builder.Services.AddRapidCMSApiRepository<BaseRepository<Details>, ApiRepository<Details, JsonRepository<Details>>>(BaseUri)
+            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+            //builder.Services.AddRapidCMSApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>>(BaseUri)
+            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+            //builder.Services.AddRapidCMSApiRepository<BaseRepository<Country>, ApiRepository<Country, JsonRepository<Country>>>(BaseUri)
+            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+            //builder.Services.AddRapidCMSApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup, JsonRepository<TagGroup>>>(BaseUri)
+            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+            //builder.Services.AddRapidCMSApiRepository<BaseRepository<Tag>, ApiRepository<Tag, JsonRepository<Tag>>>(BaseUri)
+            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+            //builder.Services.AddRapidCMSApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>>(BaseUri)
+            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
 
             // with LocalStorageRepository collections can store their data in the local storage of
             // the user, making personalisation quite easy
@@ -85,7 +86,7 @@ namespace RapidCMS.Example.WebAssembly
             
             if (ConfigureAuthentication)
             {
-                ConfigureADAuthentication(builder);
+                ConfigureOpenIDConnectAuthentication(builder);
             }
 
             builder.Services.AddRapidCMSWebAssembly(config =>
@@ -100,40 +101,40 @@ namespace RapidCMS.Example.WebAssembly
                     config.SetCustomLoginScreen(typeof(LoginScreen));
                 }
 
-                // CRUD editor for simple POCO with recursive sub collections
-                // --> see Collections/PersonCollection for the basics of this CMS
-                config.AddPersonCollection();
+                //// CRUD editor for simple POCO with recursive sub collections
+                //// --> see Collections/PersonCollection for the basics of this CMS
+                //config.AddPersonCollection();
 
-                // CRUD editor with support for one-to-many relation + validation
-                // --> see Collections/CountryCollection for one-to-many relation with validation
-                config.AddCountryCollection();
+                //// CRUD editor with support for one-to-many relation + validation
+                //// --> see Collections/CountryCollection for one-to-many relation with validation
+                //config.AddCountryCollection();
 
-                // Custom page with either custom Blazor components, or ListViews or ListEditors of collections
-                config.AddPage("beaker", "Some random page", config =>
-                {
-                    config.AddSection(typeof(CustomSection));
-                    config.AddSection("country", edit: false);
-                });
+                //// Custom page with either custom Blazor components, or ListViews or ListEditors of collections
+                //config.AddPage("beaker", "Some random page", config =>
+                //{
+                //    config.AddSection(typeof(CustomSection));
+                //    config.AddSection("country", edit: false);
+                //});
 
                 // CRUD editor with validation attributes, custom editor and custom button panes
                 // --> see Collections/UserCollection 
                 config.AddUserCollection();
 
-                // CRUD editor with nested collection
-                // --> see Collections/TagCollection
-                config.AddTagCollection();
+                //// CRUD editor with nested collection
+                //// --> see Collections/TagCollection
+                //config.AddTagCollection();
 
-                // CRUD editor with entity mapping
-                config.AddMappedCollection();
+                //// CRUD editor with entity mapping
+                //config.AddMappedCollection();
 
-                // CRUD editor based on conventions for even more rapid development
-                config.AddConventionCollection();
+                //// CRUD editor based on conventions for even more rapid development
+                //config.AddConventionCollection();
 
-                // CRUD editor with entity variants, so multiple types of entities can be mixed in a single collection
-                config.AddEntityVariantCollection();
+                //// CRUD editor with entity variants, so multiple types of entities can be mixed in a single collection
+                //config.AddEntityVariantCollection();
 
-                // CRUD editor displaying live data, an external process updates the data every second
-                config.AddActiveCollection();
+                //// CRUD editor displaying live data, an external process updates the data every second
+                //config.AddActiveCollection();
 
                 //config.Dashboard.AddSection(typeof(DashboardSection));
                 config.Dashboard.AddSection("user", edit: true);
@@ -147,13 +148,18 @@ namespace RapidCMS.Example.WebAssembly
             await host.RunAsync();
         }
 
-        private static void ConfigureADAuthentication(WebAssemblyHostBuilder builder)
+        private static void ConfigureOpenIDConnectAuthentication(WebAssemblyHostBuilder builder)
         {
-            builder.Services.AddMsalAuthentication(options =>
+            builder.Services.AddOidcAuthentication(config =>
             {
-                builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
-                options.ProviderOptions.DefaultAccessTokenScopes.Add("77d6b575-8519-4e3d-9da0-5580bd25b026");
+                builder.Configuration.Bind("DevOIDC", config.ProviderOptions);
             });
+
+            //builder.Services.AddMsalAuthentication(options =>
+            //{
+            //    builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
+            //    options.ProviderOptions.DefaultAccessTokenScopes.Add("77d6b575-8519-4e3d-9da0-5580bd25b026");
+            //});
         }
     }
 }
