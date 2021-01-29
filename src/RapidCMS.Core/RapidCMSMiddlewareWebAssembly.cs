@@ -1,12 +1,10 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Resolvers.Data;
@@ -41,13 +39,15 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds the repository as scoped service and adds a plain HttpClient for the given repository.
         /// </summary>
         /// <typeparam name="TRepository"></typeparam>
+        /// <typeparam name="TDelegatingHandler"></typeparam>
         /// <param name="services"></param>
         /// <param name="baseUri"></param>
         /// <returns></returns>
-        public static IHttpClientBuilder AddRapidCMSApiRepository<TRepository>(this IServiceCollection services, Uri baseUri)
+        public static IHttpClientBuilder AddRapidCMSApiRepository<TRepository, TDelegatingHandler>(this IServiceCollection services, Uri baseUri)
             where TRepository : class
+            where TDelegatingHandler : DelegatingHandler
         {
-            return services.AddRapidCMSApiRepository<TRepository, TRepository>(baseUri);
+            return services.AddRapidCMSApiRepository<TRepository, TRepository, TDelegatingHandler>(baseUri);
         }
 
         /// <summary>
@@ -55,36 +55,48 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TIRepository"></typeparam>
         /// <typeparam name="TRepository"></typeparam>
+        /// <typeparam name="TDelegatingHandler"></typeparam>
         /// <param name="services"></param>
         /// <param name="baseUri"></param>
         /// <returns></returns>
-        public static IHttpClientBuilder AddRapidCMSApiRepository<TIRepository, TRepository>(this IServiceCollection services, Uri baseUri)
+        public static IHttpClientBuilder AddRapidCMSApiRepository<TIRepository, TRepository, TDelegatingHandler>(this IServiceCollection services, Uri baseUri)
             where TIRepository : class
             where TRepository : class, TIRepository
+            where TDelegatingHandler : DelegatingHandler
         {
             var alias = AliasHelper.GetRepositoryAlias(typeof(TRepository));
 
             services.AddScoped<TIRepository, TRepository>();
 
-            return services.AddHttpClient(alias)
+            var builder = services.AddHttpClient(alias)
                 .ConfigureHttpClient(x => x.BaseAddress = new Uri(baseUri, $"api/_rapidcms/{alias}/"));
+
+            if (_tokenMessageHandlerBuilder != null && _tokenMessageHandlerBuilder is Func<IServiceProvider, TDelegatingHandler> messageHandlerBuilder)
+            { 
+                builder = builder.AddHttpMessageHandler(sp => messageHandlerBuilder.Invoke(sp));
+            }
+            else
+            {
+                builder = builder.AddHttpMessageHandler<TDelegatingHandler>();
+            } 
+
+            return builder;
         }
 
+        private static Func<IServiceProvider, DelegatingHandler>? _tokenMessageHandlerBuilder = null;
+
         /// <summary>
-        /// Adds the MessageHandler which adds AccessTokens to HttClient-requests to ApiRepository calls to the baseUrl. 
+        /// Adds the MessageHandler which adds AccessTokens to HttClient-requests to ApiRepository-calls.
+        /// 
+        /// NOTE: Set before calling AddRapidCMSApiRepository or AddRapidCMSFileUploadApiHttpClient
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="baseUrl"></param>
+        /// <param name="handlerBuilder"></param>
         /// <returns></returns>
-        public static IServiceCollection AddRapidCMSApiTokenAuthorization(this IServiceCollection services, Func<string> baseUrl)
+        public static IServiceCollection AddRapidCMSApiTokenAuthorization<TDelegatingHandler>(this IServiceCollection services, Func<IServiceProvider, TDelegatingHandler> handlerBuilder)
+            where TDelegatingHandler : DelegatingHandler
         {
-            services.AddTransient(sp =>
-            {
-                var provider = sp.GetRequiredService<IAccessTokenProvider>();
-                var manager = sp.GetRequiredService<NavigationManager>();
-
-                return new TokenAuthorizationMessageHandler(provider, manager, baseUrl.Invoke());
-            });
+            _tokenMessageHandlerBuilder = handlerBuilder;
 
             return services;
         }
@@ -98,13 +110,25 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="baseAddress">Base address of the api, for example: https://example.com</param>
         /// <param name="collectionAlias"></param>
         /// <returns></returns>
-        public static IHttpClientBuilder AddRapidCMSFileUploadApiHttpClient<THandler>(this IServiceCollection services, Uri baseUri)
-            where THandler : IFileUploadHandler
+        public static IHttpClientBuilder AddRapidCMSFileUploadApiHttpClient<TFileHandler, TDelegatingHandler>(this IServiceCollection services, Uri baseUri)
+            where TFileHandler : IFileUploadHandler
+            where TDelegatingHandler : DelegatingHandler
         {
-            var alias = AliasHelper.GetFileUploaderAlias(typeof(THandler));
+            var alias = AliasHelper.GetFileUploaderAlias(typeof(TFileHandler));
 
-            return services.AddHttpClient<ApiFileUploadHandler<THandler>>(alias)
+            var builder = services.AddHttpClient<ApiFileUploadHandler<TFileHandler>>(alias)
                 .ConfigureHttpClient(x => x.BaseAddress = new Uri(baseUri, $"api/_rapidcms/{alias}/"));
+
+            if (_tokenMessageHandlerBuilder != null && _tokenMessageHandlerBuilder is Func<IServiceProvider, TDelegatingHandler> messageHandlerBuilder)
+            {
+                builder = builder.AddHttpMessageHandler(sp => messageHandlerBuilder.Invoke(sp));
+            }
+            else
+            {
+                builder = builder.AddHttpMessageHandler<TDelegatingHandler>();
+            }
+
+            return builder;
         }
 
     }

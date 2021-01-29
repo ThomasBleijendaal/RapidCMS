@@ -60,7 +60,7 @@ Add a new Razor component to your project, and call it `LoginScreen`. Paste the 
 
 <hr />
 
-<a class="btn btn-primary" href="#" @onclick="BeginLogin">Login via Active Directory</a>
+<a class="btn btn-primary" href="#" @onclick="BeginLogin">Login via [identity-provider]</a>
 
 @if (action != null)
 {
@@ -153,10 +153,13 @@ in the Api project.
 Add the following configuration to the `appsettings.json`:
 
 ```json
-"AzureAd": {
-    "Instance": "https://login.microsoftonline.com/[your-tenant-guid]/v2.0",
-    "ClientId": "{app registration GUID}"
-}
+"OIDC": {
+    "Authority": "[authority url]/[tenant-id]/",
+    "TokenValidationParameters": {
+      "ValidAudience": "[api-scope]", // for this scope the front-end should request an access token
+      "ValidIssuer": "[authority url]/[tenant-id]/" // that trailing slash can sometimes be on the iss-claim (talking to you AAD)
+    }
+  }
 ```
 
 Add in `Startup.cs` to `ConfigureServices`:
@@ -175,17 +178,9 @@ services
     {
         o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     })
-    .AddJwtBearer(o =>
+    .AddJwtBearer(options =>
     {
-        o.Authority = Configuration["AzureAd:Instance"];
-        o.TokenValidationParameters = new TokenValidationParameters
-        {
-            // Both App ID URI and client id are valid audiences in the access token
-            ValidAudiences = new List<string>
-            {
-                Configuration["AzureAd:ClientId"]
-            }
-        }
+        Configuration.Bind("OIDC", options);
     });
 
 services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();

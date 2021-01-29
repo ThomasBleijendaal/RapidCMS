@@ -1,4 +1,5 @@
 ﻿@inject NavigationManager Navigation
+@*@inject OpenidConnectPkce openidConnectPkce*@
 
 <h4>Hi!</h4>
 
@@ -6,20 +7,25 @@
 
 <hr />
 
-<a class="btn btn-primary" href="#" @onclick="BeginLogin">Login via OIDC</a>
+<a class="btn btn-primary" href="/authentication/login">Login via OIDC</a>
 
-@if (action != null)
-{
-    <hr />
+@*
+    when using MSAL
+    @if (action != null)
+    {
+        <hr />
 
-    <RemoteAuthenticatorView Action="@action" />
-}
+        <RemoteAuthenticatorView Action="@action" />
+    }*@
 
 @code {
     string? action;
 
-    private void BeginLogin(MouseEventArgs args)
+    private async Task BeginLoginAsync(MouseEventArgs args)
     {
-        action = "login";
+        // when using MSAL
+        // action = "login";
+
+        //await openidConnectPkce.LoginAsync();
     }
 }

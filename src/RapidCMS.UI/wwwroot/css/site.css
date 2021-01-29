@@ -326,6 +326,12 @@ thead td:hover .icon {
     padding-top: 2rem;
 }
 
+    .content .nested-buttons:first-of-type{
+        padding-top: 0;
+        border: 0;
+        margin-top: 0;
+    }
+
     .content .nested-buttons .top-row {
         margin: 0;
         box-shadow: none;

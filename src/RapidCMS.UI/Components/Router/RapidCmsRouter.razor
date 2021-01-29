@@ -2,28 +2,28 @@
     <CascadingAuthenticationState>
         <Router AppAssembly="typeof(RapidCmsRouter).Assembly" AdditionalAssemblies="AdditionalAssemblies" PreferExactMatches="true">
             <Found Context="routeData">
-                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="typeof(MainLayout)">
+                <AuthorizeRouteView RouteData="@routeData">
                     <NotAuthorized>
                         @if (!(context.User.Identity?.IsAuthenticated ?? false))
                         {
-
                             <LayoutView Layout="typeof(EmptyLayout)">
-                                <LoginPage CustomElement="CustomLoginScreen!" />
+                                <Login CustomElement="CustomLoginScreen!" />
                             </LayoutView>
                         }
                         else
                         {
-                            <UnauthorizedPage />
+                            <LayoutView Layout="typeof(EmptyLayout)">
+                                <p><strong>Unauthorized</strong></p>
+                                <p>You are not authorized to view this data.</p>
+                            </LayoutView>
                         }
                     </NotAuthorized>
                 </AuthorizeRouteView>
             </Found>
             <NotFound>
                 <LayoutView Layout="typeof(EmptyLayout)">
-                    <div class="content">
-                        <p><strong>Page not found</strong></p>
-                        <p>Sorry, but there's nothing here!</p>
-                    </div>
+                    <p><strong>Page not found</strong></p>
+                    <p>Sorry, but there's nothing here!</p>
                 </LayoutView>
             </NotFound>
         </Router>

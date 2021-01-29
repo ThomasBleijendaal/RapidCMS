@@ -6,7 +6,7 @@
 <AuthorizeView>
     <div>
         <div class="btn btn-primary"><Icon Name="Contact" /> Hi, @context.User.Identity?.Name!</div>
-        <a class="btn btn-primary" href="#" @onclick="BeginLogout"><Icon Name="SignOut" /> Logout</a>
+        <NavLink class="btn btn-primary" href="/authentication/logout"><Icon Name="SignOut" /> Logout</NavLink>
     </div>
 </AuthorizeView>
 

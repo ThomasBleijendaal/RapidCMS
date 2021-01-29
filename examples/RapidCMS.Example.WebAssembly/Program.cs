@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Authorization;
-using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Collections;
-using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
-using RapidCMS.Example.Shared.DataViews;
-using RapidCMS.Example.Shared.Handlers;
 using RapidCMS.Example.WebAssembly.Components;
 using RapidCMS.Repositories;
 using RapidCMS.Repositories.ApiBridge;
@@ -34,7 +31,21 @@ namespace RapidCMS.Example.WebAssembly
 
             if (ConfigureAuthentication)
             {
-                builder.Services.AddRapidCMSApiTokenAuthorization(() => BaseUri.AbsoluteUri);
+                builder.Services.AddRapidCMSApiTokenAuthorization(sp =>
+                {
+                    var handler = sp.GetRequiredService<AccessTokenMessageHandler>();
+                    handler.AuthorizedUris = new[] { BaseUri.AbsoluteUri };
+                    return handler;
+                });
+
+
+                // using OIDC
+                //builder.Services.AddRapidCMSApiTokenAuthorization(sp =>
+                //{
+                //    var handler = sp.GetRequiredService<AuthorizationMessageHandler>();
+                //    handler.ConfigureHandler(new[] { BaseUri.AbsoluteUri });
+                //    return handler;
+                //});
             }
 
             // it's not required to add your repositories under the base repository
@@ -45,44 +56,35 @@ namespace RapidCMS.Example.WebAssembly
 
             // The TokenAuthorizationMessageHandler forwards the auth token from the frontend to the backend, allowing you
             // to validate the user easily
-            //builder.Services.AddRapidCMSApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>>(BaseUri)
-            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            //builder.Services.AddRapidCMSApiRepository<BaseRepository<Details>, ApiRepository<Details, JsonRepository<Details>>>(BaseUri)
-            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            //builder.Services.AddRapidCMSApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>>(BaseUri)
-            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            //builder.Services.AddRapidCMSApiRepository<BaseRepository<Country>, ApiRepository<Country, JsonRepository<Country>>>(BaseUri)
-            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            //builder.Services.AddRapidCMSApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup, JsonRepository<TagGroup>>>(BaseUri)
-            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            //builder.Services.AddRapidCMSApiRepository<BaseRepository<Tag>, ApiRepository<Tag, JsonRepository<Tag>>>(BaseUri)
-            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            //builder.Services.AddRapidCMSApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>>(BaseUri)
-            //    .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>, AccessTokenMessageHandler>(BaseUri);
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<Details>, ApiRepository<Details, JsonRepository<Details>>, AccessTokenMessageHandler>(BaseUri);
+            //builder.Services.AddRapidCMSApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>, AccessTokenMessageHandler>(BaseUri);
+            //builder.Services.AddRapidCMSApiRepository<BaseRepository<Country>, ApiRepository<Country, JsonRepository<Country>>, AccessTokenMessageHandler>(BaseUri);
+            //builder.Services.AddRapidCMSApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup, JsonRepository<TagGroup>>, AccessTokenMessageHandler>(BaseUri);
+            //builder.Services.AddRapidCMSApiRepository<BaseRepository<Tag>, ApiRepository<Tag, JsonRepository<Tag>>, AccessTokenMessageHandler>(BaseUri);
+            //builder.Services.AddRapidCMSApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>, AccessTokenMessageHandler>(BaseUri);
 
             // with LocalStorageRepository collections can store their data in the local storage of
             // the user, making personalisation quite easy
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddScoped<BaseRepository<User>, LocalStorageRepository<User>>();
 
-            // api repositories can also be mapped
-            builder.Services.AddRapidCMSApiRepository<
-                BaseMappedRepository<MappedEntity, DatabaseEntity>,
-                ApiMappedRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>>(BaseUri)
-                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            builder.Services.AddSingleton<DatabaseEntityDataViewBuilder>();
+            //// api repositories can also be mapped
+            //builder.Services.AddRapidCMSApiRepository<
+            //    BaseMappedRepository<MappedEntity, DatabaseEntity>,
+            //    ApiMappedRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>,
+            //    AccessTokenMessageHandler>(BaseUri);
+            //builder.Services.AddSingleton<DatabaseEntityDataViewBuilder>();
 
-            builder.Services.AddScoped<BaseRepository<Counter>, CounterRepository>();
+            //builder.Services.AddScoped<BaseRepository<Counter>, CounterRepository>();
 
-            builder.Services.AddSingleton<RandomNameActionHandler>();
-            builder.Services.AddSingleton<NavigateToPersonHandler>();
+            //builder.Services.AddSingleton<RandomNameActionHandler>();
+            //builder.Services.AddSingleton<NavigateToPersonHandler>();
 
-            builder.Services.AddTransient<ITextUploadHandler, Base64ApiTextUploadHandler>();
-            builder.Services.AddRapidCMSFileUploadApiHttpClient<Base64TextFileUploadHandler>(BaseUri)
-                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
-            builder.Services.AddTransient<IImageUploadHandler, Base64ApiImageUploadHandler>();
-            builder.Services.AddRapidCMSFileUploadApiHttpClient<Base64ImageUploadHandler>(BaseUri)
-                .If(ConfigureAuthentication, httpClient => httpClient.AddHttpMessageHandler<TokenAuthorizationMessageHandler>());
+            //builder.Services.AddTransient<ITextUploadHandler, Base64ApiTextUploadHandler>();
+            //builder.Services.AddRapidCMSFileUploadApiHttpClient<Base64TextFileUploadHandler, AccessTokenMessageHandler>(BaseUri);
+            //builder.Services.AddTransient<IImageUploadHandler, Base64ApiImageUploadHandler>();
+            //builder.Services.AddRapidCMSFileUploadApiHttpClient<Base64ImageUploadHandler, AccessTokenMessageHandler>(BaseUri);
             
             if (ConfigureAuthentication)
             {
@@ -101,9 +103,9 @@ namespace RapidCMS.Example.WebAssembly
                     config.SetCustomLoginScreen(typeof(LoginScreen));
                 }
 
-                //// CRUD editor for simple POCO with recursive sub collections
-                //// --> see Collections/PersonCollection for the basics of this CMS
-                //config.AddPersonCollection();
+                // CRUD editor for simple POCO with recursive sub collections
+                // --> see Collections/PersonCollection for the basics of this CMS
+                config.AddPersonCollection();
 
                 //// CRUD editor with support for one-to-many relation + validation
                 //// --> see Collections/CountryCollection for one-to-many relation with validation
@@ -116,8 +118,8 @@ namespace RapidCMS.Example.WebAssembly
                 //    config.AddSection("country", edit: false);
                 //});
 
-                // CRUD editor with validation attributes, custom editor and custom button panes
-                // --> see Collections/UserCollection 
+                //// CRUD editor with validation attributes, custom editor and custom button panes
+                //// --> see Collections/UserCollection 
                 config.AddUserCollection();
 
                 //// CRUD editor with nested collection
@@ -136,8 +138,8 @@ namespace RapidCMS.Example.WebAssembly
                 //// CRUD editor displaying live data, an external process updates the data every second
                 //config.AddActiveCollection();
 
-                //config.Dashboard.AddSection(typeof(DashboardSection));
-                config.Dashboard.AddSection("user", edit: true);
+                ////config.Dashboard.AddSection(typeof(DashboardSection));
+                //config.Dashboard.AddSection("user", edit: true);
             });
 
             var host = builder.Build();
@@ -150,15 +152,21 @@ namespace RapidCMS.Example.WebAssembly
 
         private static void ConfigureOpenIDConnectAuthentication(WebAssemblyHostBuilder builder)
         {
+            // For OIDC (but not working)
             builder.Services.AddOidcAuthentication(config =>
             {
-                builder.Configuration.Bind("DevOIDC", config.ProviderOptions);
+                builder.Configuration.Bind("DevOIDC", config);
             });
 
+            //builder.Services.AddOpenidConnectPkce(settings =>
+            //{
+            //    builder.Configuration.Bind("DevOIDC-ITfoxtec", settings);
+            //});
+
+            // For AD
             //builder.Services.AddMsalAuthentication(options =>
             //{
-            //    builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
-            //    options.ProviderOptions.DefaultAccessTokenScopes.Add("77d6b575-8519-4e3d-9da0-5580bd25b026");
+            //    builder.Configuration.Bind("AzureAd", options.ProviderOptions);
             //});
         }
     }

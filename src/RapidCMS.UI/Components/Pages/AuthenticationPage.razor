@@ -1,0 +1,38 @@
+﻿@page "/authentication/{action}"
+
+@layout EmptyLayout
+
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@if (!string.IsNullOrEmpty(Action))
+{
+    <RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="SucceededAsync">
+        <CompletingLoggingIn>
+            <p>Completing logging in..</p>
+        </CompletingLoggingIn>
+        <CompletingLogOut>
+            <p>Completing logging out..</p>
+        </CompletingLogOut>
+        <LoggingIn>
+            <p>Logging in..</p>
+        </LoggingIn>
+        <LogOut>
+            <p>Logging out..</p>
+        </LogOut>
+    </RemoteAuthenticatorView>
+}
+
+@code {
+    [Parameter]
+    public string Action { get; set; } = default!;
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+
+    private async Task SucceededAsync(RemoteAuthenticationState state)
+    {
+        ;
+
+        NavigationManager.NavigateTo("/");
+    }
+}
