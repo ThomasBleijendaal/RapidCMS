@@ -153,15 +153,15 @@ namespace RapidCMS.Example.WebAssembly
         private static void ConfigureOpenIDConnectAuthentication(WebAssemblyHostBuilder builder)
         {
             // For OIDC (but not working)
-            builder.Services.AddOidcAuthentication(config =>
-            {
-                builder.Configuration.Bind("DevOIDC", config);
-            });
-
-            //builder.Services.AddOpenidConnectPkce(settings =>
+            //builder.Services.AddOidcAuthentication(config =>
             //{
-            //    builder.Configuration.Bind("DevOIDC-ITfoxtec", settings);
+            //    builder.Configuration.Bind("DevOIDC", config);
             //});
+
+            builder.Services.AddOpenidConnectPkce(settings =>
+            {
+                builder.Configuration.Bind("DevOIDC-ITfoxtec", settings);
+            });
 
             // For AD
             //builder.Services.AddMsalAuthentication(options =>

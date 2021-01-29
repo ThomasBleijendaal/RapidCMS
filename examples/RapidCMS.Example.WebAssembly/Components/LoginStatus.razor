@@ -1,7 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@inject NavigationManager Navigation
-@inject SignOutSessionStateManager SignOutManager
+@*MSAL @inject SignOutSessionStateManager SignOutManager*@
 
 <AuthorizeView>
     <div>
@@ -10,17 +9,17 @@
     </div>
 </AuthorizeView>
 
-@if (action != null)
+@*MSAL: @if (action != null)
 {
     <RemoteAuthenticatorView Action="@action" />
-}
+}*@
 
-@code {
+@*@code {
     string? action;
 
     private async Task BeginLogout(MouseEventArgs args)
     {
-        await SignOutManager.SetSignOutState();
+        //await SignOutManager.SetSignOutState();
         action = "logout";
     }
-}
+}*@
