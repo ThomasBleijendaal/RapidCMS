@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
-using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Collections;
 using RapidCMS.Example.Shared.Data;
@@ -33,8 +33,8 @@ namespace RapidCMS.Example.WebAssembly
             {
                 builder.Services.AddRapidCMSApiTokenAuthorization(sp =>
                 {
-                    var handler = sp.GetRequiredService<AccessTokenMessageHandler>();
-                    handler.AuthorizedUris = new[] { BaseUri.AbsoluteUri };
+                    var handler = sp.GetRequiredService<AuthorizationMessageHandler>();
+                    handler.ConfigureHandler(new[] { BaseUri.AbsoluteUri });
                     return handler;
                 });
 
@@ -56,8 +56,8 @@ namespace RapidCMS.Example.WebAssembly
 
             // The TokenAuthorizationMessageHandler forwards the auth token from the frontend to the backend, allowing you
             // to validate the user easily
-            builder.Services.AddRapidCMSApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>, AccessTokenMessageHandler>(BaseUri);
-            builder.Services.AddRapidCMSApiRepository<BaseRepository<Details>, ApiRepository<Details, JsonRepository<Details>>, AccessTokenMessageHandler>(BaseUri);
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>, AuthorizationMessageHandler>(BaseUri);
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<Details>, ApiRepository<Details, JsonRepository<Details>>, AuthorizationMessageHandler>(BaseUri);
             //builder.Services.AddRapidCMSApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>, AccessTokenMessageHandler>(BaseUri);
             //builder.Services.AddRapidCMSApiRepository<BaseRepository<Country>, ApiRepository<Country, JsonRepository<Country>>, AccessTokenMessageHandler>(BaseUri);
             //builder.Services.AddRapidCMSApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup, JsonRepository<TagGroup>>, AccessTokenMessageHandler>(BaseUri);
@@ -153,15 +153,15 @@ namespace RapidCMS.Example.WebAssembly
         private static void ConfigureOpenIDConnectAuthentication(WebAssemblyHostBuilder builder)
         {
             // For OIDC (but not working)
-            //builder.Services.AddOidcAuthentication(config =>
-            //{
-            //    builder.Configuration.Bind("DevOIDC", config);
-            //});
-
-            builder.Services.AddOpenidConnectPkce(settings =>
+            builder.Services.AddOidcAuthentication(config =>
             {
-                builder.Configuration.Bind("DevOIDC-ITfoxtec", settings);
+                builder.Configuration.Bind("DevOIDC", config);
             });
+
+            //builder.Services.AddOpenidConnectPkce(settings =>
+            //{
+            //    builder.Configuration.Bind("DevOIDC-ITfoxtec", settings);
+            //});
 
             // For AD
             //builder.Services.AddMsalAuthentication(options =>

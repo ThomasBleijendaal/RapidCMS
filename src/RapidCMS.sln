@@ -43,6 +43,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bench", "bench", "{1499887F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Rewards", "..\bench\RapidCMS.Rewards\RapidCMS.Rewards.csproj", "{1B226835-05B5-43A1-B847-A48C4E3C603A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Components.WebAssembly.Authentication", "..\bench\WebAssembly.Authentication\src\Microsoft.AspNetCore.Components.WebAssembly.Authentication.csproj", "{A3C4CF5D-2EE6-46D8-AA7D-E15A2B9C4B29}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{1B226835-05B5-43A1-B847-A48C4E3C603A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B226835-05B5-43A1-B847-A48C4E3C603A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B226835-05B5-43A1-B847-A48C4E3C603A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3C4CF5D-2EE6-46D8-AA7D-E15A2B9C4B29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3C4CF5D-2EE6-46D8-AA7D-E15A2B9C4B29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3C4CF5D-2EE6-46D8-AA7D-E15A2B9C4B29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3C4CF5D-2EE6-46D8-AA7D-E15A2B9C4B29}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,6 +115,7 @@ Global
 		{184E1BAB-DA87-4E04-93F5-E69448B4562A} = {FAEBCE99-5CCB-4BBF-AAF3-9CE51FABD871}
 		{9776D10E-DC7E-4929-9800-25C5568E6497} = {D5C8E316-AA29-4FB7-A99D-F1047DCC10BE}
 		{1B226835-05B5-43A1-B847-A48C4E3C603A} = {1499887F-684A-4D1B-B6D9-4569334D1DBC}
+		{A3C4CF5D-2EE6-46D8-AA7D-E15A2B9C4B29} = {1499887F-684A-4D1B-B6D9-4569334D1DBC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A24D735F-6ECC-4089-B6BF-DB09B1FCB7D8}

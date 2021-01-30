@@ -1,5 +1,5 @@
 ﻿@inject NavigationManager Navigation
-@inject OpenidConnectPkce openidConnectPkce
+@*@inject OpenidConnectPkce openidConnectPkce*@
 
 <h4>Hi!</h4>
 
@@ -7,7 +7,7 @@
 
 <hr />
 
-<a class="btn btn-primary" href="#" @onclick="BeginLoginAsync">Login via OIDC</a>
+<a class="btn btn-primary" href="/authentication/login">Login via OIDC</a>
 
 @*
     when using MSAL
@@ -26,6 +26,6 @@
         // when using MSAL
         // action = "login";
 
-        await openidConnectPkce.LoginAsync();
+        //await openidConnectPkce.LoginAsync();
     }
 }
