@@ -14,7 +14,7 @@ Add an App Registration to your Active Directory, and add `https://localhost:[yo
 reply url for the Web App. Copy the Application Id GUID, and paste it in the following JSON which needs to
 be added to `appsettings.json`.
 
-```
+```json
 "AzureAd": {
     "Authority": "https://login.microsoftonline.com/[tenant-id]",
     "TenantId": "[tenant-id]",
@@ -24,7 +24,7 @@ be added to `appsettings.json`.
 
 ## 2b. Or use any other OpenID Connect Identity Provider
 
-```
+```json
 "DevOIDC": {
     "Authority": "[authority url]",
     "TenantId": "[tenant-id]",
@@ -107,7 +107,7 @@ The `/SignIn` has to go somewhere, so we need to add a `SignIn.cshtml` to the `P
 }
 ```
 
-```cs
+```c#
 public class SignInModel : PageModel
 {
     public IActionResult OnGet()
@@ -145,7 +145,7 @@ The `/SignOut` also has to go somewhere, wo se need to add a `SignOut.cshtml` to
 }
 ```
 
-```cs
+```c#
 public class SignOutModel : PageModel
 {
     public IActionResult OnGet()

@@ -430,6 +430,10 @@ a.current-page {
         border-color: #a80000;
     }
 
+    .login .btn {
+        width: 100%;
+    }
+
 .form-row {
     padding-top: .4rem;
     padding-bottom: .3rem;

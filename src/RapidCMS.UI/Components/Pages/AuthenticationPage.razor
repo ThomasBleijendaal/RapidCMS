@@ -2,11 +2,13 @@
 
 @layout EmptyLayout
 
+@inject SignOutSessionStateManager SignOutManager
+
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 @if (!string.IsNullOrEmpty(Action))
 {
-    <RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="SucceededAsync">
+    <RemoteAuthenticatorView Action="@Action">
         <CompletingLoggingIn>
             <p>Completing logging in..</p>
         </CompletingLoggingIn>
@@ -19,6 +21,16 @@
         <LogOut>
             <p>Logging out..</p>
         </LogOut>
+        <LogOutSucceeded>
+            <p>You are logged out.</p>
+            <hr />
+            <a class="btn btn-primary" href="/">Return to start screen</a>
+        </LogOutSucceeded>
+        <LogInFailed>
+            <p>Failed to log you in.</p>
+            <hr />
+            <a class="btn btn-primary" href="/">Return to start screen</a>
+        </LogInFailed>
     </RemoteAuthenticatorView>
 }
 
@@ -29,10 +41,11 @@
     [Inject]
     private NavigationManager NavigationManager { get; set; } = default!;
 
-    private async Task SucceededAsync(RemoteAuthenticationState state)
+    protected override async Task OnParametersSetAsync()
     {
-        ;
-
-        NavigationManager.NavigateTo("/");
+        if (Action?.ToLower() == "logout")
+        {
+            await SignOutManager.SetSignOutState();
+        }
     }
 }
