@@ -209,15 +209,5 @@ namespace Microsoft.Extensions.DependencyInjection
             config?.Invoke(rootConfig);
             return rootConfig;
         }
-
-        public static IApplicationBuilder UseRapidCMSApi(this IApplicationBuilder app, bool isDevelopment = false)
-        {
-            if (!_controllersInstalled)
-            {
-                throw new InvalidOperationException($"Configure the convention and feature provider correctly first, using {nameof(AddRapidCMSControllers)}().");
-            }
-
-            return app;
-        }
     }
 }

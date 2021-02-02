@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Azure.Functions.Worker.Configuration;
 using Microsoft.Extensions.Configuration;
-using RapidCMS.Repositories;
-using RapidCMS.Example.Shared.Data;
+using Microsoft.Extensions.Hosting;
 
 namespace RapidCMS.Example.WebAssembly.FunctionAPI
 {
@@ -19,32 +12,25 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
 
         static async Task Main(string[] args)
         {
-#if DEBUG
             Debugger.Launch();
-#endif
+
+            Startup? startup = null;
 
             var host = new HostBuilder()
                 .ConfigureAppConfiguration(config =>
                 {
                     config.AddCommandLine(args);
+                    config.AddEnvironmentVariables();
                 })
                 .ConfigureFunctionsWorker((context, builder) =>
                 {
-                    builder.UseFunctionExecutionMiddleware();
+                    startup ??= new Startup(context.Configuration);
+                    startup.ConfigureWorker(builder);
                 })
-                .ConfigureServices(services =>
+                .ConfigureServices((context, services) =>
                 {
-                    //services.AddScoped<JsonRepository<Person>>();
-
-                    //services.AddRapidCMSFunctions(config =>
-                    //{
-                    //    if (!ConfigureAuthentication)
-                    //    {
-                    //        config.AllowAnonymousUser();
-                    //    }
-
-                    //    config.RegisterRepository<Person, JsonRepository<Person>>();
-                    //});
+                    startup ??= new Startup(context.Configuration);
+                    startup.ConfigureServices(services);
                 })
                 .Build();
 

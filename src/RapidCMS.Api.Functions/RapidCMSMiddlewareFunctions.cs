@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -27,19 +28,23 @@ using RapidCMS.Core.Services.Presentation;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
+    // TODO: merge with WebApi 
     public static class RapidCMSMiddlewareFunctions
     {
+        private static ApiConfig? _rootConfig;
+
         public static IServiceCollection AddRapidCMSFunctions(this IServiceCollection services, Action<IApiConfig>? config = null)
         {
+            _rootConfig = GetRootConfig(config);
 
-
-            var rootConfig = GetRootConfig(config);
-
-            services.AddSingleton<IApiConfig>(rootConfig);
+            services.AddSingleton<IApiConfig>(_rootConfig);
 
             services.AddHttpContextAccessor();
 
-            if (rootConfig.AllowAnonymousUsage)
+            // TODO: implement properly
+            services.AddTransient<IAuthorizationService, AuthorizationServiceShiv>();
+
+            if (_rootConfig.AllowAnonymousUsage)
             {
                 services.AddSingleton<IAuthorizationHandler, AllowAllAuthorizationHandler>();
                 services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
@@ -72,6 +77,23 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddTransient<IEditContextFactory, ApiEditContextWrapperFactory>();
 
+            // TODO: functions to add?
+            // - how to limit the repository aliases allowed like the api repository controllers
+
+            var entityVariants = _rootConfig.Repositories.ToDictionary(x => x.Alias, x =>
+            {
+                var entityTypes = new[] { x.EntityType }
+                    .Union(x.EntityType.Assembly
+                        .GetTypes()
+                        .Where(t => !t.IsAbstract && t.IsSubclassOf(x.EntityType)))
+                    .ToList();
+                return (x.EntityType, (IReadOnlyList<Type>)entityTypes);
+            });
+
+            services.AddSingleton<IEntityVariantResolver>(new EntityVariantResolver(entityVariants));
+
+            // TODO: file uploaders to add?
+
             return services;
         }
 
@@ -80,6 +102,19 @@ namespace Microsoft.Extensions.DependencyInjection
             var rootConfig = new ApiConfig();
             config?.Invoke(rootConfig);
             return rootConfig;
+        }
+    }
+
+    public class AuthorizationServiceShiv : IAuthorizationService
+    {
+        public Task<AuthorizationResult> AuthorizeAsync(ClaimsPrincipal user, object? resource, IEnumerable<IAuthorizationRequirement> requirements)
+        {
+            return Task.FromResult(AuthorizationResult.Success());
+        }
+
+        public Task<AuthorizationResult> AuthorizeAsync(ClaimsPrincipal user, object? resource, string policyName)
+        {
+            return Task.FromResult(AuthorizationResult.Success());
         }
     }
 }

@@ -5,15 +5,14 @@
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
     <OutputType>Exe</OutputType>
     <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.0.0-preview3" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.0.0-preview3" OutputItemType="Analyzer" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.11" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.0.0-preview3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\RapidCMS.Api.Functions\RapidCMS.Api.Functions.csproj" />
-    <ProjectReference Include="..\..\src\RapidCMS.Repositories\RapidCMS.Repositories.csproj" />
     <ProjectReference Include="..\RapidCMS.Example.Shared\RapidCMS.Example.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
