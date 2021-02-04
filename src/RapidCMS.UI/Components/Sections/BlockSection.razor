@@ -1,7 +1,16 @@
 ﻿@inherits BaseEditContextSection
 
-@if (Section != null && Section.Elements != null && Section.Elements.Any() && EditContext != null && Section.IsVisible(EditContext.Entity, EditContext.EntityState))
+@if (Section != null && 
+    Section.Elements != null && 
+    Section.Elements.Any() && EditContext != null && 
+    Section.IsVisible(EditContext.Entity, EditContext.EntityState) &&
+    Section.Elements.Any(x => x.IsVisible(EditContext.Entity, EditContext.EntityState)))
 {
+    @if (BlockNr > 0)
+    {
+        <div class="divider"></div>
+    }
+
     @if (!string.IsNullOrWhiteSpace(Section.Label))
     {
         <h2 class="block-header">@Section.Label</h2>
@@ -72,4 +81,6 @@
 
 @code {
     [Parameter] public EventCallback<ButtonClickEventArgs> OnButtonClick { get; set; }
+
+    [Parameter] public int BlockNr { get; set; }
 }

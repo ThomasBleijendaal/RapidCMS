@@ -24,13 +24,13 @@ namespace RapidCMS.Repositories.ApiBridge
     {
         private readonly ApiRepositoryHelper _apiRepositoryHelper;
 
-        public ApiRepository(IHttpClientFactory httpClientFactory, IMemoryCache memoryCache)
+        public ApiRepository(IHttpClientFactory httpClientFactory)
         {
             var jsonSerializerSettings = new JsonSerializerSettings();
             jsonSerializerSettings.Converters.Add(new EntityModelJsonConverter<TEntity>());
             var repositoryAlias = AliasHelper.GetRepositoryAlias(typeof(ApiRepository<TEntity, TCorrespondingRepository>));
 
-            _apiRepositoryHelper = new ApiRepositoryHelper(memoryCache, httpClientFactory, jsonSerializerSettings, repositoryAlias);
+            _apiRepositoryHelper = new ApiRepositoryHelper(httpClientFactory, jsonSerializerSettings, repositoryAlias);
         }
 
         public override Task DeleteAsync(string id, IParent? parent)

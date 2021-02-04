@@ -109,7 +109,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             AddServicesRequiringRepositories(services, rootConfig);
 
-            services.AddScoped<IMediatorEventConverter, RepositoryMediatorEventConverter>();
+            services.AddScoped<IMediatorEventListener, RepositoryMediatorEventConverter>();
 
             // UI requirements
             services.AddHttpContextAccessor();

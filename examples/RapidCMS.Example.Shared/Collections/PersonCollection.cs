@@ -130,6 +130,7 @@ namespace RapidCMS.Example.Shared.Collections
                             section.AddField(x => x.FavouriteChildId)
                                 .SetName("Favourite child")
                                 .SetType(EditorType.Select)
+                                .VisibleWhen((person, state) => state == EntityState.IsExisting)
                                 .SetCollectionRelation<Person>("person", config =>
                                 {
                                     // this allows for configuring which property of the entity will make up the id for the element, and that value

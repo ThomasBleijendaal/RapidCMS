@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 
 namespace RapidCMS.Core.Mediators
 {
-    internal class RepositoryMediatorEventConverter : IMediatorEventConverter
+    internal class RepositoryMediatorEventConverter : IMediatorEventListener
     {
         private IDisposable? _eventHander;
         private IMediator? _mediator;
@@ -21,7 +22,7 @@ namespace RapidCMS.Core.Mediators
             _collectionAliasResolver = collectionAliasResolver;
         }
 
-        public void RegisterConversion(IMediator mediator)
+        public void RegisterListener(IMediator mediator)
         {
             _mediator = mediator;
             _eventHander = mediator.RegisterCallback<RepositoryEventArgs>(ConvertRepositoryEventAsync);

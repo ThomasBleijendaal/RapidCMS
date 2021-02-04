@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
@@ -25,13 +24,13 @@ namespace RapidCMS.Repositories.ApiBridge
     {
         private readonly ApiRepositoryHelper _apiRepositoryHelper;
 
-        public ApiMappedRepository(IHttpClientFactory httpClientFactory, IMemoryCache memoryCache)
+        public ApiMappedRepository(IHttpClientFactory httpClientFactory)
         {
             var jsonSerializerSettings = new JsonSerializerSettings();
             jsonSerializerSettings.Converters.Add(new EntityModelJsonConverter<TEntity>());
             var repositoryAlias = AliasHelper.GetRepositoryAlias(typeof(ApiMappedRepository<TEntity, TDatabaseEntity, TCorrespondingRepository>));
 
-            _apiRepositoryHelper = new ApiRepositoryHelper(memoryCache, httpClientFactory, jsonSerializerSettings, repositoryAlias);
+            _apiRepositoryHelper = new ApiRepositoryHelper(httpClientFactory, jsonSerializerSettings, repositoryAlias);
         }
 
         public override Task DeleteAsync(string id, IParent? parent)

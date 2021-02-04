@@ -7,6 +7,16 @@ namespace RapidCMS.UI.Components.Sections
     {
         [Parameter] public SectionUI? Section { get; set; }
 
+        protected override void OnInitialized()
+        {
+            EditContext.OnFieldChanged += EditContext_OnFieldChanged;
+        }
+
+        private void EditContext_OnFieldChanged(object? sender, Core.Forms.FieldChangedEventArgs e)
+        {
+            StateHasChanged();
+        }
+
         protected override void AttachValidationStateChangedListener()
         {
             
@@ -15,6 +25,12 @@ namespace RapidCMS.UI.Components.Sections
         protected override void DetachValidationStateChangedListener()
         {
             
+        }
+
+        public override void Dispose()
+        {
+            EditContext.OnFieldChanged -= EditContext_OnFieldChanged;
+            base.Dispose();
         }
     }
 }

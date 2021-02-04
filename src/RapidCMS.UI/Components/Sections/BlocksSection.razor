@@ -3,6 +3,8 @@
 <div class="content">
     @foreach (var (context, sections) in Sections)
     {
+        var index = 0;
+
         <div class="nested-content">
             <CascadingEditContext EditContext=@context>
                 @foreach (var section in sections)
@@ -20,7 +22,7 @@
                     }
                     else
                     {
-                        <BlockSection Section="section" OnButtonClick="OnButtonClick" />
+                        <BlockSection Section="section" OnButtonClick="OnButtonClick" BlockNr="index++" />
                     }
                 }
             </CascadingEditContext>

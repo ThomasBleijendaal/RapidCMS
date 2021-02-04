@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RapidCMS.Core.Extensions
 {
-    internal static class StringExtensions
+    public static class StringExtensions
     {
         // https://stackoverflow.com/questions/25259/how-does-stack-overflow-generate-its-seo-friendly-urls
         public static string ToUrlFriendlyString(this string title)
@@ -142,12 +142,20 @@ namespace RapidCMS.Core.Extensions
 
         private readonly static char[] Padding = { '=' };
 
-        public static string ToSha256Base64String(this string text, string? salt = null)
+        internal static string ToSha256Base64String(this string text, string? salt = null)
         {
             using var sha256 = SHA256.Create();
             var hashed = sha256.ComputeHash(Encoding.UTF8.GetBytes($"{text}{salt}"));
 
             return hashed.ToBase64String();
+        }
+
+        public static string ToBase64String(this string text)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(text))
+                .TrimEnd(Padding)
+                .Replace('+', '-')
+                .Replace('/', '_');
         }
 
         private static string ToBase64String(this byte[] text)

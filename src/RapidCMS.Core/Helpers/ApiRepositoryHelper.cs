@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using RapidCMS.Core.Exceptions;
@@ -12,18 +11,15 @@ namespace RapidCMS.Core.Helpers
 {
     internal class ApiRepositoryHelper
     {
-        private readonly IMemoryCache _memoryCache;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly JsonSerializerSettings _jsonSerializerSettings;
         private readonly string _repositoryAlias;
 
         public ApiRepositoryHelper(
-            IMemoryCache memoryCache,
             IHttpClientFactory httpClientFactory,
             JsonSerializerSettings jsonSerializerSettings,
             string repositoryAlias)
         {
-            _memoryCache = memoryCache;
             _httpClientFactory = httpClientFactory;
             _jsonSerializerSettings = jsonSerializerSettings;
             _repositoryAlias = repositoryAlias;
@@ -42,7 +38,8 @@ namespace RapidCMS.Core.Helpers
             }
 
             var request = CreateRequest(method, url);
-            request.Content = new StringContent(JsonConvert.SerializeObject(content, _jsonSerializerSettings), Encoding.UTF8, "application/json");
+            var json = JsonConvert.SerializeObject(content, _jsonSerializerSettings);
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
             return request;
         }
@@ -74,19 +71,9 @@ namespace RapidCMS.Core.Helpers
         {
             try
             {
-                var cacheKey = $"{_repositoryAlias}-{request.RequestUri}";
-                if (_memoryCache.TryGetValue(cacheKey, out TResult cachedResult))
-                {
-                    return cachedResult;
-                }
                 var response = await DoRequestAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<TResult>(json, _jsonSerializerSettings);
-
-                if (result != null)
-                {
-                    _memoryCache.Set(cacheKey, result, TimeSpan.FromSeconds(1));
-                }
 
                 return result;
             }
