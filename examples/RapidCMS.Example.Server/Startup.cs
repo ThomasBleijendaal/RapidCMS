@@ -20,7 +20,7 @@ namespace RapidCMS.Example.Server
 {
     public class Startup
     {
-        private const bool ConfigureAuthentication = true;
+        private const bool ConfigureAuthentication = false;
 
         public Startup(IConfiguration configuration)
         {
