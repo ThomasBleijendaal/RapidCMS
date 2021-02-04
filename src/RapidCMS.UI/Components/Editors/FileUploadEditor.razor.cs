@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Tewr.Blazor.FileReader;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.UI.Components.Preview;
+using Tewr.Blazor.FileReader;
+using FileInfoModel = RapidCMS.Core.Models.Data.FileInfo;
 
 namespace RapidCMS.UI.Components.Editors
 {
@@ -48,7 +48,7 @@ namespace RapidCMS.UI.Components.Editors
             IEnumerable<string> validationMessages;
             try
             {
-                validationMessages = await FileUploadHandler.ValidateFileAsync(fileInfo);
+                validationMessages = await FileUploadHandler.ValidateFileAsync(new FileInfoModel(fileInfo));
             }
             catch
             {
@@ -73,7 +73,7 @@ namespace RapidCMS.UI.Components.Editors
                     UploadCompletion = 0.0;
                     StateHasChanged();
 
-                    var value = await FileUploadHandler.SaveFileAsync(fileInfo, uploadedFile);
+                    var value = await FileUploadHandler.SaveFileAsync(new FileInfoModel(fileInfo), uploadedFile);
 
                     SetValueFromObject(value);
 
