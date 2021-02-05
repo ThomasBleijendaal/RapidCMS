@@ -4,6 +4,7 @@
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 [assembly: InternalsVisibleTo("RapidCMS.Repositories")]
+[assembly: InternalsVisibleTo("RapidCMS.Api.Core")]
 [assembly: InternalsVisibleTo("RapidCMS.Api.Functions")]
 [assembly: InternalsVisibleTo("RapidCMS.Api.WebApi")]
 

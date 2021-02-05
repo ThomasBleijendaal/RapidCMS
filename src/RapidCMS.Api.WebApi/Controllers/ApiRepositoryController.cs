@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RapidCMS.Api.WebApi.Conventions;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
@@ -17,10 +16,9 @@ using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Api.WebApi.Controllers
 {
-    public class ApiRepositoryController<TEntity, TDatabaseEntity, TRepository> : ControllerBase
+    public class ApiRepositoryController<TEntity, TDatabaseEntity> : ControllerBase
         where TEntity : class, IEntity
         where TDatabaseEntity : class
-        where TRepository : IRepository
     {
         private readonly IPresentationService _presentationService;
         private readonly IInteractionService _interactionService;

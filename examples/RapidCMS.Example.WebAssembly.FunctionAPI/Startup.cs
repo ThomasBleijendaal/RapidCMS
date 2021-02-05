@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Example.Shared.Data;
+using RapidCMS.Example.Shared.DataViews;
+using RapidCMS.Example.Shared.Handlers;
 using RapidCMS.Repositories;
 
 namespace RapidCMS.Example.WebAssembly.FunctionAPI
@@ -21,6 +23,18 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
         {
             services.AddScoped<JsonRepository<Person>>();
             services.AddScoped<JsonRepository<Details>>();
+            services.AddScoped<JsonRepository<ConventionalPerson>>();
+            services.AddScoped<JsonRepository<Country>>();
+            services.AddScoped<JsonRepository<User>>();
+            services.AddScoped<JsonRepository<TagGroup>>();
+            services.AddScoped<JsonRepository<Tag>>();
+            services.AddScoped<JsonRepository<EntityVariantBase>>();
+            services.AddScoped<MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
+            services.AddSingleton<IConverter<MappedEntity, DatabaseEntity>, Mapper>();
+            services.AddSingleton<DatabaseEntityDataViewBuilder>();
+
+            services.AddTransient<Base64TextFileUploadHandler>();
+            services.AddTransient<Base64ImageUploadHandler>();
 
             services.AddRapidCMSFunctions(config =>
             {
@@ -31,6 +45,17 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
 
                 config.RegisterRepository<Person, JsonRepository<Person>>();
                 config.RegisterRepository<Details, JsonRepository<Details>>();
+                config.RegisterRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>();
+                config.RegisterRepository<Country, JsonRepository<Country>>();
+                config.RegisterRepository<TagGroup, JsonRepository<TagGroup>>();
+                config.RegisterRepository<Tag, JsonRepository<Tag>>();
+                config.RegisterRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>();
+                config.RegisterRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
+
+                config.RegisterDataViewBuilder<DatabaseEntityDataViewBuilder>("mapped");
+
+                config.RegisterFileUploadHandler<Base64TextFileUploadHandler>();
+                config.RegisterFileUploadHandler<Base64ImageUploadHandler>();
             });
         }
 

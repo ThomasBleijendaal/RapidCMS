@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Collections;
+using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.DataViews;
 using RapidCMS.Example.Shared.Handlers;
@@ -76,18 +77,18 @@ namespace RapidCMS.Example.WebAssembly
                 // The AuthorizationMessageHandler forwards the auth token from the frontend to the backend, allowing you to validate the user easily
                 builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>, AuthorizationMessageHandler>(BaseUri);
                 builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Details>, ApiRepository<Details, JsonRepository<Details>>, AuthorizationMessageHandler>(BaseUri);
-                //builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>, AuthorizationMessageHandler>(BaseUri);
-                //builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Country>, ApiRepository<Country, JsonRepository<Country>>, AuthorizationMessageHandler>(BaseUri);
-                //builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup, JsonRepository<TagGroup>>, AuthorizationMessageHandler>(BaseUri);
-                //builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Tag>, ApiRepository<Tag, JsonRepository<Tag>>, AuthorizationMessageHandler>(BaseUri);
-                //builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>, AuthorizationMessageHandler>(BaseUri);
+                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>, AuthorizationMessageHandler>(BaseUri);
+                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Country>, ApiRepository<Country, JsonRepository<Country>>, AuthorizationMessageHandler>(BaseUri);
+                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup, JsonRepository<TagGroup>>, AuthorizationMessageHandler>(BaseUri);
+                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Tag>, ApiRepository<Tag, JsonRepository<Tag>>, AuthorizationMessageHandler>(BaseUri);
+                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>, AuthorizationMessageHandler>(BaseUri);
 
-                //// api repositories can also be mapped
-                //builder.Services.AddRapidCMSAuthenticatedApiRepository<
-                //    BaseMappedRepository<MappedEntity, DatabaseEntity>,
-                //    ApiMappedRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>,
-                //    AuthorizationMessageHandler>(BaseUri);
-                //builder.Services.AddSingleton<DatabaseEntityDataViewBuilder>();
+                // api repositories can also be mapped
+                builder.Services.AddRapidCMSAuthenticatedApiRepository<
+                    BaseMappedRepository<MappedEntity, DatabaseEntity>,
+                    ApiMappedRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>,
+                    AuthorizationMessageHandler>(BaseUri);
+                builder.Services.AddSingleton<DatabaseEntityDataViewBuilder>();
             }
 
             builder.Services.AddSingleton<DatabaseEntityDataViewBuilder>();
@@ -134,37 +135,37 @@ namespace RapidCMS.Example.WebAssembly
 
                 // CRUD editor with support for one-to-many relation + validation
                 // --> see Collections/CountryCollection for one-to-many relation with validation
-                //config.AddCountryCollection();
+                config.AddCountryCollection();
 
-                //// Custom page with either custom Blazor components, or ListViews or ListEditors of collections
-                //config.AddPage("beaker", "Some random page", config =>
-                //{
-                //    config.AddSection(typeof(CustomSection));
-                //    config.AddSection("country", edit: false);
-                //});
+                // Custom page with either custom Blazor components, or ListViews or ListEditors of collections
+                config.AddPage("beaker", "Some random page", config =>
+                {
+                    config.AddSection(typeof(CustomSection));
+                    config.AddSection("country", edit: false);
+                });
 
-                //// CRUD editor with validation attributes, custom editor and custom button panes
-                //// --> see Collections/UserCollection 
-                //config.AddUserCollection();
+                // CRUD editor with validation attributes, custom editor and custom button panes
+                // --> see Collections/UserCollection 
+                config.AddUserCollection();
 
-                //// CRUD editor with nested collection
-                //// --> see Collections/TagCollection
-                //config.AddTagCollection();
+                // CRUD editor with nested collection
+                // --> see Collections/TagCollection
+                config.AddTagCollection();
 
-                //// CRUD editor with entity mapping
-                //config.AddMappedCollection();
+                // CRUD editor with entity mapping
+                config.AddMappedCollection();
 
-                //// CRUD editor based on conventions for even more rapid development
-                //config.AddConventionCollection();
+                // CRUD editor based on conventions for even more rapid development
+                config.AddConventionCollection();
 
-                //// CRUD editor with entity variants, so multiple types of entities can be mixed in a single collection
-                //config.AddEntityVariantCollection();
+                // CRUD editor with entity variants, so multiple types of entities can be mixed in a single collection
+                config.AddEntityVariantCollection();
 
-                //// CRUD editor displaying live data, an external process updates the data every second
-                //config.AddActiveCollection();
+                // CRUD editor displaying live data, an external process updates the data every second
+                config.AddActiveCollection();
 
-                ////config.Dashboard.AddSection(typeof(DashboardSection));
-                //config.Dashboard.AddSection("user", edit: true);
+                //config.Dashboard.AddSection(typeof(DashboardSection));
+                config.Dashboard.AddSection("user", edit: true);
             });
 
             var host = builder.Build();

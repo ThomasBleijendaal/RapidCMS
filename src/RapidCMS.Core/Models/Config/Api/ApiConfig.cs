@@ -49,7 +49,8 @@ namespace RapidCMS.Core.Models.Config.Api
             {
                 Alias = alias,
                 EntityType = typeof(TEntity),
-                RepositoryType = typeof(TRepository)
+                RepositoryType = typeof(TRepository),
+                ApiRepositoryType = fullType
             };
             Repositories.Add(config);
             return config;
@@ -73,7 +74,8 @@ namespace RapidCMS.Core.Models.Config.Api
                 Alias = alias,
                 EntityType = typeof(TEntity),
                 DatabaseType = typeof(TMappedEntity),
-                RepositoryType = typeof(TRepository)
+                RepositoryType = typeof(TRepository),
+                ApiRepositoryType = fullType
             };
             Repositories.Add(config);
             return config;

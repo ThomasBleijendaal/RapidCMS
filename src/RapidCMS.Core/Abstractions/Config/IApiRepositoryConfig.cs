@@ -8,5 +8,6 @@ namespace RapidCMS.Core.Abstractions.Config
         Type EntityType { get; }
         Type? DatabaseType { get; }
         Type RepositoryType { get; }
+        Type ApiRepositoryType { get; }
     }
 }

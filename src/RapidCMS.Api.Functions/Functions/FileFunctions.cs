@@ -10,7 +10,7 @@ using RapidCMS.Api.Functions.Models;
 
 namespace RapidCMS.Api.Functions.Functions
 {
-    public class ApiFunctions
+    public class FileFunctions
     {
         private readonly IApiHandlerResolver _apiHandlerResolver;
 

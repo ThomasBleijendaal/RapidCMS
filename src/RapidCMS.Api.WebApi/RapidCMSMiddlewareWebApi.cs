@@ -104,14 +104,14 @@ namespace Microsoft.Extensions.DependencyInjection
                 {
                     if (repository.DatabaseType == default)
                     {
-                        return typeof(ApiRepositoryController<,,>)
-                            .MakeGenericType(repository.EntityType, repository.EntityType, repository.RepositoryType)
+                        return typeof(ApiRepositoryController<,>)
+                            .MakeGenericType(repository.EntityType, repository.EntityType)
                             .GetTypeInfo();
                     }
                     else
                     {
-                        return typeof(ApiRepositoryController<,,>)
-                            .MakeGenericType(repository.EntityType, repository.DatabaseType, repository.RepositoryType)
+                        return typeof(ApiRepositoryController<,>)
+                            .MakeGenericType(repository.EntityType, repository.DatabaseType)
                             .GetTypeInfo();
                     }
                 },

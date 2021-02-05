@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RapidCMS.Api.Core\RapidCMS.Api.Core.csproj" />
     <ProjectReference Include="..\RapidCMS.Core\RapidCMS.Core.csproj" />
   </ItemGroup>
   
