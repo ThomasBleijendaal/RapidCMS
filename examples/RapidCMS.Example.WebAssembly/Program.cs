@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Collections;
-using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.DataViews;
 using RapidCMS.Example.Shared.Handlers;
@@ -20,7 +19,7 @@ namespace RapidCMS.Example.WebAssembly
 {
     public class Program
     {
-        private const bool ConfigureAuthentication = true;
+        private const bool ConfigureAuthentication = false;
         //private static readonly Uri BaseUri = new Uri("https://localhost:5003");
         private static readonly Uri BaseUri = new Uri("http://localhost:7074");
 
@@ -77,18 +76,18 @@ namespace RapidCMS.Example.WebAssembly
                 // The AuthorizationMessageHandler forwards the auth token from the frontend to the backend, allowing you to validate the user easily
                 builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>, AuthorizationMessageHandler>(BaseUri);
                 builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Details>, ApiRepository<Details, JsonRepository<Details>>, AuthorizationMessageHandler>(BaseUri);
-                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>, AuthorizationMessageHandler>(BaseUri);
-                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Country>, ApiRepository<Country, JsonRepository<Country>>, AuthorizationMessageHandler>(BaseUri);
-                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup, JsonRepository<TagGroup>>, AuthorizationMessageHandler>(BaseUri);
-                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Tag>, ApiRepository<Tag, JsonRepository<Tag>>, AuthorizationMessageHandler>(BaseUri);
-                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>, AuthorizationMessageHandler>(BaseUri);
+                //builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>, AuthorizationMessageHandler>(BaseUri);
+                //builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Country>, ApiRepository<Country, JsonRepository<Country>>, AuthorizationMessageHandler>(BaseUri);
+                //builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup, JsonRepository<TagGroup>>, AuthorizationMessageHandler>(BaseUri);
+                //builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Tag>, ApiRepository<Tag, JsonRepository<Tag>>, AuthorizationMessageHandler>(BaseUri);
+                //builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>, AuthorizationMessageHandler>(BaseUri);
 
-                // api repositories can also be mapped
-                builder.Services.AddRapidCMSAuthenticatedApiRepository<
-                    BaseMappedRepository<MappedEntity, DatabaseEntity>,
-                    ApiMappedRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>,
-                    AuthorizationMessageHandler>(BaseUri);
-                builder.Services.AddSingleton<DatabaseEntityDataViewBuilder>();
+                //// api repositories can also be mapped
+                //builder.Services.AddRapidCMSAuthenticatedApiRepository<
+                //    BaseMappedRepository<MappedEntity, DatabaseEntity>,
+                //    ApiMappedRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>,
+                //    AuthorizationMessageHandler>(BaseUri);
+                //builder.Services.AddSingleton<DatabaseEntityDataViewBuilder>();
             }
 
             builder.Services.AddSingleton<DatabaseEntityDataViewBuilder>();

@@ -315,6 +315,9 @@ thead td:hover .icon {
     .content .nested-content + .nested-content {
         border-top: 1px dashed #bebbb8;
     }
+.content .divider + .nested-content {
+    padding-top: 0;
+}
 
 .content .content {
     box-shadow: 0 3.2px 7.2px 0 rgba(0,0,0,.132),0 .6px 1.8px 0 rgba(0,0,0,.108);

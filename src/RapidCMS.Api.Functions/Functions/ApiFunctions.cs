@@ -5,6 +5,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RapidCMS.Api.Functions.Models;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
@@ -434,7 +435,7 @@ namespace RapidCMS.Api.Functions.Functions
                 {
                     return new HttpResponseData(HttpStatusCode.BadRequest);
                 }
-                
+
                 await _interactionService.InteractAsync<PersistReorderRequestModel, ApiCommandResponseModel>(new PersistReorderRequestModel
                 {
                     BeforeId = reorder.BeforeId,
@@ -459,18 +460,58 @@ namespace RapidCMS.Api.Functions.Functions
 
         private static EditContextModel<IEntity>? GetEditContext(HttpRequestData req, Type entityType)
         {
-            JsonConvert.DeserializeObject()
+            var modelJson = JsonConvert.DeserializeObject<RequestWrapper<string>>(req.Body);
 
-            var editContextWrapper = JsonConvert.DeserializeObject(
-                req.Body,
-                typeof(RequestWrapper<>).MakeGenericType(
-                    typeof(EditContextModel<>).MakeGenericType(entityType)));
+            var editContextJson = modelJson.Json;
 
-            var editContext = (editContextWrapper as IWrapper)?.Value;
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(new EditContextModelConverter(entityType));
 
-            return editContext as EditContextModel<IEntity>;
+            return JsonConvert.DeserializeObject<EditContextModel<IEntity>>(editContextJson, settings);
         }
     }
 
-    
+    public class EditContextModelConverter : JsonConverter
+    {
+        private readonly Type _modelType;
+
+        public EditContextModelConverter(Type entityType)
+        {
+            _modelType = typeof(EditContextModel<>).MakeGenericType(entityType);
+        }
+
+        public override bool CanWrite => false;
+        public override bool CanRead => true;
+
+        public override bool CanConvert(Type objectType) => objectType == typeof(EditContextModel<IEntity>);
+
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+        {
+            var jsonObject = JObject.Load(reader);
+            
+            dynamic? target = Activator.CreateInstance(_modelType);
+            if (target == null)
+            {
+                throw new Exception($"Cannot instantiate {_modelType}.");
+            }
+
+            serializer.Populate(jsonObject.CreateReader(), target);
+
+            return new EditContextModel<IEntity>
+            {
+                EntityModel = new EntityModel<IEntity>
+                {
+                    Entity = target.EntityModel.Entity,
+                    VariantAlias = target.EntityModel.VariantAlias
+                },
+                ParentPath = target.ParentPath,
+                RelationContainer = target.RelationContainer
+            };
+        }
+
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
