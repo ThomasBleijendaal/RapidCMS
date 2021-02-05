@@ -8,15 +8,15 @@ namespace RapidCMS.Core.Mediators
     internal class Mediator : IMediator, IDisposable
     {
         private readonly Dictionary<Type, IMediatorEventArgs> _cache = new();
-        private readonly IEnumerable<IMediatorEventConverter> _eventConverters;
+        private readonly IEnumerable<IMediatorEventListener> _listeners;
         private bool _disposedValue;
 
-        public Mediator(IEnumerable<IMediatorEventConverter> eventConverters)
+        public Mediator(IEnumerable<IMediatorEventListener> listeners)
         {
-            _eventConverters = eventConverters;
-            foreach (var converter in _eventConverters)
+            _listeners = listeners;
+            foreach (var listener in _listeners)
             {
-                converter.RegisterConversion(this);
+                listener.RegisterListener(this);
             }
         }
 
@@ -49,9 +49,9 @@ namespace RapidCMS.Core.Mediators
             {
                 if (disposing)
                 {
-                    foreach (var converter in _eventConverters)
+                    foreach (var listener in _listeners)
                     {
-                        converter.Dispose();
+                        listener.Dispose();
                     }
                 }
 

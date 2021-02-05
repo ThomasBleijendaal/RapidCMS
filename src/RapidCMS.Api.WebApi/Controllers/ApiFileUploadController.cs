@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Tewr.Blazor.FileReader;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Models.ApiBridge.Request;
 using RapidCMS.Core.Models.Response;
@@ -21,7 +21,6 @@ namespace RapidCMS.Api.WebApi.Controllers
             _handler = handler;
         }
 
-        // TODO: move handler alias to route and validate it in a single controller
 
         [HttpPost("file/validate")]
         public async Task<ActionResult<FileUploadValidationResponseModel>> ValidateFileAsync([FromForm] UploadFileModel fileInfo)
@@ -38,7 +37,7 @@ namespace RapidCMS.Api.WebApi.Controllers
         [HttpPost("file")]
         public async Task<ActionResult<FileUploadResponseModel>> SaveFileAsync([FromForm] UploadFileModel fileInfo, [FromForm(Name = "file")] IFormFile file)
         {
-            if (DoesFileMatchFileInfo(fileInfo, file, out var downloadedFile))
+            if (ApiFileUploadController<THandler>.DoesFileMatchFileInfo(fileInfo, file, out var downloadedFile))
             {
                 using (downloadedFile)
                 {
@@ -54,16 +53,11 @@ namespace RapidCMS.Api.WebApi.Controllers
             return BadRequest();
         }
 
-        private bool DoesFileMatchFileInfo(IFileInfo fileInfo, IFormFile file, out Stream memoryStream)
+        private static bool DoesFileMatchFileInfo(IFileInfo fileInfo, IFormFile file, out Stream memoryStream)
         {
             memoryStream = file.OpenReadStream();
 
-            if (fileInfo.Size != memoryStream.Length || fileInfo.Name != file.FileName)
-            {
-                return false;
-            }
-
-            return true;
+            return !(fileInfo.Size != memoryStream.Length || fileInfo.Name != file.FileName);
         }
     }
 }

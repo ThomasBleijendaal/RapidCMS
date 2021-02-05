@@ -4,7 +4,6 @@ using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.Handlers;
-using RapidCMS.Repositories;
 
 namespace RapidCMS.Example.Shared.Collections
 {

@@ -6,18 +6,4 @@
 
 <hr />
 
-<a class="btn btn-primary" href="#" @onclick="BeginLogin">Login via Active Directory</a>
-
-@if (action != null)
-{
-    <RemoteAuthenticatorView Action="@action" />
-}
-
-@code {
-    string? action;
-
-    private void BeginLogin(MouseEventArgs args)
-    {
-        action = "login";
-    }
-}
+<a class="btn btn-primary" href="/authentication/login">Login via OIDC</a>

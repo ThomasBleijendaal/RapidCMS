@@ -1,0 +1,51 @@
+﻿@page "/authentication/{action}"
+
+@layout EmptyLayout
+
+@inject SignOutSessionStateManager SignOutManager
+
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@if (!string.IsNullOrEmpty(Action))
+{
+    <RemoteAuthenticatorView Action="@Action">
+        <CompletingLoggingIn>
+            <p>Completing logging in..</p>
+        </CompletingLoggingIn>
+        <CompletingLogOut>
+            <p>Completing logging out..</p>
+        </CompletingLogOut>
+        <LoggingIn>
+            <p>Logging in..</p>
+        </LoggingIn>
+        <LogOut>
+            <p>Logging out..</p>
+        </LogOut>
+        <LogOutSucceeded>
+            <p>You are logged out.</p>
+            <hr />
+            <a class="btn btn-primary" href="/">Return to start screen</a>
+        </LogOutSucceeded>
+        <LogInFailed>
+            <p>Failed to log you in.</p>
+            <hr />
+            <a class="btn btn-primary" href="/">Return to start screen</a>
+        </LogInFailed>
+    </RemoteAuthenticatorView>
+}
+
+@code {
+    [Parameter]
+    public string Action { get; set; } = default!;
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Action?.ToLower() == "logout")
+        {
+            await SignOutManager.SetSignOutState();
+        }
+    }
+}

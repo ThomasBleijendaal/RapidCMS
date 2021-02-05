@@ -1,94 +1,67 @@
 # Authentication in RapidCMS (server side)
 
 RapidCMS does not provide any authentication out-of-the-box, but integrates seamlessly with any
-authentication. To get you started, this page provides details about integrating AD authentication in RapidCMS.
+authentication. To get you started, this page provides details about integrating OpenID Connect authentication in RapidCMS.
 
 ## 1. NuGet package
 
-Install the [Microsoft.AspNetCore.Authentication.AzureAD.UI](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.AzureAD.UI) package
+Install the [Microsoft.AspNetCore.Authentication.OpenIdConnect](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.OpenIdConnect/5.0.2) package
 to get started.
 
-## 2. Active Directory App Registration
+## 2a. Active Directory App Registration
 
 Add an App Registration to your Active Directory, and add `https://localhost:[your-port]/signin-oidc` as
 reply url for the Web App. Copy the Application Id GUID, and paste it in the following JSON which needs to
 be added to `appsettings.json`.
 
-```
+```json
 "AzureAd": {
-    "Instance": "https://login.microsoftonline.com/common",
-    "ClientId": "{app registration GUID}",
-    "CallbackPath": "/signin-oidc"
-},
+    "Authority": "https://login.microsoftonline.com/[tenant-id]",
+    "TenantId": "[tenant-id]",
+    "ClientId": "[client-id]"
+}
 ```
 
-Use `https://login.microsoftonline.com/[tenant-id]` to prevent guest accounts from another Active Directory to
-be redirected to the wrong Active Directory instance.
+## 2b. Or use any other OpenID Connect Identity Provider
+
+```json
+"DevOIDC": {
+    "Authority": "[authority url]",
+    "TenantId": "[tenant-id]",
+    "MetadataAddress": "http://[authority url]/[tenant-id]/.well-known/openid-configuration",
+    "ClientId": "[client-id]",
+    "TokenValidationParameters": {
+        "NameClaimType": "name", // sets User.Identity.Name to use the "name"-claim
+        "ValidIssuer": "[authority url]/[tenant-id]/" // that trailing slash can sometimes be on the iss-claim (talking to you AAD)
+    }
+}
+```
 
 ## 3. Add code to `Startup.cs`
 
 To the `ConfigureServices` method in `Startup`, add the following code:
 
 ```c#
-// ***********************************************
-// For more info on:
-// Microsoft.AspNetCore.Authentication.AzureAD.UI
-// see:
-// https://bit.ly/2Fv6Zxp
-// This creates a 'virtual' controller 
-// called 'Account' in an Area called 'AzureAd' that allows the
-// 'AzureAd/Account/SignIn' and 'AzureAd/Account/SignOut'
-// links to work
-services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
-    .AddAzureAD(options => Configuration.Bind("AzureAd", options));
+services
+    .AddAuthentication(options =>
+    {
+        options.DefaultScheme = "Cookies";
+        options.DefaultChallengeScheme = "OpenIdConnect";
+    })
+    .AddCookie("Cookies")
+    .AddOpenIdConnect("OpenIdConnect", options =>
+    {
+        Configuration.Bind("[oidc-settings-section-name]", options);
 
-// This configures the 'middleware' pipeline
-// This is where code to determine what happens
-// when a person logs in is configured and processed
-services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        // Instead of using the default validation 
-        // (validating against a single issuer value, as we do in
-        // line of business apps), we inject our own multitenant validation logic
-        ValidateIssuer = false,
-        // If the app is meant to be accessed by entire organizations, 
-        // add your issuer validation logic here.
-        //IssuerValidator = (issuer, securityToken, validationParameters) => {
-        //    if (myIssuerValidationLogic(issuer)) return issuer;
-        //}
-    };
-    options.Events = new OpenIdConnectEvents
-    {
-        OnTicketReceived = context =>
+        IdentityModelEventSource.ShowPII = true; // useful during debugging. remove for when auth works
+
+        options.Events.OnSignedOutCallbackRedirect = (ctx) =>
         {
-            // If your authentication logic is based on users 
-            // then add your logic here
+            ctx.HandleResponse();
+            ctx.Response.Redirect("/");
             return Task.CompletedTask;
-        },
-        OnAuthenticationFailed = context =>
-        {
-            context.Response.Redirect("/Error");
-            context.HandleResponse(); // Suppress the exception
-            return Task.CompletedTask;
-        },
-        OnSignedOutCallbackRedirect = context =>
-        {
-            // This is called when a user logs out
-            // redirect them back to the main page
-            context.Response.Redirect("/");
-            context.HandleResponse();
-            return Task.CompletedTask;
-        },
-        // If your application needs to do authenticate single users, 
-        // add your user validation below.
-        //OnTokenValidated = context =>
-        //{
-        //    return myUserValidationLogic(context.Ticket.Principal);
-        //}
-    };
-});
+        };
+    });
 ```
 
 Verify that the following instructions are present in `Configure` in `Startup.cs`:
@@ -103,13 +76,12 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapBlazorHub();
     endpoints.MapFallbackToPage("/_Host");
-    endpoints.MapDefaultControllerRoute();
 });
 ```
 
 These methods allow the virtual controllers provided by `AzureAD.UI` to do their job, and authentication is enforced.
 
-## 4. Add `LoginScreen` component
+## 4a. Add `LoginScreen` component
 
 Add a new Razor component to your project, and call it `LoginScreen`. Paste the following code in that component:
 
@@ -120,10 +92,35 @@ Add a new Razor component to your project, and call it `LoginScreen`. Paste the 
 
 <hr />
 
-<a class="btn btn-primary" href="/AzureAD/Account/SignIn?redirectUri=/" target="_top">Login via Active Directory</a>
+<a class="btn btn-primary" href="/SignIn" target="_top">Login using [identity provider]</a>
 ```
 
-## 5. Add 'LoginStatus' component
+## 4b. Add `SignIn.cshtml` Razor Page
+
+The `/SignIn` has to go somewhere, so we need to add a `SignIn.cshtml` to the `Pages` folder:
+
+```cshtml
+@page "/SignIn"
+
+@model [namespace].SignInModel
+@{
+}
+```
+
+```c#
+public class SignInModel : PageModel
+{
+    public IActionResult OnGet()
+    {
+        return Challenge(new AuthenticationProperties
+        {
+            RedirectUri = Url.Content("~/")
+        }, "OpenIdConnect");
+    }
+}
+```
+
+## 5a. Add 'LoginStatus' component
 
 Add a new Razor component to your project, and call it `LoginStatus`. Paste the following code in that component:
 
@@ -131,9 +128,34 @@ Add a new Razor component to your project, and call it `LoginStatus`. Paste the 
 <AuthorizeView>
     <div>
         <div class="btn btn-primary"><i class="icon ion-md-contact"></i> Hi, @context.User.Identity.Name!</div>
-        <a class="btn btn-primary" href="/AzureAD/Account/SignOut?post_logout_redirect_uri=/" target="_top">Logout</a>
+        <a class="btn btn-primary" href="/SignOut" target="_top">Logout</a>
     </div>
 </AuthorizeView>
+```
+
+## 5b. Add `SignOut.cshtml` Razor Page
+
+The `/SignOut` also has to go somewhere, wo se need to add a `SignOut.cshtml` to the `Pages` folder:
+
+```cshtml
+@page "/SignOut"
+
+@model [namespace].SignOutModel
+@{
+}
+```
+
+```c#
+public class SignOutModel : PageModel
+{
+    public IActionResult OnGet()
+    {
+        return SignOut(new AuthenticationProperties 
+        {
+            RedirectUri = Url.Content("~/") 
+        }, "Cookies", "OpenIdConnect");
+    }
+}
 ```
 
 ## 6. Implement a Authorization Handler
@@ -184,7 +206,3 @@ those components.
 
 The callbacks like `OnTicketReceived` and `OnTokenValidated` can be used to further check which user has signed
 in and allow you to onboard any new user. 
-
-## More information
-
-[See this page for more information about Blazor and Authentication](https://devblogs.microsoft.com/aspnet/configuring-a-server-side-blazor-app-with-azure-app-configuration/).

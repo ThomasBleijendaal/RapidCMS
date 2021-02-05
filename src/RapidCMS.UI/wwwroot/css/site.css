@@ -320,6 +320,12 @@ thead td:hover .icon {
     box-shadow: 0 3.2px 7.2px 0 rgba(0,0,0,.132),0 .6px 1.8px 0 rgba(0,0,0,.108);
 }
 
+.content .divider {
+    margin: 2rem 0 2rem 0;
+    border-top: 1px dashed #bebbb8;
+    width: 100%;
+}
+
 .content .nested-buttons {
     margin: 0 0 2rem 0;
 }
@@ -350,7 +356,6 @@ thead td:hover .icon {
     font-weight: 600;
     margin: 2rem -1rem 1rem -1rem;
     padding: .5rem 1rem;
-    border-bottom: 1px solid #dee2e6;
 }
 
 app {
@@ -420,6 +425,10 @@ a.current-page {
         background: #a80000;
         color: white;
         border-color: #a80000;
+    }
+
+    .login .btn {
+        width: 100%;
     }
 
 .form-row {

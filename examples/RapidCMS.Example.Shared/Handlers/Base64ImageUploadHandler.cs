@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Tewr.Blazor.FileReader;
+using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Example.Shared.Handlers
 {

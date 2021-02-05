@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using RapidCMS.Example.Shared.AuthorizationHandlers;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.DataViews;
@@ -47,7 +45,7 @@ namespace RapidCMS.Example.WebAssembly.API
 
             if (ConfigureAuthentication)
             {
-                ConfigureADAuthentication(services);
+                ConfigureOpenIDConnectAuthentication(services);
                 services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();
             }
 
@@ -115,33 +113,25 @@ namespace RapidCMS.Example.WebAssembly.API
             });
         }
 
-        private void ConfigureADAuthentication(IServiceCollection services)
+        private void ConfigureOpenIDConnectAuthentication(IServiceCollection services)
         {
             services
-                .AddAuthorization(o =>
+                .AddAuthorization(options =>
                 {
-                    o.AddPolicy("default", builder =>
+                    options.AddPolicy("default", builder =>
                     {
                         builder.RequireAuthenticatedUser();
                     });
                 });
 
             services
-                .AddAuthentication(o =>
+                .AddAuthentication(options =>
                 {
-                    o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                .AddJwtBearer(o =>
+                .AddJwtBearer(options =>
                 {
-                    o.Authority = Configuration["AzureAd:Instance"];
-                    o.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        // Both App ID URI and client id are valid audiences in the access token
-                        ValidAudiences = new List<string>
-                        {
-                            Configuration["AzureAd:ClientId"]
-                        }
-                    };
+                    Configuration.Bind("DevOIDC", options);
                 });
         }
     }

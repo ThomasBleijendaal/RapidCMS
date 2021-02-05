@@ -3,7 +3,6 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
-using RapidCMS.Example.Shared.Handlers;
 
 namespace RapidCMS.Example.Shared.Collections
 {
@@ -131,6 +130,7 @@ namespace RapidCMS.Example.Shared.Collections
                             section.AddField(x => x.FavouriteChildId)
                                 .SetName("Favourite child")
                                 .SetType(EditorType.Select)
+                                .VisibleWhen((person, state) => state == EntityState.IsExisting)
                                 .SetCollectionRelation<Person>("person", config =>
                                 {
                                     // this allows for configuring which property of the entity will make up the id for the element, and that value
@@ -174,9 +174,15 @@ namespace RapidCMS.Example.Shared.Collections
 
                 collection.AddSelfAsRecursiveCollection();
 
+                // if the regular node editor of an entity is getting too cluttered, or if you want to move some of the functionality
+                // to a seperate page, a detail page can be quite useful.
+                // a detail page is always a NodeEditor, and is only visible on existing entity. 
+                // the respository it fetches its data from can have its own entity type, but the ID that is used to query for the data 
+                // is the same as the entity the page is part of. 
+                // it is also possible to create a navigation button to navigate to a details page, by building a INavigationHandler that
+                // calls NavigationRequest.NavigateToDetails (see NavigateToPersonHandler)
                 collection.AddDetailPage<Details, BaseRepository<Details>>("person-details", "Settings", "Red20", "Details", config =>
                 {
-                    // TODO: comment about creating new details
                     config.AddDefaultButton(DefaultButtonType.SaveExisting, "Save");
 
                     config.AddSection(section =>

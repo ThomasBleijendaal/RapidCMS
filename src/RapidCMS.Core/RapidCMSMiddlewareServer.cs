@@ -9,6 +9,7 @@ using RapidCMS.Core.Services.Auth;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
+    // TODO: disable authentication/ route in server mode
     public static partial class RapidCMSMiddleware
     {
         /// <summary>

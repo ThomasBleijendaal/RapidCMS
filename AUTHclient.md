@@ -5,27 +5,31 @@ authentication. To get you started, this page provides details about integrating
 
 ## 1. NuGet package
 
-Install the [Microsoft.Authentication.WebAssembly.Msal](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal) package
-to get started.
+In order for RapidCMS to integrate with remote signins, the [Microsoft.AspNetCore.Components.WebAssembly.Authentication](https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.Authentication)
+package is already installed. If you wish to log in with AD, install the [Microsoft.Authentication.WebAssembly.Msal](https://www.nuget.org/packages/Microsoft.Authentication.WebAssembly.Msal) 
+package to get started.
 
-## 2. Active Directory App Registration
+## 2a. Active Directory
 
 Add an App Registration to your Active Directory, and add `https://localhost:[your-port]/authentication/login-callback` as
 reply url for the Web App. Copy the Application Id GUID, and paste it in the following JSON which needs to
-be added to `appsettings.json`.
+be added to `appsettings.json` in `wwwroot`.
 
-```
+```json
 "AzureAd": {
-    "Authority": "https://login.microsoftonline.com/common",
-    "ClientId": "{app registration GUID}",
-    "ValidateAuthority": false
-},
+    "Authentication": {
+        "Authority": "https://login.microsoftonline.com/[tenant-id]",
+        "ClientId": "[client-id]"
+    },
+    "LoginMode": "redirect",
+    // required when interfacing an API
+    "DefaultAccessTokenScopes": [
+        "api://[api-client-id]/[api-scope]"
+    ]
+}
 ```
 
-Use `https://login.microsoftonline.com/[tenant-id]` to prevent guest accounts from another Active Directory to
-be redirected to the wrong Active Directory instance.
-
-## 3a. Add code to `Program.cs`
+## 2b. Add code
 
 To the `Main` method in `Program.cs`, add the following code:
 
@@ -34,17 +38,55 @@ builder.Services.AddAuthorizationCore();
 
 builder.Services.AddMsalAuthentication(options =>
 {
-    builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
-    options.ProviderOptions.DefaultAccessTokenScopes.Add("{app registration GUID}");
+    builder.Configuration.Bind("AzureAd", options.ProviderOptions);
 });
 ```
 
-## 3b. Add code to `index.html`
-
-To the `index.html` in `wwwroot`, add the following script to `<body>`.
+To `index.html` in `wwwroot`, add the following script to `<body>`.
 
 ```html
 <script src="_content/Microsoft.Authentication.WebAssembly.Msal/AuthenticationService.js"></script>
+```
+
+## 3a. Use OIDC
+
+In order to support an OpenID Connect identity provider, add the following configuration to `appsettings.json`.
+
+```json
+"DevOIDC": {
+    "ProviderOptions": {
+        "Authority": "[provider-url]",
+        "MetadataUrl": "[provider-url]/.well-known/openid-configuration",
+        "ClientId": "[client-id]",
+        "DefaultScopes": [
+            "[api-scope]"
+        ],
+        "ResponseMode": "fragment",
+        "ResponseType": "code"
+    },
+    "UserOptions": {
+        "NameClaim": "name"
+    }
+},
+```
+
+## 3b Add code
+
+To the `Main` method in `Program.cs`, add the following code:
+
+```c#
+builder.Services.AddAuthorizationCore();
+
+builder.Services.AddOidcAuthentication(config =>
+{
+    builder.Configuration.Bind("DevOIDC", config);
+});
+```
+
+To `index.html` in `wwwroot`, add the following script to `<body>`.
+
+```html
+<script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
 ```
 
 ## 4. Add `LoginScreen` component
@@ -60,21 +102,7 @@ Add a new Razor component to your project, and call it `LoginScreen`. Paste the 
 
 <hr />
 
-<a class="btn btn-primary" href="#" @onclick="BeginLogin">Login via Active Directory</a>
-
-@if (action != null)
-{
-    <RemoteAuthenticatorView Action="@action" />
-}
-
-@code {
-    string? action;
-
-    private void BeginLogin(MouseEventArgs args)
-    {
-        action = "login";
-    }
-}
+<a class="btn btn-primary" href="/authentication/login">Login via [identity-provider]</a>
 ```
 
 ## 5. Add 'LoginStatus' component
@@ -83,31 +111,13 @@ Add a new Razor component to your project, and call it `LoginStatus`. Paste the 
 
 ```c#
 @using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@inject NavigationManager Navigation
-@inject SignOutSessionStateManager SignOutManager
 
 <AuthorizeView>
     <div>
         <div class="btn btn-primary"><i class="icon ion-md-contact"></i> Hi, @context.User.Identity.Name!</div>
-        <a class="btn btn-primary" href="#" @onclick="BeginLogout">Logout</a>
+        <a class="btn btn-primary" href="/authentication/logout">Logout</a>
     </div>
 </AuthorizeView>
-
-@if (action != null)
-{
-    <RemoteAuthenticatorView Action="@action" />
-}
-
-@code {
-    string? action;
-
-    private async Task BeginLogout(MouseEventArgs args)
-    {
-        await SignOutManager.SetSignOutState();
-        action = "logout";
-    }
-}
 ```
 
 ## 6. Tell ASP.NET and RapidCMS to use those components
@@ -133,30 +143,36 @@ which is used by the Api Repository to include the access token. All you have to
 Open `Program.cs`, and add to `Main`:
 
 ```c#
-builder.Services.AddRapidCMSApiTokenAuthorization(() => "https://your-absolute-url-to-your-api);
+builder.Services.AddRapidCMSApiTokenAuthorization(sp =>
+{
+    var handler = sp.GetRequiredService<AuthorizationMessageHandler>();
+    handler.ConfigureHandler(new[] { "[base-url-of-api]" });
+    return handler;
+});
 ```
 
-This will create a transient `TokenAuthorizationMessageHandler` which uses an `IAccessTokenProvider` to fetch
-the access token when the HttpClient makes a call to your configured endpoint. It will not include the token when
-the endpoint is something else. This handler should be assigned to the HttpClient of the Api Repository, by using:
+This will create a transient `AuthorizationMessageHandler` which will attach the access token from the IdP
+to each request to `base-url-of-api`. 
 
 ```c#
-builder.Services.AddRapidCMSApiRepository<TRepository>(_baseUri)
-    .AddHttpMessageHandler<TokenAuthorizationMessageHandler>();
+builder.Services.AddRapidCMSApiRepository<TRepository, AuthorizationMessageHandler>(_baseUri);
 ```
 
 ## 8. (Optional) Configure authorization in the RapidCMS Api companion
 
 Install the [Microsoft.AspNetCore.Authentication.JwtBearer](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.JwtBearer) package
-in the Api project. 
+in a ASP.NET Core WebApi project. 
 
-Add the following configuration to the `appsettings.json`:
+Add the following configuration to the `appsettings.json`, this can either be AD or any other OIDC:
 
 ```json
-"AzureAd": {
-    "Instance": "https://login.microsoftonline.com/[your-tenant-guid]/v2.0",
-    "ClientId": "{app registration GUID}"
-}
+"OIDC": {
+    "Authority": "[authority url]/[tenant-id]/",
+    "TokenValidationParameters": {
+      "ValidAudience": "[api-scope]", // for this scope the front-end should request an access token
+      "ValidIssuer": "[authority url]/[tenant-id]/" // that trailing slash can sometimes be on the iss-claim (talking to you AAD)
+    }
+  }
 ```
 
 Add in `Startup.cs` to `ConfigureServices`:
@@ -175,17 +191,9 @@ services
     {
         o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     })
-    .AddJwtBearer(o =>
+    .AddJwtBearer(options =>
     {
-        o.Authority = Configuration["AzureAd:Instance"];
-        o.TokenValidationParameters = new TokenValidationParameters
-        {
-            // Both App ID URI and client id are valid audiences in the access token
-            ValidAudiences = new List<string>
-            {
-                Configuration["AzureAd:ClientId"]
-            }
-        }
+        Configuration.Bind("OIDC", options);
     });
 
 services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();
@@ -201,7 +209,3 @@ only allow authenticated access.
 This is everything you should do to get authentication working in RapidCMS. The two custom components are
 used to draw the login screen and the login status in the tob bar. You can fully customize the look and feel of
 those components.
-
-## More information
-
-[See this page for more information about Blazor and Authentication](https://docs.microsoft.com/en-us/aspnet/core/blazor/security/webassembly/hosted-with-azure-active-directory-b2c?view=aspnetcore-3.1).

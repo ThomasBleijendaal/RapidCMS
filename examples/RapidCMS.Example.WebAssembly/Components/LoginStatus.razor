@@ -1,26 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@inject NavigationManager Navigation
-@inject SignOutSessionStateManager SignOutManager
 
 <AuthorizeView>
     <div>
         <div class="btn btn-primary"><Icon Name="Contact" /> Hi, @context.User.Identity?.Name!</div>
-        <a class="btn btn-primary" href="#" @onclick="BeginLogout"><Icon Name="SignOut" /> Logout</a>
+        <NavLink class="btn btn-primary" href="/authentication/logout"><Icon Name="SignOut" /> Logout</NavLink>
     </div>
 </AuthorizeView>
-
-@if (action != null)
-{
-    <RemoteAuthenticatorView Action="@action" />
-}
-
-@code {
-    string? action;
-
-    private async Task BeginLogout(MouseEventArgs args)
-    {
-        await SignOutManager.SetSignOutState();
-        action = "logout";
-    }
-}

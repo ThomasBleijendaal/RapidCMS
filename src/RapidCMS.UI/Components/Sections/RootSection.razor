@@ -13,6 +13,8 @@
             {
                 @foreach (var mainSection in Sections)
                 {
+                    var index = 0;
+
                     <CascadingEditContext EditContext=@mainSection.editContext>
                         <ButtonBar Buttons="Buttons" OnButtonClick="ButtonOnClickAsync" />
 
@@ -28,7 +30,7 @@
                             }
                             else
                             {
-                                <BlockSection Section="section" OnButtonClick="ButtonOnClickAsync" />
+                                <BlockSection Section="section" OnButtonClick="ButtonOnClickAsync" BlockNr="index++" />
                             }
                         }
                     </CascadingEditContext>
