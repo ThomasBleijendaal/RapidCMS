@@ -1,21 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RapidCMS.Api.Core.Abstractions;
+using RapidCMS.Api.Core.Handlers;
+using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Api.Core.Resolvers
 {
     internal class FileHandlerResolver : IFileHandlerResolver
     {
-        public FileHandlerResolver()
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IApiConfig _config;
+
+        public FileHandlerResolver(
+            IServiceProvider serviceProvider,
+            IApiConfig config)
         {
+            _serviceProvider = serviceProvider;
+            _config = config;
         }
 
-        public IFileHandler GetApiHandler(string uploadHandlerAlias)
+        public IFileHandler GetFileHandler(string uploadHandlerAlias)
         {
-            throw new NotImplementedException();
+            var handlerConfig = _config.FileUploadHandlers.FirstOrDefault(x => x.Alias == uploadHandlerAlias);
+            if (handlerConfig == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var handlerType = typeof(FileHandler<>).MakeGenericType(handlerConfig.HandlerType);
+
+            return _serviceProvider.GetService<IFileHandler>(handlerType);
         }
     }
 }

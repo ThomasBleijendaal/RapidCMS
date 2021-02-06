@@ -1,176 +1,91 @@
-﻿using System.Net;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using HttpMultipartParser;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Newtonsoft.Json;
 using RapidCMS.Api.Core.Abstractions;
-using RapidCMS.Api.Core.Models;
 using RapidCMS.Api.Functions.Models;
+using RapidCMS.Core.Models.ApiBridge.Request;
 
 namespace RapidCMS.Api.Functions.Functions
 {
     public class FileFunctions
     {
-        private readonly IApiHandlerResolver _apiHandlerResolver;
+        private readonly IFileHandlerResolver _fileHandlerResolver;
 
-        public ApiFunctions(IApiHandlerResolver apiHandlerResolver)
+        public FileFunctions(IFileHandlerResolver fileHandlerResolver)
         {
-            _apiHandlerResolver = apiHandlerResolver;
+            _fileHandlerResolver = fileHandlerResolver;
         }
 
-        [FunctionName(nameof(GetByIdAsync))]
-        public async Task<HttpResponseData> GetByIdAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/entity/{id}")] HttpRequestData req)
+        [FunctionName(nameof(ValidateFileAsync))]
+        public async Task<HttpResponseData> ValidateFileAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{fileHandlerAlias}/file/validate")] HttpRequestData req)
         {
-            if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias) && req.Params.TryGetValue("id", out var id))
+            if (req.Params.TryGetValue("fileHandlerAlias", out var fileHandlerAlias))
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetByIdAsync(new ApiRequestModel { Id = id, Body = JsonConvert.DeserializeObject< RequestWrapper>(req.Body).Json });
-                return new HttpResponseData(response.StatusCode, response.ResponseBody);
+                try
+                {
+                    var (model, file) = await ReadBodyAsFormDataAsync(req);
+                    if (file != null)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    var response = await _fileHandlerResolver.GetFileHandler(fileHandlerAlias).ValidateFileAsync(model);
+                    return new HttpResponseData(response.StatusCode, response.ResponseBody);
+                }
+                catch { }
             }
-            else
-            {
-                return new HttpResponseData(HttpStatusCode.BadRequest);
-            }
+
+            return new HttpResponseData(HttpStatusCode.BadRequest);
         }
 
-        [FunctionName(nameof(GetAllAsync))]
-        public async Task<HttpResponseData> GetAllAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/all")] HttpRequestData req)
+        [FunctionName(nameof(SaveFileAsync))]
+        public async Task<HttpResponseData> SaveFileAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{fileHandlerAlias}/file")] HttpRequestData req)
         {
-            if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
+            if (req.Params.TryGetValue("fileHandlerAlias", out var fileHandlerAlias))
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<RequestWrapper>(req.Body).Json });
-                return new HttpResponseData(response.StatusCode, response.ResponseBody);
+                try
+                {
+                    var (model, file) = await ReadBodyAsFormDataAsync(req);
+                    if (file == null)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    var response = await _fileHandlerResolver.GetFileHandler(fileHandlerAlias).SaveFileAsync(model, file);
+                    return new HttpResponseData(response.StatusCode, response.ResponseBody);
+                }
+                catch { }
             }
-            else
-            {
-                return new HttpResponseData(HttpStatusCode.BadRequest);
-            }
+
+            return new HttpResponseData(HttpStatusCode.BadRequest);
         }
 
-        [FunctionName(nameof(GetAllRelatedAsync))]
-        public async Task<HttpResponseData> GetAllRelatedAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/all/related")] HttpRequestData req)
+        private static async Task<(UploadFileModel model, Stream? file)> ReadBodyAsFormDataAsync(HttpRequestData req)
         {
-            if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
-            {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllRelatedAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<RequestWrapper>(req.Body).Json });
-                return new HttpResponseData(response.StatusCode, response.ResponseBody);
-            }
-            else
-            {
-                return new HttpResponseData(HttpStatusCode.BadRequest);
-            }
-        }
+            var base64Bytes = JsonConvert.DeserializeObject<BytesRequestWrapper>(req.Body).Bytes;
 
-        [FunctionName(nameof(GetAllNonRelatedAsync))]
-        public async Task<HttpResponseData> GetAllNonRelatedAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/all/nonrelated")] HttpRequestData req)
-        {
-            if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
-            {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllNonRelatedAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<RequestWrapper>(req.Body).Json });
-                return new HttpResponseData(response.StatusCode, response.ResponseBody);
-            }
-            else
-            {
-                return new HttpResponseData(HttpStatusCode.BadRequest);
-            }
-        }
+            using var memoryStream = new MemoryStream(Convert.FromBase64String(base64Bytes));
+            var result = await MultipartFormDataParser.ParseAsync(memoryStream);
 
-        [FunctionName(nameof(NewAsync))]
-        public async Task<HttpResponseData> NewAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/new")] HttpRequestData req)
-        {
-            if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
+            var model = new UploadFileModel()
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).NewAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<RequestWrapper>(req.Body).Json });
-                return new HttpResponseData(response.StatusCode, response.ResponseBody);
-            }
-            else
-            {
-                return new HttpResponseData(HttpStatusCode.BadRequest);
-            }
-        }
+                Name = result.Parameters.FirstOrDefault(x => x.Name == nameof(UploadFileModel.Name))?.Data!,
+                Size = long.Parse(result.Parameters.FirstOrDefault(x => x.Name == nameof(UploadFileModel.Size))?.Data!),
+                Type = result.Parameters.FirstOrDefault(x => x.Name == nameof(UploadFileModel.Type))?.Data!,
+                LastModified = long.Parse(result.Parameters.FirstOrDefault(x => x.Name == nameof(UploadFileModel.LastModified))?.Data!)
+            };
 
-        [FunctionName(nameof(InsertAsync))]
-        public async Task<HttpResponseData> InsertAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/entity")] HttpRequestData req)
-        {
-            if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
-            {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).InsertAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<RequestWrapper>(req.Body).Json });
-                return new HttpResponseData(response.StatusCode, response.ResponseBody);
-            }
-            else
-            {
-                return new HttpResponseData(HttpStatusCode.BadRequest);
-            }
-        }
+            Validator.ValidateObject(model, new ValidationContext(model));
 
-        [FunctionName(nameof(UpdateAsync))]
-        public async Task<HttpResponseData> UpdateAsync([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "_rapidcms/{repositoryAlias}/entity/{id}")] HttpRequestData req)
-        {
-            if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias) && req.Params.TryGetValue("id", out var id))
-            {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).UpdateAsync(new ApiRequestModel { Id = id, Body = JsonConvert.DeserializeObject<RequestWrapper>(req.Body).Json });
-                return new HttpResponseData(response.StatusCode, response.ResponseBody);
-            }
-            else
-            {
-                return new HttpResponseData(HttpStatusCode.BadRequest);
-            }
-        }
-
-        [FunctionName(nameof(DeleteAsync))]
-        public async Task<HttpResponseData> DeleteAsync([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "_rapidcms/{repositoryAlias}/entity/{id}")] HttpRequestData req)
-        {
-            if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias) && req.Params.TryGetValue("id", out var id))
-            {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).DeleteAsync(new ApiRequestModel { Id = id, Body = JsonConvert.DeserializeObject<RequestWrapper>(req.Body).Json });
-                return new HttpResponseData(response.StatusCode, response.ResponseBody);
-            }
-            else
-            {
-                return new HttpResponseData(HttpStatusCode.BadRequest);
-            }
-        }
-
-        [FunctionName(nameof(AddRelationAsync))]
-        public async Task<HttpResponseData> AddRelationAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/relate")] HttpRequestData req)
-        {
-            if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
-            {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).AddRelationAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<RequestWrapper>(req.Body).Json });
-                return new HttpResponseData(response.StatusCode, response.ResponseBody);
-            }
-            else
-            {
-                return new HttpResponseData(HttpStatusCode.BadRequest);
-            }
-        }
-
-        [FunctionName(nameof(RemoveRelationAsync))]
-        public async Task<HttpResponseData> RemoveRelationAsync([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "_rapidcms/{repositoryAlias}/relate")] HttpRequestData req)
-        {
-            if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
-            {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).RemoveRelationAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<RequestWrapper>(req.Body).Json });
-                return new HttpResponseData(response.StatusCode, response.ResponseBody);
-            }
-            else
-            {
-                return new HttpResponseData(HttpStatusCode.BadRequest);
-            }
-        }
-
-        [FunctionName(nameof(ReorderAsync))]
-        public async Task<HttpResponseData> ReorderAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/reorder")] HttpRequestData req)
-        {
-            if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
-            {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).ReorderAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<RequestWrapper>(req.Body).Json });
-                return new HttpResponseData(response.StatusCode, response.ResponseBody);
-            }
-            else
-            {
-                return new HttpResponseData(HttpStatusCode.BadRequest);
-            }
+            return (model, result.Files.FirstOrDefault(x => x.Name == "file")?.Data);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace RapidCMS.Api.Functions.Models
 {
-    public class RequestWrapper
+    public class JsonRequestWrapper
     {
         [JsonProperty("Json")]
         public string Json { get; set; } = default!;

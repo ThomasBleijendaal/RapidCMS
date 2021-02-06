@@ -43,7 +43,6 @@ namespace RapidCMS.Core.Handlers
             var content = new MultipartFormDataContent
             {
                 { new StringContent(fileInfo.LastModified?.ToString() ?? ""), nameof(IFileInfo.LastModified) },
-                { new StringContent(JsonConvert.SerializeObject(fileInfo.NonStandardProperties)), nameof(IFileInfo.NonStandardProperties) },
                 { new StringContent(fileInfo.Name?.ToString() ?? ""), nameof(IFileInfo.Name) },
                 { new StringContent(fileInfo.Size.ToString() ?? ""), nameof(IFileInfo.Size) },
                 { new StringContent(fileInfo.Type?.ToString() ?? ""), nameof(IFileInfo.Type) }

@@ -129,16 +129,16 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton<IEntityVariantResolver>(new EntityVariantResolver(entityVariants));
 
-            if (_rootConfig.FileUploadHandlers.Any())
-            {
-                foreach (var handler in _rootConfig.FileUploadHandlers)
-                {
-                    var type = typeof(ApiFileUploadController<>).MakeGenericType(handler).GetTypeInfo();
-                    var alias = AliasHelper.GetFileUploaderAlias(type);
+            //if (_rootConfig.FileUploadHandlers.Any())
+            //{
+            //    foreach (var handler in _rootConfig.FileUploadHandlers)
+            //    {
+            //        var type = typeof(ApiFileUploadController<>).MakeGenericType(handler).GetTypeInfo();
+            //        var alias = AliasHelper.GetFileUploaderAlias(type);
 
-                    controllersToAdd.Add(type, alias);
-                }
-            }
+            //        controllersToAdd.Add(type, alias);
+            //    }
+            //}
 
             _controllerFeatureProvider = new CollectionControllerFeatureProvider(controllersToAdd.Keys);
             _routeConvention = new CollectionControllerRouteConvention(controllersToAdd);

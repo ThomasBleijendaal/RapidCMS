@@ -2,6 +2,6 @@
 {
     public interface IFileHandlerResolver
     {
-        IFileHandler GetApiHandler(string uploadHandlerAlias);
+        IFileHandler GetFileHandler(string uploadHandlerAlias);
     }
 }

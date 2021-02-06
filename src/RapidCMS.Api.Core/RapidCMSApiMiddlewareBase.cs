@@ -16,6 +16,7 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Dispatchers.Api;
+using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Factories;
 using RapidCMS.Core.Mediators;
 using RapidCMS.Core.Models.Config.Api;
@@ -35,6 +36,7 @@ namespace RapidCMS.Api.Core
         {
             services.AddSingleton<IApiConfig>(config);
             services.AddTransient<IApiHandlerResolver, ApiHandlerResolver>();
+            services.AddTransient<IFileHandlerResolver, FileHandlerResolver>();
 
             services.AddHttpContextAccessor();
 
@@ -71,25 +73,14 @@ namespace RapidCMS.Api.Core
 
             services.AddTransient<IEditContextFactory, ApiEditContextWrapperFactory>();
 
-            var apiHandlers = config.Repositories.ToDictionary(
-                repository =>
-                {
-                    if (repository.DatabaseType == default)
-                    {
-                        return typeof(ApiHandler<,,>)
-                            .MakeGenericType(repository.EntityType, repository.EntityType, repository.ApiRepositoryType);
-                    }
-                    else
-                    {
-                        return typeof(ApiHandler<,,>)
-                            .MakeGenericType(repository.EntityType, repository.DatabaseType, repository.ApiRepositoryType);
-                    }
-                },
-                kv => kv.Alias);
+            var apiHandlers = config.Repositories.ToList(
+                repository => repository.DatabaseType == default
+                    ? typeof(ApiHandler<,,>).MakeGenericType(repository.EntityType, repository.EntityType, repository.ApiRepositoryType)
+                    : typeof(ApiHandler<,,>).MakeGenericType(repository.EntityType, repository.DatabaseType, repository.ApiRepositoryType));
 
             foreach (var apiHandler in apiHandlers)
             {
-                services.AddTransient(apiHandler.Key);
+                services.AddTransient(apiHandler);
             }
 
             var entityVariants = config.Repositories.ToDictionary(x => x.Alias, x =>
@@ -104,7 +95,10 @@ namespace RapidCMS.Api.Core
 
             services.AddSingleton<IEntityVariantResolver>(new EntityVariantResolver(entityVariants));
 
-            // TODO: file uploaders to add?
+            foreach (var fileHandler in config.FileUploadHandlers.ToList(fileHandler => typeof(FileHandler<>).MakeGenericType(fileHandler.HandlerType)))
+            {
+                services.AddTransient(fileHandler);
+            }
 
             return services;
         }

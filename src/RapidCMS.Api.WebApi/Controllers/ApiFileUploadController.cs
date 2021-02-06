@@ -11,8 +11,7 @@ using RapidCMS.Core.Models.Response;
 namespace RapidCMS.Api.WebApi.Controllers
 {
     [ApiController]
-    internal class ApiFileUploadController<THandler> : ControllerBase
-        where THandler : IFileUploadHandler
+    internal class ApiFileUploadController : ControllerBase
     {
         private readonly THandler _handler;
 
@@ -22,8 +21,8 @@ namespace RapidCMS.Api.WebApi.Controllers
         }
 
 
-        [HttpPost("file/validate")]
-        public async Task<ActionResult<FileUploadValidationResponseModel>> ValidateFileAsync([FromForm] UploadFileModel fileInfo)
+        [HttpPost("_rapidcms/{fileHandler}/file/validate")]
+        public async Task<ActionResult<FileUploadValidationResponseModel>> ValidateFileAsync(string fileHandler, [FromForm] UploadFileModel fileInfo)
         {
             var messages = await _handler.ValidateFileAsync(fileInfo);
             if (messages.Any())
