@@ -32,6 +32,7 @@ RapidCMS is a Blazor framework which allows you to build a responsive and flexib
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\RapidCMS.Api.Core\RapidCMS.Api.Core.csproj" />
     <ProjectReference Include="..\RapidCMS.Core\RapidCMS.Core.csproj" />
   </ItemGroup>
   

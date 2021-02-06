@@ -22,8 +22,15 @@ namespace RapidCMS.Api.Core.Handlers
 
         public async Task<ApiResponseModel> SaveFileAsync(UploadFileModel request, Stream fileStream)
         {
+            // TODO: this validation can be better
             if (fileStream.Length == request.Size)
             {
+                var messages = await _handler.ValidateFileAsync(request);
+                if (messages.Any())
+                {
+                    return new ApiResponseModel(HttpStatusCode.BadRequest, new FileUploadValidationResponseModel { ErrorMessages = messages });
+                }
+
                 using (fileStream)
                 {
                     try

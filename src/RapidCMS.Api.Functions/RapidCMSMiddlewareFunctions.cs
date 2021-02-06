@@ -9,7 +9,6 @@ using RapidCMS.Core.Models.Config.Api;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    // TODO: merge with WebApi 
     public static class RapidCMSMiddlewareFunctions
     {
         private static ApiConfig? _rootConfig;

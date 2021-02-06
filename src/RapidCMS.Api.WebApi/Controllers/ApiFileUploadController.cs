@@ -1,10 +1,8 @@
-﻿using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Handlers;
+using RapidCMS.Api.Core.Abstractions;
+using RapidCMS.Api.WebApi.Extensions;
 using RapidCMS.Core.Models.ApiBridge.Request;
 using RapidCMS.Core.Models.Response;
 
@@ -13,50 +11,25 @@ namespace RapidCMS.Api.WebApi.Controllers
     [ApiController]
     internal class ApiFileUploadController : ControllerBase
     {
-        private readonly THandler _handler;
+        private readonly IFileHandlerResolver _fileHandlerResolver;
 
-        public ApiFileUploadController(THandler handler)
+        public ApiFileUploadController(IFileHandlerResolver fileHandlerResolver)
         {
-            _handler = handler;
+            _fileHandlerResolver = fileHandlerResolver;
         }
 
-
-        [HttpPost("_rapidcms/{fileHandler}/file/validate")]
-        public async Task<ActionResult<FileUploadValidationResponseModel>> ValidateFileAsync(string fileHandler, [FromForm] UploadFileModel fileInfo)
+        [HttpPost("_rapidcms/{fileHandlerAlias}/file/validate")]
+        public async Task<ActionResult<FileUploadValidationResponseModel>> ValidateFileAsync(string fileHandlerAlias, [FromForm] UploadFileModel model)
         {
-            var messages = await _handler.ValidateFileAsync(fileInfo);
-            if (messages.Any())
-            {
-                return new FileUploadValidationResponseModel { ErrorMessages = messages };
-            }
-
-            return NoContent();
+            var response = await _fileHandlerResolver.GetFileHandler(fileHandlerAlias).ValidateFileAsync(model);
+            return response.ToContentResult();
         }
 
-        [HttpPost("file")]
-        public async Task<ActionResult<FileUploadResponseModel>> SaveFileAsync([FromForm] UploadFileModel fileInfo, [FromForm(Name = "file")] IFormFile file)
+        [HttpPost("_rapidcms/{fileHandlerAlias}/file")]
+        public async Task<ActionResult<FileUploadResponseModel>> SaveFileAsync(string fileHandlerAlias, [FromForm] UploadFileModel model, [FromForm(Name = "file")] IFormFile file)
         {
-            if (ApiFileUploadController<THandler>.DoesFileMatchFileInfo(fileInfo, file, out var downloadedFile))
-            {
-                using (downloadedFile)
-                {
-                    try
-                    {
-                        var result = await _handler.SaveFileAsync(fileInfo, downloadedFile);
-                        return new FileUploadResponseModel { Result = result };
-                    }
-                    catch { }
-                }
-            }
-
-            return BadRequest();
-        }
-
-        private static bool DoesFileMatchFileInfo(IFileInfo fileInfo, IFormFile file, out Stream memoryStream)
-        {
-            memoryStream = file.OpenReadStream();
-
-            return !(fileInfo.Size != memoryStream.Length || fileInfo.Name != file.FileName);
+            var response = await _fileHandlerResolver.GetFileHandler(fileHandlerAlias).SaveFileAsync(model, file.OpenReadStream());
+            return response.ToContentResult();
         }
     }
 }

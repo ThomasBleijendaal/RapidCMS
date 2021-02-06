@@ -21,8 +21,8 @@ namespace RapidCMS.Example.WebAssembly
     public class Program
     {
         private const bool ConfigureAuthentication = false;
-        //private static readonly Uri BaseUri = new Uri("https://localhost:5003");
-        private static readonly Uri BaseUri = new Uri("http://localhost:7074");
+        private static readonly Uri BaseUri = new Uri("https://localhost:5003");
+        //private static readonly Uri BaseUri = new Uri("http://localhost:7074");
 
         public static async Task Main(string[] args)
         {
