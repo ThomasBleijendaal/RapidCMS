@@ -4,11 +4,9 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Newtonsoft.Json;
 using RapidCMS.Api.Core;
 using RapidCMS.Api.WebApi.Conventions;
-using RapidCMS.Api.WebApi.Providers;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Converters;
@@ -61,14 +59,14 @@ namespace Microsoft.Extensions.DependencyInjection
                     else
                     {
                         throw new InvalidOperationException($"Could not create {nameof(EntityModelJsonConverter<IEntity>)} for {entityType.Name}");
-                    } 
+                    }
                 }
             });
 
             return builder;
         }
 
-        [Obsolete("Use AddRapidCMSControllers.")]
+        [Obsolete("Use AddRapidCMSControllers.", true)]
         public static void AddRapidCMSRouteConvention(this IList<IApplicationModelConvention> list)
         {
             if (_routeConvention == null)
@@ -79,7 +77,7 @@ namespace Microsoft.Extensions.DependencyInjection
             list.Add(_routeConvention);
         }
 
-        [Obsolete("Use AddRapidCMSControllers.")]
+        [Obsolete("Use AddRapidCMSControllers.", true)]
         public static void AddRapidCMSControllerFeatureProvider(this IList<IApplicationFeatureProvider> list)
         {
         }

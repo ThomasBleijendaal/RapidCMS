@@ -15,11 +15,11 @@ using RapidCMS.Core.Models.ApiBridge.Request;
 
 namespace RapidCMS.Api.Functions.Functions
 {
-    public class FileFunctions
+    public class FileUploadFunctions
     {
         private readonly IFileHandlerResolver _fileHandlerResolver;
 
-        public FileFunctions(IFileHandlerResolver fileHandlerResolver)
+        public FileUploadFunctions(IFileHandlerResolver fileHandlerResolver)
         {
             _fileHandlerResolver = fileHandlerResolver;
         }

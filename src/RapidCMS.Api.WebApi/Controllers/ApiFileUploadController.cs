@@ -21,15 +21,27 @@ namespace RapidCMS.Api.WebApi.Controllers
         [HttpPost("_rapidcms/{fileHandlerAlias}/file/validate")]
         public async Task<ActionResult<FileUploadValidationResponseModel>> ValidateFileAsync(string fileHandlerAlias, [FromForm] UploadFileModel model)
         {
-            var response = await _fileHandlerResolver.GetFileHandler(fileHandlerAlias).ValidateFileAsync(model);
-            return response.ToContentResult();
+            try
+            {
+                var response = await _fileHandlerResolver.GetFileHandler(fileHandlerAlias).ValidateFileAsync(model);
+                return response.ToContentResult();
+            }
+            catch { }
+
+            return BadRequest();
         }
 
         [HttpPost("_rapidcms/{fileHandlerAlias}/file")]
         public async Task<ActionResult<FileUploadResponseModel>> SaveFileAsync(string fileHandlerAlias, [FromForm] UploadFileModel model, [FromForm(Name = "file")] IFormFile file)
         {
-            var response = await _fileHandlerResolver.GetFileHandler(fileHandlerAlias).SaveFileAsync(model, file.OpenReadStream());
-            return response.ToContentResult();
+            try
+            {
+                var response = await _fileHandlerResolver.GetFileHandler(fileHandlerAlias).SaveFileAsync(model, file.OpenReadStream());
+                return response.ToContentResult();
+            }
+            catch { }
+
+            return BadRequest();
         }
     }
 }
