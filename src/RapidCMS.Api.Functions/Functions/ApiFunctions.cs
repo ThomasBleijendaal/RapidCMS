@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Pipeline;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Newtonsoft.Json;
@@ -20,7 +21,7 @@ namespace RapidCMS.Api.Functions.Functions
         }
 
         [FunctionName(nameof(GetByIdAsync))]
-        public async Task<HttpResponseData> GetByIdAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/entity/{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> GetByIdAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/entity/{id}")] HttpRequestData req, FunctionExecutionContext context)
         {
             if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias) && req.Params.TryGetValue("id", out var id))
             {

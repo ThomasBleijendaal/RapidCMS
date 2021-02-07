@@ -15,12 +15,15 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddRapidCMSFunctions(this IServiceCollection services, Action<IApiConfig>? config = null)
         {
+
             _rootConfig = GetRootConfig(config);
 
             services.AddRapidCMSApiCore(_rootConfig);
 
-            // TODO: implement properly
-            services.AddTransient<IAuthorizationService, AuthorizationServiceShiv>();
+            if (!_rootConfig.AllowAnonymousUsage)
+            {
+                // TODO: implement authentication state provider or user resolver
+            }
 
             return services;
         }

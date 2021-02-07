@@ -13,6 +13,7 @@ using RapidCMS.Core.Forms;
 
 namespace RapidCMS.Core.Services.Auth
 {
+    // TODO: remove dependency on AuthenticationStateProvider. introduce IUserResolver
     internal class ApiAuthService : IAuthService
     {
         private readonly AuthenticationStateProvider _authenticationStateProvider;
@@ -41,6 +42,7 @@ namespace RapidCMS.Core.Services.Auth
 
         public async Task<bool> IsUserAuthorizedAsync(OperationAuthorizationRequirement operation, IEntity entity)
         {
+            // TODO: why resolve here and not just use DI
             var authorizationService = _serviceProvider.GetRequiredService<IAuthorizationService>();
 
             var state = await _authenticationStateProvider.GetAuthenticationStateAsync();

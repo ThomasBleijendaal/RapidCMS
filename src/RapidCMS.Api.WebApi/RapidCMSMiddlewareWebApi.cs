@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
@@ -9,6 +10,7 @@ using RapidCMS.Api.Core;
 using RapidCMS.Api.WebApi.Conventions;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Converters;
 using RapidCMS.Core.Models.Config.Api;
 
@@ -30,6 +32,11 @@ namespace Microsoft.Extensions.DependencyInjection
             _rootConfig = GetRootConfig(config);
 
             services.AddRapidCMSApiCore(_rootConfig);
+
+            if (!_rootConfig.AllowAnonymousUsage)
+            {
+                services.AddSingleton<AuthenticationStateProvider, HttpContextAuthenticationStateProvider>();
+            }
 
             _routeConvention = new CollectionControllerRouteConvention();
 

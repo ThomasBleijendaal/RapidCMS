@@ -1,16 +1,20 @@
-﻿using Microsoft.Azure.Functions.Worker.Configuration;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Azure.Functions.Worker.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RapidCMS.Example.Shared.AuthorizationHandlers;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.DataViews;
 using RapidCMS.Example.Shared.Handlers;
+using RapidCMS.Example.WebAssembly.FunctionAPI.Authentication;
 using RapidCMS.Repositories;
 
 namespace RapidCMS.Example.WebAssembly.FunctionAPI
 {
     public class Startup
     {
-        private const bool ConfigureAuthentication = false;
+        private const bool ConfigureAuthentication = true;
 
         public Startup(IConfiguration configuration)
         {
@@ -35,6 +39,15 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
 
             services.AddTransient<Base64TextFileUploadHandler>();
             services.AddTransient<Base64ImageUploadHandler>();
+
+            services.AddOptions<AuthenticationConfig>().Bind(Configuration.GetSection("DevOIDC"));
+
+            services.AddTransient<AuthenticationStateProvider, FunctionContextAuthenticationStateProvider>();
+
+            // services.AddAuthentication();
+
+            services.AddAuthorizationCore();
+            services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();
 
             services.AddRapidCMSFunctions(config =>
             {
@@ -61,8 +74,8 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
 
         public void ConfigureWorker(IFunctionsWorkerApplicationBuilder builder)
         {
+            builder.UseAuthorization();
             builder.UseFunctionExecutionMiddleware();
-            // TODO: add authentication middleware
         }
     }
 }

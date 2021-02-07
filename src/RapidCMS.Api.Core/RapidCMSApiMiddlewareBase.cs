@@ -45,11 +45,7 @@ namespace RapidCMS.Api.Core
                 services.AddSingleton<IAuthorizationHandler, AllowAllAuthorizationHandler>();
                 services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
             }
-            else
-            {
-                services.AddSingleton<AuthenticationStateProvider, HttpContextAuthenticationStateProvider>();
-            }
-
+            
             services.AddSingleton<ISetupResolver<IEntityVariantSetup>, GlobalEntityVariantSetupResolver>();
 
             services.AddTransient<IDataViewResolver, ApiDataViewResolver>();

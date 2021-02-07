@@ -10,6 +10,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.0.0-preview3" OutputItemType="Analyzer" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.0.0-preview3" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.8.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\RapidCMS.Api.Functions\RapidCMS.Api.Functions.csproj" />
