@@ -1,24 +1,31 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
+using RapidCMS.Api.Functions.Abstractions;
 
 namespace RapidCMS.Example.WebAssembly.FunctionAPI.Authentication
 {
     // this class is temporary
     internal class FunctionContextAuthenticationStateProvider : AuthenticationStateProvider
     {
-        public FunctionContextAuthenticationStateProvider()
+        private readonly IFunctionExecutionContextAccessor _functionExecutionContextAccessor;
+
+        public FunctionContextAuthenticationStateProvider(
+            IFunctionExecutionContextAccessor functionExecutionContextAccessor)
         {
+            _functionExecutionContextAccessor = functionExecutionContextAccessor;
         }
 
         public override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var id = new ClaimsIdentity("anonymous");
-            id.AddClaim(new Claim(ClaimTypes.Name, "Anonymous"));
+            if (_functionExecutionContextAccessor.FunctionExecutionContext != null &&
+                _functionExecutionContextAccessor.FunctionExecutionContext.Items.TryGetValue("User", out var userObject) && 
+                userObject is ClaimsPrincipal user)
+            {
+                return Task.FromResult(new AuthenticationState(user));
+            }
 
-            var principal = new ClaimsPrincipal(id);
-
-            return Task.FromResult(new AuthenticationState(principal));
+            return Task.FromResult(new AuthenticationState(null));
         }
     }
 }

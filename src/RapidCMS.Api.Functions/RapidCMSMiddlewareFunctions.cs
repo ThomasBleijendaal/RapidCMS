@@ -4,6 +4,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using RapidCMS.Api.Core;
+using RapidCMS.Api.Functions.Abstractions;
+using RapidCMS.Api.Functions.Accessors;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Models.Config.Api;
 
@@ -15,10 +17,11 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddRapidCMSFunctions(this IServiceCollection services, Action<IApiConfig>? config = null)
         {
-
             _rootConfig = GetRootConfig(config);
 
             services.AddRapidCMSApiCore(_rootConfig);
+
+            services.AddSingleton<IFunctionExecutionContextAccessor, FunctionExecutionContextAccessor>();
 
             if (!_rootConfig.AllowAnonymousUsage)
             {

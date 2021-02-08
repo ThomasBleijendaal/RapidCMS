@@ -6,10 +6,12 @@ using System.Net;
 using System.Threading.Tasks;
 using HttpMultipartParser;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Pipeline;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Newtonsoft.Json;
 using RapidCMS.Api.Core.Abstractions;
+using RapidCMS.Api.Functions.Abstractions;
 using RapidCMS.Api.Functions.Models;
 using RapidCMS.Core.Models.ApiBridge.Request;
 
@@ -18,15 +20,21 @@ namespace RapidCMS.Api.Functions.Functions
     public class FileUploadFunctions
     {
         private readonly IFileHandlerResolver _fileHandlerResolver;
+        private readonly IFunctionExecutionContextAccessor _functionExecutionContextAccessor;
 
-        public FileUploadFunctions(IFileHandlerResolver fileHandlerResolver)
+        public FileUploadFunctions(
+            IFileHandlerResolver fileHandlerResolver,
+            IFunctionExecutionContextAccessor functionExecutionContextAccessor)
         {
             _fileHandlerResolver = fileHandlerResolver;
+            _functionExecutionContextAccessor = functionExecutionContextAccessor;
         }
 
         [FunctionName(nameof(ValidateFileAsync))]
-        public async Task<HttpResponseData> ValidateFileAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{fileHandlerAlias}/file/validate")] HttpRequestData req)
+        public async Task<HttpResponseData> ValidateFileAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{fileHandlerAlias}/file/validate")] HttpRequestData req, FunctionExecutionContext context)
         {
+            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+
             if (req.Params.TryGetValue("fileHandlerAlias", out var fileHandlerAlias))
             {
                 try
@@ -47,8 +55,10 @@ namespace RapidCMS.Api.Functions.Functions
         }
 
         [FunctionName(nameof(SaveFileAsync))]
-        public async Task<HttpResponseData> SaveFileAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{fileHandlerAlias}/file")] HttpRequestData req)
+        public async Task<HttpResponseData> SaveFileAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{fileHandlerAlias}/file")] HttpRequestData req, FunctionExecutionContext context)
         {
+            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+
             if (req.Params.TryGetValue("fileHandlerAlias", out var fileHandlerAlias))
             {
                 try
