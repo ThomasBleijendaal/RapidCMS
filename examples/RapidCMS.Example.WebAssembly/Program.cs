@@ -157,7 +157,7 @@ namespace RapidCMS.Example.WebAssembly
                 config.AddEntityVariantCollection();
 
                 // CRUD editor displaying live data, an external process updates the data every second
-                config.AddActiveCollection();
+                // config.AddActiveCollection();
 
                 //config.Dashboard.AddSection(typeof(DashboardSection));
                 config.Dashboard.AddSection("user", edit: true);

@@ -68,6 +68,8 @@ namespace RapidCMS.UI.Components.Sections
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
+
             DisposeWhenDisposing(Mediator.RegisterCallback<CollectionRepositoryEventArgs>(OnRepositoryActionAsync));
             DisposeWhenDisposing(Mediator.RegisterCallback<ExceptionEventArgs>(OnExceptionAsync));
         }

@@ -13,6 +13,8 @@
 
     protected override void OnInitialized()
     {
+        base.OnInitialized();
+
         DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(LocationChangedAsync));
     }
 

@@ -50,7 +50,8 @@ namespace RapidCMS.Core.Providers
 
         private async Task OnRepositoryChangeAsync(object? sender, CollectionRepositoryEventArgs args)
         {
-            if (args.RepositoryAlias == _setup.RepositoryAlias)
+            if ((!string.IsNullOrEmpty(_setup.RepositoryAlias) && args.RepositoryAlias == _setup.RepositoryAlias) ||
+                (string.IsNullOrEmpty(_setup.RepositoryAlias) && args.CollectionAlias == _setup.CollectionAlias))
             {
                 await SetElementsAsync(refreshCache: true);
 

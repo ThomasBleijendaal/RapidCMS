@@ -5,7 +5,7 @@ using RapidCMS.Core.Forms;
 
 namespace RapidCMS.Core.Abstractions.Data
 {
-    public interface IDataCollection
+    public interface IDataCollection : IDisposable
     {
         /// <summary>
         /// Use this method to receive the EditContext for which this data collection is used. This allows for making the available elements contextual to the entity.

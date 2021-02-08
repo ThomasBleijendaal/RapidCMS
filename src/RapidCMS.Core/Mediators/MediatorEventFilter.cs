@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using RapidCMS.Core.Abstractions.Mediators;
 
 namespace RapidCMS.Core.Mediators
@@ -9,11 +10,13 @@ namespace RapidCMS.Core.Mediators
     {
         private readonly IMediator _mediator;
         private readonly Func<object, TMediatorEventArgs, Task> _callback;
+        private readonly ILogger<Mediator> _logger;
 
-        public MediatorEventFilter(IMediator mediator, Func<object, TMediatorEventArgs, Task> callback)
+        public MediatorEventFilter(IMediator mediator, Func<object, TMediatorEventArgs, Task> callback, ILogger<Mediator> logger)
         {
             _mediator = mediator;
             _callback = callback;
+            _logger = logger;
             _mediator.OnEvent += Mediator_OnEventAsync;
         }
 
@@ -21,6 +24,7 @@ namespace RapidCMS.Core.Mediators
         {
             if (e is TMediatorEventArgs typedEventArgs)
             {
+                _logger.LogWarning($"{sender?.GetType()} triggered {typedEventArgs.GetType()}.");
                 await _callback.Invoke(sender ?? _mediator, typedEventArgs);
             }
         }
