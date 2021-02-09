@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using RapidCMS.Core.Abstractions.Mediators;
 
 namespace RapidCMS.Core.Mediators

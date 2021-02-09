@@ -30,5 +30,18 @@ namespace RapidCMS.UI.Components
         {
 
         }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            if (_disposables == null)
+            {
+                throw new ObjectDisposedException($"{nameof(OnInitialized)} called on disposed {nameof(DisposableComponent)}.");
+            }
+
+            _disposables.ForEach(x => x.Dispose());
+            _disposables.Clear();
+        }
     }
 }

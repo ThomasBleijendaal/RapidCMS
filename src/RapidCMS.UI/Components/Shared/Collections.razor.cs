@@ -26,6 +26,8 @@ namespace RapidCMS.UI.Components.Shared
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
+
             DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(LocationChangedAsync));
         }
 

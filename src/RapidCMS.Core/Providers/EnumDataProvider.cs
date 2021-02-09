@@ -52,5 +52,10 @@ namespace RapidCMS.Core.Providers
         {
             return Task.CompletedTask;
         }
+
+        public void Dispose()
+        {
+
+        }
     }
 }

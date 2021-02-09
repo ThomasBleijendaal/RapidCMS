@@ -13,6 +13,8 @@ namespace RapidCMS.UI.Components.Panes
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
+
             DisposeWhenDisposing(Mediator.RegisterCallback<PaneRequestEventArgs>(OnPaneRequestedAsync));
             DisposeWhenDisposing(Mediator.RegisterCallback<PaneResponseEventArgs>(OnPaneRespondedAsync));
         }
