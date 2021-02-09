@@ -2,28 +2,27 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 
-namespace RapidCMS.Core.Services.Auth
+namespace RapidCMS.Api.Core.Services
 {
-    // TODO: remove dependency on AuthenticationStateProvider. introduce IUserResolver
     internal class ApiAuthService : IAuthService
     {
-        private readonly AuthenticationStateProvider _authenticationStateProvider;
+        private readonly IUserResolver _userResolver;
         private readonly IServiceProvider _serviceProvider;
 
         public ApiAuthService(
-            AuthenticationStateProvider authenticationStateProvider,
+            IUserResolver userResolver,
             IServiceProvider serviceProvider)
         {
-            _authenticationStateProvider = authenticationStateProvider;
+            _userResolver = userResolver;
             _serviceProvider = serviceProvider;
         }
 
@@ -45,8 +44,11 @@ namespace RapidCMS.Core.Services.Auth
             // TODO: why resolve here and not just use DI
             var authorizationService = _serviceProvider.GetRequiredService<IAuthorizationService>();
 
-            var state = await _authenticationStateProvider.GetAuthenticationStateAsync();
-            var user = state.User;
+            var user = _userResolver.GetUser();
+            if (user == null)
+            {
+                return false;
+            }
 
             var authorizationChallenge = await authorizationService.AuthorizeAsync(user, entity, operation);
 

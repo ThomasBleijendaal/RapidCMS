@@ -5,13 +5,13 @@
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
     
-    <Version>3.7.0</Version>
+    <Version>3.8.0</Version>
     
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Thomas Bleijendaal</Authors>
     <Company>Thomas Bleijendaal</Company>
     <Description>RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS purely from code.</Description>
-    <Copyright>2020</Copyright>
+    <Copyright>2021</Copyright>
     <RepositoryUrl>https://github.com/ThomasBleijendaal/RapidCMS</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
     <PackageTags>Blazor, CMS</PackageTags>

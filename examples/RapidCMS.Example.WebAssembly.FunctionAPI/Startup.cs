@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Azure.Functions.Worker.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,8 +40,6 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
             services.AddTransient<Base64ImageUploadHandler>();
 
             services.AddOptions<AuthenticationConfig>().Bind(Configuration.GetSection("DevOIDC"));
-
-            services.AddTransient<AuthenticationStateProvider, FunctionContextAuthenticationStateProvider>();
 
             // services.AddAuthentication();
 

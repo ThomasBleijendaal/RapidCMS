@@ -11,6 +11,7 @@ using RapidCMS.Core.Models.ApiBridge.Response;
 
 namespace RapidCMS.Api.WebApi.Controllers
 {
+    [ApiController]
     public class ApiRepositoryController : ControllerBase
     {
         private readonly IApiHandlerResolver _apiHandlerResolver;

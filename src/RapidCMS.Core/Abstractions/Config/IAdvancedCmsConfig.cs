@@ -2,6 +2,11 @@
 {
     public interface IAdvancedCmsConfig
     {
+        /// <summary>
+        /// This count controls the amount of concurrent repository calls that can be
+        /// performed at the same time. For some scenarios (like server-side blazor with EF without MARS), 
+        /// this number should be strictly 1, but can be higher for other scenarios. 
+        /// </summary>
         int SemaphoreCount { get; set; }
     }
 }

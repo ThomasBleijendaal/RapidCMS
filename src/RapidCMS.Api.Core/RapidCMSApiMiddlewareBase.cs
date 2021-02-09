@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Api.Core.Abstractions;
 using RapidCMS.Api.Core.Handlers;
 using RapidCMS.Api.Core.Resolvers;
+using RapidCMS.Api.Core.Services;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
@@ -23,7 +24,6 @@ using RapidCMS.Core.Models.Config.Api;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Resolvers.Repositories;
 using RapidCMS.Core.Resolvers.Setup;
-using RapidCMS.Core.Services.Auth;
 using RapidCMS.Core.Services.Parent;
 using RapidCMS.Core.Services.Persistence;
 using RapidCMS.Core.Services.Presentation;
@@ -43,7 +43,7 @@ namespace RapidCMS.Api.Core
             if (config.AllowAnonymousUsage)
             {
                 services.AddSingleton<IAuthorizationHandler, AllowAllAuthorizationHandler>();
-                services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
+                services.AddSingleton<IUserResolver, AnonymousUserResolver>();
             }
             
             services.AddSingleton<ISetupResolver<IEntityVariantSetup>, GlobalEntityVariantSetupResolver>();
