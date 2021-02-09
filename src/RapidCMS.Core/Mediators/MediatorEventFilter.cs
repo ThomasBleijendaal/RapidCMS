@@ -10,13 +10,11 @@ namespace RapidCMS.Core.Mediators
     {
         private readonly IMediator _mediator;
         private readonly Func<object, TMediatorEventArgs, Task> _callback;
-        private readonly ILogger<Mediator> _logger;
 
-        public MediatorEventFilter(IMediator mediator, Func<object, TMediatorEventArgs, Task> callback, ILogger<Mediator> logger)
+        public MediatorEventFilter(IMediator mediator, Func<object, TMediatorEventArgs, Task> callback)
         {
             _mediator = mediator;
             _callback = callback;
-            _logger = logger;
             _mediator.OnEvent += Mediator_OnEventAsync;
         }
 
@@ -24,7 +22,6 @@ namespace RapidCMS.Core.Mediators
         {
             if (e is TMediatorEventArgs typedEventArgs)
             {
-                _logger.LogWarning($"{sender?.GetType()} triggered {typedEventArgs.GetType()}.");
                 await _callback.Invoke(sender ?? _mediator, typedEventArgs);
             }
         }
