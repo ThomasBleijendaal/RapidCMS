@@ -41,8 +41,6 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
 
             services.AddOptions<AuthenticationConfig>().Bind(Configuration.GetSection("DevOIDC"));
 
-            // services.AddAuthentication();
-
             services.AddAuthorizationCore();
             services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();
 
