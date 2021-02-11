@@ -22,7 +22,9 @@ jobs:
         nuget-api-key: ${{ secrets.NUGET_APIKEY }}
         nuget-version: '5.x'
     - name: Build Api Core
-      run: dotnet build --configuration Release ./src/RapidCMS.Api.Core/RapidCMS.Api.Core.csproj
+      run: dotnet build --configuration Release ./src/RapidCMS.Api.WebApi/RapidCMS.Api.Core.csproj
+    - name: Build Api Functions
+      run: dotnet build --configuration Release ./src/RapidCMS.Api.Functions/RapidCMS.Api.Functions.csproj
     - name: Pack Api Functions
       run: nuget pack ./src/RapidCMS.Api.Functions/RapidCMS.Api.Functions.csproj -properties Configuration=Release -OutputDirectory ./src/RapidCMS.Api.Functions/bin/Release
     - name: Build Api WebApi
