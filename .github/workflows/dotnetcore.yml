@@ -19,7 +19,7 @@ jobs:
         dotnet-version: '5.0.100'
     - uses: nuget/setup-nuget@v1
       with:
-#        nuget-api-key: ${{ secrets.NUGET_APIKEY }}
+        nuget-api-key: ${{ secrets.NUGET_APIKEY }}
         nuget-version: '5.x'
 #    - name: Build Api Core
 #      run: dotnet build --configuration Release ./src/RapidCMS.Api.WebApi/RapidCMS.Api.Core.csproj
@@ -37,10 +37,8 @@ jobs:
 #      run: dotnet build --configuration Release ./src/RapidCMS.UI/RapidCMS.UI.csproj
 #    - name: Publish Api Core
 #      run: dotnet nuget push ./src/RapidCMS.Api.Core/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
-    - name: LS
-      run: dir -r
     - name: Publish Api Functions
-      run: dotnet nuget push ./src/RapidCMS.Api.Functions/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      run: nuget push ./src/RapidCMS.Api.Functions/bin/Release/*.nupkg -source https://api.nuget.org/v3/index.json --skipduplicate
 #    - name: Publish Api WebApi
 #      run: dotnet nuget push ./src/RapidCMS.Api.WebApi/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
 #    - name: Publish Core
