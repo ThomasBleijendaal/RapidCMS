@@ -36,7 +36,7 @@ jobs:
     - name: Build UI
       run: dotnet build --configuration Release ./src/RapidCMS.UI/RapidCMS.UI.csproj
     - name: Publish Api Core
-      run: dotnet nuget push ./src/RapidCMS.Api.Core/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push .\src\RapidCMS.Api.Core\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Publish Api Functions
       run: nuget push .\src\RapidCMS.Api.Functions\bin\Release\*.nupkg -source https://api.nuget.org/v3/index.json -skipduplicate
     - name: Publish Api WebApi
