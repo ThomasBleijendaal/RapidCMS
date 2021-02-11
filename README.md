@@ -61,7 +61,7 @@ to get a sense on how to build such Api and get it working with your RapidCMS We
 
 ### Companion Function API for client-side RapidCMS (optional) (experimental)
 
-1. Create a new .NET 5.0 Azure Functions project (`dotnet-isolated` -- this is currently in preview).
+1. Create a new .NET 5.0 Azure Functions project (`dotnet-isolated` -- this is currently in preview, see [this repo](https://github.com/Azure/azure-functions-dotnet-worker-preview)).
 2. Install NuGet-package: `RapidCMS.Api.Functions`, `Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator`, `Microsoft.Azure.WebJobs.Extensions.Http`, `Microsoft.Azure.Functions.Worker` (preview), `Microsoft.Azure.Functions.Worker.Sdk` (preview).
 3. Add the following block of code to `ConfigureServices` in `Program.cs`:
 
@@ -69,7 +69,7 @@ to get a sense on how to build such Api and get it working with your RapidCMS We
 services.AddRapidCMSFunctions(config => {});
 ```
 
-4. Run `func host start`: you're now running a completely empty RapidCMS companion Api instance.
+4. Run `func host start` from the Azure Function project root: you're now running a completely empty, serverless RapidCMS companion Api instance.
 5. Start building your CMS Api by expanding `config => {}`. [Explore the examples](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/examples/RapidCMS.Example.WebAssembly.FunctionAPI)
 to get a sense on how to build such Api and get it working with your RapidCMS WebAssembly instance.
 
