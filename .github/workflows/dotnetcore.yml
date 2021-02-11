@@ -4,6 +4,7 @@ on:
     push:
         branches:
         - master
+        - azure-function-support
 
 jobs:
   build:
