@@ -24,7 +24,7 @@ jobs:
 #    - name: Build Api Core
 #      run: dotnet build --configuration Release ./src/RapidCMS.Api.WebApi/RapidCMS.Api.Core.csproj
     - name: Build Api Functions
-      run: dotnet build --configuration Release ./src/RapidCMS.Api.Functions/RapidCMS.Api.Functions.csprosj
+      run: dotnet build --configuration Release ./src/RapidCMS.Api.Functions/RapidCMS.Api.Functions.csproj
     - name: Pack Api Functions
       run: nuget pack ./src/RapidCMS.Api.Functions/RapidCMS.Api.Functions.csproj -properties Configuration=Release
 #    - name: Build Api WebApi
