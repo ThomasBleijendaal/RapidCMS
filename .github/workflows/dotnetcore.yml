@@ -38,7 +38,7 @@ jobs:
 #    - name: Publish Api Core
 #      run: dotnet nuget push ./src/RapidCMS.Api.Core/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Publish Api Functions
-      run: dotnet nuget push ./src/RapidCMS.Api.Functions/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push ./src/RapidCMS.Api.Functions.*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
 #    - name: Publish Api WebApi
 #      run: dotnet nuget push ./src/RapidCMS.Api.WebApi/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
 #    - name: Publish Core
