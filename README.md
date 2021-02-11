@@ -13,7 +13,7 @@ a feature you need, you're not stuck but can build it your own and use it just a
 default UI libary and only use the core of RapidCMS.
 
 RapidCMS supports both Server-side and WebAssembly. It can run as a server side application just as a MVC or Razor Pages application,
-but fully responsive and interactive. Or it can run fully serverless, as a static front-end connected to sometling like an Azure Function backend.
+but as a SPA-like application. Or it can run fully serverless, as a static front-end connected to sometling like an Azure Function backend.
 
 ## Demo
 

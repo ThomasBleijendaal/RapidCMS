@@ -21,8 +21,10 @@ namespace RapidCMS.Example.WebAssembly
     public class Program
     {
         private const bool ConfigureAuthentication = true;
-        //private static readonly Uri BaseUri = new Uri("https://localhost:5003");
-        private static readonly Uri BaseUri = new Uri("http://localhost:7074");
+        // web api 
+        private static readonly Uri BaseUri = new Uri("https://localhost:5003");
+        // function api
+        // private static readonly Uri BaseUri = new Uri("http://localhost:7074");
 
         public static async Task Main(string[] args)
         {
@@ -42,10 +44,11 @@ namespace RapidCMS.Example.WebAssembly
                     return handler;
                 });
             }
-            else
-            {
-                builder.Services.AddTransient<AuthorizationMessageHandler>();
-            }
+            // TODO: test removal of this
+            //else
+            //{
+            //    builder.Services.AddTransient<AuthorizationMessageHandler>();
+            //}
 
             // with LocalStorageRepository collections can store their data in the local storage of
             // the user, making personalisation quite easy
