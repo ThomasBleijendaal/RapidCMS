@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
@@ -16,14 +15,14 @@ namespace RapidCMS.Api.Core.Services
     internal class ApiAuthService : IAuthService
     {
         private readonly IUserResolver _userResolver;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IAuthorizationService _authorizationService;
 
         public ApiAuthService(
             IUserResolver userResolver,
-            IServiceProvider serviceProvider)
+            IAuthorizationService authorizationService)
         {
             _userResolver = userResolver;
-            _serviceProvider = serviceProvider;
+            _authorizationService = authorizationService;
         }
 
         public Task<bool> IsUserAuthorizedAsync(UsageType usageType, IEntity entity)
@@ -41,16 +40,13 @@ namespace RapidCMS.Api.Core.Services
 
         public async Task<bool> IsUserAuthorizedAsync(OperationAuthorizationRequirement operation, IEntity entity)
         {
-            // TODO: why resolve here and not just use DI
-            var authorizationService = _serviceProvider.GetRequiredService<IAuthorizationService>();
-
             var user = _userResolver.GetUser();
             if (user == null)
             {
                 return false;
             }
 
-            var authorizationChallenge = await authorizationService.AuthorizeAsync(user, entity, operation);
+            var authorizationChallenge = await _authorizationService.AuthorizeAsync(user, entity, operation);
 
             return authorizationChallenge.Succeeded;
         }

@@ -10,8 +10,6 @@ namespace RapidCMS.Api.WebApi.Conventions
         
         public void Apply(ControllerModel controller)
         {
-            var type = controller.ControllerType;
-
             if (controller.ControllerType.In(typeof(ApiRepositoryController), typeof(ApiFileUploadController)))
             {
                 controller.Selectors.Add(new SelectorModel

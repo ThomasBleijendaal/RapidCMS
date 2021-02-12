@@ -8,8 +8,6 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
 {
     class Program
     {
-        private const bool ConfigureAuthentication = false;
-
         static async Task Main(string[] args)
         {
             Debugger.Launch();

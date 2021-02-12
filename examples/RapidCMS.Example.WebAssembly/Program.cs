@@ -20,11 +20,11 @@ namespace RapidCMS.Example.WebAssembly
 {
     public class Program
     {
-        private const bool ConfigureAuthentication = true;
+        private const bool ConfigureAuthentication = false;
         // web api 
         private static readonly Uri BaseUri = new Uri("https://localhost:5003");
         // function api
-        // private static readonly Uri BaseUri = new Uri("http://localhost:7074");
+        //private static readonly Uri BaseUri = new Uri("http://localhost:7074");
 
         public static async Task Main(string[] args)
         {
@@ -44,11 +44,6 @@ namespace RapidCMS.Example.WebAssembly
                     return handler;
                 });
             }
-            // TODO: test removal of this
-            //else
-            //{
-            //    builder.Services.AddTransient<AuthorizationMessageHandler>();
-            //}
 
             // with LocalStorageRepository collections can store their data in the local storage of
             // the user, making personalisation quite easy
@@ -189,7 +184,7 @@ namespace RapidCMS.Example.WebAssembly
             // For OIDC (but not working)
             builder.Services.AddOidcAuthentication(config =>
             {
-                builder.Configuration.Bind("DevOIDC", config);
+                builder.Configuration.Bind("OnlineDevOIDC", config);
             });
 
             // For AD

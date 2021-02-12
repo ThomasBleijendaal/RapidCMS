@@ -13,11 +13,10 @@
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.12" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="1.2.1" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.8.0" />
-    <PackageReference Include="RapidCMS.Api.Functions" Version="3.8.0-preview" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\RapidCMS.Api.Core\RapidCMS.Api.Core.csproj" />
+    <ProjectReference Include="..\..\src\RapidCMS.Api.Functions\RapidCMS.Api.Functions.csproj" />
     <ProjectReference Include="..\RapidCMS.Example.Shared\RapidCMS.Example.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>

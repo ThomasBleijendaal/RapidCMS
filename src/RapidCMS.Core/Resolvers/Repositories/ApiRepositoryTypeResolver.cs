@@ -27,7 +27,6 @@ namespace RapidCMS.Core.Resolvers.Repositories
                 : GetGenericParametersOfBaseType(type, typeof(BaseMappedRepository<,>)) is Type[] entityTypes && entityTypes.Length == 2 ? (entityTypes[0], entityTypes[1])
                 : throw new InvalidOperationException($"Cannot find entity types for Repository '{repositoryAlias}'.");
 
-        // TODO: fix this
         // the API does not handle repositories that were registered under their base class / interface etc.
         public string GetAlias(Type originallyRegisterdType) => throw new InvalidOperationException("Use AliasHelper.GetRepositoryAlias in Api context.");
     }
