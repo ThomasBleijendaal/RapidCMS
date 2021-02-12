@@ -69,7 +69,11 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
 
         public void ConfigureWorker(IFunctionsWorkerApplicationBuilder builder)
         {
-            builder.UseAuthorization();
+            if (ConfigureAuthentication)
+            {
+                builder.UseAuthorization();
+            }
+
             builder.UseFunctionExecutionMiddleware();
         }
     }

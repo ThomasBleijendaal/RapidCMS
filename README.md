@@ -62,7 +62,7 @@ to get a sense on how to build such Api and get it working with your RapidCMS We
 ### Companion Function API for client-side RapidCMS (optional) (experimental)
 
 1. Create a new .NET 5.0 Azure Functions project (`dotnet-isolated` -- this is currently in preview, see [this repo](https://github.com/Azure/azure-functions-dotnet-worker-preview)).
-2. Install NuGet-package: `RapidCMS.Api.Functions`, `Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator`, `Microsoft.Azure.WebJobs.Extensions.Http`, `Microsoft.Azure.Functions.Worker` (preview), `Microsoft.Azure.Functions.Worker.Sdk` (preview).
+2. Install NuGet-package: `RapidCMS.Api.Functions` (preview), `Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator`, `Microsoft.Azure.WebJobs.Extensions.Http`, `Microsoft.Azure.Functions.Worker` (preview), `Microsoft.Azure.Functions.Worker.Sdk` (preview).
 3. Add the following block of code to `ConfigureServices` in `Program.cs`:
 
 ```c#

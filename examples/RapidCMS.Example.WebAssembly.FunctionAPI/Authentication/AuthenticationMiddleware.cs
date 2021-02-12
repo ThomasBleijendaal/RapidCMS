@@ -51,6 +51,7 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI.Authentication
                     }
                     catch { }
 
+                    // NOTE: this middleware requires an authenticated uses.
                     context.InvocationResult = new HttpResponseData(HttpStatusCode.Unauthorized);
                     return;
                 }
