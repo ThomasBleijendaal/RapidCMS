@@ -1,10 +1,11 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("RapidCMS.Core.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 [assembly: InternalsVisibleTo("RapidCMS.Repositories")]
+[assembly: InternalsVisibleTo("RapidCMS.Api.Core")]
+[assembly: InternalsVisibleTo("RapidCMS.Api.Functions")]
 [assembly: InternalsVisibleTo("RapidCMS.Api.WebApi")]
 
 namespace RapidCMS.Core

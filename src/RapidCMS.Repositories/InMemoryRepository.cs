@@ -229,8 +229,9 @@ namespace RapidCMS.Repositories
                             var inMemoryRepo = _serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(r.RelatedEntityType)) as IRepository;
                             var jsonRepo = _serviceProvider.GetService(typeof(JsonRepository<>).MakeGenericType(r.RelatedEntityType)) as IRepository;
                             var lsRepo = _serviceProvider.GetService(typeof(LocalStorageRepository<>).MakeGenericType(r.RelatedEntityType)) as IRepository;
+                            var baseRepo = _serviceProvider.GetService(typeof(BaseRepository<>).MakeGenericType(r.RelatedEntityType)) as IRepository;
 
-                            var repo = inMemoryRepo ?? jsonRepo ?? lsRepo;
+                            var repo = inMemoryRepo ?? jsonRepo ?? lsRepo ?? baseRepo;
 
                             if (repo != null)
                             {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
 
@@ -24,7 +23,5 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
             get => DateTimeOffset.FromUnixTimeMilliseconds(LastModified ?? 0).UtcDateTime;
             set => LastModified = !value.HasValue ? 0 : new DateTimeOffset(value.Value).ToUnixTimeMilliseconds();
         }
-
-        public Dictionary<string, object> NonStandardProperties { get; set; } = default!;
     }
 }

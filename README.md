@@ -3,7 +3,7 @@
 [![#](https://img.shields.io/nuget/v/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
 
 RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS
-purely from code. It provides a basic set of editors and controls, next to allowing you to build your own blazor components
+purely from code. It provides a basic set of editors and controls, next to allowing you to build your own razor components
 for every editor, button, pane, page and dashboard section. You provide the repositories for data and configuration for
 the UI and RapidCMS renders a complete CMS according to your specification.
 
@@ -11,6 +11,9 @@ Since RapidCMS runs as an element within your ASP.NET Core application, you have
 authentication, authorization, additional endpoints like Api controllers, Mvc controllers, and Razor pages. If RapidCMS does not supply
 a feature you need, you're not stuck but can build it your own and use it just as if it was build it. You can even fully replace the 
 default UI libary and only use the core of RapidCMS.
+
+RapidCMS supports both Server-side and WebAssembly. It can run as a server side application just as a MVC or Razor Pages application,
+but as a SPA-like application. Or it can run fully serverless, as a static front-end connected to sometling like an Azure Function backend.
 
 ## Demo
 
@@ -41,7 +44,7 @@ or browse the [Examples](https://github.com/ThomasBleijendaal/RapidCMS/tree/mast
 7. Start building your CMS by expanding `config => {}`. Read the introduction below to get a sense of what is possible,
 or browse the [Examples](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/examples) to see all the options.
 
-### Companion API for client-side RapidCMS (optional)
+### Companion Web API for client-side RapidCMS (optional)
 
 1. Create a new ASP.NET Core Api project.
 2. Install NuGet-package: `RapidCMS.Api.WebApi` and `Microsoft.AspNetCore.Mvc.NewtonsoftJson`.
@@ -54,6 +57,20 @@ services.AddRapidCMSControllers();
 
 4. Hit `F5`: you're now running a completely empty RapidCMS companion Api instance.
 5. Start building your CMS Api by expanding `config => {}`. [Explore the examples](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/examples/RapidCMS.Example.WebAssembly.API)
+to get a sense on how to build such Api and get it working with your RapidCMS WebAssembly instance.
+
+### Companion Function API for client-side RapidCMS (optional) (experimental)
+
+1. Create a new .NET 5.0 Azure Functions project (`dotnet-isolated` -- this is currently in preview, see [this repo](https://github.com/Azure/azure-functions-dotnet-worker-preview)).
+2. Install NuGet-package: `RapidCMS.Api.Functions` (preview), `Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator`, `Microsoft.Azure.WebJobs.Extensions.Http`, `Microsoft.Azure.Functions.Worker` (preview), `Microsoft.Azure.Functions.Worker.Sdk` (preview).
+3. Add the following block of code to `ConfigureServices` in `Program.cs`:
+
+```c#
+services.AddRapidCMSFunctions(config => {});
+```
+
+4. Run `func host start` from the Azure Function project root: you're now running a completely empty, serverless RapidCMS companion Api instance.
+5. Start building your CMS Api by expanding `config => {}`. [Explore the examples](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/examples/RapidCMS.Example.WebAssembly.FunctionAPI)
 to get a sense on how to build such Api and get it working with your RapidCMS WebAssembly instance.
 
 ### Useful docs

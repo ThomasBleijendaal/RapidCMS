@@ -1,366 +1,173 @@
-﻿using System;
+﻿using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RapidCMS.Api.WebApi.Conventions;
+using RapidCMS.Api.Core.Abstractions;
+using RapidCMS.Api.Core.Models;
+using RapidCMS.Api.WebApi.Extensions;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Repositories;
-using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Enums;
-using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Models.ApiBridge;
 using RapidCMS.Core.Models.ApiBridge.Request;
 using RapidCMS.Core.Models.ApiBridge.Response;
-using RapidCMS.Core.Models.Request.Api;
-using RapidCMS.Core.Models.Response;
-using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Api.WebApi.Controllers
 {
-    public class ApiRepositoryController<TEntity, TDatabaseEntity, TRepository> : ControllerBase
-        where TEntity : class, IEntity
-        where TDatabaseEntity : class
-        where TRepository : IRepository
+    [ApiController]
+    public class ApiRepositoryController : ControllerBase
     {
-        private readonly IPresentationService _presentationService;
-        private readonly IInteractionService _interactionService;
+        private readonly IApiHandlerResolver _apiHandlerResolver;
 
-        public ApiRepositoryController(
-            IPresentationService presentationService,
-            IInteractionService interactionService)
+        public ApiRepositoryController(IApiHandlerResolver apiHandlerResolver)
         {
-            _presentationService = presentationService;
-            _interactionService = interactionService;
+            _apiHandlerResolver = apiHandlerResolver;
         }
 
-        public string RepositoryAlias
-        {
-            get => (string)ControllerContext.ActionDescriptor.Properties[CollectionControllerRouteConvention.AliasKey];
-        }
-
-        [HttpPost("entity/{id}")]
-        public async Task<ActionResult<EntityModel<IEntity>>> GetByIdAsync(string id, [FromBody] ParentQueryModel query)
+        [HttpPost("_rapidcms/{repositoryAlias}/entity/{id}")]
+        public async Task<ActionResult<EntityModel<IEntity>>> GetByIdAsync(string repositoryAlias, string id)
         {
             try
             {
-                var entity = await _presentationService.GetEntityAsync<GetEntityRequestModel, IEntity>(new GetEntityRequestModel
-                {
-                    Subject = new EntityDescriptor(id, RepositoryAlias, query.ParentPath, query.VariantAlias),
-                    UsageType = UsageType.Node | UsageType.Edit
-                });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetByIdAsync(new ApiRequestModel { Id = id, Body = await ReadBodyAsStringAsync() });
+                return response.ToContentResult();
+            }
+            catch { }
 
-                return Ok(EntityModel.Create(entity));
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return BadRequest();
         }
 
-        [HttpPost("all")]
-        public async Task<ActionResult<EntitiesModel<IEntity>>> GetAllAsync([FromBody] ParentQueryModel query)
+        [HttpPost("_rapidcms/{repositoryAlias}/all")]
+        public async Task<ActionResult<EntitiesModel<IEntity>>> GetAllAsync(string repositoryAlias)
         {
             try
             {
-                var response = await _presentationService.GetEntitiesAsync<GetEntitiesRequestModel, EntitiesResponseModel>(new GetEntitiesOfParentRequestModel
-                {
-                    RepositoryAlias = RepositoryAlias,
-                    ParentPath = query.ParentPath,
-                    UsageType = UsageType.List | UsageType.Edit,
-                    Query = query.GetQuery<TDatabaseEntity>()
-                });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllAsync(new ApiRequestModel { Body = await ReadBodyAsStringAsync() });
+                return response.ToContentResult();
+            }
+            catch { }
 
-                return Ok(new EntitiesModel<IEntity>
-                {
-                    Entities = EntityModel.Create(response.Entities),
-                    MoreDataAvailable = response.MoreDataAvailable
-                });
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return BadRequest();
         }
 
-        [HttpPost("all/related")]
-        public async Task<ActionResult<EntitiesModel<IEntity>>> GetAllRelatedAsync([FromBody] RelatedQueryModel query)
+        [HttpPost("_rapidcms/{repositoryAlias}/all/related")]
+        public async Task<ActionResult<EntitiesModel<IEntity>>> GetAllRelatedAsync(string repositoryAlias)
         {
             try
             {
-                var response = await _presentationService.GetEntitiesAsync<GetEntitiesRequestModel, EntitiesResponseModel>(new GetEntitiesOfRelationRequestModel
-                {
-                    RepositoryAlias = RepositoryAlias,
-                    UsageType = UsageType.List | UsageType.Edit,
-                    Query = query.GetQuery<TDatabaseEntity>(),
-                    Related = new EntityDescriptor(query.Related.Id, query.Related.RepositoryAlias, query.Related.ParentPath,  default)
-                });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllRelatedAsync(new ApiRequestModel { Body = await ReadBodyAsStringAsync() });
+                return response.ToContentResult();
+            }
+            catch { }
 
-                return Ok(new EntitiesModel<IEntity>
-                {
-                    Entities = EntityModel.Create(response.Entities),
-                    MoreDataAvailable = response.MoreDataAvailable
-                });
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return BadRequest();
         }
 
-        [HttpPost("all/nonrelated")]
-        public async Task<ActionResult<EntitiesModel<IEntity>>> GetAllNonRelatedAsync([FromBody] RelatedQueryModel query)
+        [HttpPost("_rapidcms/{repositoryAlias}/all/nonrelated")]
+        public async Task<ActionResult<EntitiesModel<IEntity>>> GetAllNonRelatedAsync(string repositoryAlias)
         {
             try
             {
-                var response = await _presentationService.GetEntitiesAsync<GetEntitiesRequestModel, EntitiesResponseModel>(new GetEntitiesOfRelationRequestModel
-                {
-                    RepositoryAlias = RepositoryAlias,
-                    UsageType = UsageType.List | UsageType.Add,
-                    Query = query.GetQuery<TDatabaseEntity>(),
-                    Related = new EntityDescriptor(query.Related.Id, query.Related.RepositoryAlias, query.Related.ParentPath, default)
-                });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllNonRelatedAsync(new ApiRequestModel { Body = await ReadBodyAsStringAsync() });
+                return response.ToContentResult();
+            }
+            catch { }
 
-                return Ok(new EntitiesModel<IEntity>
-                {
-                    Entities = EntityModel.Create(response.Entities),
-                    MoreDataAvailable = response.MoreDataAvailable
-                });
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return BadRequest();
         }
 
-        [HttpPost("new")]
-        public async Task<ActionResult<EntityModel<IEntity>>> NewAsync([FromBody] ParentQueryModel query)
+        [HttpPost("_rapidcms/{repositoryAlias}/new")]
+        public async Task<ActionResult<EntityModel<IEntity>>> NewAsync(string repositoryAlias)
         {
             try
             {
-                var entity = await _presentationService.GetEntityAsync<GetEntityRequestModel, IEntity>(new GetEntityRequestModel
-                {
-                    Subject = new EntityDescriptor(default, RepositoryAlias, query.ParentPath, query.VariantAlias),
-                    UsageType = UsageType.Node | UsageType.New
-                });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).NewAsync(new ApiRequestModel { Body = await ReadBodyAsStringAsync() });
+                return response.ToContentResult();
+            }
+            catch { }
 
-                return Ok(EntityModel.Create(entity));
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return BadRequest();
         }
 
-        [HttpPost("entity")]
-        public async Task<ActionResult<EntityModel<IEntity>?>> InsertAsync([FromBody] EditContextModel<TEntity> editContextModel)
+        [HttpPost("_rapidcms/{repositoryAlias}/entity")]
+        public async Task<ActionResult<EntityModel<IEntity>?>> InsertAsync(string repositoryAlias)
         {
             try
             {
-                var response = await _interactionService.InteractAsync<PersistEntityRequestModel, ApiCommandResponseModel>(new PersistEntityRequestModel
-                {
-                    Descriptor = new EntityDescriptor(default, RepositoryAlias, editContextModel.ParentPath, editContextModel.EntityModel.VariantAlias),
-                    Entity = editContextModel.EntityModel.Entity,
-                    EntityState = EntityState.IsNew,
-                    Relations = editContextModel.GetRelations()
-                }, ViewState.Api);
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).InsertAsync(new ApiRequestModel { Body = await ReadBodyAsStringAsync() });
+                return response.ToContentResult();
+            }
+            catch { }
 
-                return response switch
-                {
-                    ApiPersistEntityResponseModel persistResponse when persistResponse.ValidationErrors != null => BadRequest(persistResponse.ValidationErrors),
-                    ApiPersistEntityResponseModel insertResponse when insertResponse.NewEntity != null => Ok(EntityModel.Create(insertResponse.NewEntity)),
-                    _ => Ok()
-                };
-            }
-            catch (InvalidEntityException)
-            {
-                return BadRequest();
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return BadRequest();
         }
 
-        [HttpPut("entity/{id}")]
-        public async Task<ActionResult> UpdateAsync(string id, [FromBody] EditContextModel<TEntity> editContextModel)
+        [HttpPut("_rapidcms/{repositoryAlias}/entity/{id}")]
+        public async Task<ActionResult> UpdateAsync(string repositoryAlias, string id)
         {
             try
             {
-                var response = await _interactionService.InteractAsync<PersistEntityRequestModel, ApiCommandResponseModel>(new PersistEntityRequestModel
-                {
-                    Descriptor = new EntityDescriptor(id, RepositoryAlias, editContextModel.ParentPath, editContextModel.EntityModel.VariantAlias),
-                    Entity = editContextModel.EntityModel.Entity,
-                    EntityState = EntityState.IsExisting,
-                    Relations = editContextModel.GetRelations()
-                }, ViewState.Api);
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).UpdateAsync(new ApiRequestModel { Id = id, Body = await ReadBodyAsStringAsync() });
+                return response.ToContentResult();
+            }
+            catch { }
 
-                return response switch
-                {
-                    ApiPersistEntityResponseModel persistResponse when persistResponse.ValidationErrors != null => BadRequest(persistResponse.ValidationErrors),
-                    _ => Ok()
-                };
-            }
-            catch (InvalidEntityException)
-            {
-                return BadRequest();
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return BadRequest();
         }
 
-        [HttpDelete("entity/{id}")]
-        public async Task<ActionResult> DeleteAsync(string id, [FromBody] DeleteModel delete)
+        [HttpDelete("_rapidcms/{repositoryAlias}/entity/{id}")]
+        public async Task<ActionResult> DeleteAsync(string repositoryAlias, string id)
         {
             try
             {
-                await _interactionService.InteractAsync<DeleteEntityRequestModel, ApiCommandResponseModel>(new DeleteEntityRequestModel
-                {
-                    Descriptor = new EntityDescriptor(id, RepositoryAlias, delete.ParentPath, default)
-                }, ViewState.Api);
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).DeleteAsync(new ApiRequestModel { Id = id, Body = await ReadBodyAsStringAsync() });
+                return response.ToContentResult();
+            }
+            catch { }
 
-                return Ok();
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return BadRequest();
         }
 
-        [HttpPost("relate")]
-        public async Task<ActionResult> AddRelationAsync([FromBody] RelateModel relate)
+        [HttpPost("_rapidcms/{repositoryAlias}/relate")]
+        public async Task<ActionResult> AddRelationAsync(string repositoryAlias)
         {
             try
             {
-                await _interactionService.InteractAsync<PersistRelatedEntityRequestModel, ApiCommandResponseModel>(new PersistRelatedEntityRequestModel
-                {
-                    Related = new EntityDescriptor(relate.Related.Id, relate.Related.RepositoryAlias, relate.Related.ParentPath, default),
-                    Subject = new EntityDescriptor(relate.Id, RepositoryAlias, default, default),
-                    Action = PersistRelatedEntityRequestModel.Actions.Add
-                }, ViewState.Api);
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).AddRelationAsync(new ApiRequestModel { Body = await ReadBodyAsStringAsync() });
+                return response.ToContentResult();
+            }
+            catch { }
 
-                return Ok();
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return BadRequest();
         }
 
-        [HttpDelete("relate")]
-        public async Task<ActionResult> RemoveRelationAsync([FromBody] RelateModel relate)
+        [HttpDelete("_rapidcms/{repositoryAlias}/relate")]
+        public async Task<ActionResult> RemoveRelationAsync(string repositoryAlias)
         {
             try
             {
-                await _interactionService.InteractAsync<PersistRelatedEntityRequestModel, ApiCommandResponseModel>(new PersistRelatedEntityRequestModel
-                {
-                    Related = new EntityDescriptor(relate.Related.Id, relate.Related.RepositoryAlias, relate.Related.ParentPath, default),
-                    Subject = new EntityDescriptor(relate.Id, RepositoryAlias, default, default),
-                    Action = PersistRelatedEntityRequestModel.Actions.Remove
-                }, ViewState.Api);
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).RemoveRelationAsync(new ApiRequestModel { Body = await ReadBodyAsStringAsync() });
+                return response.ToContentResult();
+            }
+            catch { }
 
-                return Ok();
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return BadRequest();
         }
 
-        [HttpPost("reorder")]
-        public async Task<ActionResult> ReorderAsync([FromBody] ReorderModel reorder)
+        [HttpPost("_rapidcms/{repositoryAlias}/reorder")]
+        public async Task<ActionResult> ReorderAsync(string repositoryAlias, [FromBody] ReorderModel reorder)
         {
             try
             {
-                await _interactionService.InteractAsync<PersistReorderRequestModel, ApiCommandResponseModel>(new PersistReorderRequestModel
-                {
-                    BeforeId = reorder.BeforeId,
-                    Subject = new EntityDescriptor(reorder.Subject.Id, RepositoryAlias, reorder.Subject.ParentPath, default)
-                }, ViewState.Api);
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).ReorderAsync(new ApiRequestModel { Body = await ReadBodyAsStringAsync() });
+                return response.ToContentResult();
+            }
+            catch { }
 
-                return Ok();
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return BadRequest();
+        }
+
+        private async Task<string> ReadBodyAsStringAsync()
+        {
+            using var streamReader = new StreamReader(Request.Body);
+            return await streamReader.ReadToEndAsync();
         }
     }
 }

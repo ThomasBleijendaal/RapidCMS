@@ -21,7 +21,9 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
 
         public IEnumerable<OrderModel>? OrderBys { get; set; }
 
-        public IQuery GetQuery<TEntity>()
+        public IQuery GetQuery<TEntity>() => GetQuery(typeof(TEntity));
+
+        public IQuery GetQuery(Type entityType)
         {
             var query = Create(Take, 1 + Skip / Math.Max(1, Take), SearchTerm, ActiveTab);
 
@@ -32,7 +34,7 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
                 query.SetOrderBys(OrderBys
                     .Select(x =>
                     {
-                        var property = PropertyMetadataHelper.GetPropertyMetadata(typeof(TEntity), x.PropertyName);
+                        var property = PropertyMetadataHelper.GetPropertyMetadata(entityType, x.PropertyName);
 
                         if (property == null || x.Fingerprint != property.Fingerprint)
                         {

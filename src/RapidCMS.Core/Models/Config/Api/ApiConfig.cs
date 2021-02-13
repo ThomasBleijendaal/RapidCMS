@@ -16,10 +16,11 @@ namespace RapidCMS.Core.Models.Config.Api
         internal bool AllowAnonymousUsage { get; set; } = false;
         internal List<ApiRepositoryConfig> Repositories { get; set; } = new List<ApiRepositoryConfig>();
         internal List<IApiDataViewBuilderConfig> DataViews { get; set; } = new List<IApiDataViewBuilderConfig>();
-        internal List<Type> FileUploadHandlers { get; set; } = new List<Type>();
+        internal List<FileUploadHandlerConfig> FileUploadHandlers { get; set; } = new List<FileUploadHandlerConfig>();
 
         IEnumerable<IApiRepositoryConfig> IApiConfig.Repositories => Repositories;
         IEnumerable<IApiDataViewBuilderConfig> IApiConfig.DataViews => DataViews;
+        IEnumerable<IFileUploadHandlerConfig> IApiConfig.FileUploadHandlers => FileUploadHandlers;
 
         public IApiConfig AllowAnonymousUser()
         {
@@ -29,7 +30,12 @@ namespace RapidCMS.Core.Models.Config.Api
 
         public IApiConfig RegisterFileUploadHandler<THandler>() where THandler : IFileUploadHandler
         {
-            FileUploadHandlers.Add(typeof(THandler));
+            FileUploadHandlers.Add(new FileUploadHandlerConfig
+            {
+                Alias = AliasHelper.GetFileUploaderAlias(typeof(THandler)),
+                HandlerType = typeof(THandler)
+            });
+
             return this;
         }
 
@@ -49,7 +55,8 @@ namespace RapidCMS.Core.Models.Config.Api
             {
                 Alias = alias,
                 EntityType = typeof(TEntity),
-                RepositoryType = typeof(TRepository)
+                RepositoryType = typeof(TRepository),
+                ApiRepositoryType = fullType
             };
             Repositories.Add(config);
             return config;
@@ -73,7 +80,8 @@ namespace RapidCMS.Core.Models.Config.Api
                 Alias = alias,
                 EntityType = typeof(TEntity),
                 DatabaseType = typeof(TMappedEntity),
-                RepositoryType = typeof(TRepository)
+                RepositoryType = typeof(TRepository),
+                ApiRepositoryType = fullType
             };
             Repositories.Add(config);
             return config;

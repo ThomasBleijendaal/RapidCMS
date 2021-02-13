@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Repositories;
@@ -59,5 +60,10 @@ namespace RapidCMS.Core.Abstractions.Config
         /// Returns the registered data views
         /// </summary>
         IEnumerable<IApiDataViewBuilderConfig> DataViews { get; }
+
+        /// <summary>
+        /// Returns the registered file upload handlers
+        /// </summary>
+        IEnumerable<IFileUploadHandlerConfig> FileUploadHandlers { get; }
     }
 }

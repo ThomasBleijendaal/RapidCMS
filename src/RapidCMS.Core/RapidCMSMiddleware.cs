@@ -157,7 +157,6 @@ namespace Microsoft.Extensions.DependencyInjection
                     reverseRepositoryTypeDictionary[implementationType] = repositoryAlias;
                 }
 
-
                 if (!collectionAliasDictionary.ContainsKey(repositoryAlias))
                 {
                     collectionAliasDictionary.Add(repositoryAlias, new List<string>());

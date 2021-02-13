@@ -8,7 +8,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v1
@@ -16,7 +16,17 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '5.0.100'
-    - name: Build Core
+    - uses: nuget/setup-nuget@v1
+      with:
+        nuget-api-key: ${{ secrets.NUGET_APIKEY }}
+        nuget-version: '5.x'
+    - name: Build Api Core
+      run: dotnet build --configuration Release ./src/RapidCMS.Api.Core/RapidCMS.Api.Core.csproj
+    - name: Build Api Functions
+      run: dotnet build --configuration Release ./src/RapidCMS.Api.Functions/RapidCMS.Api.Functions.csproj
+    - name: Pack Api Functions
+      run: nuget pack ./src/RapidCMS.Api.Functions/RapidCMS.Api.Functions.csproj -properties Configuration=Release -OutputDirectory ./src/RapidCMS.Api.Functions/bin/Release
+    - name: Build Api WebApi
       run: dotnet build --configuration Release ./src/RapidCMS.Api.WebApi/RapidCMS.Api.WebApi.csproj
     - name: Build Core
       run: dotnet build --configuration Release ./src/RapidCMS.Core/RapidCMS.Core.csproj
@@ -24,11 +34,15 @@ jobs:
       run: dotnet build --configuration Release ./src/RapidCMS.Repositories/RapidCMS.Repositories.csproj
     - name: Build UI
       run: dotnet build --configuration Release ./src/RapidCMS.UI/RapidCMS.UI.csproj
-    - name: Publish Web Api
-      run: dotnet nuget push ./src/RapidCMS.Api.WebApi/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+    - name: Publish Api Core
+      run: dotnet nuget push .\src\RapidCMS.Api.Core\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+    - name: Publish Api Functions
+      run: nuget push .\src\RapidCMS.Api.Functions\bin\Release\*.nupkg -source https://api.nuget.org/v3/index.json -skipduplicate
+    - name: Publish Api WebApi
+      run: dotnet nuget push .\src\RapidCMS.Api.WebApi\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Publish Core
-      run: dotnet nuget push ./src/RapidCMS.Core/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push .\src\RapidCMS.Core\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Publish Repositories
-      run: dotnet nuget push ./src/RapidCMS.Repositories/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push .\src\RapidCMS.Repositories\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Publish UI
-      run: dotnet nuget push ./src/RapidCMS.UI/bin/Release/*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push .\src\RapidCMS.UI\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate

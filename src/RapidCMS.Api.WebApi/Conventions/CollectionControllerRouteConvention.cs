@@ -1,34 +1,22 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
+﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using RapidCMS.Api.WebApi.Controllers;
+using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Api.WebApi.Conventions
 {
     public class CollectionControllerRouteConvention : IControllerModelConvention
     {
-        public const string RouteTemplatePrefix = "/api/_rapidcms/";
-        public const string AliasKey = "__rapidCMSAlias";
-
-        private readonly IReadOnlyDictionary<TypeInfo, string> _controllers;
-
-        public CollectionControllerRouteConvention(IReadOnlyDictionary<TypeInfo, string> controllers)
-        {
-            _controllers = controllers;
-        }
-
+        public const string RouteTemplatePrefix = "/api/";
+        
         public void Apply(ControllerModel controller)
         {
-            var type = controller.ControllerType;
-
-            if (_controllers.TryGetValue(type, out var alias))
+            if (controller.ControllerType.In(typeof(ApiRepositoryController), typeof(ApiFileUploadController)))
             {
-                controller.Properties.Add(AliasKey, alias);
-
                 controller.Selectors.Add(new SelectorModel
                 {
                     AttributeRouteModel = new AttributeRouteModel
                     {
-                        Template = $"{RouteTemplatePrefix}{alias}"
+                        Template = RouteTemplatePrefix
                     }
                 });
             }

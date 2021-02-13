@@ -21,7 +21,10 @@ namespace RapidCMS.Example.WebAssembly
     public class Program
     {
         private const bool ConfigureAuthentication = false;
+        // web api 
         private static readonly Uri BaseUri = new Uri("https://localhost:5003");
+        // function api
+        //private static readonly Uri BaseUri = new Uri("http://localhost:7074");
 
         public static async Task Main(string[] args)
         {
@@ -95,14 +98,16 @@ namespace RapidCMS.Example.WebAssembly
             builder.Services.AddTransient<ITextUploadHandler, Base64ApiTextUploadHandler>();
             builder.Services.AddTransient<IImageUploadHandler, Base64ApiImageUploadHandler>();
 
-
             if (!ConfigureAuthentication)
             {
+                // just like the repositories, the file uploads are also forwarded to the backend API
+                // the handler should also be registered on the API side
                 builder.Services.AddRapidCMSFileUploadApiHttpClient<Base64TextFileUploadHandler>(BaseUri);
                 builder.Services.AddRapidCMSFileUploadApiHttpClient<Base64ImageUploadHandler>(BaseUri);
             }
             else
             {
+                // when authentication is enabled, the auth token from the frontend should be forwarded to the file upload API
                 builder.Services.AddRapidCMSAuthenticatedFileUploadApiHttpClient<Base64TextFileUploadHandler, AuthorizationMessageHandler>(BaseUri);
                 builder.Services.AddRapidCMSAuthenticatedFileUploadApiHttpClient<Base64ImageUploadHandler, AuthorizationMessageHandler>(BaseUri);
             }
@@ -123,6 +128,9 @@ namespace RapidCMS.Example.WebAssembly
                     config.SetCustomLoginStatus(typeof(LoginStatus));
                     config.SetCustomLoginScreen(typeof(LoginScreen));
                 }
+
+                // configure 5 as number of concurrent HTTP requests to the backend API
+                config.Advanced.SemaphoreCount = 5;
 
                 // CRUD editor for simple POCO with recursive sub collections
                 // --> see Collections/PersonCollection for the basics of this CMS
@@ -176,7 +184,7 @@ namespace RapidCMS.Example.WebAssembly
             // For OIDC (but not working)
             builder.Services.AddOidcAuthentication(config =>
             {
-                builder.Configuration.Bind("DevOIDC", config);
+                builder.Configuration.Bind("OnlineDevOIDC", config);
             });
 
             // For AD

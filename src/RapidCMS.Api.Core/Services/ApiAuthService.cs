@@ -2,28 +2,27 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 
-namespace RapidCMS.Core.Services.Auth
+namespace RapidCMS.Api.Core.Services
 {
     internal class ApiAuthService : IAuthService
     {
-        private readonly AuthenticationStateProvider _authenticationStateProvider;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IUserResolver _userResolver;
+        private readonly IAuthorizationService _authorizationService;
 
         public ApiAuthService(
-            AuthenticationStateProvider authenticationStateProvider,
-            IServiceProvider serviceProvider)
+            IUserResolver userResolver,
+            IAuthorizationService authorizationService)
         {
-            _authenticationStateProvider = authenticationStateProvider;
-            _serviceProvider = serviceProvider;
+            _userResolver = userResolver;
+            _authorizationService = authorizationService;
         }
 
         public Task<bool> IsUserAuthorizedAsync(UsageType usageType, IEntity entity)
@@ -41,12 +40,13 @@ namespace RapidCMS.Core.Services.Auth
 
         public async Task<bool> IsUserAuthorizedAsync(OperationAuthorizationRequirement operation, IEntity entity)
         {
-            var authorizationService = _serviceProvider.GetRequiredService<IAuthorizationService>();
+            var user = _userResolver.GetUser();
+            if (user == null)
+            {
+                return false;
+            }
 
-            var state = await _authenticationStateProvider.GetAuthenticationStateAsync();
-            var user = state.User;
-
-            var authorizationChallenge = await authorizationService.AuthorizeAsync(user, entity, operation);
+            var authorizationChallenge = await _authorizationService.AuthorizeAsync(user, entity, operation);
 
             return authorizationChallenge.Succeeded;
         }

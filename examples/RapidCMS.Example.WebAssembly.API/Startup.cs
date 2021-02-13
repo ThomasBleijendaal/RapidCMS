@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -49,7 +50,7 @@ namespace RapidCMS.Example.WebAssembly.API
                 services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();
             }
 
-            services.AddRapidCMSApi(config =>
+            services.AddRapidCMSWebApi(config =>
             {
                 if (!ConfigureAuthentication)
                 {
@@ -131,7 +132,7 @@ namespace RapidCMS.Example.WebAssembly.API
                 })
                 .AddJwtBearer(options =>
                 {
-                    Configuration.Bind("DevOIDC", options);
+                    Configuration.Bind("OnlineDevOIDC", options);
                 });
         }
     }

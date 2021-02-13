@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>RapidCMS.Api.Functions</id>
+    <version>3.8.0-preview</version>
+    <title>RapidCMS.Api.Functions</title>
+    <authors>Thomas Bleijendaal</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/ThomasBleijendaal/RapidCMS</projectUrl>
+    <description>Package for creating a companion Function API which allows you to easily create backend repositories for front-end collections in RapidCMS WebAssembly.
+
+      RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS purely from code.</description>
+    <copyright>2021</copyright>
+    <tags>Blazor, CMS</tags>
+  </metadata>
+  <files>
+    <file src="bin\Release\net5.0\bin\RapidCMS.Api.Functions.dll" target="lib\net5.0\RapidCMS.Api.Functions.dll" />
+  </files>
+</package>
