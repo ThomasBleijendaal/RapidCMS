@@ -65,7 +65,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<TIRepository, TRepository>();
 
             var builder = services.AddHttpClient(alias)
-                .ConfigureHttpClient(x => x.BaseAddress = new Uri(baseUri, $"api/_rapidcms/{alias}/"));
+                .ConfigureHttpClient(x => x.BaseAddress = new Uri(baseUri, $"_rapidcms/{alias}/"));
 
             return builder;
         }
@@ -146,7 +146,7 @@ namespace Microsoft.Extensions.DependencyInjection
             var alias = AliasHelper.GetFileUploaderAlias(typeof(TFileHandler));
 
             var builder = services.AddHttpClient<ApiFileUploadHandler<TFileHandler>>(alias)
-                .ConfigureHttpClient(x => x.BaseAddress = new Uri(baseUri, $"api/_rapidcms/{alias}/"));
+                .ConfigureHttpClient(x => x.BaseAddress = new Uri(baseUri, $"_rapidcms/{alias}/"));
 
             return builder;
         }
