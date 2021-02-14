@@ -57,34 +57,34 @@ namespace RapidCMS.Example.WebAssembly
             // work seamlessly with a repository on the API side of things (See RapidCMS.Example.WebAssembly.API)
             if (!ConfigureAuthentication)
             {
-                builder.Services.AddRapidCMSApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>>(BaseUri);
-                builder.Services.AddRapidCMSApiRepository<BaseRepository<Details>, ApiRepository<Details, JsonRepository<Details>>>(BaseUri);
-                builder.Services.AddRapidCMSApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>>(BaseUri);
-                builder.Services.AddRapidCMSApiRepository<BaseRepository<Country>, ApiRepository<Country, JsonRepository<Country>>>(BaseUri);
-                builder.Services.AddRapidCMSApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup, JsonRepository<TagGroup>>>(BaseUri);
-                builder.Services.AddRapidCMSApiRepository<BaseRepository<Tag>, ApiRepository<Tag, JsonRepository<Tag>>>(BaseUri);
-                builder.Services.AddRapidCMSApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>>(BaseUri);
+                builder.Services.AddRapidCMSApiRepository<BaseRepository<Person>, ApiRepository<Person>>(BaseUri);
+                builder.Services.AddRapidCMSApiRepository<BaseRepository<Details>, ApiRepository<Details>>(BaseUri);
+                builder.Services.AddRapidCMSApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson>>(BaseUri);
+                builder.Services.AddRapidCMSApiRepository<BaseRepository<Country>, ApiRepository<Country>>(BaseUri);
+                builder.Services.AddRapidCMSApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup>>(BaseUri);
+                builder.Services.AddRapidCMSApiRepository<BaseRepository<Tag>, ApiRepository<Tag>>(BaseUri);
+                builder.Services.AddRapidCMSApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase>>(BaseUri);
 
                 // api repositories can also be mapped
                 builder.Services.AddRapidCMSApiRepository<
                     BaseMappedRepository<MappedEntity, DatabaseEntity>,
-                    ApiMappedRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>>(BaseUri);
+                    ApiMappedRepository<MappedEntity, DatabaseEntity>>(BaseUri);
             }
             else
             {
                 // The AuthorizationMessageHandler forwards the auth token from the frontend to the backend, allowing you to validate the user easily
-                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Person>, ApiRepository<Person, JsonRepository<Person>>, AuthorizationMessageHandler>(BaseUri);
-                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Details>, ApiRepository<Details, JsonRepository<Details>>, AuthorizationMessageHandler>(BaseUri);
-                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>, AuthorizationMessageHandler>(BaseUri);
-                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Country>, ApiRepository<Country, JsonRepository<Country>>, AuthorizationMessageHandler>(BaseUri);
-                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup, JsonRepository<TagGroup>>, AuthorizationMessageHandler>(BaseUri);
-                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Tag>, ApiRepository<Tag, JsonRepository<Tag>>, AuthorizationMessageHandler>(BaseUri);
-                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>, AuthorizationMessageHandler>(BaseUri);
+                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Person>, ApiRepository<Person>, AuthorizationMessageHandler>(BaseUri);
+                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Details>, ApiRepository<Details>, AuthorizationMessageHandler>(BaseUri);
+                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<ConventionalPerson>, ApiRepository<ConventionalPerson>, AuthorizationMessageHandler>(BaseUri);
+                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Country>, ApiRepository<Country>, AuthorizationMessageHandler>(BaseUri);
+                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<TagGroup>, ApiRepository<TagGroup>, AuthorizationMessageHandler>(BaseUri);
+                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<Tag>, ApiRepository<Tag>, AuthorizationMessageHandler>(BaseUri);
+                builder.Services.AddRapidCMSAuthenticatedApiRepository<BaseRepository<EntityVariantBase>, ApiRepository<EntityVariantBase>, AuthorizationMessageHandler>(BaseUri);
 
                 // api repositories can also be mapped
                 builder.Services.AddRapidCMSAuthenticatedApiRepository<
                     BaseMappedRepository<MappedEntity, DatabaseEntity>,
-                    ApiMappedRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>,
+                    ApiMappedRepository<MappedEntity, DatabaseEntity>,
                     AuthorizationMessageHandler>(BaseUri);
                 builder.Services.AddSingleton<DatabaseEntityDataViewBuilder>();
             }

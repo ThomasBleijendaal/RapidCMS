@@ -17,10 +17,9 @@ using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Repositories.ApiBridge
 {
-    public class ApiMappedRepository<TEntity, TDatabaseEntity, TCorrespondingRepository> : BaseMappedRepository<TEntity, TDatabaseEntity>
+    public class ApiMappedRepository<TEntity, TDatabaseEntity> : BaseMappedRepository<TEntity, TDatabaseEntity>
         where TEntity : class, IEntity
         where TDatabaseEntity : class
-        where TCorrespondingRepository : IRepository
     {
         private readonly ApiRepositoryHelper _apiRepositoryHelper;
 
@@ -28,7 +27,7 @@ namespace RapidCMS.Repositories.ApiBridge
         {
             var jsonSerializerSettings = new JsonSerializerSettings();
             jsonSerializerSettings.Converters.Add(new EntityModelJsonConverter<TEntity>());
-            var repositoryAlias = AliasHelper.GetRepositoryAlias(typeof(ApiMappedRepository<TEntity, TDatabaseEntity, TCorrespondingRepository>));
+            var repositoryAlias = AliasHelper.GetRepositoryAlias(typeof(ApiMappedRepository<TEntity, TDatabaseEntity>));
 
             _apiRepositoryHelper = new ApiRepositoryHelper(httpClientFactory, jsonSerializerSettings, repositoryAlias);
         }

@@ -43,7 +43,7 @@ namespace RapidCMS.Core.Models.Config.Api
             where TEntity : class, IEntity
             where TRepository : IRepository
         {
-            var fullType = typeof(ApiRepository<TEntity, TRepository>);
+            var fullType = typeof(ApiRepository<TEntity>);
             var alias = AliasHelper.GetRepositoryAlias(fullType);
 
             if (Repositories.Any(x => x.Alias == alias))
@@ -67,7 +67,7 @@ namespace RapidCMS.Core.Models.Config.Api
             where TMappedEntity : class
             where TRepository : IRepository
         {
-            var fullType = typeof(ApiMappedRepository<TEntity, TMappedEntity, TRepository>);
+            var fullType = typeof(ApiMappedRepository<TEntity, TMappedEntity>);
             var alias = AliasHelper.GetRepositoryAlias(fullType);
 
             if (Repositories.Any(x => x.Alias == alias))
