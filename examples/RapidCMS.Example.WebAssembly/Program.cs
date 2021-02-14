@@ -181,7 +181,7 @@ namespace RapidCMS.Example.WebAssembly
 
         private static void ConfigureOpenIDConnectAuthentication(WebAssemblyHostBuilder builder)
         {
-            // For OIDC (but not working)
+            // For OIDC
             builder.Services.AddOidcAuthentication(config =>
             {
                 builder.Configuration.Bind("OnlineDevOIDC", config);

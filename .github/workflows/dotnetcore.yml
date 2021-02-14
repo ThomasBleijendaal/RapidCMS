@@ -4,6 +4,7 @@ on:
     push:
         branches:
         - master
+        - dotnet5functions
 
 jobs:
   build:
