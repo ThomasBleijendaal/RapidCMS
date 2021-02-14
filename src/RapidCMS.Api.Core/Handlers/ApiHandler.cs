@@ -29,13 +29,13 @@ namespace RapidCMS.Api.Core.Handlers
     {
         private readonly IPresentationService _presentationService;
         private readonly IInteractionService _interactionService;
-        private readonly ILogger _logger;
+        private readonly ILogger<ApiHandler<TEntity, TDatabaseEntity, TRepository>> _logger;
         private readonly JsonSerializerSettings _jsonSerializerSettings;
 
         public ApiHandler(
             IPresentationService presentationService,
             IInteractionService interactionService,
-            ILogger logger)
+            ILogger<ApiHandler<TEntity, TDatabaseEntity, TRepository>> logger)
         {
             _presentationService = presentationService;
             _interactionService = interactionService;
