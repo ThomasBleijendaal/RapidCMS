@@ -161,7 +161,7 @@ namespace RapidCMS.Example.Server
                 .AddCookie("Cookies")
                 .AddOpenIdConnect("OpenIdConnect", options =>
                 {
-                    Configuration.Bind("DevOIDC", options);
+                    Configuration.Bind("OnlineDevOIDC", options);
 
                     IdentityModelEventSource.ShowPII = true;
 

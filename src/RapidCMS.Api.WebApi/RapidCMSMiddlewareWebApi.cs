@@ -50,43 +50,29 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new InvalidOperationException("Call AddRapidCMSApi() before calling this method.");
             }
 
-            var builder = services.AddControllers(config =>
-            {
-                config.Conventions.Add(_routeConvention);
-
-                extraConfig?.Invoke(config);
-            }).AddNewtonsoftJson(options =>
-            {
-                foreach (var entityType in _rootConfig.Repositories.Select(x => x.EntityType))
+            var builder = services
+                .AddControllers(config =>
                 {
-                    if (Activator.CreateInstance(typeof(EntityModelJsonConverter<>).MakeGenericType(entityType)) is JsonConverter jsonConverter)
+                    config.Conventions.Add(_routeConvention);
+
+                    extraConfig?.Invoke(config);
+                })
+                .AddNewtonsoftJson(options =>
+                {
+                    foreach (var entityType in _rootConfig.Repositories.Select(x => x.EntityType))
                     {
-                        options.SerializerSettings.Converters.Add(jsonConverter);
+                        if (Activator.CreateInstance(typeof(EntityModelJsonConverter<>).MakeGenericType(entityType)) is JsonConverter jsonConverter)
+                        {
+                            options.SerializerSettings.Converters.Add(jsonConverter);
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException($"Could not create {nameof(EntityModelJsonConverter<IEntity>)} for {entityType.Name}");
+                        }
                     }
-                    else
-                    {
-                        throw new InvalidOperationException($"Could not create {nameof(EntityModelJsonConverter<IEntity>)} for {entityType.Name}");
-                    }
-                }
-            });
+                });
 
             return builder;
-        }
-
-        [Obsolete("Use AddRapidCMSControllers.", true)]
-        public static void AddRapidCMSRouteConvention(this IList<IApplicationModelConvention> list)
-        {
-            if (_routeConvention == null)
-            {
-                throw new InvalidOperationException("Call AddRapidCMSApi() before calling this method.");
-            }
-
-            list.Add(_routeConvention);
-        }
-
-        [Obsolete("Use AddRapidCMSControllers.", true)]
-        public static void AddRapidCMSControllerFeatureProvider(this IList<IApplicationFeatureProvider> list)
-        {
         }
 
         private static ApiConfig GetRootConfig(Action<IApiConfig>? config = null)

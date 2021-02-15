@@ -4,6 +4,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Pipeline;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RapidCMS.Api.Core.Abstractions;
 using RapidCMS.Api.Core.Models;
@@ -16,13 +17,16 @@ namespace RapidCMS.Api.Functions.Functions
     {
         private readonly IApiHandlerResolver _apiHandlerResolver;
         private readonly IFunctionExecutionContextAccessor _functionExecutionContextAccessor;
+        private readonly ILogger<ApiFunctions> _logger;
 
         public ApiFunctions(
             IApiHandlerResolver apiHandlerResolver,
-            IFunctionExecutionContextAccessor functionExecutionContextAccessor)
+            IFunctionExecutionContextAccessor functionExecutionContextAccessor,
+            ILogger<ApiFunctions> logger)
         {
             _apiHandlerResolver = apiHandlerResolver;
             _functionExecutionContextAccessor = functionExecutionContextAccessor;
+            _logger = logger;
         }
 
         [FunctionName(nameof(GetByIdAsync))]
@@ -92,11 +96,16 @@ namespace RapidCMS.Api.Functions.Functions
         [FunctionName(nameof(NewAsync))]
         public async Task<HttpResponseData> NewAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/new")] HttpRequestData req, FunctionExecutionContext context)
         {
+            _logger.LogWarning("Got into function");
             _functionExecutionContextAccessor.FunctionExecutionContext = context;
 
+            _logger.LogWarning("Context set");
             if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
             {
+                _logger.LogWarning("Repo alias is: " + repositoryAlias);
                 var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).NewAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body).Json });
+
+                _logger.LogWarning("Response received");
                 return new HttpResponseData(response.StatusCode, response.ResponseBody);
             }
             else

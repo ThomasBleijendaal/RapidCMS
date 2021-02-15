@@ -29,14 +29,17 @@ namespace RapidCMS.Api.Core.Handlers
     {
         private readonly IPresentationService _presentationService;
         private readonly IInteractionService _interactionService;
+        private readonly ILogger<ApiHandler<TEntity, TDatabaseEntity, TRepository>> _logger;
         private readonly JsonSerializerSettings _jsonSerializerSettings;
 
         public ApiHandler(
             IPresentationService presentationService,
-            IInteractionService interactionService)
+            IInteractionService interactionService,
+            ILogger<ApiHandler<TEntity, TDatabaseEntity, TRepository>> logger)
         {
             _presentationService = presentationService;
             _interactionService = interactionService;
+            _logger = logger;
             _jsonSerializerSettings = new JsonSerializerSettings();
 
             if (Activator.CreateInstance(typeof(EntityModelJsonConverter<>).MakeGenericType(typeof(TEntity))) is JsonConverter jsonConverter)
@@ -78,12 +81,12 @@ namespace RapidCMS.Api.Core.Handlers
             {
                 return new ApiResponseModel(HttpStatusCode.Forbidden);
             }
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, $"Error in {nameof(AddRelationAsync)}.");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(AddRelationAsync)}.");
 
-            //    return new ApiResponseModel(HttpStatusCode.InternalServerError);
-            //}
+                return new ApiResponseModel(HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<ApiResponseModel> DeleteAsync(ApiRequestModel request)
@@ -111,12 +114,12 @@ namespace RapidCMS.Api.Core.Handlers
             {
                 return new ApiResponseModel(HttpStatusCode.Forbidden);
             }
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, $"Error in {nameof(DeleteAsync)}.");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(DeleteAsync)}.");
 
-            //    return new ApiResponseModel(HttpStatusCode.InternalServerError);
-            //}
+                return new ApiResponseModel(HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<ApiResponseModel> GetAllAsync(ApiRequestModel request)
@@ -147,12 +150,12 @@ namespace RapidCMS.Api.Core.Handlers
             {
                 return new ApiResponseModel(HttpStatusCode.Forbidden);
             }
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, $"Error in {nameof(GetAllAsync)}.");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(GetAllAsync)}.");
 
-            //    return new ApiResponseModel(HttpStatusCode.InternalServerError);
-            //}
+                return new ApiResponseModel(HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<ApiResponseModel> GetAllNonRelatedAsync(ApiRequestModel request)
@@ -183,12 +186,12 @@ namespace RapidCMS.Api.Core.Handlers
             {
                 return new ApiResponseModel(HttpStatusCode.Forbidden);
             }
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, $"Error in {nameof(GetAllNonRelatedAsync)}.");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(GetAllNonRelatedAsync)}.");
 
-            //    return new ApiResponseModel(HttpStatusCode.InternalServerError);
-            //}
+                return new ApiResponseModel(HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<ApiResponseModel> GetAllRelatedAsync(ApiRequestModel request)
@@ -219,12 +222,12 @@ namespace RapidCMS.Api.Core.Handlers
             {
                 return new ApiResponseModel(HttpStatusCode.Forbidden);
             }
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, $"Error in {nameof(GetAllRelatedAsync)}.");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(GetAllRelatedAsync)}.");
 
-            //    return new ApiResponseModel(HttpStatusCode.InternalServerError);
-            //}
+                return new ApiResponseModel(HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<ApiResponseModel> GetByIdAsync(ApiRequestModel request)
@@ -253,12 +256,12 @@ namespace RapidCMS.Api.Core.Handlers
             {
                 return new ApiResponseModel(HttpStatusCode.Forbidden);
             }
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, $"Error in {nameof(GetByIdAsync)}.");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(GetByIdAsync)}.");
 
-            //    return new ApiResponseModel(HttpStatusCode.InternalServerError);
-            //}
+                return new ApiResponseModel(HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<ApiResponseModel> InsertAsync(ApiRequestModel request)
@@ -298,29 +301,34 @@ namespace RapidCMS.Api.Core.Handlers
             {
                 return new ApiResponseModel(HttpStatusCode.Forbidden);
             }
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, $"Error in {nameof(InsertAsync)}.");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(InsertAsync)}.");
 
-            //    return new ApiResponseModel(HttpStatusCode.InternalServerError);
-            //}
+                return new ApiResponseModel(HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<ApiResponseModel> NewAsync(ApiRequestModel request)
         {
             try
             {
+                _logger.LogWarning("Handler");
                 var query = JsonConvert.DeserializeObject<ParentQueryModel>(request.Body ?? "", _jsonSerializerSettings);
                 if (query == null)
                 {
+                    _logger.LogWarning("Query bad");
                     return new ApiResponseModel(HttpStatusCode.BadRequest);
                 }
+                _logger.LogWarning("Query good");
 
                 var entity = await _presentationService.GetEntityAsync<GetEntityRequestModel, IEntity>(new GetEntityRequestModel
                 {
                     Subject = new EntityDescriptor(default, RepositoryAlias, query.ParentPath, query.VariantAlias),
                     UsageType = UsageType.Node | UsageType.New
                 });
+
+                _logger.LogWarning("Presentation service ok");
 
                 return new ApiResponseModel(HttpStatusCode.OK, EntityModel.Create(entity));
             }
@@ -332,12 +340,12 @@ namespace RapidCMS.Api.Core.Handlers
             {
                 return new ApiResponseModel(HttpStatusCode.Forbidden);
             }
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, $"Error in {nameof(NewAsync)}.");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(NewAsync)}.");
 
-            //    return new ApiResponseModel(HttpStatusCode.InternalServerError);
-            //}
+                return new ApiResponseModel(HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<ApiResponseModel> RemoveRelationAsync(ApiRequestModel request)
@@ -367,12 +375,12 @@ namespace RapidCMS.Api.Core.Handlers
             {
                 return new ApiResponseModel(HttpStatusCode.Forbidden);
             }
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, $"Error in {nameof(RemoveRelationAsync)}.");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(RemoveRelationAsync)}.");
 
-            //    return new ApiResponseModel(HttpStatusCode.InternalServerError);
-            //}
+                return new ApiResponseModel(HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<ApiResponseModel> ReorderAsync(ApiRequestModel request)
@@ -401,12 +409,12 @@ namespace RapidCMS.Api.Core.Handlers
             {
                 return new ApiResponseModel(HttpStatusCode.Forbidden);
             }
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, $"Error in {nameof(ReorderAsync)}.");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(ReorderAsync)}.");
 
-            //    return new ApiResponseModel(HttpStatusCode.InternalServerError);
-            //}
+                return new ApiResponseModel(HttpStatusCode.InternalServerError);
+            }
         }
 
         public async Task<ApiResponseModel> UpdateAsync(ApiRequestModel request)
@@ -445,12 +453,12 @@ namespace RapidCMS.Api.Core.Handlers
             {
                 return new ApiResponseModel(HttpStatusCode.Forbidden);
             }
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, $"Error in {nameof(UpdateAsync)}.");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in {nameof(UpdateAsync)}.");
 
-            //    return new ApiResponseModel(HttpStatusCode.InternalServerError);
-            //}
+                return new ApiResponseModel(HttpStatusCode.InternalServerError);
+            }
         }
     }
 }
