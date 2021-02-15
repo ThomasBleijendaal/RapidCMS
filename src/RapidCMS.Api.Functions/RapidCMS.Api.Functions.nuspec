@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>RapidCMS.Api.Functions</id>
-    <version>3.8.7-preview</version>
+    <version>3.8.8-preview</version>
     <title>RapidCMS.Api.Functions</title>
     <authors>Thomas Bleijendaal</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
