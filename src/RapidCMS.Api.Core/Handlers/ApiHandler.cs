@@ -313,22 +313,17 @@ namespace RapidCMS.Api.Core.Handlers
         {
             try
             {
-                _logger.LogWarning("Handler");
                 var query = JsonConvert.DeserializeObject<ParentQueryModel>(request.Body ?? "", _jsonSerializerSettings);
                 if (query == null)
                 {
-                    _logger.LogWarning("Query bad");
                     return new ApiResponseModel(HttpStatusCode.BadRequest);
                 }
-                _logger.LogWarning("Query good");
 
                 var entity = await _presentationService.GetEntityAsync<GetEntityRequestModel, IEntity>(new GetEntityRequestModel
                 {
                     Subject = new EntityDescriptor(default, RepositoryAlias, query.ParentPath, query.VariantAlias),
                     UsageType = UsageType.Node | UsageType.New
                 });
-
-                _logger.LogWarning("Presentation service ok");
 
                 return new ApiResponseModel(HttpStatusCode.OK, EntityModel.Create(entity));
             }

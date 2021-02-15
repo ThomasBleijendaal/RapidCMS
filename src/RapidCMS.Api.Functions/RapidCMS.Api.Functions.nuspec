@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>RapidCMS.Api.Functions</id>
-    <version>3.8.8-preview</version>
+    <version>3.8.9-preview</version>
     <title>RapidCMS.Api.Functions</title>
     <authors>Thomas Bleijendaal</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -21,6 +21,8 @@
         <dependency id="Microsoft.Azure.Functions.Worker" version="1.0.0-preview3" />
         <dependency id="Microsoft.Azure.Functions.Worker.Sdk" version="1.0.0-preview3" />
         <dependency id="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" version="1.2.1" />
+        <dependency id="RapidCMS.Api.Core" version="3.8.9" />
+        <dependency id="RapidCMS.Core" version="3.8.9" />
       </group>
     </dependencies>
   </metadata>
