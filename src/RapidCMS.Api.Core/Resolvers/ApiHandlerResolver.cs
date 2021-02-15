@@ -25,7 +25,7 @@ namespace RapidCMS.Api.Core.Resolvers
             var repoConfig = _config.Repositories.FirstOrDefault(x => x.Alias == repositoryAlias);
             if (repoConfig == null)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"Could not find repository with alias {repositoryAlias}. Available: {string.Join(",", _config.Repositories.Select(x => $"[{x.ApiRepositoryType}: {x.Alias}]"))}.");
             }
 
             Type repoType;
