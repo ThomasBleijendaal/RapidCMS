@@ -103,7 +103,22 @@ namespace RapidCMS.Api.Functions.Functions
             if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
             {
                 _logger.LogWarning("Repo alias is: " + repositoryAlias);
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).NewAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body).Json });
+
+                var handler = _apiHandlerResolver.GetApiHandler(repositoryAlias);
+
+                _logger.LogWarning("Handler found");
+
+                _logger.LogWarning("Body is");
+
+                _logger.LogWarning(req.Body);
+
+                var json = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body).Json;
+
+                _logger.LogWarning("Json in body is");
+
+                _logger.LogWarning(json);
+
+                var response = await handler.NewAsync(new ApiRequestModel { Body = json });
 
                 _logger.LogWarning("Response received");
                 return new HttpResponseData(response.StatusCode, response.ResponseBody);
