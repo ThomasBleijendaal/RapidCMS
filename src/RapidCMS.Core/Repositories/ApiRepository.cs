@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
-using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Converters;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Helpers;
@@ -18,9 +16,8 @@ using RapidCMS.Core.Repositories;
 
 namespace RapidCMS.Repositories.ApiBridge
 {
-    public class ApiRepository<TEntity, TCorrespondingRepository> : BaseRepository<TEntity>
+    public class ApiRepository<TEntity> : BaseRepository<TEntity>
         where TEntity : class, IEntity
-        where TCorrespondingRepository : IRepository
     {
         private readonly ApiRepositoryHelper _apiRepositoryHelper;
 
@@ -28,7 +25,7 @@ namespace RapidCMS.Repositories.ApiBridge
         {
             var jsonSerializerSettings = new JsonSerializerSettings();
             jsonSerializerSettings.Converters.Add(new EntityModelJsonConverter<TEntity>());
-            var repositoryAlias = AliasHelper.GetRepositoryAlias(typeof(ApiRepository<TEntity, TCorrespondingRepository>));
+            var repositoryAlias = AliasHelper.GetRepositoryAlias(typeof(ApiRepository<TEntity>));
 
             _apiRepositoryHelper = new ApiRepositoryHelper(httpClientFactory, jsonSerializerSettings, repositoryAlias);
         }

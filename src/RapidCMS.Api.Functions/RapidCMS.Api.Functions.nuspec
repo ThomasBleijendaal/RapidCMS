@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>RapidCMS.Api.Functions</id>
-    <version>3.8.1-preview</version>
+    <version>3.8.9-preview</version>
     <title>RapidCMS.Api.Functions</title>
     <authors>Thomas Bleijendaal</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -13,6 +13,18 @@
       RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS purely from code.</description>
     <copyright>2021</copyright>
     <tags>Blazor, CMS</tags>
+
+    <dependencies>
+      <group targetFramework=".net5.0">
+        <dependency id="HttpMultipartParser" version="5.0.0" />
+        <dependency id="Microsoft.Azure.WebJobs.Extensions.Http" version="3.0.12" />
+        <dependency id="Microsoft.Azure.Functions.Worker" version="1.0.0-preview3" />
+        <dependency id="Microsoft.Azure.Functions.Worker.Sdk" version="1.0.0-preview3" />
+        <dependency id="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" version="1.2.1" />
+        <dependency id="RapidCMS.Api.Core" version="3.8.9" />
+        <dependency id="RapidCMS.Core" version="3.8.9" />
+      </group>
+    </dependencies>
   </metadata>
   <files>
     <file src="bin\Release\net5.0\bin\RapidCMS.Api.Functions.dll" target="lib\net5.0\RapidCMS.Api.Functions.dll" />

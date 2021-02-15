@@ -24,7 +24,6 @@ namespace RapidCMS.Core.Tests.Services.Auth
     {
         private IAuthService _subject = default!;
 
-        private Mock<IServiceProvider> _serviceProvider = default!;
         private Mock<IAuthorizationService> _authorizationService = default!;
         private Mock<IButtonActionHandler> _buttonActionHandler = default!;
         private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
@@ -35,11 +34,6 @@ namespace RapidCMS.Core.Tests.Services.Auth
         public void Setup()
         {
             _authorizationService = new Mock<IAuthorizationService>();
-
-            _serviceProvider = new Mock<IServiceProvider>();
-            _serviceProvider
-                .Setup(x => x.GetService(It.Is<Type>(x => x == typeof(IAuthorizationService))))
-                .Returns(_authorizationService.Object);
 
             _buttonActionHandler = new Mock<IButtonActionHandler>();
             _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
@@ -54,8 +48,8 @@ namespace RapidCMS.Core.Tests.Services.Auth
 
             _subject = new ServerSideAuthService(
                 _buttonActionHandlerResolver.Object,
-                _authenticationStateProvider.Object,
-                _serviceProvider.Object);
+                _authorizationService.Object,
+                _authenticationStateProvider.Object);
         }
 
         [TestCase(UsageType.Add, "Add")]
