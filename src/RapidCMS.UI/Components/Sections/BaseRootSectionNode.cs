@@ -35,7 +35,6 @@ namespace RapidCMS.UI.Components.Sections
 
             if (cancellationToken.IsCancellationRequested)
             {
-                Console.WriteLine("CANCEL");
                 return;
             }
 
@@ -48,8 +47,6 @@ namespace RapidCMS.UI.Components.Sections
                 Tabs = null;
                 ListUI = null;
                 PageContents = null;
-
-                editContext.OnFieldChanged += (s, a) => StateHasChanged();
             }
             catch
             {

@@ -25,13 +25,6 @@
 
     protected override void OnInitialized()
     {
-        //NavigationManager.LocationChanged += LocationChanged;
-
         TreeRoot = TreeService.GetRoot();
-    }
-
-    private void LocationChanged(object? sender, LocationChangedEventArgs args)
-    {
-        //StateHasChanged();
     }
 }

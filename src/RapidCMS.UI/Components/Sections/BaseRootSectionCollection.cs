@@ -66,7 +66,6 @@ namespace RapidCMS.UI.Components.Sections
                     Tabs = tabs;
                     ListContext = listContext;
                     Sections = sections;
-                    Sections?.ForEach(x => x.editContext.OnFieldChanged += (s, a) => StateHasChanged());
 
                     PageContents = null;
                 }

@@ -162,9 +162,8 @@ namespace RapidCMS.UI.Components.Sections
             });
         }
 
-        protected RenderFragment RenderType(ITypeRegistration section)
-        {
-            return builder =>
+        protected static RenderFragment RenderType(ITypeRegistration section) 
+            => builder =>
             {
                 var type = section.Type == typeof(ICollectionConfig)
                     ? typeof(RootSection)
@@ -183,7 +182,6 @@ namespace RapidCMS.UI.Components.Sections
 
                 builder.CloseComponent();
             };
-        }
 
         protected override bool ShouldRender()
         {

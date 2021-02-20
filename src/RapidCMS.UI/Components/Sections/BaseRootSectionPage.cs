@@ -15,7 +15,6 @@ namespace RapidCMS.UI.Components.Sections
 
             if (cancellationToken.IsCancellationRequested)
             {
-                Console.WriteLine("CANCEL");
                 return;
             }
 
