@@ -315,6 +315,7 @@ thead td:hover .icon {
     .content .nested-content + .nested-content {
         border-top: 1px dashed #bebbb8;
     }
+
 .content .divider + .nested-content {
     padding-top: 0;
 }
@@ -430,9 +431,9 @@ a.current-page {
         border-color: #a80000;
     }
 
-    .login .btn {
-        width: 100%;
-    }
+.login .btn {
+    width: 100%;
+}
 
 .form-row {
     padding-top: .4rem;
@@ -473,6 +474,7 @@ a.current-page {
     padding: .25rem 0 .25rem 2rem;
     margin: 0 1rem 0 -.4rem;
 }
+
     .form-check:hover {
         background: #faf9f8;
     }
@@ -508,57 +510,68 @@ pre.col-form-label {
     margin-top: -.25rem;
 }
 
-table thead td {
-    border-top: 0 !important;
-    border-bottom: 1px solid #a19f9d;
-    vertical-align: top !important;
-    cursor: default;
+table {
+    border-collapse: collapse;
 }
 
-table tbody td {
-    border-bottom: 1px solid #d2d0ce;
-}
-
-table tbody tr.dropzone td {
-    border: 0;
-}
-
-table td {
-    vertical-align: top !important;
-}
-
-    table td.button-cell {
-        white-space: nowrap;
-        text-align: right;
+    table thead td {
+        border-top: 0 !important;
+        border-bottom: 1px solid #a19f9d;
+        vertical-align: top !important;
+        cursor: default;
     }
 
-table tr[draggable=true] td {
-    cursor: grab;
-    /*width: 10px;*/
-    /*background: repeating-linear-gradient( -45deg, #ced4da, #ced4da 2px, #fff 2px, #fff 4px );*/
-}
-
-table tr.dragged td {
-    background: #ccc;
-    cursor: move !important;
-}
-
-table tr.modified td {
-    background: #deecf9;
-}
-
-table tr.dropover td {
-    border-top: 1px solid #333;
-}
-
-table thead td .ms-Icon {
-    color: #979593;
-    cursor: pointer;
-}
-
-    table thead td .ms-Icon:hover {
-        color: #484644;
+    table tbody td {
+        border-bottom: 1px solid #d2d0ce;
     }
+
+    table tbody tr.dropzone td {
+        border: 0;
+    }
+
+    table td {
+        vertical-align: top !important;
+    }
+
+        table td.button-cell {
+            white-space: nowrap;
+            text-align: right;
+            width: 1%;
+        }
+
+    table tr[draggable=true] td {
+        cursor: grab;
+    }
+
+        table tr[draggable=true] td:first-of-type {
+            border-left: .2rem solid #fff;
+        }
+
+            table tr[draggable=true] td:first-of-type:hover {
+                border-left: .2rem solid #a19f9d;
+            }
+
+    table tr.dragged td {
+        background: #edebe9;
+        cursor: move !important;
+    }
+
+    table tr.modified td {
+        background: #deecf9;
+    }
+
+    table tr.dropover {
+        border-top: 12px solid #d2d0ce;
+    }
+
+    table thead td .ms-Icon {
+        color: #979593;
+        cursor: pointer;
+    }
+
+        table thead td .ms-Icon:hover {
+            color: #484644;
+        }
 
 pre {
     background-color: #f3f2f1;
