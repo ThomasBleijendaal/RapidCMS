@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
@@ -10,7 +12,7 @@ namespace RapidCMS.UI.Components.Sections
 {
     public abstract partial class BaseRootSection
     {
-        protected async Task LoadNodeDataAsync()
+        protected async Task LoadNodeDataAsync(CancellationToken cancellationToken)
         {
             if (CurrentState == null)
             {
@@ -29,18 +31,26 @@ namespace RapidCMS.UI.Components.Sections
             var resolver = await UIResolverFactory.GetNodeUIResolverAsync(CurrentState.UsageType, CurrentState.CollectionAlias);
 
             var buttons = await resolver.GetButtonsForEditContextAsync(editContext);
-            var sections = new[] { (editContext, await resolver.GetSectionsForEditContextAsync(editContext)) };
+            var sections = new[] { (editContext, await resolver.GetSectionsForEditContextAsync(editContext)) }.ToList();
 
-            Buttons = buttons;
-            Sections = sections;
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
 
-            ListContext = null;
-            Tabs = null;
-            UIResolver = null;
-            ListUI = null;
-            PageContents = null;
+            try
+            {
+                Buttons = buttons;
+                Sections = sections;
 
-            editContext.OnFieldChanged += (s, a) => StateHasChanged();
+                ListContext = null;
+                Tabs = null;
+                ListUI = null;
+                PageContents = null;
+            }
+            catch
+            {
+            }
 
             StateHasChanged();
         }

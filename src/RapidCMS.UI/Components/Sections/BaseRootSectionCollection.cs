@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Enums;
@@ -16,92 +17,112 @@ using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Components.Sections
 {
-    public abstract partial class BaseRootSection 
+    public abstract partial class BaseRootSection
     {
         protected ListContext? ListContext { get; set; }
 
         protected IEnumerable<TabUI>? Tabs { get; set; }
 
-        protected IListUIResolver? UIResolver { get; set; }
         protected ListUI? ListUI { get; set; }
 
-        protected async Task LoadCollectionDataAsync(IEnumerable<string>? reloadEntityIds = null)
+        protected async Task LoadCollectionDataAsync(CancellationToken cancellationToken, IEnumerable<string>? reloadEntityIds = null)
         {
-            try
+            if (CurrentState == null)
             {
-                if (CurrentState == null)
+                throw new InvalidOperationException();
+            }
+
+            var uiResolver = await UIResolverFactory.GetListUIResolverAsync(CurrentState.UsageType, CurrentState.CollectionAlias);
+
+            if (reloadEntityIds?.Any() == true)
+            {
+                var sections = await ReloadSectionsAsync(reloadEntityIds, uiResolver);
+
+                if (cancellationToken.IsCancellationRequested)
                 {
-                    throw new InvalidOperationException();
+                    return;
                 }
 
-                if (reloadEntityIds?.Any() == true)
+                Sections = sections;
+            }
+            else
+            {
+                var listUI = uiResolver.GetListDetails();
+
+                var (listContext, sections) = await LoadSectionsAsync(listUI, uiResolver);
+
+                var buttons = await uiResolver.GetButtonsForEditContextAsync(listContext.ProtoEditContext);
+                var tabs = await uiResolver.GetTabsAsync(listContext.ProtoEditContext);
+
+                if (cancellationToken.IsCancellationRequested)
                 {
-                    await ReloadSectionsAsync(reloadEntityIds);
+                    return;
                 }
-                else
+
+                try
                 {
-                    UIResolver = await UIResolverFactory.GetListUIResolverAsync(CurrentState.UsageType, CurrentState.CollectionAlias);
-                    ListUI = UIResolver.GetListDetails();
-
-                    var listContext = await LoadSectionsAsync();
-
-                    var buttons = await UIResolver.GetButtonsForEditContextAsync(listContext.ProtoEditContext);
-                    var tabs = await UIResolver.GetTabsAsync(listContext.ProtoEditContext);
-
+                    ListUI = listUI;
                     Buttons = buttons;
                     Tabs = tabs;
                     ListContext = listContext;
-                    Sections?.ForEach(x => x.editContext.OnFieldChanged += (s, a) => StateHasChanged());
+                    Sections = sections;
 
                     PageContents = null;
                 }
-
-                StateHasChanged();
+                catch
+                {
+                }
             }
-            catch
-            {
-                ListContext = null;
-                Sections = null;
-                ListUI = null;
 
-                throw;
-            }
+            StateHasChanged();
         }
 
         protected async Task PageChangedAsync(int page)
         {
+            if (ListUI == null)
+            {
+                return;
+            }
+
             CurrentState.CurrentPage = page;
 
-            await LoadSectionsAsync();
-            StateHasChanged();
+            await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
         }
 
         protected async Task SearchAsync(string? search)
         {
+            if (ListUI == null)
+            {
+                return;
+            }
+
             CurrentState.CurrentPage = 1;
             CurrentState.SearchTerm = search;
 
-            await LoadSectionsAsync();
-            StateHasChanged();
+            await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
         }
 
         protected async Task TabChangeAsync(int? tabId)
         {
+            if (ListUI == null)
+            {
+                return;
+            }
+
             CurrentState.ActiveTab = tabId;
             CurrentState.CurrentPage = 1;
 
-            await LoadSectionsAsync();
-            StateHasChanged();
+            await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
         }
 
-        protected async Task<ListContext> LoadSectionsAsync()
+        protected async Task<(ListContext listContext, List<(FormEditContext editContext, IEnumerable<SectionUI> sections)> sections)> LoadSectionsAsync(ListUI listUI, IListUIResolver uiResolver)
         {
-            var query = Query.Create(ListUI!.PageSize, CurrentState.CurrentPage, CurrentState.SearchTerm, CurrentState.ActiveTab);
+            var query = Query.Create(listUI.PageSize, CurrentState.CurrentPage, CurrentState.SearchTerm, CurrentState.ActiveTab);
             query.CollectionAlias = CurrentState.CollectionAlias;
 
-            if (ListUI.OrderBys != null)
+            if (listUI.OrderBys != null)
             {
-                query.SetOrderBys(ListUI.OrderBys);
+                query.SetOrderBys(listUI.OrderBys);
             }
 
             var request = CurrentState.Related != null
@@ -124,17 +145,17 @@ namespace RapidCMS.UI.Components.Sections
 
             var listContext = await PresentationService.GetEntitiesAsync<GetEntitiesRequestModel, ListContext>(request);
 
-            await SetSectionsAsync(listContext);
+            var sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await uiResolver.GetSectionsForEditContextAsync(editContext)));
 
             if (!query.MoreDataAvailable)
             {
                 CurrentState.MaxPage = CurrentState.CurrentPage;
 
-                if (CurrentState.CurrentPage > 1 && Sections?.Any() != true)
+                if (CurrentState.CurrentPage > 1 && sections?.Any() != true)
                 {
                     CurrentState.CurrentPage--;
                     CurrentState.MaxPage = null;
-                    await LoadSectionsAsync();
+                    return await LoadSectionsAsync(listUI, uiResolver);
                 }
             }
             if (CurrentState.MaxPage == CurrentState.CurrentPage && query.MoreDataAvailable)
@@ -142,24 +163,14 @@ namespace RapidCMS.UI.Components.Sections
                 CurrentState.MaxPage = null;
             }
 
-            return listContext;
+            return (listContext, sections);
         }
 
-        private async Task SetSectionsAsync(ListContext listContext)
+        protected async Task<List<(FormEditContext editContext, IEnumerable<SectionUI> sections)>> ReloadSectionsAsync(IEnumerable<string> reloadEntityIds, IListUIResolver uiResolver)
         {
-            if (UIResolver == null)
+            if (Sections == null)
             {
-                return;
-            }
-
-            Sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await UIResolver.GetSectionsForEditContextAsync(editContext)));
-        }
-
-        protected async Task ReloadSectionsAsync(IEnumerable<string> reloadEntityIds)
-        {
-            if (UIResolver == null || Sections == null)
-            {
-                return;
+                return new List<(FormEditContext editContext, IEnumerable<SectionUI> sections)>();
             }
 
             var newSections = await Sections.ToListAsync(async x =>
@@ -175,7 +186,7 @@ namespace RapidCMS.UI.Components.Sections
                         VariantAlias = x.editContext.EntityVariantAlias
                     });
 
-                    return (reloadedEditContext, await UIResolver.GetSectionsForEditContextAsync(reloadedEditContext));
+                    return (reloadedEditContext, await uiResolver.GetSectionsForEditContextAsync(reloadedEditContext));
                 }
                 else
                 {
@@ -183,7 +194,7 @@ namespace RapidCMS.UI.Components.Sections
                 }
             });
 
-            Sections = newSections;
+            return newSections;
         }
 
         protected async Task ListButtonOnClickAsync(ButtonClickEventArgs args)
@@ -242,16 +253,27 @@ namespace RapidCMS.UI.Components.Sections
             }
         }
 
-        protected async Task OnRowDraggedAsync(RowDragEventArgs args)
+        protected void OnRowDragged(RowDragEventArgs args)
         {
             try
             {
-                if (ListContext == null)
+                if (ListContext == null || Sections == null)
                 {
                     throw new InvalidOperationException();
                 }
 
-                var editContext = ListContext.EditContexts.FirstOrDefault(x => x.Entity.Id == args.SubjectId);
+                var beforeIds = ListContext.EditContexts.Select(x => x.Entity.Id).ToArray();
+                var beforeSections = Sections.Select(x => x.editContext.Entity.Id).ToArray();
+
+                var subjectIndex = ListContext.EditContexts.FindIndex(x => x.Entity.Id == args.SubjectId);
+                var targetIndex = args.TargetId == null ? -1 : ListContext.EditContexts.FindIndex(x => x.Entity.Id == args.TargetId);
+                if (targetIndex > subjectIndex)
+                {
+                    targetIndex--;
+                }
+
+                var editContext = ListContext.EditContexts.ElementAt(subjectIndex);
+                var section = Sections.ElementAt(subjectIndex);
                 if (editContext == null)
                 {
                     throw new InvalidOperationException();
@@ -260,19 +282,21 @@ namespace RapidCMS.UI.Components.Sections
                 editContext.NotifyReordered(args.TargetId);
 
                 ListContext.EditContexts.Remove(editContext);
+                Sections.Remove(section);
 
-                if (args.TargetId == null)
+                if (targetIndex == -1)
                 {
                     ListContext.EditContexts.Add(editContext);
+                    Sections.Add(section);
                 }
                 else
                 {
-                    ListContext.EditContexts.Insert(
-                        ListContext.EditContexts.FindIndex(x => x.Entity.Id == args.TargetId),
-                        editContext);
+                    ListContext.EditContexts.Insert(targetIndex, editContext);
+                    Sections.Insert(targetIndex, section);
                 }
 
-                await SetSectionsAsync(ListContext);
+                var afterIds = ListContext.EditContexts.Select(x => x.Entity.Id).ToArray();
+                var afterSections = Sections.Select(x => x.editContext.Entity.Id).ToArray();
 
                 StateHasChanged();
             }

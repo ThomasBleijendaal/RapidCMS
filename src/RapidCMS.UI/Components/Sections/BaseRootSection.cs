@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Config;
@@ -37,10 +38,12 @@ namespace RapidCMS.UI.Components.Sections
         protected PageStateModel CurrentState => PageState.GetCurrentState()!;
 
         protected IEnumerable<ButtonUI>? Buttons { get; set; }
-        protected IEnumerable<(FormEditContext editContext, IEnumerable<SectionUI> sections)>? Sections { get; set; }
+        protected List<(FormEditContext editContext, IEnumerable<SectionUI> sections)>? Sections { get; set; }
         protected IEnumerable<ITypeRegistration>? PageContents { get; set; }
 
         protected ViewState CurrentViewState => new ViewState(PageState);
+
+        private CancellationTokenSource _loadCancellationTokenSource = new CancellationTokenSource();
 
         protected async Task HandleViewCommandAsync(ViewCommandResponseModel response)
         {
@@ -82,7 +85,6 @@ namespace RapidCMS.UI.Components.Sections
                 Sections = null;
                 ListContext = null;
                 Tabs = null;
-                UIResolver = null;
                 ListUI = null;
                 PageContents = null;
 
@@ -102,22 +104,24 @@ namespace RapidCMS.UI.Components.Sections
         }
 
         private async Task LoadDataAsync(IEnumerable<string>? entityIds = null)
-        {   
+        {
+            CancelLoadAndRestart();
+
             if (CurrentState?.PageType == PageType.Node)
             {
-                await LoadNodeDataAsync();
+                await LoadNodeDataAsync(_loadCancellationTokenSource.Token);
             }
             else if (CurrentState?.PageType == PageType.Collection)
             {
-                await LoadCollectionDataAsync(entityIds);
+                await LoadCollectionDataAsync(_loadCancellationTokenSource.Token, entityIds);
             }
             else if (CurrentState?.PageType == PageType.Page)
             {
-                await LoadPageDataAsync();
+                await LoadPageDataAsync(_loadCancellationTokenSource.Token);
             }
             else if (CurrentState?.PageType == PageType.Dashboard)
             {
-                await LoadPageDataAsync();
+                await LoadPageDataAsync(_loadCancellationTokenSource.Token);
             }
         }
 
@@ -158,9 +162,8 @@ namespace RapidCMS.UI.Components.Sections
             });
         }
 
-        protected RenderFragment RenderType(ITypeRegistration section)
-        {
-            return builder =>
+        protected static RenderFragment RenderType(ITypeRegistration section) 
+            => builder =>
             {
                 var type = section.Type == typeof(ICollectionConfig)
                     ? typeof(RootSection)
@@ -179,11 +182,17 @@ namespace RapidCMS.UI.Components.Sections
 
                 builder.CloseComponent();
             };
-        }
 
         protected override bool ShouldRender()
         {
             return !StateIsChanging;
+        }
+
+        private void CancelLoadAndRestart()
+        {
+            var currentSource = _loadCancellationTokenSource;
+            _loadCancellationTokenSource = new CancellationTokenSource();
+            currentSource.Cancel();
         }
     }
 }
