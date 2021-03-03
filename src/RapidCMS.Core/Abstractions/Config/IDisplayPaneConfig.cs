@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Repositories;
 
 namespace RapidCMS.Core.Abstractions.Config
 {
+    // TODO: add text section between fields
     public interface IDisplayPaneConfig<TEntity> : IHasButtons<IDisplayPaneConfig<TEntity>>
         where TEntity : IEntity
     {
