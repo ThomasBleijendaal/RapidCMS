@@ -1,4 +1,5 @@
-﻿using RapidCMS.Core.Abstractions.Config;
+﻿using Microsoft.AspNetCore.Components;
+using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Components;
@@ -104,7 +105,8 @@ namespace RapidCMS.Example.Shared.Collections
                             section.AddField(x => x.Details.Email)
                             // by default, all the properties will be combined to form the Name of the property (DetailsEmail in this example)
                             // so using SetName this can be set to something more user friendly
-                                .SetName("Email");
+                                .SetName("Email")
+                                .SetDetails(new MarkupString("<p>An emailadress looks like <code>name@domain.tld</code>.</p>"));
                         });
 
                         // you can even have sections specifically for an entity type.

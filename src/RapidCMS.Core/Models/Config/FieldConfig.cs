@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
@@ -18,6 +19,7 @@ namespace RapidCMS.Core.Models.Config
 
         internal string? Name { get; set; }
         internal string? Description { get; set; }
+        internal MarkupString? Details { get; set; }
         internal string? Placeholder { get; set; }
 
         internal Func<object, EntityState, bool> IsVisible { get; set; } = (x, y) => true;
@@ -51,6 +53,12 @@ namespace RapidCMS.Core.Models.Config
         IDisplayFieldConfig<TEntity, TValue> IHasNameDescription<IDisplayFieldConfig<TEntity, TValue>>.SetDescription(string description)
         {
             Description = description;
+            return this;
+        }
+
+        IDisplayFieldConfig<TEntity, TValue> IHasNameDescription<IDisplayFieldConfig<TEntity, TValue>>.SetDetails(MarkupString details)
+        {
+            Details = details;
             return this;
         }
 
@@ -97,6 +105,12 @@ namespace RapidCMS.Core.Models.Config
         IEditorFieldConfig<TEntity, TValue> IHasNameDescription<IEditorFieldConfig<TEntity, TValue>>.SetDescription(string description)
         {
             Description = description;
+            return this;
+        }
+
+        IEditorFieldConfig<TEntity, TValue> IHasNameDescription<IEditorFieldConfig<TEntity, TValue>>.SetDetails(MarkupString details)
+        {
+            Details = details;
             return this;
         }
 

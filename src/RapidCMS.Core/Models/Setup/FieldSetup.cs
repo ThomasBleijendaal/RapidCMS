@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Config;
@@ -11,6 +12,7 @@ namespace RapidCMS.Core.Models.Setup
         {
             Index = field.Index;
             Description = field.Description;
+            Details = field.Details;
             Name = field.Name;
             Placeholder = field.Placeholder;
             Property = field.Property;
@@ -25,6 +27,7 @@ namespace RapidCMS.Core.Models.Setup
         
         internal string? Name { get; set; }
         internal string? Description { get; set; }
+        internal MarkupString? Details { get; set; }
         internal string? Placeholder { get; set; }
 
         internal IPropertyMetadata? Property { get; set; }

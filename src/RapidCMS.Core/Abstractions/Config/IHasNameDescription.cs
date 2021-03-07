@@ -1,4 +1,6 @@
-﻿namespace RapidCMS.Core.Abstractions.Config
+﻿using Microsoft.AspNetCore.Components;
+
+namespace RapidCMS.Core.Abstractions.Config
 {
     public interface IHasNameDescription<TReturn>
     {
@@ -15,5 +17,12 @@
         /// <param name="description"></param>
         /// <returns></returns>
         TReturn SetDescription(string description);
+
+        /// <summary>
+        /// Sets the details of this field, displayed under the control.
+        /// </summary>
+        /// <param name="details"></param>
+        /// <returns></returns>
+        TReturn SetDetails(MarkupString details);
     }
 }

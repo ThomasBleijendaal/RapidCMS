@@ -510,6 +510,10 @@ pre.col-form-label {
     margin-top: -.25rem;
 }
 
+.details {
+    margin-top: .2rem;
+}
+
 table {
     border-collapse: collapse;
 }
