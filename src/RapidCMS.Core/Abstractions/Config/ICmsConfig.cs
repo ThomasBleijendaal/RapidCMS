@@ -75,6 +75,8 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <returns></returns>
         ICmsConfig AddPage(string icon, string color, string name, Action<IPageConfig> configure);
 
+        ICmsConfig AddWorkflow(Action<IWorkflowConfig> configure);
+
         /// <summary>
         /// The CMS homepage.
         /// </summary>
