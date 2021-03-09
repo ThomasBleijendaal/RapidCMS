@@ -51,9 +51,11 @@ namespace RapidCMS.Core.Resolvers.UI
 
         public ListUI GetListDetails()
         {
+            var commonValues = _fieldsPerType.GetCommonValues(_equalityComparer).ToList();
+
             return new ListUI
             {
-                CommonFields = _fieldsPerType.GetCommonValues(_equalityComparer).ToList(),
+                CommonFields = commonValues,
                 EmptyVariantColumnVisibility = _list.EmptyVariantColumnVisibility,
                 ListType = _list.ListType,
                 MaxUniqueFieldsInSingleEntity = _fieldsPerType.Max(x => x.Value.Count()),
@@ -61,7 +63,9 @@ namespace RapidCMS.Core.Resolvers.UI
                 SearchBarVisible = _list.SearchBarVisible ?? true,
                 Reorderable = _list.ReorderingAllowed ?? false,
                 SectionsHaveButtons = _list.Panes.Any(x => x.Buttons.Any()),
-                UniqueFields = _fieldsPerType.SelectMany(x => x.Value).Distinct(_equalityComparer).ToList()
+                UniqueFields = _fieldsPerType.SelectMany(x => x.Value).Distinct(_equalityComparer).ToList(),
+                GroupedFields = _fieldsPerType
+                    .ToDictionary(x => x.Key, x => x.Value.Where())
             };
         }
 
@@ -70,8 +74,7 @@ namespace RapidCMS.Core.Resolvers.UI
             var type = editContext.Entity.GetType();
             return await _list.Panes
                 .Where(pane => pane.VariantType.IsSameTypeOrDerivedFrom(type))
-                .ToListAsync(pane => GetSectionUIAsync(pane, editContext))
-                ;
+                .ToListAsync(pane => GetSectionUIAsync(pane, editContext));
         }
 
         public async Task<IEnumerable<TabUI>?> GetTabsAsync(FormEditContext editContext)

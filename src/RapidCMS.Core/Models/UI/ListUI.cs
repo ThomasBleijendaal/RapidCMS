@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Enums;
@@ -11,6 +12,7 @@ namespace RapidCMS.Core.Models.UI
         public ListType ListType { get; internal set; }
         public EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; internal set; }
 
+        public List<Dictionary<Type, FieldUI>>? GroupedFields { get; internal set; }
         public List<FieldUI>? UniqueFields { get; internal set; }
         public List<FieldUI>? CommonFields { get; internal set; }
         public int MaxUniqueFieldsInSingleEntity { get; internal set; }

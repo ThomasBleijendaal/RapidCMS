@@ -21,9 +21,18 @@
         }
     </td>
 }
+else if (GroupedFields != null && FieldToShow != null)
+{
+    <td>
+        @GroupedFields[FieldToShow].Name
+        <small>@GroupedFields[FieldToShow].Description</small>
+    </td>
+}
 
 @code {
     [Parameter] public FieldUI? Field { get; set; }
+    [Parameter] public Dictionary<Type, FieldUI>? GroupedFields { get; set; }
+    [Parameter] public Type? FieldToShow { get; set; }
     [Parameter] public EventCallback<int> OnPageChanged { get; set; }
 
     private async Task HandleClick(MouseEventArgs args)

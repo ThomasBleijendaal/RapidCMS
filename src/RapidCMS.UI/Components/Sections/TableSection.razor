@@ -11,9 +11,15 @@
                         <HeaderCell Field="field" OnPageChanged="@OnPageChanged" />
                     }
 
-                    if (UI.MaxUniqueFieldsInSingleEntity - UI.CommonFields.Count > 0)
+                    if (UI.MaxUniqueFieldsInSingleEntity - UI.CommonFields.Count > 0 && UI.GroupedFields != null)
                     {
-                        <td colspan=@(UI.MaxUniqueFieldsInSingleEntity - UI.CommonFields.Count)></td>
+                        foreach (var fields in UI.GroupedFields)
+                        {
+                            <HeaderCell GroupedFields="fields" FieldToShow="FieldToShow" />
+                        }
+
+                        // TODO: fix or remove
+                        @*<td colspan=@(UI.MaxUniqueFieldsInSingleEntity - UI.CommonFields.Count)></td>*@
                     }
                 }
                 else if (UI.UniqueFields != null)
@@ -23,6 +29,7 @@
                         <HeaderCell Field="field" />
                     }
                 }
+
 
                 if (UI.SectionsHaveButtons)
                 {
@@ -73,6 +80,7 @@
     [Parameter] public EventCallback<ButtonClickEventArgs> OnButtonClick { get; set; }
     [Parameter] public EventCallback<RowDragEventArgs> OnRowDragged { get; set; }
 
+    [Parameter] public int? FieldToShow { get; set; }
     [Parameter] public int CurrentPage { get; set; }
     [Parameter] public int? MaxPage { get; set; }
     [Parameter] public EventCallback<int> OnPageChanged { get; set; }
