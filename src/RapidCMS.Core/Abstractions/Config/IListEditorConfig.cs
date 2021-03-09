@@ -8,7 +8,8 @@ namespace RapidCMS.Core.Abstractions.Config
         IHasPageSize<IListEditorConfig<TEntity>>,
         IHasSearchBar<IListEditorConfig<TEntity>>,
         IHasEditorPanes<TEntity, IListEditorConfig<TEntity>>,
-        ISupportReordering<IListEditorConfig<TEntity>>
+        ISupportReordering<IListEditorConfig<TEntity>>,
+        IHasColumnVisibility<IListEditorConfig<TEntity>>
         where TEntity : IEntity
     {
         /// <summary>
@@ -17,14 +18,5 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <param name="listType"></param>
         /// <returns></returns>
         IListEditorConfig<TEntity> SetListType(ListType listType);
-
-        /// <summary>
-        /// Controls whether empty columns in the table should be collapsed. Only required when the
-        /// collection uses multiple EntityVariants, with seperate sets of properties which are not shared between the variants. Collapsing
-        /// the empty cell will reduce the number of columns required, and makes the table more readable.
-        /// </summary>
-        /// <param name="columnVisibility"></param>
-        /// <returns></returns>
-        IListEditorConfig<TEntity> SetColumnVisibility(EmptyVariantColumnVisibility columnVisibility);
     }
 }

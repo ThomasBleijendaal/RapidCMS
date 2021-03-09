@@ -49,9 +49,7 @@ namespace RapidCMS.Example.Shared.Collections
                                 section.AddDefaultButton(DefaultButtonType.SaveExisting);
                                 section.AddDefaultButton(DefaultButtonType.SaveNew);
                                 section.AddDefaultButton(DefaultButtonType.Edit);
-                            });
-
-                        view
+                            })
                             .AddSection<EntityVariantB>(section =>
                             {
                                 section.AddField(p => p.Id);
@@ -65,9 +63,7 @@ namespace RapidCMS.Example.Shared.Collections
                                 section.AddDefaultButton(DefaultButtonType.SaveExisting);
                                 section.AddDefaultButton(DefaultButtonType.SaveNew);
                                 section.AddDefaultButton(DefaultButtonType.Edit);
-                            });
-
-                        view
+                            })
                             .AddSection<EntityVariantC>(section =>
                             {
                                 section.AddField(p => p.Id);
@@ -90,37 +86,35 @@ namespace RapidCMS.Example.Shared.Collections
                         editor.AddDefaultButton(DefaultButtonType.SaveNew);
                         editor.AddDefaultButton(DefaultButtonType.SaveExisting);
 
-                        editor.AddSection(generic =>
-                        {
-                            generic.SetLabel("Generics");
+                        editor
+                            .AddSection(generic =>
+                            {
+                                generic.SetLabel("Generics");
 
-                            generic.AddField(x => x.Id).SetType(DisplayType.Pre);
-                            generic.AddField(x => x.Name);
-                        });
+                                generic.AddField(x => x.Id).SetType(DisplayType.Pre);
+                                generic.AddField(x => x.Name);
+                            })
+                            .AddSection<EntityVariantA>(a =>
+                            {
+                                a.SetLabel("Variant A specifics");
 
-                        editor.AddSection<EntityVariantA>(a =>
-                        {
-                            a.SetLabel("Variant A specifics");
+                                a.AddField(x => x.NameA1);
+                            })
+                            .AddSection<EntityVariantB>(b =>
+                            {
+                                b.SetLabel("Variant B specifics");
 
-                            a.AddField(x => x.NameA1);
-                        });
+                                b.AddField(x => x.NameB1);
+                                b.AddField(x => x.NameB2);
+                            })
+                            .AddSection<EntityVariantC>(c =>
+                            {
+                                c.SetLabel("Variant C specifics");
 
-                        editor.AddSection<EntityVariantB>(b =>
-                        {
-                            b.SetLabel("Variant B specifics");
-
-                            b.AddField(x => x.NameB1);
-                            b.AddField(x => x.NameB2);
-                        });
-
-                        editor.AddSection<EntityVariantC>(c =>
-                        {
-                            c.SetLabel("Variant C specifics");
-
-                            c.AddField(x => x.NameC1);
-                            c.AddField(x => x.NameC2);
-                            c.AddField(x => x.NameC3);
-                        });
+                                c.AddField(x => x.NameC1);
+                                c.AddField(x => x.NameC2);
+                                c.AddField(x => x.NameC3);
+                            });
                     });
             });
         }
