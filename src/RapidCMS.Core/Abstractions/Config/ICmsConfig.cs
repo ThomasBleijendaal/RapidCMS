@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Repositories;
 
 namespace RapidCMS.Core.Abstractions.Config
@@ -74,6 +76,12 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <param name="configure"></param>
         /// <returns></returns>
         ICmsConfig AddPage(string icon, string color, string name, Action<IPageConfig> configure);
+
+        // TODO: how to configure the tree elements position
+        internal ICmsConfig AddPlugin<TPlugin>()
+            where TPlugin : IPlugin;
+
+        IEnumerable<Type> Plugins { get; }
 
         /// <summary>
         /// The CMS homepage.

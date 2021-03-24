@@ -8,6 +8,8 @@
 [assembly: InternalsVisibleTo("RapidCMS.Api.Functions")]
 [assembly: InternalsVisibleTo("RapidCMS.Api.WebApi")]
 
+[assembly: InternalsVisibleTo("RapidCMS.ModelMaker")]
+
 namespace RapidCMS.Core
 {
     public class Constants

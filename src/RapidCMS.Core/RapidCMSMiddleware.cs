@@ -9,6 +9,7 @@ using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Mediators;
+using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
@@ -69,6 +70,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IConventionBasedResolver<NodeConfig>, ConventionBasedNodeConfigResolver>();
             services.AddSingleton<IFieldConfigResolver, FieldConfigResolver>();
             services.AddSingleton<ILanguageResolver, LanguageResolver>();
+
+            services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>, IPlugin>, PluginTreeElementsSetupResolver>();
 
             if (rootConfig.AllowAnonymousUsage)
             {

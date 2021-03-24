@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
@@ -19,7 +20,9 @@ namespace RapidCMS.Core.Resolvers.Setup
         private readonly ISetupResolver<ListSetup, ListConfig> _listResolver;
         private readonly ISetupResolver<NodeSetup, NodeConfig> _nodeResolver;
         private readonly IRepositoryTypeResolver _repositoryTypeResolver;
+        private readonly IEnumerable<IPlugin> _plugins;
 
+        private Dictionary<string, IPlugin> _pluginMap { get; set; } = new Dictionary<string, IPlugin>();
         private Dictionary<string, CollectionConfig> _collectionMap { get; set; } = new Dictionary<string, CollectionConfig>();
         private Dictionary<string, CollectionSetup> _cachedCollectionMap { get; set; } = new Dictionary<string, CollectionSetup>();
 
@@ -29,7 +32,8 @@ namespace RapidCMS.Core.Resolvers.Setup
             ISetupResolver<TreeViewSetup, TreeViewConfig> treeViewResolver,
             ISetupResolver<ListSetup, ListConfig> listResolver,
             ISetupResolver<NodeSetup, NodeConfig> nodeResolver,
-            IRepositoryTypeResolver repositoryTypeResolver)
+            IRepositoryTypeResolver repositoryTypeResolver,
+            IEnumerable<IPlugin> plugins)
         {
             _treeElementResolver = treeElementResolver;
             _entityVariantResolver = entityVariantResolver;
@@ -37,12 +41,18 @@ namespace RapidCMS.Core.Resolvers.Setup
             _listResolver = listResolver;
             _nodeResolver = nodeResolver;
             _repositoryTypeResolver = repositoryTypeResolver;
+            _plugins = plugins;
             Initialize(cmsConfig);
         }
 
         private void Initialize(ICmsConfig cmsConfig)
         {
             MapCollections(cmsConfig.CollectionsAndPages.SelectNotNull(x => x as CollectionConfig));
+
+            foreach (var plugin in _plugins)
+            {
+                _pluginMap.Add(plugin.CollectionPrefix, plugin);
+            }
 
             void MapCollections(IEnumerable<CollectionConfig> collections)
             {
@@ -87,6 +97,12 @@ namespace RapidCMS.Core.Resolvers.Setup
                 }
 
                 return resolvedSetup.Setup;
+            }
+            else if (alias.Contains("::") && alias.Split("::") is string[] aliasParts && 
+                _pluginMap.TryGetValue(aliasParts[0], out var plugin) &&
+                plugin.GetCollection(aliasParts[1]) is CollectionSetup collection)
+            {
+                return collection;
             }
             else
             {

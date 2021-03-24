@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
@@ -32,6 +33,8 @@ namespace RapidCMS.Core.Models.Config
 
         IEnumerable<ITreeElementConfig> ICollectionConfig.CollectionsAndPages => CollectionsAndPages;
 
+        IEnumerable<Type> ICmsConfig.Plugins => Plugins;
+        
         IEnumerable<Type> ICollectionConfig.RepositoryTypes 
             => CollectionsAndPages.SelectNotNull(c => c as ICollectionConfig).SelectMany(c => c.RepositoryTypes);
 
@@ -39,6 +42,8 @@ namespace RapidCMS.Core.Models.Config
         {
             new PageConfig("Dashboard", "apps", "Gray30", "__dashboard")
         };
+
+        public List<Type> Plugins { get; set; } = new List<Type>();
 
         public IAdvancedCmsConfig Advanced => AdvancedConfig;
 
@@ -157,6 +162,13 @@ namespace RapidCMS.Core.Models.Config
             configure.Invoke(page);
 
             CollectionsAndPages.Add(page);
+
+            return this;
+        }
+
+        ICmsConfig ICmsConfig.AddPlugin<TPlugin>()
+        {
+            Plugins.Add(typeof(TPlugin));
 
             return this;
         }
