@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
@@ -39,7 +40,7 @@ namespace RapidCMS.ModelMaker
             };
         }
 
-        public Type? GetRepository(string collectionAlias)
+        public Type? GetRepositoryType(string collectionAlias)
         {
             return typeof(ModelMakerRepository);
         }
@@ -53,7 +54,9 @@ namespace RapidCMS.ModelMaker
             false,
             false)
         {
-            
+            UsageType = UsageType.List,
+            TreeView = new TreeViewSetup(EntityVisibilty.Visible, CollectionRootVisibility.Visible, false, false, default),
+            ListView = new ListSetup(100, false, false, ListType.Table, EmptyVariantColumnVisibility.Collapse, new List<PaneSetup>(), new List<IButtonSetup>())
         };
     }
 
@@ -71,7 +74,7 @@ namespace RapidCMS.ModelMaker
 
         public Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(Enumerable.Empty<IEntity>());
         }
 
         public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelated related, IQuery query)
@@ -96,7 +99,7 @@ namespace RapidCMS.ModelMaker
 
         public Task<IEntity> NewAsync(IParent? parent, Type? variantType)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<IEntity>(new ModelMakerEntity());
         }
 
         public Task RemoveAsync(IRelated related, string id)
@@ -114,4 +117,11 @@ namespace RapidCMS.ModelMaker
             throw new NotImplementedException();
         }
     }
+
+    internal class ModelMakerEntity : IEntity
+    {
+        public string? Id { get; set; }
+    }
+
+
 }

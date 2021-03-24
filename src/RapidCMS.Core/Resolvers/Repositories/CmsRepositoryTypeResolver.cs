@@ -11,27 +11,19 @@ namespace RapidCMS.Core.Resolvers.Repositories
     {
         private readonly IReadOnlyDictionary<string, Type> _repositoryTypes;
         private readonly IReadOnlyDictionary<Type, string> _originallyRegisterdRepositoriesToAlias;
-        private readonly IEnumerable<IPlugin> _plugins;
 
         public CmsRepositoryTypeResolver(
             IReadOnlyDictionary<string, Type> types,
-            IReadOnlyDictionary<Type, string> originals,
-            IEnumerable<IPlugin> plugins)
+            IReadOnlyDictionary<Type, string> originals)
         {
             _repositoryTypes = types;
             _originallyRegisterdRepositoriesToAlias = originals;
-            _plugins = plugins;
         }
 
         public Type GetType(string repositoryAlias)
             => _repositoryTypes.TryGetValue(repositoryAlias, out var type)
                 ? type
-                : repositoryAlias.Contains("::") && 
-                        repositoryAlias.Split("::") is string[] aliasParts && 
-                        _plugins.FirstOrDefault(x => x.CollectionPrefix == aliasParts[0]) is IPlugin plugin && 
-                        plugin.GetRepository(aliasParts[1]) is Type repositoryType
-                    ? repositoryType
-                    : throw new InvalidOperationException($"Cannot find Repository for alias '{repositoryAlias}'.");
+                : throw new InvalidOperationException($"Cannot find Repository for alias '{repositoryAlias}'.");
 
         public string GetAlias(Type originallyRegisteredType)
             => _originallyRegisterdRepositoriesToAlias.TryGetValue(originallyRegisteredType, out var alias)

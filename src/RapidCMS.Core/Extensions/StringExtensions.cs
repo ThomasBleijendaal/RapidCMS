@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RapidCMS.Core.Extensions
 {
@@ -179,6 +180,21 @@ namespace RapidCMS.Core.Extensions
                 Convert.FromBase64String($"{preString}{string.Join("", Enumerable.Repeat(Padding.First(), preString.Length % 4))}"));
 
             return originalString;
+        }
+
+        
+        public static bool TryParseAsPluginAlias(this string? alias, [NotNullWhen(true)] out (string prefix, string collectionAlias) aliases)
+        {
+            if (!string.IsNullOrWhiteSpace(alias) &&
+                alias.Contains("::") &&
+                alias.Split("::") is string[] parts)
+            {
+                aliases = (parts[0], parts[1]);
+                return true;
+            }
+
+            aliases = (default!, default!);
+            return false;
         }
     }
 }
