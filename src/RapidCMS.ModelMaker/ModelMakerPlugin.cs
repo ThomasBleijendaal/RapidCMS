@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Setup;
@@ -55,9 +56,22 @@ namespace RapidCMS.ModelMaker
             false)
         {
             UsageType = UsageType.List,
-            TreeView = new TreeViewSetup(EntityVisibilty.Visible, CollectionRootVisibility.Visible, false, false, default),
+            TreeView = new TreeViewSetup(EntityVisibilty.Visible, CollectionRootVisibility.Visible, false, false, new ModelMakerEntityExpressionMetadata("Name", x => x.Data["Name"])),
             ListView = new ListSetup(100, false, false, ListType.Table, EmptyVariantColumnVisibility.Collapse, new List<PaneSetup>(), new List<IButtonSetup>())
         };
+    }
+
+    internal class ModelMakerEntityExpressionMetadata : IExpressionMetadata
+    {
+        public ModelMakerEntityExpressionMetadata(string name, Func<ModelMakerEntity, string> getter)
+        {
+            PropertyName = name;
+            StringGetter = x => getter.Invoke((ModelMakerEntity)x);
+        }
+
+        public string PropertyName { get; }
+
+        public Func<object, string> StringGetter { get; }
     }
 
     internal class ModelMakerRepository : IRepository
@@ -74,7 +88,24 @@ namespace RapidCMS.ModelMaker
 
         public Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query)
         {
-            return Task.FromResult(Enumerable.Empty<IEntity>());
+            return Task.FromResult<IEnumerable<IEntity>>(new[] {
+                new ModelMakerEntity
+                {
+                    Id = "1",
+                    Data = new Dictionary<string, string>
+                    {
+                        { "Name", "Name1" }
+                    }
+                },
+                new ModelMakerEntity
+                {
+                    Id = "2",
+                    Data = new Dictionary<string, string>
+                    {
+                        { "Name", "Name2" }
+                    }
+                }
+            });
         }
 
         public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelated related, IQuery query)
@@ -121,6 +152,8 @@ namespace RapidCMS.ModelMaker
     internal class ModelMakerEntity : IEntity
     {
         public string? Id { get; set; }
+
+        public Dictionary<string, string> Data { get; set; } = default!;
     }
 
 
