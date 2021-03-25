@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RapidCMS.Api.Core\RapidCMS.Api.Core.csproj" />
+    <ProjectReference Include="..\RapidCMS.Repositories\RapidCMS.Repositories.csproj" />
   </ItemGroup>
 
 </Project>

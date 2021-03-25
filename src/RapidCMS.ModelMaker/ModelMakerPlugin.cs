@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Forms;
-using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Plugins;
-using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Handlers;
+using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.ModelMaker
@@ -46,6 +43,8 @@ namespace RapidCMS.ModelMaker
             return typeof(ModelMakerRepository);
         }
 
+        
+
         private CollectionSetup _dynamic = new CollectionSetup(
             "Database",
             "Gray100",
@@ -55,106 +54,168 @@ namespace RapidCMS.ModelMaker
             false,
             false)
         {
+            // TODO: use existing setup resolvers to convert more simple config to complex setup easily
+
+            EntityVariant = new EntityVariantSetup("default", default, typeof(ModelMakerEntity), "modelmaker"),
             UsageType = UsageType.List,
-            TreeView = new TreeViewSetup(EntityVisibilty.Visible, CollectionRootVisibility.Visible, false, false, new ModelMakerEntityExpressionMetadata("Name", x => x.Data["Name"])),
-            ListView = new ListSetup(100, false, false, ListType.Table, EmptyVariantColumnVisibility.Collapse, new List<PaneSetup>(), new List<IButtonSetup>())
+            TreeView = new TreeViewSetup(
+                EntityVisibilty.Visible,
+                CollectionRootVisibility.Visible,
+                false,
+                false,
+                new ModelMakerEntityExpressionMetadata(
+                    "Name",
+                    x => x.Get<string>("Name"))),
+            NodeEditor = new NodeSetup(
+                typeof(ModelMakerEntity),
+                new List<PaneSetup>
+                {
+                    new PaneSetup(
+                        default,
+                        "Dynamic",
+                        (m, s) => true,
+                        typeof(ModelMakerEntity),
+                        new List<IButtonSetup>
+                        {
+                            
+                        },
+                        new List<FieldSetup>
+                        {
+                            new PropertyFieldSetup(new FieldConfig
+                            {
+                                Description = "Dynamic Name",
+                                EditorType = EditorType.TextBox,
+                                Index = 1,
+                                IsDisabled = (m, s) => false,
+                                IsVisible = (m, s) => true,
+                                Name = "Name",
+                                Placeholder = "Dynamic name",
+                                Property = new ModelMakerEntityPropertyMetadata(
+                                    typeof(string),
+                                    "Name",
+                                    x => x.Get("Name"),
+                                    (x, v) => x.Set("Name", v),
+                                    "DynamicName")
+                            })
+                        },
+                        new List<SubCollectionListSetup>(),
+                        new List<RelatedCollectionListSetup>())
+                },
+                new List<IButtonSetup>
+                {
+                    new ButtonSetup
+                    {
+                        ButtonHandlerType = typeof(DefaultButtonActionHandler),
+                        ButtonId = "modelmaker-save-new",
+                        Buttons = Enumerable.Empty<IButtonSetup>(),
+                        DefaultButtonType = DefaultButtonType.SaveNew,
+                        Icon = "Save",
+                        IsPrimary = true,
+                        Label = "Insert"
+                    },
+                    new ButtonSetup
+                    {
+                        ButtonHandlerType = typeof(DefaultButtonActionHandler),
+                        ButtonId = "modelmaker-save-existing",
+                        Buttons = Enumerable.Empty<IButtonSetup>(),
+                        DefaultButtonType = DefaultButtonType.SaveExisting,
+                        Icon = "Save",
+                        IsPrimary = true,
+                        Label = "Update"
+                    },
+                    new ButtonSetup
+                    {
+                        ButtonHandlerType = typeof(DefaultButtonActionHandler),
+                        ButtonId = "modelmaker-delete",
+                        Buttons = Enumerable.Empty<IButtonSetup>(),
+                        DefaultButtonType = DefaultButtonType.Delete,
+                        Icon = "Delete",
+                        Label = "Delete"
+                    }
+                }),
+            ListEditor = new ListSetup(
+                100,
+                false,
+                false,
+                ListType.Table,
+                EmptyVariantColumnVisibility.Collapse,
+                new List<PaneSetup>
+                {
+                    new PaneSetup(
+                        default,
+                        "Dynamic",
+                        (m, s) => true,
+                        typeof(ModelMakerEntity),
+                        new List<IButtonSetup>
+                        {
+                            new ButtonSetup
+                            {
+                                ButtonHandlerType = typeof(DefaultButtonActionHandler),
+                                ButtonId = "modelmaker-save-new",
+                                Buttons = Enumerable.Empty<IButtonSetup>(),
+                                DefaultButtonType = DefaultButtonType.SaveNew,
+                                Icon = "Save",
+                                IsPrimary = true,
+                                Label = "Insert"
+                            },
+                            new ButtonSetup
+                            {
+                                ButtonHandlerType = typeof(DefaultButtonActionHandler),
+                                ButtonId = "modelmaker-save-existing",
+                                Buttons = Enumerable.Empty<IButtonSetup>(),
+                                DefaultButtonType = DefaultButtonType.SaveExisting,
+                                Icon = "Save",
+                                IsPrimary = true,
+                                Label = "Update"
+                            },
+                            new ButtonSetup
+                            {
+                                ButtonHandlerType = typeof(DefaultButtonActionHandler),
+                                ButtonId = "modelmaker-edit",
+                                Buttons = Enumerable.Empty<IButtonSetup>(),
+                                DefaultButtonType = DefaultButtonType.Edit,
+                                Icon = "Edit",
+                                Label = "Edit"
+                            },
+                        },
+                        new List<FieldSetup>
+                        {
+                            new PropertyFieldSetup(new FieldConfig
+                            {
+                                Description = "Dynamic Name",
+                                EditorType = EditorType.TextBox,
+                                Index = 1,
+                                IsDisabled = (m, s) => false,
+                                IsVisible = (m, s) => true,
+                                Name = "Name",
+                                Placeholder = "Dynamic name",
+                                Property = new ModelMakerEntityPropertyMetadata(
+                                    typeof(string),
+                                    "Name",
+                                    x => x.Get("Name"),
+                                    (x, v) => x.Set("Name", v),
+                                    "DynamicName")
+                            })
+                        },
+                        new List<SubCollectionListSetup>(),
+                        new List<RelatedCollectionListSetup>())
+                },
+                new List<IButtonSetup>
+                {
+                    new ButtonSetup
+                    {
+                        ButtonHandlerType = typeof(DefaultButtonActionHandler),
+                        ButtonId = "modelmaker-new",
+                        Buttons = Enumerable.Empty<IButtonSetup>(),
+                        DefaultButtonType = DefaultButtonType.New,
+                        Icon = "Add",
+                        IsPrimary = true,
+                        Label = "New",
+
+                        // TODO: reuse
+                        EntityVariant = new EntityVariantSetup("default", default, typeof(ModelMakerEntity), "modelmaker")
+                    }
+                })
         };
     }
-
-    internal class ModelMakerEntityExpressionMetadata : IExpressionMetadata
-    {
-        public ModelMakerEntityExpressionMetadata(string name, Func<ModelMakerEntity, string> getter)
-        {
-            PropertyName = name;
-            StringGetter = x => getter.Invoke((ModelMakerEntity)x);
-        }
-
-        public string PropertyName { get; }
-
-        public Func<object, string> StringGetter { get; }
-    }
-
-    internal class ModelMakerRepository : IRepository
-    {
-        public Task AddAsync(IRelated related, string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteAsync(string id, IParent? parent)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query)
-        {
-            return Task.FromResult<IEnumerable<IEntity>>(new[] {
-                new ModelMakerEntity
-                {
-                    Id = "1",
-                    Data = new Dictionary<string, string>
-                    {
-                        { "Name", "Name1" }
-                    }
-                },
-                new ModelMakerEntity
-                {
-                    Id = "2",
-                    Data = new Dictionary<string, string>
-                    {
-                        { "Name", "Name2" }
-                    }
-                }
-            });
-        }
-
-        public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelated related, IQuery query)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelated related, IQuery query)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEntity?> GetByIdAsync(string id, IParent? parent)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEntity?> InsertAsync(IEditContext editContext)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEntity> NewAsync(IParent? parent, Type? variantType)
-        {
-            return Task.FromResult<IEntity>(new ModelMakerEntity());
-        }
-
-        public Task RemoveAsync(IRelated related, string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task ReorderAsync(string? beforeId, string id, IParent? parent)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateAsync(IEditContext editContext)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    internal class ModelMakerEntity : IEntity
-    {
-        public string? Id { get; set; }
-
-        public Dictionary<string, string> Data { get; set; } = default!;
-    }
-
-
 }
