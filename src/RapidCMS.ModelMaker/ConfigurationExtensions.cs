@@ -9,6 +9,7 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Providers;
+using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.Repositories;
 
 namespace RapidCMS.ModelMaker
@@ -23,12 +24,73 @@ namespace RapidCMS.ModelMaker
             services.AddScoped<ModelMakerRepository>();
             services.AddScoped<JsonRepository<ModelConfigurationEntity>>();
 
+
+            IModelMakerConfig config = null;
+
+
+            var minLengthValidator = config.AddPropertyValidator<MinLengthValidator, string, MinLengthValidationConfig>(
+                "minlength",
+                "Minimum length", 
+                "The value has to be at least this amount of characters.", 
+                EditorType.Numeric);
+            // custom type TODO
+
+            var textBox = config.AddPropertyEditor("textbox", "TextBox", EditorType.TextBox);
+
+            config.AddProperty<string>("shortstring", "ShortString", "Label", new[] { textBox }, new[] { minLengthValidator });
+
             return services;
         }
 
         public static ICmsConfig AddModelMakerPlugin(this ICmsConfig cmsConfig)
         {
             cmsConfig.AddPlugin<ModelMakerPlugin>();
+
+
+
+
+            var nameShortString = new ShortStringPropertyModel
+            {
+                EditorAlias = "TextBox",
+                Name = "Name",
+                Validations = new List<PropertyValidation>
+                {
+                    new PropertyValidation
+                    {
+                        Alias = "MinLength",
+                        Config = new MinLengthValidationConfig
+                        {
+                            MinLength = 3
+                        }
+                    }
+                }
+            };
+
+            var shortString = new PropertyModelDescriptor<ShortStringPropertyModel>
+            {
+                Editors = new List<PropertyEditorDescriptor>
+                {
+                    new PropertyEditorDescriptor
+                    {
+                        Alias = "TextBox"
+                    },
+                    new PropertyEditorDescriptor
+                    {
+                        Alias = "TextArea"
+                    },
+                    new PropertyEditorDescriptor
+                    {
+                        Alias = "Dropdown"
+                    },
+                },
+                ValidatorAliases = new List<string>
+                {
+                    "MinLength",
+                    "LimitedOptions"
+                }
+            };
+
+
 
             cmsConfig.AddCollection<ModelConfigurationEntity, JsonRepository<ModelConfigurationEntity>>(
                 "modelmakerconfiguration",
