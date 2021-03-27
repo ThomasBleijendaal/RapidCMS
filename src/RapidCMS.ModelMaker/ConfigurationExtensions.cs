@@ -1,43 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Config;
-using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Forms;
-using RapidCMS.Core.Models.Data;
-using RapidCMS.Core.Providers;
 using RapidCMS.ModelMaker.Abstractions.Config;
-using RapidCMS.Repositories;
+using RapidCMS.ModelMaker.Models;
 
 namespace RapidCMS.ModelMaker
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection AddModelMaker(this IServiceCollection services)
+        public const string TextBox = "textbox";
+        public const string TextArea = "textarea";
+        public const string Dropdown = "dropdown";
+        public const string MinLength = "minlength";
+        public const string MaxLength = "maxlength";
+        public const string LimitedOptions = "limitedOptions";
+
+        public static IServiceCollection AddModelMaker(this IServiceCollection services, Action<IModelMakerConfig>? configure = null)
         {
             // TODO: what should this life time be?
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
+            services.AddTransient<PropertyEditorDataCollection>();
+
             services.AddScoped<ModelMakerRepository>();
-            services.AddScoped<JsonRepository<ModelConfigurationEntity>>();
+            services.AddScoped<ModelRepository>();
+            services.AddScoped<PropertyRepository>();
+            services.AddScoped<ValidationRepository>();
 
+            var config = new ModelMakerConfig();
 
-            IModelMakerConfig config = null;
-
-
-            var minLengthValidator = config.AddPropertyValidator<MinLengthValidator, string, MinLengthValidationConfig>(
-                "minlength",
-                "Minimum length", 
-                "The value has to be at least this amount of characters.", 
+            config.AddPropertyValidator<MinLengthValidator, string, MinLengthValidationConfig>(
+                MinLength,
+                "Minimum length",
+                "The value has to be at least this amount of characters.",
                 EditorType.Numeric);
-            // custom type TODO
 
-            var textBox = config.AddPropertyEditor("textbox", "TextBox", EditorType.TextBox);
+            config.AddPropertyValidator<MaxLengthValidator, string, MaxLengthValidationConfig>(
+                MaxLength,
+                "Maximum length",
+                "The value has to be at most this amount of characters.",
+                EditorType.Numeric);
 
-            config.AddProperty<string>("shortstring", "ShortString", "Label", new[] { textBox }, new[] { minLengthValidator });
+            config.AddPropertyValidator<LimitedOptionsValidator, string, LimitedOptionsValidationConfig>(
+                LimitedOptions,
+                "Limited options",
+                "The value has to be one of these items",
+                EditorType.TextBox); // TODO: convert to tag editor
+            // TODO: custom type
+
+            config.AddPropertyEditor(TextBox, "Text box", EditorType.TextBox);
+            config.AddPropertyEditor(TextArea, "Text area", EditorType.TextArea);
+            config.AddPropertyEditor(Dropdown, "Dropdown", EditorType.Dropdown);
+            
+            // TODO: add data collection to be configured
+
+            config.AddProperty<string>("shortstring", "Short string", "Label", new[] { TextBox, TextArea, Dropdown }, new[] { MinLength, MaxLength, LimitedOptions });
+            config.AddProperty<string>("longstring", "Long string", "Label", new[] { TextArea }, new[] { MinLength });
+
+            configure?.Invoke(config);
+
+            services.AddSingleton<IModelMakerConfig>(config);
 
             return services;
         }
@@ -49,15 +74,16 @@ namespace RapidCMS.ModelMaker
 
 
 
-            var nameShortString = new ShortStringPropertyModel
+            var nameShortString = new PropertyModel
             {
-                EditorAlias = "TextBox",
                 Name = "Name",
-                Validations = new List<PropertyValidation>
+                PropertyAlias = "shortstring",
+                EditorAlias = TextBox,
+                Validations = new List<PropertyValidationModel>
                 {
-                    new PropertyValidation
+                    new PropertyValidationModel
                     {
-                        Alias = "MinLength",
+                        Alias = MinLength,
                         Config = new MinLengthValidationConfig
                         {
                             MinLength = 3
@@ -66,35 +92,39 @@ namespace RapidCMS.ModelMaker
                 }
             };
 
-            var shortString = new PropertyModelDescriptor<ShortStringPropertyModel>
+            var shortString = new PropertyModelDescriptor
             {
+                Alias = "shortstring",
                 Editors = new List<PropertyEditorDescriptor>
                 {
                     new PropertyEditorDescriptor
                     {
-                        Alias = "TextBox"
+                        Alias = TextBox
                     },
                     new PropertyEditorDescriptor
                     {
-                        Alias = "TextArea"
+                        Alias = TextArea
                     },
                     new PropertyEditorDescriptor
                     {
-                        Alias = "Dropdown"
+                        Alias = Dropdown
                     },
                 },
                 ValidatorAliases = new List<string>
                 {
-                    "MinLength",
+                    MinLength,
                     "LimitedOptions"
                 }
             };
 
 
 
-            cmsConfig.AddCollection<ModelConfigurationEntity, JsonRepository<ModelConfigurationEntity>>(
-                "modelmakerconfiguration",
+            cmsConfig.AddCollection<ModelEntity, ModelRepository>(
+                "modelmakeradmin",
+                "Database",
+                "MagentaPink10",
                 "Models",
+                
                 config =>
                 {
                     config.SetTreeView(x => x.Name);
@@ -121,48 +151,13 @@ namespace RapidCMS.ModelMaker
                         editor.AddSection(section =>
                         {
                             section.AddField(x => x.Name);
-                            section.AddField(x => x.Type)
-                                .SetType(EditorType.Dropdown)
-                                .SetDataCollection<EnumDataProvider<ModelPropertyType>>();
+
+                            section.AddSubCollectionList("modelmaker::property");
                         });
                     });
                 });
 
             return cmsConfig;
         }
-    }
-
-    public class ModelConfigurationEntity : IEntity, ICloneable
-    {
-        public string? Id { get; set; }
-
-        public string Name { get; set; } = default!;
-
-        // move to property
-        public ModelPropertyType Type { get; set; } = default!;
-
-        public List<ModelProperty> Properties { get; set; } = new List<ModelProperty>();
-
-        public object Clone()
-        {
-            return new ModelConfigurationEntity
-            {
-                Id = Id,
-                Name = Name,
-                Properties = Properties
-            };
-        }
-    }
-
-    public class ModelProperty
-    {
-        public ModelPropertyType Type { get; set; } = default!;
-
-
-    }
-
-    public enum ModelPropertyType
-    {
-        String
     }
 }

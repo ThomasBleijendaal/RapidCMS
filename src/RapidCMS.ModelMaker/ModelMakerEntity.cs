@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 
@@ -20,27 +21,37 @@ namespace RapidCMS.ModelMaker
     internal class ModelEntity : IEntity
     {
         public string? Id { get; set; }
-    }
 
-    internal class PropertyModel
-    {
+        [Required]
+        [MinLength(1)]
         public string? Name { get; set; }
+
+        public List<PropertyModel> Properties { get; set; } = new List<PropertyModel>();
     }
 
-    internal class ShortStringPropertyModel : PropertyModel
+    internal class PropertyModel : IEntity
     {
-        public string EditorAlias { get; set; }
-        public List<PropertyValidation> Validations { get; set; }
+        public string? Id { get; set; }
+
+        [Required]
+        [MinLength(1)]
+        public string? Name { get; set; }
+
+        public string? PropertyAlias { get; set; }
+        public string? EditorAlias { get; set; }
+        public List<PropertyValidationModel> Validations { get; set; } = new List<PropertyValidationModel>();
     }
 
-    internal class PropertyValidation
+    internal class PropertyValidationModel : IEntity
     {
-        public string Alias { get; set; }
-        public IValidatorConfig Config { get; set; }
+        public string? Id { get; set; }
+
+        public string? Alias { get; set; }
+        public IValidatorConfig? Config { get; set; }
     }
 
 
-    internal class PropertyModelDescriptor<TPropertyModel> where TPropertyModel : PropertyModel
+    internal class PropertyModelDescriptor
     {
         public string Alias { get; set; }
 
@@ -49,11 +60,6 @@ namespace RapidCMS.ModelMaker
         public List<string> ValidatorAliases { get; set; }
 
         public List<PropertyEditorDescriptor> Editors { get; set; }
-    }
-
-    internal class PropertyValidationDescriptor<TValidator>
-    {
-
     }
 
     internal class PropertyValidationDescriptor
@@ -114,6 +120,19 @@ namespace RapidCMS.ModelMaker
         }
     }
 
+    public class MaxLengthValidator : BaseValidator<string, MaxLengthValidationConfig>
+    {
+        protected override Task<string> ErrorMessage(MaxLengthValidationConfig validatorConfig)
+        {
+            return Task.FromResult($"The input has to be at most {validatorConfig.MaxLength} characters long.");
+        }
+
+        protected override Task<bool> IsValid(string? value, MaxLengthValidationConfig validatorConfig)
+        {
+            return Task.FromResult(value?.Length > validatorConfig.MaxLength);
+        }
+    }
+
     public class LimitedOptionsValidator : BaseValidator<string, LimitedOptionsValidationConfig>
     {
         protected override Task<string> ErrorMessage(LimitedOptionsValidationConfig validatorConfig)
@@ -142,11 +161,13 @@ namespace RapidCMS.ModelMaker
         public int MinLength { get; set; }
     }
 
-    public class LimitedOptionsValidationConfig : IValidatorConfig
+    public class MaxLengthValidationConfig : IValidatorConfig
     {
-        public List<string> Options { get; set; }
+        public int MaxLength { get; set; }
     }
 
-
-
+    public class LimitedOptionsValidationConfig : IValidatorConfig
+    {
+        public List<string> Options { get; set; } = new List<string>();
+    }
 }

@@ -27,9 +27,10 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
         IPropertyEditorConfig? GetPropertyEditor(EditorType editorType);
         IPropertyEditorConfig? GetPropertyEditor<TCustomEditor>();
         IPropertyValidatorConfig? GetPropertyValidator<TValidator>();
-        IPropertyValidatorConfig? GetProperty(string name);
+        IPropertyConfig? GetProperty(string name);
 
         IEnumerable<IPropertyEditorConfig> Editors { get; }
         IEnumerable<IPropertyValidatorConfig> Validators { get; }
+        IEnumerable<IPropertyConfig> Properties { get; }
     }
 }

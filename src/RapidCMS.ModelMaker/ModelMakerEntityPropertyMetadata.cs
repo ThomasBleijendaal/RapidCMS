@@ -4,23 +4,22 @@ using RapidCMS.Core.Abstractions.Metadata;
 
 namespace RapidCMS.ModelMaker
 {
-    internal class ModelMakerEntityPropertyMetadata : IFullPropertyMetadata
+    internal class PropertyMetadata<TEntity, TProperty> : IFullPropertyMetadata
     {
-        public ModelMakerEntityPropertyMetadata(
-            Type propertyType,
+        public PropertyMetadata(
             string propertyName,
-            Func<ModelMakerEntity, object?> getter,
-            Action<ModelMakerEntity, object?> setter,
+            Func<TEntity, object?> getter,
+            Action<TEntity, TProperty?> setter,
             string fingerprint)
         {
-            PropertyType = propertyType;
+            PropertyType = typeof(TProperty);
             PropertyName = propertyName;
             Fingerprint = fingerprint;
 
-            Getter = x => getter.Invoke((ModelMakerEntity)x);
-            Setter = (x, y) => setter.Invoke((ModelMakerEntity)x, y);
+            Getter = x => getter.Invoke((TEntity)x);
+            Setter = (x, y) => setter.Invoke((TEntity)x, (TProperty)y);
 
-            ObjectType = typeof(ModelMakerEntity);
+            ObjectType = typeof(TEntity);
             OriginalExpression = Expression.Lambda(Expression.Empty());
         }
 
@@ -35,8 +34,5 @@ namespace RapidCMS.ModelMaker
         public string Fingerprint { get; }
 
         public LambdaExpression OriginalExpression { get; }
-
     }
-
-
 }

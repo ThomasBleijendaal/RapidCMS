@@ -3,18 +3,16 @@ using RapidCMS.Core.Abstractions.Metadata;
 
 namespace RapidCMS.ModelMaker
 {
-    internal class ModelMakerEntityExpressionMetadata : IExpressionMetadata
+    internal class ExpressionMetadata<TEntity> : IExpressionMetadata
     {
-        public ModelMakerEntityExpressionMetadata(string name, Func<ModelMakerEntity, string?> getter)
+        public ExpressionMetadata(string name, Func<TEntity, string?> getter)
         {
             PropertyName = name;
-            StringGetter = x => getter.Invoke((ModelMakerEntity)x) ?? string.Empty;
+            StringGetter = x => getter.Invoke((TEntity)x) ?? string.Empty;
         }
 
         public string PropertyName { get; }
 
         public Func<object, string> StringGetter { get; }
     }
-
-
 }

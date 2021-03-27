@@ -10,13 +10,15 @@ namespace RapidCMS.ModelMaker.Models
 {
     internal class ModelMakerConfig : IModelMakerConfig
     {
-        private List<IPropertyEditorConfig> _editors = new List<IPropertyEditorConfig>();
-        private List<IPropertyValidatorConfig> _validators = new List<IPropertyValidatorConfig>();
-        private List<IPropertyConfig> _properties = new List<IPropertyConfig>();
+        private readonly List<IPropertyEditorConfig> _editors = new List<IPropertyEditorConfig>();
+        private readonly List<IPropertyValidatorConfig> _validators = new List<IPropertyValidatorConfig>();
+        private readonly List<IPropertyConfig> _properties = new List<IPropertyConfig>();
 
         public IEnumerable<IPropertyEditorConfig> Editors => _editors;
 
         public IEnumerable<IPropertyValidatorConfig> Validators => _validators;
+
+        public IEnumerable<IPropertyConfig> Properties => _properties;
 
         public IModelMakerConfig AddProperty<TValue>(string alias, string name, string icon, IEnumerable<string> editorAliases, IEnumerable<string> validatorAliases)
         {
@@ -64,9 +66,9 @@ namespace RapidCMS.ModelMaker.Models
             return this;
         }
 
-        public IPropertyValidatorConfig? GetProperty(string name)
+        public IPropertyConfig? GetProperty(string name)
         {
-            return 
+            return _properties.FirstOrDefault(x => x.Name == name);
         }
 
         public IPropertyEditorConfig? GetPropertyEditor(EditorType editorType)
