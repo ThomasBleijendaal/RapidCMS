@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
@@ -27,7 +28,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _relatedCollectionSetupResolver = relatedCollectionSetupResolver;
         }
 
-        public IResolvedSetup<PaneSetup> ResolveSetup(PaneConfig config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<PaneSetup>> ResolveSetupAsync(PaneConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -41,7 +42,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             var subCollectionLists = _subCollectionSetupResolver.ResolveSetup(config.SubCollectionLists, collection).CheckIfCachable(ref cacheable).ToList();
             var relatedCollectionLists = _relatedCollectionSetupResolver.ResolveSetup(config.RelatedCollectionLists, collection).CheckIfCachable(ref cacheable).ToList();
 
-            return new ResolvedSetup<PaneSetup>(new PaneSetup(
+            return Task.FromResult<IResolvedSetup<PaneSetup>>(new ResolvedSetup<PaneSetup>(new PaneSetup(
                 config.CustomType,
                 config.Label,
                 config.IsVisible,
@@ -50,7 +51,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 fields,
                 subCollectionLists,
                 relatedCollectionLists),
-                cacheable);
+                cacheable));
         }
     }
 }

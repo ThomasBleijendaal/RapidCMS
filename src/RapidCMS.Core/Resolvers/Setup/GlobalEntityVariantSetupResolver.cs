@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
@@ -19,19 +20,19 @@ namespace RapidCMS.Core.Resolvers.Setup
             _types = typeof(IEntity).GetImplementingTypes().ToDictionary(x => AliasHelper.GetEntityVariantAlias(x));
         }
 
-        public IEntityVariantSetup ResolveSetup()
+        public Task<IEntityVariantSetup> ResolveSetupAsync()
         {
             throw new NotImplementedException();
         }
 
-        public IEntityVariantSetup ResolveSetup(string alias)
+        public Task<IEntityVariantSetup> ResolveSetupAsync(string alias)
         {
             if (!_types.TryGetValue(alias, out var type))
             {
                 throw new InvalidOperationException($"Cannot find type with alias {alias}.");
             }
 
-            return new EntityVariantSetup(alias, default, type, alias);
+            return Task.FromResult<IEntityVariantSetup>(new EntityVariantSetup(alias, default, type, alias));
         }
     }
 }

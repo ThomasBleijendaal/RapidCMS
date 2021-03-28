@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
@@ -28,43 +28,25 @@ namespace RapidCMS.Core.Resolvers.Setup
             _plugins = plugins;
         }
 
-        IEnumerable<ITreeElementSetup> ISetupResolver<IEnumerable<ITreeElementSetup>>.ResolveSetup()
+        async Task<IEnumerable<ITreeElementSetup>> ISetupResolver<IEnumerable<ITreeElementSetup>>.ResolveSetupAsync()
         {
+            var results = new List<ITreeElementSetup>();
+
             foreach (var plugin in _plugins)
             {
-                var treeElements = _pluginTreeElementResolver.ResolveSetup(plugin);
+                var treeElements = await _pluginTreeElementResolver.ResolveSetupAsync(plugin);
 
-                foreach (var element in treeElements.Setup)
-                {
-                    yield return element;
-                }
+                results.AddRange(treeElements.Setup);
             }
 
-            foreach (var element in _treeElementResolver.ResolveSetup(_cmsConfig.CollectionsAndPages?.Skip(1) ?? Enumerable.Empty<ITreeElementConfig>()).Setup)
-            {
-                yield return element;
-            }
+            results.AddRange((await _treeElementResolver.ResolveSetupAsync(_cmsConfig.CollectionsAndPages?.Skip(1) ?? Enumerable.Empty<ITreeElementConfig>())).Setup);
+
+            return results;
         }
 
-        IEnumerable<ITreeElementSetup> ISetupResolver<IEnumerable<ITreeElementSetup>>.ResolveSetup(string alias)
+        Task<IEnumerable<ITreeElementSetup>> ISetupResolver<IEnumerable<ITreeElementSetup>>.ResolveSetupAsync(string alias)
         {
             throw new InvalidOperationException("Cannot resolve root collections with alias.");
-        }
-    }
-
-    internal class PluginTreeElementsSetupResolver : ISetupResolver<IEnumerable<ITreeElementSetup>, IPlugin>
-    {
-        private readonly ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> _treeElementResolver;
-
-        public PluginTreeElementsSetupResolver(ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> treeElementResolver)
-        {
-            _treeElementResolver = treeElementResolver;
-        }
-
-        public IResolvedSetup<IEnumerable<ITreeElementSetup>> ResolveSetup(IPlugin config, ICollectionSetup? collection = null)
-        {
-            return new ResolvedSetup<IEnumerable<ITreeElementSetup>>(config.GetTreeElements(), false);
-            
         }
     }
 }

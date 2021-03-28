@@ -112,24 +112,24 @@ namespace RapidCMS.ModelMaker.Repositories
             {
                 var entity = typedEditContext.Entity;
 
-                var modelDefinition = ConfigurationExtensions.MODELS.First(x => x.Alias == entity.ModelAlias);
+                //var modelDefinition = ConfigurationExtensions.MODELS.First(x => x.Alias == entity.ModelAlias);
 
-                foreach (var property in modelDefinition.Properties)
-                {
-                    foreach (var validation in property.Validations.Where(x => x.Config?.IsEnabled == true))
-                    {
-                        var validatorConfig = _config.Validators.First(x => x.Alias == validation.Alias);
+                //foreach (var property in modelDefinition.Properties)
+                //{
+                //    foreach (var validation in property.Validations.Where(x => x.Config?.IsEnabled == true))
+                //    {
+                //        var validatorConfig = _config.Validators.First(x => x.Alias == validation.Alias);
 
-                        var validator = _serviceProvider.GetService<IValidator>(validatorConfig.Validator);
+                //        var validator = _serviceProvider.GetService<IValidator>(validatorConfig.Validator);
 
-                        if (!await validator.IsValid(entity.Get(property.Alias), validation.Config!))
-                        {
-                            typedEditContext.AddValidationError(property.Alias, await validator.ErrorMessage(validation.Config!));
-                        }
-                    }
-                }
+                //        if (!await validator.IsValid(entity.Get(property.Alias), validation.Config!))
+                //        {
+                //            typedEditContext.AddValidationError(property.Alias, await validator.ErrorMessage(validation.Config!));
+                //        }
+                //    }
+                //}
 
-                editContext.EnforceValidEntity();
+                //editContext.EnforceValidEntity();
 
 
             }

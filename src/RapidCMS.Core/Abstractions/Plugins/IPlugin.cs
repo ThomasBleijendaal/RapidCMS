@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Models.Setup;
 
@@ -7,9 +8,9 @@ namespace RapidCMS.Core.Abstractions.Plugins
 {
     internal interface IPlugin
     {
-        IEnumerable<ITreeElementSetup> GetTreeElements();
+        Task<IEnumerable<ITreeElementSetup>> GetTreeElementsAsync();
 
-        CollectionSetup? GetCollection(string collectionAlias);
+        Task<CollectionSetup?> GetCollectionAsync(string collectionAlias);
 
         Type? GetRepositoryType(string collectionAlias);
 

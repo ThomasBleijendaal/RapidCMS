@@ -4,10 +4,14 @@ using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Enums;
+using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
+using RapidCMS.ModelMaker.CommandHandlers;
 using RapidCMS.ModelMaker.DataCollections;
 using RapidCMS.ModelMaker.Models;
+using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;
+using RapidCMS.ModelMaker.Models.Responses;
 using RapidCMS.ModelMaker.Repositories;
 using RapidCMS.ModelMaker.Validation;
 using RapidCMS.ModelMaker.Validation.Config;
@@ -15,43 +19,7 @@ using RapidCMS.ModelMaker.Validation.Config;
 namespace RapidCMS.ModelMaker
 {
     public static class ConfigurationExtensions
-    {
-        internal static List<ModelEntity> MODELS = new List<ModelEntity>
-        {
-            new ModelEntity
-            {
-                // TODO: icon + color
-                Id = "1",
-                Alias = "dynamicmodels",
-                Name = "Dynamic model",
-                Properties = new List<PropertyModel>
-                {
-                    new PropertyModel
-                    {
-                        // TODO: description, details, placeholder
-                        Id = "1,",
-                        EditorAlias = "textbox",
-                        Name = "Name",
-                        Alias = "name",
-                        IsTitle = true,
-                        PropertyAlias = "shortstring",
-                        Validations = new List<PropertyValidationModel>
-                        {
-                            new PropertyValidationModel<MinLengthValidationConfig>
-                            {
-                                Id = "1",
-                                Alias = "minlength",
-                                Config = new MinLengthValidationConfig
-                                {
-                                    MinLength = 10
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        };
-
+    {   
         public const string TextBox = "textbox";
         public const string TextArea = "textarea";
         public const string Dropdown = "dropdown";
@@ -63,6 +31,13 @@ namespace RapidCMS.ModelMaker
         {
             // TODO: what should this life time be?
             services.AddTransient<IPlugin, ModelMakerPlugin>();
+
+            services.AddTransient<ICommandHandler<RemoveRequest<ModelEntity>, ConfirmResponse>, InMemoryModelEntityCommandHandler>();
+            services.AddTransient<ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
+            services.AddTransient<ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
+            services.AddTransient<ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
+            services.AddTransient<ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
+            services.AddTransient<ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse>, InMemoryModelEntityCommandHandler>();
 
             services.AddTransient<PropertyEditorDataCollection>();
             services.AddTransient<PropertyTypeDataCollection>();

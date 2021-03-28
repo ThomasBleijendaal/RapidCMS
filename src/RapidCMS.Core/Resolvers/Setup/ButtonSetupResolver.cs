@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Attributes;
@@ -22,7 +23,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _languageResolver = languageResolver;
         }
 
-        public IResolvedSetup<IButtonSetup> ResolveSetup(ButtonConfig config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<IButtonSetup>> ResolveSetupAsync(ButtonConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -90,7 +91,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 throw new InvalidOperationException();
             }
 
-            return new ResolvedSetup<IButtonSetup>(button, true);
+            return Task.FromResult<IResolvedSetup<IButtonSetup>>(new ResolvedSetup<IButtonSetup>(button, true));
         }
     }
 }

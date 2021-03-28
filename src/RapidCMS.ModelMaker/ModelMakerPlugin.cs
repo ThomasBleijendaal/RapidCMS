@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
+using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Abstractions.Validation;
 using RapidCMS.ModelMaker.DataCollections;
 using RapidCMS.ModelMaker.Metadata;
+using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;
+using RapidCMS.ModelMaker.Models.Responses;
 using RapidCMS.ModelMaker.Repositories;
 
 namespace RapidCMS.ModelMaker
@@ -21,23 +26,28 @@ namespace RapidCMS.ModelMaker
     {
         private readonly IModelMakerConfig _config;
         private readonly ISetupResolver<IButtonSetup, ButtonConfig> _buttonSetupResolver;
+        private readonly ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>> _getAllModelEntitiesCommandHandler;
+        private readonly ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>> _getModelEntityByAliasCommandHandler;
 
         public ModelMakerPlugin(
             IModelMakerConfig config,
-             ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver)
+             ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver,
+             ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>> getAllModelEntitiesCommandHandler,
+             ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>> getModelEntityByAliasCommandHandler)
         {
             _config = config;
             _buttonSetupResolver = buttonSetupResolver;
+            _getAllModelEntitiesCommandHandler = getAllModelEntitiesCommandHandler;
+            _getModelEntityByAliasCommandHandler = getModelEntityByAliasCommandHandler;
         }
 
         public string CollectionPrefix => "modelmaker";
 
-        // TODO: async
-        public CollectionSetup? GetCollection(string collectionAlias)
+        public async Task<CollectionSetup?> GetCollectionAsync(string collectionAlias)
         {
             if (collectionAlias == "property")
             {
-                return PropertyConfigurationCollection();
+                return await PropertyConfigurationCollectionAsync();
             }
             else if (collectionAlias == "validation")
             {
@@ -45,20 +55,20 @@ namespace RapidCMS.ModelMaker
             }
             else
             {
-                var model = ConfigurationExtensions.MODELS.FirstOrDefault(model => model.Alias == collectionAlias);
-                if (model != null)
+                var response = await _getModelEntityByAliasCommandHandler.HandleAsync(new GetByAliasRequest<ModelEntity>(collectionAlias));
+                if (response.Entity != null)
                 {
-                    return ModelCollection(model);
+                    return await ModelCollectionAsync(response.Entity);
                 }
             }
 
             return default;
         }
 
-        // TODO: async
-        public IEnumerable<ITreeElementSetup> GetTreeElements()
+        public async Task<IEnumerable<ITreeElementSetup>> GetTreeElementsAsync()
         {
-            return ConfigurationExtensions.MODELS.Select(model => new TreeElementSetup($"{CollectionPrefix}::{model.Alias}", PageType.Collection));
+            var response = await _getAllModelEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>());
+            return response.Entities.Select(model => new TreeElementSetup($"{CollectionPrefix}::{model.Alias}", PageType.Collection));
         }
 
         public Type? GetRepositoryType(string collectionAlias)
@@ -79,7 +89,7 @@ namespace RapidCMS.ModelMaker
             return typeof(ModelMakerRepository);
         }
 
-        private CollectionSetup ModelCollection(ModelEntity definition)
+        private async Task<CollectionSetup> ModelCollectionAsync(ModelEntity definition)
         {
             var entityVariantSetup = new EntityVariantSetup(definition.Alias, default, typeof(ModelMakerEntity), definition.Alias);
             var collection = new CollectionSetup(
@@ -116,14 +126,8 @@ namespace RapidCMS.ModelMaker
                         default,
                         (m, s) => true,
                         typeof(ModelMakerEntity),
-                        new List<IButtonSetup>
-                        {
-                            _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
-                                ButtonType = DefaultButtonType.Edit,
-                                Id = "model-edit",
-                                IsPrimary = true,
-                                Label = "Edit"
-                            }, collection).Setup
+                        new List<IButtonSetup>  {
+                            await CreateButtonAsync(collection, DefaultButtonType.Edit, true)
                         },
                         new List<FieldSetup>
                         {
@@ -138,17 +142,17 @@ namespace RapidCMS.ModelMaker
                 },
                 new List<IButtonSetup>
                 {
-                    _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
+                    (await _buttonSetupResolver.ResolveSetupAsync(new DefaultButtonConfig {
                         ButtonType = DefaultButtonType.New,
                         Id = "model-new",
                         IsPrimary = true,
                         Label = "New"
-                    }, collection).Setup
+                    }, collection)).Setup
                 });
 
             collection.NodeEditor = new NodeSetup(
                 typeof(ModelMakerEntity),
-                ModelPanes(definition, collection).ToList(),
+                await ModelPanesAsync(definition, collection).ToListAsync(),
                 new List<IButtonSetup>
                 {
 
@@ -157,7 +161,9 @@ namespace RapidCMS.ModelMaker
             return collection;
         }
 
-        private IEnumerable<PaneSetup> ModelPanes(ModelEntity definition, CollectionSetup collection)
+
+
+        private async IAsyncEnumerable<PaneSetup> ModelPanesAsync(ModelEntity definition, CollectionSetup collection)
         {
             yield return
                 new PaneSetup(
@@ -167,23 +173,9 @@ namespace RapidCMS.ModelMaker
                     typeof(ModelMakerEntity),
                     new List<IButtonSetup>
                     {
-                        _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
-                            ButtonType = DefaultButtonType.SaveExisting,
-                            Id = "model-save-existing",
-                            IsPrimary = true,
-                            Label = "Update"
-                        }, collection).Setup,
-                        _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
-                            ButtonType = DefaultButtonType.SaveNew,
-                            Id = "model-save-new",
-                            IsPrimary = true,
-                            Label = "Insert"
-                        }, collection).Setup,
-                        _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
-                            ButtonType = DefaultButtonType.Delete,
-                            Id = "model-delete",
-                            Label = "Delete"
-                        }, collection).Setup
+                        await CreateButtonAsync(collection, DefaultButtonType.SaveExisting, true, "Update"),
+                        await CreateButtonAsync(collection, DefaultButtonType.SaveNew, true, "Insert"),
+                        await CreateButtonAsync(collection, DefaultButtonType.Delete, false)
                     },
                     ModelFields(definition).ToList(),
                     new List<SubCollectionListSetup>(),
@@ -268,7 +260,7 @@ namespace RapidCMS.ModelMaker
                                 EditorType = EditorType.Custom,
                                 Index = 1,
                                 Name = validationType.Name,
-                                Property = validationType.ConfigToEditor 
+                                Property = validationType.ConfigToEditor
                                     ?? new PropertyMetadata<PropertyValidationModel, IValidatorConfig>(
                                         "Config",
                                          x => x.Config,
@@ -281,7 +273,7 @@ namespace RapidCMS.ModelMaker
             }
         }
 
-        private CollectionSetup PropertyConfigurationCollection()
+        private async Task<CollectionSetup> PropertyConfigurationCollectionAsync()
         {
             var entityVariantSetup = new EntityVariantSetup("default", default, typeof(PropertyModel), "modelproperty");
             var collection = new CollectionSetup(
@@ -317,10 +309,7 @@ namespace RapidCMS.ModelMaker
                         typeof(PropertyModel),
                         new List<IButtonSetup>
                         {
-                            _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
-                                ButtonType = DefaultButtonType.Edit,
-                                Id = "property-edit"
-                            }, collection).Setup
+                            await CreateButtonAsync(collection, DefaultButtonType.Edit, true)
                         },
                         new List<FieldSetup>
                         {
@@ -365,18 +354,8 @@ namespace RapidCMS.ModelMaker
                 PropertyPanes().ToList(),
                 new List<IButtonSetup>
                 {
-                    _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
-                        ButtonType = DefaultButtonType.Up,
-                        Id = "property-up",
-                        Icon = "Back",
-                        Label = "Return"
-                    }, collection).Setup,
-                    _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
-                        ButtonType = DefaultButtonType.SaveNew,
-                        Id = "property-save-new",
-                        IsPrimary = true,
-                        Label = "Insert"
-                    }, collection).Setup,
+                    await CreateButtonAsync(collection, DefaultButtonType.Up, false, "Return", "Back"),
+                    await CreateButtonAsync(collection, DefaultButtonType.SaveNew, true, "Insert")
                 });
 
             return collection;
@@ -395,7 +374,7 @@ namespace RapidCMS.ModelMaker
 
                     },
                     new List<FieldSetup>
-                    { 
+                    {
                         new PropertyFieldSetup(new FieldConfig
                         {
                             EditorType = EditorType.Dropdown,
@@ -408,7 +387,7 @@ namespace RapidCMS.ModelMaker
                                 x => x.PropertyAlias,
                                 (x, v) => x.PropertyAlias = v,
                                 "propertyalias")
-                        }) 
+                        })
                         {
                             Relation = new DataProviderRelationSetup(typeof(PropertyTypeDataCollection))
                         },
@@ -447,6 +426,21 @@ namespace RapidCMS.ModelMaker
 
                     });
 
+        }
+
+        private async Task<IButtonSetup> CreateButtonAsync(CollectionSetup collection, DefaultButtonType type, bool isPrimary, string? label = default, string? icon = default)
+        {
+            var response = (await _buttonSetupResolver.ResolveSetupAsync(new DefaultButtonConfig
+            {
+                ButtonType = type,
+                Icon = icon,
+                Id = Guid.NewGuid().ToString(),
+                IsPrimary = isPrimary,
+                Label = label,
+
+            }, collection));
+
+            return response.Setup;
         }
     }
 }
