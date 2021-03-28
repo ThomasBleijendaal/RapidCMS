@@ -47,10 +47,10 @@ namespace RapidCMS.Core.Dispatchers.Form
                 throw new InvalidOperationException($"Cannot New Node when id is not null");
             }
 
-            var collection = _collectionResolver.ResolveSetup(request.CollectionAlias);
+            var collection = await _collectionResolver.ResolveSetupAsync(request.CollectionAlias);
             var variant = collection.GetEntityVariant(request.VariantAlias);
             var repository = _repositoryResolver.GetRepository(collection);
-            
+
             var parent = await _parentService.GetParentAsync(request.ParentPath);
 
             var action = (request.UsageType & ~(UsageType.Node | UsageType.Root | UsageType.NotRoot)) switch
@@ -60,7 +60,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                 UsageType.New => () => repository.NewAsync(parent, variant.Type)!,
 
                 _ => default(Func<Task<IEntity?>>)
-            }; 
+            };
 
             if (action == default)
             {

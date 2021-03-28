@@ -63,7 +63,7 @@ namespace RapidCMS.Core.Dispatchers.Form
         private async Task<T> InvokeAsync<T>(PersistEntityRequestModel request, T response, IPageState pageState)
             where T : ViewCommandResponseModel
         {
-            var collection = _collectionResolver.ResolveSetup(request.EditContext.CollectionAlias);
+            var collection = await _collectionResolver.ResolveSetupAsync(request.EditContext.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
             var entityVariant = collection.GetEntityVariant(request.EditContext.Entity);

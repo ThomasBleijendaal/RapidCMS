@@ -26,7 +26,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _conventionListConfigResolver = conventionListConfigResolver;
         }
 
-        public Task<IResolvedSetup<ListSetup>> ResolveSetupAsync(ListConfig config, ICollectionSetup? collection = default)
+        public async Task<IResolvedSetup<ListSetup>> ResolveSetupAsync(ListConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -40,17 +40,17 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             var cacheable = true;
 
-            var panes = _paneSetupResolver.ResolveSetup(config.Panes, collection).CheckIfCachable(ref cacheable).ToList();
-            var buttons = _buttonSetupResolver.ResolveSetup(config.Buttons, collection).CheckIfCachable(ref cacheable).ToList();
+            var panes = (await _paneSetupResolver.ResolveSetupAsync(config.Panes, collection)).CheckIfCachable(ref cacheable).ToList();
+            var buttons = (await _buttonSetupResolver.ResolveSetupAsync(config.Buttons, collection)).CheckIfCachable(ref cacheable).ToList();
 
-            return Task.FromResult<IResolvedSetup<ListSetup>>(new ResolvedSetup<ListSetup>(new ListSetup(
+            return new ResolvedSetup<ListSetup>(new ListSetup(
                 config.PageSize,
                 config.SearchBarVisible,
                 config.ReorderingAllowed,
                 config.ListEditorType,
                 config.EmptyVariantColumnVisibility,
                 panes,
-                buttons), cacheable));
+                buttons), cacheable);
         }
     }
 }

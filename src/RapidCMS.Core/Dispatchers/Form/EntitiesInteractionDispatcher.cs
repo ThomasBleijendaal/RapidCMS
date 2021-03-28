@@ -62,7 +62,7 @@ namespace RapidCMS.Core.Dispatchers.Form
         private async Task<T> InvokeAsync<T>(PersistEntitiesRequestModel request, T response, IPageState pageState)
             where T : ViewCommandResponseModel
         {
-            var collection = _collectionResolver.ResolveSetup(request.ListContext.CollectionAlias);
+            var collection = await _collectionResolver.ResolveSetupAsync(request.ListContext.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
             var (crudType, entityVariant) = await _buttonInteraction.ValidateButtonInteractionAsync(request);
@@ -189,7 +189,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                             break;
                         }
 
-                        var parentCollection = collection.Parent != null && collection.Parent.Type == PageType.Collection ? _collectionResolver.ResolveSetup(collection.Parent.Alias) : default;
+                        var parentCollection = collection.Parent != null && collection.Parent.Type == PageType.Collection ? await _collectionResolver.ResolveSetupAsync(collection.Parent.Alias) : default;
                         if (parentCollection == null)
                         {
                             throw new InvalidOperationException("Cannot go Up on collection that is root.");

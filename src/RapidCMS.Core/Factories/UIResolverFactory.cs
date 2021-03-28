@@ -31,9 +31,9 @@ namespace RapidCMS.Core.Factories
             _authService = authService;
         }
 
-        public Task<INodeUIResolver> GetNodeUIResolverAsync(UsageType usageType, string collectionAlias)
+        public async Task<INodeUIResolver> GetNodeUIResolverAsync(UsageType usageType, string collectionAlias)
         {
-            var collection = _collectionResolver.ResolveSetup(collectionAlias);
+            var collection = await _collectionResolver.ResolveSetupAsync(collectionAlias);
             var node = usageType.HasFlag(UsageType.View)
                 ? collection.NodeView ?? collection.NodeEditor
                 : collection.NodeEditor ?? collection.NodeView;
@@ -44,12 +44,12 @@ namespace RapidCMS.Core.Factories
 
             INodeUIResolver nodeUI = new NodeUIResolver(node, _dataProviderResolver, _buttonActionHandlerResolver,  _authService);
 
-            return Task.FromResult(nodeUI);
+            return nodeUI;
         }
 
-        public Task<IListUIResolver> GetListUIResolverAsync(UsageType usageType, string collectionAlias)
+        public async Task<IListUIResolver> GetListUIResolverAsync(UsageType usageType, string collectionAlias)
         {
-            var collection = _collectionResolver.ResolveSetup(collectionAlias);
+            var collection = await _collectionResolver.ResolveSetupAsync(collectionAlias);
             var list = usageType == UsageType.List
                 ? collection.ListView ?? collection.ListEditor
                 : collection.ListEditor ?? collection.ListView;
@@ -60,7 +60,7 @@ namespace RapidCMS.Core.Factories
 
             IListUIResolver listUI = new ListUIResolver(list, _dataProviderResolver, _dataViewResolver, _buttonActionHandlerResolver, _authService);
 
-            return Task.FromResult(listUI);
+            return listUI;
         }
     }
 }

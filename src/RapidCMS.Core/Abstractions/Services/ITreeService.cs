@@ -10,6 +10,6 @@ namespace RapidCMS.Core.Abstractions.Services
         Task<TreeCollectionUI?> GetCollectionAsync(string alias, ParentPath? parentPath);
         Task<TreePageUI?> GetPageAsync(string alias);
         Task<TreeNodesUI?> GetNodesAsync(string alias, ParentPath? parentPath, int pageNr, int pageSize);
-        TreeRootUI GetRoot();
+        Task<TreeRootUI> GetRootAsync();
     }
 }

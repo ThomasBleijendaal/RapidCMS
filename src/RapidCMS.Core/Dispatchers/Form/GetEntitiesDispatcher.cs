@@ -44,7 +44,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
         public async Task<ListContext> GetAsync(GetEntitiesRequestModel request)
         {
-            var collection = _collectionResolver.ResolveSetup(request.CollectionAlias);
+            var collection = await _collectionResolver.ResolveSetupAsync(request.CollectionAlias);
             var variant = collection.GetEntityVariant(request.VariantAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 

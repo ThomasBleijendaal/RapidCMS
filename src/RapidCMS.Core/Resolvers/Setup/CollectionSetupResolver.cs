@@ -133,14 +133,14 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             if (!string.IsNullOrWhiteSpace(config.ParentAlias) && _collectionMap.TryGetValue(config.ParentAlias, out var collectionConfig))
             {
-                collection.Parent = new TreeElementSetup(collectionConfig.Alias, PageType.Collection); // TODO: enum
+                collection.Parent = new TreeElementSetup(collectionConfig.Alias, PageType.Collection); // TODO: this assumes nesting is always with collections
             }
             collection.Collections = (await _treeElementResolver.ResolveSetupAsync(config.CollectionsAndPages, collection)).CheckIfCachable(ref cacheable).ToList();
 
             collection.EntityVariant = (await _entityVariantResolver.ResolveSetupAsync(config.EntityVariant, collection)).CheckIfCachable(ref cacheable);
             if (config.SubEntityVariants.Any())
             {
-                collection.SubEntityVariants = _entityVariantResolver.ResolveSetup(config.SubEntityVariants, collection).CheckIfCachable(ref cacheable).ToList();
+                collection.SubEntityVariants = (await _entityVariantResolver.ResolveSetupAsync(config.SubEntityVariants, collection)).CheckIfCachable(ref cacheable).ToList();
             }
 
             collection.TreeView = config.TreeView == null ? null : (await _treeViewResolver.ResolveSetupAsync(config.TreeView, collection)).CheckIfCachable(ref cacheable);

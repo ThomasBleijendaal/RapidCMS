@@ -49,7 +49,7 @@ namespace RapidCMS.Core.Services.Tree
 
         public async Task<TreeCollectionUI?> GetCollectionAsync(string alias, ParentPath? parentPath)
         {
-            var collection = _collectionResolver.ResolveSetup(alias);
+            var collection = await _collectionResolver.ResolveSetupAsync(alias);
             if (collection == null)
             {
                 throw new InvalidOperationException($"Failed to get collection for given alias ({alias}).");
@@ -127,26 +127,26 @@ namespace RapidCMS.Core.Services.Tree
             return tree;
         }
 
-        public Task<TreePageUI?> GetPageAsync(string alias)
+        public async Task<TreePageUI?> GetPageAsync(string alias)
         {
-            var page = _pageResolver.ResolveSetup(alias);
+            var page = await _pageResolver.ResolveSetupAsync(alias);
             if (page == null)
             {
                 throw new InvalidOperationException($"Failed to get page for given alias ({alias}).");
             }
 
-            return Task.FromResult(new TreePageUI(page.Name, page.Icon, page.Color, new PageStateModel
+            return new TreePageUI(page.Name, page.Icon, page.Color, new PageStateModel
             {
                 CollectionAlias = page.Alias,
                 PageType = PageType.Page
-            }))!;
+            });
         }
 
         public async Task<TreeNodesUI?> GetNodesAsync(string alias, ParentPath? parentPath, int pageNr, int pageSize)
         {
             var x = _httpContextAccessor.HttpContext;
 
-            var collection = _collectionResolver.ResolveSetup(alias);
+            var collection = await _collectionResolver.ResolveSetupAsync(alias);
             if (collection == null)
             {
                 throw new InvalidOperationException($"Failed to get collection for given alias ({alias}).");
@@ -218,9 +218,9 @@ namespace RapidCMS.Core.Services.Tree
             }
         }
 
-        public TreeRootUI GetRoot()
+        public async Task<TreeRootUI> GetRootAsync()
         {
-            var collections = _treeElementResolver.ResolveSetup()
+            var collections = (await _treeElementResolver.ResolveSetupAsync())
                 .ToList(x => (x.Alias, x.Type));
 
             return new TreeRootUI("-1", AliasHelper.GetRepositoryAlias(typeof(object)), _cms.SiteName, collections)

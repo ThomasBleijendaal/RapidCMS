@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Enums;
@@ -9,8 +10,8 @@ namespace RapidCMS.Core.Abstractions.Factories
 {
     internal interface IEditContextFactory
     {
-        IEditContext GetEditContextWrapper(FormEditContext editContext);
-        IEditContext GetEditContextWrapper(
+        Task<IEditContext> GetEditContextWrapperAsync(FormEditContext editContext);
+        Task<IEditContext> GetEditContextWrapperAsync(
             UsageType usageType, 
             EntityState entityState, 
             Type repositoryEntityType,

@@ -30,11 +30,11 @@ namespace RapidCMS.Core.Resolvers.Setup
             throw new InvalidOperationException("Cannot resolve page without alias.");
         }
 
-        Task<IPageSetup> ISetupResolver<IPageSetup>.ResolveSetupAsync(string alias)
+        async Task<IPageSetup> ISetupResolver<IPageSetup>.ResolveSetupAsync(string alias)
         {
             if (_cache.TryGetValue(alias, out var pageSetup))
             {
-                return Task.FromResult(pageSetup);
+                return pageSetup;
             }
 
             var config = _cmsConfig.CollectionsAndPages.SelectNotNull(x => x as IPageConfig).FirstOrDefault(x => x.Alias == alias);
@@ -51,7 +51,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 Alias = config.Alias,
                 Icon = config.Icon,
                 Color = config.Color,
-                Sections = _typeRegistrationSetupResolver.ResolveSetup(config.SectionRegistrations).CheckIfCachable(ref cacheable).ToList()
+                Sections = (await _typeRegistrationSetupResolver.ResolveSetupAsync(config.SectionRegistrations)).CheckIfCachable(ref cacheable).ToList()
             };
 
             if (cacheable)
@@ -59,7 +59,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 _cache[alias] = pageSetup;
             }
 
-            return Task.FromResult(pageSetup);
+            return pageSetup;
         }
     }
 }

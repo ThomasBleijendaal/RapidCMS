@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Resolvers;
@@ -16,9 +15,9 @@ namespace RapidCMS.Core.Dispatchers
             _pageResolver = pageResolver;
         }
 
-        public Task<IEnumerable<ITypeRegistration>> GetAsync(string request)
+        public async Task<IEnumerable<ITypeRegistration>> GetAsync(string request)
         {
-            return Task.FromResult(_pageResolver.ResolveSetup(request).Sections.AsEnumerable());
+            return (await _pageResolver.ResolveSetupAsync(request)).Sections;
         }
     }
 }

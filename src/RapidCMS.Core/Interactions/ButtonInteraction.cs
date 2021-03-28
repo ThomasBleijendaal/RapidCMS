@@ -29,7 +29,7 @@ namespace RapidCMS.Core.Interactions
 
         public async Task<CrudType> ValidateButtonInteractionAsync(IEditorButtonInteractionRequestModel request)
         {
-            var (handler, button) = FindButtonHandler(request.EditContext.CollectionAlias, request.ActionId);
+            var (handler, button) = await FindButtonHandlerAsync(request.EditContext.CollectionAlias, request.ActionId);
 
             await _authService.EnsureAuthorizedUserAsync(request.EditContext, button);
 
@@ -45,7 +45,7 @@ namespace RapidCMS.Core.Interactions
 
         public async Task CompleteButtonInteractionAsync(IEditorButtonInteractionRequestModel request)
         {
-            var (handler, button) = FindButtonHandler(request.EditContext.CollectionAlias, request.ActionId);
+            var (handler, button) = await FindButtonHandlerAsync(request.EditContext.CollectionAlias, request.ActionId);
             
             var context = new ButtonContext(request.EditContext.Parent, request.CustomData);
 
@@ -54,7 +54,7 @@ namespace RapidCMS.Core.Interactions
 
         public async Task<CrudType> ValidateButtonInteractionAsync(IEditorInListInteractionRequestModel request)
         {
-            var (handler, button) = FindButtonHandler(request.ListContext.CollectionAlias, request.ActionId);
+            var (handler, button) = await FindButtonHandlerAsync(request.ListContext.CollectionAlias, request.ActionId);
 
             await _authService.EnsureAuthorizedUserAsync(request.EditContext, button);
 
@@ -70,7 +70,7 @@ namespace RapidCMS.Core.Interactions
 
         public async Task<(CrudType crudType, IEntityVariantSetup? entityVariant)> ValidateButtonInteractionAsync(IListButtonInteractionRequestModel request)
         {
-            var (handler, button) = FindButtonHandler(request.ListContext.CollectionAlias, request.ActionId);
+            var (handler, button) = await FindButtonHandlerAsync(request.ListContext.CollectionAlias, request.ActionId);
 
             // NOTE: this might check too much or reject because of the wrong reasons.
             await _authService.EnsureAuthorizedUserAsync(request.ListContext.ProtoEditContext, button);
@@ -81,16 +81,16 @@ namespace RapidCMS.Core.Interactions
 
         public async Task CompleteButtonInteractionAsync(IListButtonInteractionRequestModel request)
         {
-            var (handler, button) = FindButtonHandler(request.ListContext.CollectionAlias, request.ActionId);
+            var (handler, button) = await FindButtonHandlerAsync(request.ListContext.CollectionAlias, request.ActionId);
 
             var context = new ButtonContext(request.ListContext.Parent, request.CustomData);
 
             await handler.ButtonClickAfterRepositoryActionAsync(button, request.ListContext.ProtoEditContext, context);
         }
 
-        private (IButtonActionHandler handler, IButtonSetup button) FindButtonHandler(string collectionAlias, string buttonId)
+        private async Task<(IButtonActionHandler handler, IButtonSetup button)> FindButtonHandlerAsync(string collectionAlias, string buttonId)
         {
-            var collection = _collectionResolver.ResolveSetup(collectionAlias);
+            var collection = await _collectionResolver.ResolveSetupAsync(collectionAlias);
 
             var button = collection.FindButton(buttonId);
             if (button == null)

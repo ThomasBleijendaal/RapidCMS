@@ -45,7 +45,7 @@ namespace RapidCMS.Core.Dispatchers.Api
             var repository = _repositoryResolver.GetRepository(request.Subject.RepositoryAlias ?? throw new ArgumentNullException());
 
             var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Subject.ParentPath));
-            var entityVariant = request.Subject.VariantAlias == null ? default : _entityVariantResolver.ResolveSetup(request.Subject.VariantAlias);
+            var entityVariant = request.Subject.VariantAlias == null ? default : await _entityVariantResolver.ResolveSetupAsync(request.Subject.VariantAlias);
 
             var action = (request.UsageType & ~(UsageType.Node | UsageType.Root | UsageType.NotRoot)) switch
             {
