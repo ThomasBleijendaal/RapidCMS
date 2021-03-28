@@ -13,6 +13,7 @@ namespace RapidCMS.ModelMaker
     {
         private readonly IModelMakerConfig _config;
         private PropertyModel? _property;
+        private FormEditContext? _editContext;
 
         public PropertyEditorDataCollection(IModelMakerConfig config)
         {
@@ -23,7 +24,10 @@ namespace RapidCMS.ModelMaker
 
         public void Dispose()
         {
-            
+            if (_editContext != null)
+            {
+                _editContext.OnFieldChanged -= EditContext_OnFieldChanged;
+            }
         }
 
         public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
@@ -45,12 +49,26 @@ namespace RapidCMS.ModelMaker
 
         public Task SetEntityAsync(FormEditContext editContext, IParent? parent)
         {
+            if (_editContext != null)
+            {
+                _editContext.OnFieldChanged -= EditContext_OnFieldChanged;
+            }
+
+            _editContext = editContext;
+            
             if (editContext.Entity is PropertyModel property)
             {
+                editContext.OnFieldChanged += EditContext_OnFieldChanged;
+
                 _property = property;
             }
 
             return Task.CompletedTask;
+        }
+
+        private void EditContext_OnFieldChanged(object? sender, FieldChangedEventArgs e)
+        {
+            OnDataChange?.Invoke(this, new EventArgs());
         }
     }
 }

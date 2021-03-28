@@ -153,7 +153,6 @@ namespace RapidCMS.ModelMaker
 
     public interface IValidatorConfig
     {
-
     }
 
     public class MinLengthValidationConfig : IValidatorConfig

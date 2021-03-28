@@ -24,6 +24,7 @@ namespace RapidCMS.ModelMaker
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
             services.AddTransient<PropertyEditorDataCollection>();
+            services.AddTransient<PropertyTypeDataCollection>();
 
             services.AddScoped<ModelMakerRepository>();
             services.AddScoped<ModelRepository>();
@@ -116,8 +117,6 @@ namespace RapidCMS.ModelMaker
                     "LimitedOptions"
                 }
             };
-
-
 
             cmsConfig.AddCollection<ModelEntity, ModelRepository>(
                 "modelmakeradmin",

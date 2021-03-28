@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Plugins;
+using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Handlers;
@@ -14,22 +15,21 @@ namespace RapidCMS.ModelMaker
     internal class ModelMakerPlugin : IPlugin
     {
         private readonly IModelMakerConfig _config;
+        private readonly ISetupResolver<IButtonSetup, ButtonConfig> _buttonSetupResolver;
 
-        public ModelMakerPlugin(IModelMakerConfig config)
+        public ModelMakerPlugin(
+            IModelMakerConfig config,
+             ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver)
         {
             _config = config;
+            _buttonSetupResolver = buttonSetupResolver;
         }
 
         public string CollectionPrefix => "modelmaker";
 
-        // TODO: async?
+        // TODO: async
         public CollectionSetup? GetCollection(string collectionAlias)
         {
-            //if (collectionAlias == "dynamic")
-            //{
-            //    return _dynamic;
-            //}
-
             if (collectionAlias == "property")
             {
                 return PropertyConfigurationCollection();
@@ -42,21 +42,11 @@ namespace RapidCMS.ModelMaker
             return null;
         }
 
-        // TODO: async?
+        // TODO: async
         public IEnumerable<ITreeElementSetup> GetTreeElements()
         {
             return new ITreeElementSetup[]
             {
-                // TODO: prefix should be added automatically
-                //new TreeElementSetup(_dynamic.Alias, PageType.Collection)
-                //{
-                //    RootVisibility = CollectionRootVisibility.Visible
-                //}
-
-                //new TreeElementSetup(ModelConfigurationCollection().Alias, PageType.Collection)
-                //{
-                //    RootVisibility = CollectionRootVisibility.Visible
-                //}
             };
         }
 
@@ -129,24 +119,11 @@ namespace RapidCMS.ModelMaker
                         },
                         new List<FieldSetup>
                         {
-                            new PropertyFieldSetup(new FieldConfig
-                            {
-                                EditorType = EditorType.TextBox,
-                                Index = 1,
-                                IsDisabled = (m, s) => false,
-                                IsVisible = (m, s) => true,
-                                Name = "Alias",
-                                Property = new PropertyMetadata<PropertyValidationModel, string>(
-                                    "Alias",
-                                    x => x.Alias,
-                                    (x, v) => x.Alias = v,
-                                    "name")
-                            }),
                             new CustomPropertyFieldSetup(new FieldConfig
                             {
                                 Description = validationType.Description,
                                 EditorType = EditorType.Custom,
-                                Index = 2,
+                                Index = 1,
                                 IsDisabled = (m, s) => false,
                                 IsVisible = (m, s) => true,
                                 Name = validationType.Name,
@@ -165,7 +142,7 @@ namespace RapidCMS.ModelMaker
         private CollectionSetup PropertyConfigurationCollection()
         {
             var entityVariantSetup = new EntityVariantSetup("default", default, typeof(PropertyModel), "modelproperty");
-            return new CollectionSetup(
+            var collection = new CollectionSetup(
                 "Database",
                 "MagentaPink10",
                 "Properties",
@@ -181,274 +158,159 @@ namespace RapidCMS.ModelMaker
                     CollectionRootVisibility.Visible,
                     false,
                     false,
-                    new ExpressionMetadata<ModelEntity>("Name", x => x.Name ?? string.Empty)),
-                ListEditor = new ListSetup(
-                    100,
-                    false,
-                    false,
-                    ListType.Block,
-                    EmptyVariantColumnVisibility.Collapse,
-                    PropertyPanes().ToList(),
-                    new List<IButtonSetup>
-                    {
-                        new ButtonSetup
-                        {
-                            ButtonHandlerType = typeof(DefaultButtonActionHandler),
-                            ButtonId = "property-return",
-                            DefaultButtonType = DefaultButtonType.Return,
-                            Icon = "Back",
-                            Label = "Cancel",
-                            Buttons = Enumerable.Empty<IButtonSetup>(),
-                            EntityVariant = entityVariantSetup
-                        },
-                        new ButtonSetup
-                        {
-                            ButtonHandlerType = typeof(DefaultButtonActionHandler),
-                            ButtonId = "property-new",
-                            DefaultButtonType = DefaultButtonType.New,
-                            Icon = "Add",
-                            IsPrimary = true,
-                            Label = "Add property",
-                            Buttons = Enumerable.Empty<IButtonSetup>(),
-                            EntityVariant = entityVariantSetup
-                        }
-                    })
+                    new ExpressionMetadata<ModelEntity>("Name", x => x.Name ?? string.Empty))
             };
+            collection.ListEditor = new ListSetup(
+                100,
+                false,
+                true,
+                ListType.Table,
+                EmptyVariantColumnVisibility.Collapse,
+                new List<PaneSetup>
+                {
+                    new PaneSetup(
+                        default,
+                        default,
+                        (m, s) => true,
+                        typeof(PropertyModel),
+                        new List<IButtonSetup>
+                        {
+                            _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
+                                ButtonType = DefaultButtonType.Edit,
+                                Id = "property-edit"
+                            }, collection).Setup
+                        },
+                        new List<FieldSetup>
+                        {
+                            new ExpressionFieldSetup(new FieldConfig
+                            {
+                                DisplayType = DisplayType.Label,
+                                EditorType = EditorType.None,
+                                Index = 1,
+                                IsDisabled = (m, s) => false,
+                                IsVisible = (m, s) => true,
+                                Name = "Property name"
+                            }, new ExpressionMetadata<PropertyModel>("Name", x => x.Name)),
+                        },
+                        new List<SubCollectionListSetup>(),
+                        new List<RelatedCollectionListSetup>())
+                },
+                new List<IButtonSetup>
+                {
+                    new ButtonSetup
+                    {
+                        ButtonHandlerType = typeof(DefaultButtonActionHandler),
+                        ButtonId = "property-return",
+                        DefaultButtonType = DefaultButtonType.Return,
+                        Icon = "Back",
+                        Label = "Cancel",
+                        Buttons = Enumerable.Empty<IButtonSetup>(),
+                        EntityVariant = entityVariantSetup
+                    },
+                    new ButtonSetup
+                    {
+                        ButtonHandlerType = typeof(DefaultButtonActionHandler),
+                        ButtonId = "property-new",
+                        DefaultButtonType = DefaultButtonType.New,
+                        Icon = "Add",
+                        IsPrimary = true,
+                        Label = "Add property",
+                        Buttons = Enumerable.Empty<IButtonSetup>(),
+                        EntityVariant = entityVariantSetup
+                    }
+                });
+
+            collection.NodeEditor = new NodeSetup(
+                typeof(PropertyModel),
+                PropertyPanes().ToList(),
+                new List<IButtonSetup>
+                {
+                    _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
+                        ButtonType = DefaultButtonType.Up,
+                        Id = "property-up",
+                        Icon = "Back",
+                        Label = "Return"
+                    }, collection).Setup,
+                    _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
+                        ButtonType = DefaultButtonType.SaveNew,
+                        Id = "property-save-new",
+                        IsPrimary = true,
+                        Label = "Insert"
+                    }, collection).Setup,
+                });
+
+            return collection;
         }
 
         private IEnumerable<PaneSetup> PropertyPanes()
         {
-            // TODO: property alias selector when property is new 
+            yield return
+                new PaneSetup(
+                    default,
+                    default,
+                    (m, s) => true,
+                    typeof(PropertyModel),
+                    new List<IButtonSetup>
+                    {
 
-            foreach (var propertyType in _config.Properties)
-            {
-                yield return
-                    new PaneSetup(
-                        default,
-                        default,
-                        (m, s) => s == EntityState.IsExisting &&
-                            m is PropertyModel p && p.PropertyAlias == propertyType.Alias,
-                        typeof(PropertyModel),
-                        new List<IButtonSetup>
+                    },
+                    new List<FieldSetup>
+                    { 
+                        new PropertyFieldSetup(new FieldConfig
                         {
+                            EditorType = EditorType.Dropdown,
+                            Index = 0,
+                            IsDisabled = (m, s) => s == EntityState.IsExisting,
+                            IsVisible = (m, s) => true,
+                            Name = "Property type",
+                            Property = new PropertyMetadata<PropertyModel, string>(
+                                "PropertyAlias",
+                                x => x.PropertyAlias,
+                                (x, v) => x.PropertyAlias = v,
+                                "propertyalias")
+                        }) 
+                        {
+                            Relation = new DataProviderRelationSetup(typeof(PropertyTypeDataCollection))
+                        },
+                        new PropertyFieldSetup(new FieldConfig
+                        {
+                            EditorType = EditorType.TextBox,
+                            Index = 1,
+                            IsDisabled = (m, s) => false,
+                            IsVisible = (m, s) => true,
+                            Name = "Property name",
+                            Property = new PropertyMetadata<PropertyModel, string>(
+                                "Name",
+                                x => x.Name,
+                                (x, v) => x.Name = v,
+                                "name")
+                        }),
+                        new PropertyFieldSetup(new FieldConfig
+                        {
+                            EditorType = EditorType.Dropdown,
+                            Index = 2,
+                            IsDisabled = (m, s) => false,
+                            IsVisible = (m, s) => true,
+                            Name = "Property editor",
+                            Property = new PropertyMetadata<PropertyModel, string>(
+                                "EditorAlias",
+                                x => x.EditorAlias,
+                                (x, v) => x.EditorAlias = v,
+                                "editoralias")
+                        })
+                        {
+                            Relation = new DataProviderRelationSetup(typeof(PropertyEditorDataCollection))
+                        }
+                    },
+                    new List<SubCollectionListSetup>
+                    {
+                        new SubCollectionListSetup(3, "modelmaker::validation")
+                    },
+                    new List<RelatedCollectionListSetup>
+                    {
 
-                        },
-                        new List<FieldSetup>
-                        {
-                            new PropertyFieldSetup(new FieldConfig
-                            {
-                                Description = propertyType.Name,
-                                EditorType = EditorType.TextBox,
-                                Index = 1,
-                                IsDisabled = (m, s) => false,
-                                IsVisible = (m, s) => true,
-                                Name = "Property name",
-                                Property = new PropertyMetadata<PropertyModel, string>(
-                                    "Name",
-                                    x => x.Name,
-                                    (x, v) => x.Name = v,
-                                    "name")
-                            }),
-                            new PropertyFieldSetup(new FieldConfig
-                            {
-                                EditorType = EditorType.Dropdown,
-                                Index = 2,
-                                IsDisabled = (m, s) => false,
-                                IsVisible = (m, s) => true,
-                                Name = "Property editor",
-                                Property = new PropertyMetadata<PropertyModel, string>(
-                                    "EditorAlias",
-                                    x => x.EditorAlias,
-                                    (x, v) => x.EditorAlias = v,
-                                    "editoralias")
-                            })
-                            {
-                                Relation = new DataProviderRelationSetup(typeof(PropertyEditorDataCollection))
-                            }
-                        },
-                        new List<SubCollectionListSetup>
-                        {
-                            new SubCollectionListSetup(3, "modelmaker::validation")
-                        },
-                        new List<RelatedCollectionListSetup>
-                        {
+                    });
 
-                        });
-            }
         }
-
-
-        //private CollectionSetup _dynamic = new CollectionSetup(
-        //    "Database",
-        //    "Gray100",
-        //    "Dynamic Config",
-        //    $"modelmaker::dynamic",
-        //    $"modelmaker::dynamic",
-        //    false,
-        //    false)
-        //{
-        //    // TODO: use existing setup resolvers to convert more simple config to complex setup easily
-
-        //    EntityVariant = new EntityVariantSetup("default", default, typeof(ModelMakerEntity), "modelmaker"),
-        //    UsageType = UsageType.List,
-        //    TreeView = new TreeViewSetup(
-        //        EntityVisibilty.Visible,
-        //        CollectionRootVisibility.Visible,
-        //        false,
-        //        false,
-        //        new ModelMakerEntityExpressionMetadata(
-        //            "Name",
-        //            x => x.Get<string>("Name"))),
-        //    NodeEditor = new NodeSetup(
-        //        typeof(ModelMakerEntity),
-        //        new List<PaneSetup>
-        //        {
-        //            new PaneSetup(
-        //                default,
-        //                "Dynamic",
-        //                (m, s) => true,
-        //                typeof(ModelMakerEntity),
-        //                new List<IButtonSetup>
-        //                {
-
-        //                },
-        //                new List<FieldSetup>
-        //                {
-        //                    new PropertyFieldSetup(new FieldConfig
-        //                    {
-        //                        Description = "Dynamic Name",
-        //                        EditorType = EditorType.TextBox,
-        //                        Index = 1,
-        //                        IsDisabled = (m, s) => false,
-        //                        IsVisible = (m, s) => true,
-        //                        Name = "Name",
-        //                        Placeholder = "Dynamic name",
-        //                        Property = new ModelMakerEntityPropertyMetadata(
-        //                            typeof(string),
-        //                            "Name",
-        //                            x => x.Get("Name"),
-        //                            (x, v) => x.Set("Name", v),
-        //                            "DynamicName")
-        //                    })
-        //                },
-        //                new List<SubCollectionListSetup>(),
-        //                new List<RelatedCollectionListSetup>())
-        //        },
-        //        new List<IButtonSetup>
-        //        {
-        //            new ButtonSetup
-        //            {
-        //                ButtonHandlerType = typeof(DefaultButtonActionHandler),
-        //                ButtonId = "modelmaker-save-new",
-        //                Buttons = Enumerable.Empty<IButtonSetup>(),
-        //                DefaultButtonType = DefaultButtonType.SaveNew,
-        //                Icon = "Save",
-        //                IsPrimary = true,
-        //                Label = "Insert"
-        //            },
-        //            new ButtonSetup
-        //            {
-        //                ButtonHandlerType = typeof(DefaultButtonActionHandler),
-        //                ButtonId = "modelmaker-save-existing",
-        //                Buttons = Enumerable.Empty<IButtonSetup>(),
-        //                DefaultButtonType = DefaultButtonType.SaveExisting,
-        //                Icon = "Save",
-        //                IsPrimary = true,
-        //                Label = "Update"
-        //            },
-        //            new ButtonSetup
-        //            {
-        //                ButtonHandlerType = typeof(DefaultButtonActionHandler),
-        //                ButtonId = "modelmaker-delete",
-        //                Buttons = Enumerable.Empty<IButtonSetup>(),
-        //                DefaultButtonType = DefaultButtonType.Delete,
-        //                Icon = "Delete",
-        //                Label = "Delete"
-        //            }
-        //        }),
-        //    ListEditor = new ListSetup(
-        //        100,
-        //        false,
-        //        false,
-        //        ListType.Table,
-        //        EmptyVariantColumnVisibility.Collapse,
-        //        new List<PaneSetup>
-        //        {
-        //            new PaneSetup(
-        //                default,
-        //                "Dynamic",
-        //                (m, s) => true,
-        //                typeof(ModelMakerEntity),
-        //                new List<IButtonSetup>
-        //                {
-        //                    new ButtonSetup
-        //                    {
-        //                        ButtonHandlerType = typeof(DefaultButtonActionHandler),
-        //                        ButtonId = "modelmaker-save-new",
-        //                        Buttons = Enumerable.Empty<IButtonSetup>(),
-        //                        DefaultButtonType = DefaultButtonType.SaveNew,
-        //                        Icon = "Save",
-        //                        IsPrimary = true,
-        //                        Label = "Insert"
-        //                    },
-        //                    new ButtonSetup
-        //                    {
-        //                        ButtonHandlerType = typeof(DefaultButtonActionHandler),
-        //                        ButtonId = "modelmaker-save-existing",
-        //                        Buttons = Enumerable.Empty<IButtonSetup>(),
-        //                        DefaultButtonType = DefaultButtonType.SaveExisting,
-        //                        Icon = "Save",
-        //                        IsPrimary = true,
-        //                        Label = "Update"
-        //                    },
-        //                    new ButtonSetup
-        //                    {
-        //                        ButtonHandlerType = typeof(DefaultButtonActionHandler),
-        //                        ButtonId = "modelmaker-edit",
-        //                        Buttons = Enumerable.Empty<IButtonSetup>(),
-        //                        DefaultButtonType = DefaultButtonType.Edit,
-        //                        Icon = "Edit",
-        //                        Label = "Edit"
-        //                    },
-        //                },
-        //                new List<FieldSetup>
-        //                {
-        //                    new PropertyFieldSetup(new FieldConfig
-        //                    {
-        //                        Description = "Dynamic Name",
-        //                        EditorType = EditorType.TextBox,
-        //                        Index = 1,
-        //                        IsDisabled = (m, s) => false,
-        //                        IsVisible = (m, s) => true,
-        //                        Name = "Name",
-        //                        Placeholder = "Dynamic name",
-        //                        Property = new ModelMakerEntityPropertyMetadata(
-        //                            typeof(string),
-        //                            "Name",
-        //                            x => x.Get("Name"),
-        //                            (x, v) => x.Set("Name", v),
-        //                            "DynamicName")
-        //                    })
-        //                },
-        //                new List<SubCollectionListSetup>(),
-        //                new List<RelatedCollectionListSetup>())
-        //        },
-        //        new List<IButtonSetup>
-        //        {
-        //            new ButtonSetup
-        //            {
-        //                ButtonHandlerType = typeof(DefaultButtonActionHandler),
-        //                ButtonId = "modelmaker-new",
-        //                Buttons = Enumerable.Empty<IButtonSetup>(),
-        //                DefaultButtonType = DefaultButtonType.New,
-        //                Icon = "Add",
-        //                IsPrimary = true,
-        //                Label = "New",
-
-        //                // TODO: reuse
-        //                EntityVariant = new EntityVariantSetup("default", default, typeof(ModelMakerEntity), "modelmaker")
-        //            }
-        //        })
-        //};
     }
 }

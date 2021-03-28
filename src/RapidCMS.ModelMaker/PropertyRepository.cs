@@ -53,7 +53,17 @@ namespace RapidCMS.ModelMaker
 
         public Task<IEntity?> InsertAsync(IEditContext editContext)
         {
-            throw new NotImplementedException();
+            if (editContext is IEditContext<PropertyModel> typedEditContext &&
+                typedEditContext.Parent?.Entity is ModelEntity model)
+            {
+                var newProperty = typedEditContext.Entity;
+                newProperty.Id = Guid.NewGuid().ToString();
+                model.Properties.Add(newProperty);
+
+                return Task.FromResult<IEntity?>(newProperty);
+            }
+
+            return Task.FromResult<IEntity?>(default);
         }
 
         public Task<IEntity> NewAsync(IParent? parent, Type? variantType)

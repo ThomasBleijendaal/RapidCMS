@@ -20,6 +20,7 @@ namespace RapidCMS.ModelMaker
                 {
                     new PropertyModel
                     {
+                        Id = "1,",
                         EditorAlias = "textbox",
                         Name = "Name",
                         PropertyAlias = "shortstring",
@@ -27,6 +28,7 @@ namespace RapidCMS.ModelMaker
                         {
                             new PropertyValidationModel
                             {
+                                Id = "1",
                                 Alias = "minlength",
                                 Config = new MinLengthValidationConfig
                                 {
