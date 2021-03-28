@@ -6,8 +6,9 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.ModelMaker.Abstractions.Config;
+using RapidCMS.ModelMaker.Models.Entities;
 
-namespace RapidCMS.ModelMaker
+namespace RapidCMS.ModelMaker.DataCollections
 {
     public class PropertyEditorDataCollection : IDataCollection
     {
@@ -40,7 +41,7 @@ namespace RapidCMS.ModelMaker
                     .Select(x => new Element
                     {
                         Id = x.Alias,
-                        Labels = new []
+                        Labels = new[]
                         {
                             x.Name
                         }
@@ -55,7 +56,7 @@ namespace RapidCMS.ModelMaker
             }
 
             _editContext = editContext;
-            
+
             if (editContext.Entity is PropertyModel property)
             {
                 editContext.OnFieldChanged += EditContext_OnFieldChanged;

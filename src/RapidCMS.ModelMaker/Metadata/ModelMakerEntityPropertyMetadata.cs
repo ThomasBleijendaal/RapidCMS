@@ -2,13 +2,13 @@
 using System.Linq.Expressions;
 using RapidCMS.Core.Abstractions.Metadata;
 
-namespace RapidCMS.ModelMaker
+namespace RapidCMS.ModelMaker.Metadata
 {
     internal class PropertyMetadata<TEntity, TProperty> : IFullPropertyMetadata
     {
         public PropertyMetadata(
             string propertyName,
-            Func<TEntity, object?> getter,
+            Func<TEntity, TProperty?> getter,
             Action<TEntity, TProperty?> setter,
             string fingerprint)
         {

@@ -9,6 +9,11 @@ using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.ModelMaker.Abstractions.Config;
+using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.DataCollections;
+using RapidCMS.ModelMaker.Metadata;
+using RapidCMS.ModelMaker.Models.Entities;
+using RapidCMS.ModelMaker.Repositories;
 
 namespace RapidCMS.ModelMaker
 {
@@ -38,16 +43,22 @@ namespace RapidCMS.ModelMaker
             {
                 return ValidationConfigurationCollection();
             }
+            else
+            {
+                var model = ConfigurationExtensions.MODELS.FirstOrDefault(model => model.Alias == collectionAlias);
+                if (model != null)
+                {
+                    return ModelCollection(model);
+                }
+            }
 
-            return null;
+            return default;
         }
 
         // TODO: async
         public IEnumerable<ITreeElementSetup> GetTreeElements()
         {
-            return new ITreeElementSetup[]
-            {
-            };
+            return ConfigurationExtensions.MODELS.Select(model => new TreeElementSetup($"{CollectionPrefix}::{model.Alias}", PageType.Collection));
         }
 
         public Type? GetRepositoryType(string collectionAlias)
@@ -66,6 +77,138 @@ namespace RapidCMS.ModelMaker
             }
 
             return typeof(ModelMakerRepository);
+        }
+
+        private CollectionSetup ModelCollection(ModelEntity definition)
+        {
+            var entityVariantSetup = new EntityVariantSetup(definition.Alias, default, typeof(ModelMakerEntity), definition.Alias);
+            var collection = new CollectionSetup(
+                "Database",
+                "Cyan10",
+                definition.Name,
+                $"modelmaker::{definition.Alias}",
+                $"modelmaker::{definition.Alias}",
+                false,
+                false)
+            {
+                EntityVariant = entityVariantSetup,
+                UsageType = UsageType.List,
+                TreeView = new TreeViewSetup(
+                    EntityVisibilty.Visible,
+                    CollectionRootVisibility.Visible,
+                    false,
+                    false,
+                    new ExpressionMetadata<ModelMakerEntity>("Name", x => x.Id))
+            };
+
+            var titleProperty = definition.Properties.First(x => x.IsTitle);
+
+            collection.ListView = new ListSetup(
+                100,
+                false,
+                false,
+                ListType.Table,
+                EmptyVariantColumnVisibility.Collapse,
+                new List<PaneSetup>
+                {
+                    new PaneSetup(
+                        default,
+                        default,
+                        (m, s) => true,
+                        typeof(ModelMakerEntity),
+                        new List<IButtonSetup>
+                        {
+                            _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
+                                ButtonType = DefaultButtonType.Edit,
+                                Id = "model-edit",
+                                IsPrimary = true,
+                                Label = "Edit"
+                            }, collection).Setup
+                        },
+                        new List<FieldSetup>
+                        {
+                            new ExpressionFieldSetup(new FieldConfig
+                            {
+                                DisplayType = DisplayType.Label,
+                                Name = titleProperty.Name
+                            }, new ExpressionMetadata<ModelMakerEntity>(titleProperty.Name, x => x.Get<string>(titleProperty.Alias)))
+                        },
+                        new List<SubCollectionListSetup>(),
+                        new List<RelatedCollectionListSetup>())
+                },
+                new List<IButtonSetup>
+                {
+                    _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
+                        ButtonType = DefaultButtonType.New,
+                        Id = "model-new",
+                        IsPrimary = true,
+                        Label = "New"
+                    }, collection).Setup
+                });
+
+            collection.NodeEditor = new NodeSetup(
+                typeof(ModelMakerEntity),
+                ModelPanes(definition, collection).ToList(),
+                new List<IButtonSetup>
+                {
+
+                });
+
+            return collection;
+        }
+
+        private IEnumerable<PaneSetup> ModelPanes(ModelEntity definition, CollectionSetup collection)
+        {
+            yield return
+                new PaneSetup(
+                    default,
+                    default,
+                    (m, s) => true,
+                    typeof(ModelMakerEntity),
+                    new List<IButtonSetup>
+                    {
+                        _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
+                            ButtonType = DefaultButtonType.SaveExisting,
+                            Id = "model-save-existing",
+                            IsPrimary = true,
+                            Label = "Update"
+                        }, collection).Setup,
+                        _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
+                            ButtonType = DefaultButtonType.SaveNew,
+                            Id = "model-save-new",
+                            IsPrimary = true,
+                            Label = "Insert"
+                        }, collection).Setup,
+                        _buttonSetupResolver.ResolveSetup(new DefaultButtonConfig {
+                            ButtonType = DefaultButtonType.Delete,
+                            Id = "model-delete",
+                            Label = "Delete"
+                        }, collection).Setup
+                    },
+                    ModelFields(definition).ToList(),
+                    new List<SubCollectionListSetup>(),
+                    new List<RelatedCollectionListSetup>());
+        }
+
+        private IEnumerable<FieldSetup> ModelFields(ModelEntity definition)
+        {
+            var i = 0;
+            foreach (var property in definition.Properties)
+            {
+                var editor = _config.Editors.First(x => x.Alias == property.EditorAlias);
+
+                yield return new CustomPropertyFieldSetup(new FieldConfig
+                {
+                    EditorType = EditorType.Custom,
+                    Index = ++i,
+                    Name = property.Name,
+                    Property = new PropertyMetadata<ModelMakerEntity, object?>(
+                        property.Alias,
+                        entity => entity.Get(property.Alias),
+                        (entity, value) => entity.Set(property.Alias, value),
+                        $"{property.EditorAlias}::{property.Alias}")
+                }, editor.Editor);
+            }
         }
 
         private CollectionSetup ValidationConfigurationCollection()
@@ -112,7 +255,7 @@ namespace RapidCMS.ModelMaker
                         default,
                         (m, s) => s == EntityState.IsExisting &&
                             m is PropertyValidationModel v && v.Alias == validationType.Alias,
-                        typeof(PropertyValidationModel),
+                        typeof(PropertyValidationModel<>).MakeGenericType(validationType.Config),
                         new List<IButtonSetup>
                         {
 
@@ -124,14 +267,13 @@ namespace RapidCMS.ModelMaker
                                 Description = validationType.Description,
                                 EditorType = EditorType.Custom,
                                 Index = 1,
-                                IsDisabled = (m, s) => false,
-                                IsVisible = (m, s) => true,
                                 Name = validationType.Name,
-                                Property = new PropertyMetadata<PropertyValidationModel, IValidatorConfig>(
-                                    "Config",
-                                    x => x.Config,
-                                    (x, v) => x.Config = v,
-                                    "config"),
+                                Property = validationType.ConfigToEditor 
+                                    ?? new PropertyMetadata<PropertyValidationModel, IValidatorConfig>(
+                                        "Config",
+                                         x => x.Config,
+                                        (x, v) => x.Config = v,
+                                        "config"),
                             }, validationType.Editor),
                         },
                         new List<SubCollectionListSetup>(),
@@ -187,8 +329,6 @@ namespace RapidCMS.ModelMaker
                                 DisplayType = DisplayType.Label,
                                 EditorType = EditorType.None,
                                 Index = 1,
-                                IsDisabled = (m, s) => false,
-                                IsVisible = (m, s) => true,
                                 Name = "Property name"
                             }, new ExpressionMetadata<PropertyModel>("Name", x => x.Name)),
                         },
@@ -276,8 +416,6 @@ namespace RapidCMS.ModelMaker
                         {
                             EditorType = EditorType.TextBox,
                             Index = 1,
-                            IsDisabled = (m, s) => false,
-                            IsVisible = (m, s) => true,
                             Name = "Property name",
                             Property = new PropertyMetadata<PropertyModel, string>(
                                 "Name",
@@ -289,8 +427,6 @@ namespace RapidCMS.ModelMaker
                         {
                             EditorType = EditorType.Dropdown,
                             Index = 2,
-                            IsDisabled = (m, s) => false,
-                            IsVisible = (m, s) => true,
                             Name = "Property editor",
                             Property = new PropertyMetadata<PropertyModel, string>(
                                 "EditorAlias",

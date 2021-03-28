@@ -5,12 +5,53 @@ using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Enums;
 using RapidCMS.ModelMaker.Abstractions.Config;
+using RapidCMS.ModelMaker.DataCollections;
 using RapidCMS.ModelMaker.Models;
+using RapidCMS.ModelMaker.Models.Entities;
+using RapidCMS.ModelMaker.Repositories;
+using RapidCMS.ModelMaker.Validation;
+using RapidCMS.ModelMaker.Validation.Config;
 
 namespace RapidCMS.ModelMaker
 {
     public static class ConfigurationExtensions
     {
+        internal static List<ModelEntity> MODELS = new List<ModelEntity>
+        {
+            new ModelEntity
+            {
+                // TODO: icon + color
+                Id = "1",
+                Alias = "dynamicmodels",
+                Name = "Dynamic model",
+                Properties = new List<PropertyModel>
+                {
+                    new PropertyModel
+                    {
+                        // TODO: description, details, placeholder
+                        Id = "1,",
+                        EditorAlias = "textbox",
+                        Name = "Name",
+                        Alias = "name",
+                        IsTitle = true,
+                        PropertyAlias = "shortstring",
+                        Validations = new List<PropertyValidationModel>
+                        {
+                            new PropertyValidationModel<MinLengthValidationConfig>
+                            {
+                                Id = "1",
+                                Alias = "minlength",
+                                Config = new MinLengthValidationConfig
+                                {
+                                    MinLength = 10
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
         public const string TextBox = "textbox";
         public const string TextArea = "textarea";
         public const string Dropdown = "dropdown";
@@ -31,25 +72,32 @@ namespace RapidCMS.ModelMaker
             services.AddScoped<PropertyRepository>();
             services.AddScoped<ValidationRepository>();
 
+            services.AddTransient<MinLengthValidator>();
+            services.AddTransient<MaxLengthValidator>();
+            services.AddTransient<LimitedOptionsValidator>();
+
             var config = new ModelMakerConfig();
 
-            config.AddPropertyValidator<MinLengthValidator, string, MinLengthValidationConfig>(
+            config.AddPropertyValidator<MinLengthValidator, string, MinLengthValidationConfig, int?>(
                 MinLength,
                 "Minimum length",
                 "The value has to be at least this amount of characters.",
-                EditorType.Numeric);
+                EditorType.Numeric,
+                x => x.Config.MinLength);
 
-            config.AddPropertyValidator<MaxLengthValidator, string, MaxLengthValidationConfig>(
+            config.AddPropertyValidator<MaxLengthValidator, string, MaxLengthValidationConfig, int?>(
                 MaxLength,
                 "Maximum length",
                 "The value has to be at most this amount of characters.",
-                EditorType.Numeric);
+                EditorType.Numeric,
+                x => x.Config.MaxLength);
 
-            config.AddPropertyValidator<LimitedOptionsValidator, string, LimitedOptionsValidationConfig>(
+            config.AddPropertyValidator<LimitedOptionsValidator, string, LimitedOptionsValidationConfig, IList<string>>(
                 LimitedOptions,
                 "Limited options",
                 "The value has to be one of these items",
-                EditorType.TextBox); // TODO: convert to tag editor
+                EditorType.TextBox,
+                x => x.Config.Options); // TODO: convert to tag editor
             // TODO: custom type
 
             config.AddPropertyEditor(TextBox, "Text box", EditorType.TextBox);
@@ -71,52 +119,6 @@ namespace RapidCMS.ModelMaker
         public static ICmsConfig AddModelMakerPlugin(this ICmsConfig cmsConfig)
         {
             cmsConfig.AddPlugin<ModelMakerPlugin>();
-
-
-
-
-            var nameShortString = new PropertyModel
-            {
-                Name = "Name",
-                PropertyAlias = "shortstring",
-                EditorAlias = TextBox,
-                Validations = new List<PropertyValidationModel>
-                {
-                    new PropertyValidationModel
-                    {
-                        Alias = MinLength,
-                        Config = new MinLengthValidationConfig
-                        {
-                            MinLength = 3
-                        }
-                    }
-                }
-            };
-
-            var shortString = new PropertyModelDescriptor
-            {
-                Alias = "shortstring",
-                Editors = new List<PropertyEditorDescriptor>
-                {
-                    new PropertyEditorDescriptor
-                    {
-                        Alias = TextBox
-                    },
-                    new PropertyEditorDescriptor
-                    {
-                        Alias = TextArea
-                    },
-                    new PropertyEditorDescriptor
-                    {
-                        Alias = Dropdown
-                    },
-                },
-                ValidatorAliases = new List<string>
-                {
-                    MinLength,
-                    "LimitedOptions"
-                }
-            };
 
             cmsConfig.AddCollection<ModelEntity, ModelRepository>(
                 "modelmakeradmin",

@@ -7,7 +7,7 @@ using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.ModelMaker.Abstractions.Config;
 
-namespace RapidCMS.ModelMaker
+namespace RapidCMS.ModelMaker.DataCollections
 {
     public class PropertyTypeDataCollection : IDataCollection
     {

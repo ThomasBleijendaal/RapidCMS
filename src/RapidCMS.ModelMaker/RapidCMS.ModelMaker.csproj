@@ -13,4 +13,8 @@
     <ProjectReference Include="..\RapidCMS.UI\RapidCMS.UI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Attributes\" />
+  </ItemGroup>
+
 </Project>

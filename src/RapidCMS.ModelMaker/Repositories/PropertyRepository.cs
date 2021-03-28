@@ -5,11 +5,22 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.ModelMaker.Abstractions.Config;
+using RapidCMS.Core.Extensions;
+using RapidCMS.ModelMaker.Models.Entities;
+using RapidCMS.ModelMaker.Abstractions.Validation;
 
-namespace RapidCMS.ModelMaker
+namespace RapidCMS.ModelMaker.Repositories
 {
     internal class PropertyRepository : IRepository
     {
+        private readonly IModelMakerConfig _config;
+
+        public PropertyRepository(IModelMakerConfig config)
+        {
+            _config = config;
+        }
+
         public Task AddAsync(IRelated related, string id)
         {
             throw new NotImplementedException();
@@ -42,7 +53,7 @@ namespace RapidCMS.ModelMaker
 
         public Task<IEntity?> GetByIdAsync(string id, IParent? parent)
         {
-            if (parent?.Entity is ModelEntity model && 
+            if (parent?.Entity is ModelEntity model &&
                 model.Properties.FirstOrDefault(x => x.Id == id) is PropertyModel property)
             {
                 return Task.FromResult<IEntity?>(property);
@@ -58,7 +69,34 @@ namespace RapidCMS.ModelMaker
             {
                 var newProperty = typedEditContext.Entity;
                 newProperty.Id = Guid.NewGuid().ToString();
+                newProperty.Alias = newProperty.Name.ToUrlFriendlyString();
                 model.Properties.Add(newProperty);
+
+
+
+                var property = _config.Properties.FirstOrDefault(x => x.Alias == newProperty.PropertyAlias);
+
+                if (property != null)
+                {
+                    // TODO: move this to upper repositories
+                    var validations = _config.Validators.Where(x => property.Validators.Any(v => v.Alias == x.Alias));
+
+                    foreach (var validation in validations)
+                    {
+                        var config = Activator.CreateInstance(validation.Config) as IValidatorConfig;
+
+                        var validationModel = Activator.CreateInstance(typeof(PropertyValidationModel<>).MakeGenericType(validation.Config)) as PropertyValidationModel
+                            ?? throw new InvalidOperationException("Could not create correct PropertyValidationModel.");
+
+                        validationModel.Alias = validation.Alias;
+                        validationModel.Config = config;
+                        validationModel.Id = Guid.NewGuid().ToString();
+
+                        newProperty.Validations.Add(validationModel);
+                    }
+                }
+
+
 
                 return Task.FromResult<IEntity?>(newProperty);
             }

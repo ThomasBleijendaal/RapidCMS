@@ -69,7 +69,7 @@
         }
         else if (ListUI.ListType == ListType.Block)
         {
-            if (Buttons.Any())
+            if (Buttons?.Any() == true)
             {
                 <div class="content buttons-only">
                     <CascadingEditContext EditContext=@ListContext.ProtoEditContext>

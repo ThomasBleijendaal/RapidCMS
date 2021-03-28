@@ -1,4 +1,5 @@
 ﻿using System;
+using RapidCMS.Core.Abstractions.Metadata;
 
 namespace RapidCMS.ModelMaker.Abstractions.Config
 {
@@ -12,5 +13,7 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
         Type Value { get; }
         Type Config { get; }
         Type Editor { get; }
+
+        IFullPropertyMetadata? ConfigToEditor { get; }
     }
 }

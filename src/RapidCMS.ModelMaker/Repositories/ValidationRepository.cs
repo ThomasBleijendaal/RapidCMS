@@ -6,8 +6,10 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.ModelMaker.Abstractions.Config;
+using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Models.Entities;
 
-namespace RapidCMS.ModelMaker
+namespace RapidCMS.ModelMaker.Repositories
 {
     internal class ValidationRepository : IRepository
     {
@@ -38,6 +40,7 @@ namespace RapidCMS.ModelMaker
 
                 if (property != null)
                 {
+                    // TODO: move this to upper repositories
                     var validations = _config.Validators.Where(x => property.Validators.Any(v => v.Alias == x.Alias));
 
                     foreach (var validation in validations)
@@ -45,12 +48,14 @@ namespace RapidCMS.ModelMaker
                         var config = model.Validations.FirstOrDefault(v => v.Alias == validation.Alias)?.Config
                             ?? Activator.CreateInstance(validation.Config) as IValidatorConfig;
 
-                        models.Add(new PropertyValidationModel
-                        {
-                            Alias = validation.Alias,
-                            Config = config,
-                            Id = Guid.NewGuid().ToString()
-                        });
+                        var validationModel = Activator.CreateInstance(typeof(PropertyValidationModel<>).MakeGenericType(validation.Config)) as PropertyValidationModel
+                            ?? throw new InvalidOperationException("Could not create correct PropertyValidationModel.");
+
+                        validationModel.Alias = validation.Alias;
+                        validationModel.Config = config;
+                        validationModel.Id = Guid.NewGuid().ToString();
+
+                        models.Add(validationModel);
                     }
                 }
 

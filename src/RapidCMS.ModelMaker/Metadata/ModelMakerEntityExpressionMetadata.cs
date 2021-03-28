@@ -1,7 +1,7 @@
 ﻿using System;
 using RapidCMS.Core.Abstractions.Metadata;
 
-namespace RapidCMS.ModelMaker
+namespace RapidCMS.ModelMaker.Metadata
 {
     internal class ExpressionMetadata<TEntity> : IExpressionMetadata
     {

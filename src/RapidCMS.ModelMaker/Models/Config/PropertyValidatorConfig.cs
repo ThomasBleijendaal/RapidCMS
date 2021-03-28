@@ -1,11 +1,20 @@
 ﻿using System;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.ModelMaker.Abstractions.Config;
 
 namespace RapidCMS.ModelMaker.Models.Config
 {
     internal class PropertyValidatorConfig : IPropertyValidatorConfig
     {
-        public PropertyValidatorConfig(string alias, string name, string? description, Type value, Type editor, Type validator, Type config)
+        public PropertyValidatorConfig(
+            string alias, 
+            string name, 
+            string? description, 
+            Type value, 
+            Type editor, 
+            Type validator,
+            Type config,
+            IFullPropertyMetadata? configToEditor = null)
         {
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
             Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -14,6 +23,8 @@ namespace RapidCMS.ModelMaker.Models.Config
             Editor = editor ?? throw new ArgumentNullException(nameof(editor));
             Validator = validator ?? throw new ArgumentNullException(nameof(validator));
             Config = config ?? throw new ArgumentNullException(nameof(config));
+
+            ConfigToEditor = configToEditor;
         }
 
         public string Alias { get; }
@@ -27,5 +38,7 @@ namespace RapidCMS.ModelMaker.Models.Config
         public Type Config { get; }
 
         public Type Editor { get; }
+
+        public IFullPropertyMetadata? ConfigToEditor { get; }
     }
 }

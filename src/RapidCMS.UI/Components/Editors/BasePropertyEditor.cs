@@ -26,8 +26,15 @@ namespace RapidCMS.UI.Components.Editors
 
         protected void SetValueFromString(string value)
         {
-            var obj = TypeDescriptor.GetConverter(Property.PropertyType).ConvertFromString(value);
-            SetValueFromObject(obj);
+            if (Property.PropertyType == typeof(object))
+            {
+                SetValueFromObject(value);
+            }
+            else
+            {
+                var obj = TypeDescriptor.GetConverter(Property.PropertyType).ConvertFromString(value);
+                SetValueFromObject(obj);
+            }
         }
     }
 }

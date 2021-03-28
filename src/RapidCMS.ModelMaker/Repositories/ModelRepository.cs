@@ -5,30 +5,19 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.ModelMaker.Abstractions.Config;
+using RapidCMS.ModelMaker.Models.Entities;
 
-namespace RapidCMS.ModelMaker
+namespace RapidCMS.ModelMaker.Repositories
 {
-    internal class ModelMakerRepository : IRepository
+    internal class ModelRepository : IRepository
     {
-        private List<ModelMakerEntity> _entities = new List<ModelMakerEntity> 
+        private readonly IModelMakerConfig _config;
+
+        public ModelRepository(IModelMakerConfig config)
         {
-            new ModelMakerEntity
-            {
-                Id = "1",
-                Data = new Dictionary<string, object?>
-                {
-                    { "Name", "Name1" }
-                }
-            },
-            new ModelMakerEntity
-            {
-                Id = "2",
-                Data = new Dictionary<string, object?>
-                {
-                    { "Name", "Name2" }
-                }
-            }
-        };
+            _config = config;
+        }
 
         public Task AddAsync(IRelated related, string id)
         {
@@ -37,14 +26,13 @@ namespace RapidCMS.ModelMaker
 
         public Task DeleteAsync(string id, IParent? parent)
         {
-            _entities.RemoveAll(x => x.Id == id);
-
+            ConfigurationExtensions.MODELS.RemoveAll(x => x.Id == id);
             return Task.CompletedTask;
         }
 
         public Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query)
         {
-            return Task.FromResult<IEnumerable<IEntity>>(_entities);
+            return Task.FromResult<IEnumerable<IEntity>>(ConfigurationExtensions.MODELS);
         }
 
         public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelated related, IQuery query)
@@ -59,17 +47,17 @@ namespace RapidCMS.ModelMaker
 
         public Task<IEntity?> GetByIdAsync(string id, IParent? parent)
         {
-            return Task.FromResult(_entities.FirstOrDefault<IEntity>(x => x.Id == id));
+            return Task.FromResult<IEntity?>(ConfigurationExtensions.MODELS.FirstOrDefault(x => x.Id == id));
         }
 
         public Task<IEntity?> InsertAsync(IEditContext editContext)
         {
-            if (editContext is IEditContext<ModelMakerEntity> typedEditContext)
+            if (editContext is IEditContext<ModelEntity> typedEditContext)
             {
-                var newEntity = typedEditContext.Entity;
-                newEntity.Id = $"{(_entities.Max(x => int.Parse(x.Id)) + 1)}";
-                _entities.Add(newEntity);
-                return Task.FromResult<IEntity?>(newEntity);
+                var entity = typedEditContext.Entity;
+                entity.Id = $"{ConfigurationExtensions.MODELS.Count + 1}";
+                ConfigurationExtensions.MODELS.Add(entity);
+                return Task.FromResult<IEntity?>(entity);
             }
 
             return Task.FromResult<IEntity?>(default);
@@ -77,7 +65,7 @@ namespace RapidCMS.ModelMaker
 
         public Task<IEntity> NewAsync(IParent? parent, Type? variantType)
         {
-            return Task.FromResult<IEntity>(new ModelMakerEntity());
+            return Task.FromResult<IEntity>(new ModelEntity());
         }
 
         public Task RemoveAsync(IRelated related, string id)
@@ -95,6 +83,4 @@ namespace RapidCMS.ModelMaker
             return Task.CompletedTask;
         }
     }
-
-
 }

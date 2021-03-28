@@ -55,6 +55,12 @@ namespace RapidCMS.Core.Forms
         public bool? WasValidated(string propertyName) 
             => GetPropertyState(propertyName)?.WasValidated;
 
+        public void AddValidationError<TValue>(Expression<Func<TEntity, TValue>> property, string message)
+            => GetPropertyState(GetMetadata(property))?.AddMessage(message, isManual: true);
+
+        public void AddValidationError(string propertyName, string message)
+            => GetPropertyState(propertyName)?.AddMessage(message, isManual: true);
+
         public bool? Validate<TValue>(Expression<Func<TEntity, TValue>> property)
         {
             // make sure it will be validated
@@ -67,6 +73,14 @@ namespace RapidCMS.Core.Forms
             // add all properties to the form state
             _editContext.FormState.PopulateAllPropertyStates();
 
+            if (!IsValid())
+            {
+                throw new InvalidEntityException();
+            }
+        }
+
+        public void EnforceValidEntity()
+        {
             if (!IsValid())
             {
                 throw new InvalidEntityException();

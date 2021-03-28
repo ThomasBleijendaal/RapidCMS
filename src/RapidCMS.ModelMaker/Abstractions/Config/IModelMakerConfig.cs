@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using RapidCMS.Core.Enums;
+using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Validation.Base;
 using RapidCMS.UI.Components.Editors;
 
 namespace RapidCMS.ModelMaker.Abstractions.Config
 {
     public interface IModelMakerConfig
     {
-        IModelMakerConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig>(string alias, string name, string? description, EditorType editorType)
-            where TValidatorConfig : IValidatorConfig
+        IModelMakerConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TValueForEditor>(string alias, string name, string? description, EditorType editorType, Expression<Func<IPropertyValidationModel<TValidatorConfig>, TValueForEditor>> configEditor)
+            where TValidatorConfig : class, IValidatorConfig
             where TValidator : BaseValidator<TValue, TValidatorConfig>;
 
         IModelMakerConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TCustomEditor>(string alias, string name, string? description)
