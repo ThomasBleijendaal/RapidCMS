@@ -29,8 +29,8 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             _collectionResolver = new Mock<ISetupResolver<ICollectionSetup>>();
             _collectionResolver
-                .Setup(x => x.ResolveSetup(It.IsAny<string>()))
-                .Returns((string alias) =>
+                .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
+                .ReturnsAsync((string alias) =>
                     new CollectionSetup(default,
                         default,
                         "name",
@@ -62,7 +62,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _collectionResolver.Verify(x => x.ResolveSetup(It.Is<string>(x => x == "alias")), Times.Once());
+            _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
         }
 
         [Test]
@@ -78,7 +78,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.CompleteButtonInteractionAsync(request);
 
             // assert
-            _collectionResolver.Verify(x => x.ResolveSetup(It.Is<string>(x => x == "alias")), Times.Once());
+            _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _collectionResolver.Verify(x => x.ResolveSetup(It.Is<string>(x => x == "alias")), Times.Once());
+            _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _collectionResolver.Verify(x => x.ResolveSetup(It.Is<string>(x => x == "alias")), Times.Once());
+            _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
         }
 
         [Test]
@@ -144,7 +144,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.CompleteButtonInteractionAsync(request);
 
             // assert
-            _collectionResolver.Verify(x => x.ResolveSetup(It.Is<string>(x => x == "alias")), Times.Once());
+            _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
         }
     }
 }

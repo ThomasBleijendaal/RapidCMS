@@ -1,17 +1,18 @@
-﻿using RapidCMS.Core.Abstractions.Data;
+﻿using RapidCMS.ModelMaker.Abstractions.Entities;
 using RapidCMS.ModelMaker.Abstractions.Validation;
 
 namespace RapidCMS.ModelMaker.Models.Entities
 {
-    internal class PropertyValidationModel : IEntity
+    public class PropertyValidationModel : IModelMakerEntity
     {
         public string? Id { get; set; }
 
-        public string? Alias { get; set; }
+        public string Alias { get; set; } = default!;
+
         public IValidatorConfig? Config { get; set; }
     }
 
-    internal class PropertyValidationModel<TValidatorConfig> : PropertyValidationModel, IPropertyValidationModel<TValidatorConfig>
+    public class PropertyValidationModel<TValidatorConfig> : PropertyValidationModel, IPropertyValidationModel<TValidatorConfig>
         where TValidatorConfig : class, IValidatorConfig, new()
     {
         TValidatorConfig IPropertyValidationModel<TValidatorConfig>.Config => Config as TValidatorConfig ?? new TValidatorConfig();

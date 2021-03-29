@@ -430,15 +430,15 @@ namespace RapidCMS.ModelMaker
 
         private async Task<IButtonSetup> CreateButtonAsync(CollectionSetup collection, DefaultButtonType type, bool isPrimary, string? label = default, string? icon = default)
         {
-            var response = (await _buttonSetupResolver.ResolveSetupAsync(new DefaultButtonConfig
+            var response = await _buttonSetupResolver.ResolveSetupAsync(new DefaultButtonConfig
             {
                 ButtonType = type,
                 Icon = icon,
-                Id = Guid.NewGuid().ToString(),
+                Id = $"{collection.Alias}::{type}",
                 IsPrimary = isPrimary,
                 Label = label,
 
-            }, collection));
+            }, collection);
 
             return response.Setup;
         }

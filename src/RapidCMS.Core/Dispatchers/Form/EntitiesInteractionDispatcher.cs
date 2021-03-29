@@ -133,7 +133,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
                         if (editContext.IsModified())
                         {
-                            var wrapper = _editContextFactory.GetEditContextWrapper(editContext);
+                            var wrapper = await _editContextFactory.GetEditContextWrapperAsync(editContext);
                             await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(wrapper));
                         }
                         if (editContext.IsReordered())

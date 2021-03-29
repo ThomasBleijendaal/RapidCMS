@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.ModelMaker.Abstractions.Entities;
 
 namespace RapidCMS.ModelMaker.Models.Entities
 {
-    internal class PropertyModel : IEntity
+    public class PropertyModel : IModelMakerEntity
     {
         public string? Id { get; set; }
 

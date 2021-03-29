@@ -50,9 +50,9 @@ namespace RapidCMS.Core.Resolvers.UI
 
         protected internal async Task<SectionUI> GetSectionUIAsync(PaneSetup pane, FormEditContext editContext)
         {
-            var fields = pane.Fields.Select(field =>
+            var fields = await pane.Fields.ToListAsync(async field =>
             {
-                var dataProvider = _dataProviderResolver.GetDataProvider(field);
+                var dataProvider = await _dataProviderResolver.GetDataProviderAsync(field);
                 if (dataProvider != null)
                 {
                     editContext.DataProviders.Add(dataProvider);

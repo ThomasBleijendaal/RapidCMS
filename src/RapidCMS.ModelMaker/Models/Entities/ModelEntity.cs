@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.ModelMaker.Abstractions.Entities;
 
 namespace RapidCMS.ModelMaker.Models.Entities
 {
-    internal class ModelEntity : IEntity
+    public class ModelEntity : IModelMakerEntity
     {
         public string? Id { get; set; }
-
 
         [Required]
         [MinLength(1)]

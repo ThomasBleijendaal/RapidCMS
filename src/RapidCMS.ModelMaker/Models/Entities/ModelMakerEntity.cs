@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using RapidCMS.Core.Abstractions.Data;
+﻿using System.Collections.Generic;
+using RapidCMS.ModelMaker.Abstractions.Entities;
 
 namespace RapidCMS.ModelMaker.Models.Entities
 {
-    internal class ModelMakerEntity : IEntity
+    public class ModelMakerEntity : IModelMakerEntity
     {
         public string? Id { get; set; }
 
-        public string ModelAlias { get; set; } = default!;
+        public string Alias { get; set; } = default!;
 
         public Dictionary<string, object?> Data { get; set; } = new Dictionary<string, object?>();
 

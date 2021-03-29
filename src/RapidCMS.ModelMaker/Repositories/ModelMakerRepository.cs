@@ -6,14 +6,18 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Extensions;
+using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;
+using RapidCMS.ModelMaker.Models.Responses;
 
 namespace RapidCMS.ModelMaker.Repositories
 {
     internal class ModelMakerRepository : IRepository
     {
+        private readonly ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>> _getDefinitionByIdHandler;
         private readonly IModelMakerConfig _config;
         private readonly IServiceProvider _serviceProvider;
         private List<ModelMakerEntity> _entities = new List<ModelMakerEntity>
@@ -21,7 +25,7 @@ namespace RapidCMS.ModelMaker.Repositories
             new ModelMakerEntity
             {
                 Id = "1",
-                ModelAlias = "dynamicmodels",
+                Alias = "dynamicmodels",
                 Data = new Dictionary<string, object?>
                 {
                     { "name", "Name1" }
@@ -30,7 +34,7 @@ namespace RapidCMS.ModelMaker.Repositories
             new ModelMakerEntity
             {
                 Id = "2",
-                ModelAlias = "dynamicmodels",
+                Alias = "dynamicmodels",
                 Data = new Dictionary<string, object?>
                 {
                     { "name", "Name2" }
@@ -39,9 +43,11 @@ namespace RapidCMS.ModelMaker.Repositories
         };
 
         public ModelMakerRepository(
+            ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>> getDefinitionByIdHandler,
             IModelMakerConfig config,
             IServiceProvider serviceProvider)
         {
+            _getDefinitionByIdHandler = getDefinitionByIdHandler;
             _config = config;
             _serviceProvider = serviceProvider;
         }
@@ -112,29 +118,28 @@ namespace RapidCMS.ModelMaker.Repositories
             {
                 var entity = typedEditContext.Entity;
 
-                //var modelDefinition = ConfigurationExtensions.MODELS.First(x => x.Alias == entity.ModelAlias);
+                var modelDefinition = await _getDefinitionByIdHandler.HandleAsync(new GetByAliasRequest<ModelEntity>(entity.Alias));
 
-                //foreach (var property in modelDefinition.Properties)
-                //{
-                //    foreach (var validation in property.Validations.Where(x => x.Config?.IsEnabled == true))
-                //    {
-                //        var validatorConfig = _config.Validators.First(x => x.Alias == validation.Alias);
+                if (modelDefinition.Entity != null)
+                {
+                    foreach (var property in modelDefinition.Entity.Properties)
+                    {
+                        foreach (var validation in property.Validations.Where(x => x.Config?.IsEnabled == true))
+                        {
+                            var validatorConfig = _config.Validators.First(x => x.Alias == validation.Alias);
 
-                //        var validator = _serviceProvider.GetService<IValidator>(validatorConfig.Validator);
+                            var validator = _serviceProvider.GetService<IValidator>(validatorConfig.Validator);
 
-                //        if (!await validator.IsValid(entity.Get(property.Alias), validation.Config!))
-                //        {
-                //            typedEditContext.AddValidationError(property.Alias, await validator.ErrorMessage(validation.Config!));
-                //        }
-                //    }
-                //}
+                            if (!await validator.IsValid(entity.Get(property.Alias), validation.Config!))
+                            {
+                                typedEditContext.AddValidationError(property.Alias, await validator.ErrorMessage(validation.Config!));
+                            }
+                        }
+                    }
+                }
 
-                //editContext.EnforceValidEntity();
-
-
+                editContext.EnforceValidEntity();
             }
         }
     }
-
-
 }

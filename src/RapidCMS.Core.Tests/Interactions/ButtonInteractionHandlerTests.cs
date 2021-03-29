@@ -41,8 +41,8 @@ namespace RapidCMS.Core.Tests.Interactions
 
             _collectionResolver = new Mock<ISetupResolver<ICollectionSetup>>();
             _collectionResolver
-                .Setup(x => x.ResolveSetup(It.IsAny<string>()))
-                .Returns(_collection.Object);
+                .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
+                .ReturnsAsync(_collection.Object);
 
             _buttonActionHandler = new Mock<IButtonActionHandler>();
             _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();

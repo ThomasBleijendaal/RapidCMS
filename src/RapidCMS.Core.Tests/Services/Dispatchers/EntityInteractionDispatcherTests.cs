@@ -52,8 +52,8 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
                 .Returns(_entityVariant.Object);
             _collectionResolver = new Mock<ISetupResolver<ICollectionSetup>>();
             _collectionResolver
-                .Setup(x => x.ResolveSetup(It.IsAny<string>()))
-                .Returns(_collection.Object);
+                .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
+                .ReturnsAsync(_collection.Object);
 
             _repositoryResolver = new Mock<IRepositoryResolver>();
             _concurrencyService = new ConcurrencyService(new SemaphoreSlim(1, 1));
@@ -84,7 +84,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _subject.InvokeAsync(request, _pageState.Object);
 
             // assert
-            _collectionResolver.Verify(x => x.ResolveSetup(It.Is<string>(x => x == alias)));
+            _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == alias)));
         }
 
         [TestCase("alias1")]

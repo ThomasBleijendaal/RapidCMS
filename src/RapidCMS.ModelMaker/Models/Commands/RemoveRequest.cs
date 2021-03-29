@@ -1,10 +1,10 @@
 ﻿using System;
-using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.ModelMaker.Abstractions.Entities;
 
 namespace RapidCMS.ModelMaker.Models.Commands
 {
     public class RemoveRequest<TEntity>
-        where TEntity : IEntity
+        where TEntity : IModelMakerEntity
     {
         public RemoveRequest(string id)
         {

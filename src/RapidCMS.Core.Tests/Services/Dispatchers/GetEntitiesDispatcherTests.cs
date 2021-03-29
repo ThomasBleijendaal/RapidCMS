@@ -48,8 +48,8 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         {
             _collectionResolver = new Mock<ISetupResolver<ICollectionSetup>>();
             _collectionResolver
-                .Setup(x => x.ResolveSetup(It.IsAny<string>()))
-                .Returns((string alias) =>
+                .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
+                .ReturnsAsync((string alias) =>
                     new CollectionSetup(default,
                         default,
                         "name",
@@ -113,7 +113,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { UsageType = UsageType.New, CollectionAlias = alias });
 
             // assert
-            _collectionResolver.Verify(x => x.ResolveSetup(It.Is<string>(x => x == alias)));
+            _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == alias)));
         }
 
         [TestCase("collectionAlias1")]
