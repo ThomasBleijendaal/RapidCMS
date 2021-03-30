@@ -16,6 +16,8 @@ namespace RapidCMS.ModelMaker.Models.Entities
         [MinLength(1)]
         public string Name { get; set; } = default!;
 
-        public List<PropertyModel> Properties { get; set; } = new List<PropertyModel>();
+        public List<PropertyModel> PublishedProperties { get; set; } = new List<PropertyModel>();
+
+        public List<PropertyModel> DraftProperties { get; set; } = new List<PropertyModel>();
     }
 }

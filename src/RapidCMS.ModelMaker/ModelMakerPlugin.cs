@@ -119,7 +119,7 @@ namespace RapidCMS.ModelMaker
                     new ExpressionMetadata<ModelMakerEntity>("Name", x => x.Id))
             };
 
-            var titleProperty = definition.Properties.First(x => x.IsTitle);
+            var titleProperty = definition.PublishedProperties.First(x => x.IsTitle);
 
             collection.ListView = new ListSetup(
                 100,
@@ -191,7 +191,7 @@ namespace RapidCMS.ModelMaker
         private IEnumerable<FieldSetup> ModelFields(ModelEntity definition)
         {
             var i = 0;
-            foreach (var property in definition.Properties)
+            foreach (var property in definition.PublishedProperties)
             {
                 var editor = _config.Editors.First(x => x.Alias == property.EditorAlias);
 
@@ -468,7 +468,7 @@ namespace RapidCMS.ModelMaker
 
         private bool IsValidDefintion(ModelEntity entity)
         {
-            return entity.Properties.Any(x => x.IsTitle);
+            return entity.PublishedProperties.Any(x => x.IsTitle);
         }
     }
 }

@@ -19,7 +19,11 @@ namespace RapidCMS.ModelMaker.TableStorage.CommandHandlers
 
         public async Task<ConfirmResponse> HandleAsync(UpdateRequest<TEntity> request)
         {
-            var existingEntity = new ModelTableEntity<TEntity>(request.Entity, _partitionKey);
+            var existingEntity = new ModelTableEntity<TEntity>(request.Entity, _partitionKey)
+            {
+                // TODO: always *?
+                ETag = "*"
+            };
 
             var replace = TableOperation.Replace(existingEntity);
 

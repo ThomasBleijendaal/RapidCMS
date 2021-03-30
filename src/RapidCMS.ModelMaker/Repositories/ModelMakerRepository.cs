@@ -122,7 +122,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
                 if (modelDefinition.Entity != null)
                 {
-                    foreach (var property in modelDefinition.Entity.Properties)
+                    foreach (var property in modelDefinition.Entity.PublishedProperties)
                     {
                         foreach (var validation in property.Validations.Where(x => x.Config?.IsEnabled == true))
                         {

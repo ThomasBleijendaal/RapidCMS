@@ -25,7 +25,7 @@ namespace RapidCMS.ModelMaker.CommandHandlers
                 Id = "1",
                 Alias = "dynamicmodels",
                 Name = "Dynamic model",
-                Properties = new List<PropertyModel>
+                PublishedProperties = new List<PropertyModel>
                 {
                     new PropertyModel
                     {

@@ -9,16 +9,23 @@ using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.Core.Extensions;
 using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
+using RapidCMS.ModelMaker.Models.Responses;
+using RapidCMS.ModelMaker.Models.Commands;
 
 namespace RapidCMS.ModelMaker.Repositories
 {
     internal class PropertyRepository : IRepository
     {
         private readonly IModelMakerConfig _config;
+        private readonly ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse> _updateEntityCommandHandler;
 
-        public PropertyRepository(IModelMakerConfig config)
+        public PropertyRepository(
+            IModelMakerConfig config,
+            ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse> updateEntityCommandHandler)
         {
             _config = config;
+            _updateEntityCommandHandler = updateEntityCommandHandler;
         }
 
         public Task AddAsync(IRelated related, string id)
@@ -35,7 +42,7 @@ namespace RapidCMS.ModelMaker.Repositories
         {
             if (parent?.Entity is ModelEntity model)
             {
-                return Task.FromResult<IEnumerable<IEntity>>(model.Properties);
+                return Task.FromResult<IEnumerable<IEntity>>(model.PublishedProperties);
             }
 
             throw new InvalidOperationException();
@@ -54,7 +61,7 @@ namespace RapidCMS.ModelMaker.Repositories
         public Task<IEntity?> GetByIdAsync(string id, IParent? parent)
         {
             if (parent?.Entity is ModelEntity model &&
-                model.Properties.FirstOrDefault(x => x.Id == id) is PropertyModel property)
+                model.DraftProperties.FirstOrDefault(x => x.Id == id) is PropertyModel property)
             {
                 return Task.FromResult<IEntity?>(property);
             }
@@ -62,7 +69,7 @@ namespace RapidCMS.ModelMaker.Repositories
             return Task.FromResult<IEntity?>(default);
         }
 
-        public Task<IEntity?> InsertAsync(IEditContext editContext)
+        public async Task<IEntity?> InsertAsync(IEditContext editContext)
         {
             if (editContext is IEditContext<PropertyModel> typedEditContext &&
                 typedEditContext.Parent?.Entity is ModelEntity model)
@@ -70,7 +77,7 @@ namespace RapidCMS.ModelMaker.Repositories
                 var newProperty = typedEditContext.Entity;
                 newProperty.Id = Guid.NewGuid().ToString();
                 newProperty.Alias = newProperty.Name.ToUrlFriendlyString();
-                model.Properties.Add(newProperty);
+                model.DraftProperties.Add(newProperty);
 
 
 
@@ -96,12 +103,12 @@ namespace RapidCMS.ModelMaker.Repositories
                     }
                 }
 
+                await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
 
-
-                return Task.FromResult<IEntity?>(newProperty);
+                return newProperty;
             }
 
-            return Task.FromResult<IEntity?>(default);
+            return default;
         }
 
         public Task<IEntity> NewAsync(IParent? parent, Type? variantType)
