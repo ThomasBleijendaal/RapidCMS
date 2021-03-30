@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Azure.Cosmos.Table;
+﻿using Microsoft.Azure.Cosmos.Table;
 using RapidCMS.ModelMaker.Abstractions.Entities;
 using RapidCMS.ModelMaker.TableStorage.Extensions;
 
@@ -15,8 +14,5 @@ namespace RapidCMS.ModelMaker.TableStorage.CommandHandlers.Base
         {
             _cloudTable = tableClient.GetTableReference(typeof(TEntity).GetTableName());
         }
-
-        protected string GetRowKey(IModelMakerEntity modelMakerEntity)
-            => modelMakerEntity.Id ?? Guid.NewGuid().ToString();
     }
 }

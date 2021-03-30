@@ -32,12 +32,12 @@ namespace RapidCMS.ModelMaker
             // TODO: what should this life time be?
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
-            services.AddTransient<ICommandHandler<RemoveRequest<ModelEntity>, ConfirmResponse>, InMemoryModelEntityCommandHandler>();
-            services.AddTransient<ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
-            services.AddTransient<ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
-            services.AddTransient<ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
-            services.AddTransient<ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
-            services.AddTransient<ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse>, InMemoryModelEntityCommandHandler>();
+            //services.AddTransient<ICommandHandler<RemoveRequest<ModelEntity>, ConfirmResponse>, InMemoryModelEntityCommandHandler>();
+            //services.AddTransient<ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
+            //services.AddTransient<ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
+            //services.AddTransient<ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
+            //services.AddTransient<ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
+            //services.AddTransient<ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse>, InMemoryModelEntityCommandHandler>();
 
             services.AddTransient<PropertyEditorDataCollection>();
             services.AddTransient<PropertyTypeDataCollection>();
@@ -127,6 +127,7 @@ namespace RapidCMS.ModelMaker
                         editor.AddSection(section =>
                         {
                             section.AddField(x => x.Name);
+                            section.AddField(x => x.Alias);
 
                             section.AddSubCollectionList("modelmaker::property");
                         });

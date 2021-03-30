@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.ModelMaker;
+using RapidCMS.ModelMaker.TableStorage;
 
 namespace RapidCMS.Example.ModelMaker
 {
@@ -25,6 +26,7 @@ namespace RapidCMS.Example.ModelMaker
             services.AddServerSideBlazor();
 
             services.AddModelMaker();
+            services.AddModelMakerTableStorage();
 
             services.AddRapidCMSServer(config =>
             {

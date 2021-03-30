@@ -19,13 +19,15 @@ namespace RapidCMS.ModelMaker.TableStorage.CommandHandlers
 
         public async Task<EntityResponse<TEntity>> HandleAsync(GetByIdRequest<TEntity> request)
         {
+            await _cloudTable.CreateIfNotExistsAsync();
+
             var fetch = TableOperation.Retrieve<ModelTableEntity<TEntity>>(_partitionKey, request.Id);
 
             var data = await _cloudTable.ExecuteAsync(fetch);
 
             return new EntityResponse<TEntity>
             {
-                Entity = data.Result as TEntity
+                Entity = (data.Result as ModelTableEntity<TEntity>)?.Entity
             };
         }
     }

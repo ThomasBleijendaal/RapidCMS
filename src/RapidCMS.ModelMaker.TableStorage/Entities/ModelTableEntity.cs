@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Cosmos.Table;
+﻿using System;
+using Microsoft.Azure.Cosmos.Table;
 using Newtonsoft.Json;
 using RapidCMS.ModelMaker.Abstractions.Entities;
 
@@ -12,16 +13,30 @@ namespace RapidCMS.ModelMaker.TableStorage.Entities
 
         }
 
-        public ModelTableEntity(TEntity entity)
+        public ModelTableEntity(TEntity entity, string partitionKey)
         {
             Entity = entity;
+            PartitionKey = partitionKey;
         }
 
         [IgnoreProperty]
         public TEntity? Entity
         {
-            get => JsonConvert.DeserializeObject<TEntity>(EntityJson ?? "");
-            set => JsonConvert.SerializeObject(Entity);
+            get
+            {
+                var entity = JsonConvert.DeserializeObject<TEntity>(EntityJson ?? "");
+
+                entity.Id = RowKey;
+
+                return entity;
+            }
+            set
+            {
+                EntityJson = JsonConvert.SerializeObject(value);
+
+                RowKey = value?.Id ?? Guid.NewGuid().ToString();
+                Alias = value?.Alias;
+            }
         }
 
         public string? EntityJson { get; set; }

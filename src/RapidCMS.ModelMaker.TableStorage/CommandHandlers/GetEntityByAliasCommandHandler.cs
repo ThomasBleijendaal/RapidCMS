@@ -18,15 +18,17 @@ namespace RapidCMS.ModelMaker.TableStorage.CommandHandlers
         {
         }
 
-        public Task<EntityResponse<TEntity>> HandleAsync(GetByAliasRequest<TEntity> request)
+        public async Task<EntityResponse<TEntity>> HandleAsync(GetByAliasRequest<TEntity> request)
         {
+            await _cloudTable.CreateIfNotExistsAsync();
+
             var query = _cloudTable.CreateQuery<ModelTableEntity<TEntity>>()
                 .Where(x => x.PartitionKey == _partitionKey && x.Alias == request.Alias);
 
-            return Task.FromResult(new EntityResponse<TEntity>
+            return new EntityResponse<TEntity>
             {
                 Entity = query.FirstOrDefault()?.Entity
-            });
+            };
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
@@ -68,7 +69,9 @@ namespace RapidCMS.ModelMaker
         public async Task<IEnumerable<ITreeElementSetup>> GetTreeElementsAsync()
         {
             var response = await _getAllModelEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>());
-            return response.Entities.Select(model => new TreeElementSetup($"{CollectionPrefix}::{model.Alias}", PageType.Collection));
+            return response.Entities
+                .Where(IsValidDefintion)
+                .Select(model => new TreeElementSetup($"{CollectionPrefix}::{model.Alias}", PageType.Collection));
         }
 
         public Type? GetRepositoryType(string collectionAlias)
@@ -89,8 +92,13 @@ namespace RapidCMS.ModelMaker
             return typeof(ModelMakerRepository);
         }
 
-        private async Task<CollectionSetup> ModelCollectionAsync(ModelEntity definition)
+        private async Task<CollectionSetup?> ModelCollectionAsync(ModelEntity definition)
         {
+            if (!IsValidDefintion(definition))
+            {
+                return default;
+            }
+
             var entityVariantSetup = new EntityVariantSetup(definition.Alias, default, typeof(ModelMakerEntity), definition.Alias);
             var collection = new CollectionSetup(
                 "Database",
@@ -160,8 +168,6 @@ namespace RapidCMS.ModelMaker
 
             return collection;
         }
-
-
 
         private async IAsyncEnumerable<PaneSetup> ModelPanesAsync(ModelEntity definition, CollectionSetup collection)
         {
@@ -312,14 +318,8 @@ namespace RapidCMS.ModelMaker
                             await CreateButtonAsync(collection, DefaultButtonType.Edit, true)
                         },
                         new List<FieldSetup>
-                        {
-                            new ExpressionFieldSetup(new FieldConfig
-                            {
-                                DisplayType = DisplayType.Label,
-                                EditorType = EditorType.None,
-                                Index = 1,
-                                Name = "Property name"
-                            }, new ExpressionMetadata<PropertyModel>("Name", x => x.Name)),
+                        { 
+                            CreateExpressionField(DisplayType.Label, EditorType.None, 1, "Property name", new ExpressionMetadata<PropertyModel>("Name", x => x.Name)),
                         },
                         new List<SubCollectionListSetup>(),
                         new List<RelatedCollectionListSetup>())
@@ -428,7 +428,30 @@ namespace RapidCMS.ModelMaker
 
         }
 
-        private async Task<IButtonSetup> CreateButtonAsync(CollectionSetup collection, DefaultButtonType type, bool isPrimary, string? label = default, string? icon = default)
+        private static ExpressionFieldSetup CreateExpressionField(
+            DisplayType displayType,
+            EditorType editorType,
+            int index,
+            string name,
+            IExpressionMetadata expression)
+        {
+            return new ExpressionFieldSetup(
+                new FieldConfig
+                {
+                    DisplayType = displayType,
+                    EditorType = editorType,
+                    Index = index,
+                    Name = name
+                },
+                expression);
+        }
+
+        private async Task<IButtonSetup> CreateButtonAsync(
+            CollectionSetup collection, 
+            DefaultButtonType type, 
+            bool isPrimary, 
+            string? label = default, 
+            string? icon = default)
         {
             var response = await _buttonSetupResolver.ResolveSetupAsync(new DefaultButtonConfig
             {
@@ -441,6 +464,11 @@ namespace RapidCMS.ModelMaker
             }, collection);
 
             return response.Setup;
+        }
+
+        private bool IsValidDefintion(ModelEntity entity)
+        {
+            return entity.Properties.Any(x => x.IsTitle);
         }
     }
 }

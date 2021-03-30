@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Azure.Cosmos.Table;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Models.Commands;
@@ -22,10 +18,13 @@ namespace RapidCMS.ModelMaker.TableStorage
             services.AddTransient<ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>>, GetEntityByIdCommandHandler<ModelEntity>>();
             services.AddTransient<ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>>, GetEntityByAliasCommandHandler<ModelEntity>>();
 
-            services.AddTransient<ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
-            services.AddTransient<ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse>, InMemoryModelEntityCommandHandler>();
+            services.AddTransient<ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>>, InsertEntityCommandHandler<ModelEntity>>();
+            services.AddTransient<ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse>, UpdateEntityCommandHandler<ModelEntity>>();
 
-            services.AddSingleton(Microsoft.Azure.Cosmos.Table.CloudStorageAccount.DevelopmentStorageAccount);
+            var account = CloudStorageAccount.DevelopmentStorageAccount;
+
+            var tableClient = account.CreateCloudTableClient();
+            services.AddSingleton(tableClient);
 
             return services;
         }
