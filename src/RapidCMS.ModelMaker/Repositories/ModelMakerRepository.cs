@@ -18,36 +18,30 @@ namespace RapidCMS.ModelMaker.Repositories
     internal class ModelMakerRepository : IRepository
     {
         private readonly ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>> _getDefinitionByIdHandler;
+        private readonly ICommandHandler<RemoveRequest<ModelMakerEntity>, ConfirmResponse> _removeCommandHandler;
+        private readonly ICommandHandler<GetAllRequest<ModelMakerEntity>, EntitiesResponse<ModelMakerEntity>> _getAllEntitiesCommandHandler;
+        private readonly ICommandHandler<GetByIdRequest<ModelMakerEntity>, EntityResponse<ModelMakerEntity>> _getEntityCommandHandler;
+        private readonly ICommandHandler<InsertRequest<ModelMakerEntity>, EntityResponse<ModelMakerEntity>> _insertEntityCommandHandler;
+        private readonly ICommandHandler<PublishRequest<ModelMakerEntity>, ConfirmResponse> _publishEntityCommandHandler;
         private readonly IModelMakerConfig _config;
         private readonly IServiceProvider _serviceProvider;
-        private List<ModelMakerEntity> _entities = new List<ModelMakerEntity>
-        {
-            new ModelMakerEntity
-            {
-                Id = "1",
-                Alias = "dynamicmodels",
-                Data = new Dictionary<string, object?>
-                {
-                    { "name", "Name1" }
-                }
-            },
-            new ModelMakerEntity
-            {
-                Id = "2",
-                Alias = "dynamicmodels",
-                Data = new Dictionary<string, object?>
-                {
-                    { "name", "Name2" }
-                }
-            }
-        };
 
         public ModelMakerRepository(
             ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>> getDefinitionByIdHandler,
+            ICommandHandler<RemoveRequest<ModelMakerEntity>, ConfirmResponse> removeCommandHandler,
+            ICommandHandler<GetAllRequest<ModelMakerEntity>, EntitiesResponse<ModelMakerEntity>> getAllEntitiesCommandHandler,
+            ICommandHandler<GetByIdRequest<ModelMakerEntity>, EntityResponse<ModelMakerEntity>> getEntityCommandHandler,
+            ICommandHandler<InsertRequest<ModelMakerEntity>, EntityResponse<ModelMakerEntity>> insertEntityCommandHandler,
+            ICommandHandler<PublishRequest<ModelMakerEntity>, ConfirmResponse> publishEntityCommandHandler,
             IModelMakerConfig config,
             IServiceProvider serviceProvider)
         {
             _getDefinitionByIdHandler = getDefinitionByIdHandler;
+            _removeCommandHandler = removeCommandHandler;
+            _getAllEntitiesCommandHandler = getAllEntitiesCommandHandler;
+            _getEntityCommandHandler = getEntityCommandHandler;
+            _insertEntityCommandHandler = insertEntityCommandHandler;
+            _publishEntityCommandHandler = publishEntityCommandHandler;
             _config = config;
             _serviceProvider = serviceProvider;
         }
@@ -57,16 +51,16 @@ namespace RapidCMS.ModelMaker.Repositories
             throw new NotImplementedException();
         }
 
-        public Task DeleteAsync(string id, IParent? parent)
+        public async Task DeleteAsync(string id, IParent? parent)
         {
-            _entities.RemoveAll(x => x.Id == id);
-
-            return Task.CompletedTask;
+            await _removeCommandHandler.HandleAsync(new RemoveRequest<ModelMakerEntity>(id));
         }
 
-        public Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query)
+        public async Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query)
         {
-            return Task.FromResult<IEnumerable<IEntity>>(_entities);
+            var response = await _getAllEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelMakerEntity>());
+
+            return response.Entities;
         }
 
         public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelated related, IQuery query)
@@ -79,22 +73,27 @@ namespace RapidCMS.ModelMaker.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<IEntity?> GetByIdAsync(string id, IParent? parent)
+        public async Task<IEntity?> GetByIdAsync(string id, IParent? parent)
         {
-            return Task.FromResult(_entities.FirstOrDefault<IEntity>(x => x.Id == id));
+            var response = await _getEntityCommandHandler.HandleAsync(new GetByIdRequest<ModelMakerEntity>(id));
+
+            return response.Entity;
         }
 
-        public Task<IEntity?> InsertAsync(IEditContext editContext)
+        public async Task<IEntity?> InsertAsync(IEditContext editContext)
         {
             if (editContext is IEditContext<ModelMakerEntity> typedEditContext)
             {
-                var newEntity = typedEditContext.Entity;
-                newEntity.Id = $"{_entities.Max(x => int.Parse(x.Id)) + 1}";
-                _entities.Add(newEntity);
-                return Task.FromResult<IEntity?>(newEntity);
+                var entity = typedEditContext.Entity;
+
+                await ValidateEntityAsync(typedEditContext, entity);
+
+                var response = await _insertEntityCommandHandler.HandleAsync(new InsertRequest<ModelMakerEntity>(entity));
+
+                return response.Entity;
             }
 
-            return Task.FromResult<IEntity?>(default);
+            return default;
         }
 
         public Task<IEntity> NewAsync(IParent? parent, Type? variantType)
@@ -118,28 +117,35 @@ namespace RapidCMS.ModelMaker.Repositories
             {
                 var entity = typedEditContext.Entity;
 
-                var modelDefinition = await _getDefinitionByIdHandler.HandleAsync(new GetByAliasRequest<ModelEntity>(entity.Alias));
+                await ValidateEntityAsync(typedEditContext, entity);
 
-                if (modelDefinition.Entity != null)
+                await _publishEntityCommandHandler.HandleAsync(new PublishRequest<ModelMakerEntity>(entity));
+            }
+        }
+
+        private async Task ValidateEntityAsync(IEditContext<ModelMakerEntity> editContext, ModelMakerEntity entity)
+        {
+            var modelDefinition = await _getDefinitionByIdHandler.HandleAsync(new GetByAliasRequest<ModelEntity>(editContext.CollectionAlias));
+
+            if (modelDefinition.Entity != null)
+            {
+                foreach (var property in modelDefinition.Entity.PublishedProperties)
                 {
-                    foreach (var property in modelDefinition.Entity.PublishedProperties)
+                    foreach (var validation in property.Validations.Where(x => x.Config?.IsEnabled == true))
                     {
-                        foreach (var validation in property.Validations.Where(x => x.Config?.IsEnabled == true))
+                        var validatorConfig = _config.Validators.First(x => x.Alias == validation.Alias);
+
+                        var validator = _serviceProvider.GetService<IValidator>(validatorConfig.Validator);
+
+                        if (!await validator.IsValid(entity.Get(property.Alias), validation.Config!))
                         {
-                            var validatorConfig = _config.Validators.First(x => x.Alias == validation.Alias);
-
-                            var validator = _serviceProvider.GetService<IValidator>(validatorConfig.Validator);
-
-                            if (!await validator.IsValid(entity.Get(property.Alias), validation.Config!))
-                            {
-                                typedEditContext.AddValidationError(property.Alias, await validator.ErrorMessage(validation.Config!));
-                            }
+                            editContext.AddValidationError(property.Alias, await validator.ErrorMessage(validation.Config!));
                         }
                     }
                 }
-
-                editContext.EnforceValidEntity();
             }
+
+            editContext.EnforceValidEntity();
         }
     }
 }

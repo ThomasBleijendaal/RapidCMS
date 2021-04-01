@@ -17,20 +17,20 @@ namespace RapidCMS.ModelMaker.Repositories
         private readonly ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>> _getAllEntitiesCommandHandler;
         private readonly ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>> _getEntityCommandHandler;
         private readonly ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>> _insertEntityCommandHandler;
-        private readonly ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse> _updateEntityCommandHandler;
+        private readonly ICommandHandler<PublishRequest<ModelEntity>, ConfirmResponse> _publishEntityCommandHandler;
 
         public ModelRepository(
             ICommandHandler<RemoveRequest<ModelEntity>, ConfirmResponse> removeCommandHandler,
             ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>> getAllEntitiesCommandHandler,
             ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>> getEntityCommandHandler,
             ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>> insertEntityCommandHandler,
-            ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse> updateEntityCommandHandler)
+            ICommandHandler<PublishRequest<ModelEntity>, ConfirmResponse> publishEntityCommandHandler)
         {
             _removeCommandHandler = removeCommandHandler;
             _getAllEntitiesCommandHandler = getAllEntitiesCommandHandler;
             _getEntityCommandHandler = getEntityCommandHandler;
             _insertEntityCommandHandler = insertEntityCommandHandler;
-            _updateEntityCommandHandler = updateEntityCommandHandler;
+            _publishEntityCommandHandler = publishEntityCommandHandler;
         }
 
         public Task AddAsync(IRelated related, string id)
@@ -98,7 +98,7 @@ namespace RapidCMS.ModelMaker.Repositories
         {
             if (editContext is IEditContext<ModelEntity> typedEditContext)
             {
-                await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(typedEditContext.Entity));
+                await _publishEntityCommandHandler.HandleAsync(new PublishRequest<ModelEntity>(typedEditContext.Entity));
             }
         }
     }

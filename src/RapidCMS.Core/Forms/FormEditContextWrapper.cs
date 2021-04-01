@@ -25,6 +25,8 @@ namespace RapidCMS.Core.Forms
 
         public EntityState EntityState => _editContext.EntityState;
 
+        public string CollectionAlias => _editContext.CollectionAlias;
+
         public TEntity Entity => (TEntity)_editContext.Entity;
 
         public IParent? Parent => _editContext.Parent;

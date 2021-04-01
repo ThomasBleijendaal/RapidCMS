@@ -30,19 +30,24 @@ namespace RapidCMS.ModelMaker.Repositories
 
         public Task AddAsync(IRelated related, string id)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
-        public Task DeleteAsync(string id, IParent? parent)
+        public async Task DeleteAsync(string id, IParent? parent)
         {
-            throw new NotImplementedException();
+            if (parent?.Entity is ModelEntity model)
+            {
+                model.DraftProperties.RemoveAll(x => x.Id == id);
+
+                await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
+            }
         }
 
         public Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query)
         {
             if (parent?.Entity is ModelEntity model)
             {
-                return Task.FromResult<IEnumerable<IEntity>>(model.PublishedProperties);
+                return Task.FromResult<IEnumerable<IEntity>>(model.DraftProperties);
             }
 
             throw new InvalidOperationException();
@@ -50,12 +55,12 @@ namespace RapidCMS.ModelMaker.Repositories
 
         public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelated related, IQuery query)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelated related, IQuery query)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public Task<IEntity?> GetByIdAsync(string id, IParent? parent)
@@ -79,7 +84,10 @@ namespace RapidCMS.ModelMaker.Repositories
                 newProperty.Alias = newProperty.Name.ToUrlFriendlyString();
                 model.DraftProperties.Add(newProperty);
 
-
+                if (newProperty.IsTitle)
+                {
+                    SetPropertyAsOnlyTitle(model, newProperty);
+                }
 
                 var property = _config.Properties.FirstOrDefault(x => x.Alias == newProperty.PropertyAlias);
 
@@ -103,6 +111,10 @@ namespace RapidCMS.ModelMaker.Repositories
                     }
                 }
 
+                ValidateProperty(typedEditContext, newProperty, model);
+
+                typedEditContext.EnforceValidEntity();
+
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
 
                 return newProperty;
@@ -118,7 +130,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
         public Task RemoveAsync(IRelated related, string id)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public Task ReorderAsync(string? beforeId, string id, IParent? parent)
@@ -126,9 +138,41 @@ namespace RapidCMS.ModelMaker.Repositories
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(IEditContext editContext)
+        public async Task UpdateAsync(IEditContext editContext)
         {
-            throw new NotImplementedException();
+            if (editContext is IEditContext<PropertyModel> typedEditContext &&
+                typedEditContext.Parent?.Entity is ModelEntity model)
+            {
+                model.Alias ??= model.Name.ToUrlFriendlyString();
+
+                var index = model.DraftProperties.FindIndex(x => x.Id == typedEditContext.Entity.Id);
+
+                model.DraftProperties[index] = typedEditContext.Entity;
+
+                if (typedEditContext.Entity.IsTitle)
+                {
+                    SetPropertyAsOnlyTitle(model, typedEditContext.Entity);
+                }
+
+                ValidateProperty(typedEditContext, typedEditContext.Entity, model);
+
+                typedEditContext.EnforceValidEntity();
+
+                await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
+            }
+        }
+
+        private void ValidateProperty(IEditContext<PropertyModel> editContext, PropertyModel property, ModelEntity model)
+        {
+            if (model.DraftProperties.Count(x => x.Alias == property.Alias) > 1)
+            {
+                editContext.AddValidationError("Alias", "Alias already used.");
+            }
+        }
+
+        private static void SetPropertyAsOnlyTitle(ModelEntity model, PropertyModel property)
+        {
+            model.DraftProperties.Where(x => x.Alias != property.Alias).ForEach(x => x.IsTitle = false);
         }
     }
 }

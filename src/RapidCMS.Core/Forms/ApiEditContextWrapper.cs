@@ -43,6 +43,7 @@ namespace RapidCMS.Core.Forms
         public EntityState EntityState { get; }
         public TEntity Entity { get; }
         public IParent? Parent { get; }
+        public string CollectionAlias => throw new NotSupportedException("The collection alias is unknown in API contexts");
 
         public ModelStateDictionary ValidationErrors => _formState.ModelState;
 

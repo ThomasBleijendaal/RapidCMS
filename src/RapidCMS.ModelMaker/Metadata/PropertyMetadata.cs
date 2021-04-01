@@ -16,7 +16,7 @@ namespace RapidCMS.ModelMaker.Metadata
             PropertyName = propertyName;
             Fingerprint = fingerprint;
 
-            Getter = x => getter.Invoke((TEntity)x);
+            Getter = x => getter.Invoke((TEntity)x)!;
             Setter = (x, y) => setter.Invoke((TEntity)x, (TProperty)y);
 
             ObjectType = typeof(TEntity);

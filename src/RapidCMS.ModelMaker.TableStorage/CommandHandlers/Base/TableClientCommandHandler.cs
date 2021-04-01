@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Cosmos.Table;
+﻿using System;
+using Microsoft.Azure.Cosmos.Table;
 using RapidCMS.ModelMaker.Abstractions.Entities;
 using RapidCMS.ModelMaker.TableStorage.Extensions;
 
@@ -8,6 +9,8 @@ namespace RapidCMS.ModelMaker.TableStorage.CommandHandlers.Base
         where TEntity : IModelMakerEntity
     {
         protected readonly CloudTable _cloudTable;
+
+        [Obsolete("Replace with Entity.Alias")]
         protected readonly string _partitionKey = typeof(TEntity).GetPartitionKey();
 
         public TableClientCommandHandler(CloudTableClient tableClient)

@@ -4,8 +4,8 @@ using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Entities;
 using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Responses;
+using RapidCMS.ModelMaker.TableStorage.Abstractions;
 using RapidCMS.ModelMaker.TableStorage.CommandHandlers.Base;
-using RapidCMS.ModelMaker.TableStorage.Entities;
 
 namespace RapidCMS.ModelMaker.TableStorage.CommandHandlers
 {
@@ -13,17 +13,21 @@ namespace RapidCMS.ModelMaker.TableStorage.CommandHandlers
             ICommandHandler<UpdateRequest<TEntity>, ConfirmResponse>
         where TEntity : class, IModelMakerEntity
     {
-        public UpdateEntityCommandHandler(CloudTableClient tableClient) : base(tableClient)
+        private readonly ITableEntityResolver<TEntity> _tableEntityResolver;
+
+        public UpdateEntityCommandHandler(
+            ITableEntityResolver<TEntity> tableEntityResolver,
+            CloudTableClient tableClient) : base(tableClient)
         {
+            _tableEntityResolver = tableEntityResolver;
         }
 
         public async Task<ConfirmResponse> HandleAsync(UpdateRequest<TEntity> request)
         {
-            var existingEntity = new ModelTableEntity<TEntity>(request.Entity, _partitionKey)
-            {
-                // TODO: always *?
-                ETag = "*"
-            };
+            var existingEntity = _tableEntityResolver.ResolveTableEntity(request.Entity, _partitionKey);
+
+            // TODO: always *?
+            existingEntity.ETag = "*";
 
             var replace = TableOperation.Replace(existingEntity);
 

@@ -5,5 +5,7 @@ namespace RapidCMS.ModelMaker.Abstractions.Entities
     public interface IModelMakerEntity : IEntity
     {
         string Alias { get; }
+
+        // TODO: implement state (Draft, Published, Changed)
     }
 }

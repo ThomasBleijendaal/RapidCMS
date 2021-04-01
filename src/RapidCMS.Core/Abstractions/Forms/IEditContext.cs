@@ -69,6 +69,11 @@ namespace RapidCMS.Core.Abstractions.Forms
         IRelationContainer GetRelationContainer();
 
         /// <summary>
+        /// Alias of the collection this edit context is used in
+        /// </summary>
+        string CollectionAlias { get; }
+
+        /// <summary>
         /// Checks whether the given property was modified by the form.
         /// </summary>
         /// <typeparam name="TValue"></typeparam>

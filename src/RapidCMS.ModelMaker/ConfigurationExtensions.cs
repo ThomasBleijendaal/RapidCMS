@@ -32,20 +32,13 @@ namespace RapidCMS.ModelMaker
             // TODO: what should this life time be?
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
-            //services.AddTransient<ICommandHandler<RemoveRequest<ModelEntity>, ConfirmResponse>, InMemoryModelEntityCommandHandler>();
-            //services.AddTransient<ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
-            //services.AddTransient<ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
-            //services.AddTransient<ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
-            //services.AddTransient<ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>>, InMemoryModelEntityCommandHandler>();
-            //services.AddTransient<ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse>, InMemoryModelEntityCommandHandler>();
-
             services.AddTransient<PropertyEditorDataCollection>();
             services.AddTransient<PropertyTypeDataCollection>();
 
             services.AddScoped<ModelMakerRepository>();
             services.AddScoped<ModelRepository>();
             services.AddScoped<PropertyRepository>();
-            services.AddScoped<ValidationRepository>();
+            // services.AddScoped<ValidationRepository>();
 
             services.AddTransient<MinLengthValidator>();
             services.AddTransient<MaxLengthValidator>();
@@ -120,9 +113,11 @@ namespace RapidCMS.ModelMaker
                     config.SetNodeEditor(editor =>
                     {
                         editor.AddDefaultButton(DefaultButtonType.Up);
-                        editor.AddDefaultButton(DefaultButtonType.SaveExisting);
+                        editor.AddDefaultButton(DefaultButtonType.SaveExisting, "Publish changed");
                         editor.AddDefaultButton(DefaultButtonType.SaveNew);
                         editor.AddDefaultButton(DefaultButtonType.Delete);
+                        // TODO: implement revert + custom button handler
+                        // editor.AddDefaultButton(DefaultButtonType.SaveExisting, "Revert changes");
 
                         editor.AddSection(section =>
                         {

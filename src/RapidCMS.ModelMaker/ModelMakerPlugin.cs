@@ -15,6 +15,7 @@ using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Abstractions.Validation;
 using RapidCMS.ModelMaker.DataCollections;
+using RapidCMS.ModelMaker.Extenstions;
 using RapidCMS.ModelMaker.Metadata;
 using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;
@@ -50,10 +51,10 @@ namespace RapidCMS.ModelMaker
             {
                 return await PropertyConfigurationCollectionAsync();
             }
-            else if (collectionAlias == "validation")
-            {
-                return ValidationConfigurationCollection();
-            }
+            //else if (collectionAlias == "validation")
+            //{
+            //    return ValidationConfigurationCollection();
+            //}
             else
             {
                 var response = await _getModelEntityByAliasCommandHandler.HandleAsync(new GetByAliasRequest<ModelEntity>(collectionAlias));
@@ -84,10 +85,10 @@ namespace RapidCMS.ModelMaker
             {
                 return typeof(PropertyRepository);
             }
-            else if (collectionAlias == "validation")
-            {
-                return typeof(ValidationRepository);
-            }
+            //else if (collectionAlias == "validation")
+            //{
+            //    return typeof(ValidationRepository);
+            //}
 
             return typeof(ModelMakerRepository);
         }
@@ -209,75 +210,39 @@ namespace RapidCMS.ModelMaker
             }
         }
 
-        private CollectionSetup ValidationConfigurationCollection()
-        {
-            var entityVariantSetup = new EntityVariantSetup("default", default, typeof(PropertyValidationModel), "modelpropertyvalidation");
-            return new CollectionSetup(
-                "Database",
-                "MagentaPink20",
-                "Validation",
-                "modelmaker::validation",
-                "modelmaker::validation",
-                false,
-                false)
-            {
-                EntityVariant = entityVariantSetup,
-                UsageType = UsageType.List,
-                TreeView = new TreeViewSetup(
-                    EntityVisibilty.Visible,
-                    CollectionRootVisibility.Visible,
-                    false,
-                    false,
-                    new ExpressionMetadata<PropertyValidationModel>("Alias", x => x.Alias)),
-                ListEditor = new ListSetup(
-                    100,
-                    false,
-                    false,
-                    ListType.Block,
-                    EmptyVariantColumnVisibility.Collapse,
-                    ValidationPanes().ToList(),
-                    new List<IButtonSetup>
-                    {
+        //private CollectionSetup ValidationConfigurationCollection()
+        //{
+        //    var entityVariantSetup = new EntityVariantSetup("default", default, typeof(PropertyValidationModel), "modelpropertyvalidation");
+        //    return new CollectionSetup(
+        //        "Database",
+        //        "MagentaPink20",
+        //        "Validation",
+        //        "modelmaker::validation",
+        //        "modelmaker::validation",
+        //        false,
+        //        false)
+        //    {
+        //        EntityVariant = entityVariantSetup,
+        //        UsageType = UsageType.List,
+        //        TreeView = new TreeViewSetup(
+        //            EntityVisibilty.Visible,
+        //            CollectionRootVisibility.Visible,
+        //            false,
+        //            false,
+        //            new ExpressionMetadata<PropertyValidationModel>("Alias", x => x.Alias)),
+        //        ListEditor = new ListSetup(
+        //            100,
+        //            false,
+        //            false,
+        //            ListType.Block,
+        //            EmptyVariantColumnVisibility.Collapse,
+        //            ValidationPanes().ToList(),
+        //            new List<IButtonSetup>
+        //            {
 
-                    })
-            };
-        }
-
-        private IEnumerable<PaneSetup> ValidationPanes()
-        {
-            foreach (var validationType in _config.Validators)
-            {
-                yield return
-                    new PaneSetup(
-                        default,
-                        default,
-                        (m, s) => s == EntityState.IsExisting &&
-                            m is PropertyValidationModel v && v.Alias == validationType.Alias,
-                        typeof(PropertyValidationModel<>).MakeGenericType(validationType.Config),
-                        new List<IButtonSetup>
-                        {
-
-                        },
-                        new List<FieldSetup>
-                        {
-                            new CustomPropertyFieldSetup(new FieldConfig
-                            {
-                                Description = validationType.Description,
-                                EditorType = EditorType.Custom,
-                                Index = 1,
-                                Name = validationType.Name,
-                                Property = validationType.ConfigToEditor
-                                    ?? new PropertyMetadata<PropertyValidationModel, IValidatorConfig>(
-                                        "Config",
-                                         x => x.Config,
-                                        (x, v) => x.Config = v,
-                                        "config"),
-                            }, validationType.Editor),
-                        },
-                        new List<SubCollectionListSetup>(),
-                        new List<RelatedCollectionListSetup>());
-            }
-        }
+        //            })
+        //    };
+        //}
 
         private async Task<CollectionSetup> PropertyConfigurationCollectionAsync()
         {
@@ -320,6 +285,7 @@ namespace RapidCMS.ModelMaker
                         new List<FieldSetup>
                         { 
                             CreateExpressionField(DisplayType.Label, EditorType.None, 1, "Property name", new ExpressionMetadata<PropertyModel>("Name", x => x.Name)),
+                            CreateExpressionField(DisplayType.Label, EditorType.None, 2, "Is Title", new ExpressionMetadata<PropertyModel>("IsTitle", x => x.IsTitle ? "Yes" : "No")),
                         },
                         new List<SubCollectionListSetup>(),
                         new List<RelatedCollectionListSetup>())
@@ -355,7 +321,9 @@ namespace RapidCMS.ModelMaker
                 new List<IButtonSetup>
                 {
                     await CreateButtonAsync(collection, DefaultButtonType.Up, false, "Return", "Back"),
-                    await CreateButtonAsync(collection, DefaultButtonType.SaveNew, true, "Insert")
+                    await CreateButtonAsync(collection, DefaultButtonType.SaveNew, true, "Insert"),
+                    await CreateButtonAsync(collection, DefaultButtonType.SaveExisting, true, "Update"),
+                    await CreateButtonAsync(collection, DefaultButtonType.Delete, false, "Delete")
                 });
 
             return collection;
@@ -399,13 +367,35 @@ namespace RapidCMS.ModelMaker
                             Property = new PropertyMetadata<PropertyModel, string>(
                                 "Name",
                                 x => x.Name,
-                                (x, v) => x.Name = v,
+                                (x, v) => x.Name = v ?? "No Name",
                                 "name")
                         }),
                         new PropertyFieldSetup(new FieldConfig
                         {
-                            EditorType = EditorType.Dropdown,
+                            EditorType = EditorType.TextBox,
                             Index = 2,
+                            Name = "Property alias",
+                            Property = new PropertyMetadata<PropertyModel, string>(
+                                "Alias",
+                                x => x.Alias,
+                                (x, v) => x.Alias = v,
+                                "alias")
+                        }),
+                        new PropertyFieldSetup(new FieldConfig
+                        {
+                            EditorType = EditorType.Checkbox,
+                            Index = 3,
+                            Name = "Use as entity title",
+                            Property = new PropertyMetadata<PropertyModel, bool>(
+                                "IsTitle",
+                                x => x.IsTitle,
+                                (x, v) => x.IsTitle = v,
+                                "isTitle")
+                        }),
+                        new PropertyFieldSetup(new FieldConfig
+                        {
+                            EditorType = EditorType.Dropdown,
+                            Index = 4,
                             Name = "Property editor",
                             Property = new PropertyMetadata<PropertyModel, string>(
                                 "EditorAlias",
@@ -419,13 +409,61 @@ namespace RapidCMS.ModelMaker
                     },
                     new List<SubCollectionListSetup>
                     {
-                        new SubCollectionListSetup(3, "modelmaker::validation")
                     },
                     new List<RelatedCollectionListSetup>
                     {
 
                     });
 
+            foreach (var pane in ValidationPanes())
+            {
+                yield return pane;
+            }
+        }
+
+        private IEnumerable<PaneSetup> ValidationPanes()
+        {
+            // TODO: merge all panes into single validation pane
+            foreach (var validationType in _config.Validators)
+            {
+                yield return
+                    new PaneSetup(
+                        default,
+                        default,
+                        (m, s) => s == EntityState.IsExisting &&
+                            m is PropertyModel property &&
+                            property.Validations.Any(x => x.Alias == validationType.Alias),
+                        typeof(PropertyModel),
+                        new List<IButtonSetup>
+                        {
+
+                        },
+                        new List<FieldSetup>
+                        {
+                            new CustomPropertyFieldSetup(new FieldConfig
+                            {
+                                Description = validationType.Description,
+                                EditorType = EditorType.Custom,
+                                Index = 1,
+                                Name = validationType.Name,
+                                Property =
+                                    validationType.ConfigToEditor != null
+                                    ? validationType.ConfigToEditor.Nest<PropertyModel, PropertyValidationModel>(x => x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias))
+                                    : new PropertyMetadata<PropertyModel, IValidatorConfig>(
+                                        "Config",
+                                         x => x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias)?.Config,
+                                        (x, v) => {
+                                            if (x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias) is PropertyValidationModel validation)
+                                            {
+                                                validation.Config = v;
+                                            }
+                                        },
+                                        "config"),
+                            }, validationType.Editor),
+                        },
+                        new List<SubCollectionListSetup>(),
+                        new List<RelatedCollectionListSetup>());
+            }
         }
 
         private static ExpressionFieldSetup CreateExpressionField(
