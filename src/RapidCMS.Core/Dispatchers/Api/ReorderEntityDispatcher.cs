@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Exceptions;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
@@ -40,12 +41,12 @@ namespace RapidCMS.Core.Dispatchers.Api
             
             var subjectParent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Subject.ParentPath));
 
-            var subjectEntity = await subjectRepository.GetByIdAsync(request.Subject.Id, subjectParent)
+            var subjectEntity = await subjectRepository.GetByIdAsync(request.Subject.Id, new ViewContext("", subjectParent))
                 ?? throw new NotFoundException("Subject entity was not found");
 
             await _authService.EnsureAuthorizedUserAsync(Operations.Update, subjectEntity);
 
-            await subjectRepository.ReorderAsync(request.BeforeId, request.Subject.Id, subjectParent);
+            await subjectRepository.ReorderAsync(request.BeforeId, request.Subject.Id, new ViewContext("", subjectParent));
 
             return new ApiCommandResponseModel();
         }

@@ -46,36 +46,36 @@ namespace RapidCMS.ModelMaker.Repositories
             _serviceProvider = serviceProvider;
         }
 
-        public Task AddAsync(IRelated related, string id)
+        public Task AddAsync(IRelatedViewContext viewContext, string id)
         {
             throw new NotImplementedException();
         }
 
-        public async Task DeleteAsync(string id, IParent? parent)
+        public async Task DeleteAsync(string id, IViewContext viewContext)
         {
-            await _removeCommandHandler.HandleAsync(new RemoveRequest<ModelMakerEntity>(id, "modelmaker::test")); // TODO
+            await _removeCommandHandler.HandleAsync(new RemoveRequest<ModelMakerEntity>(id, viewContext.CollectionAlias));
         }
 
-        public async Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query)
+        public async Task<IEnumerable<IEntity>> GetAllAsync(IViewContext viewContext, IQuery query)
         {
-            var response = await _getAllEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelMakerEntity>("modelmaker::test")); // TODO
+            var response = await _getAllEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelMakerEntity>(viewContext.CollectionAlias));
 
             return response.Entities;
         }
 
-        public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelated related, IQuery query)
+        public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelatedViewContext viewContext, IQuery query)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelated related, IQuery query)
+        public Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelatedViewContext viewContext, IQuery query)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IEntity?> GetByIdAsync(string id, IParent? parent)
+        public async Task<IEntity?> GetByIdAsync(string id, IViewContext viewContext)
         {
-            var response = await _getEntityCommandHandler.HandleAsync(new GetByIdRequest<ModelMakerEntity>(id, "modelmaker::test")); // TODO
+            var response = await _getEntityCommandHandler.HandleAsync(new GetByIdRequest<ModelMakerEntity>(id, viewContext.CollectionAlias));
 
             return response.Entity;
         }
@@ -98,17 +98,17 @@ namespace RapidCMS.ModelMaker.Repositories
             return default;
         }
 
-        public Task<IEntity> NewAsync(IParent? parent, Type? variantType)
+        public Task<IEntity> NewAsync(IViewContext viewContext, Type? variantType)
         {
             return Task.FromResult<IEntity>(new ModelMakerEntity());
         }
 
-        public Task RemoveAsync(IRelated related, string id)
+        public Task RemoveAsync(IRelatedViewContext viewContext, string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task ReorderAsync(string? beforeId, string id, IParent? parent)
+        public Task ReorderAsync(string? beforeId, string id, IViewContext viewContext)
         {
             throw new NotImplementedException();
         }

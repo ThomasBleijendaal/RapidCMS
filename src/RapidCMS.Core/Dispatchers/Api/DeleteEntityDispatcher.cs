@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Exceptions;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
@@ -39,12 +40,12 @@ namespace RapidCMS.Core.Dispatchers.Api
             var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Descriptor.ParentPath));
 
             var subjectRepository = _repositoryResolver.GetRepository(request.Descriptor.RepositoryAlias);
-            var subjectEntity = await subjectRepository.GetByIdAsync(request.Descriptor.Id, parent)
+            var subjectEntity = await subjectRepository.GetByIdAsync(request.Descriptor.Id, new ViewContext("", parent))
                 ?? throw new NotFoundException("Could not find entity to delete");
 
             await _authService.EnsureAuthorizedUserAsync(Operations.Delete, subjectEntity);
 
-            await subjectRepository.DeleteAsync(request.Descriptor.Id, parent);
+            await subjectRepository.DeleteAsync(request.Descriptor.Id, new ViewContext("", parent));
 
             return new ApiCommandResponseModel();
         }

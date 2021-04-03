@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Metadata;
@@ -114,7 +113,7 @@ namespace RapidCMS.Core.Providers
                 parent = _setup.RepositoryParentSelector.Getter.Invoke(_parent) as IParent;
             }
 
-            var entities = await _repository.GetAllAsync(parent, Query.Default(_editContext.CollectionAlias));
+            var entities = await _repository.GetAllAsync(new ViewContext(_editContext.CollectionAlias, parent), Query.Default(_editContext.CollectionAlias));
 
             _elements = entities
                 .Select(entity => (IElement)new Element

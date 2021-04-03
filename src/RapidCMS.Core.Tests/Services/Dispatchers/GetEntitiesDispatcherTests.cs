@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
+using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
@@ -67,10 +68,10 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
                     });
 
             _repository = new Mock<IRepository>();
-            _repository.Setup(x => x.NewAsync(It.IsAny<IParent>(), It.IsAny<Type>())).ReturnsAsync(_protoEntity);
-            _repository.Setup(x => x.GetAllAsync(It.IsAny<IParent>(), It.IsAny<IQuery>())).ReturnsAsync(_entities);
-            _repository.Setup(x => x.GetAllNonRelatedAsync(It.IsAny<IRelated>(), It.IsAny<IQuery>())).ReturnsAsync(_entities);
-            _repository.Setup(x => x.GetAllRelatedAsync(It.IsAny<IRelated>(), It.IsAny<IQuery>())).ReturnsAsync(_entities);
+            _repository.Setup(x => x.NewAsync(It.IsAny<IViewContext>(), It.IsAny<Type>())).ReturnsAsync(_protoEntity);
+            _repository.Setup(x => x.GetAllAsync(It.IsAny<IViewContext>(), It.IsAny<IQuery>())).ReturnsAsync(_entities);
+            _repository.Setup(x => x.GetAllNonRelatedAsync(It.IsAny<IRelatedViewContext>(), It.IsAny<IQuery>())).ReturnsAsync(_entities);
+            _repository.Setup(x => x.GetAllRelatedAsync(It.IsAny<IRelatedViewContext>(), It.IsAny<IQuery>())).ReturnsAsync(_entities);
 
             _repositoryResolver = new Mock<IRepositoryResolver>();
             _repositoryResolver
@@ -145,7 +146,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { CollectionAlias = "name" });
 
             // assert
-            _repository.Verify(x => x.NewAsync(It.IsAny<IParent>(), It.IsAny<Type>()));
+            _repository.Verify(x => x.NewAsync(It.IsAny<IViewContext>(), It.IsAny<Type>()));
         }
 
         [TestCase(UsageType.Add)]
@@ -179,7 +180,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _subject.GetAsync(new GetEntitiesOfParentRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", ParentPath = parentPath });
 
             // assert
-            _repository.Verify(x => x.GetAllAsync(It.Is<IParent>(x => x.GetParentPath()!.ToPathString() == parentPath!.ToPathString()), It.Is<IQuery>(x => x == query)));
+            _repository.Verify(x => x.GetAllAsync(It.Is<IViewContext>(x => x.Parent.GetParentPath()!.ToPathString() == parentPath!.ToPathString()), It.Is<IQuery>(x => x == query)));
         }
 
         [TestCase(UsageType.Add)]
@@ -191,7 +192,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
 
             // assert
-            _repository.Verify(x => x.GetAllNonRelatedAsync(It.Is<IRelated>(x => x == related), It.Is<IQuery>(x => x == query)));
+            _repository.Verify(x => x.GetAllNonRelatedAsync(It.Is<IRelatedViewContext>(x => x.Related == related), It.Is<IQuery>(x => x == query)));
         }
 
         [TestCase(UsageType.Edit)]
@@ -208,7 +209,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
 
             // assert
-            _repository.Verify(x => x.GetAllRelatedAsync(It.Is<IRelated>(x => x == related), It.Is<IQuery>(x => x == query)));
+            _repository.Verify(x => x.GetAllRelatedAsync(It.Is<IRelatedViewContext>(x => x.Related == related), It.Is<IQuery>(x => x == query)));
         }
 
         [TestCase(UsageType.List)]

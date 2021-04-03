@@ -9,6 +9,7 @@ using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.State;
@@ -63,8 +64,8 @@ namespace RapidCMS.Core.Services.Tree
             var isDetails = collection.UsageType.HasFlag(UsageType.Details) && parent?.Entity != null;
 
             var entity = isList
-                ? await _repositoryResolver.GetRepository(collection).NewAsync(parent, collection.EntityVariant.Type)
-                : await _repositoryResolver.GetRepository(collection).GetByIdAsync(parent!.Entity.Id!, parent)
+                ? await _repositoryResolver.GetRepository(collection).NewAsync(new ViewContext(collection.Alias, parent), collection.EntityVariant.Type)
+                : await _repositoryResolver.GetRepository(collection).GetByIdAsync(parent!.Entity.Id!, new ViewContext(collection.Alias, parent))
                     ?? throw new InvalidOperationException($"Failed to get detail entity for given alias ({alias}) -- a detail entity should always exist.");
 
             var canEdit = (isList && isListEditor && await _authService.IsUserAuthorizedAsync(Operations.Update, entity)) || 
@@ -157,8 +158,7 @@ namespace RapidCMS.Core.Services.Tree
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
             {
                 var query = Query.Create(pageSize, pageNr, default, default);
-                query.CollectionAlias = alias;
-                var entities = await _repositoryResolver.GetRepository(collection).GetAllAsync(parent, query);
+                var entities = await _repositoryResolver.GetRepository(collection).GetAllAsync(new ViewContext(collection.Alias, parent), query);
 
                 var list = await entities.SelectNotNullAsync(async entity =>
                 {

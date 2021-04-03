@@ -12,8 +12,6 @@ namespace RapidCMS.ModelMaker.Models.Entities
             set => Alias = value ?? string.Empty;
         }
 
-        [Required]
-        [MinLength(1)]
         public string Alias { get; set; } = default!;
 
         [Required]

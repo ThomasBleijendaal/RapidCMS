@@ -8,6 +8,7 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
@@ -54,8 +55,8 @@ namespace RapidCMS.Core.Dispatchers.Api
 
             var subjectRepository = _repositoryResolver.GetRepository(request.Descriptor.RepositoryAlias);
             var referenceEntity = (request.EntityState == EntityState.IsExisting)
-                ? await subjectRepository.GetByIdAsync(request.Descriptor.Id ?? throw new InvalidOperationException("Cannot modify entity without giving an Id."), parent)
-                : await subjectRepository.NewAsync(parent, request.Entity.GetType());
+                ? await subjectRepository.GetByIdAsync(request.Descriptor.Id ?? throw new InvalidOperationException("Cannot modify entity without giving an Id."), new ViewContext("", parent))
+                : await subjectRepository.NewAsync(new ViewContext("", parent), request.Entity.GetType());
 
             if (referenceEntity == null)
             {

@@ -51,10 +51,6 @@ namespace RapidCMS.ModelMaker
             {
                 return await PropertyConfigurationCollectionAsync();
             }
-            //else if (collectionAlias == "validation")
-            //{
-            //    return ValidationConfigurationCollection();
-            //}
             else
             {
                 var response = await _getModelEntityByAliasCommandHandler.HandleAsync(new GetByAliasRequest<ModelEntity>(collectionAlias));
@@ -85,13 +81,11 @@ namespace RapidCMS.ModelMaker
             {
                 return typeof(PropertyRepository);
             }
-            //else if (collectionAlias == "validation")
-            //{
-            //    return typeof(ValidationRepository);
-            //}
 
             return typeof(ModelMakerRepository);
         }
+
+        // MODEL MAKER
 
         private async Task<CollectionSetup?> ModelCollectionAsync(ModelEntity definition)
         {
@@ -101,6 +95,10 @@ namespace RapidCMS.ModelMaker
             }
 
             var entityVariantSetup = new EntityVariantSetup(definition.Alias, default, typeof(ModelMakerEntity), definition.Alias);
+
+            var titleProperty = definition.PublishedProperties.First(x => x.IsTitle);
+            var titlePropertyMetadata = CreateExpressionMetadata(titleProperty);
+
             var collection = new CollectionSetup(
                 "Database",
                 "Cyan10",
@@ -117,10 +115,8 @@ namespace RapidCMS.ModelMaker
                     CollectionRootVisibility.Visible,
                     false,
                     false,
-                    new ExpressionMetadata<ModelMakerEntity>("Name", x => x.Id))
+                    titlePropertyMetadata)
             };
-
-            var titleProperty = definition.PublishedProperties.First(x => x.IsTitle);
 
             collection.ListView = new ListSetup(
                 100,
@@ -140,32 +136,20 @@ namespace RapidCMS.ModelMaker
                         },
                         new List<FieldSetup>
                         {
-                            new ExpressionFieldSetup(new FieldConfig
-                            {
-                                DisplayType = DisplayType.Label,
-                                Name = titleProperty.Name
-                            }, new ExpressionMetadata<ModelMakerEntity>(titleProperty.Name, x => x.Get<string>(titleProperty.Alias)))
+                            CreateExpressionField(DisplayType.Label, EditorType.None, 1, titleProperty.Name, titlePropertyMetadata)
                         },
                         new List<SubCollectionListSetup>(),
                         new List<RelatedCollectionListSetup>())
                 },
                 new List<IButtonSetup>
                 {
-                    (await _buttonSetupResolver.ResolveSetupAsync(new DefaultButtonConfig {
-                        ButtonType = DefaultButtonType.New,
-                        Id = "model-new",
-                        IsPrimary = true,
-                        Label = "New"
-                    }, collection)).Setup
+                    await CreateButtonAsync(collection, DefaultButtonType.New, true)
                 });
 
             collection.NodeEditor = new NodeSetup(
                 typeof(ModelMakerEntity),
                 await ModelPanesAsync(definition, collection).ToListAsync(),
-                new List<IButtonSetup>
-                {
-
-                });
+                new List<IButtonSetup>());
 
             return collection;
         }
@@ -196,53 +180,11 @@ namespace RapidCMS.ModelMaker
             {
                 var editor = _config.Editors.First(x => x.Alias == property.EditorAlias);
 
-                yield return new CustomPropertyFieldSetup(new FieldConfig
-                {
-                    EditorType = EditorType.Custom,
-                    Index = ++i,
-                    Name = property.Name,
-                    Property = new PropertyMetadata<ModelMakerEntity, object?>(
-                        property.Alias,
-                        entity => entity.Get(property.Alias),
-                        (entity, value) => entity.Set(property.Alias, value),
-                        $"{property.EditorAlias}::{property.Alias}")
-                }, editor.Editor);
+                yield return CreateCustomPropertyField(++i, property, editor);
             }
         }
 
-        //private CollectionSetup ValidationConfigurationCollection()
-        //{
-        //    var entityVariantSetup = new EntityVariantSetup("default", default, typeof(PropertyValidationModel), "modelpropertyvalidation");
-        //    return new CollectionSetup(
-        //        "Database",
-        //        "MagentaPink20",
-        //        "Validation",
-        //        "modelmaker::validation",
-        //        "modelmaker::validation",
-        //        false,
-        //        false)
-        //    {
-        //        EntityVariant = entityVariantSetup,
-        //        UsageType = UsageType.List,
-        //        TreeView = new TreeViewSetup(
-        //            EntityVisibilty.Visible,
-        //            CollectionRootVisibility.Visible,
-        //            false,
-        //            false,
-        //            new ExpressionMetadata<PropertyValidationModel>("Alias", x => x.Alias)),
-        //        ListEditor = new ListSetup(
-        //            100,
-        //            false,
-        //            false,
-        //            ListType.Block,
-        //            EmptyVariantColumnVisibility.Collapse,
-        //            ValidationPanes().ToList(),
-        //            new List<IButtonSetup>
-        //            {
-
-        //            })
-        //    };
-        //}
+        // MODEL
 
         private async Task<CollectionSetup> PropertyConfigurationCollectionAsync()
         {
@@ -379,7 +321,8 @@ namespace RapidCMS.ModelMaker
                                 "Alias",
                                 x => x.Alias,
                                 (x, v) => x.Alias = v,
-                                "alias")
+                                "alias"),
+                            IsVisible = (m, s) => s == EntityState.IsExisting
                         }),
                         new PropertyFieldSetup(new FieldConfig
                         {
@@ -471,9 +414,8 @@ namespace RapidCMS.ModelMaker
             EditorType editorType,
             int index,
             string name,
-            IExpressionMetadata expression)
-        {
-            return new ExpressionFieldSetup(
+            IExpressionMetadata expression) 
+            => new ExpressionFieldSetup(
                 new FieldConfig
                 {
                     DisplayType = displayType,
@@ -482,7 +424,20 @@ namespace RapidCMS.ModelMaker
                     Name = name
                 },
                 expression);
-        }
+
+        private static CustomPropertyFieldSetup CreateCustomPropertyField(int index, PropertyModel property, IPropertyEditorConfig editor)
+            => new CustomPropertyFieldSetup(new FieldConfig
+                {
+                    EditorType = EditorType.Custom,
+                    Index = index,
+                    Name = property.Name,
+                    Property = new PropertyMetadata<ModelMakerEntity, object?>(
+                            property.Alias,
+                            entity => entity.Get(property.Alias),
+                            (entity, value) => entity.Set(property.Alias, value),
+                            $"{property.EditorAlias}::{property.Alias}")
+                }, 
+                editor.Editor);
 
         private async Task<IButtonSetup> CreateButtonAsync(
             CollectionSetup collection, 
@@ -508,5 +463,8 @@ namespace RapidCMS.ModelMaker
         {
             return entity.PublishedProperties.Any(x => x.IsTitle);
         }
+
+        private static ExpressionMetadata<ModelMakerEntity> CreateExpressionMetadata(PropertyModel property) 
+            => new ExpressionMetadata<ModelMakerEntity>(property.Name, x => x.Get<string>(property.Alias));
     }
 }

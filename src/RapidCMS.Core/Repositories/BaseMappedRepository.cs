@@ -129,20 +129,20 @@ namespace RapidCMS.Core.Repositories
         public virtual Task ReorderAsync(string? beforeId, string id, IParent? parent)
             => throw new NotImplementedException($"In order to use reordering in list editors, implement {nameof(ReorderAsync)} on the {GetType()}.");
 
-        async Task<IEntity?> IRepository.GetByIdAsync(string id, IParent? parent) 
-            => await GetByIdAsync(id, parent);
+        async Task<IEntity?> IRepository.GetByIdAsync(string id, IViewContext viewContext) 
+            => await GetByIdAsync(id, viewContext.Parent);
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllAsync(IParent? parent, IQuery query) 
-            => (await GetAllAsync(parent, TypedQuery<TDatabaseEntity>.Convert(query))).Cast<IEntity>();
+        async Task<IEnumerable<IEntity>> IRepository.GetAllAsync(IViewContext viewContext, IQuery query) 
+            => (await GetAllAsync(viewContext.Parent, TypedQuery<TDatabaseEntity>.Convert(query))).Cast<IEntity>();
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllRelatedAsync(IRelated related, IQuery query) 
-            => (await GetAllRelatedAsync(related, TypedQuery<TDatabaseEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+        async Task<IEnumerable<IEntity>> IRepository.GetAllRelatedAsync(IRelatedViewContext viewContext, IQuery query) 
+            => (await GetAllRelatedAsync(viewContext.Related, TypedQuery<TDatabaseEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllNonRelatedAsync(IRelated related, IQuery query) 
-            => (await GetAllNonRelatedAsync(related, TypedQuery<TDatabaseEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+        async Task<IEnumerable<IEntity>> IRepository.GetAllNonRelatedAsync(IRelatedViewContext viewContext, IQuery query) 
+            => (await GetAllNonRelatedAsync(viewContext.Related, TypedQuery<TDatabaseEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
 
-        async Task<IEntity> IRepository.NewAsync(IParent? parent, Type? variantType) 
-            => await NewAsync(parent, variantType);
+        async Task<IEntity> IRepository.NewAsync(IViewContext viewContext, Type? variantType) 
+            => await NewAsync(viewContext.Parent, variantType);
 
         async Task<IEntity?> IRepository.InsertAsync(IEditContext editContext) 
             => await InsertAsync((IEditContext<TEntity>)editContext);
@@ -150,15 +150,15 @@ namespace RapidCMS.Core.Repositories
         async Task IRepository.UpdateAsync(IEditContext editContext) 
             => await UpdateAsync((IEditContext<TEntity>)editContext);
 
-        async Task IRepository.DeleteAsync(string id, IParent? parent) 
-            => await DeleteAsync(id, parent);
+        async Task IRepository.DeleteAsync(string id, IViewContext viewContext) 
+            => await DeleteAsync(id, viewContext.Parent);
 
-        async Task IRepository.AddAsync(IRelated related, string id) 
-            => await AddAsync(related, id);
-        async Task IRepository.RemoveAsync(IRelated related, string id) 
-            => await RemoveAsync(related, id);
+        async Task IRepository.AddAsync(IRelatedViewContext viewContext, string id) 
+            => await AddAsync(viewContext.Related, id);
+        async Task IRepository.RemoveAsync(IRelatedViewContext viewContext, string id) 
+            => await RemoveAsync(viewContext.Related, id);
 
-        async Task IRepository.ReorderAsync(string? beforeId, string id, IParent? parent) 
-            => await ReorderAsync(beforeId, id, parent);
+        async Task IRepository.ReorderAsync(string? beforeId, string id, IViewContext viewContext) 
+            => await ReorderAsync(beforeId, id, viewContext.Parent);
     }
 }

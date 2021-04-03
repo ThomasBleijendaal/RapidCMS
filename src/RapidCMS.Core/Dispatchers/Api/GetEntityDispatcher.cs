@@ -7,6 +7,7 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Api;
 
@@ -49,9 +50,9 @@ namespace RapidCMS.Core.Dispatchers.Api
 
             var action = (request.UsageType & ~(UsageType.Node | UsageType.Root | UsageType.NotRoot)) switch
             {
-                UsageType.View => () => repository.GetByIdAsync(request.Subject.Id!, parent),
-                UsageType.Edit => () => repository.GetByIdAsync(request.Subject.Id!, parent),
-                UsageType.New => () => repository.NewAsync(parent, entityVariant?.Type)!,
+                UsageType.View => () => repository.GetByIdAsync(request.Subject.Id!, new ViewContext("", parent)),
+                UsageType.Edit => () => repository.GetByIdAsync(request.Subject.Id!, new ViewContext("", parent)),
+                UsageType.New => () => repository.NewAsync(new ViewContext("", parent), entityVariant?.Type)!,
 
                 _ => default(Func<Task<IEntity?>>)
             };

@@ -14,6 +14,7 @@ using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
@@ -139,7 +140,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                         if (editContext.IsReordered())
                         {
                             await _concurrencyService.EnsureCorrectConcurrencyAsync(
-                                () => repository.ReorderAsync(editContext.ReorderedBeforeId, editContext.Entity.Id!, editContext.Parent));
+                                () => repository.ReorderAsync(editContext.ReorderedBeforeId, editContext.Entity.Id!, new ViewContext("", editContext.Parent)));
                         }
 
                         affectedEntities.Add(editContext.Entity);

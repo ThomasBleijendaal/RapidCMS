@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Primitives;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 
@@ -9,20 +8,20 @@ namespace RapidCMS.Core.Abstractions.Repositories
 {
     public interface IRepository
     {
-        Task<IEntity?> GetByIdAsync(string id, IParent? parent);
-        Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query);
+        Task<IEntity?> GetByIdAsync(string id, IViewContext viewContext);
+        Task<IEnumerable<IEntity>> GetAllAsync(IViewContext viewContext, IQuery query);
 
-        Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelated related, IQuery query);
-        Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelated related, IQuery query);
+        Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelatedViewContext viewContext, IQuery query);
+        Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelatedViewContext viewContext, IQuery query);
 
-        Task<IEntity> NewAsync(IParent? parent, Type? variantType);
+        Task<IEntity> NewAsync(IViewContext viewContext, Type? variantType);
         Task<IEntity?> InsertAsync(IEditContext editContext);
         Task UpdateAsync(IEditContext editContext);
-        Task DeleteAsync(string id, IParent? parent);
+        Task DeleteAsync(string id, IViewContext viewContext);
 
-        Task AddAsync(IRelated related, string id);
-        Task RemoveAsync(IRelated related, string id);
+        Task AddAsync(IRelatedViewContext viewContext, string id);
+        Task RemoveAsync(IRelatedViewContext viewContext, string id);
 
-        Task ReorderAsync(string? beforeId, string id, IParent? parent);
+        Task ReorderAsync(string? beforeId, string id, IViewContext viewContext);
     }
 }

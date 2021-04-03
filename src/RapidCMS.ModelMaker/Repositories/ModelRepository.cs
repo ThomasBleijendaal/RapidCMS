@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Extensions;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;
@@ -33,34 +34,22 @@ namespace RapidCMS.ModelMaker.Repositories
             _publishEntityCommandHandler = publishEntityCommandHandler;
         }
 
-        public Task AddAsync(IRelated related, string id)
-        {
-            throw new NotSupportedException();
-        }
+        public Task AddAsync(IRelatedViewContext viewContext, string id) => throw new NotSupportedException();
 
-        public async Task DeleteAsync(string id, IParent? parent)
-        {
-            await _removeCommandHandler.HandleAsync(new RemoveRequest<ModelEntity>(id, id));
-        }
+        public async Task DeleteAsync(string id, IViewContext viewContext) => await _removeCommandHandler.HandleAsync(new RemoveRequest<ModelEntity>(id, id));
 
-        public async Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query)
+        public async Task<IEnumerable<IEntity>> GetAllAsync(IViewContext viewContext, IQuery query)
         {
             var response = await _getAllEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>(default));
 
             return response.Entities;
         }
 
-        public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelated related, IQuery query)
-        {
-            throw new NotSupportedException();
-        }
+        public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelatedViewContext viewContext, IQuery query) => throw new NotSupportedException();
 
-        public Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelated related, IQuery query)
-        {
-            throw new NotSupportedException();
-        }
+        public Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelatedViewContext viewContext, IQuery query) => throw new NotSupportedException();
 
-        public async Task<IEntity?> GetByIdAsync(string id, IParent? parent)
+        public async Task<IEntity?> GetByIdAsync(string id, IViewContext viewContext)
         {
             var response = await _getEntityCommandHandler.HandleAsync(new GetByIdRequest<ModelEntity>(id, id));
 
@@ -71,7 +60,10 @@ namespace RapidCMS.ModelMaker.Repositories
         {
             if (editContext is IEditContext<ModelEntity> typedEditContext)
             {
-                var response = await _insertEntityCommandHandler.HandleAsync(new InsertRequest<ModelEntity>(typedEditContext.Entity));
+                var entity = typedEditContext.Entity;
+                entity.Alias = entity.Name.ToUrlFriendlyString();
+
+                var response = await _insertEntityCommandHandler.HandleAsync(new InsertRequest<ModelEntity>(entity));
 
                 return response.Entity;
             }
@@ -79,20 +71,11 @@ namespace RapidCMS.ModelMaker.Repositories
             return default;
         }
 
-        public Task<IEntity> NewAsync(IParent? parent, Type? variantType)
-        {
-            return Task.FromResult<IEntity>(new ModelEntity());
-        }
+        public Task<IEntity> NewAsync(IViewContext viewContext, Type? variantType) => Task.FromResult<IEntity>(new ModelEntity());
 
-        public Task RemoveAsync(IRelated related, string id)
-        {
-            throw new NotSupportedException();
-        }
+        public Task RemoveAsync(IRelatedViewContext viewContext, string id) => throw new NotSupportedException();
 
-        public Task ReorderAsync(string? beforeId, string id, IParent? parent)
-        {
-            throw new NotSupportedException();
-        }
+        public Task ReorderAsync(string? beforeId, string id, IViewContext viewContext) => throw new NotSupportedException();
 
         public async Task UpdateAsync(IEditContext editContext)
         {

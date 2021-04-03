@@ -43,6 +43,11 @@ namespace RapidCMS.Core.Abstractions.Forms
         /// Gets the ModelStateDirectory containing all validation errors, to be used in BadRequest() responses etc.
         /// </summary>
         ModelStateDictionary ValidationErrors { get; }
+
+        /// <summary>
+        /// Alias of the collection this edit context is used in
+        /// </summary>
+        string CollectionAlias { get; }
     }
 
     public interface IEditContext<TEntity> : IEditContext
@@ -67,11 +72,6 @@ namespace RapidCMS.Core.Abstractions.Forms
         IParent? Parent { get; }
 
         IRelationContainer GetRelationContainer();
-
-        /// <summary>
-        /// Alias of the collection this edit context is used in
-        /// </summary>
-        string CollectionAlias { get; }
 
         /// <summary>
         /// Checks whether the given property was modified by the form.

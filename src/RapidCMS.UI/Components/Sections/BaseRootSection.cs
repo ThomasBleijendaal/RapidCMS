@@ -129,7 +129,7 @@ namespace RapidCMS.UI.Components.Sections
         {
             if (CurrentState == null || 
                 CurrentState.CollectionAlias == null || 
-                !CurrentState.UsageType.HasFlag(UsageType.View) || 
+                // TODO: really test this removal !CurrentState.UsageType.HasFlag(UsageType.View) || 
                 args.CollectionAlias != CurrentState.CollectionAlias ||
                 StateIsChanging)
             {
