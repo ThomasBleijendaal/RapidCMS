@@ -45,18 +45,20 @@ namespace RapidCMS.ModelMaker
 
         public string CollectionPrefix => "modelmaker";
 
-        public async Task<CollectionSetup?> GetCollectionAsync(string collectionAlias)
+        public async Task<IResolvedSetup<CollectionSetup>?> GetCollectionAsync(string collectionAlias)
         {
-            if (collectionAlias == "property")
+            if (collectionAlias.EndsWith("::property"))
             {
-                return await PropertyConfigurationCollectionAsync();
+                return new ResolvedSetup<CollectionSetup>(await PropertyConfigurationCollectionAsync(), true);
             }
             else
             {
                 var response = await _getModelEntityByAliasCommandHandler.HandleAsync(new GetByAliasRequest<ModelEntity>(collectionAlias));
                 if (response.Entity != null)
                 {
-                    return await ModelCollectionAsync(response.Entity);
+                    return await ModelCollectionAsync(response.Entity) is CollectionSetup collection
+                        ? new ResolvedSetup<CollectionSetup>(collection, false) // TODO: how to bust collection setup cache so this setup can be cached until outdated
+                        : default;
                 }
             }
 
@@ -68,16 +70,16 @@ namespace RapidCMS.ModelMaker
             var response = await _getAllModelEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>(default));
             return response.Entities
                 .Where(IsValidDefintion)
-                .Select(model => new TreeElementSetup($"{CollectionPrefix}::{model.Alias}", PageType.Collection));
+                .Select(model => new TreeElementSetup(model.Alias, PageType.Collection));
         }
 
         public Type? GetRepositoryType(string collectionAlias)
         {
-            if (collectionAlias == "models")
+            if (collectionAlias.EndsWith("::models"))
             {
                 return typeof(ModelRepository);
             }
-            else if (collectionAlias == "property")
+            else if (collectionAlias.EndsWith("::property"))
             {
                 return typeof(PropertyRepository);
             }
@@ -103,9 +105,8 @@ namespace RapidCMS.ModelMaker
                 "Database",
                 "Cyan10",
                 definition.Name,
-                $"modelmaker::{definition.Alias}",
-                $"modelmaker::{definition.Alias}",
-                false,
+                definition.Alias,
+                definition.Alias,
                 false)
             {
                 EntityVariant = entityVariantSetup,
@@ -195,7 +196,6 @@ namespace RapidCMS.ModelMaker
                 "Properties",
                 "modelmaker::property",
                 "modelmaker::property",
-                false,
                 false)
             {
                 EntityVariant = entityVariantSetup,

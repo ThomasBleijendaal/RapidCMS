@@ -16,8 +16,7 @@ namespace RapidCMS.Core.Models.Setup
             string name,
             string alias,
             string repositoryAlias,
-            bool isRecursive = false,
-            bool isResolverCachable = true) // TODO
+            bool isRecursive = false)
         {
             Icon = icon;
             Color = color;

@@ -189,7 +189,7 @@ namespace RapidCMS.Core.Extensions
                 alias.Contains("::") &&
                 alias.Split("::") is string[] parts)
             {
-                aliases = (parts[0], parts[1]);
+                aliases = (parts[0], alias);
                 return true;
             }
 

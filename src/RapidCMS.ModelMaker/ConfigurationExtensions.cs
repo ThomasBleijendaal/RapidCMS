@@ -8,7 +8,6 @@ using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Collections;
 using RapidCMS.ModelMaker.DataCollections;
 using RapidCMS.ModelMaker.Models;
-using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.Repositories;
 using RapidCMS.ModelMaker.Validation;
 using RapidCMS.ModelMaker.Validation.Config;

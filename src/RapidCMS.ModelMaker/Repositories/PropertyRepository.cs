@@ -93,7 +93,8 @@ namespace RapidCMS.ModelMaker.Repositories
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
 
-                _mediator.NotifyEvent(this, new RepositoryEventArgs(typeof(ModelRepository), default, model.Id, CrudType.Update));
+                // TODO: this triggers a refresh of the properties pane
+                // _mediator.NotifyEvent(this, new RepositoryEventArgs(typeof(ModelRepository), default, model.Id, CrudType.Update));
 
                 return newProperty;
             }
@@ -133,11 +134,12 @@ namespace RapidCMS.ModelMaker.Repositories
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
 
-                _mediator.NotifyEvent(this, new RepositoryEventArgs(typeof(ModelRepository), default, model.Id, CrudType.Update));
+                // TODO: this triggers a refresh of the properties pane
+                // _mediator.NotifyEvent(this, new RepositoryEventArgs(typeof(ModelRepository), default, model.Id, CrudType.Update));
             }
         }
 
-        private void ValidateProperty(IEditContext<PropertyModel> editContext, PropertyModel property, ModelEntity model)
+        private static void ValidateProperty(IEditContext<PropertyModel> editContext, PropertyModel property, ModelEntity model)
         {
             if (model.DraftProperties.Count(x => x.Alias == property.Alias) > 1)
             {
@@ -157,6 +159,8 @@ namespace RapidCMS.ModelMaker.Repositories
             {
                 var validations = _config.Validators.Where(x => propertyConfig.Validators.Any(v => v.Alias == x.Alias));
 
+                var newValidations = new List<PropertyValidationModel>();
+
                 foreach (var validation in validations)
                 {
                     var config = property.Validations.FirstOrDefault(x => x.Alias == validation.Alias)?.Config
@@ -169,8 +173,10 @@ namespace RapidCMS.ModelMaker.Repositories
                     validationModel.Config = config;
                     validationModel.Id = Guid.NewGuid().ToString();
 
-                    property.Validations.Add(validationModel);
+                    newValidations.Add(validationModel);
                 }
+
+                property.Validations = newValidations;
             }
         }
 

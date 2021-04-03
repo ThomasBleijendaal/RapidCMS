@@ -89,26 +89,30 @@ namespace RapidCMS.Core.Resolvers.Setup
                 return collection;
             }
 
+            var resolvedSetup = default(IResolvedSetup<CollectionSetup>);
             if (_collectionMap.TryGetValue(alias, out var collectionConfig))
             {
-                var resolvedSetup = await ConvertConfigAsync(collectionConfig);
-                if (resolvedSetup.Cachable)
-                {
-                    _cachedCollectionMap[alias] = resolvedSetup.Setup;
-                }
-
-                return resolvedSetup.Setup;
+                resolvedSetup = await ConvertConfigAsync(collectionConfig);
+                
             }
-            else if (alias.Contains("::") && alias.Split("::") is string[] aliasParts && 
-                _pluginMap.TryGetValue(aliasParts[0], out var plugin) &&
-                await plugin.GetCollectionAsync(aliasParts[1]) is CollectionSetup collection)
+            else if (alias.TryParseAsPluginAlias(out var pluginAlias) && 
+                _pluginMap.TryGetValue(pluginAlias.prefix, out var plugin) &&
+                await plugin.GetCollectionAsync(pluginAlias.collectionAlias) is ResolvedSetup<CollectionSetup> collection)
             {
-                return collection;
+                resolvedSetup = collection;
             }
-            else
+
+            if (resolvedSetup == null)
             {
                 throw new InvalidOperationException($"Cannot find collection with alias {alias}.");
             }
+
+            if (resolvedSetup.Cachable)
+            {
+                _cachedCollectionMap[alias] = resolvedSetup.Setup;
+            }
+
+            return resolvedSetup.Setup;
         }
 
         private async Task<IResolvedSetup<CollectionSetup>> ConvertConfigAsync(CollectionConfig config)
@@ -121,8 +125,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 config.Name,
                 config.Alias,
                 repositoryAlias,
-                isRecursive: config.Recursive,
-                isResolverCachable: true) // TODO
+                isRecursive: config.Recursive)
             {
                 DataViews = config.DataViews,
                 DataViewBuilder = config.DataViewBuilder,

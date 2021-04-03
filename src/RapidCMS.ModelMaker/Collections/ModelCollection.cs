@@ -44,7 +44,7 @@ namespace RapidCMS.ModelMaker.Collections
                         {
                             section.AddField(x => x.Name);
                             section.AddField(x => x.Alias)
-                                .SetName("Model alias")
+                                .SetName("Collection alias")
                                 .SetType(EditorType.Readonly)
                                 .VisibleWhen((m, s) => s == EntityState.IsExisting);
 
