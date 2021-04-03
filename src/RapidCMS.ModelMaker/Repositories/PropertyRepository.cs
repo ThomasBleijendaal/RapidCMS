@@ -143,7 +143,7 @@ namespace RapidCMS.ModelMaker.Repositories
             if (editContext is IEditContext<PropertyModel> typedEditContext &&
                 typedEditContext.Parent?.Entity is ModelEntity model)
             {
-                model.Alias ??= model.Name.ToUrlFriendlyString();
+                typedEditContext.Entity.Alias ??= typedEditContext.Entity.Name.ToUrlFriendlyString();
 
                 var index = model.DraftProperties.FindIndex(x => x.Id == typedEditContext.Entity.Id);
 

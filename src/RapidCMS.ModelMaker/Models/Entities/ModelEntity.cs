@@ -6,7 +6,11 @@ namespace RapidCMS.ModelMaker.Models.Entities
 {
     public class ModelEntity : IModelMakerEntity
     {
-        public string? Id { get; set; }
+        public string? Id
+        {
+            get => Alias;
+            set => Alias = value ?? string.Empty;
+        }
 
         [Required]
         [MinLength(1)]

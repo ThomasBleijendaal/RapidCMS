@@ -53,12 +53,12 @@ namespace RapidCMS.ModelMaker.Repositories
 
         public async Task DeleteAsync(string id, IParent? parent)
         {
-            await _removeCommandHandler.HandleAsync(new RemoveRequest<ModelMakerEntity>(id));
+            await _removeCommandHandler.HandleAsync(new RemoveRequest<ModelMakerEntity>(id, "modelmaker::test")); // TODO
         }
 
         public async Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query)
         {
-            var response = await _getAllEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelMakerEntity>());
+            var response = await _getAllEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelMakerEntity>("modelmaker::test")); // TODO
 
             return response.Entities;
         }
@@ -75,7 +75,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
         public async Task<IEntity?> GetByIdAsync(string id, IParent? parent)
         {
-            var response = await _getEntityCommandHandler.HandleAsync(new GetByIdRequest<ModelMakerEntity>(id));
+            var response = await _getEntityCommandHandler.HandleAsync(new GetByIdRequest<ModelMakerEntity>(id, "modelmaker::test")); // TODO
 
             return response.Entity;
         }
@@ -85,6 +85,8 @@ namespace RapidCMS.ModelMaker.Repositories
             if (editContext is IEditContext<ModelMakerEntity> typedEditContext)
             {
                 var entity = typedEditContext.Entity;
+
+                entity.Alias = typedEditContext.CollectionAlias;
 
                 await ValidateEntityAsync(typedEditContext, entity);
 

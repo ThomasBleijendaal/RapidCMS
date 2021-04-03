@@ -10,7 +10,5 @@ namespace RapidCMS.ModelMaker.TableStorage.Entities
         }
 
         public string? EntityJson { get; set; }
-
-        public string? Alias { get; set; }
     }
 }

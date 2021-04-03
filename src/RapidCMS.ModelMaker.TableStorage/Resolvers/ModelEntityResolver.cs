@@ -1,17 +1,15 @@
-﻿using System;
-using Newtonsoft.Json;
-using RapidCMS.ModelMaker.Abstractions.Entities;
+﻿using Newtonsoft.Json;
+using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.TableStorage.Abstractions;
 using RapidCMS.ModelMaker.TableStorage.Entities;
 
 namespace RapidCMS.ModelMaker.TableStorage.Resolvers
 {
-    internal class TableEntityResolver<TEntity> : ITableEntityResolver<TEntity>
-        where TEntity : IModelMakerEntity
+    internal class ModelEntityResolver : ITableEntityResolver<ModelEntity>
     {
         private readonly JsonSerializerSettings _settings;
 
-        public TableEntityResolver()
+        public ModelEntityResolver()
         {
             _settings = new JsonSerializerSettings
             {
@@ -20,23 +18,19 @@ namespace RapidCMS.ModelMaker.TableStorage.Resolvers
             };
         }
 
-        public TEntity? ResolveEntity(ModelTableEntity tableEntity)
+        public ModelEntity? ResolveEntity(ModelTableEntity tableEntity)
         {
             // TODO: what if the class has changed and the json cannot fit it anymore?
-            return JsonConvert.DeserializeObject<TEntity>(tableEntity.EntityJson ?? "", _settings);
+            return JsonConvert.DeserializeObject<ModelEntity>(tableEntity.EntityJson ?? "", _settings);
         }
 
-        public ModelTableEntity ResolveTableEntity(TEntity entity, string partitionKey)
+        public ModelTableEntity ResolveTableEntity(ModelEntity entity)
         {
-            var id = entity.Id ?? Guid.NewGuid().ToString();
-            entity.Id ??= id;
-
             return new ModelTableEntity
             {
-                Alias = entity.Alias,
                 EntityJson = JsonConvert.SerializeObject(entity, _settings),
-                PartitionKey = partitionKey,
-                RowKey = id
+                PartitionKey = entity.Alias,
+                RowKey = entity.Id
             };
         }
     }

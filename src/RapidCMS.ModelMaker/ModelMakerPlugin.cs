@@ -69,7 +69,7 @@ namespace RapidCMS.ModelMaker
 
         public async Task<IEnumerable<ITreeElementSetup>> GetTreeElementsAsync()
         {
-            var response = await _getAllModelEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>());
+            var response = await _getAllModelEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>(default));
             return response.Entities
                 .Where(IsValidDefintion)
                 .Select(model => new TreeElementSetup($"{CollectionPrefix}::{model.Alias}", PageType.Collection));

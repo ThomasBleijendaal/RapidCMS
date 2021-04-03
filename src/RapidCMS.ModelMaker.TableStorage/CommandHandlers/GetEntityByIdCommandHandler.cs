@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos.Table;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Entities;
@@ -27,15 +28,17 @@ namespace RapidCMS.ModelMaker.TableStorage.CommandHandlers
         {
             await _cloudTable.CreateIfNotExistsAsync();
 
-            var fetch = TableOperation.Retrieve<ModelTableEntity>(_partitionKey, request.Id);
+            var query = _cloudTable.CreateQuery<ModelTableEntity>()
+                .Where(x => x.RowKey == request.Id);
 
-            var data = await _cloudTable.ExecuteAsync(fetch);
-
+            if (!string.IsNullOrWhiteSpace(request.Alias))
+            {
+                query = query.Where(x => x.PartitionKey == request.Alias);
+            }
+            
             return new EntityResponse<TEntity>
             {
-                Entity = (data.Result is ModelTableEntity tableEntity)
-                    ? _tableEntityResolver.ResolveEntity(tableEntity)
-                    : default
+                Entity = query.Select(_tableEntityResolver.ResolveEntity).FirstOrDefault()
             };
         }
     }

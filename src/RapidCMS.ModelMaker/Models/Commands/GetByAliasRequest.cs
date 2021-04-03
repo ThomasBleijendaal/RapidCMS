@@ -11,6 +11,6 @@ namespace RapidCMS.ModelMaker.Models.Commands
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
         }
 
-        public string Alias { get; set; }
+        public string Alias { get; private set; }
     }
 }

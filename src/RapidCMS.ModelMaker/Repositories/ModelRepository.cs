@@ -40,12 +40,12 @@ namespace RapidCMS.ModelMaker.Repositories
 
         public async Task DeleteAsync(string id, IParent? parent)
         {
-            await _removeCommandHandler.HandleAsync(new RemoveRequest<ModelEntity>(id));
+            await _removeCommandHandler.HandleAsync(new RemoveRequest<ModelEntity>(id, id));
         }
 
         public async Task<IEnumerable<IEntity>> GetAllAsync(IParent? parent, IQuery query)
         {
-            var response = await _getAllEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>());
+            var response = await _getAllEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>(default));
 
             return response.Entities;
         }
@@ -62,7 +62,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
         public async Task<IEntity?> GetByIdAsync(string id, IParent? parent)
         {
-            var response = await _getEntityCommandHandler.HandleAsync(new GetByIdRequest<ModelEntity>(id));
+            var response = await _getEntityCommandHandler.HandleAsync(new GetByIdRequest<ModelEntity>(id, id));
 
             return response.Entity;
         }

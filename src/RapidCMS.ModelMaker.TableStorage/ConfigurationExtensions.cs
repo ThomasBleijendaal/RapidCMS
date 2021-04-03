@@ -25,7 +25,7 @@ namespace RapidCMS.ModelMaker.TableStorage
             services.AddTransient<ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse>, UpdateEntityCommandHandler<ModelEntity>>();
             services.AddTransient<ICommandHandler<PublishRequest<ModelEntity>, ConfirmResponse>, PublishEntityCommandHandler<ModelEntity>>();
 
-            services.AddSingleton<ITableEntityResolver<ModelEntity>, TableEntityResolver<ModelEntity>>();
+            services.AddSingleton<ITableEntityResolver<ModelEntity>, ModelEntityResolver>();
 
             // Model Maker Entity
             services.AddTransient<ICommandHandler<RemoveRequest<ModelMakerEntity>, ConfirmResponse>, RemoveEntityCommandHandler<ModelMakerEntity>>();
@@ -38,7 +38,7 @@ namespace RapidCMS.ModelMaker.TableStorage
             services.AddTransient<ICommandHandler<UpdateRequest<ModelMakerEntity>, ConfirmResponse>, UpdateEntityCommandHandler<ModelMakerEntity>>();
             services.AddTransient<ICommandHandler<PublishRequest<ModelMakerEntity>, ConfirmResponse>, PublishEntityCommandHandler<ModelMakerEntity>>();
 
-            services.AddSingleton<ITableEntityResolver<ModelMakerEntity>, TableEntityResolver<ModelMakerEntity>>();
+            services.AddSingleton<ITableEntityResolver<ModelMakerEntity>, ModelMakerEntityResolver>();
 
 
 

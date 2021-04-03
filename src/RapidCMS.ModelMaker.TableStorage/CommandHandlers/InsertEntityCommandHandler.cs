@@ -25,7 +25,7 @@ namespace RapidCMS.ModelMaker.TableStorage.CommandHandlers
 
         public async Task<EntityResponse<TEntity>> HandleAsync(InsertRequest<TEntity> request)
         {
-            var newEntity = _tableEntityResolver.ResolveTableEntity(request.Entity, _partitionKey);
+            var newEntity = _tableEntityResolver.ResolveTableEntity(request.Entity);
 
             var insert = TableOperation.Insert(newEntity);
 

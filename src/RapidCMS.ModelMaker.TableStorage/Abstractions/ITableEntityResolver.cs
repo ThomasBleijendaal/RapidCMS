@@ -6,7 +6,7 @@ namespace RapidCMS.ModelMaker.TableStorage.Abstractions
     internal interface ITableEntityResolver<TEntity>
         where TEntity : IModelMakerEntity
     {
-        public ModelTableEntity ResolveTableEntity(TEntity entity, string partitionKey);
+        public ModelTableEntity ResolveTableEntity(TEntity entity);
         public TEntity? ResolveEntity(ModelTableEntity tableEntity);
     }
 }

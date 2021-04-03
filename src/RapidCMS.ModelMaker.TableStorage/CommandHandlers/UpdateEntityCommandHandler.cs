@@ -24,7 +24,7 @@ namespace RapidCMS.ModelMaker.TableStorage.CommandHandlers
 
         public async Task<ConfirmResponse> HandleAsync(UpdateRequest<TEntity> request)
         {
-            var existingEntity = _tableEntityResolver.ResolveTableEntity(request.Entity, _partitionKey);
+            var existingEntity = _tableEntityResolver.ResolveTableEntity(request.Entity);
 
             // TODO: always *?
             existingEntity.ETag = "*";

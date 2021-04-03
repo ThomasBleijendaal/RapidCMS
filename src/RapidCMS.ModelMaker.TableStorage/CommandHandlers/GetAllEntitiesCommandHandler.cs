@@ -29,8 +29,11 @@ namespace RapidCMS.ModelMaker.TableStorage.CommandHandlers
         {
             await _cloudTable.CreateIfNotExistsAsync();
 
-            var query = _cloudTable.CreateQuery<ModelTableEntity>()
-                .Where(x => x.PartitionKey == _partitionKey);
+            var query = _cloudTable.CreateQuery<ModelTableEntity>().AsQueryable();
+            if (!string.IsNullOrWhiteSpace(request.Alias))
+            { 
+                query = query.Where(x => x.PartitionKey == request.Alias);
+            }
 
             var data = query.ToList();
 

@@ -35,19 +35,20 @@ namespace RapidCMS.ModelMaker.TableStorage.CommandHandlers
             }
 
             // TODO: check if refreshing of the entity can be done by the CMS via IMediator events
-            var entity = (await _commandHandler.HandleAsync(new GetByIdRequest<TEntity>(request.Entity.Id!)).ConfigureAwait(false)).Entity;
-            if (entity == null)
-            {
-                throw new InvalidOperationException();
-            }
+            // TODO: this causes bugs
+            //var entity = (await _commandHandler.HandleAsync(new GetByIdRequest<TEntity>(request.Entity.Id!, request.Entity.Alias)).ConfigureAwait(false)).Entity;
+            //if (entity == null)
+            //{
+            //    throw new InvalidOperationException();
+            //}
 
             // TODO: move publish logic to some external resolver + check how publishing should be supported model maker wide
-            if (entity is ModelEntity modelEntity)
+            if (request.Entity is ModelEntity modelEntity)
             {
                 modelEntity.PublishedProperties = modelEntity.DraftProperties;
             }
 
-            var existingEntity = _tableEntityResolver.ResolveTableEntity(entity, _partitionKey);
+            var existingEntity = _tableEntityResolver.ResolveTableEntity(request.Entity);
 
             // TODO: always *?
             existingEntity.ETag = "*";

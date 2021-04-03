@@ -18,7 +18,7 @@ namespace RapidCMS.ModelMaker.TableStorage.CommandHandlers
 
         public async Task<ConfirmResponse> HandleAsync(RemoveRequest<TEntity> request)
         {
-            var fetch = TableOperation.Retrieve(_partitionKey, request.Id);
+            var fetch = TableOperation.Retrieve(request.Alias ?? _cloudTable.Name, request.Id);
 
             var entity = await _cloudTable.ExecuteAsync(fetch);
 
