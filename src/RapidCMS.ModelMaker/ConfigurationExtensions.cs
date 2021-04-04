@@ -19,6 +19,8 @@ namespace RapidCMS.ModelMaker
         public const string TextBox = "textbox";
         public const string TextArea = "textarea";
         public const string Dropdown = "dropdown";
+        public const string Numeric = "numeric";
+        public const string Checkbox = "checkbox";
         public const string MinLength = "minlength";
         public const string MaxLength = "maxlength";
         public const string LimitedOptions = "limitedOptions";
@@ -46,7 +48,6 @@ namespace RapidCMS.ModelMaker
                 services.AddTransient<MaxLengthValidator>();
                 services.AddTransient<LimitedOptionsValidator>();
 
-
                 config.AddPropertyValidator<MinLengthValidator, string, MinLengthValidationConfig, int?>(
                     MinLength,
                     "Minimum length",
@@ -72,9 +73,12 @@ namespace RapidCMS.ModelMaker
                 config.AddPropertyEditor(TextBox, "Text box", EditorType.TextBox);
                 config.AddPropertyEditor(TextArea, "Text area", EditorType.TextArea);
                 config.AddPropertyEditor(Dropdown, "Dropdown", EditorType.Dropdown);
+                config.AddPropertyEditor(Numeric, "Numeric", EditorType.Numeric);
+                config.AddPropertyEditor(Checkbox, "Checkbox", EditorType.Checkbox);
 
                 config.AddProperty<string>("shortstring", "Short string", "Label", new[] { TextBox, TextArea, Dropdown }, new[] { MinLength, MaxLength, LimitedOptions });
                 config.AddProperty<string>("longstring", "Long string", "Label", new[] { TextArea }, new[] { MinLength });
+                // TODO: slug, media, reference(s) (model maker / external), markdown, JSON object, date, date time, time, rich text
             }
 
             configure?.Invoke(config);
