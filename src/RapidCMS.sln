@@ -57,7 +57,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.ModelMaker.Core", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.ModelMaker", "RapidCMS.ModelMaker\RapidCMS.ModelMaker.csproj", "{8C7D70C8-CAC6-4774-8C62-0684349E7D9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidCMS.ModelMaker.TableStorage", "RapidCMS.ModelMaker.TableStorage\RapidCMS.ModelMaker.TableStorage.csproj", "{22E64CD4-DC0F-4C74-927E-411D1745FB92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.ModelMaker.TableStorage", "RapidCMS.ModelMaker.TableStorage\RapidCMS.ModelMaker.TableStorage.csproj", "{22E64CD4-DC0F-4C74-927E-411D1745FB92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -10,7 +10,7 @@ using RapidCMS.ModelMaker.Models.Entities;
 
 namespace RapidCMS.ModelMaker.DataCollections
 {
-    public class PropertyEditorDataCollection : IDataCollection
+    internal class PropertyEditorDataCollection : IDataCollection
     {
         private readonly IModelMakerConfig _config;
         private PropertyModel? _property;

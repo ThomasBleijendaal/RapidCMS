@@ -23,7 +23,10 @@ namespace RapidCMS.ModelMaker
         public const string MaxLength = "maxlength";
         public const string LimitedOptions = "limitedOptions";
 
-        public static IServiceCollection AddModelMaker(this IServiceCollection services, Action<IModelMakerConfig>? configure = null)
+        public static IServiceCollection AddModelMaker(
+            this IServiceCollection services, 
+            bool addDefaultPropertiesAndValidators = true,
+            Action<IModelMakerConfig>? configure = null)
         {
             // TODO: what should this life time be?
             services.AddTransient<IPlugin, ModelMakerPlugin>();
@@ -34,44 +37,45 @@ namespace RapidCMS.ModelMaker
             services.AddScoped<ModelMakerRepository>();
             services.AddScoped<ModelRepository>();
             services.AddScoped<PropertyRepository>();
-            // services.AddScoped<ValidationRepository>();
-
-            services.AddTransient<MinLengthValidator>();
-            services.AddTransient<MaxLengthValidator>();
-            services.AddTransient<LimitedOptionsValidator>();
 
             var config = new ModelMakerConfig();
 
-            config.AddPropertyValidator<MinLengthValidator, string, MinLengthValidationConfig, int?>(
-                MinLength,
-                "Minimum length",
-                "The value has to be at least this amount of characters.",
-                EditorType.Numeric,
-                x => x.Config.MinLength);
+            if (addDefaultPropertiesAndValidators)
+            {
+                services.AddTransient<MinLengthValidator>();
+                services.AddTransient<MaxLengthValidator>();
+                services.AddTransient<LimitedOptionsValidator>();
 
-            config.AddPropertyValidator<MaxLengthValidator, string, MaxLengthValidationConfig, int?>(
-                MaxLength,
-                "Maximum length",
-                "The value has to be at most this amount of characters.",
-                EditorType.Numeric,
-                x => x.Config.MaxLength);
 
-            config.AddPropertyValidator<LimitedOptionsValidator, string, LimitedOptionsValidationConfig, IList<string>>(
-                LimitedOptions,
-                "Limited options",
-                "The value has to be one of these items",
-                EditorType.TextBox,
-                x => x.Config.Options); // TODO: convert to tag editor
-            // TODO: custom type
+                config.AddPropertyValidator<MinLengthValidator, string, MinLengthValidationConfig, int?>(
+                    MinLength,
+                    "Minimum length",
+                    "The value has to be at least this amount of characters.",
+                    EditorType.Numeric,
+                    x => x.Config.MinLength);
 
-            config.AddPropertyEditor(TextBox, "Text box", EditorType.TextBox);
-            config.AddPropertyEditor(TextArea, "Text area", EditorType.TextArea);
-            config.AddPropertyEditor(Dropdown, "Dropdown", EditorType.Dropdown);
-            
-            // TODO: add data collection to be configured
+                config.AddPropertyValidator<MaxLengthValidator, string, MaxLengthValidationConfig, int?>(
+                    MaxLength,
+                    "Maximum length",
+                    "The value has to be at most this amount of characters.",
+                    EditorType.Numeric,
+                    x => x.Config.MaxLength);
 
-            config.AddProperty<string>("shortstring", "Short string", "Label", new[] { TextBox, TextArea, Dropdown }, new[] { MinLength, MaxLength, LimitedOptions });
-            config.AddProperty<string>("longstring", "Long string", "Label", new[] { TextArea }, new[] { MinLength });
+                config.AddPropertyValidator<LimitedOptionsValidator, string, LimitedOptionsValidationConfig, IList<string>, ModelMakerLimitedOptionsDataCollection>(
+                    LimitedOptions,
+                    "Limited options",
+                    "The value has to be one of these items",
+                    EditorType.ListEditor,
+                    x => x.Config.Options);
+                // TODO: custom type
+
+                config.AddPropertyEditor(TextBox, "Text box", EditorType.TextBox);
+                config.AddPropertyEditor(TextArea, "Text area", EditorType.TextArea);
+                config.AddPropertyEditor(Dropdown, "Dropdown", EditorType.Dropdown);
+
+                config.AddProperty<string>("shortstring", "Short string", "Label", new[] { TextBox, TextArea, Dropdown }, new[] { MinLength, MaxLength, LimitedOptions });
+                config.AddProperty<string>("longstring", "Long string", "Label", new[] { TextArea }, new[] { MinLength });
+            }
 
             configure?.Invoke(config);
 

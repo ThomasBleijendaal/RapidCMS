@@ -9,7 +9,7 @@ using RapidCMS.ModelMaker.Abstractions.Config;
 
 namespace RapidCMS.ModelMaker.DataCollections
 {
-    public class PropertyTypeDataCollection : IDataCollection
+    internal class PropertyTypeDataCollection : IDataCollection
     {
         private readonly IModelMakerConfig _config;
 

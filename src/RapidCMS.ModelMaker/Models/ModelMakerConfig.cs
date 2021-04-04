@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Helpers;
 using RapidCMS.ModelMaker.Abstractions.Config;
+using RapidCMS.ModelMaker.Abstractions.DataCollections;
 using RapidCMS.ModelMaker.Abstractions.Validation;
 using RapidCMS.ModelMaker.Models.Config;
 using RapidCMS.ModelMaker.Validation.Base;
@@ -44,6 +45,7 @@ namespace RapidCMS.ModelMaker.Models
             return this;
         }
 
+        
         public IModelMakerConfig AddPropertyEditor<TCustomEditor>(string alias, string name) where TCustomEditor : BasePropertyEditor
         {
             _editors.Add(new PropertyEditorConfig(alias, name, typeof(TCustomEditor)));
@@ -51,7 +53,7 @@ namespace RapidCMS.ModelMaker.Models
             return this;
         }
 
-        public IModelMakerConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TValueForEditor>(
+        public IPropertyValidatorConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TValueForEditor>(
                 string alias, 
                 string name, 
                 string? description, 
@@ -60,34 +62,86 @@ namespace RapidCMS.ModelMaker.Models
             where TValidator : BaseValidator<TValue, TValidatorConfig>
             where TValidatorConfig : class, IValidatorConfig
         {
-            _validators.Add(new PropertyValidatorConfig(
-                alias, 
-                name, 
-                description, 
-                typeof(TValue), 
-                GetEditorByEditorType(editorType), 
-                typeof(TValidator), 
+            var validator = new PropertyValidatorConfig(
+                alias,
+                name,
+                description,
+                typeof(TValue),
+                GetEditorByEditorType(editorType),
+                typeof(TValidator),
                 typeof(TValidatorConfig),
-                PropertyMetadataHelper.GetPropertyMetadata(configEditor) as IFullPropertyMetadata));
+                PropertyMetadataHelper.GetPropertyMetadata(configEditor) as IFullPropertyMetadata);
 
-            return this;
+            _validators.Add(validator);
+
+            return validator;
         }
 
-        public IModelMakerConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TCustomEditor>(string alias, string name, string? description)
+        public IPropertyValidatorConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TValueForEditor, TDataCollection>(
+                string alias,
+                string name,
+                string? description,
+                EditorType editorType,
+                Expression<Func<IPropertyValidationModel<TValidatorConfig>, TValueForEditor>> configEditor)
+            where TValidator : BaseValidator<TValue, TValidatorConfig>
+            where TValidatorConfig : class, IValidatorConfig
+            where TDataCollection : IPropertyDataCollection, new()
+        {
+            var validator = new PropertyValidatorConfig(
+                alias,
+                name,
+                description,
+                typeof(TValue),
+                GetEditorByEditorType(editorType),
+                typeof(TValidator),
+                typeof(TValidatorConfig),
+                PropertyMetadataHelper.GetPropertyMetadata(configEditor) as IFullPropertyMetadata,
+                typeof(TDataCollection));
+
+            _validators.Add(validator);
+
+            return validator;
+        }
+
+        public IPropertyValidatorConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TCustomEditor>(string alias, string name, string? description)
             where TValidator : BaseValidator<TValue, TValidatorConfig>
             where TValidatorConfig : IValidatorConfig
             where TCustomEditor : BasePropertyEditor
         {
-            _validators.Add(new PropertyValidatorConfig(
+            var validator = new PropertyValidatorConfig(
                 alias, 
                 name, 
                 description, 
                 typeof(TValue),
                 typeof(TCustomEditor), 
                 typeof(TValidator), 
-                typeof(TValidatorConfig)));
+                typeof(TValidatorConfig));
 
-            return this;
+            _validators.Add(validator);
+
+            return validator;
+        }
+
+        public IPropertyValidatorConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TCustomEditor, TDataCollection>(string alias, string name, string? description)
+            where TValidator : BaseValidator<TValue, TValidatorConfig>
+            where TValidatorConfig : IValidatorConfig
+            where TCustomEditor : BasePropertyEditor
+            where TDataCollection : IPropertyDataCollection, new()
+        {
+            var validator = new PropertyValidatorConfig(
+                alias,
+                name,
+                description,
+                typeof(TValue),
+                typeof(TCustomEditor),
+                typeof(TValidator),
+                typeof(TValidatorConfig),
+                default,
+                typeof(TDataCollection));
+
+            _validators.Add(validator);
+
+            return validator;
         }
 
         public IPropertyConfig? GetProperty(string name)
@@ -115,6 +169,8 @@ namespace RapidCMS.ModelMaker.Models
         private static Type GetEditorByEditorType(EditorType editorType) 
             => editorType switch
             {
+                // TODO: check if all types are supported 
+
                 EditorType.Checkbox => typeof(CheckboxEditor),
                 EditorType.TextBox => typeof(TextBoxEditor),
                 EditorType.TextArea => typeof(TextAreaEditor),
@@ -123,8 +179,10 @@ namespace RapidCMS.ModelMaker.Models
                 EditorType.Dropdown => typeof(DropdownEditor),
                 EditorType.Select => typeof(SelectEditor),
                 EditorType.MultiSelect => typeof(MultiSelectEditor),
+                EditorType.ListEditor => typeof(ListEditor),
 
                 _ => throw new InvalidOperationException($"EditorType.{editorType} is not a valid option."),
             };
+
     }
 }

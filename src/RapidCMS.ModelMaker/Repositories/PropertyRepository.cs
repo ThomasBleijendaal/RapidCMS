@@ -106,9 +106,30 @@ namespace RapidCMS.ModelMaker.Repositories
 
         public Task RemoveAsync(IRelatedViewContext viewContext, string id) => throw new NotSupportedException();
 
-        public Task ReorderAsync(string? beforeId, string id, IViewContext viewContext)
+        public async Task ReorderAsync(string? beforeId, string id, IViewContext viewContext)
         {
-            throw new NotImplementedException();
+            if (viewContext.Parent?.Entity is ModelEntity model)
+            {
+                var property = model.DraftProperties.FirstOrDefault(x => x.Id == id);
+                if (property == null)
+                {
+                    return;
+                }
+
+                model.DraftProperties.Remove(property);
+
+                var targetIndex = model.DraftProperties.FindIndex(x => x.Id == beforeId);
+                if (targetIndex == -1)
+                {
+                    model.DraftProperties.Add(property);
+                }
+                else
+                {
+                    model.DraftProperties.Insert(targetIndex, property);
+                }
+
+                await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
+            }
         }
 
         public async Task UpdateAsync(IEditContext editContext)

@@ -13,6 +13,7 @@ using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
+using RapidCMS.ModelMaker.Abstractions.DataCollections;
 using RapidCMS.ModelMaker.Abstractions.Validation;
 using RapidCMS.ModelMaker.DataCollections;
 using RapidCMS.ModelMaker.Extenstions;
@@ -21,6 +22,7 @@ using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.Models.Responses;
 using RapidCMS.ModelMaker.Repositories;
+using RapidCMS.ModelMaker.Validation.Config;
 
 namespace RapidCMS.ModelMaker
 {
@@ -169,19 +171,19 @@ namespace RapidCMS.ModelMaker
                         await CreateButtonAsync(collection, DefaultButtonType.SaveNew, true, "Insert"),
                         await CreateButtonAsync(collection, DefaultButtonType.Delete, false)
                     },
-                    ModelFields(definition).ToList(),
+                    await ModelFieldsAsync(definition).ToListAsync(),
                     new List<SubCollectionListSetup>(),
                     new List<RelatedCollectionListSetup>());
         }
 
-        private IEnumerable<FieldSetup> ModelFields(ModelEntity definition)
+        private async IAsyncEnumerable<FieldSetup> ModelFieldsAsync(ModelEntity definition)
         {
             var i = 0;
             foreach (var property in definition.PublishedProperties)
             {
                 var editor = _config.Editors.First(x => x.Alias == property.EditorAlias);
 
-                yield return CreateCustomPropertyField(++i, property, editor);
+                yield return await CreateCustomPropertyFieldAsync(++i, property, editor);
             }
         }
 
@@ -225,7 +227,7 @@ namespace RapidCMS.ModelMaker
                             await CreateButtonAsync(collection, DefaultButtonType.Edit, true)
                         },
                         new List<FieldSetup>
-                        { 
+                        {
                             CreateExpressionField(DisplayType.Label, EditorType.None, 1, "Property name", new ExpressionMetadata<PropertyModel>("Name", x => x.Name)),
                             CreateExpressionField(DisplayType.Label, EditorType.None, 2, "Is Title", new ExpressionMetadata<PropertyModel>("IsTitle", x => x.IsTitle ? "Yes" : "No")),
                         },
@@ -234,27 +236,9 @@ namespace RapidCMS.ModelMaker
                 },
                 new List<IButtonSetup>
                 {
-                    new ButtonSetup
-                    {
-                        ButtonHandlerType = typeof(DefaultButtonActionHandler),
-                        ButtonId = "property-return",
-                        DefaultButtonType = DefaultButtonType.Return,
-                        Icon = "Back",
-                        Label = "Cancel",
-                        Buttons = Enumerable.Empty<IButtonSetup>(),
-                        EntityVariant = entityVariantSetup
-                    },
-                    new ButtonSetup
-                    {
-                        ButtonHandlerType = typeof(DefaultButtonActionHandler),
-                        ButtonId = "property-new",
-                        DefaultButtonType = DefaultButtonType.New,
-                        Icon = "Add",
-                        IsPrimary = true,
-                        Label = "Add property",
-                        Buttons = Enumerable.Empty<IButtonSetup>(),
-                        EntityVariant = entityVariantSetup
-                    }
+                    await CreateButtonAsync(collection, DefaultButtonType.Return, false, "Cancel", "Back"),
+                    await CreateButtonAsync(collection, DefaultButtonType.New, true, "Add property", "Add"),
+                    await CreateButtonAsync(collection, DefaultButtonType.SaveExisting, false, "Save order", "Save")
                 });
 
             collection.NodeEditor = new NodeSetup(
@@ -358,54 +342,48 @@ namespace RapidCMS.ModelMaker
 
                     });
 
-            foreach (var pane in ValidationPanes())
-            {
-                yield return pane;
-            }
+            yield return
+                new PaneSetup(
+                    default,
+                    default,
+                    (m, s) => s == EntityState.IsExisting,
+                    typeof(PropertyModel),
+                    new List<IButtonSetup>
+                    {
+
+                    },
+                    ValidationFields().ToList(),
+                    new List<SubCollectionListSetup>(),
+                    new List<RelatedCollectionListSetup>());
         }
 
-        private IEnumerable<PaneSetup> ValidationPanes()
+        private IEnumerable<FieldSetup> ValidationFields()
         {
-            // TODO: merge all panes into single validation pane
             foreach (var validationType in _config.Validators)
             {
                 yield return
-                    new PaneSetup(
-                        default,
-                        default,
-                        (m, s) => s == EntityState.IsExisting &&
-                            m is PropertyModel property &&
-                            property.Validations.Any(x => x.Alias == validationType.Alias),
-                        typeof(PropertyModel),
-                        new List<IButtonSetup>
-                        {
-
-                        },
-                        new List<FieldSetup>
-                        {
-                            new CustomPropertyFieldSetup(new FieldConfig
+                new CustomPropertyFieldSetup(new FieldConfig
+                {
+                    Description = validationType.Description,
+                    EditorType = EditorType.Custom,
+                    Index = 1,
+                    Name = validationType.Name,
+                    IsVisible = (m, s) => m is PropertyModel property && property.Validations.Any(x => x.Alias == validationType.Alias),
+                    Property =
+                        validationType.ConfigToEditor != null
+                        ? validationType.ConfigToEditor.Nest<PropertyModel, PropertyValidationModel>(x => x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias))
+                        : new PropertyMetadata<PropertyModel, IValidatorConfig>(
+                            "Config",
+                                x => x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias)?.Config,
+                            (x, v) =>
                             {
-                                Description = validationType.Description,
-                                EditorType = EditorType.Custom,
-                                Index = 1,
-                                Name = validationType.Name,
-                                Property =
-                                    validationType.ConfigToEditor != null
-                                    ? validationType.ConfigToEditor.Nest<PropertyModel, PropertyValidationModel>(x => x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias))
-                                    : new PropertyMetadata<PropertyModel, IValidatorConfig>(
-                                        "Config",
-                                         x => x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias)?.Config,
-                                        (x, v) => {
-                                            if (x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias) is PropertyValidationModel validation)
-                                            {
-                                                validation.Config = v;
-                                            }
-                                        },
-                                        "config"),
-                            }, validationType.Editor),
-                        },
-                        new List<SubCollectionListSetup>(),
-                        new List<RelatedCollectionListSetup>());
+                                if (x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias) is PropertyValidationModel validation)
+                                {
+                                    validation.Config = v;
+                                }
+                            },
+                            "config"),
+                }, validationType.Editor);
             }
         }
 
@@ -414,7 +392,7 @@ namespace RapidCMS.ModelMaker
             EditorType editorType,
             int index,
             string name,
-            IExpressionMetadata expression) 
+            IExpressionMetadata expression)
             => new ExpressionFieldSetup(
                 new FieldConfig
                 {
@@ -425,25 +403,55 @@ namespace RapidCMS.ModelMaker
                 },
                 expression);
 
-        private static CustomPropertyFieldSetup CreateCustomPropertyField(int index, PropertyModel property, IPropertyEditorConfig editor)
-            => new CustomPropertyFieldSetup(new FieldConfig
+        private async Task<CustomPropertyFieldSetup> CreateCustomPropertyFieldAsync(int index, PropertyModel property, IPropertyEditorConfig editor)
+        {
+            var relationSetup = default(RelationSetup);
+
+            try
+            {
+                var validator = _config.Validators
+                    .SingleOrDefault(x => x.DataCollection != null && property.Validations.Any(v => v.Config?.IsEnabled == true && v.Alias == x.Alias));
+
+                if (validator != null)
                 {
-                    EditorType = EditorType.Custom,
-                    Index = index,
-                    Name = property.Name,
-                    Property = new PropertyMetadata<ModelMakerEntity, object?>(
-                            property.Alias,
-                            entity => entity.Get(property.Alias),
-                            (entity, value) => entity.Set(property.Alias, value),
-                            $"{property.EditorAlias}::{property.Alias}")
-                }, 
-                editor.Editor);
+                    if (Activator.CreateInstance(validator.DataCollection!) is IPropertyDataCollection dataCollection)
+                    {
+                        await dataCollection.SetConfigAsync(property.Validations.First(x => x.Alias == validator.Alias).Config);
+
+                        relationSetup = new ConcreteDataProviderRelationSetup(dataCollection);
+                    }
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException("A property can only have 1 enabled validator with DataCollection.", ex);
+            }
+
+
+            var setup = new CustomPropertyFieldSetup(new FieldConfig
+            {
+                EditorType = EditorType.Custom,
+                Index = index,
+                Name = property.Name,
+                Property = new PropertyMetadata<ModelMakerEntity, object?>(
+                    property.Alias,
+                    entity => entity.Get(property.Alias),
+                    (entity, value) => entity.Set(property.Alias, value),
+                    $"{property.EditorAlias}::{property.Alias}")
+            },
+            editor.Editor)
+            {
+                Relation = relationSetup
+            };
+
+            return setup;
+        }
 
         private async Task<IButtonSetup> CreateButtonAsync(
-            CollectionSetup collection, 
-            DefaultButtonType type, 
-            bool isPrimary, 
-            string? label = default, 
+            CollectionSetup collection,
+            DefaultButtonType type,
+            bool isPrimary,
+            string? label = default,
             string? icon = default)
         {
             var response = await _buttonSetupResolver.ResolveSetupAsync(new DefaultButtonConfig
@@ -464,7 +472,7 @@ namespace RapidCMS.ModelMaker
             return entity.PublishedProperties.Any(x => x.IsTitle);
         }
 
-        private static ExpressionMetadata<ModelMakerEntity> CreateExpressionMetadata(PropertyModel property) 
+        private static ExpressionMetadata<ModelMakerEntity> CreateExpressionMetadata(PropertyModel property)
             => new ExpressionMetadata<ModelMakerEntity>(property.Name, x => x.Get<string>(property.Alias));
     }
 }

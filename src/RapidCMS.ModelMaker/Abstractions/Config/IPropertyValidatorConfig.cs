@@ -15,5 +15,7 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
         Type Editor { get; }
 
         IFullPropertyMetadata? ConfigToEditor { get; }
+
+        Type? DataCollection { get; }
     }
 }

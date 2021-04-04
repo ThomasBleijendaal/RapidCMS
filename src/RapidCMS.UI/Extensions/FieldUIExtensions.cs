@@ -80,6 +80,7 @@ namespace RapidCMS.UI.Extensions
                     EditorType.Select => typeof(SelectEditor),
                     EditorType.MultiSelect => typeof(MultiSelectEditor),
                     EditorType.Dropdown => typeof(DropdownEditor),
+                    EditorType.ListEditor => typeof(ListEditor),
                     _ => null
                 };
 

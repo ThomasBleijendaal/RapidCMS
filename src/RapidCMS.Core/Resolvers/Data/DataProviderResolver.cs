@@ -71,6 +71,10 @@ namespace RapidCMS.Core.Resolvers.Data
 
                     return new FormDataProvider(propertyField.Property!, _serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType), default);
 
+                case ConcreteDataProviderRelationSetup concreteDataProvider:
+
+                    return new FormDataProvider(propertyField.Property!, concreteDataProvider.DataCollection, default);
+
                 default:
                     throw new InvalidOperationException();
             };
