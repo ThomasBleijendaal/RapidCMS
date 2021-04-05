@@ -15,6 +15,8 @@ using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Enums;
+using RapidCMS.ModelMaker.Enums;
+using RapidCMS.ModelMaker.Extenstions;
 
 namespace RapidCMS.ModelMaker.Repositories
 {
@@ -41,6 +43,7 @@ namespace RapidCMS.ModelMaker.Repositories
             if (viewContext.Parent?.Entity is ModelEntity model)
             {
                 model.DraftProperties.RemoveAll(x => x.Id == id);
+                model.State = model.State.Modify();
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
             }
@@ -79,6 +82,7 @@ namespace RapidCMS.ModelMaker.Repositories
                 var newProperty = typedEditContext.Entity;
                 newProperty.Id = Guid.NewGuid().ToString();
                 model.DraftProperties.Add(newProperty);
+                model.State = model.State.Modify();
 
                 SetDefaultProperties(model, typedEditContext.Entity);
 
@@ -117,6 +121,7 @@ namespace RapidCMS.ModelMaker.Repositories
                 }
 
                 model.DraftProperties.Remove(property);
+                model.State = model.State.Modify();
 
                 var targetIndex = model.DraftProperties.FindIndex(x => x.Id == beforeId);
                 if (targetIndex == -1)
@@ -142,6 +147,7 @@ namespace RapidCMS.ModelMaker.Repositories
                 var index = model.DraftProperties.FindIndex(x => x.Id == typedEditContext.Entity.Id);
 
                 model.DraftProperties[index] = typedEditContext.Entity;
+                model.State = model.State.Modify();
 
                 SetDefaultProperties(model, typedEditContext.Entity);
                 if (typedEditContext.Entity.IsTitle)

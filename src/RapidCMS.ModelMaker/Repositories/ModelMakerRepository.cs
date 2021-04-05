@@ -9,6 +9,7 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Extenstions;
 using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.Models.Responses;
@@ -87,6 +88,7 @@ namespace RapidCMS.ModelMaker.Repositories
                 var entity = typedEditContext.Entity;
 
                 entity.Alias = typedEditContext.CollectionAlias;
+                entity.CreatedAt = DateTime.UtcNow;
 
                 await ValidateEntityAsync(typedEditContext, entity);
 
@@ -118,6 +120,11 @@ namespace RapidCMS.ModelMaker.Repositories
             if (editContext is IEditContext<ModelMakerEntity> typedEditContext)
             {
                 var entity = typedEditContext.Entity;
+
+                // move logic to external provider
+                entity.State = entity.State.Publish();
+                entity.PublishedAt = DateTime.UtcNow;
+                entity.UpdatedAt = DateTime.UtcNow;
 
                 await ValidateEntityAsync(typedEditContext, entity);
 

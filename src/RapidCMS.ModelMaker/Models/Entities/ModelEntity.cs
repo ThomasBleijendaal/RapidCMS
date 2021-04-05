@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using RapidCMS.ModelMaker.Abstractions.Entities;
+using RapidCMS.ModelMaker.Enums;
 
 namespace RapidCMS.ModelMaker.Models.Entities
 {
-    public class ModelEntity : IModelMakerEntity
+    public class ModelEntity : IPublishableModelMakerEntity
     {
         public string? Id
         {
@@ -13,6 +15,10 @@ namespace RapidCMS.ModelMaker.Models.Entities
         }
 
         public string Alias { get; set; } = default!;
+        public PublishState State { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime PublishedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
         [Required]
         [MinLength(1)]

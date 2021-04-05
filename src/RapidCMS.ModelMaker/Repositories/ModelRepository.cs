@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Extensions;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
+using RapidCMS.ModelMaker.Extenstions;
 using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.Models.Responses;
@@ -62,6 +63,7 @@ namespace RapidCMS.ModelMaker.Repositories
             {
                 var entity = typedEditContext.Entity;
                 entity.Alias = $"modelmaker::{entity.Name.ToUrlFriendlyString()}";
+                entity.CreatedAt = DateTime.UtcNow;
 
                 var response = await _insertEntityCommandHandler.HandleAsync(new InsertRequest<ModelEntity>(entity));
 
@@ -81,6 +83,11 @@ namespace RapidCMS.ModelMaker.Repositories
         {
             if (editContext is IEditContext<ModelEntity> typedEditContext)
             {
+                // TODO: move logic to external provider
+                typedEditContext.Entity.State = typedEditContext.Entity.State.Publish();
+                typedEditContext.Entity.PublishedAt = DateTime.UtcNow;
+                typedEditContext.Entity.UpdatedAt = DateTime.UtcNow;
+
                 await _publishEntityCommandHandler.HandleAsync(new PublishRequest<ModelEntity>(typedEditContext.Entity));
             }
         }

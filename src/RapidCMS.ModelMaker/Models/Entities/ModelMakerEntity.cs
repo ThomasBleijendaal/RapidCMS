@@ -1,13 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RapidCMS.ModelMaker.Abstractions.Entities;
+using RapidCMS.ModelMaker.Enums;
 
 namespace RapidCMS.ModelMaker.Models.Entities
 {
-    public class ModelMakerEntity : IModelMakerEntity
+    public class ModelMakerEntity : IPublishableModelMakerEntity
     {
         public string? Id { get; set; }
 
         public string Alias { get; set; } = default!;
+        public PublishState State { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime PublishedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
         public Dictionary<string, object?> Data { get; set; } = new Dictionary<string, object?>();
 

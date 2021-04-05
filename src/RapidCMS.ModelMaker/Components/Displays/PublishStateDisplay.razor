@@ -1,0 +1,12 @@
+﻿@inherits BaseDisplay
+
+<span class="publish-state publish-state-@(state.ToString().ToLower())">@state</span>
+
+@code {
+    private PublishState state { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        state = Enum.Parse<PublishState>(GetValueAsString());
+    }
+} 

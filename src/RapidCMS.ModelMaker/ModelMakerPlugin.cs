@@ -8,13 +8,14 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Abstractions.DataCollections;
 using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Components.Displays;
+using RapidCMS.ModelMaker.Components.Sections;
 using RapidCMS.ModelMaker.DataCollections;
 using RapidCMS.ModelMaker.Extenstions;
 using RapidCMS.ModelMaker.Metadata;
@@ -22,7 +23,6 @@ using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.Models.Responses;
 using RapidCMS.ModelMaker.Repositories;
-using RapidCMS.ModelMaker.Validation.Config;
 
 namespace RapidCMS.ModelMaker
 {
@@ -139,7 +139,8 @@ namespace RapidCMS.ModelMaker
                         },
                         new List<FieldSetup>
                         {
-                            CreateExpressionField(DisplayType.Label, EditorType.None, 1, titleProperty.Name, titlePropertyMetadata)
+                            CreateExpressionField(DisplayType.Label, EditorType.None, 1, titleProperty.Name, titlePropertyMetadata),
+                            CreateCustomExpressionField(typeof(PublishStateDisplay), 2, "", new ExpressionMetadata<ModelMakerEntity>("State", x => x.State.ToString()))
                         },
                         new List<SubCollectionListSetup>(),
                         new List<RelatedCollectionListSetup>())
@@ -159,6 +160,17 @@ namespace RapidCMS.ModelMaker
 
         private async IAsyncEnumerable<PaneSetup> ModelPanesAsync(ModelEntity definition, CollectionSetup collection)
         {
+            yield return
+                new PaneSetup(
+                    typeof(ModelDetailsSection),
+                    default,
+                    (m, s) => true,
+                    typeof(ModelMakerEntity),
+                    new List<IButtonSetup>(),
+                    new List<FieldSetup>(),
+                    new List<SubCollectionListSetup>(),
+                    new List<RelatedCollectionListSetup>());
+
             yield return
                 new PaneSetup(
                     default,
@@ -269,70 +281,33 @@ namespace RapidCMS.ModelMaker
                     },
                     new List<FieldSetup>
                     {
-                        new PropertyFieldSetup(new FieldConfig
-                        {
-                            EditorType = EditorType.Dropdown,
-                            Index = 0,
-                            IsDisabled = (m, s) => s == EntityState.IsExisting,
-                            IsVisible = (m, s) => true,
-                            Name = "Property type",
-                            Property = new PropertyMetadata<PropertyModel, string>(
-                                "PropertyAlias",
-                                x => x.PropertyAlias,
-                                (x, v) => x.PropertyAlias = v,
-                                "propertyalias")
-                        })
-                        {
-                            Relation = new DataProviderRelationSetup(typeof(PropertyTypeDataCollection))
-                        },
-                        new PropertyFieldSetup(new FieldConfig
-                        {
-                            EditorType = EditorType.TextBox,
-                            Index = 1,
-                            Name = "Property name",
-                            Property = new PropertyMetadata<PropertyModel, string>(
-                                "Name",
-                                x => x.Name,
-                                (x, v) => x.Name = v ?? "No Name",
-                                "name")
-                        }),
-                        new PropertyFieldSetup(new FieldConfig
-                        {
-                            EditorType = EditorType.TextBox,
-                            Index = 2,
-                            Name = "Property alias",
-                            Property = new PropertyMetadata<PropertyModel, string>(
-                                "Alias",
-                                x => x.Alias,
-                                (x, v) => x.Alias = v,
-                                "alias"),
-                            IsVisible = (m, s) => s == EntityState.IsExisting
-                        }),
-                        new PropertyFieldSetup(new FieldConfig
-                        {
-                            EditorType = EditorType.Checkbox,
-                            Index = 3,
-                            Name = "Use as entity title",
-                            Property = new PropertyMetadata<PropertyModel, bool>(
-                                "IsTitle",
-                                x => x.IsTitle,
-                                (x, v) => x.IsTitle = v,
-                                "isTitle")
-                        }),
-                        new PropertyFieldSetup(new FieldConfig
-                        {
-                            EditorType = EditorType.Dropdown,
-                            Index = 4,
-                            Name = "Property editor",
-                            Property = new PropertyMetadata<PropertyModel, string>(
-                                "EditorAlias",
-                                x => x.EditorAlias,
-                                (x, v) => x.EditorAlias = v,
-                                "editoralias")
-                        })
-                        {
-                            Relation = new DataProviderRelationSetup(typeof(PropertyEditorDataCollection))
-                        }
+                        CreatePropertyField(EditorType.Dropdown,
+                            0,
+                            "Property type",
+                            new PropertyMetadata<PropertyModel, string>("PropertyAlias", x => x.PropertyAlias, (x, v) => x.PropertyAlias = v, "propertyalias"),
+                            (m, s) => s == EntityState.IsExisting,
+                            relation: new DataProviderRelationSetup(typeof(PropertyTypeDataCollection))),
+
+                        CreatePropertyField(EditorType.TextBox,
+                            1,
+                            "Property name",
+                             new PropertyMetadata<PropertyModel, string>("Name", x => x.Name, (x, v) => x.Name = v ?? "No Name", "name")),
+
+                        CreatePropertyField(EditorType.TextBox,
+                            2,
+                            "Property alias",
+                            new PropertyMetadata<PropertyModel, string>("Alias", x => x.Alias, (x, v) => x.Alias = v ?? x.Name?.ToUrlFriendlyString() ?? "", "alias")),
+
+                        CreatePropertyField(EditorType.Checkbox,
+                            3,
+                            "Use as entity title",
+                            new PropertyMetadata<PropertyModel, bool>("IsTitle", x => x.IsTitle, (x, v) => x.IsTitle = v, "isTitle")),
+
+                        CreatePropertyField(EditorType.Dropdown,
+                            4,
+                            "Property editor",
+                           new PropertyMetadata<PropertyModel, string>("EditorAlias", x => x.EditorAlias, (x, v) => x.EditorAlias = v, "editoralias"),
+                           relation: new DataProviderRelationSetup(typeof(PropertyEditorDataCollection))),
                     },
                     new List<SubCollectionListSetup>
                     {
@@ -387,6 +362,8 @@ namespace RapidCMS.ModelMaker
             }
         }
 
+        // COMMON
+
         private static ExpressionFieldSetup CreateExpressionField(
             DisplayType displayType,
             EditorType editorType,
@@ -402,6 +379,44 @@ namespace RapidCMS.ModelMaker
                     Name = name
                 },
                 expression);
+
+        private static ExpressionFieldSetup CreateCustomExpressionField(
+            Type displayComponent,
+            int index,
+            string name,
+            IExpressionMetadata expression)
+            => new CustomExpressionFieldSetup(
+                new FieldConfig
+                {
+                    DisplayType = DisplayType.Custom,
+                    EditorType = EditorType.None,
+                    Index = index,
+                    Name = name
+                },
+                expression, displayComponent);
+
+        private static PropertyFieldSetup CreatePropertyField(
+            EditorType editorType,
+            int index,
+            string name,
+            IFullPropertyMetadata metadata,
+            Func<object, EntityState, bool>? isDisabled = default,
+            Func<object, EntityState, bool>? isVisible = default,
+            RelationSetup? relation = default)
+        {
+            return new PropertyFieldSetup(new FieldConfig
+            {
+                EditorType = editorType,
+                Index = index,
+                IsDisabled = isDisabled ?? ((m, s) => false),
+                IsVisible = isVisible ?? ((m, s) => true),
+                Name = name,
+                Property = metadata
+            })
+            {
+                Relation = relation
+            };
+        }
 
         private async Task<CustomPropertyFieldSetup> CreateCustomPropertyFieldAsync(int index, PropertyModel property, IPropertyEditorConfig editor)
         {
