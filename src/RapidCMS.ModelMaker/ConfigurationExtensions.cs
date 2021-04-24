@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Plugins;
@@ -30,7 +31,7 @@ namespace RapidCMS.ModelMaker
             bool addDefaultPropertiesAndValidators = true,
             Action<IModelMakerConfig>? configure = null)
         {
-            // TODO: what should this life time be?
+            // TODO: what should this lifetime be?
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
             services.AddTransient<PropertyEditorDataCollection>();
@@ -68,6 +69,8 @@ namespace RapidCMS.ModelMaker
                     "The value has to be one of these items",
                     EditorType.ListEditor,
                     x => x.Config.Options);
+
+                // TODO: validation configuration validation
                 // TODO: custom type
 
                 config.AddPropertyEditor(TextBox, "Text box", EditorType.TextBox);
@@ -78,6 +81,9 @@ namespace RapidCMS.ModelMaker
 
                 config.AddProperty<string>("shortstring", "Short string", "Label", new[] { TextBox, TextArea, Dropdown }, new[] { MinLength, MaxLength, LimitedOptions });
                 config.AddProperty<string>("longstring", "Long string", "Label", new[] { TextArea }, new[] { MinLength });
+                config.AddProperty<bool>("boolean", "Boolean", "ToggleLeft", new[] { Checkbox }, Enumerable.Empty<string>()); // TODO: dropdown with labels for true / false
+
+
                 // TODO: slug, media, reference(s) (model maker / external), markdown, JSON object, date, date time, time, rich text
             }
 

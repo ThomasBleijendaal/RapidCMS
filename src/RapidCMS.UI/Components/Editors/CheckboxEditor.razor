@@ -1,13 +1,13 @@
 ﻿@inherits BasePropertyEditor
 
-<div class="form-check">
-    <input checked=@GetValueAsObject()
-           @onchange=@(args => SetValueFromObject(((bool?)args.Value) ?? false))
-           type="checkbox"
-           disabled=@IsDisabled
-           class="form-check-input position-static @(CssHelper.GetValidationClass(State))" />
-
-    <label class="form-check-label">&nbsp;</label>
+<div>
+    <label class="form-check-label">
+        <input checked=@GetValueAsObject()
+               @onchange=@(args => SetValueFromObject(((bool?)args.Value) ?? false))
+               type="checkbox"
+               disabled=@IsDisabled
+               class="form-check-input position-static @(CssHelper.GetValidationClass(State))" />
+    </label>
 
     @foreach (var message in GetValidationMessages())
     {
