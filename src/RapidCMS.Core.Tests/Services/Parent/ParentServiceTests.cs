@@ -23,7 +23,7 @@ namespace RapidCMS.Core.Tests.Services.Parent
             _repository = new Mock<IRepository>();
             _repository
                 .Setup(x => x.GetByIdAsync(It.IsAny<string>(), It.IsAny<IViewContext>()))
-                .ReturnsAsync((string id, IParent parent) =>
+                .ReturnsAsync((string id, IViewContext context) =>
                 {
                     var mock = new Mock<IEntity>();
                     mock.Setup(x => x.Id).Returns(id);

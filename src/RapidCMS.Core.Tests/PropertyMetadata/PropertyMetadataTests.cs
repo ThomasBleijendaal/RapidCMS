@@ -165,7 +165,7 @@ namespace RapidCMS.Core.Tests.PropertyMetadata
 
             Assert.IsNotNull(propertyData);
             Assert.IsNull(propertyData as IFullPropertyMetadata);
-            Assert.AreEqual("x => (\"Blaat\" ?? \"\")", propertyData.PropertyName);
+            Assert.AreEqual("x => \"Blaat\"", propertyData.PropertyName);
             Assert.AreEqual("Blaat", propertyData.Getter(instance));
             Assert.AreEqual(typeof(string), propertyData.PropertyType);
         }
