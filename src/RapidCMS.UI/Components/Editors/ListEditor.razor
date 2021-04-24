@@ -1,0 +1,97 @@
+﻿@inherits BasePropertyEditor
+
+@if (List != null)
+{
+    <div class="form-control form-control-select-list @(CssHelper.GetDisplayModifier(DisplayType)) @(CssHelper.GetValidationClass(State))">
+        @{
+            var index = 0;
+        }
+        @foreach (var element in List)
+        {
+            var thisIndex = index;
+
+            <div class="form-check form-check-list">
+                <div class="row">
+                    <div class="col">
+                        <input value=@element
+                               disabled=@IsDisabled
+                               placeholder="Key"
+                               @onchange=@((e) => OnChange(thisIndex, e.Value as string))
+                               class="form-control" />
+                    </div>
+                    @if (!IsDisabled)
+                    {
+                        <div class="col col-md-1">
+                            <button class="btn" @onclick=@((e) => RemoveRow(thisIndex))><Icon Name="Remove" /></button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            index++;
+        }
+
+
+        @if (!IsDisabled)
+        {
+            <div class="form-check form-check-list">
+                <div class="row">
+                    <div class="col">
+                        <button class="btn btn-light" @onclick=AddRow><Icon Name="Add" /> Add entry</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @foreach (var message in GetValidationMessages())
+    {
+        <div class="invalid-feedback">
+            @message
+        </div>
+    }
+}
+
+@code {
+
+    private List<string>? List;
+
+    protected override void OnParametersSet()
+    {
+        List = (GetValueAsObject() as IEnumerable<string>)?.ToList() ?? new List<string>();
+
+        StateHasChanged();
+    }
+
+    private void OnChange(int index, string? value)
+    {
+        if (List == null || List.Count < index)
+        {
+            return;
+        }
+
+        List[index] = value ?? "";
+
+        Update();
+    }
+
+    private void AddRow(MouseEventArgs args)
+    {
+        List?.Add("");
+        StateHasChanged();
+    }
+
+    private void RemoveRow(int index)
+    {
+        List?.RemoveAt(index);
+
+        Update();
+
+        StateHasChanged();
+    }
+
+    private void Update()
+    {
+        SetValueFromObject(List?.ToList() ?? new List<string>());
+    }
+}

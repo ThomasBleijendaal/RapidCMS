@@ -43,6 +43,7 @@ namespace RapidCMS.Core.Forms
         public EntityState EntityState { get; }
         public TEntity Entity { get; }
         public IParent? Parent { get; }
+        public string CollectionAlias => throw new NotSupportedException("The collection alias is unknown in API contexts");
 
         public ModelStateDictionary ValidationErrors => _formState.ModelState;
 
@@ -73,6 +74,12 @@ namespace RapidCMS.Core.Forms
         public bool? WasValidated(string propertyName)
             => GetPropertyState(propertyName)?.WasValidated;
 
+        public void AddValidationError<TValue>(Expression<Func<TEntity, TValue>> property, string message)
+            => GetPropertyState(GetMetadata(property))?.AddMessage(message);
+
+        public void AddValidationError(string propertyName, string message)
+            => GetPropertyState(propertyName)?.AddMessage(message);
+
         public bool? Validate<TValue>(Expression<Func<TEntity, TValue>> property)
         {
             var metadata = GetMetadata(property);
@@ -91,6 +98,14 @@ namespace RapidCMS.Core.Forms
             // add all properties to the form state
             _formState.PopulateAllPropertyStates();
 
+            if (!IsValid())
+            {
+                throw new InvalidEntityException();
+            }
+        }
+
+        public void EnforceValidEntity()
+        {
             if (!IsValid())
             {
                 throw new InvalidEntityException();

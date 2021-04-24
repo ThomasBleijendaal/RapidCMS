@@ -32,7 +32,7 @@ namespace RapidCMS.Core.Handlers
             var request = await _navigationHandler.CreateNavigationRequestAsync(button, editContext);
             if (request != null)
             {
-                var collection = request.IsPage ? null : _collectionResolver.ResolveSetup(request.CollectionAlias);
+                var collection = request.IsPage ? null : await _collectionResolver.ResolveSetupAsync(request.CollectionAlias);
 
                 var pageType = request.IsPage ? PageType.Page 
                     : request.IsList ? PageType.Collection 

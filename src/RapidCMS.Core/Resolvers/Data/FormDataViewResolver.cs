@@ -29,7 +29,7 @@ namespace RapidCMS.Core.Resolvers.Data
                 throw new ArgumentNullException($"{nameof(query)}.{nameof(query.CollectionAlias)}");
             }
 
-            var collection = _collectionResolver.ResolveSetup(query.CollectionAlias);
+            var collection = await _collectionResolver.ResolveSetupAsync(query.CollectionAlias);
 
             if (collection.DataViewBuilder != null || collection.DataViews?.Count > 0)
             {
@@ -44,10 +44,10 @@ namespace RapidCMS.Core.Resolvers.Data
             }
         }
 
-        public Task<IEnumerable<IDataView>> GetDataViewsAsync(string collectionAlias)
+        public async Task<IEnumerable<IDataView>> GetDataViewsAsync(string collectionAlias)
         {
-            var collection = _collectionResolver.ResolveSetup(collectionAlias);
-            return GetDataViewsAsync(collection);
+            var collection = await _collectionResolver.ResolveSetupAsync(collectionAlias);
+            return await GetDataViewsAsync(collection);
         }
 
         private Task<IEnumerable<IDataView>> GetDataViewsAsync(ICollectionSetup collection)

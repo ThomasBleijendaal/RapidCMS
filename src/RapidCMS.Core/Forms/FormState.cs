@@ -187,7 +187,7 @@ namespace RapidCMS.Core.Forms
             }
 
             var state = GetPropertyState(property)!;
-            state.ClearMessages();
+            state.ClearMessages(clearManualMessages: true);
             state.WasValidated = true;
 
             foreach (var result in results)

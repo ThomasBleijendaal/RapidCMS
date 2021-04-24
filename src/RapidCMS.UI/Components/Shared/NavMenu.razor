@@ -23,8 +23,8 @@
 @code {
     TreeRootUI? TreeRoot;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        TreeRoot = TreeService.GetRoot();
+        TreeRoot = await TreeService.GetRootAsync();
     }
 }

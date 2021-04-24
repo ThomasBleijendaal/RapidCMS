@@ -30,6 +30,10 @@ jobs:
       run: dotnet build --configuration Release ./src/RapidCMS.Api.WebApi/RapidCMS.Api.WebApi.csproj
     - name: Build Core
       run: dotnet build --configuration Release ./src/RapidCMS.Core/RapidCMS.Core.csproj
+    - name: Build ModelMaker
+      run: dotnet build --configuration Release ./src/RapidCMS.ModelMaker/RapidCMS.ModelMaker.csproj
+    - name: Build ModelMaker TableStorage
+      run: dotnet build --configuration Release ./src/RapidCMS.ModelMaker.TableStorage/RapidCMS.ModelMaker.TableStorage.csproj
     - name: Build Repositories
       run: dotnet build --configuration Release ./src/RapidCMS.Repositories/RapidCMS.Repositories.csproj
     - name: Build UI
@@ -42,6 +46,10 @@ jobs:
       run: dotnet nuget push .\src\RapidCMS.Api.WebApi\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Publish Core
       run: dotnet nuget push .\src\RapidCMS.Core\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+    - name: Publish Core
+      run: dotnet nuget push .\src\RapidCMS.ModelMaker\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+    - name: Publish Core
+      run: dotnet nuget push .\src\RapidCMS.ModelMaker.TableStorage\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Publish Repositories
       run: dotnet nuget push .\src\RapidCMS.Repositories\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Publish UI

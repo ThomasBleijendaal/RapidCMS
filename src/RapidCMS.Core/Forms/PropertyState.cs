@@ -7,6 +7,7 @@ namespace RapidCMS.Core.Forms
     internal class PropertyState
     {
         private readonly List<string> _messages = new List<string>();
+        private readonly List<string> _manualMessages = new List<string>();
 
         public PropertyState(IPropertyMetadata property)
         {
@@ -25,16 +26,33 @@ namespace RapidCMS.Core.Forms
             {
                 yield return message;
             }
+            foreach (var message in _manualMessages)
+            {
+                yield return message;
+            }
         }
 
-        public void ClearMessages()
+        public void ClearMessages(bool clearManualMessages = false)
         {
             _messages.Clear();
+            if (clearManualMessages)
+            {
+                _manualMessages.Clear();
+            } 
         }
 
-        public void AddMessage(string message)
+        public void AddMessage(string message, bool isManual = false)
         {
-            _messages.Add(message);
+            if (isManual)
+            {
+                _manualMessages.Add(message);
+            }
+            else
+            {
+                _messages.Add(message);
+            }
+
+            WasValidated = true;
         }
     }
 }

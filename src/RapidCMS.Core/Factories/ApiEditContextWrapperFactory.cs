@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Forms;
@@ -27,15 +28,16 @@ namespace RapidCMS.Core.Factories
             _entityVariantResolver = entityVariantResolver;
         }
 
-        public IEditContext GetEditContextWrapper(FormEditContext editContext)
+        public Task<IEditContext> GetEditContextWrapperAsync(FormEditContext editContext)
         {
             var contextType = typeof(FormEditContextWrapper<>).MakeGenericType(editContext.Entity.GetType());
             var instance = Activator.CreateInstance(contextType, editContext);
 
-            return instance as IEditContext ?? throw new InvalidOperationException("Cannot create FormEditContextWrapper");
+            return Task.FromResult<IEditContext>(instance as IEditContext 
+                ?? throw new InvalidOperationException("Cannot create FormEditContextWrapper"));
         }
 
-        public IEditContext GetEditContextWrapper(
+        public async Task<IEditContext> GetEditContextWrapperAsync(
             UsageType usageType,
             EntityState entityState,
             Type repositoryEntityType,
@@ -44,9 +46,9 @@ namespace RapidCMS.Core.Factories
             IParent? parent,
             IEnumerable<(string propertyName, string typeName, IEnumerable<object> elements)> relations)
         {
-            var container = new RelationContainer(relations.SelectNotNull(r =>
+            var container = new RelationContainer(await relations.SelectNotNullAsync(async r =>
             {
-                var variant = _entityVariantResolver.ResolveSetup(r.typeName);
+                var variant = await _entityVariantResolver.ResolveSetupAsync(r.typeName);
                 var property = PropertyMetadataHelper.GetPropertyMetadata(updatedEntity.GetType(), r.propertyName);
 
                 if (property == null)
@@ -58,7 +60,7 @@ namespace RapidCMS.Core.Factories
                     variant.Type,
                     property,
                     r.elements.Select(e => new Element { Id = e, Labels = Enumerable.Empty<string>() }).ToList());
-            }));
+            }).ToListAsync());
 
             var contextType = typeof(ApiEditContextWrapper<>).MakeGenericType(repositoryEntityType);
             var instance = Activator.CreateInstance(contextType,

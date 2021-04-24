@@ -34,9 +34,20 @@ namespace RapidCMS.Core.Abstractions.Forms
         void EnforceCompleteValidation();
 
         /// <summary>
+        /// Throws an exception when the entity is invalid.
+        /// </summary>
+        /// <exception cref="InvalidEntityException">Thrown when the given entity has validation errors.</exception>
+        void EnforceValidEntity();
+
+        /// <summary>
         /// Gets the ModelStateDirectory containing all validation errors, to be used in BadRequest() responses etc.
         /// </summary>
         ModelStateDictionary ValidationErrors { get; }
+
+        /// <summary>
+        /// Alias of the collection this edit context is used in
+        /// </summary>
+        string CollectionAlias { get; }
     }
 
     public interface IEditContext<TEntity> : IEditContext
@@ -111,5 +122,8 @@ namespace RapidCMS.Core.Abstractions.Forms
         /// <param name="property"></param>
         /// <returns></returns>
         bool? Validate<TValue>(Expression<Func<TEntity, TValue>> property);
+
+        void AddValidationError<TValue>(Expression<Func<TEntity, TValue>> property, string message);
+        void AddValidationError(string propertyName, string message);
     }
 }

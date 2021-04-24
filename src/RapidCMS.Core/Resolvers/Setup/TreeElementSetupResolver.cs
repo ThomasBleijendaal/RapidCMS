@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
@@ -11,23 +12,25 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class TreeElementSetupResolver : ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>
     {
-        public IResolvedSetup<IEnumerable<ITreeElementSetup>> ResolveSetup(IEnumerable<ITreeElementConfig> config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<IEnumerable<ITreeElementSetup>>> ResolveSetupAsync(IEnumerable<ITreeElementConfig> config, ICollectionSetup? collection = default)
         {
-            return new ResolvedSetup<IEnumerable<ITreeElementSetup>>(config.Select(corp =>
-            {
-                var type = corp switch
-                {
-                    IPageConfig page => PageType.Page,
-                    _ => PageType.Collection
-                };
+            return Task.FromResult< IResolvedSetup<IEnumerable<ITreeElementSetup>>>(
+                new ResolvedSetup<IEnumerable<ITreeElementSetup>>(
+                    config.Select(corp =>
+                    {
+                        var type = corp switch
+                        {
+                            IPageConfig page => PageType.Page,
+                            _ => PageType.Collection
+                        };
 
-                return new TreeElementSetup(corp.Alias, type)
-                {
-                    RootVisibility = (corp as CollectionConfig)?.TreeView?.RootVisibility ?? default
-                };
+                        return new TreeElementSetup(corp.Alias, type)
+                        {
+                            RootVisibility = (corp as CollectionConfig)?.TreeView?.RootVisibility ?? default
+                        };
 
-            }) ?? Enumerable.Empty<ITreeElementSetup>(),
-            true);
+                    }) ?? Enumerable.Empty<ITreeElementSetup>(),
+                    true));
         }
     }
 }

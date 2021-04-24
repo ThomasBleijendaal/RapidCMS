@@ -69,16 +69,19 @@
         }
         else if (ListUI.ListType == ListType.Block)
         {
-            <div class="content buttons-only">
-                <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
-                    <Tabbar Tabs="Tabs"
-                            SearchBarVisible="ListUI.SearchBarVisible"
-                            State="CurrentState"
-                            OnSearch="SearchAsync"
-                            OnTabChange="TabChangeAsync" />
-                    <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
-                </CascadingEditContext>
-            </div>
+            if (Buttons?.Any() == true)
+            {
+                <div class="content buttons-only">
+                    <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
+                        <Tabbar Tabs="Tabs"
+                                SearchBarVisible="ListUI.SearchBarVisible"
+                                State="CurrentState"
+                                OnSearch="SearchAsync"
+                                OnTabChange="TabChangeAsync" />
+                        <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
+                    </CascadingEditContext>
+                </div>
+            }
 
             <BlocksSection Sections="Sections"
                            CurrentPage="CurrentState.CurrentPage"

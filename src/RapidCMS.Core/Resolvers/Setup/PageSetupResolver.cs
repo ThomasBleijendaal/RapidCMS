@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
@@ -24,12 +25,12 @@ namespace RapidCMS.Core.Resolvers.Setup
             _typeRegistrationSetupResolver = typeRegistrationSetupResolver;
         }
 
-        IPageSetup ISetupResolver<IPageSetup>.ResolveSetup()
+        Task<IPageSetup> ISetupResolver<IPageSetup>.ResolveSetupAsync()
         {
             throw new InvalidOperationException("Cannot resolve page without alias.");
         }
 
-        IPageSetup ISetupResolver<IPageSetup>.ResolveSetup(string alias)
+        async Task<IPageSetup> ISetupResolver<IPageSetup>.ResolveSetupAsync(string alias)
         {
             if (_cache.TryGetValue(alias, out var pageSetup))
             {
@@ -50,7 +51,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 Alias = config.Alias,
                 Icon = config.Icon,
                 Color = config.Color,
-                Sections = _typeRegistrationSetupResolver.ResolveSetup(config.SectionRegistrations).CheckIfCachable(ref cacheable).ToList()
+                Sections = (await _typeRegistrationSetupResolver.ResolveSetupAsync(config.SectionRegistrations)).CheckIfCachable(ref cacheable).ToList()
             };
 
             if (cacheable)

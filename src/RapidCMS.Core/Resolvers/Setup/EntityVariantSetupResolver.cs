@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Helpers;
@@ -9,7 +10,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class EntityVariantSetupResolver : ISetupResolver<IEntityVariantSetup, EntityVariantConfig>
     {
-        public IResolvedSetup<IEntityVariantSetup> ResolveSetup(EntityVariantConfig config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<IEntityVariantSetup>> ResolveSetupAsync(EntityVariantConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -18,13 +19,13 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             if (config == default)
             {
-                return new ResolvedSetup<IEntityVariantSetup>(EntityVariantSetup.Undefined, true);
+                return Task.FromResult<IResolvedSetup<IEntityVariantSetup>>(new ResolvedSetup<IEntityVariantSetup>(EntityVariantSetup.Undefined, true));
             }
             else
             {
-                return new ResolvedSetup<IEntityVariantSetup>(
+                return Task.FromResult<IResolvedSetup<IEntityVariantSetup>>(new ResolvedSetup<IEntityVariantSetup>(
                     new EntityVariantSetup(config.Name, config.Icon, config.Type, AliasHelper.GetEntityVariantAlias(config.Type)),
-                    true);
+                    true));
             }
         }
     }

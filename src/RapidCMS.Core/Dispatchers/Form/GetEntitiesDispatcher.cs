@@ -44,7 +44,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
         public async Task<ListContext> GetAsync(GetEntitiesRequestModel request)
         {
-            var collection = _collectionResolver.ResolveSetup(request.CollectionAlias);
+            var collection = await _collectionResolver.ResolveSetupAsync(request.CollectionAlias);
             var variant = collection.GetEntityVariant(request.VariantAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
@@ -53,19 +53,19 @@ namespace RapidCMS.Core.Dispatchers.Form
             var parent = request is GetEntitiesOfParentRequestModel parentRequest ? await _parentService.GetParentAsync(parentRequest.ParentPath) : default;
             var relatedEntity = (request as GetEntitiesOfRelationRequestModel)?.Related;
 
-            var protoEntity = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.NewAsync(parent, collection.EntityVariant.Type));
+            var protoEntity = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.NewAsync(new ViewContext(collection.Alias, parent), collection.EntityVariant.Type));
             var newEntity = requestedEntityVariantIsDefaultVariant
                 ? protoEntity
-                : await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.NewAsync(parent, variant.Type));
+                : await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.NewAsync(new ViewContext(collection.Alias, parent), variant.Type));
 
             await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity);
             await _dataViewResolver.ApplyDataViewToQueryAsync(request.Query);
 
             var action = (request.UsageType & ~(UsageType.List | UsageType.Root | UsageType.NotRoot)) switch
             {
-                UsageType.Add when relatedEntity != null => () => repository.GetAllNonRelatedAsync(relatedEntity!, request.Query),
-                _ when relatedEntity != null => () => repository.GetAllRelatedAsync(relatedEntity!, request.Query),
-                _ when relatedEntity == null => () => repository.GetAllAsync(parent, request.Query),
+                UsageType.Add when relatedEntity != null => () => repository.GetAllNonRelatedAsync(new RelatedViewContext(relatedEntity!, collection.Alias, parent), request.Query),
+                _ when relatedEntity != null => () => repository.GetAllRelatedAsync(new RelatedViewContext(relatedEntity!, collection.Alias, parent), request.Query),
+                _ when relatedEntity == null => () => repository.GetAllAsync(new ViewContext(collection.Alias, parent), request.Query),
 
                 _ => default(Func<Task<IEnumerable<IEntity>>>)
             };

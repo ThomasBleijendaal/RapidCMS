@@ -470,6 +470,15 @@ a.current-page {
         padding-right: .75em !important;
     }
 
+textarea.form-control{
+    height: 300px;
+}
+
+.form-check-label {
+    width: 100%;
+    padding: .25rem 0 .25rem 1.25rem;
+}
+
 .form-check {
     padding: .25rem 0 .25rem 2rem;
     margin: 0 1rem 0 -.4rem;
@@ -477,6 +486,11 @@ a.current-page {
 
     .form-check:hover {
         background: #faf9f8;
+    }
+
+    .form-check.form-check-list {
+        padding-left: .25rem;
+        margin-right: -.5rem;
     }
 
 pre.col-form-label {

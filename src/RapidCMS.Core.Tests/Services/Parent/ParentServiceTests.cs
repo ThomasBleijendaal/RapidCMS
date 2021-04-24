@@ -1,6 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
@@ -21,7 +22,7 @@ namespace RapidCMS.Core.Tests.Services.Parent
         {
             _repository = new Mock<IRepository>();
             _repository
-                .Setup(x => x.GetByIdAsync(It.IsAny<string>(), It.IsAny<IParent>()))
+                .Setup(x => x.GetByIdAsync(It.IsAny<string>(), It.IsAny<IViewContext>()))
                 .ReturnsAsync((string id, IParent parent) =>
                 {
                     var mock = new Mock<IEntity>();

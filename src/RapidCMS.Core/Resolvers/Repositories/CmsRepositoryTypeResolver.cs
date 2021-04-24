@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Repositories;
 
@@ -10,7 +12,9 @@ namespace RapidCMS.Core.Resolvers.Repositories
         private readonly IReadOnlyDictionary<string, Type> _repositoryTypes;
         private readonly IReadOnlyDictionary<Type, string> _originallyRegisterdRepositoriesToAlias;
 
-        public CmsRepositoryTypeResolver(IReadOnlyDictionary<string, Type> types, IReadOnlyDictionary<Type, string> originals)
+        public CmsRepositoryTypeResolver(
+            IReadOnlyDictionary<string, Type> types,
+            IReadOnlyDictionary<Type, string> originals)
         {
             _repositoryTypes = types;
             _originallyRegisterdRepositoriesToAlias = originals;

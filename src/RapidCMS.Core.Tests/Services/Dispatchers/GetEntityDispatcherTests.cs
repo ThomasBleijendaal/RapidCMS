@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
+using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
@@ -40,8 +41,8 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         {
             _collectionResolver = new Mock<ISetupResolver<ICollectionSetup>>();
             _collectionResolver
-                .Setup(x => x.ResolveSetup(It.IsAny<string>()))
-                .Returns((string alias) =>
+                .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
+                .ReturnsAsync((string alias) =>
                     new CollectionSetup(default,
                         default,
                         "name",
@@ -59,8 +60,8 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
                     });
 
             _repository = new Mock<IRepository>();
-            _repository.Setup(x => x.NewAsync(It.IsAny<IParent>(), It.IsAny<Type>())).ReturnsAsync(_entity);
-            _repository.Setup(x => x.GetByIdAsync(It.IsAny<string>(), It.IsAny<IParent>())).ReturnsAsync(_entity);
+            _repository.Setup(x => x.NewAsync(It.IsAny<IViewContext>(), It.IsAny<Type>())).ReturnsAsync(_entity);
+            _repository.Setup(x => x.GetByIdAsync(It.IsAny<string>(), It.IsAny<IViewContext>())).ReturnsAsync(_entity);
 
             _repositoryResolver = new Mock<IRepositoryResolver>();
             _repositoryResolver
@@ -105,7 +106,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _subject.GetAsync(new GetEntityRequestModel { UsageType = UsageType.New, CollectionAlias = alias });
 
             // assert
-            _collectionResolver.Verify(x => x.ResolveSetup(It.Is<string>(x => x == alias)));
+            _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == alias)));
         }
 
         [TestCase("collectionAlias1")]
@@ -140,7 +141,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _subject.GetAsync(new GetEntityRequestModel { UsageType = usageType, CollectionAlias = "alias", Id = id });
 
             // assert
-            _repository.Verify(x => x.GetByIdAsync(It.Is<string>(x => x == id), It.IsAny<IParent>()), Times.Once());
+            _repository.Verify(x => x.GetByIdAsync(It.Is<string>(x => x == id), It.IsAny<IViewContext>()), Times.Once());
             _repository.VerifyNoOtherCalls();
         }
 
@@ -164,7 +165,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _subject.GetAsync(new GetEntityRequestModel { UsageType = usageType, CollectionAlias = "alias", VariantAlias = variantAlias });
 
             // assert
-            _repository.Verify(x => x.NewAsync(It.IsAny<IParent>(), It.Is<Type>(x => x == type)), Times.Once());
+            _repository.Verify(x => x.NewAsync(It.IsAny<IViewContext>(), It.Is<Type>(x => x == type)), Times.Once());
             _repository.VerifyNoOtherCalls();
         }
 

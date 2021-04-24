@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Mediators;
@@ -30,7 +31,7 @@ namespace RapidCMS.Core.Resolvers.Data
             _serviceProvider = serviceProvider;
         }
 
-        public FormDataProvider? GetDataProvider(FieldSetup field)
+        public async Task<FormDataProvider?> GetDataProviderAsync(FieldSetup field)
         {
             if (!(field is PropertyFieldSetup propertyField && propertyField.Relation != null))
             {
@@ -44,7 +45,8 @@ namespace RapidCMS.Core.Resolvers.Data
                     var repo = collectionRelation.RepositoryAlias != null
                             ? _repositoryResolver.GetRepository(collectionRelation.RepositoryAlias)
                             : collectionRelation.CollectionAlias != null
-                                ? _repositoryResolver.GetRepository(_collectionSetupResolver.ResolveSetup(collectionRelation.CollectionAlias))
+                                ? _repositoryResolver.GetRepository(
+                                    await _collectionSetupResolver.ResolveSetupAsync(collectionRelation.CollectionAlias))
                                 : default;
 
                     if (repo == null)
@@ -68,6 +70,10 @@ namespace RapidCMS.Core.Resolvers.Data
                 case DataProviderRelationSetup dataProviderRelation:
 
                     return new FormDataProvider(propertyField.Property!, _serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType), default);
+
+                case ConcreteDataProviderRelationSetup concreteDataProvider:
+
+                    return new FormDataProvider(propertyField.Property!, concreteDataProvider.DataCollection, default);
 
                 default:
                     throw new InvalidOperationException();

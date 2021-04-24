@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
@@ -16,7 +17,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _repositoryTypeResolver = repositoryTypeResolver;
         }
 
-        public IResolvedSetup<FieldSetup> ResolveSetup(FieldConfig config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<FieldSetup>> ResolveSetupAsync(FieldConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -54,7 +55,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 };
             }
 
-            return new ResolvedSetup<FieldSetup>(setup, true);
+            return Task.FromResult<IResolvedSetup<FieldSetup>>(new ResolvedSetup<FieldSetup>(setup, true));
         }
     }
 }

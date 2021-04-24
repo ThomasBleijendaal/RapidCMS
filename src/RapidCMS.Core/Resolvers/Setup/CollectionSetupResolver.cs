@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
@@ -19,7 +21,9 @@ namespace RapidCMS.Core.Resolvers.Setup
         private readonly ISetupResolver<ListSetup, ListConfig> _listResolver;
         private readonly ISetupResolver<NodeSetup, NodeConfig> _nodeResolver;
         private readonly IRepositoryTypeResolver _repositoryTypeResolver;
+        private readonly IEnumerable<IPlugin> _plugins;
 
+        private Dictionary<string, IPlugin> _pluginMap { get; set; } = new Dictionary<string, IPlugin>();
         private Dictionary<string, CollectionConfig> _collectionMap { get; set; } = new Dictionary<string, CollectionConfig>();
         private Dictionary<string, CollectionSetup> _cachedCollectionMap { get; set; } = new Dictionary<string, CollectionSetup>();
 
@@ -29,7 +33,8 @@ namespace RapidCMS.Core.Resolvers.Setup
             ISetupResolver<TreeViewSetup, TreeViewConfig> treeViewResolver,
             ISetupResolver<ListSetup, ListConfig> listResolver,
             ISetupResolver<NodeSetup, NodeConfig> nodeResolver,
-            IRepositoryTypeResolver repositoryTypeResolver)
+            IRepositoryTypeResolver repositoryTypeResolver,
+            IEnumerable<IPlugin> plugins)
         {
             _treeElementResolver = treeElementResolver;
             _entityVariantResolver = entityVariantResolver;
@@ -37,12 +42,18 @@ namespace RapidCMS.Core.Resolvers.Setup
             _listResolver = listResolver;
             _nodeResolver = nodeResolver;
             _repositoryTypeResolver = repositoryTypeResolver;
+            _plugins = plugins;
             Initialize(cmsConfig);
         }
 
         private void Initialize(ICmsConfig cmsConfig)
         {
             MapCollections(cmsConfig.CollectionsAndPages.SelectNotNull(x => x as CollectionConfig));
+
+            foreach (var plugin in _plugins)
+            {
+                _pluginMap.Add(plugin.CollectionPrefix, plugin);
+            }
 
             void MapCollections(IEnumerable<CollectionConfig> collections)
             {
@@ -62,12 +73,12 @@ namespace RapidCMS.Core.Resolvers.Setup
             }
         }
 
-        ICollectionSetup ISetupResolver<ICollectionSetup>.ResolveSetup()
+        Task<ICollectionSetup> ISetupResolver<ICollectionSetup>.ResolveSetupAsync()
         {
             throw new InvalidOperationException("Cannot resolve collection or page without alias.");
         }
 
-        ICollectionSetup ISetupResolver<ICollectionSetup>.ResolveSetup(string alias)
+        async Task<ICollectionSetup> ISetupResolver<ICollectionSetup>.ResolveSetupAsync(string alias)
         {
             if (_cachedCollectionMap.TryGetValue(alias, out var collectionSetup))
             {
@@ -78,23 +89,33 @@ namespace RapidCMS.Core.Resolvers.Setup
                 return collection;
             }
 
+            var resolvedSetup = default(IResolvedSetup<CollectionSetup>);
             if (_collectionMap.TryGetValue(alias, out var collectionConfig))
             {
-                var resolvedSetup = ConvertConfig(collectionConfig);
-                if (resolvedSetup.Cachable)
-                {
-                    _cachedCollectionMap[alias] = resolvedSetup.Setup;
-                }
-
-                return resolvedSetup.Setup;
+                resolvedSetup = await ConvertConfigAsync(collectionConfig);
+                
             }
-            else
+            else if (alias.TryParseAsPluginAlias(out var pluginAlias) && 
+                _pluginMap.TryGetValue(pluginAlias.prefix, out var plugin) &&
+                await plugin.GetCollectionAsync(pluginAlias.collectionAlias) is ResolvedSetup<CollectionSetup> collection)
+            {
+                resolvedSetup = collection;
+            }
+
+            if (resolvedSetup == null)
             {
                 throw new InvalidOperationException($"Cannot find collection with alias {alias}.");
             }
+
+            if (resolvedSetup.Cachable)
+            {
+                _cachedCollectionMap[alias] = resolvedSetup.Setup;
+            }
+
+            return resolvedSetup.Setup;
         }
 
-        private IResolvedSetup<CollectionSetup> ConvertConfig(CollectionConfig config)
+        private async Task<IResolvedSetup<CollectionSetup>> ConvertConfigAsync(CollectionConfig config)
         {
             var repositoryAlias = _repositoryTypeResolver.GetAlias(config.RepositoryType);
 
@@ -104,8 +125,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 config.Name,
                 config.Alias,
                 repositoryAlias,
-                isRecursive: config.Recursive,
-                isResolverCachable: true) // TODO
+                isRecursive: config.Recursive)
             {
                 DataViews = config.DataViews,
                 DataViewBuilder = config.DataViewBuilder,
@@ -116,23 +136,23 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             if (!string.IsNullOrWhiteSpace(config.ParentAlias) && _collectionMap.TryGetValue(config.ParentAlias, out var collectionConfig))
             {
-                collection.Parent = new TreeElementSetup(collectionConfig.Alias, PageType.Collection); // TODO: enum
+                collection.Parent = new TreeElementSetup(collectionConfig.Alias, PageType.Collection); // TODO: this assumes nesting is always with collections
             }
-            collection.Collections = _treeElementResolver.ResolveSetup(config.CollectionsAndPages, collection).CheckIfCachable(ref cacheable).ToList();
+            collection.Collections = (await _treeElementResolver.ResolveSetupAsync(config.CollectionsAndPages, collection)).CheckIfCachable(ref cacheable).ToList();
 
-            collection.EntityVariant = _entityVariantResolver.ResolveSetup(config.EntityVariant, collection).CheckIfCachable(ref cacheable);
+            collection.EntityVariant = (await _entityVariantResolver.ResolveSetupAsync(config.EntityVariant, collection)).CheckIfCachable(ref cacheable);
             if (config.SubEntityVariants.Any())
             {
-                collection.SubEntityVariants = _entityVariantResolver.ResolveSetup(config.SubEntityVariants, collection).CheckIfCachable(ref cacheable).ToList();
+                collection.SubEntityVariants = (await _entityVariantResolver.ResolveSetupAsync(config.SubEntityVariants, collection)).CheckIfCachable(ref cacheable).ToList();
             }
 
-            collection.TreeView = config.TreeView == null ? null : _treeViewResolver.ResolveSetup(config.TreeView, collection).CheckIfCachable(ref cacheable);
+            collection.TreeView = config.TreeView == null ? null : (await _treeViewResolver.ResolveSetupAsync(config.TreeView, collection)).CheckIfCachable(ref cacheable);
 
-            collection.ListView = config.ListView == null ? null : _listResolver.ResolveSetup(config.ListView, collection).CheckIfCachable(ref cacheable);
-            collection.ListEditor = config.ListEditor == null ? null : _listResolver.ResolveSetup(config.ListEditor, collection).CheckIfCachable(ref cacheable);
+            collection.ListView = config.ListView == null ? null : (await _listResolver.ResolveSetupAsync(config.ListView, collection)).CheckIfCachable(ref cacheable);
+            collection.ListEditor = config.ListEditor == null ? null : (await _listResolver.ResolveSetupAsync(config.ListEditor, collection)).CheckIfCachable(ref cacheable);
 
-            collection.NodeView = config.NodeView == null ? null : _nodeResolver.ResolveSetup(config.NodeView, collection).CheckIfCachable(ref cacheable);
-            collection.NodeEditor = config.NodeEditor == null ? null : _nodeResolver.ResolveSetup(config.NodeEditor, collection).CheckIfCachable(ref cacheable);
+            collection.NodeView = config.NodeView == null ? null : (await _nodeResolver.ResolveSetupAsync(config.NodeView, collection)).CheckIfCachable(ref cacheable);
+            collection.NodeEditor = config.NodeEditor == null ? null : (await _nodeResolver.ResolveSetupAsync(config.NodeEditor, collection)).CheckIfCachable(ref cacheable);
 
             return new ResolvedSetup<CollectionSetup>(collection, cacheable);
         }

@@ -14,6 +14,7 @@ using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
@@ -62,7 +63,7 @@ namespace RapidCMS.Core.Dispatchers.Form
         private async Task<T> InvokeAsync<T>(PersistEntitiesRequestModel request, T response, IPageState pageState)
             where T : ViewCommandResponseModel
         {
-            var collection = _collectionResolver.ResolveSetup(request.ListContext.CollectionAlias);
+            var collection = await _collectionResolver.ResolveSetupAsync(request.ListContext.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
             var (crudType, entityVariant) = await _buttonInteraction.ValidateButtonInteractionAsync(request);
@@ -133,13 +134,13 @@ namespace RapidCMS.Core.Dispatchers.Form
 
                         if (editContext.IsModified())
                         {
-                            var wrapper = _editContextFactory.GetEditContextWrapper(editContext);
+                            var wrapper = await _editContextFactory.GetEditContextWrapperAsync(editContext);
                             await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.UpdateAsync(wrapper));
                         }
                         if (editContext.IsReordered())
                         {
                             await _concurrencyService.EnsureCorrectConcurrencyAsync(
-                                () => repository.ReorderAsync(editContext.ReorderedBeforeId, editContext.Entity.Id!, editContext.Parent));
+                                () => repository.ReorderAsync(editContext.ReorderedBeforeId, editContext.Entity.Id!, new ViewContext("", editContext.Parent)));
                         }
 
                         affectedEntities.Add(editContext.Entity);
@@ -189,7 +190,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                             break;
                         }
 
-                        var parentCollection = collection.Parent != null && collection.Parent.Type == PageType.Collection ? _collectionResolver.ResolveSetup(collection.Parent.Alias) : default;
+                        var parentCollection = collection.Parent != null && collection.Parent.Type == PageType.Collection ? await _collectionResolver.ResolveSetupAsync(collection.Parent.Alias) : default;
                         if (parentCollection == null)
                         {
                             throw new InvalidOperationException("Cannot go Up on collection that is root.");

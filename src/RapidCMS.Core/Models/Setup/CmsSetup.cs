@@ -20,11 +20,13 @@ namespace RapidCMS.Core.Models.Setup
 
             if (config.CustomLoginScreenRegistration != null)
             {
-                CustomLoginScreenRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginScreenRegistration).Setup;
+                // TODO: fix async
+                //CustomLoginScreenRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginScreenRegistration).Setup;
             }
             if (config.CustomLoginStatusRegistration != null)
             {
-                CustomLoginStatusRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginStatusRegistration).Setup;
+                // TODO: fix async
+                // CustomLoginStatusRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginStatusRegistration).Setup;
             }
         }
 

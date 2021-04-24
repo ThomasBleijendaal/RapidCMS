@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
@@ -25,7 +26,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _conventionNodeConfigResolver = conventionNodeConfigResolver;
         }
 
-        public IResolvedSetup<NodeSetup> ResolveSetup(NodeConfig config, ICollectionSetup? collection = default)
+        public async Task<IResolvedSetup<NodeSetup>> ResolveSetupAsync(NodeConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -39,8 +40,8 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             var cacheable = true;
 
-            var panes = _paneSetupResolver.ResolveSetup(config.Panes, collection).CheckIfCachable(ref cacheable).ToList();
-            var buttons = _buttonSetupResolver.ResolveSetup(config.Buttons, collection).CheckIfCachable(ref cacheable).ToList();
+            var panes = (await _paneSetupResolver.ResolveSetupAsync(config.Panes, collection)).CheckIfCachable(ref cacheable).ToList();
+            var buttons = (await _buttonSetupResolver.ResolveSetupAsync(config.Buttons, collection)).CheckIfCachable(ref cacheable).ToList();
 
             return new ResolvedSetup<NodeSetup>(new NodeSetup(
                 config.BaseType,

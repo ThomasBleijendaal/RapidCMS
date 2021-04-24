@@ -2,6 +2,7 @@
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Services.Parent
@@ -27,7 +28,7 @@ namespace RapidCMS.Core.Services.Parent
             foreach (var (repositoryAlias, id) in parentPath)
             {
                 var repo = _repositoryResolver.GetRepository(repositoryAlias);
-                var entity = await repo.GetByIdAsync(id, parent);
+                var entity = await repo.GetByIdAsync(id, new ViewContext("", parent)); // TODO: add collection alias
                 if (entity == null)
                 {
                     break;

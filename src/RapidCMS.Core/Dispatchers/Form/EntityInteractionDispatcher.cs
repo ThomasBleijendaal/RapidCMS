@@ -10,6 +10,7 @@ using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
@@ -63,7 +64,7 @@ namespace RapidCMS.Core.Dispatchers.Form
         private async Task<T> InvokeAsync<T>(PersistEntityRequestModel request, T response, IPageState pageState)
             where T : ViewCommandResponseModel
         {
-            var collection = _collectionResolver.ResolveSetup(request.EditContext.CollectionAlias);
+            var collection = await _collectionResolver.ResolveSetupAsync(request.EditContext.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
             var entityVariant = collection.GetEntityVariant(request.EditContext.Entity);
@@ -99,7 +100,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                     break;
 
                 case CrudType.Update:
-                    var updateContext = _editContextFactory.GetEditContextWrapper(request.EditContext);
+                    var updateContext = await _editContextFactory.GetEditContextWrapperAsync(request.EditContext);
                     if (!updateContext.IsValid())
                     {
                         throw new InvalidEntityException();
@@ -110,7 +111,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                     if (request.EditContext.IsReordered())
                     {
                         await _concurrencyService.EnsureCorrectConcurrencyAsync(
-                            () => repository.ReorderAsync(request.EditContext.ReorderedBeforeId, request.EditContext.Entity.Id!, request.EditContext.Parent));
+                            () => repository.ReorderAsync(request.EditContext.ReorderedBeforeId, request.EditContext.Entity.Id!, new ViewContext(collection.Alias, request.EditContext.Parent)));
                     }
 
                     response.RefreshIds = new[] { request.EditContext.Entity.Id! };
@@ -125,7 +126,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                     break;
 
                 case CrudType.Insert:
-                    var insertContext = _editContextFactory.GetEditContextWrapper(request.EditContext);
+                    var insertContext = await _editContextFactory.GetEditContextWrapperAsync(request.EditContext);
                     if (!insertContext.IsValid())
                     {
                         throw new InvalidEntityException();
@@ -139,7 +140,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
                     if (request is PersistRelatedEntityRequestModel related)
                     {
-                        await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.AddAsync(related.Related, request.EditContext.Entity.Id!));
+                        await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.AddAsync(new RelatedViewContext(related.Related, collection.Alias, default), request.EditContext.Entity.Id!));
                     }
 
                     if (response is NodeViewCommandResponseModel)
@@ -166,7 +167,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                     break;
 
                 case CrudType.Delete:
-                    await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.DeleteAsync(request.EditContext.Entity.Id!, request.EditContext.Parent));
+                    await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.DeleteAsync(request.EditContext.Entity.Id!, new ViewContext(collection.Alias, request.EditContext.Parent)));
 
                     if (response is NodeViewCommandResponseModel)
                     {
@@ -194,7 +195,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
                 case CrudType.Pick when request is PersistRelatedEntityRequestModel relationRequest:
 
-                    await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.AddAsync(relationRequest.Related, request.EditContext.Entity.Id!));
+                    await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.AddAsync(new RelatedViewContext(relationRequest.Related, collection.Alias, default), request.EditContext.Entity.Id!));
 
                     _mediator.NotifyEvent(this, new CollectionRepositoryEventArgs(
                         collection.Alias,
@@ -207,7 +208,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
                 case CrudType.Remove when request is PersistRelatedEntityRequestModel relationRequest:
 
-                    await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.RemoveAsync(relationRequest.Related, request.EditContext.Entity.Id!));
+                    await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.RemoveAsync(new RelatedViewContext(relationRequest.Related, collection.Alias, default), request.EditContext.Entity.Id!));
 
                     _mediator.NotifyEvent(this, new CollectionRepositoryEventArgs(
                         collection.Alias,
