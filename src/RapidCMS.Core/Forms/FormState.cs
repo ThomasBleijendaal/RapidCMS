@@ -16,13 +16,14 @@ namespace RapidCMS.Core.Forms
         private readonly List<string> _messages = new List<string>();
         private readonly List<PropertyState> _fieldStates = new List<PropertyState>();
         private readonly IEntity _entity;
-        private readonly IServiceProvider _serviceProvider;
 
         public FormState(IEntity entity, IServiceProvider serviceProvider)
         {
             _entity = entity;
-            _serviceProvider = serviceProvider;
+            ServiceProvider = serviceProvider;
         }
+
+        public IServiceProvider ServiceProvider { get; }
 
         public IEnumerable<string> GetValidationMessages()
         {
@@ -199,7 +200,7 @@ namespace RapidCMS.Core.Forms
         private IEnumerable<ValidationResult> GetValidationResultsForProperty(IPropertyMetadata property, IEnumerable<IDataValidationProvider>? dataProviders)
         {
             var results = new List<ValidationResult>();
-            var context = new ValidationContext(_entity, _serviceProvider, null)
+            var context = new ValidationContext(_entity, ServiceProvider, null)
             {
                 MemberName = property.PropertyName
             };
@@ -213,7 +214,7 @@ namespace RapidCMS.Core.Forms
 
             if (dataProviders != null)
             {
-                foreach (var result in dataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(_entity, _serviceProvider)))
+                foreach (var result in dataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(_entity, ServiceProvider)))
                 {
                     results.Add(result);
                 }
@@ -224,7 +225,7 @@ namespace RapidCMS.Core.Forms
 
         private IEnumerable<ValidationResult> GetValidationResultsForModel(IEnumerable<IDataValidationProvider>? dataProviders)
         {
-            var context = new ValidationContext(_entity, _serviceProvider, null);
+            var context = new ValidationContext(_entity, ServiceProvider, null);
             var results = new List<ValidationResult>();
 
             try
@@ -244,7 +245,7 @@ namespace RapidCMS.Core.Forms
 
             if (dataProviders != null)
             {
-                foreach (var result in dataProviders.SelectMany(p => p.Validate(_entity, _serviceProvider)))
+                foreach (var result in dataProviders.SelectMany(p => p.Validate(_entity, ServiceProvider)))
                 {
                     results.Add(result);
                 }

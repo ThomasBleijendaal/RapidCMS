@@ -5,21 +5,22 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
-using RapidCMS.ModelMaker.Abstractions.DataCollections;
-using RapidCMS.ModelMaker.Abstractions.Validation;
-using RapidCMS.ModelMaker.Validation.Config;
 
 namespace RapidCMS.ModelMaker.DataCollections
 {
-    internal class ModelMakerLimitedOptionsDataCollection : IPropertyDataCollection
+    internal class FixedOptionsDataCollection : IDataCollection
     {
-        private IEnumerable<string> _options = Enumerable.Empty<string>();
+        private readonly IEnumerable<string> _options;
+
+        public FixedOptionsDataCollection(IEnumerable<string>? options)
+        {
+            _options = options ?? Enumerable.Empty<string>();
+        }
 
         public event EventHandler? OnDataChange;
 
         public void Dispose()
         {
-            
         }
 
         public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
@@ -29,16 +30,6 @@ namespace RapidCMS.ModelMaker.DataCollections
                 Id = item,
                 Labels = new[] { item }
             }));
-        }
-
-        public Task SetConfigAsync(IValidatorConfig? config)
-        {
-            if (config is LimitedOptionsValidationConfig limitedOptions)
-            {
-                _options = limitedOptions.Options;
-            }
-
-            return Task.CompletedTask;
         }
 
         public Task SetEntityAsync(FormEditContext editContext, IParent? parent)

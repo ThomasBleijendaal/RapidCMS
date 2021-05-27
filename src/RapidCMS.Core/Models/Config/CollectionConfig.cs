@@ -33,7 +33,7 @@ namespace RapidCMS.Core.Models.Config
         public string Alias { get; internal set; }
         internal string? Icon { get; set; }
         internal string? Color { get; set; }
-        internal string Name { get; set; }
+        public string Name { get; set; }
 
         public Type RepositoryType { get; set; }
 

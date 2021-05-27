@@ -22,6 +22,7 @@ namespace RapidCMS.Core.Models.Config
         internal bool AllowAnonymousUsage { get; set; } = false;
 
         public string Alias => "__root";
+        public string Name => "Root";
         public string? ParentAlias => default;
         public bool Recursive => throw new NotImplementedException();
         Type ICollectionConfig.RepositoryType => throw new NotImplementedException();

@@ -146,9 +146,9 @@ namespace RapidCMS.ModelMaker.Repositories
 
                         var validator = _serviceProvider.GetService<IValidator>(validatorConfig.Validator);
 
-                        if (!await validator.IsValid(entity.Get(property.Alias), validation.Config!))
+                        if (!await validator.IsValidAsync(entity.Get(property.Alias), validation.Config!))
                         {
-                            editContext.AddValidationError(property.Alias, await validator.ErrorMessage(validation.Config!));
+                            editContext.AddValidationError(property.Alias, await validator.ErrorMessageAsync(validation.Config!));
                         }
                     }
                 }

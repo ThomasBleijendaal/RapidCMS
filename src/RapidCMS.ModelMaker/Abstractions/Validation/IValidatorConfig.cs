@@ -1,4 +1,6 @@
-﻿namespace RapidCMS.ModelMaker.Abstractions.Validation
+﻿using System;
+
+namespace RapidCMS.ModelMaker.Abstractions.Validation
 {
     public interface IValidatorConfig
     {

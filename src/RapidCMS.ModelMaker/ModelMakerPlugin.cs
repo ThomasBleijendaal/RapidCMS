@@ -12,7 +12,7 @@ using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
-using RapidCMS.ModelMaker.Abstractions.DataCollections;
+using RapidCMS.ModelMaker.Abstractions.Factories;
 using RapidCMS.ModelMaker.Abstractions.Validation;
 using RapidCMS.ModelMaker.Components.Displays;
 using RapidCMS.ModelMaker.Components.Sections;
@@ -28,17 +28,20 @@ namespace RapidCMS.ModelMaker
 {
     internal class ModelMakerPlugin : IPlugin
     {
+        private readonly IServiceProvider _serviceProvider;
         private readonly IModelMakerConfig _config;
         private readonly ISetupResolver<IButtonSetup, ButtonConfig> _buttonSetupResolver;
         private readonly ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>> _getAllModelEntitiesCommandHandler;
         private readonly ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>> _getModelEntityByAliasCommandHandler;
 
         public ModelMakerPlugin(
+            IServiceProvider serviceProvider,
             IModelMakerConfig config,
-             ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver,
-             ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>> getAllModelEntitiesCommandHandler,
-             ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>> getModelEntityByAliasCommandHandler)
+            ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver,
+            ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>> getAllModelEntitiesCommandHandler,
+            ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>> getModelEntityByAliasCommandHandler)
         {
+            _serviceProvider = serviceProvider;
             _config = config;
             _buttonSetupResolver = buttonSetupResolver;
             _getAllModelEntitiesCommandHandler = getAllModelEntitiesCommandHandler;
@@ -72,7 +75,7 @@ namespace RapidCMS.ModelMaker
             var response = await _getAllModelEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>(default));
             return response.Entities
                 .Where(IsValidDefintion)
-                .Select(model => new TreeElementSetup(model.Alias, PageType.Collection));
+                .Select(model => new TreeElementSetup(model.Alias, model.Name, PageType.Collection));
         }
 
         public Type? GetRepositoryType(string collectionAlias)
@@ -183,23 +186,62 @@ namespace RapidCMS.ModelMaker
                         await CreateButtonAsync(collection, DefaultButtonType.SaveNew, true, "Insert"),
                         await CreateButtonAsync(collection, DefaultButtonType.Delete, false)
                     },
-                    await ModelFieldsAsync(definition).ToListAsync(),
+                    await ModelFieldsAsync(definition, collection).ToListAsync(),
                     new List<SubCollectionListSetup>(),
                     new List<RelatedCollectionListSetup>());
         }
 
-        private async IAsyncEnumerable<FieldSetup> ModelFieldsAsync(ModelEntity definition)
+        private async IAsyncEnumerable<FieldSetup> ModelFieldsAsync(ModelEntity definition, CollectionSetup collection)
         {
             var i = 0;
             foreach (var property in definition.PublishedProperties)
             {
                 var editor = _config.Editors.First(x => x.Alias == property.EditorAlias);
 
-                yield return await CreateCustomPropertyFieldAsync(++i, property, editor);
+                yield return await CreateCustomPropertyFieldAsync(++i, property, editor, collection);
             }
         }
 
-        // MODEL
+        private async Task<CustomPropertyFieldSetup> CreateCustomPropertyFieldAsync(int index, PropertyModel property, IPropertyEditorConfig editor, CollectionSetup collection)
+        {
+            var relationSetup = default(RelationSetup);
+
+            try
+            {
+                var validator = _config.Validators
+                    .SingleOrDefault(x => x.DataCollectionFactory != null && property.Validations.Any(v => v.Config?.IsEnabled == true && v.Alias == x.Alias));
+
+                if (validator != null && _serviceProvider.GetService<IDataCollectionFactory>(validator.DataCollectionFactory!) is IDataCollectionFactory dataCollectionFactory)
+                {
+                    relationSetup = await dataCollectionFactory.GetModelRelationSetupAsync(property.Validations.First(x => x.Alias == validator.Alias).Config);
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException("A property can only have 1 enabled validator with DataCollection.", ex);
+            }
+
+
+            var setup = new CustomPropertyFieldSetup(new FieldConfig
+            {
+                EditorType = EditorType.Custom,
+                Index = index,
+                Name = property.Name,
+                Property = new PropertyMetadata<ModelMakerEntity, object?>(
+                    property.Alias,
+                    entity => entity.Get(property.Alias),
+                    (entity, value) => entity.Set(property.Alias, value),
+                    $"{property.EditorAlias}::{property.Alias}")
+            },
+            editor.Editor)
+            {
+                Relation = relationSetup
+            };
+
+            return setup;
+        }
+
+        // MODEL EDITOR
 
         private async Task<CollectionSetup> PropertyConfigurationCollectionAsync()
         {
@@ -255,7 +297,7 @@ namespace RapidCMS.ModelMaker
 
             collection.NodeEditor = new NodeSetup(
                 typeof(PropertyModel),
-                PropertyPanes().ToList(),
+                await PropertyPanesAsync().ToListAsync(),
                 new List<IButtonSetup>
                 {
                     await CreateButtonAsync(collection, DefaultButtonType.Up, false, "Return", "Back"),
@@ -267,7 +309,7 @@ namespace RapidCMS.ModelMaker
             return collection;
         }
 
-        private IEnumerable<PaneSetup> PropertyPanes()
+        private async IAsyncEnumerable<PaneSetup> PropertyPanesAsync()
         {
             yield return
                 new PaneSetup(
@@ -327,17 +369,24 @@ namespace RapidCMS.ModelMaker
                     {
 
                     },
-                    ValidationFields().ToList(),
+                    await ValidationFieldsAsync().ToListAsync(),
                     new List<SubCollectionListSetup>(),
                     new List<RelatedCollectionListSetup>());
         }
 
-        private IEnumerable<FieldSetup> ValidationFields()
+        private async IAsyncEnumerable<FieldSetup> ValidationFieldsAsync()
         {
             foreach (var validationType in _config.Validators)
             {
-                yield return
-                new CustomPropertyFieldSetup(new FieldConfig
+                var relationSetup = default(RelationSetup);
+
+                if (validationType.DataCollectionFactory != null &&
+                    _serviceProvider.GetService<IDataCollectionFactory>(validationType.DataCollectionFactory) is IDataCollectionFactory dataCollectionFactory)
+                {
+                    relationSetup = await dataCollectionFactory.GetModelEditorRelationSetupAsync();
+                }
+
+                yield return new CustomPropertyFieldSetup(new FieldConfig
                 {
                     Description = validationType.Description,
                     EditorType = EditorType.Custom,
@@ -358,7 +407,10 @@ namespace RapidCMS.ModelMaker
                                 }
                             },
                             "config"),
-                }, validationType.Editor);
+                }, validationType.Editor)
+                {
+                    Relation = relationSetup
+                };
             }
         }
 
@@ -416,50 +468,6 @@ namespace RapidCMS.ModelMaker
             {
                 Relation = relation
             };
-        }
-
-        private async Task<CustomPropertyFieldSetup> CreateCustomPropertyFieldAsync(int index, PropertyModel property, IPropertyEditorConfig editor)
-        {
-            var relationSetup = default(RelationSetup);
-
-            try
-            {
-                var validator = _config.Validators
-                    .SingleOrDefault(x => x.DataCollection != null && property.Validations.Any(v => v.Config?.IsEnabled == true && v.Alias == x.Alias));
-
-                if (validator != null)
-                {
-                    if (Activator.CreateInstance(validator.DataCollection!) is IPropertyDataCollection dataCollection)
-                    {
-                        await dataCollection.SetConfigAsync(property.Validations.First(x => x.Alias == validator.Alias).Config);
-
-                        relationSetup = new ConcreteDataProviderRelationSetup(dataCollection);
-                    }
-                }
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new InvalidOperationException("A property can only have 1 enabled validator with DataCollection.", ex);
-            }
-
-
-            var setup = new CustomPropertyFieldSetup(new FieldConfig
-            {
-                EditorType = EditorType.Custom,
-                Index = index,
-                Name = property.Name,
-                Property = new PropertyMetadata<ModelMakerEntity, object?>(
-                    property.Alias,
-                    entity => entity.Get(property.Alias),
-                    (entity, value) => entity.Set(property.Alias, value),
-                    $"{property.EditorAlias}::{property.Alias}")
-            },
-            editor.Editor)
-            {
-                Relation = relationSetup
-            };
-
-            return setup;
         }
 
         private async Task<IButtonSetup> CreateButtonAsync(

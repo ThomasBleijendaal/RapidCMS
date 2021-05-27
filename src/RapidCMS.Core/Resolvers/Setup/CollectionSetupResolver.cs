@@ -136,7 +136,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             if (!string.IsNullOrWhiteSpace(config.ParentAlias) && _collectionMap.TryGetValue(config.ParentAlias, out var collectionConfig))
             {
-                collection.Parent = new TreeElementSetup(collectionConfig.Alias, PageType.Collection); // TODO: this assumes nesting is always with collections
+                collection.Parent = new TreeElementSetup(collectionConfig.Alias, collectionConfig.Name, PageType.Collection); // TODO: this assumes nesting is always with collections
             }
             collection.Collections = (await _treeElementResolver.ResolveSetupAsync(config.CollectionsAndPages, collection)).CheckIfCachable(ref cacheable).ToList();
 

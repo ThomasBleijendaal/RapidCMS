@@ -6,7 +6,6 @@ using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {

@@ -3,8 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RapidCMS.Core.Repositories;
+using RapidCMS.Example.Shared.Collections;
+using RapidCMS.Example.Shared.Data;
 using RapidCMS.ModelMaker;
 using RapidCMS.ModelMaker.TableStorage;
+using RapidCMS.Repositories;
 
 namespace RapidCMS.Example.ModelMaker
 {
@@ -17,15 +21,24 @@ namespace RapidCMS.Example.ModelMaker
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            services.AddModelMaker();
+            services.AddModelMaker(
+                // this flag adds the default properties and validators covering most of the use cases
+                // each of the features added can also be added manually, to fully control the feature set of the model maker
+                // (see ConfigurationExtensions.cs of RapidCMS.ModelMaker to see what is added when this flag is true)
+                addDefaultPropertiesAndValidators: true,
+                config =>
+                {
+                    
+                });
             services.AddModelMakerTableStorage();
+
+            services.AddScoped<BaseRepository<Person>, JsonRepository<Person>>();
+            services.AddScoped<BaseRepository<Details>, JsonRepository<Details>>();
 
             services.AddRapidCMSServer(config =>
             {
@@ -33,12 +46,12 @@ namespace RapidCMS.Example.ModelMaker
 
                 config.SetSiteName("Model maker");
 
-                config.AddModelMakerPlugin();
+                config.AddPersonCollection();
 
+                config.AddModelMakerPlugin();
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseRapidCMS(isDevelopment: env.IsDevelopment());
@@ -50,7 +63,6 @@ namespace RapidCMS.Example.ModelMaker
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
