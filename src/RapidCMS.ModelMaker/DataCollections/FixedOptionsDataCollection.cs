@@ -23,13 +23,16 @@ namespace RapidCMS.ModelMaker.DataCollections
         {
         }
 
-        public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
+        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync()
         {
-            return Task.FromResult<IEnumerable<IElement>>(_options.Select(item => new Element
-            {
-                Id = item,
-                Labels = new[] { item }
-            }));
+            return Task.FromResult<IReadOnlyList<IElement>>(
+                _options
+                .Select(item => new Element
+                {
+                    Id = item,
+                    Labels = new[] { item }
+                })
+                .ToList());
         }
 
         public Task SetEntityAsync(FormEditContext editContext, IParent? parent)

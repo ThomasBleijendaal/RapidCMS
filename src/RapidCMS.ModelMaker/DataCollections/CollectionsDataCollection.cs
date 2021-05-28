@@ -26,18 +26,19 @@ namespace RapidCMS.ModelMaker.DataCollections
         {
         }
 
-        public async Task<IEnumerable<IElement>> GetAvailableElementsAsync()
+        public async Task<IReadOnlyList<IElement>> GetAvailableElementsAsync()
         {
             var treeElements = await _setupResolver.ResolveSetupAsync();
 
             return treeElements
                 .Where(treeElement => treeElement.Type == PageType.Collection)
-                .Where(treeElement => treeElement.Alias != "modelmakeradmin") // TODO: make constant
+                .Where(treeElement => treeElement.Alias != Constants.ModelMakerAdminCollectionAlias)
                 .Select(treeElement => new Element
                 {
                     Id = treeElement.Alias,
                     Labels = new[] { treeElement.Name }
-                });
+                })
+                .ToList();
         }
 
         public Task SetEntityAsync(FormEditContext editContext, IParent? parent)

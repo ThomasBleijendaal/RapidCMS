@@ -16,29 +16,6 @@ using RapidCMS.ModelMaker.Validation.Config;
 
 namespace RapidCMS.ModelMaker
 {
-    public static class Constants
-    {
-        public static class Editors
-        {
-            public const string TextBox = "textbox";
-            public const string TextArea = "textarea";
-            public const string Dropdown = "dropdown";
-            public const string Numeric = "numeric";
-            public const string Checkbox = "checkbox";
-            public const string Date = "date";
-            public const string Select = "select";
-            public const string MultiSelect = "multiselect";
-        }
-
-        public static class Validators
-        {
-            public const string MinLength = "minlength";
-            public const string MaxLength = "maxlength";
-            public const string LimitedOptions = "limitedOptions";
-            public const string LinkedEntity = "linkedEntity";
-        }
-    }
-
     public static class ConfigurationExtensions
     {
         public static IServiceCollection AddModelMaker(
@@ -138,7 +115,12 @@ namespace RapidCMS.ModelMaker
                     new[] { Constants.Editors.Dropdown, Constants.Editors.Select }, 
                     new[] { Constants.Validators.LinkedEntity });
 
-                
+                config.AddProperty<DateTime>(
+                    "date",
+                    "Date",
+                    "Calendar",
+                    new[] { Constants.Editors.Date },
+                    Enumerable.Empty<string>()); // TODO: date validation (valid ranges etc)
 
                 // TODO: slug, media, reference(s) (model maker / external), markdown, JSON object, date, date time, time, rich text
             }

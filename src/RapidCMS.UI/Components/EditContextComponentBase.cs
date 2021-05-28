@@ -23,26 +23,26 @@ namespace RapidCMS.UI.Components
 
                 EditContext = CascadedEditContext;
 
-                AttachValidationStateChangedListener();
+                AttachListener();
             }
             else if (EditContext != CascadedEditContext)
             {
-                DetachValidationStateChangedListener();
+                DetachListener();
 
                 EditContext = CascadedEditContext;
 
-                AttachValidationStateChangedListener();
+                AttachListener();
             }
 
             return base.SetParametersAsync(ParameterView.Empty);
         }
 
-        protected abstract void AttachValidationStateChangedListener();
-        protected abstract void DetachValidationStateChangedListener();
+        protected abstract void AttachListener();
+        protected abstract void DetachListener();
 
         public virtual void Dispose()
         {
-            DetachValidationStateChangedListener();
+            DetachListener();
         }
     }
 }

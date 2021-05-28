@@ -48,7 +48,7 @@ namespace RapidCMS.ModelMaker
             _getModelEntityByAliasCommandHandler = getModelEntityByAliasCommandHandler;
         }
 
-        public string CollectionPrefix => "modelmaker";
+        public string CollectionPrefix => Constants.CollectionPrefix;
 
         public async Task<IResolvedSetup<CollectionSetup>?> GetCollectionAsync(string collectionAlias)
         {
@@ -221,7 +221,6 @@ namespace RapidCMS.ModelMaker
                 throw new InvalidOperationException("A property can only have 1 enabled validator with DataCollection.", ex);
             }
 
-
             var setup = new CustomPropertyFieldSetup(new FieldConfig
             {
                 EditorType = EditorType.Custom,
@@ -363,7 +362,7 @@ namespace RapidCMS.ModelMaker
                 new PaneSetup(
                     default,
                     default,
-                    (m, s) => s == EntityState.IsExisting,
+                    (m, s) => true, //s == EntityState.IsExisting,
                     typeof(PropertyModel),
                     new List<IButtonSetup>
                     {
@@ -392,7 +391,14 @@ namespace RapidCMS.ModelMaker
                     EditorType = EditorType.Custom,
                     Index = 1,
                     Name = validationType.Name,
-                    IsVisible = (m, s) => m is PropertyModel property && property.Validations.Any(x => x.Alias == validationType.Alias),
+                    IsVisible = (m, s) =>
+                    {
+                        return m is PropertyModel property &&
+                            property.Validations.FirstOrDefault(x => x.Alias == validationType.Alias) is PropertyValidationModel validation &&
+                            !string.IsNullOrEmpty(property.PropertyAlias) &&
+                            _config.Properties.First(x => x.Alias == property.PropertyAlias).Validators.Any(x => x.Alias == validationType.Alias) &&
+                            (validation.Config?.IsApplicable(property) ?? false);
+                    },
                     Property =
                         validationType.ConfigToEditor != null
                         ? validationType.ConfigToEditor.Nest<PropertyModel, PropertyValidationModel>(x => x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias))

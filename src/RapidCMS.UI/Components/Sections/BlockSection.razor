@@ -90,4 +90,9 @@
     [Parameter] public EventCallback<ButtonClickEventArgs> OnButtonClick { get; set; }
 
     [Parameter] public int BlockNr { get; set; }
+
+    protected override void AttachListener()
+    {
+        base.AttachListener();
+    }
 }

@@ -129,10 +129,8 @@ namespace RapidCMS.Core.Providers
             _relatedElements = _elements?.Where(x => _relatedIds?.Contains(x.Id) ?? false).ToList();
         }
 
-        public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
-        {
-            return Task.FromResult(_elements ?? Enumerable.Empty<IElement>());
-        }
+        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync()
+            => Task.FromResult<IReadOnlyList<IElement>>(_elements ?? new List<IElement>());
 
         public Task<IReadOnlyList<IElement>> GetRelatedElementsAsync()
         {

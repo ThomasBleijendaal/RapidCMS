@@ -50,7 +50,7 @@ namespace RapidCMS.UI.Components.Buttons
             StateHasChanged();
         }
 
-        protected override void AttachValidationStateChangedListener()
+        protected override void AttachListener()
         {
             if (EditContext != null)
             {
@@ -59,7 +59,7 @@ namespace RapidCMS.UI.Components.Buttons
             }
         }
 
-        protected override void DetachValidationStateChangedListener()
+        protected override void DetachListener()
         {
             if (EditContext != null)
             {

@@ -72,7 +72,15 @@
 
         await InvokeAsync(async () =>
         {
+            var currentValue = GetValueAsObject();
+
             Options = await DataCollection.GetAvailableElementsAsync();
+
+            if (currentValue != null && !Options.Any(x => x.Id.Equals(currentValue)))
+            {
+                SetValueFromObject(default!);
+            }
+
             StateHasChanged();
         });
     }

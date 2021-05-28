@@ -18,9 +18,9 @@ namespace RapidCMS.ModelMaker.Validation.Base
 
         public Task<bool> IsValidAsync(object? value, IValidatorConfig validatorConfig)
         {
-            if (value is TValue validationValue && validatorConfig is TValidatorConfig config)
+            if (validatorConfig is TValidatorConfig config)
             {
-                return IsValid(validationValue, config);
+                return IsValid((TValue?)value, config);
             }
 
             return Task.FromResult(false);

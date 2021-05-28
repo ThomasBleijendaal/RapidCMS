@@ -7,14 +7,19 @@ namespace RapidCMS.UI.Components.Sections
     {
         [Parameter] public SectionUI? Section { get; set; }
 
-        protected override void AttachValidationStateChangedListener()
+        protected override void AttachListener()
         {
-            
+            EditContext.OnFieldChanged += EditContext_OnFieldChangedAsync;
         }
 
-        protected override void DetachValidationStateChangedListener()
+        private async void EditContext_OnFieldChangedAsync(object? sender, Core.Forms.FieldChangedEventArgs e)
         {
-            
+            await InvokeAsync(() => StateHasChanged());
+        }
+
+        protected override void DetachListener()
+        {
+            EditContext.OnFieldChanged -= EditContext_OnFieldChangedAsync;
         }
     }
 }

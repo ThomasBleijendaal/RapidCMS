@@ -12,7 +12,7 @@ namespace RapidCMS.ModelMaker.Collections
         public static void AddModelCollection(this ICmsConfig cmsConfig)
         {
             cmsConfig.AddCollection<ModelEntity, ModelRepository>(
-                "modelmakeradmin",
+                Constants.ModelMakerAdminCollectionAlias,
                 "Database",
                 "MagentaPink10",
                 "Models",

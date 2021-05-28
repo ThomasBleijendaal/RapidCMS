@@ -25,9 +25,10 @@
 }
 @code {
 
-    private IEnumerable<IElement>? Options;
+    private IReadOnlyList<IElement>? Options;
     private int SelectedIndex = -1;
 
+    private bool IsNotNullableValueType;
     private bool IsNullable;
 
     protected override async Task OnInitializedAsync()
@@ -36,16 +37,15 @@
         {
             DataCollection.OnDataChange += UpdateOptionsAsync;
 
-            IsNullable = Nullable.GetUnderlyingType(Property.PropertyType) != null;
+            IsNotNullableValueType = Property.PropertyType.IsValueType && Nullable.GetUnderlyingType(Property.PropertyType) == null;
+            IsNullable = !Property.PropertyType.IsValueType || !IsNotNullableValueType;
 
             var value = GetValueAsObject();
 
             await DataCollection.SetEntityAsync(EditContext, Parent);
             await UpdateOptionsAsync();
 
-            var list = Options?.ToList();
-
-            SelectedIndex = list?.FindIndex(option => option.Id.Equals(value)) ?? -1;
+            SelectedIndex = Options?.FindIndex(option => option.Id.Equals(value)) ?? -1;
 
             if (SelectedIndex == -1)
             {
@@ -64,7 +64,27 @@
 
         await InvokeAsync(async () =>
         {
+            var currentValue = GetValueAsObject();
+
             await UpdateOptionsAsync();
+
+            if (Options != null)
+            {
+                if (currentValue != null && Options.Any(x => x.Id.Equals(currentValue)))
+                {
+                    var newIndex = Options.FindIndex(x => x.Id.Equals(currentValue));
+                    if (newIndex.HasValue)
+                    {
+                        SelectedIndex = newIndex.Value;
+                    }
+                }
+                else if (currentValue != null && !Options.Any(x => x.Id.Equals(currentValue)))
+                {
+                    SetValueFromObject(default!);
+                    SelectedIndex = -1;
+                }
+            }
+
             StateHasChanged();
         });
     }
@@ -93,7 +113,7 @@
         }
 
         // reset nullable when option is selected
-        if (Nullable.GetUnderlyingType(Property.PropertyType) == null && IsNullable)
+        if (IsNotNullableValueType && IsNullable)
         {
             IsNullable = false;
 

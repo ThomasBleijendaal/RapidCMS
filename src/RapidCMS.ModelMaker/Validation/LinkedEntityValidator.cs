@@ -13,7 +13,6 @@ namespace RapidCMS.ModelMaker.Validation
 
         protected override Task<bool> IsValid(string? value, LinkedEntityValidationConfig validatorConfig)
         {
-            // TODO: check if selected value is valid?
             return Task.FromResult(true);
         }
     }

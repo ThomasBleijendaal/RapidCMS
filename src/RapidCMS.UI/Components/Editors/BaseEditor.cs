@@ -72,7 +72,7 @@ namespace RapidCMS.UI.Components.Editors
             StateHasChanged();
         }
 
-        protected override void AttachValidationStateChangedListener()
+        protected override void AttachListener()
         {
             if (EditContext != null)
             {
@@ -83,7 +83,7 @@ namespace RapidCMS.UI.Components.Editors
             }
         }
 
-        protected override void DetachValidationStateChangedListener()
+        protected override void DetachListener()
         {
             if (EditContext != null)
             {
