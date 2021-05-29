@@ -74,7 +74,6 @@ namespace RapidCMS.ModelMaker
                     EditorType.Dropdown,
                     x => x.Config.CollectionAlias);
 
-                // TODO: allow validators to hide themselves when property is not good for them (max length on dropdown for example)
                 // TODO: validation configuration validation
                 // TODO: custom type
 
@@ -88,39 +87,46 @@ namespace RapidCMS.ModelMaker
                 config.AddPropertyEditor(Constants.Editors.TextBox, "Text box", EditorType.TextBox);
                 
                 config.AddProperty<string>(
-                    "shortstring",
+                    Constants.Properties.ShortString,
                     "Short string",
                     "Label",
                     new[] { Constants.Editors.TextBox, Constants.Editors.TextArea, Constants.Editors.Dropdown },
                     new[] { Constants.Validators.MinLength, Constants.Validators.MaxLength, Constants.Validators.LimitedOptions });
 
                 config.AddProperty<string>(
-                    "longstring",
+                    Constants.Properties.LongString,
                     "Long string",
                     "Label",
                     new[] { Constants.Editors.TextArea },
                     new[] { Constants.Validators.MinLength });
 
                 config.AddProperty<bool>(
-                    "boolean",
+                    Constants.Properties.Boolean,
                     "Boolean",
                     "ToggleLeft",
                     new[] { Constants.Editors.Checkbox },
                     Enumerable.Empty<string>()); // TODO: dropdown with labels for true / false
 
                 config.AddProperty<string>(
-                    "linkedentity", 
+                    Constants.Properties.LinkedEntity, 
                     "Linked entity", 
                     "Link", 
                     new[] { Constants.Editors.Dropdown, Constants.Editors.Select }, 
                     new[] { Constants.Validators.LinkedEntity });
 
                 config.AddProperty<DateTime>(
-                    "date",
+                    Constants.Properties.Date,
                     "Date",
                     "Calendar",
                     new[] { Constants.Editors.Date },
                     Enumerable.Empty<string>()); // TODO: date validation (valid ranges etc)
+
+                config.AddProperty<double>(
+                    Constants.Properties.Numeric,
+                    "Number",
+                    "NumberField",
+                    new[] { Constants.Editors.Numeric },
+                    Enumerable.Empty<string>()); // TODO: min max limitedoptions
 
                 // TODO: slug, media, reference(s) (model maker / external), markdown, JSON object, date, date time, time, rich text
             }

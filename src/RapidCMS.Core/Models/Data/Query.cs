@@ -19,14 +19,27 @@ namespace RapidCMS.Core.Models.Data
             };
         }
 
-        public static Query Create(int pageSize, int pageNumber, string? searchTerm, int? activeTab)
+        public static Query Create(int pageSize, int pageNumber, string? searchTerm, int? activeTab, string? collectionAlias = default)
         {
             return new Query
             {
                 Skip = pageSize * (pageNumber - 1),
                 Take = pageSize,
                 SearchTerm = searchTerm,
-                ActiveTab = activeTab
+                ActiveTab = activeTab,
+                CollectionAlias = collectionAlias
+            };
+        }
+
+        public static Query Create(IQuery query, string collectionAlias)
+        {
+            return new Query
+            {
+                Skip = query.Skip,
+                Take = query.Take,
+                SearchTerm = query.SearchTerm,
+                ActiveTab = query.ActiveTab,
+                CollectionAlias = collectionAlias
             };
         }
 

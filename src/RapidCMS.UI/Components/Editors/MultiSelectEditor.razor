@@ -49,6 +49,7 @@
     }
 }
 @code {
+    // TODO: upon update re-evaluate which items are selected or not
 
     private string group = Guid.NewGuid().ToString().Replace("-", "");
 
@@ -89,7 +90,7 @@
             return;
         }
 
-        Options = await RelationDataCollection.GetAvailableElementsAsync();
+        Options = await RelationDataCollection.GetAvailableElementsAsync(Query.Default());
     }
 
     private async Task OnChangeAsync(ChangeEventArgs e, object value)

@@ -64,6 +64,12 @@ namespace RapidCMS.Core.Enums
         /// A list editor accepting an array of strings
         /// </summary>
         [DefaultType(typeof(IEnumerable<string>), typeof(ICollection<string>), typeof(IList<string>), typeof(List<string>))]
-        ListEditor
+        ListEditor,
+
+        /// <summary>
+        /// A picker with search and navigation features for selecting an entity
+        /// </summary>
+        [Relation(RelationType.One)]
+        EntityPicker
     }
 }

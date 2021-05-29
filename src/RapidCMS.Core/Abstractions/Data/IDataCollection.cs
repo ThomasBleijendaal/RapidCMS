@@ -18,8 +18,9 @@ namespace RapidCMS.Core.Abstractions.Data
         /// <summary>
         /// This method is called when the editor which this data collection requests elements to display.
         /// </summary>
+        /// <param name="query">A query for filtering the elements. Not all editors will issue meaningful queries.</param>
         /// <returns></returns>
-        Task<IReadOnlyList<IElement>> GetAvailableElementsAsync();
+        Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query);
 
         /// <summary>
         /// The editor using this data collection will refresh its UI when this event is invoked. Use this to refresh the UI when the available elements changes.

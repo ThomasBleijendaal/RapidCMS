@@ -480,8 +480,7 @@ textarea.form-control{
 }
 
 .form-check {
-    padding: .25rem 0 .25rem 2rem;
-    margin: 0 1rem 0 -.4rem;
+    padding: .25rem 0 .25rem .5rem;
 }
 
     .form-check:hover {
@@ -513,16 +512,29 @@ pre.col-form-label {
     height: auto;
     max-height: 150px;
     overflow: auto;
-    padding-bottom: 1rem;
+    padding: 0;
 }
 
     .form-control-select-list.block {
         max-height: 300px;
     }
 
-.form-text.text-muted {
-    margin-top: -.25rem;
-}
+    .form-control-select-list .nav-tabs {
+        background: #faf9f8;
+        padding: .3rem;
+        margin: 0 0 .1rem 0;
+    }
+    .form-control-select-list .nav-tabs .search .btn {
+        margin-right: -0.1rem;
+    }
+
+    .form-control-select-list .pagination {
+        margin: .1rem;
+    }
+
+    .form-text.text-muted {
+        margin-top: -.25rem;
+    }
 
 .details {
     margin-top: .2rem;

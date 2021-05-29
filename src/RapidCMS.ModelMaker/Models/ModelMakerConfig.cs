@@ -38,19 +38,18 @@ namespace RapidCMS.ModelMaker.Models
             return this;
         }
 
-        public IModelMakerConfig AddPropertyEditor(string alias, string name, EditorType editorType)
+        public IPropertyEditorConfig AddPropertyEditor(string alias, string name, EditorType editorType)
         {
-            _editors.Add(new PropertyEditorConfig(alias, name, GetEditorByEditorType(editorType)));
-
-            return this;
+            var editor = new PropertyEditorConfig(alias, name, GetEditorByEditorType(editorType));
+            _editors.Add(editor);
+            return editor;
         }
 
-        
-        public IModelMakerConfig AddPropertyEditor<TCustomEditor>(string alias, string name) where TCustomEditor : BasePropertyEditor
+        public IPropertyEditorConfig AddPropertyEditor<TCustomEditor>(string alias, string name) where TCustomEditor : BasePropertyEditor
         {
-            _editors.Add(new PropertyEditorConfig(alias, name, typeof(TCustomEditor)));
-
-            return this;
+            var editor = new PropertyEditorConfig(alias, name, typeof(TCustomEditor));
+            _editors.Add(editor);
+            return editor;
         }
 
         public IPropertyValidatorConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TValueForEditor>(
@@ -144,10 +143,8 @@ namespace RapidCMS.ModelMaker.Models
             return validator;
         }
 
-        public IPropertyConfig? GetProperty(string name)
-        {
-            return _properties.FirstOrDefault(x => x.Name == name);
-        }
+        public IPropertyConfig? GetProperty(string alias) 
+            => _properties.FirstOrDefault(x => x.Alias == alias);
 
         public IPropertyEditorConfig? GetPropertyEditor(EditorType editorType)
         {
@@ -157,14 +154,12 @@ namespace RapidCMS.ModelMaker.Models
         }
 
         public IPropertyEditorConfig? GetPropertyEditor<TCustomEditor>()
-        {
-            return _editors.FirstOrDefault(x => x.Editor == typeof(TCustomEditor));
-        }
+            => _editors.FirstOrDefault(x => x.Editor == typeof(TCustomEditor));
+        public IPropertyEditorConfig? GetPropertyEditor(string alias)
+            => _editors.FirstOrDefault(x => x.Alias == alias);
 
         public IPropertyValidatorConfig? GetPropertyValidator<TValidator>()
-        {
-            return _validators.FirstOrDefault(x => x.Validator == typeof(TValidator));
-        }
+            => _validators.FirstOrDefault(x => x.Validator == typeof(TValidator));
 
         private static Type GetEditorByEditorType(EditorType editorType) 
             => editorType switch

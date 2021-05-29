@@ -1,4 +1,6 @@
-﻿@inherits BaseDataEditor
+﻿@using System.Threading
+
+@inherits BaseDataEditor
 
 @if (Options != null)
 {
@@ -6,7 +8,30 @@
 
     var value = GetValueAsObject();
 
-    <div class="form-control form-control-select-list @(CssHelper.GetValidationClass(State))">
+    <div class="form-control form-control-select-list block @(CssHelper.GetValidationClass(State))">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <button type="button" class="btn btn-light" @onclick="ResetViewAsync"><Icon Name="Refresh" /> Reset</button>
+            </li>
+
+            <li class="nav-item search">
+                <div class="input-group">
+                    <input type="search"
+                           placeholder="Search.."
+                           class="form-control"
+                           value="@searchTerm"
+                           @onchange="(args) => Search(((string?)args.Value) ?? string.Empty)" />
+                    <div class="input-group-append">
+                        <button class="btn"
+                                @onclick="(args) => { searchTerm = string.Empty; Search(string.Empty); }">
+                            <Icon Name="Cancel" />
+                        </button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+
         @foreach (var option in Options)
         {
             index++;
@@ -37,6 +62,10 @@
                 </div>
             </div>
         }
+
+        <Paginator CurrentPage="@currentPage"
+                   MaxPage="@maxPage"
+                   OnPageChanged="@PageChangedAsync" />
     </div>
 
     @foreach (var message in GetValidationMessages())
@@ -47,10 +76,14 @@
     }
 }
 @code {
+    private string? searchTerm;
+    private int currentPage = 1;
+    private int? maxPage;
 
     private string group = Guid.NewGuid().ToString().Replace("-", "");
 
     private IEnumerable<IElement>? Options;
+    private CancellationTokenSource cts = new CancellationTokenSource();
 
     protected override async Task OnInitializedAsync()
     {
@@ -85,6 +118,22 @@
         });
     }
 
+    private async Task PageChangedAsync(int page)
+    {
+        currentPage = page;
+
+        await UpdateOptionsAsync();
+    }
+
+    private async Task ResetViewAsync(MouseEventArgs args)
+    {
+        searchTerm = "";
+        currentPage = 1;
+        maxPage = null;
+
+        await UpdateOptionsAsync();
+    }
+
     private async Task UpdateOptionsAsync()
     {
         if (DataCollection == null)
@@ -92,7 +141,17 @@
             return;
         }
 
-        Options = await DataCollection.GetAvailableElementsAsync(Query.Default());
+        var query = Query.Create(10, currentPage, searchTerm, default);
+        Options = await DataCollection.GetAvailableElementsAsync(query);
+
+        if (query.MoreDataAvailable)
+        {
+            maxPage = null;
+        }
+        else
+        {
+            maxPage = currentPage;
+        }
     }
 
     public override void Dispose()
@@ -102,6 +161,23 @@
         if (DataCollection != null)
         {
             DataCollection.OnDataChange -= UpdateOptionsAsync;
+        }
+    }
+
+    async void Search(string searchValue)
+    {
+        cts.Cancel();
+        cts = new CancellationTokenSource();
+
+        await Task.Delay(300);
+
+        if (!cts.IsCancellationRequested)
+        {
+            searchTerm = searchValue;
+
+            await UpdateOptionsAsync();
+
+            StateHasChanged();
         }
     }
 }

@@ -16,6 +16,8 @@ namespace RapidCMS.Example.Shared.Data
         [Required]
         public string? Name { get; set; }
 
+        public int PersonId { get; set; }
+
         [MaxTwo]
         public List<Person> People { get; set; } = new List<Person>();
 

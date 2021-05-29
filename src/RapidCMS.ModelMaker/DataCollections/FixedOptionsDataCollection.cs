@@ -23,7 +23,7 @@ namespace RapidCMS.ModelMaker.DataCollections
         {
         }
 
-        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync()
+        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query)
         {
             return Task.FromResult<IReadOnlyList<IElement>>(
                 _options

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RapidCMS.Core.Repositories;
+using RapidCMS.Example.ModelMaker.Components;
 using RapidCMS.Example.Shared.Collections;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.ModelMaker;
@@ -33,7 +34,13 @@ namespace RapidCMS.Example.ModelMaker
                 addDefaultPropertiesAndValidators: true,
                 config =>
                 {
-                    
+                    // extra editors can be inserted easily
+                    var customTextAreaEditor = config.AddPropertyEditor<CustomTextAreaEditor>("ctae", "Big textarea");
+
+                    // adding new editors to existing properties is possible
+                    config.GetProperty(Constants.Properties.ShortString).Editors.Add(customTextAreaEditor);
+
+
                 });
             services.AddModelMakerTableStorage();
 

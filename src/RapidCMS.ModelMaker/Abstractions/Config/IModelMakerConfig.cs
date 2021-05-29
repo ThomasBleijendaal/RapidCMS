@@ -31,9 +31,9 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
             where TCustomEditor : BasePropertyEditor
             where TDataCollection : IDataCollectionFactory;
 
-        IModelMakerConfig AddPropertyEditor(string alias, string name, EditorType editorType);
+        IPropertyEditorConfig AddPropertyEditor(string alias, string name, EditorType editorType);
 
-        IModelMakerConfig AddPropertyEditor<TCustomEditor>(string alias, string name)
+        IPropertyEditorConfig AddPropertyEditor<TCustomEditor>(string alias, string name)
             where TCustomEditor : BasePropertyEditor;
 
         IModelMakerConfig AddProperty<TValue>(string alias, string name, string icon,
@@ -42,8 +42,9 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
 
         IPropertyEditorConfig? GetPropertyEditor(EditorType editorType);
         IPropertyEditorConfig? GetPropertyEditor<TCustomEditor>();
+        IPropertyEditorConfig? GetPropertyEditor(string alias);
         IPropertyValidatorConfig? GetPropertyValidator<TValidator>();
-        IPropertyConfig? GetProperty(string name);
+        IPropertyConfig? GetProperty(string alias);
 
         IEnumerable<IPropertyEditorConfig> Editors { get; }
         IEnumerable<IPropertyValidatorConfig> Validators { get; }

@@ -63,8 +63,12 @@ namespace RapidCMS.Repositories
 
             if (query.SearchTerm != null)
             {
-                // this is not a very useful search function, but it's just an example
-                dataQuery = dataQuery.Where(x => x.Id != null && x.Id.Contains(query.SearchTerm));
+                var stringProperties = typeof(TEntity).GetProperties().Where(x => x.PropertyType == typeof(string)).ToList();
+
+                // this is not a very fast or sensible search function, but it's just an example that works for all entities
+                dataQuery = dataQuery
+                    .Where(x => stringProperties
+                        .Any(property => (property.GetValue(x) as string) != null ? ((string)property.GetValue(x)!).Contains(query.SearchTerm) : false));
             }
 
             dataQuery = query.ApplyOrder(dataQuery);

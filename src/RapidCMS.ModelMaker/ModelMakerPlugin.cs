@@ -226,7 +226,7 @@ namespace RapidCMS.ModelMaker
                 EditorType = EditorType.Custom,
                 Index = index,
                 Name = property.Name,
-                Property = new PropertyMetadata<ModelMakerEntity, object?>(
+                Property = new PropertyMetadata<ModelMakerEntity, object?>( // TODO: pinning this to object? really impairs the functionality of some editors
                     property.Alias,
                     entity => entity.Get(property.Alias),
                     (entity, value) => entity.Set(property.Alias, value),

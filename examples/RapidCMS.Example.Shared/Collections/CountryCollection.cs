@@ -58,6 +58,15 @@ namespace RapidCMS.Example.Shared.Collections
                             section.AddField(x => x.Name);
                             section.AddField(x => x.Metadata.Continent);
 
+
+                            section.AddField(x => x.PersonId)
+                                .SetType(EditorType.EntityPicker)
+                                .SetCollectionRelation<Person>("person", relation =>
+                                {
+                                    relation.SetElementIdProperty(x => x.Id);
+                                    relation.SetElementDisplayProperties(x => x.Name);
+                                });
+
                             // this property contains a list of people it is related to
                             // you can see it as a ICollection<TRelated> property in EF Core
 
