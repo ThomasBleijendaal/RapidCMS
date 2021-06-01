@@ -19,7 +19,8 @@ namespace RapidCMS.Repositories
     {
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
-            TypeNameHandling = TypeNameHandling.All
+            TypeNameHandling = TypeNameHandling.All,
+            Formatting = Formatting.Indented
         };
 
         public JsonRepository(IMediator mediator, IServiceProvider serviceProvider) : base(mediator, serviceProvider)

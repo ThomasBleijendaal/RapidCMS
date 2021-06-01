@@ -59,13 +59,13 @@ namespace RapidCMS.Example.Shared.Collections
                             //section.AddField(x => x.Metadata.Continent);
 
 
-                            //section.AddField(x => x.PersonId)
-                            //    .SetType(EditorType.EntityPicker)
-                            //    .SetCollectionRelation<Person>("person", relation =>
-                            //    {
-                            //        relation.SetElementIdProperty(x => x.Id);
-                            //        relation.SetElementDisplayProperties(x => x.Name);
-                            //    });
+                            section.AddField(x => x.PersonId)
+                                .SetType(EditorType.Dropdown)
+                                .SetCollectionRelation<Person>("person", relation =>
+                                {
+                                    relation.SetElementIdProperty(x => x.Id);
+                                    relation.SetElementDisplayProperties(x => x.Name);
+                                });
 
                             section.AddField(x => x.People2)
                                 .SetType(EditorType.EntitiesPicker)
