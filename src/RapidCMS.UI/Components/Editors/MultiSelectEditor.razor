@@ -93,17 +93,17 @@
         Options = await RelationDataCollection.GetAvailableElementsAsync(Query.Default());
     }
 
-    private async Task OnChangeAsync(ChangeEventArgs e, object value)
+    private void OnChangeAsync(ChangeEventArgs e, object value)
     {
         var element = Options!.First(x => x.Id.Equals(value));
 
         if ((bool?)e.Value == true)
         {
-            await RelationDataCollection!.AddElementAsync(element);
+            RelationDataCollection!.AddElement(element);
         }
         else
         {
-            await RelationDataCollection!.RemoveElementAsync(element);
+            RelationDataCollection!.RemoveElement(element);
         }
 
         EditContext.NotifyPropertyChanged(Property);

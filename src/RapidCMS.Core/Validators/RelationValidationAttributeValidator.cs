@@ -19,7 +19,7 @@ namespace RapidCMS.Core.Validators
             _property = property;
         }
 
-        public IEnumerable<ValidationResult> Validate(IEntity entity, IEnumerable<IElement> relatedElements, IServiceProvider serviceProvider)
+        public IEnumerable<ValidationResult> Validate(IEntity entity, IReadOnlyList<object> relatedElementIds, IServiceProvider serviceProvider)
         {
             var validationAttributes = _property.GetAttributes<RelationValidationAttribute>();
             var validationContext = new ValidationContext(entity, serviceProvider, default)
@@ -28,7 +28,7 @@ namespace RapidCMS.Core.Validators
             };
 
             return validationAttributes
-                .Select(attr => attr.IsValid(entity, relatedElements, validationContext))
+                .Select(attr => attr.IsValid(entity, relatedElementIds, validationContext))
                 .SelectNotNull(result => result as ValidationResult);
         }
     }

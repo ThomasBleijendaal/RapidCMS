@@ -49,13 +49,17 @@ namespace RapidCMS.Core.Enums
         Dropdown,
 
         /// <summary>
-        /// A list of options accepting a string, requires a data provider to privide the options
+        /// A list of options accepting a string, requires a data provider to privide the options.
+        /// 
+        /// NOTE: Consider using EntityPicker. That control has better UX but is somewhat bigger.
         /// </summary>
         [Relation(RelationType.One)]
         Select,
 
         /// <summary>
-        /// A list of options acceting an array of strings, requires a data provider to provide the options, returning the selected items via the RelationContainer in EditContext
+        /// A list of options accepting an array of strings, requires a data provider to provide the options, returning the selected items via the RelationContainer in EditContext
+        /// 
+        /// NOTE: Consider using EntitiesPicker. That control has better UX but is somewhat bigger.
         /// </summary>
         [Relation(RelationType.Many)]
         MultiSelect,
@@ -70,6 +74,12 @@ namespace RapidCMS.Core.Enums
         /// A picker with search and navigation features for selecting an entity
         /// </summary>
         [Relation(RelationType.One)]
-        EntityPicker
+        EntityPicker,
+
+        /// <summary>
+        /// A picker with search and navigation features for selecting multiple entities
+        /// </summary>
+        [Relation(RelationType.Many)]
+        EntitiesPicker
     }
 }

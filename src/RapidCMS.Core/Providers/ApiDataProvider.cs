@@ -12,13 +12,13 @@ namespace RapidCMS.Core.Providers
     internal class ApiDataProvider : IDataValidationProvider
     {
         private IRelationValidator? _validator { get; set; }
-        private IReadOnlyList<IElement> _relatedElements { get; set; }
+        private IReadOnlyList<object> _relatedElementIds { get; set; }
 
         public ApiDataProvider(IRelation relation)
         {
             _validator =  new RelationValidationAttributeValidator(relation.Property);
             Property = relation.Property;
-            _relatedElements = relation.RelatedElements;
+            _relatedElementIds = relation.RelatedElementIds;
         }
 
         public IPropertyMetadata Property { get; private set; }
@@ -27,7 +27,7 @@ namespace RapidCMS.Core.Providers
         {
             if (_validator != null)
             {
-                return _validator.Validate(entity, _relatedElements, serviceProvider);
+                return _validator.Validate(entity, _relatedElementIds, serviceProvider);
             }
             else
             {

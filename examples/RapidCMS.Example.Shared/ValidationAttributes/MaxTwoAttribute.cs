@@ -8,9 +8,9 @@ namespace RapidCMS.Example.Shared.ValidationAttributes
 {
     public class MaxTwoAttribute : RelationValidationAttribute
     {
-        public override ValidationResult? IsValid(IEntity entity, IEnumerable<IElement> relatedElements, ValidationContext validationContext)
+        public override ValidationResult? IsValid(IEntity entity, IReadOnlyList<object> relatedElementIds, ValidationContext validationContext)
         {
-            if (relatedElements.Count() <= 2)
+            if (relatedElementIds.Count() <= 2)
             {
                 return null;
             }

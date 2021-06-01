@@ -16,13 +16,13 @@
                     <div class="col">
                         <label class="form-check-label row" for="@_group-option@(index)">
                             <input class="form-check-input"
-                                   type="radio"
+                                   type="checkbox"
                                    value=@option.Id
                                    id="@_group-option@(index)"
                                    name=@_group
                                    checked=@(IsSelected(option.Id))
                                    disabled=@IsDisabled
-                                   @onchange=@(args => SelectElement(option.Id, true)) />
+                                   @onchange=@(args => SelectElement(option.Id, (bool?)args.Value)) />
                             @option.Labels.First()
                         </label>
                     </div>
@@ -49,4 +49,9 @@
             @message
         </div>
     }
+}
+
+@code {
+    // TODO: move to inheritance
+    protected override bool IsMultiple { get; set; } = true;
 }

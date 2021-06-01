@@ -16,6 +16,9 @@ namespace RapidCMS.Example.Shared.Data
         [Required]
         public string? Name { get; set; }
 
+        [MaxTwo]
+        public List<Person> People2 { get; set; } = new List<Person>();
+
         public int PersonId { get; set; }
 
         [MaxTwo]
@@ -30,6 +33,8 @@ namespace RapidCMS.Example.Shared.Data
                 Id = Id,
                 Name = Name,
                 People = People.ToList(),
+                People2 = People2.ToList(),
+                PersonId = PersonId,
                 Metadata = new CountryMetadata
                 {
                     Continent = Metadata.Continent

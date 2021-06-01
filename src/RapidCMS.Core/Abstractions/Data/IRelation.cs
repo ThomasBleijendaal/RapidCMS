@@ -8,7 +8,7 @@ namespace RapidCMS.Core.Abstractions.Data
     {
         Type RelatedEntityType { get; }
         IPropertyMetadata Property { get; }
-        IReadOnlyList<IElement> RelatedElements { get; }
+        IReadOnlyList<object> RelatedElementIds { get; }
         IReadOnlyList<T> RelatedElementIdsAs<T>();
     }
 }

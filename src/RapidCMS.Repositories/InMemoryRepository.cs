@@ -10,6 +10,7 @@ using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Repositories;
 
@@ -68,18 +69,21 @@ namespace RapidCMS.Repositories
                 // this is not a very fast or sensible search function, but it's just an example that works for all entities
                 dataQuery = dataQuery
                     .Where(x => stringProperties
-                        .Any(property => (property.GetValue(x) as string) != null ? ((string)property.GetValue(x)!).Contains(query.SearchTerm) : false));
+                        .Any(property => (property.GetValue(x) as string) != null ? ((string)property.GetValue(x)!).Contains(query.SearchTerm, StringComparison.InvariantCultureIgnoreCase) : false));
             }
 
             dataQuery = query.ApplyOrder(dataQuery);
 
-            var data = dataQuery
+            var dataQueryResult = dataQuery
                 .Skip(query.Skip)
+                .Take(query.Take + 1)
+                .ToList();
+
+            var data = dataQueryResult
                 .Take(query.Take)
-                .ToList()
                 .Select(x => (TEntity)x.Clone());
 
-            query.HasMoreData(GetListForParent(parent).Count > (query.Skip + query.Take));
+            query.HasMoreData(dataQueryResult.Count > query.Take);
 
             return Task.FromResult(data);
         }
@@ -223,27 +227,28 @@ namespace RapidCMS.Repositories
                 // use relations to process one-to-many relations between collections / tables
                 // it contains a list of selected Ids, which should be used to update the relations
 
-                foreach (var r in relations.Relations)
+                foreach (var relation in relations.Relations)
                 {
                     try
                     {
-                        if (r.Property is IFullPropertyMetadata fp)
+                        if (relation.Property is IFullPropertyMetadata fp)
                         {
                             // this is pretty ugly
-                            var inMemoryRepo = _serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(r.RelatedEntityType)) as IRepository;
-                            var jsonRepo = _serviceProvider.GetService(typeof(JsonRepository<>).MakeGenericType(r.RelatedEntityType)) as IRepository;
-                            var lsRepo = _serviceProvider.GetService(typeof(LocalStorageRepository<>).MakeGenericType(r.RelatedEntityType)) as IRepository;
-                            var baseRepo = _serviceProvider.GetService(typeof(BaseRepository<>).MakeGenericType(r.RelatedEntityType)) as IRepository;
+                            var inMemoryRepo = _serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
+                            var jsonRepo = _serviceProvider.GetService(typeof(JsonRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
+                            var lsRepo = _serviceProvider.GetService(typeof(LocalStorageRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
+                            var baseRepo = _serviceProvider.GetService(typeof(BaseRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
 
                             var repo = inMemoryRepo ?? jsonRepo ?? lsRepo ?? baseRepo;
 
                             if (repo != null)
                             {
-                                var relatedEntities = await r.RelatedElements
-                                    .Select(x => x.Id.ToString())
+                                var relatedEntities = await relation.RelatedElementIds
+                                    .Select(x => x?.ToString())
+                                    .OfType<string>()
                                     .ToListAsync(async id =>
                                     {
-                                        var entity = await repo.GetByIdAsync(id!, null);
+                                        var entity = await repo.GetByIdAsync(id!, new ViewContext("", default));
                                         return entity;
                                     });
 

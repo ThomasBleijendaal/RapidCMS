@@ -27,7 +27,7 @@ namespace RapidCMS.Core.Providers
 
         private readonly IDisposable? _eventHandle;
 
-        private ICollection<object>? _relatedIds;
+        private List<object>? _relatedIds;
 
         public CollectionDataProvider(
             IRepository repository,
@@ -52,8 +52,6 @@ namespace RapidCMS.Core.Providers
             if ((!string.IsNullOrEmpty(_setup.RepositoryAlias) && args.RepositoryAlias == _setup.RepositoryAlias) ||
                 (string.IsNullOrEmpty(_setup.RepositoryAlias) && args.CollectionAlias == _setup.CollectionAlias))
             {
-                //await SetElementsAsync(refreshCache: true);
-
                 OnDataChange?.Invoke(sender, EventArgs.Empty);
             }
 
@@ -65,16 +63,14 @@ namespace RapidCMS.Core.Providers
             _editContext = editContext;
             _parent = parent;
 
-            //await SetElementsAsync();
-
             var data = _setup.RelatedElementsGetter?.Getter(_property.Getter(_editContext.Entity)) ?? _property.Getter(_editContext.Entity);
-            if (data is ICollection<IEntity> entityCollection)
+            if (data is IEnumerable<IEntity> entityCollection)
             {
                 _relatedIds = entityCollection.Select(x => (object)x.Id!).ToList();
             }
-            else if (data is ICollection<object> objectCollection)
+            else if (data is IEnumerable<object> objectCollection)
             {
-                _relatedIds = objectCollection;
+                _relatedIds = objectCollection.ToList();
             }
             else if (data is IEnumerable enumerable)
             {
@@ -90,46 +86,8 @@ namespace RapidCMS.Core.Providers
             }
 
             return Task.CompletedTask;
-
-            //UpdateRelatedElements();
         }
 
-        //private async Task SetElementsAsync(bool refreshCache = false)
-        //{
-        //    if (_editContext == null)
-        //    {
-        //        return;
-        //    }
-
-        //    var parent = default(IParent?);
-
-        //    if (_setup.EntityAsParent && _editContext.EntityState != EntityState.IsNew)
-        //    {
-        //        parent = new ParentEntity(_editContext.Parent, _editContext.Entity, _editContext.RepositoryAlias);
-        //    }
-
-        //    if (_setup.RepositoryParentSelector != null && _parent != null)
-        //    {
-        //        parent = _setup.RepositoryParentSelector.Getter.Invoke(_parent) as IParent;
-        //    }
-
-        //    var entities = await _repository.GetAllAsync(new ViewContext(_editContext.CollectionAlias, parent), Query.Default(_editContext.CollectionAlias));
-
-        //    _elements = entities
-        //        .Select(entity => (IElement)new Element
-        //        {
-        //            Id = _setup.IdProperty.Getter(entity),
-        //            Labels = _setup.DisplayProperties.Select(x => x.StringGetter(entity)).ToList()
-        //        })
-        //        .ToList();
-        //}
-
-        //private void UpdateRelatedElements()
-        //{
-        //    _relatedElements = _elements?.Where(x => _relatedIds?.Contains(x.Id) ?? false).ToList();
-        //}
-
-        // TODO: implement query and remove _elements
         public async Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query)
         {
             if (_editContext == null)
@@ -176,52 +134,28 @@ namespace RapidCMS.Core.Providers
             return elements.Where(x => _relatedIds.Contains(x.Id)).ToList();
         }
 
-        public Task AddElementAsync(IElement option)
+        public void AddElement(object id)
         {
             if (_relatedIds != null)
             {
-                _relatedIds.Add(option.Id);
+                _relatedIds.Add(id);
             }
-
-            return Task.CompletedTask;
         }
 
-        public Task RemoveElementAsync(IElement option)
+        public void RemoveElement(object id)
         {
             if (_relatedIds != null)
             {
-                _relatedIds.Remove(option.Id);
+                _relatedIds.Remove(id);
             }
-
-            return Task.CompletedTask;
         }
 
-        //public Task SetElementAsync(IElement option)
-        //{
-        //    _relatedElements?.Clear();
-        //    if (_elements != null)
-        //    {
-        //        _relatedElements?.Add(_elements.First(x => x.Id == option.Id));
-        //    }
+        public bool IsRelated(object id) => _relatedIds?.Any(x => x.Equals(id)) ?? false;
 
-        //    return Task.CompletedTask;
-        //}
+        public IReadOnlyList<object> GetCurrentRelatedElementIds() => _relatedIds ?? new List<object>();
 
-        public IReadOnlyList<IElement> GetCurrentRelatedElements()
-        {
-            // TODO: fix this issue
-            return new List<IElement>();
-            //return _relatedElements ?? new List<IElement>();
-        }
+        public Type GetRelatedEntityType() => _setup.RelatedEntityType ?? typeof(object);
 
-        public Type GetRelatedEntityType()
-        {
-            return _setup.RelatedEntityType ?? typeof(object);
-        }
-
-        public void Dispose()
-        {
-            _eventHandle?.Dispose();
-        }
+        public void Dispose() => _eventHandle?.Dispose();
     }
 }
