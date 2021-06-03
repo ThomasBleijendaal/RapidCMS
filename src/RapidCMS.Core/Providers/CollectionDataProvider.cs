@@ -27,7 +27,7 @@ namespace RapidCMS.Core.Providers
 
         private readonly IDisposable? _eventHandle;
 
-        private List<object>? _relatedIds;
+        private List<object> _relatedIds = new List<object>();
 
         public CollectionDataProvider(
             IRepository repository,
@@ -125,7 +125,7 @@ namespace RapidCMS.Core.Providers
 
         public async Task<IReadOnlyList<IElement>> GetRelatedElementsAsync()
         {
-            if (_relatedIds == null)
+            if (!_relatedIds.Any())
             {
                 return new List<IElement>();
             }
@@ -134,25 +134,13 @@ namespace RapidCMS.Core.Providers
             return elements.Where(x => _relatedIds.Contains(x.Id)).ToList();
         }
 
-        public void AddElement(object id)
-        {
-            if (_relatedIds != null)
-            {
-                _relatedIds.Add(id);
-            }
-        }
+        public void AddElement(object id) => _relatedIds.Add(id);
 
-        public void RemoveElement(object id)
-        {
-            if (_relatedIds != null)
-            {
-                _relatedIds.Remove(id);
-            }
-        }
+        public void RemoveElement(object id) => _relatedIds.Remove(id);
 
-        public bool IsRelated(object id) => _relatedIds?.Any(x => x.Equals(id)) ?? false;
+        public bool IsRelated(object id) => _relatedIds.Any(x => x.Equals(id));
 
-        public IReadOnlyList<object> GetCurrentRelatedElementIds() => _relatedIds ?? new List<object>();
+        public IReadOnlyList<object> GetCurrentRelatedElementIds() => _relatedIds;
 
         public Type GetRelatedEntityType() => _setup.RelatedEntityType ?? typeof(object);
 

@@ -84,7 +84,7 @@ namespace RapidCMS.UI.Components.Editors
                 return;
             }
 
-            var query = Query.Create(5, _currentPage, _searchTerm, default);
+            var query = Query.Create(25, _currentPage, _searchTerm, default);
             _options = await DataCollection.GetAvailableElementsAsync(query);
 
             if (query.MoreDataAvailable)

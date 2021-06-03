@@ -45,6 +45,7 @@ namespace RapidCMS.ModelMaker
                 services.AddTransient<MaxLengthValidator>();
                 services.AddTransient<LimitedOptionsValidator>();
                 services.AddTransient<LinkedEntityValidator>();
+                services.AddTransient<LinkedEntitiesValidator>();
 
                 config.AddPropertyValidator<MinLengthValidator, string, MinLengthValidationConfig, int?>(
                     Constants.Validators.MinLength,
@@ -70,7 +71,14 @@ namespace RapidCMS.ModelMaker
                 config.AddPropertyValidator<LinkedEntityValidator, string, LinkedEntityValidationConfig, string, LinkedEntityDataCollectionFactory>(
                     Constants.Validators.LinkedEntity,
                     "Linked entity",
-                    "The value has to be one of entities of the linked collection",
+                    "The value has to be one of the entities of the linked collection",
+                    EditorType.Dropdown,
+                    x => x.Config.CollectionAlias);
+
+                config.AddPropertyValidator<LinkedEntitiesValidator, List<string>, LinkedEntityValidationConfig, string, LinkedEntityDataCollectionFactory>(
+                    Constants.Validators.LinkedEntities,
+                    "Linked entity",
+                    "The value has to be one or more of the entities of the linked collection",
                     EditorType.Dropdown,
                     x => x.Config.CollectionAlias);
 
@@ -80,53 +88,65 @@ namespace RapidCMS.ModelMaker
                 config.AddPropertyEditor(Constants.Editors.Checkbox, "Checkbox", EditorType.Checkbox);
                 config.AddPropertyEditor(Constants.Editors.Date, "Date", EditorType.Date);
                 config.AddPropertyEditor(Constants.Editors.Dropdown, "Dropdown", EditorType.Dropdown);
+                config.AddPropertyEditor(Constants.Editors.EntitiesPicker, "Entities Picker", EditorType.EntitiesPicker);
+                config.AddPropertyEditor(Constants.Editors.EntityPicker, "Enitity Picker", EditorType.EntityPicker);
                 config.AddPropertyEditor(Constants.Editors.MultiSelect, "Multi-select", EditorType.MultiSelect);
                 config.AddPropertyEditor(Constants.Editors.Numeric, "Numeric", EditorType.Numeric);
                 config.AddPropertyEditor(Constants.Editors.Select, "Select", EditorType.Select);
                 config.AddPropertyEditor(Constants.Editors.TextArea, "Text area", EditorType.TextArea);
                 config.AddPropertyEditor(Constants.Editors.TextBox, "Text box", EditorType.TextBox);
-                
-                config.AddProperty<string>(
-                    Constants.Properties.ShortString,
-                    "Short string",
-                    "Label",
-                    new[] { Constants.Editors.TextBox, Constants.Editors.TextArea, Constants.Editors.Dropdown },
-                    new[] { Constants.Validators.MinLength, Constants.Validators.MaxLength, Constants.Validators.LimitedOptions });
 
                 config.AddProperty<string>(
-                    Constants.Properties.LongString,
-                    "Long string",
-                    "Label",
-                    new[] { Constants.Editors.TextArea },
-                    new[] { Constants.Validators.MinLength });
+                        Constants.Properties.ShortString,
+                        "Short string",
+                        "Label",
+                        new[] { Constants.Editors.TextBox, Constants.Editors.TextArea, Constants.Editors.Dropdown },
+                        new[] { Constants.Validators.MinLength, Constants.Validators.MaxLength, Constants.Validators.LimitedOptions });
+
+                config.AddProperty<string>(
+                        Constants.Properties.LongString,
+                        "Long string",
+                        "Label",
+                        new[] { Constants.Editors.TextArea },
+                        new[] { Constants.Validators.MinLength });
 
                 config.AddProperty<bool>(
-                    Constants.Properties.Boolean,
-                    "Boolean",
-                    "ToggleLeft",
-                    new[] { Constants.Editors.Checkbox },
-                    Enumerable.Empty<string>()); // TODO: dropdown with labels for true / false
+                        Constants.Properties.Boolean,
+                        "Boolean",
+                        "ToggleLeft",
+                        new[] { Constants.Editors.Checkbox },
+                        Enumerable.Empty<string>()); // TODO: dropdown with labels for true / false
 
                 config.AddProperty<string>(
-                    Constants.Properties.LinkedEntity, 
-                    "Linked entity", 
-                    "Link", 
-                    new[] { Constants.Editors.Dropdown, Constants.Editors.Select }, 
-                    new[] { Constants.Validators.LinkedEntity });
+                        Constants.Properties.LinkedEntity,
+                        "Linked entity",
+                        "Link",
+                        new[] { Constants.Editors.EntityPicker },
+                        new[] { Constants.Validators.LinkedEntity })
+                    .CanBeUsedAsTitle(false);
+
+                config.AddProperty<List<string>>(
+                        Constants.Properties.LinkedEntities,
+                        "Linked entities",
+                        "Link",
+                        new[] { Constants.Editors.EntitiesPicker },
+                        new[] { Constants.Validators.LinkedEntities }) // TODO: min max linkedentities
+                    .CanBeUsedAsTitle(false);
 
                 config.AddProperty<DateTime>(
-                    Constants.Properties.Date,
-                    "Date",
-                    "Calendar",
-                    new[] { Constants.Editors.Date },
-                    Enumerable.Empty<string>()); // TODO: date validation (valid ranges etc)
+                        Constants.Properties.Date,
+                        "Date",
+                        "Calendar",
+                        new[] { Constants.Editors.Date },
+                        Enumerable.Empty<string>()); // TODO: date validation (valid ranges etc)
 
                 config.AddProperty<double>(
-                    Constants.Properties.Numeric,
-                    "Number",
-                    "NumberField",
-                    new[] { Constants.Editors.Numeric },
-                    Enumerable.Empty<string>()); // TODO: min max limitedoptions
+                        Constants.Properties.Numeric,
+                        "Number",
+                        "NumberField",
+                        new[] { Constants.Editors.Numeric },
+                        Enumerable.Empty<string>())
+                    .CanBeUsedAsTitle(false); // TODO: min max limitedoptions
 
                 // TODO: slug, media, reference(s) (model maker / external), markdown, JSON object, date, date time, time, rich text
             }

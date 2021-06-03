@@ -11,6 +11,6 @@ namespace RapidCMS.ModelMaker.Validation.Config
         public bool IsEnabled => !string.IsNullOrWhiteSpace(CollectionAlias);
 
         public bool IsApplicable(PropertyModel model)
-            => model.EditorAlias.In(Constants.Editors.Dropdown, Constants.Editors.Select);
+            => model.EditorAlias.In(Constants.Editors.EntityPicker, Constants.Editors.EntitiesPicker);
     }
 }

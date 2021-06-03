@@ -26,16 +26,18 @@ namespace RapidCMS.ModelMaker.Models
 
         public IEnumerable<IPropertyConfig> Properties => _properties;
 
-        public IModelMakerConfig AddProperty<TValue>(string alias, string name, string icon, IEnumerable<string> editorAliases, IEnumerable<string> validatorAliases)
+        public IPropertyConfig AddProperty<TValue>(string alias, string name, string icon, IEnumerable<string> editorAliases, IEnumerable<string> validatorAliases)
         {
-            _properties.Add(new PropertyConfig(
+            var property = new PropertyConfig(
                 alias,
                 name,
                 icon,
                 validatorAliases.Select(x => _validators.FirstOrDefault(v => v.Alias == x) ?? throw new InvalidOperationException($"Cannot find validator with alias {x}")).ToList(),
-                editorAliases.Select(x => _editors.FirstOrDefault(e => e.Alias == x) ?? throw new InvalidOperationException($"Cannot find editor with alias {x}")).ToList()));
+                editorAliases.Select(x => _editors.FirstOrDefault(e => e.Alias == x) ?? throw new InvalidOperationException($"Cannot find editor with alias {x}")).ToList());
 
-            return this;
+            _properties.Add(property);
+
+            return property;
         }
 
         public IPropertyEditorConfig AddPropertyEditor(string alias, string name, EditorType editorType)
@@ -167,14 +169,16 @@ namespace RapidCMS.ModelMaker.Models
                 // TODO: check if all types are supported 
 
                 EditorType.Checkbox => typeof(CheckboxEditor),
-                EditorType.TextBox => typeof(TextBoxEditor),
-                EditorType.TextArea => typeof(TextAreaEditor),
-                EditorType.Numeric => typeof(NumericEditor),
                 EditorType.Date => typeof(DateEditor),
                 EditorType.Dropdown => typeof(DropdownEditor),
-                EditorType.Select => typeof(SelectEditor),
-                EditorType.MultiSelect => typeof(MultiSelectEditor),
+                EditorType.EntitiesPicker => typeof(EntitiesPickerEditor),
+                EditorType.EntityPicker => typeof(EntityPickerEditor),
                 EditorType.ListEditor => typeof(ListEditor),
+                EditorType.MultiSelect => typeof(MultiSelectEditor),
+                EditorType.Numeric => typeof(NumericEditor),
+                EditorType.Select => typeof(SelectEditor),
+                EditorType.TextBox => typeof(TextBoxEditor),
+                EditorType.TextArea => typeof(TextAreaEditor),
 
                 _ => throw new InvalidOperationException($"EditorType.{editorType} is not a valid option."),
             };

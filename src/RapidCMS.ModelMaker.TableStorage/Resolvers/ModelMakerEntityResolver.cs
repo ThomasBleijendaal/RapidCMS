@@ -14,6 +14,8 @@ namespace RapidCMS.ModelMaker.TableStorage.Resolvers
         {
             _settings = new JsonSerializerSettings
             {
+                // TODO: is this the best way?
+                TypeNameHandling = TypeNameHandling.All
             };
         }
 

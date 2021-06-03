@@ -8,7 +8,11 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
         string Name { get; }
         string Icon { get; }
 
+        bool UsableAsTitle { get; }
+
         IList<IPropertyValidatorConfig> Validators { get; }
         IList<IPropertyEditorConfig> Editors { get; }
+
+        IPropertyConfig CanBeUsedAsTitle(bool usedAsTitle);
     }
 }

@@ -7,6 +7,8 @@
             public const string Checkbox = "checkbox";
             public const string Date = "date";
             public const string Dropdown = "dropdown";
+            public const string EntitiesPicker = "entitiespicker";
+            public const string EntityPicker = "entitypicker";
             public const string MultiSelect = "multiselect";
             public const string Numeric = "numeric";
             public const string Select = "select";
@@ -17,6 +19,7 @@
         public static class Validators
         {
             public const string LimitedOptions = "limitedOptions";
+            public const string LinkedEntities = "linkedEntities";
             public const string LinkedEntity = "linkedEntity";
             public const string MaxLength = "maxlength";
             public const string MinLength = "minlength";
@@ -26,6 +29,7 @@
         {
             public const string Boolean = "boolean";
             public const string Date = "date";
+            public const string LinkedEntities = "linkedentities";
             public const string LinkedEntity = "linkedentity";
             public const string LongString = "longstring";
             public const string Numeric = "double";

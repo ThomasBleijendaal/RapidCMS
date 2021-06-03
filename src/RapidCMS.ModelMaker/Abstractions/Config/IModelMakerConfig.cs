@@ -36,7 +36,7 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
         IPropertyEditorConfig AddPropertyEditor<TCustomEditor>(string alias, string name)
             where TCustomEditor : BasePropertyEditor;
 
-        IModelMakerConfig AddProperty<TValue>(string alias, string name, string icon,
+        IPropertyConfig AddProperty<TValue>(string alias, string name, string icon,
             IEnumerable<string> editorAliases,
             IEnumerable<string> validatorAliases);
 

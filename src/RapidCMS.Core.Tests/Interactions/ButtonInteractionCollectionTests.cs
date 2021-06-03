@@ -35,7 +35,6 @@ namespace RapidCMS.Core.Tests.Interactions
                         default,
                         "name",
                         alias,
-                        default,
                         default)
                     {
                         EntityVariant = new EntityVariantSetup("default", default, typeof(DefaultEntityVariant), "alias")

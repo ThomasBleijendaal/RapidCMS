@@ -228,6 +228,11 @@ namespace RapidCMS.ModelMaker.Repositories
             var propertyConfig = _config.Properties.FirstOrDefault(x => x.Alias == property.PropertyAlias);
             if (propertyConfig != null)
             {
+                if (!propertyConfig.UsableAsTitle)
+                {
+                    property.IsTitle = false;
+                }
+
                 var validations = _config.Validators.Where(x => propertyConfig.Validators.Any(v => v.Alias == x.Alias));
 
                 var newValidations = new List<PropertyValidationModel>();

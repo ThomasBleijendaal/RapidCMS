@@ -29,7 +29,6 @@ namespace RapidCMS.Core.Models.Config
             EntityVariant = entityVariant ?? throw new ArgumentNullException(nameof(entityVariant));
         }
 
-        public bool Recursive { get; set; }
         public string Alias { get; internal set; }
         internal string? Icon { get; set; }
         internal string? Color { get; set; }
@@ -92,6 +91,14 @@ namespace RapidCMS.Core.Models.Config
         internal ListConfig? ListEditor { get; set; }
         internal NodeConfig? NodeView { get; set; }
         internal NodeConfig? NodeEditor { get; set; }
+    }
+
+    internal class ReferencedCollectionConfig : CollectionConfig
+    {
+        internal ReferencedCollectionConfig(string alias) 
+            : base(alias, default, default, default, "reference", typeof(IRepository), new EntityVariantConfig("", typeof(IEntity)))
+        {
+        }
     }
 
     internal class CollectionConfig<TEntity> : CollectionConfig, ICollectionConfig<TEntity>
@@ -193,6 +200,15 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
+        public ICollectionConfig<TEntity> AddSubCollection(string alias)
+        {
+            var configReceiver = new ReferencedCollectionConfig(alias);
+
+            _collections.Add(configReceiver);
+
+            return this;
+        }
+
         public ICollectionConfig<TSubEntity> AddSubCollection<TSubEntity, TRepository>(string alias, string name, Action<ICollectionConfig<TSubEntity>> configure)
             where TSubEntity : class, IEntity
             where TRepository : IRepository 
@@ -238,14 +254,13 @@ namespace RapidCMS.Core.Models.Config
             return configReceiver;
         }
 
-        public void AddSelfAsRecursiveCollection()
+        public ICollectionConfig<TEntity> AddSelfAsRecursiveCollection()
         {
-            var configReceiver = new CollectionConfig<TEntity>(Alias, Alias, Icon, Color, Name, RepositoryType, EntityVariant)
-            {
-                Recursive = true
-            };
+            var configReceiver = new ReferencedCollectionConfig(Alias);
 
             _collections.Add(configReceiver);
+
+            return this;
         }
 
         public ICollectionDetailPageEditorConfig<TDetailEntity> AddDetailPage<TDetailEntity, TDetailRepository>(string alias, string name, Action<ICollectionDetailPageEditorConfig<TDetailEntity>> configure)

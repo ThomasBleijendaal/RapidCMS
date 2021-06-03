@@ -57,7 +57,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             void MapCollections(IEnumerable<CollectionConfig> collections)
             {
-                foreach (var collection in collections.Where(col => !col.Recursive))
+                foreach (var collection in collections.Where(col => col is not ReferencedCollectionConfig))
                 {
                     if (!_collectionMap.TryAdd(collection.Alias, collection))
                     {
@@ -124,8 +124,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 config.Color,
                 config.Name,
                 config.Alias,
-                repositoryAlias,
-                isRecursive: config.Recursive)
+                repositoryAlias)
             {
                 DataViews = config.DataViews,
                 DataViewBuilder = config.DataViewBuilder,

@@ -111,8 +111,7 @@ namespace RapidCMS.ModelMaker
                 "Cyan10",
                 definition.Name,
                 definition.Alias,
-                definition.Alias,
-                false)
+                definition.Alias)
             {
                 EntityVariant = entityVariantSetup,
                 UsageType = UsageType.List,
@@ -213,7 +212,7 @@ namespace RapidCMS.ModelMaker
 
                 if (validator != null && _serviceProvider.GetService<IDataCollectionFactory>(validator.DataCollectionFactory!) is IDataCollectionFactory dataCollectionFactory)
                 {
-                    relationSetup = await dataCollectionFactory.GetModelRelationSetupAsync(property.Validations.First(x => x.Alias == validator.Alias).Config);
+                    relationSetup = await dataCollectionFactory.GetModelRelationSetupAsync(property.GetValidation(validator.Alias).Config);
                 }
             }
             catch (InvalidOperationException ex)
@@ -250,8 +249,7 @@ namespace RapidCMS.ModelMaker
                 "MagentaPink10",
                 "Properties",
                 "modelmaker::property",
-                "modelmaker::property",
-                false)
+                "modelmaker::property")
             {
                 EntityVariant = entityVariantSetup,
                 UsageType = UsageType.List,
@@ -281,8 +279,7 @@ namespace RapidCMS.ModelMaker
                         },
                         new List<FieldSetup>
                         {
-                            CreateExpressionField(DisplayType.Label, EditorType.None, 1, "Property name", new ExpressionMetadata<PropertyModel>("Name", x => x.Name)),
-                            CreateExpressionField(DisplayType.Label, EditorType.None, 2, "Is Title", new ExpressionMetadata<PropertyModel>("IsTitle", x => x.IsTitle ? "Yes" : "No")),
+                            CreateExpressionField(DisplayType.Label, EditorType.None, 1, "Property name", new ExpressionMetadata<PropertyModel>("Name", x => x.Name))
                         },
                         new List<SubCollectionListSetup>(),
                         new List<RelatedCollectionListSetup>())
@@ -310,6 +307,15 @@ namespace RapidCMS.ModelMaker
 
         private async IAsyncEnumerable<PaneSetup> PropertyPanesAsync()
         {
+            var titleField = CreatePropertyField(EditorType.Checkbox,
+                3,
+                "Use as entity title",
+                new PropertyMetadata<PropertyModel, bool>("IsTitle", x => x.IsTitle, (x, v) => x.IsTitle = v, "isTitle"));
+
+            titleField.IsVisible = (m, s)
+                => m is PropertyModel property && !string.IsNullOrEmpty(property.PropertyAlias)
+                    && (_config.GetProperty(property.PropertyAlias)?.UsableAsTitle ?? false);
+
             yield return
                 new PaneSetup(
                     default,
@@ -339,10 +345,7 @@ namespace RapidCMS.ModelMaker
                             "Property alias",
                             new PropertyMetadata<PropertyModel, string>("Alias", x => x.Alias, (x, v) => x.Alias = v ?? x.Name?.ToUrlFriendlyString() ?? "", "alias")),
 
-                        CreatePropertyField(EditorType.Checkbox,
-                            3,
-                            "Use as entity title",
-                            new PropertyMetadata<PropertyModel, bool>("IsTitle", x => x.IsTitle, (x, v) => x.IsTitle = v, "isTitle")),
+                        titleField,
 
                         CreatePropertyField(EditorType.Dropdown,
                             4,

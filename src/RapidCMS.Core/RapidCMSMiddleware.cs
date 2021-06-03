@@ -166,7 +166,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 }
                 collectionAliasDictionary[repositoryAlias].Add(collection.Alias);
 
-                foreach (var subCollection in collection.CollectionsAndPages.OfType<ICollectionConfig>().Where(x => !x.Recursive))
+                foreach (var subCollection in collection.CollectionsAndPages.OfType<ICollectionConfig>().Where(x => x is not ReferencedCollectionConfig)) // !x.Recursive))
                 {
                     ProcessCollection(subCollection);
                 }

@@ -13,7 +13,6 @@ namespace RapidCMS.Core.Abstractions.Setup
         string Alias { get; }
         string RepositoryAlias { get; }
         string Name { get; }
-        bool Recursive { get; }
 
         UsageType UsageType { get; set; }
 
