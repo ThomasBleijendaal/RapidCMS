@@ -1,4 +1,5 @@
-﻿using RapidCMS.Core.Extensions;
+﻿using System.ComponentModel.DataAnnotations;
+using RapidCMS.Core.Extensions;
 using RapidCMS.ModelMaker.Abstractions.Validation;
 using RapidCMS.ModelMaker.Models.Entities;
 
@@ -6,6 +7,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
 {
     public class MaxLengthValidationConfig : IValidatorConfig
     {
+        [Range(1, int.MaxValue)]
         public int? MaxLength { get; set; }
 
         public bool IsEnabled => MaxLength.HasValue;

@@ -391,7 +391,7 @@ a.current-page {
 }
 
 .btn {
-    margin-right: 5px;
+    margin-right: .2rem;
     border-radius: 0;
     background: #d2d0ce;
     border-color: #d2d0ce;
@@ -489,7 +489,6 @@ textarea.form-control{
 
     .form-check.form-check-list {
         padding-left: .25rem;
-        margin-right: -.5rem;
     }
 
 pre.col-form-label {
