@@ -45,8 +45,6 @@ namespace RapidCMS.Core.Providers
 
         public event EventHandler? OnDataChange;
 
-        // TODO: test this class with its editors as it has been changed significantly
-
         private Task OnRepositoryChangeAsync(object? sender, CollectionRepositoryEventArgs args)
         {
             if ((!string.IsNullOrEmpty(_setup.RepositoryAlias) && args.RepositoryAlias == _setup.RepositoryAlias) ||
@@ -107,12 +105,9 @@ namespace RapidCMS.Core.Providers
                 parent = _setup.RepositoryParentSelector.Getter.Invoke(_parent) as IParent;
             }
 
-            // TODO: this is a bit brittle -- really make a new query?
-            var detailedQuery = Query.Create(query, _editContext.CollectionAlias);
+            query.CollectionAlias = _editContext.CollectionAlias;
 
-            var entities = await _repository.GetAllAsync(new ViewContext(_editContext.CollectionAlias, parent), detailedQuery);
-
-            query.HasMoreData(detailedQuery.MoreDataAvailable);
+            var entities = await _repository.GetAllAsync(new ViewContext(_editContext.CollectionAlias, parent), query);
 
             return entities
                .Select(entity => (IElement)new Element

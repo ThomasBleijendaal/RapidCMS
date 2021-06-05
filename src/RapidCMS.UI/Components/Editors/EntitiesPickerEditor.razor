@@ -1,4 +1,4 @@
-﻿@inherits BasePickerEditor
+﻿@inherits BaseMultiplePickerEditor
 
 @if (_options != null)
 {
@@ -49,9 +49,4 @@
             @message
         </div>
     }
-}
-
-@code {
-    // TODO: move to inheritance
-    protected override bool IsMultiple { get; set; } = true;
 }
