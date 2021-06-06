@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Factories;
@@ -9,7 +10,7 @@ namespace RapidCMS.UI.Components.Editors
 {
     public partial class ModelEditor
     {
-        protected SectionUI? Section { get; set; }
+        protected IEnumerable<FieldUI>? Fields { get; set; }
 
         protected FormEditContext? PropertyEditContext { get; set; }
 
@@ -18,15 +19,32 @@ namespace RapidCMS.UI.Components.Editors
 
         protected override async Task OnInitializedAsync()
         {
+            // TODO: this does not proxy validation errors from PropertyEditContext to EditContext and reversed
             PropertyEditContext = EditContext.EntityProperty(Property);
+
+            PropertyEditContext.OnValidationStateChanged += PropertyEditContext_OnValidationStateChanged;
 
             var nodeUI = await UIResolverFactory.GetConventionNodeUIResolverAsync(Property.PropertyType);
 
             var sections = await nodeUI.GetSectionsForEditContextAsync(PropertyEditContext);
 
-            Section = sections.FirstOrDefault();
+            Fields = sections.FirstOrDefault()?.Elements?.OfType<FieldUI>();
 
+            if (Fields != null)
+            {
+                foreach (var field in Fields)
+                {
+                    if (field.Property != null)
+                    {
+                        EditContext.NotifyPropertyIncludedInForm(field.Property);
+                    }
+                }
+            }
             await base.OnInitializedAsync();
+        }
+
+        private void PropertyEditContext_OnValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
+        {
         }
     }
 }

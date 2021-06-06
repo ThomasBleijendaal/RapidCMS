@@ -22,10 +22,12 @@ namespace RapidCMS.ModelMaker.Validation.Config
         public class LabelsConfig: IEntity
         {
             [Required]
+            [MinLength(1)]
             [Display(Name = "True label", ResourceType = typeof(TextBoxEditor))]
             public string? TrueLabel { get; set; }
 
             [Required]
+            [MinLength(1)]
             [Display(Name = "False label", ResourceType = typeof(TextBoxEditor))]
             public string? FalseLabel { get; set; }
 

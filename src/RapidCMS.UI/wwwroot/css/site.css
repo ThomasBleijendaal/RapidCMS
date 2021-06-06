@@ -470,7 +470,7 @@ a.current-page {
         padding-right: .75em !important;
     }
 
-textarea.form-control{
+textarea.form-control {
     height: 300px;
 }
 
@@ -506,7 +506,7 @@ pre.col-form-label {
     text-overflow: ellipsis;
 }
 
-.form-control-select-list {
+.form-control-select-list, .form-control-model {
     min-height: 30px;
     height: auto;
     max-height: 150px;
@@ -523,21 +523,27 @@ pre.col-form-label {
         padding: .3rem;
         margin: 0 0 .1rem 0;
     }
-    .form-control-select-list .nav-tabs .search .btn {
-        margin-right: -0.1rem;
-    }
+
+        .form-control-select-list .nav-tabs .search .btn {
+            margin-right: -0.1rem;
+        }
 
     .form-control-select-list .pagination {
         margin: .1rem;
     }
 
-    .form-control-select-list .form-row{
+.form-control-model {
+    max-height: none;
+}
+
+    .form-control-model .form-row {
         margin: 0;
+        padding: .2rem 0;
     }
 
-    .form-text.text-muted {
-        margin-top: -.25rem;
-    }
+.form-text.text-muted {
+    margin-top: -.25rem;
+}
 
 .details {
     margin-top: .2rem;

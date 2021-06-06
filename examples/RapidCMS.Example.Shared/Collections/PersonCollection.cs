@@ -191,6 +191,10 @@ namespace RapidCMS.Example.Shared.Collections
                     {
                         section.AddField(x => x.Title);
                         section.AddField(x => x.History);
+
+
+                        section.AddField(x => x.Nested)
+                            .SetType(EditorType.ModelEditor);
                     });
                 });
             });

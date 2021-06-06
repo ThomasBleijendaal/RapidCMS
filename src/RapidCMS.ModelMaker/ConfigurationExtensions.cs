@@ -23,7 +23,6 @@ namespace RapidCMS.ModelMaker
             bool addDefaultPropertiesAndValidators = true,
             Action<IModelMakerConfig>? configure = null)
         {
-            // TODO: what should this lifetime be?
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
             services.AddTransient<CollectionsDataCollection>();

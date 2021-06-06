@@ -1,9 +1,9 @@
 ﻿@inherits BasePropertyEditor
 
-<div class="form-control form-control-select-list @(CssHelper.GetDisplayModifier(DisplayType)) @(CssHelper.GetValidationClass(State))">
-    @if (PropertyEditContext != null && Section?.Elements != null)
+<div class="form-control form-control-model @(CssHelper.GetDisplayModifier(DisplayType)) @(CssHelper.GetValidationClass(State))">
+    @if (PropertyEditContext != null && Fields != null)
     {
-        foreach (var field in Section.Elements.OfType<FieldUI>())
+        foreach (var field in Fields)
         {
             <div class="form-row">
                 <div class="col-2">
