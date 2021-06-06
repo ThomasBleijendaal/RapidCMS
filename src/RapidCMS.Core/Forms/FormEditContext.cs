@@ -65,10 +65,18 @@ namespace RapidCMS.Core.Forms
 
         public event EventHandler<ValidationStateChangedEventArgs>? OnValidationStateChanged;
 
-        public static implicit operator EditContext(FormEditContext editContext)
-        {
-            return new EditContext(editContext.Entity);
-        }
+        public static implicit operator EditContext(FormEditContext editContext) 
+            => new EditContext(editContext.Entity);
+
+        public FormEditContext EntityProperty(IPropertyMetadata property) 
+            => new FormEditContext(
+                CollectionAlias,
+                RepositoryAlias,
+                EntityVariantAlias,
+                (IEntity)property.Getter(Entity),
+                default,
+                UsageType.Edit | UsageType.Node,
+                FormState.ServiceProvider);
 
         public void NotifyReordered(string? beforeId)
         {

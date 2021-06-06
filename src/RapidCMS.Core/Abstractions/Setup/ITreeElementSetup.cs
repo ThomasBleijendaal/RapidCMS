@@ -2,7 +2,7 @@
 
 namespace RapidCMS.Core.Abstractions.Setup
 {
-    internal interface ITreeElementSetup
+    public interface ITreeElementSetup
     {
         string Alias { get; }
         string Name { get; }

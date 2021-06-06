@@ -34,6 +34,7 @@ namespace RapidCMS.ModelMaker
             services.AddScoped<ModelRepository>();
             services.AddScoped<PropertyRepository>();
 
+            services.AddTransient<BooleanLabelDataCollectionFactory>();
             services.AddTransient<LimitedOptionsDataCollectionFactory>();
             services.AddTransient<LinkedEntityDataCollectionFactory>();
 
@@ -41,11 +42,12 @@ namespace RapidCMS.ModelMaker
 
             if (addDefaultPropertiesAndValidators)
             {
-                services.AddTransient<MinLengthValidator>();
-                services.AddTransient<MaxLengthValidator>();
+                services.AddTransient<BooleanLabelValidator>();
                 services.AddTransient<LimitedOptionsValidator>();
-                services.AddTransient<LinkedEntityValidator>();
                 services.AddTransient<LinkedEntitiesValidator>();
+                services.AddTransient<LinkedEntityValidator>();
+                services.AddTransient<MaxLengthValidator>();
+                services.AddTransient<MinLengthValidator>();
 
                 config.AddPropertyValidator<MinLengthValidator, string, MinLengthValidationConfig, int?>(
                     Constants.Validators.MinLength,
@@ -82,7 +84,13 @@ namespace RapidCMS.ModelMaker
                     EditorType.Dropdown,
                     x => x.Config.CollectionAlias);
 
-                // TODO: validation configuration validation
+                config.AddPropertyValidator<BooleanLabelValidator, bool, BooleanLabelValidationConfig, BooleanLabelValidationConfig.LabelsConfig, BooleanLabelDataCollectionFactory>(
+                    Constants.Validators.BooleanLabels,
+                    "Labels",
+                    "The editor will display a dropdown instead of a checkbox",
+                    EditorType.ModelEditor,
+                    x => x.Config.Labels);
+
                 // TODO: custom type
 
                 config.AddPropertyEditor(Constants.Editors.Checkbox, "Checkbox", EditorType.Checkbox);
@@ -114,8 +122,8 @@ namespace RapidCMS.ModelMaker
                         Constants.Properties.Boolean,
                         "Boolean",
                         "ToggleLeft",
-                        new[] { Constants.Editors.Checkbox },
-                        Enumerable.Empty<string>()); // TODO: dropdown with labels for true / false
+                        new[] { Constants.Editors.Checkbox, Constants.Editors.Dropdown, Constants.Editors.Select },
+                        new[] { Constants.Validators.BooleanLabels });
 
                 config.AddProperty<string>(
                         Constants.Properties.LinkedEntity,

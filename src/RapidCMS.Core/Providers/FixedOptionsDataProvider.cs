@@ -6,15 +6,20 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 
-namespace RapidCMS.ModelMaker.DataCollections
+namespace RapidCMS.Core.Providers
 {
-    internal class FixedOptionsDataCollection : IDataCollection
+    public class FixedOptionsDataProvider : IDataCollection
     {
-        private readonly IEnumerable<string> _options;
+        private readonly IEnumerable<(object id, string label)> _options;
 
-        public FixedOptionsDataCollection(IEnumerable<string>? options)
+        public FixedOptionsDataProvider(IEnumerable<string>? options)
         {
-            _options = options ?? Enumerable.Empty<string>();
+            _options = options?.Select(x => (x as object, x)) ?? Enumerable.Empty<(object, string)>();
+        }
+
+        public FixedOptionsDataProvider(IEnumerable<(object, string)>? options)
+        {
+            _options = options ?? Enumerable.Empty<(object, string)>();
         }
 
         public event EventHandler? OnDataChange;
@@ -29,8 +34,8 @@ namespace RapidCMS.ModelMaker.DataCollections
                 _options
                 .Select(item => new Element
                 {
-                    Id = item,
-                    Labels = new[] { item }
+                    Id = item.id,
+                    Labels = new[] { item.label }
                 })
                 .ToList());
         }

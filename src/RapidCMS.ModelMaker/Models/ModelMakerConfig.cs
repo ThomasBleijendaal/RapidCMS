@@ -166,8 +166,6 @@ namespace RapidCMS.ModelMaker.Models
         private static Type GetEditorByEditorType(EditorType editorType) 
             => editorType switch
             {
-                // TODO: check if all types are supported 
-
                 EditorType.Checkbox => typeof(CheckboxEditor),
                 EditorType.Date => typeof(DateEditor),
                 EditorType.Dropdown => typeof(DropdownEditor),
@@ -175,6 +173,7 @@ namespace RapidCMS.ModelMaker.Models
                 EditorType.EntityPicker => typeof(EntityPickerEditor),
                 EditorType.ListEditor => typeof(ListEditor),
                 EditorType.MultiSelect => typeof(MultiSelectEditor),
+                EditorType.ModelEditor => typeof(ModelEditor),
                 EditorType.Numeric => typeof(NumericEditor),
                 EditorType.Select => typeof(SelectEditor),
                 EditorType.TextBox => typeof(TextBoxEditor),

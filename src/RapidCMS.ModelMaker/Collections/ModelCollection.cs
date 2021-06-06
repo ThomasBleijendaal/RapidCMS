@@ -48,7 +48,6 @@ namespace RapidCMS.ModelMaker.Collections
                             // TODO: implement revert + custom button handler
                             // editor.AddDefaultButton(DefaultButtonType.SaveExisting, "Revert changes");
 
-
                             section.AddField(x => x.Name);
                             section.AddField(x => x.Alias)
                                 .SetName("Collection alias")

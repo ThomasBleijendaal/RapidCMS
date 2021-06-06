@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RapidCMS.Core.Abstractions.Setup
 {
-    internal interface IButtonSetup : IButton
+    public interface IButtonSetup : IButton
     {
         string ButtonId { get; }
         IEnumerable<IButtonSetup> Buttons { get; }

@@ -1,11 +1,11 @@
-﻿using RapidCMS.Core.Enums;
-using RapidCMS.Core.Models.Setup;
+﻿using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.UI
 {
     public class RelatedCollectionUI : ElementUI
     {
-        internal RelatedCollectionUI(RelatedCollectionListSetup relatedCollection) : base((x, state) => state == EntityState.IsExisting, (x, y) => false)
+        internal RelatedCollectionUI(IRelatedCollectionListSetup relatedCollection) : base((x, state) => state == EntityState.IsExisting, (x, y) => false)
         {
             CollectionAlias = relatedCollection.CollectionAlias;
             SupportsUsageType = relatedCollection.SupportsUsageType;

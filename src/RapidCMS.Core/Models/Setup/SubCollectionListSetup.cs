@@ -1,9 +1,10 @@
 ﻿using System;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class SubCollectionListSetup
+    internal class SubCollectionListSetup : ISubCollectionListSetup
     {
         public SubCollectionListSetup(int index, string collectionAlias)
         {
@@ -11,9 +12,9 @@ namespace RapidCMS.Core.Models.Setup
             CollectionAlias = collectionAlias ?? throw new ArgumentNullException(nameof(collectionAlias));
         }
 
-        internal int Index { get; set; }
-        internal string CollectionAlias { get; set; }
+        public int Index { get; set; }
+        public string CollectionAlias { get; set; }
 
-        internal UsageType SupportsUsageType { get; set; }
+        public UsageType SupportsUsageType { get; set; }
     }
 }

@@ -110,7 +110,11 @@ namespace RapidCMS.Core.Models.Data
 
         public IEnumerable<IOrderBy> ActiveOrderBys => _query.OrderBys ?? Enumerable.Empty<OrderBy>();
 
-        public string? CollectionAlias => _query.CollectionAlias;
+        public string? CollectionAlias
+        {
+            get => _query.CollectionAlias;
+            set => _query.CollectionAlias = value;
+        }
 
         /// <summary>
         /// The Linker incorrectly removes these methods from Queryable 

@@ -94,7 +94,7 @@ namespace RapidCMS.ModelMaker
 
         // MODEL MAKER
 
-        private async Task<CollectionSetup?> ModelCollectionAsync(ModelEntity definition)
+        private async Task<ICollectionSetup?> ModelCollectionAsync(ModelEntity definition)
         {
             if (!IsValidDefintion(definition))
             {
@@ -129,7 +129,7 @@ namespace RapidCMS.ModelMaker
                 false,
                 ListType.Table,
                 EmptyVariantColumnVisibility.Collapse,
-                new List<PaneSetup>
+                new List<IPaneSetup>
                 {
                     new PaneSetup(
                         default,
@@ -139,13 +139,13 @@ namespace RapidCMS.ModelMaker
                         new List<IButtonSetup>  {
                             await CreateButtonAsync(collection, DefaultButtonType.Edit, true)
                         },
-                        new List<FieldSetup>
+                        new List<IFieldSetup>
                         {
                             CreateExpressionField(DisplayType.Label, EditorType.None, 1, titleProperty.Name, titlePropertyMetadata),
                             CreateCustomExpressionField(typeof(PublishStateDisplay), 2, "", new ExpressionMetadata<ModelMakerEntity>("State", x => x.State.ToString()))
                         },
-                        new List<SubCollectionListSetup>(),
-                        new List<RelatedCollectionListSetup>())
+                        new List<ISubCollectionListSetup>(),
+                        new List<IRelatedCollectionListSetup>())
                 },
                 new List<IButtonSetup>
                 {
@@ -160,7 +160,7 @@ namespace RapidCMS.ModelMaker
             return collection;
         }
 
-        private async IAsyncEnumerable<PaneSetup> ModelPanesAsync(ModelEntity definition, CollectionSetup collection)
+        private async IAsyncEnumerable<IPaneSetup> ModelPanesAsync(ModelEntity definition, CollectionSetup collection)
         {
             yield return
                 new PaneSetup(
@@ -169,9 +169,9 @@ namespace RapidCMS.ModelMaker
                     (m, s) => true,
                     typeof(ModelMakerEntity),
                     new List<IButtonSetup>(),
-                    new List<FieldSetup>(),
-                    new List<SubCollectionListSetup>(),
-                    new List<RelatedCollectionListSetup>());
+                    new List<IFieldSetup>(),
+                    new List<ISubCollectionListSetup>(),
+                    new List<IRelatedCollectionListSetup>());
 
             yield return
                 new PaneSetup(
@@ -186,11 +186,11 @@ namespace RapidCMS.ModelMaker
                         await CreateButtonAsync(collection, DefaultButtonType.Delete, false)
                     },
                     await ModelFieldsAsync(definition, collection).ToListAsync(),
-                    new List<SubCollectionListSetup>(),
-                    new List<RelatedCollectionListSetup>());
+                    new List<ISubCollectionListSetup>(),
+                    new List<IRelatedCollectionListSetup>());
         }
 
-        private async IAsyncEnumerable<FieldSetup> ModelFieldsAsync(ModelEntity definition, CollectionSetup collection)
+        private async IAsyncEnumerable<IFieldSetup> ModelFieldsAsync(ModelEntity definition, CollectionSetup collection)
         {
             var i = 0;
             foreach (var property in definition.PublishedProperties)
@@ -266,7 +266,7 @@ namespace RapidCMS.ModelMaker
                 true,
                 ListType.Table,
                 EmptyVariantColumnVisibility.Collapse,
-                new List<PaneSetup>
+                new List<IPaneSetup>
                 {
                     new PaneSetup(
                         default,
@@ -277,12 +277,12 @@ namespace RapidCMS.ModelMaker
                         {
                             await CreateButtonAsync(collection, DefaultButtonType.Edit, true)
                         },
-                        new List<FieldSetup>
+                        new List<IFieldSetup>
                         {
                             CreateExpressionField(DisplayType.Label, EditorType.None, 1, "Property name", new ExpressionMetadata<PropertyModel>("Name", x => x.Name))
                         },
-                        new List<SubCollectionListSetup>(),
-                        new List<RelatedCollectionListSetup>())
+                        new List<ISubCollectionListSetup>(),
+                        new List<IRelatedCollectionListSetup>())
                 },
                 new List<IButtonSetup>
                 {
@@ -305,7 +305,7 @@ namespace RapidCMS.ModelMaker
             return collection;
         }
 
-        private async IAsyncEnumerable<PaneSetup> PropertyPanesAsync()
+        private async IAsyncEnumerable<IPaneSetup> PropertyPanesAsync()
         {
             var titleField = CreatePropertyField(EditorType.Checkbox,
                 3,
@@ -326,7 +326,7 @@ namespace RapidCMS.ModelMaker
                     {
 
                     },
-                    new List<FieldSetup>
+                    new List<IFieldSetup>
                     {
                         CreatePropertyField(EditorType.Dropdown,
                             0,
@@ -353,10 +353,10 @@ namespace RapidCMS.ModelMaker
                            new PropertyMetadata<PropertyModel, string>("EditorAlias", x => x.EditorAlias, (x, v) => x.EditorAlias = v, "editoralias"),
                            relation: new DataProviderRelationSetup(typeof(PropertyEditorDataCollection))),
                     },
-                    new List<SubCollectionListSetup>
+                    new List<ISubCollectionListSetup>
                     {
                     },
-                    new List<RelatedCollectionListSetup>
+                    new List<IRelatedCollectionListSetup>
                     {
 
                     });
@@ -372,11 +372,11 @@ namespace RapidCMS.ModelMaker
 
                     },
                     await ValidationFieldsAsync().ToListAsync(),
-                    new List<SubCollectionListSetup>(),
-                    new List<RelatedCollectionListSetup>());
+                    new List<ISubCollectionListSetup>(),
+                    new List<IRelatedCollectionListSetup>());
         }
 
-        private async IAsyncEnumerable<FieldSetup> ValidationFieldsAsync()
+        private async IAsyncEnumerable<IFieldSetup> ValidationFieldsAsync()
         {
             foreach (var validationType in _config.Validators)
             {
@@ -500,9 +500,7 @@ namespace RapidCMS.ModelMaker
         }
 
         private bool IsValidDefintion(ModelEntity entity)
-        {
-            return entity.PublishedProperties.Any(x => x.IsTitle);
-        }
+            => entity.PublishedProperties.Any(x => x.IsTitle);
 
         private static ExpressionMetadata<ModelMakerEntity> CreateExpressionMetadata(PropertyModel property)
             => new ExpressionMetadata<ModelMakerEntity>(property.Name, x => x.Get<string>(property.Alias));

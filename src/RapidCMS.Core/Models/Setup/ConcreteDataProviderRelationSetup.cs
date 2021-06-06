@@ -3,7 +3,6 @@ using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    // TODO: expose this class also via Config > Setup route
     public class ConcreteDataProviderRelationSetup : RelationSetup
     {
         public ConcreteDataProviderRelationSetup(IDataCollection dataCollection)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
@@ -21,7 +22,7 @@ namespace RapidCMS.Core.Resolvers.Convention
             _languageResolver = languageResolver;
         }
 
-        public ListConfig ResolveByConvention(Type subject, Features features, ICollectionSetup? collection)
+        public Task<ListConfig> ResolveByConventionAsync(Type subject, Features features, ICollectionSetup? collection)
         {
             var listButtons = new List<ButtonConfig>();
 
@@ -92,7 +93,7 @@ namespace RapidCMS.Core.Resolvers.Convention
                 SearchBarVisible = true
             };
 
-            return result;
+            return Task.FromResult(result);
         }
     }
 }

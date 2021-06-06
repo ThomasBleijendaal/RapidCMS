@@ -6,6 +6,8 @@ namespace RapidCMS.Core.Forms
 {
     internal class ViewContext : IViewContext
     {
+        public static ViewContext Default => new("", default);
+
         public ViewContext(string collectionAlias, IParent? parent)
         {
             CollectionAlias = collectionAlias ?? throw new ArgumentNullException(nameof(collectionAlias));

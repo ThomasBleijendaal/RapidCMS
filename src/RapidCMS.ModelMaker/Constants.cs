@@ -23,6 +23,7 @@
             public const string LinkedEntity = "linkedEntity";
             public const string MaxLength = "maxlength";
             public const string MinLength = "minlength";
+            public const string BooleanLabels = "booleanLabels";
         }
 
         public static class Properties

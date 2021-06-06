@@ -7,12 +7,12 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class RelatedCollectionListSetupResolver : ISetupResolver<RelatedCollectionListSetup, CollectionListConfig>
+    internal class RelatedCollectionListSetupResolver : ISetupResolver<IRelatedCollectionListSetup, CollectionListConfig>
     {
-        public Task<IResolvedSetup<RelatedCollectionListSetup>> ResolveSetupAsync(CollectionListConfig config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<IRelatedCollectionListSetup>> ResolveSetupAsync(CollectionListConfig config, ICollectionSetup? collection = default)
         {
-            return Task.FromResult<IResolvedSetup<RelatedCollectionListSetup>>(
-                new ResolvedSetup<RelatedCollectionListSetup>(
+            return Task.FromResult<IResolvedSetup<IRelatedCollectionListSetup>>(
+                new ResolvedSetup<IRelatedCollectionListSetup>(
                     new RelatedCollectionListSetup(config.Index, config.CollectionAlias)
                     {
                         SupportsUsageType = (config?.ListEditor != null ? UsageType.Edit : 0) | (config?.ListView != null ? UsageType.View : 0)

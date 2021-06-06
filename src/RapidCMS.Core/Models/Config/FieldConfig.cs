@@ -155,6 +155,20 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
+        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetDataCollection<TDataCollection>(TDataCollection dataCollection)
+        {
+            if (EditorType != EditorType.Custom && EditorType.GetCustomAttribute<RelationAttribute>()?.Type != RelationType.One)
+            {
+                throw new InvalidOperationException("Cannot add DataRelation to Editor with no support for RelationType.One");
+            }
+
+            var config = new ConcreteDataProviderRelationConfig(dataCollection);
+
+            Relation = config;
+
+            return this;
+        }
+
         IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetCollectionRelation<TRelatedEntity>(
             string collectionAlias, Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure)
         {

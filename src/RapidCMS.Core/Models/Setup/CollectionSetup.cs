@@ -58,13 +58,13 @@ namespace RapidCMS.Core.Models.Setup
                 ?? EntityVariant;
         }
 
-        public TreeViewSetup? TreeView { get; set; }
+        public ITreeViewSetup? TreeView { get; set; }
 
-        public ListSetup? ListView { get; set; }
-        public ListSetup? ListEditor { get; set; }
+        public IListSetup? ListView { get; set; }
+        public IListSetup? ListEditor { get; set; }
 
-        public NodeSetup? NodeView { get; set; }
-        public NodeSetup? NodeEditor { get; set; }
+        public INodeSetup? NodeView { get; set; }
+        public INodeSetup? NodeEditor { get; set; }
 
         public IButtonSetup? FindButton(string buttonId)
         {

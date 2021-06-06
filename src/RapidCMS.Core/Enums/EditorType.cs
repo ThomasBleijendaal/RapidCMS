@@ -92,6 +92,15 @@ namespace RapidCMS.Core.Enums
         /// NOTE: This control will not reset its value when the DataCollection data changes.
         /// </summary>
         [Relation(RelationType.Many)]
-        EntitiesPicker
+        EntitiesPicker,
+
+        /// <summary>
+        /// An editor that will render simple editors for each of the properties of the model it edits.
+        /// 
+        /// Only creates basic editors for properties (TextBox, TextArea, Numeric, Checkbox, Date), use [DisplayAttribute] for customizations.
+        /// 
+        /// Model property must be annotated with [ValidateObject] to enable validation.
+        /// </summary>
+        ModelEditor
     }
 }

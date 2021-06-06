@@ -55,19 +55,21 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>>, TreeElementsSetupResolver>();
             services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>, TreeElementSetupResolver>();
 
+            // TODO: convert *Config to I*Config
             services.AddSingleton<ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig>, TypeRegistrationSetupResolver>();
             services.AddSingleton<ISetupResolver<IEntityVariantSetup, EntityVariantConfig>, EntityVariantSetupResolver>();
-            services.AddSingleton<ISetupResolver<TreeViewSetup, TreeViewConfig>, TreeViewSetupResolver>();
-            services.AddSingleton<ISetupResolver<PaneSetup, PaneConfig>, PaneSetupResolver>();
-            services.AddSingleton<ISetupResolver<ListSetup, ListConfig>, ListSetupResolver>();
-            services.AddSingleton<ISetupResolver<NodeSetup, NodeConfig>, NodeSetupResolver>();
-            services.AddSingleton<ISetupResolver<FieldSetup, FieldConfig>, FieldSetupResolver>();
+            services.AddSingleton<ISetupResolver<ITreeViewSetup, TreeViewConfig>, TreeViewSetupResolver>();
+            services.AddSingleton<ISetupResolver<IPaneSetup, PaneConfig>, PaneSetupResolver>();
+            services.AddSingleton<ISetupResolver<IListSetup, ListConfig>, ListSetupResolver>();
+            services.AddSingleton<ISetupResolver<INodeSetup, NodeConfig>, NodeSetupResolver>();
+            services.AddSingleton<ISetupResolver<IFieldSetup, FieldConfig>, FieldSetupResolver>();
             services.AddSingleton<ISetupResolver<IButtonSetup, ButtonConfig>, ButtonSetupResolver>();
-            services.AddSingleton<ISetupResolver<SubCollectionListSetup, CollectionListConfig>, SubCollectionListSetupResolver>();
-            services.AddSingleton<ISetupResolver<RelatedCollectionListSetup, CollectionListConfig>, RelatedCollectionListSetupResolver>();
+            services.AddSingleton<ISetupResolver<ISubCollectionListSetup, CollectionListConfig>, SubCollectionListSetupResolver>();
+            services.AddSingleton<ISetupResolver<IRelatedCollectionListSetup, CollectionListConfig>, RelatedCollectionListSetupResolver>();
 
             services.AddSingleton<IConventionBasedResolver<ListConfig>, ConventionBasedListConfigResolver>();
             services.AddSingleton<IConventionBasedResolver<NodeConfig>, ConventionBasedNodeConfigResolver>();
+            services.AddSingleton<IConventionBasedResolver<INodeSetup>, ConventionBasedNodeSetupResolver>();
             services.AddSingleton<IFieldConfigResolver, FieldConfigResolver>();
             services.AddSingleton<ILanguageResolver, LanguageResolver>();
 
@@ -166,7 +168,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 }
                 collectionAliasDictionary[repositoryAlias].Add(collection.Alias);
 
-                foreach (var subCollection in collection.CollectionsAndPages.OfType<ICollectionConfig>().Where(x => x is not ReferencedCollectionConfig)) // !x.Recursive))
+                foreach (var subCollection in collection.CollectionsAndPages.OfType<ICollectionConfig>().Where(x => x is not ReferencedCollectionConfig))
                 {
                     ProcessCollection(subCollection);
                 }

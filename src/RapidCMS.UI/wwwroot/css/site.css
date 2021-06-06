@@ -531,6 +531,10 @@ pre.col-form-label {
         margin: .1rem;
     }
 
+    .form-control-select-list .form-row{
+        margin: 0;
+    }
+
     .form-text.text-muted {
         margin-top: -.25rem;
     }

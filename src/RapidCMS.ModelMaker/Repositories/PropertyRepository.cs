@@ -242,7 +242,7 @@ namespace RapidCMS.ModelMaker.Repositories
                     var config = property.Validations.FirstOrDefault(x => x.Alias == validation.Alias)?.Config
                         ?? Activator.CreateInstance(validation.Config) as IValidatorConfig;
 
-                    if (config?.IsApplicable(property) ?? true) // TODO: default to true? no config is good config?
+                    if (config?.IsApplicable(property) ?? false)
                     {
                         var validationModel = Activator.CreateInstance(typeof(PropertyValidationModel<>).MakeGenericType(validation.Config)) as PropertyValidationModel
                             ?? throw new InvalidOperationException("Could not create correct PropertyValidationModel.");

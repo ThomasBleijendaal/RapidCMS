@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.Handlers;
@@ -57,6 +58,16 @@ namespace RapidCMS.Example.Shared.Collections
                         {
                             section.AddField(x => x.Name);
                             section.AddField(x => x.Metadata.Continent);
+                            section.AddField(x => x.Metadata.Tag)
+                                .SetType(EditorType.Dropdown)
+                                // the FixedOptionsDataProvider allows for adding hard-coded options, without requiring a Enum
+                                .SetDataCollection(new FixedOptionsDataProvider(
+                                    new[]
+                                    {
+                                        "Tag A",
+                                        "Tag B",
+                                        "Tab C"
+                                    }));
 
                             // this property contains a list of people it is related to
                             // you can see it as a ICollection<TRelated> property in EF Core

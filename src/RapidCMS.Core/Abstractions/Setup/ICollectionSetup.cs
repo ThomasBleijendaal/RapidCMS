@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Setup
 {
-    internal interface ICollectionSetup
+    public interface ICollectionSetup
     {
         string? Icon { get; }
         string? Color { get; }
@@ -28,13 +27,13 @@ namespace RapidCMS.Core.Abstractions.Setup
         IEntityVariantSetup GetEntityVariant(string? alias);
         IEntityVariantSetup GetEntityVariant(IEntity entity);
 
-        TreeViewSetup? TreeView { get; }
+        ITreeViewSetup? TreeView { get; }
 
-        ListSetup? ListView { get; }
-        ListSetup? ListEditor { get; }
+        IListSetup? ListView { get; }
+        IListSetup? ListEditor { get; }
 
-        NodeSetup? NodeView { get; }
-        NodeSetup? NodeEditor { get; }
+        INodeSetup? NodeView { get; }
+        INodeSetup? NodeEditor { get; }
 
         IButtonSetup? FindButton(string buttonId);
     }

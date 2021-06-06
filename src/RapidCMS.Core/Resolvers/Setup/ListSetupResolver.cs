@@ -10,14 +10,14 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class ListSetupResolver : ISetupResolver<ListSetup, ListConfig>
+    internal class ListSetupResolver : ISetupResolver<IListSetup, ListConfig>
     {
-        private readonly ISetupResolver<PaneSetup, PaneConfig> _paneSetupResolver;
+        private readonly ISetupResolver<IPaneSetup, PaneConfig> _paneSetupResolver;
         private readonly ISetupResolver<IButtonSetup, ButtonConfig> _buttonSetupResolver;
         private readonly IConventionBasedResolver<ListConfig> _conventionListConfigResolver;
 
         public ListSetupResolver(
-            ISetupResolver<PaneSetup, PaneConfig> paneSetupResolver,
+            ISetupResolver<IPaneSetup, PaneConfig> paneSetupResolver,
             ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver,
             IConventionBasedResolver<ListConfig> conventionListConfigResolver)
         {
@@ -26,7 +26,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _conventionListConfigResolver = conventionListConfigResolver;
         }
 
-        public async Task<IResolvedSetup<ListSetup>> ResolveSetupAsync(ListConfig config, ICollectionSetup? collection = default)
+        public async Task<IResolvedSetup<IListSetup>> ResolveSetupAsync(ListConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -35,7 +35,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             if (config is IIsConventionBased isConventionBasedConfig)
             {
-                config = _conventionListConfigResolver.ResolveByConvention(config.BaseType, isConventionBasedConfig.GetFeatures(), collection);
+                config = await _conventionListConfigResolver.ResolveByConventionAsync(config.BaseType, isConventionBasedConfig.GetFeatures(), collection);
             }
 
             var cacheable = true;
@@ -43,7 +43,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             var panes = (await _paneSetupResolver.ResolveSetupAsync(config.Panes, collection)).CheckIfCachable(ref cacheable).ToList();
             var buttons = (await _buttonSetupResolver.ResolveSetupAsync(config.Buttons, collection)).CheckIfCachable(ref cacheable).ToList();
 
-            return new ResolvedSetup<ListSetup>(new ListSetup(
+            return new ResolvedSetup<IListSetup>(new ListSetup(
                 config.PageSize,
                 config.SearchBarVisible,
                 config.ReorderingAllowed,

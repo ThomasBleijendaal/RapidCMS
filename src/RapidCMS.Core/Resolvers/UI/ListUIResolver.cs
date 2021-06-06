@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.EqualityComparers;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
@@ -14,14 +15,14 @@ namespace RapidCMS.Core.Resolvers.UI
 {
     internal class ListUIResolver : BaseUIResolver, IListUIResolver
     {
-        private readonly ListSetup _list;
+        private readonly IListSetup _list;
         private readonly IDataViewResolver _dataViewResolver;
         private readonly Dictionary<Type, IEnumerable<FieldUI>> _fieldsPerType = new Dictionary<Type, IEnumerable<FieldUI>>();
 
         private readonly FieldUIEqualityComparer _equalityComparer = new FieldUIEqualityComparer();
 
         public ListUIResolver(
-            ListSetup list,
+            IListSetup list,
             IDataProviderResolver dataProviderService,
             IDataViewResolver dataViewResolver,
             IButtonActionHandlerResolver buttonActionHandlerResolver,

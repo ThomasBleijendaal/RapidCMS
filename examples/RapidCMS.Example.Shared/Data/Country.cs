@@ -17,11 +17,6 @@ namespace RapidCMS.Example.Shared.Data
         public string? Name { get; set; }
 
         [MaxTwo]
-        public List<Person> People2 { get; set; } = new List<Person>();
-
-        public int PersonId { get; set; }
-
-        [MaxTwo]
         public List<Person> People { get; set; } = new List<Person>();
 
         string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? "0"); }
@@ -33,11 +28,10 @@ namespace RapidCMS.Example.Shared.Data
                 Id = Id,
                 Name = Name,
                 People = People.ToList(),
-                People2 = People2.ToList(),
-                PersonId = PersonId,
                 Metadata = new CountryMetadata
                 {
-                    Continent = Metadata.Continent
+                    Continent = Metadata.Continent,
+                    Tag = Metadata.Tag
                 }
             };
         }
@@ -52,6 +46,8 @@ namespace RapidCMS.Example.Shared.Data
             [MinLength(8)]
             [MaxLength(10)]
             public string? Continent { get; set; }
+
+            public string? Tag { get; set; }
         }
     }
 }
