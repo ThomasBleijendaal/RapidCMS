@@ -57,6 +57,9 @@ namespace RapidCMS.Example.Shared.Collections
                         editor.AddSection(section =>
                         {
                             section.AddField(x => x.Name);
+
+                            // to enable validation on Metadata.Continent, the Metadata property on Country must be annotated with [ValidateObject]
+                            // to instruct the data annotation validator to validate the properties inside the metadata object
                             section.AddField(x => x.Metadata.Continent);
                             section.AddField(x => x.Metadata.Tag)
                                 .SetType(EditorType.Dropdown)

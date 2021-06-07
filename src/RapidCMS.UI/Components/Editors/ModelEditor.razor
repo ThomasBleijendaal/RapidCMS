@@ -3,25 +3,27 @@
 <div class="form-control form-control-model @(CssHelper.GetDisplayModifier(DisplayType)) @(CssHelper.GetValidationClass(State))">
     @if (PropertyEditContext != null && Fields != null)
     {
-        foreach (var field in Fields)
-        {
-            <div class="form-row">
-                <div class="col-2">
-                    <label class="col-form-label">@field.Name</label>
-                    <small class="form-text text-muted">@field.Description</small>
-                </div>
-                <div class="col-10">
-                    @field.ToRenderFragment(PropertyEditContext, ListType.Block)
+        <CascadingEditContext EditContext="PropertyEditContext">
+            @foreach (var field in Fields)
+            {
+                <div class="form-row">
+                    <div class="col-2">
+                        <label class="col-form-label">@field.Name</label>
+                        <small class="form-text text-muted">@field.Description</small>
+                    </div>
+                    <div class="col-10">
+                        @field.ToRenderFragment(PropertyEditContext, ListType.Block)
 
-                    @if (field.Details.HasValue)
-                    {
-                        <div class="details">
-                            @field.Details.Value
-                        </div>
-                    }
+                        @if (field.Details.HasValue)
+                        {
+                            <div class="details">
+                                @field.Details.Value
+                            </div>
+                        }
+                    </div>
                 </div>
-            </div>
-        }
+            }
+        </CascadingEditContext>
     }
 </div>
 

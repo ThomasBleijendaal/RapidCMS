@@ -192,7 +192,13 @@ namespace RapidCMS.Example.Shared.Collections
                         section.AddField(x => x.Title);
                         section.AddField(x => x.History);
 
-
+                        // when a model has a sub class which has a few simple properties, it's possible to group those properties
+                        // into a single editor using the ModelEditor type. this editor uses the same rules as the convention based
+                        // approach (see ConventionCollection), but groups the editors together of this property.
+                        //
+                        // to validate the properties of the nested object, the Nested property must be attributed with [ValidateObjectAsProperty]
+                        // to instruct the data annotation validator to validate NestedDetails and use that validation as validation result
+                        // for Nested. 
                         section.AddField(x => x.Nested)
                             .SetType(EditorType.ModelEditor);
                     });

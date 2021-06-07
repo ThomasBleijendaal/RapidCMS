@@ -1,5 +1,4 @@
 ﻿using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;

@@ -61,7 +61,7 @@ namespace RapidCMS.UI.Extensions
 
                     if (editorType.IsSubclassOf(typeof(BaseDataEditor)))
                     {
-                        builder.AddAttribute(7, nameof(BaseDataEditor.DataCollection), customPropertyField.DataCollection);
+                        builder.AddAttribute(8, nameof(BaseDataEditor.DataCollection), customPropertyField.DataCollection);
                     }
 
                     builder.CloseComponent();
@@ -99,11 +99,11 @@ namespace RapidCMS.UI.Extensions
 
                     if (editorType.IsSubclassOf(typeof(BaseDataEditor)))
                     {
-                        builder.AddAttribute(7, nameof(BaseDataEditor.DataCollection), propertyField.DataCollection);
+                        builder.AddAttribute(8, nameof(BaseDataEditor.DataCollection), propertyField.DataCollection);
                     }
                     if (editorType.IsSubclassOf(typeof(BaseRelationEditor)))
                     {
-                        builder.AddAttribute(8, nameof(BaseRelationEditor.DataCollection), propertyField.DataCollection);
+                        builder.AddAttribute(9, nameof(BaseRelationEditor.DataCollection), propertyField.DataCollection);
                     }
                     builder.CloseComponent();
                 };
@@ -131,7 +131,7 @@ namespace RapidCMS.UI.Extensions
             builder.AddAttribute(4, nameof(BaseEditor.Property), propertyField.Property);
             builder.AddAttribute(5, nameof(BaseEditor.IsDisabledFunc), propertyField.IsDisabled);
             builder.AddAttribute(6, nameof(BaseEditor.Placeholder), propertyField.Placeholder);
-            builder.AddAttribute(6, nameof(BaseEditor.DisplayType), displayType);
+            builder.AddAttribute(7, nameof(BaseEditor.DisplayType), displayType);
         }
     }
 }

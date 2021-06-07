@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms.Validation;
 using RapidCMS.ModelMaker.Abstractions.Validation;
@@ -11,7 +12,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
     public class BooleanLabelValidationConfig : IValidatorConfig
     {
         [Required]
-        [ValidateObject]
+        [ValidateObjectAsProperty]
         public LabelsConfig Labels { get; set; } = new LabelsConfig();
 
         public bool IsEnabled => true;
@@ -23,12 +24,12 @@ namespace RapidCMS.ModelMaker.Validation.Config
         {
             [Required]
             [MinLength(1)]
-            [Display(Name = "True label", ResourceType = typeof(TextBoxEditor))]
+            [Field(Name = "True label", EditorType = typeof(TextBoxEditor))]
             public string? TrueLabel { get; set; }
 
             [Required]
             [MinLength(1)]
-            [Display(Name = "False label", ResourceType = typeof(TextBoxEditor))]
+            [Field(Name = "False label", EditorType = typeof(TextBoxEditor))]
             public string? FalseLabel { get; set; }
 
             string? IEntity.Id { get; set; }

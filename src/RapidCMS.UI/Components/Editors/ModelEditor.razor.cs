@@ -19,10 +19,7 @@ namespace RapidCMS.UI.Components.Editors
 
         protected override async Task OnInitializedAsync()
         {
-            // TODO: this does not proxy validation errors from PropertyEditContext to EditContext and reversed
             PropertyEditContext = EditContext.EntityProperty(Property);
-
-            PropertyEditContext.OnValidationStateChanged += PropertyEditContext_OnValidationStateChanged;
 
             var nodeUI = await UIResolverFactory.GetConventionNodeUIResolverAsync(Property.PropertyType);
 
@@ -30,21 +27,37 @@ namespace RapidCMS.UI.Components.Editors
 
             Fields = sections.FirstOrDefault()?.Elements?.OfType<FieldUI>();
 
-            if (Fields != null)
+            EditContext.OnValidationStateChanged += EditContext_OnValidationStateChanged;
+            if (PropertyEditContext != null)
             {
-                foreach (var field in Fields)
-                {
-                    if (field.Property != null)
-                    {
-                        EditContext.NotifyPropertyIncludedInForm(field.Property);
-                    }
-                }
+                PropertyEditContext.OnValidationStateChanged += PropertyEditContext_OnValidationStateChanged;
             }
+
             await base.OnInitializedAsync();
+        }
+
+        protected override void DetachListener()
+        {
+            EditContext.OnValidationStateChanged -= EditContext_OnValidationStateChanged;
+            if (PropertyEditContext != null)
+            {
+                PropertyEditContext.OnValidationStateChanged -= PropertyEditContext_OnValidationStateChanged;
+            }
+
+            base.DetachListener();
+        }
+
+        private void EditContext_OnValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
+        {
+            PropertyEditContext?.IsValid();
         }
 
         private void PropertyEditContext_OnValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
         {
+            if (!EditContext.IsValid(Property) && e.IsValid == true)
+            {
+                EditContext.IsValid();
+            }
         }
     }
 }

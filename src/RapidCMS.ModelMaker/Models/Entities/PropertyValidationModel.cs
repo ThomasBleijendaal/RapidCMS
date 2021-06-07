@@ -19,8 +19,6 @@ namespace RapidCMS.ModelMaker.Models.Entities
     public class PropertyValidationModel<TValidatorConfig> : PropertyValidationModel, IPropertyValidationModel<TValidatorConfig>
         where TValidatorConfig : class, IValidatorConfig, new()
     {
-        [Required]
-        [ValidateObject]
         TValidatorConfig IPropertyValidationModel<TValidatorConfig>.Config => Config as TValidatorConfig ?? new TValidatorConfig();
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Attributes;
 
 namespace RapidCMS.Example.Shared.Data
 {
@@ -8,7 +8,7 @@ namespace RapidCMS.Example.Shared.Data
     {
         public string? Id { get; set; }
 
-        [Display(Name = "Current count", ShortName = "Current count")]
+        [Field(Name = "Current count", ShortName = "Current count")]
         public int CurrentCount { get; set; }
 
         public object Clone()
