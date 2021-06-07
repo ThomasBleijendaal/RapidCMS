@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.TableStorage.Abstractions;
 using RapidCMS.ModelMaker.TableStorage.Entities;
@@ -17,6 +18,8 @@ namespace RapidCMS.ModelMaker.TableStorage.Resolvers
                 // TODO: is this the best way?
                 TypeNameHandling = TypeNameHandling.All
             };
+
+            _settings.Converters.Add(new StringEnumConverter());
         }
 
         public ModelMakerEntity? ResolveEntity(ModelTableEntity tableEntity)

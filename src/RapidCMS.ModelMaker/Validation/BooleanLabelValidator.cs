@@ -6,14 +6,8 @@ namespace RapidCMS.ModelMaker.Validation
 {
     public class BooleanLabelValidator : BaseValidator<bool, BooleanLabelValidationConfig>
     {
-        protected override Task<string> ErrorMessage(BooleanLabelValidationConfig validatorConfig)
-        {
-            return Task.FromResult("");
-        }
+        protected override Task<string> ErrorMessage(BooleanLabelValidationConfig validatorConfig) => Task.FromResult("");
 
-        protected override Task<bool> IsValid(bool value, BooleanLabelValidationConfig validatorConfig)
-        {
-            return Task.FromResult(true);
-        }
+        protected override Task<bool> IsValid(bool value, BooleanLabelValidationConfig validatorConfig) => Task.FromResult(true);
     }
 }

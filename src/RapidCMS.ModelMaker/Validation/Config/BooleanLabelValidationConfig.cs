@@ -16,6 +16,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
         public LabelsConfig Labels { get; set; } = new LabelsConfig();
 
         public bool IsEnabled => true;
+        public bool AlwaysIncluded => false;
 
         public bool IsApplicable(PropertyModel model)
             => model.EditorAlias.In(Constants.Editors.Dropdown, Constants.Editors.Select);

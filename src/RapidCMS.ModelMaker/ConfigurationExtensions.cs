@@ -90,8 +90,6 @@ namespace RapidCMS.ModelMaker
                     EditorType.ModelEditor,
                     x => x.Config.Labels);
 
-                // TODO: custom type
-
                 config.AddPropertyEditor(Constants.Editors.Checkbox, "Checkbox", EditorType.Checkbox);
                 config.AddPropertyEditor(Constants.Editors.Date, "Date", EditorType.Date);
                 config.AddPropertyEditor(Constants.Editors.Dropdown, "Dropdown", EditorType.Dropdown);

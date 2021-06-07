@@ -11,6 +11,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
         public int? MaxLength { get; set; }
 
         public bool IsEnabled => MaxLength.HasValue;
+        public bool AlwaysIncluded => false;
 
         public bool IsApplicable(PropertyModel model)
             => model.EditorAlias.In(Constants.Editors.TextArea, Constants.Editors.TextBox);

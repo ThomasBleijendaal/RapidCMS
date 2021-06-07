@@ -179,6 +179,9 @@ namespace RapidCMS.ModelMaker.Models
                 EditorType.TextBox => typeof(TextBoxEditor),
                 EditorType.TextArea => typeof(TextAreaEditor),
 
+                // TODO: perhaps an empty component?
+                EditorType.None => typeof(TextBoxEditor),
+
                 _ => throw new InvalidOperationException($"EditorType.{editorType} is not a valid option."),
             };
 

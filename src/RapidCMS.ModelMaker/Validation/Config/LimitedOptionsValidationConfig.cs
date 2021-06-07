@@ -14,6 +14,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
         public List<string> Options { get; set; } = new List<string>();
 
         public bool IsEnabled => Options?.Any() == true;
+        public bool AlwaysIncluded => false;
 
         public bool IsApplicable(PropertyModel model)
             => model.EditorAlias.In(Constants.Editors.Dropdown);
