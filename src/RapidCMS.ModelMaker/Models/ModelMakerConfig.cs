@@ -20,6 +20,11 @@ namespace RapidCMS.ModelMaker.Models
         private readonly List<IPropertyValidatorConfig> _validators = new List<IPropertyValidatorConfig>();
         private readonly List<IPropertyConfig> _properties = new List<IPropertyConfig>();
 
+        public ModelMakerConfig()
+        {
+            ModelFolder = "./RapidModels/";
+        }
+
         public IEnumerable<IPropertyEditorConfig> Editors => _editors;
 
         public IEnumerable<IPropertyValidatorConfig> Validators => _validators;
@@ -186,5 +191,11 @@ namespace RapidCMS.ModelMaker.Models
                 _ => throw new InvalidOperationException($"EditorType.{editorType} is not a valid option."),
             };
 
+        public string ModelFolder { get; private set; }
+
+        public void SetModelFolder(string folder)
+        {
+            ModelFolder = folder;
+        }
     }
 }

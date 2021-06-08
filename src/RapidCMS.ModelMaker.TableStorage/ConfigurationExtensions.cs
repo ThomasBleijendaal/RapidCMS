@@ -15,17 +15,17 @@ namespace RapidCMS.ModelMaker.TableStorage
         public static IServiceCollection AddModelMakerTableStorage(this IServiceCollection services)
         {
             // Model Entity 
-            services.AddTransient<ICommandHandler<RemoveRequest<ModelEntity>, ConfirmResponse>, RemoveEntityCommandHandler<ModelEntity>>();
+            //services.AddTransient<ICommandHandler<RemoveRequest<ModelEntity>, ConfirmResponse>, RemoveEntityCommandHandler<ModelEntity>>();
             
-            services.AddTransient<ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>>, GetAllEntitiesCommandHandler<ModelEntity>>();
-            services.AddTransient<ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>>, GetEntityByIdCommandHandler<ModelEntity>>();
-            services.AddTransient<ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>>, GetEntityByAliasCommandHandler<ModelEntity>>();
+            //services.AddTransient<ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>>, GetAllEntitiesCommandHandler<ModelEntity>>();
+            //services.AddTransient<ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>>, GetEntityByIdCommandHandler<ModelEntity>>();
+            //services.AddTransient<ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>>, GetEntityByAliasCommandHandler<ModelEntity>>();
 
-            services.AddTransient<ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>>, InsertEntityCommandHandler<ModelEntity>>();
-            services.AddTransient<ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse>, UpdateEntityCommandHandler<ModelEntity>>();
-            services.AddTransient<ICommandHandler<PublishRequest<ModelEntity>, ConfirmResponse>, PublishEntityCommandHandler<ModelEntity>>();
+            //services.AddTransient<ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>>, InsertEntityCommandHandler<ModelEntity>>();
+            //services.AddTransient<ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse>, UpdateEntityCommandHandler<ModelEntity>>();
+            //services.AddTransient<ICommandHandler<PublishRequest<ModelEntity>, ConfirmResponse>, PublishEntityCommandHandler<ModelEntity>>();
 
-            services.AddSingleton<ITableEntityResolver<ModelEntity>, ModelEntityResolver>();
+            //services.AddSingleton<ITableEntityResolver<ModelEntity>, ModelEntityResolver>();
 
             // Model Maker Entity
             services.AddTransient<ICommandHandler<RemoveRequest<ModelMakerEntity>, ConfirmResponse>, RemoveEntityCommandHandler<ModelMakerEntity>>();

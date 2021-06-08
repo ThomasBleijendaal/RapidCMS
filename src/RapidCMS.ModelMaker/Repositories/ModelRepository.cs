@@ -83,7 +83,6 @@ namespace RapidCMS.ModelMaker.Repositories
         {
             if (editContext is IEditContext<ModelEntity> typedEditContext)
             {
-                // TODO: move logic to external provider
                 typedEditContext.Entity.State = typedEditContext.Entity.State.Publish();
                 typedEditContext.Entity.PublishedAt = DateTime.UtcNow;
                 typedEditContext.Entity.UpdatedAt = DateTime.UtcNow;

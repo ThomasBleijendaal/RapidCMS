@@ -5,11 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Enums;
+using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Collections;
+using RapidCMS.ModelMaker.CommandHandlers;
 using RapidCMS.ModelMaker.DataCollections;
 using RapidCMS.ModelMaker.Factories;
 using RapidCMS.ModelMaker.Models;
+using RapidCMS.ModelMaker.Models.Commands;
+using RapidCMS.ModelMaker.Models.Entities;
+using RapidCMS.ModelMaker.Models.Responses;
 using RapidCMS.ModelMaker.Repositories;
 using RapidCMS.ModelMaker.Validation;
 using RapidCMS.ModelMaker.Validation.Config;
@@ -24,9 +29,9 @@ namespace RapidCMS.ModelMaker
             Action<IModelMakerConfig>? configure = null)
         {
             // TODO:
-            // - 3.9.3-preview: after implementing configurable sub collections + alias working
-            // - 3.9.4-preview: after implementing save to json instead of table storage
-            // - 3.9.5-preview: after implementing basic ModelEntity generation
+            // - 3.9.3-preview: after implementing save to json instead of table storage
+            // - 3.9.4-preview: after implementing basic ModelEntity generation
+            // - 3.9.5-preview: after implementing configurable sub collections + alias working
             // - 4.0.0: after implementing complete DbContext generation by configured code
 
             services.AddTransient<IPlugin, ModelMakerPlugin>();
@@ -165,6 +170,16 @@ namespace RapidCMS.ModelMaker
             configure?.Invoke(config);
 
             services.AddSingleton<IModelMakerConfig>(config);
+
+            services.AddTransient<ICommandHandler<RemoveRequest<ModelEntity>, ConfirmResponse>, RemoveModelEntityCommandHandler>();
+
+            services.AddTransient<ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>>, GetAllModelEntitiesCommandHandler>();
+            services.AddTransient<ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>>, GetModelEntityCommandHandler>();
+            services.AddTransient<ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>>, GetModelEntityCommandHandler>();
+
+            services.AddTransient<ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>>, InsertModelEntityCommandHandler>();
+            services.AddTransient<ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse>, UpdateModelEntityCommandHandler>();
+            services.AddTransient<ICommandHandler<PublishRequest<ModelEntity>, ConfirmResponse>, PublishModelEntityCommandHandler>();
 
             return services;
         }

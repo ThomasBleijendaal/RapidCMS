@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using RapidCMS.Core.Extensions;
 using RapidCMS.ModelMaker.Abstractions.Entities;
 using RapidCMS.ModelMaker.Enums;
 
@@ -15,6 +16,7 @@ namespace RapidCMS.ModelMaker.Models.Entities
         }
 
         public string Alias { get; set; } = default!;
+        public string? ParentId { get; set; } = default!;
         public PublishState State { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime PublishedAt { get; set; }

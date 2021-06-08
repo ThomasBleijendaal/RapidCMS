@@ -49,5 +49,8 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
         IEnumerable<IPropertyEditorConfig> Editors { get; }
         IEnumerable<IPropertyValidatorConfig> Validators { get; }
         IEnumerable<IPropertyConfig> Properties { get; }
+
+        string ModelFolder { get; }
+        void SetModelFolder(string folder);
     }
 }
