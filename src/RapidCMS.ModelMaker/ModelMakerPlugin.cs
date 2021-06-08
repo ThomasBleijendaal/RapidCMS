@@ -365,7 +365,7 @@ namespace RapidCMS.ModelMaker
                 new PaneSetup(
                     default,
                     default,
-                    (m, s) => true, //s == EntityState.IsExisting,
+                    (m, s) => true,
                     typeof(PropertyModel),
                     new List<IButtonSetup>
                     {

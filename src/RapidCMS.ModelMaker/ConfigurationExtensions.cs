@@ -23,6 +23,13 @@ namespace RapidCMS.ModelMaker
             bool addDefaultPropertiesAndValidators = true,
             Action<IModelMakerConfig>? configure = null)
         {
+            // TODO:
+            // - 3.9.2-preview: after testing of current code
+            // - 3.9.3-preview: after implementing configurable sub collections
+            // - 3.9.4-preview: after implementing save to json instead of table storage
+            // - 3.9.5-preview: after implementing basic ModelEntity generation
+            // - 4.0.0: after implementing complete DbContext generation by configured code
+
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
             services.AddTransient<CollectionsDataCollection>();
