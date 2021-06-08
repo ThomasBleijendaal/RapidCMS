@@ -8,6 +8,7 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
@@ -220,13 +221,16 @@ namespace RapidCMS.ModelMaker
                 throw new InvalidOperationException("A property can only have 1 enabled validator with DataCollection.", ex);
             }
 
+            var propertyType = _config.Properties.SingleOrDefault(x => x.Alias == property.PropertyAlias)?.Type ?? typeof(object);
+
             var setup = new CustomPropertyFieldSetup(new FieldConfig
             {
                 EditorType = EditorType.Custom,
                 Index = index,
                 Name = property.Name,
-                Property = new PropertyMetadata<ModelMakerEntity, object?>( // TODO: pinning this to object? really impairs the functionality of some editors
+                Property = new PropertyMetadata<ModelMakerEntity>(
                     property.Alias,
+                    propertyType,
                     entity => entity.Get(property.Alias),
                     (entity, value) => entity.Set(property.Alias, value),
                     $"{property.EditorAlias}::{property.Alias}")
@@ -310,7 +314,7 @@ namespace RapidCMS.ModelMaker
             var titleField = CreatePropertyField(EditorType.Checkbox,
                 3,
                 "Use as entity title",
-                new PropertyMetadata<PropertyModel, bool>("IsTitle", x => x.IsTitle, (x, v) => x.IsTitle = v, "isTitle"));
+                PropertyMetadataHelper.GetFullPropertyMetadata<PropertyModel, bool>(x => x.IsTitle));
 
             titleField.IsVisible = (m, s)
                 => m is PropertyModel property && !string.IsNullOrEmpty(property.PropertyAlias)
@@ -331,27 +335,27 @@ namespace RapidCMS.ModelMaker
                         CreatePropertyField(EditorType.Dropdown,
                             0,
                             "Property type",
-                            new PropertyMetadata<PropertyModel, string>("PropertyAlias", x => x.PropertyAlias, (x, v) => x.PropertyAlias = v, "propertyalias"),
+                            PropertyMetadataHelper.GetFullPropertyMetadata<PropertyModel, string?>(x => x.PropertyAlias),
                             (m, s) => s == EntityState.IsExisting,
                             relation: new DataProviderRelationSetup(typeof(PropertyTypeDataCollection))),
 
                         CreatePropertyField(EditorType.TextBox,
                             1,
                             "Property name",
-                             new PropertyMetadata<PropertyModel, string>("Name", x => x.Name, (x, v) => x.Name = v ?? "No Name", "name")),
+                            PropertyMetadataHelper.GetFullPropertyMetadata<PropertyModel, string?>(x => x.Name)),
 
                         CreatePropertyField(EditorType.TextBox,
                             2,
                             "Property alias",
-                            new PropertyMetadata<PropertyModel, string>("Alias", x => x.Alias, (x, v) => x.Alias = v ?? x.Name?.ToUrlFriendlyString() ?? "", "alias")),
+                            new PropertyMetadata<PropertyModel>("Alias", typeof(string), x => x.Alias, (x, v) => x.Alias = v as string ?? x.Name?.ToUrlFriendlyString() ?? "", "alias")),
 
                         titleField,
 
                         CreatePropertyField(EditorType.Dropdown,
                             4,
                             "Property editor",
-                           new PropertyMetadata<PropertyModel, string>("EditorAlias", x => x.EditorAlias, (x, v) => x.EditorAlias = v, "editoralias"),
-                           relation: new DataProviderRelationSetup(typeof(PropertyEditorDataCollection))),
+                            PropertyMetadataHelper.GetFullPropertyMetadata<PropertyModel, string?>(x => x.EditorAlias),
+                           relation: new DataProviderRelationSetup(typeof(PropertyEditorDataCollection)))
                     },
                     new List<ISubCollectionListSetup>
                     {
@@ -405,14 +409,15 @@ namespace RapidCMS.ModelMaker
                     Property =
                         validationType.ConfigToEditor != null
                         ? validationType.ConfigToEditor.Nest<PropertyModel, PropertyValidationModel>(x => x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias))
-                        : new PropertyMetadata<PropertyModel, IValidatorConfig>(
+                        : new PropertyMetadata<PropertyModel>(
                             "Config",
-                                x => x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias)?.Config,
+                            typeof(IValidatorConfig),
+                            x => x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias)?.Config,
                             (x, v) =>
                             {
                                 if (x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias) is PropertyValidationModel validation)
                                 {
-                                    validation.Config = v;
+                                    validation.Config = v as IValidatorConfig;
                                 }
                             },
                             "config"),

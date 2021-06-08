@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace RapidCMS.ModelMaker.Abstractions.Config
 {
@@ -7,6 +8,8 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
         string Alias { get; }
         string Name { get; }
         string Icon { get; }
+
+        Type Type { get; }
 
         bool UsableAsTitle { get; }
 

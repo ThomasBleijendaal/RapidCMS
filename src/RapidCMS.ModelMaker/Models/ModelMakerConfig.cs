@@ -32,6 +32,7 @@ namespace RapidCMS.ModelMaker.Models
                 alias,
                 name,
                 icon,
+                typeof(TValue),
                 validatorAliases.Select(x => _validators.FirstOrDefault(v => v.Alias == x) ?? throw new InvalidOperationException($"Cannot find validator with alias {x}")).ToList(),
                 editorAliases.Select(x => _editors.FirstOrDefault(e => e.Alias == x) ?? throw new InvalidOperationException($"Cannot find editor with alias {x}")).ToList());
 
