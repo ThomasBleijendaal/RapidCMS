@@ -1,0 +1,28 @@
+﻿<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <button type="button" class="btn btn-light" @onclick="@(async (x) => await OnResetView.InvokeAsync())"><Icon Name="Refresh" /> Reset</button>
+    </li>
+
+    <li class="nav-item search">
+        <div class="input-group">
+            <input type="search"
+                   placeholder="Search.."
+                   class="form-control"
+                   value="@_searchTerm"
+                   @onchange="@(async (args) => await OnSearch.InvokeAsync(((string?)args.Value) ?? string.Empty))" />
+            <div class="input-group-append">
+                <button class="btn"
+                        @onclick="@(async (args) => { _searchTerm = string.Empty; await OnSearch.InvokeAsync(string.Empty); })">
+                    <Icon Name="Cancel" />
+                </button>
+            </div>
+        </div>
+    </li>
+</ul>
+
+@code {
+    private string? _searchTerm;
+
+    [Parameter] public EventCallback OnResetView { get; set; } = default!;
+    [Parameter] public EventCallback<string> OnSearch { get; set; } = default!;
+} 

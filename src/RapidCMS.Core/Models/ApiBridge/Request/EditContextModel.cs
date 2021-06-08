@@ -23,7 +23,7 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
                 {
                     return new RelationModel
                     {
-                        Elements = relation.RelatedElements.Select(el => el.Id),
+                        Elements = relation.RelatedElementIds,
                         PropertyName = relation.Property.PropertyName,
                         VariantAlias = AliasHelper.GetEntityVariantAlias(relation.RelatedEntityType)
                     };

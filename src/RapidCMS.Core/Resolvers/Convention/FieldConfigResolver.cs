@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Config;
-using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Resolvers.Convention
@@ -21,13 +21,13 @@ namespace RapidCMS.Core.Resolvers.Convention
             return properties
                 .Select(property =>
                 {
-                    var displayAttribute = property.GetCustomAttribute<DisplayAttribute>();
-                    if (displayAttribute != null)
+                    var fieldAttribute = property.GetCustomAttribute<FieldAttribute>();
+                    if (fieldAttribute != null)
                     {
-                        if ((features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(displayAttribute.Name)) ||
-                            (!features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(displayAttribute.ShortName)))
+                        if ((features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(fieldAttribute.Name)) ||
+                            (!features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(fieldAttribute.ShortName)))
                         {
-                            return (property, displayAttribute);
+                            return (property, fieldAttribute);
                         }
                     }
 
@@ -36,7 +36,7 @@ namespace RapidCMS.Core.Resolvers.Convention
                 .Where(x => x != default)
                 .Select((data, index) =>
                 {
-                    if (data.displayAttribute.ResourceType?.IsSameTypeOrDerivedFrom(typeof(ComponentBase)) == false)
+                    if (data.fieldAttribute.EditorType?.IsSameTypeOrDerivedFrom(typeof(ComponentBase)) == false)
                     {
                         throw new InvalidOperationException("ResourceType of [Display] must be a valid BaseEditor derived component.");
                     }
@@ -49,32 +49,26 @@ namespace RapidCMS.Core.Resolvers.Convention
 
                     var displayType = features.HasFlag(Features.CanEdit) ? DisplayType.None : DisplayType.Label;
                     var editorType = !features.HasFlag(Features.CanEdit) ? EditorType.None
-                        : data.displayAttribute.ResourceType != null ? EditorType.Custom
+                        : data.fieldAttribute.EditorType != null ? EditorType.Custom
                         : EditorTypeHelper.TryFindDefaultEditorType(propertyType);
-                    var customType = editorType == EditorType.Custom ? data.displayAttribute.ResourceType : null;
+                    var customType = editorType == EditorType.Custom ? data.fieldAttribute.EditorType : null;
 
                     var relationConfig = editorType != EditorType.Select ? null :
                         new DataProviderRelationConfig(typeof(EnumDataProvider<>).MakeGenericType(propertyType));
 
                     return new FieldConfig
                     {
-                        Description = features.HasFlag(Features.CanEdit) ? data.displayAttribute.Description : default,
-                        DefaultOrder = data.displayAttribute.GetOrder() switch
-                        {
-                            (int)OrderByType.Ascending => OrderByType.Ascending,
-                            -1 => OrderByType.Descending,
-                            (int)OrderByType.Descending => OrderByType.Descending,
-                            _ => OrderByType.None
-                        },
+                        Description = features.HasFlag(Features.CanEdit) ? data.fieldAttribute.Description : default,
+                        DefaultOrder = data.fieldAttribute.OrderByType,
                         CustomType = customType,
                         DisplayType = displayType,
                         EditorType = editorType,
-                        Index = !data.displayAttribute.GetOrder().HasValue ? index : data.displayAttribute.Order,
+                        Index = data.fieldAttribute.Index,
                         IsDisabled = (object x, EntityState y) => false,
                         IsVisible = (object x, EntityState y) => true,
-                        Name = features.HasFlag(Features.CanEdit) ? data.displayAttribute.Name : data.displayAttribute.ShortName,
-                        OrderByExpression = data.displayAttribute.GetOrder() == 0 ? null : propertyMetadata,
-                        Placeholder = data.displayAttribute.GetPrompt(),
+                        Name = features.HasFlag(Features.CanEdit) ? data.fieldAttribute.Name : data.fieldAttribute.ShortName,
+                        OrderByExpression = data.fieldAttribute.OrderByType == OrderByType.Disabled ? null : propertyMetadata,
+                        Placeholder = data.fieldAttribute.Placeholder,
                         Property = propertyMetadata,
                         Relation = relationConfig
                     };

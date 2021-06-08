@@ -1,9 +1,10 @@
 ﻿using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class TreeViewSetup
+    internal class TreeViewSetup : ITreeViewSetup
     {
         public TreeViewSetup(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, bool defaultOpenEntities, bool defaultOpenCollections, IExpressionMetadata? name)
         {
@@ -14,11 +15,11 @@ namespace RapidCMS.Core.Models.Setup
             Name = name;
         }
 
-        internal EntityVisibilty EntityVisibility { get; set; }
-        internal CollectionRootVisibility RootVisibility { get; set; }
-        internal bool DefaultOpenEntities { get; set; }
-        internal bool DefaultOpenCollections { get; set; }
+        public EntityVisibilty EntityVisibility { get; set; }
+        public CollectionRootVisibility RootVisibility { get; set; }
+        public bool DefaultOpenEntities { get; set; }
+        public bool DefaultOpenCollections { get; set; }
 
-        internal IExpressionMetadata? Name { get; set; }
+        public IExpressionMetadata? Name { get; set; }
     }
 }

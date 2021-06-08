@@ -17,9 +17,9 @@ namespace RapidCMS.Core.Resolvers.Setup
     {
         private readonly ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> _treeElementResolver;
         private readonly ISetupResolver<IEntityVariantSetup, EntityVariantConfig> _entityVariantResolver;
-        private readonly ISetupResolver<TreeViewSetup, TreeViewConfig> _treeViewResolver;
-        private readonly ISetupResolver<ListSetup, ListConfig> _listResolver;
-        private readonly ISetupResolver<NodeSetup, NodeConfig> _nodeResolver;
+        private readonly ISetupResolver<ITreeViewSetup, TreeViewConfig> _treeViewResolver;
+        private readonly ISetupResolver<IListSetup, ListConfig> _listResolver;
+        private readonly ISetupResolver<INodeSetup, NodeConfig> _nodeResolver;
         private readonly IRepositoryTypeResolver _repositoryTypeResolver;
         private readonly IEnumerable<IPlugin> _plugins;
 
@@ -30,9 +30,9 @@ namespace RapidCMS.Core.Resolvers.Setup
         public CollectionSetupResolver(ICmsConfig cmsConfig,
             ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> treeElementResolver,
             ISetupResolver<IEntityVariantSetup, EntityVariantConfig> entityVariantResolver,
-            ISetupResolver<TreeViewSetup, TreeViewConfig> treeViewResolver,
-            ISetupResolver<ListSetup, ListConfig> listResolver,
-            ISetupResolver<NodeSetup, NodeConfig> nodeResolver,
+            ISetupResolver<ITreeViewSetup, TreeViewConfig> treeViewResolver,
+            ISetupResolver<IListSetup, ListConfig> listResolver,
+            ISetupResolver<INodeSetup, NodeConfig> nodeResolver,
             IRepositoryTypeResolver repositoryTypeResolver,
             IEnumerable<IPlugin> plugins)
         {
@@ -57,7 +57,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             void MapCollections(IEnumerable<CollectionConfig> collections)
             {
-                foreach (var collection in collections.Where(col => !col.Recursive))
+                foreach (var collection in collections.Where(col => col is not ReferencedCollectionConfig))
                 {
                     if (!_collectionMap.TryAdd(collection.Alias, collection))
                     {
@@ -124,8 +124,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 config.Color,
                 config.Name,
                 config.Alias,
-                repositoryAlias,
-                isRecursive: config.Recursive)
+                repositoryAlias)
             {
                 DataViews = config.DataViews,
                 DataViewBuilder = config.DataViewBuilder,
@@ -136,7 +135,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             if (!string.IsNullOrWhiteSpace(config.ParentAlias) && _collectionMap.TryGetValue(config.ParentAlias, out var collectionConfig))
             {
-                collection.Parent = new TreeElementSetup(collectionConfig.Alias, PageType.Collection); // TODO: this assumes nesting is always with collections
+                collection.Parent = new TreeElementSetup(collectionConfig.Alias, collectionConfig.Name, PageType.Collection); // TODO: this assumes nesting is always with collections
             }
             collection.Collections = (await _treeElementResolver.ResolveSetupAsync(config.CollectionsAndPages, collection)).CheckIfCachable(ref cacheable).ToList();
 

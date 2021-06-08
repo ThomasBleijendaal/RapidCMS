@@ -14,13 +14,20 @@ namespace RapidCMS.Core.Abstractions.Config
 
         Type RepositoryType { get; }
         IEnumerable<Type> RepositoryTypes { get; }
-
-        bool Recursive { get; }
     }
 
     public interface ICollectionConfig<TEntity> : ICollectionConfig
         where TEntity : IEntity
     {
+        /// <summary>
+        /// Adds the given collection as sub collection to the current collection.
+        /// 
+        /// Because it's referenced only by alias, no configuration can be added to this sub collection.
+        /// </summary>
+        /// <param name="alias"></param>
+        /// <returns></returns>
+        ICollectionConfig<TEntity> AddSubCollection(string alias);
+
         /// <summary>
         /// Adds a sub collection to the current collection.
         /// </summary>
@@ -65,8 +72,10 @@ namespace RapidCMS.Core.Abstractions.Config
 
         /// <summary>
         /// Adds itself as sub collection.
+        /// 
+        /// Because this is a self-reference, no configuration can be added to this sub collection.
         /// </summary>
-        void AddSelfAsRecursiveCollection();
+        ICollectionConfig<TEntity> AddSelfAsRecursiveCollection();
 
         /// <summary>
         /// Add a detail page to the current collection. A detail page is a NodeEditor with its own entity type and repository, and allow

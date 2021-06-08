@@ -55,8 +55,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
                         default,
                         "name",
                         alias,
-                        $"repo-{alias}",
-                        default)
+                        $"repo-{alias}")
                     {
                         EntityVariant = new EntityVariantSetup("default", default, typeof(DefaultEntityVariant), "alias"),
                         SubEntityVariants = new List<IEntityVariantSetup>

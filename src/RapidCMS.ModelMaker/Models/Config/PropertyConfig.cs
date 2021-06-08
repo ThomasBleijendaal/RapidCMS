@@ -21,8 +21,18 @@ namespace RapidCMS.ModelMaker.Models.Config
 
         public string Icon { get; }
 
+        public bool UsableAsTitle { get; private set; } = true;
+
         public IList<IPropertyValidatorConfig> Validators { get; }
 
         public IList<IPropertyEditorConfig> Editors { get; }
+
+
+        public IPropertyConfig CanBeUsedAsTitle(bool usedAsTitle)
+        {
+            UsableAsTitle = usedAsTitle;
+
+            return this;
+        }
     }
 }

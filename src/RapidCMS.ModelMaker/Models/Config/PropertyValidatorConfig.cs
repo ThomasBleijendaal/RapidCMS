@@ -15,7 +15,7 @@ namespace RapidCMS.ModelMaker.Models.Config
             Type validator,
             Type config,
             IFullPropertyMetadata? configToEditor = null,
-            Type? dataCollection = null)
+            Type? dataCollectionFactory = null)
         {
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
             Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -26,7 +26,7 @@ namespace RapidCMS.ModelMaker.Models.Config
             Config = config ?? throw new ArgumentNullException(nameof(config));
 
             ConfigToEditor = configToEditor;
-            DataCollection = dataCollection;
+            DataCollectionFactory = dataCollectionFactory;
         }
 
         public string Alias { get; }
@@ -42,6 +42,6 @@ namespace RapidCMS.ModelMaker.Models.Config
         public Type Editor { get; }
 
         public IFullPropertyMetadata? ConfigToEditor { get; }
-        public Type? DataCollection { get; }
+        public Type? DataCollectionFactory { get; }
     }
 }

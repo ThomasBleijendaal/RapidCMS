@@ -24,14 +24,14 @@ namespace RapidCMS.ModelMaker.DataCollections
         {
         }
 
-        public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
+        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query)
         {
-            return Task.FromResult<IEnumerable<IElement>>(
+            return Task.FromResult<IReadOnlyList<IElement>>(
                 _config.Properties.Select(x => new Element
                 {
                     Id = x.Alias,
                     Labels = new[] { x.Name }
-                }));
+                }).ToList());
         }
 
         public Task SetEntityAsync(FormEditContext editContext, IParent? parent)

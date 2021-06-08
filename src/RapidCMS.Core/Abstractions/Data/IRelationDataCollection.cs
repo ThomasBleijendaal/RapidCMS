@@ -8,10 +8,12 @@ namespace RapidCMS.Core.Abstractions.Data
     {
         Task<IReadOnlyList<IElement>> GetRelatedElementsAsync();
 
-        Task AddElementAsync(IElement option);
-        Task RemoveElementAsync(IElement option);
+        void AddElement(object id);
+        void RemoveElement(object id);
 
-        IReadOnlyList<IElement> GetCurrentRelatedElements();
+        bool IsRelated(object id);
+
+        IReadOnlyList<object> GetCurrentRelatedElementIds();
 
         Type GetRelatedEntityType();
     }

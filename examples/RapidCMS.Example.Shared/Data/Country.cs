@@ -30,7 +30,8 @@ namespace RapidCMS.Example.Shared.Data
                 People = People.ToList(),
                 Metadata = new CountryMetadata
                 {
-                    Continent = Metadata.Continent
+                    Continent = Metadata.Continent,
+                    Tag = Metadata.Tag
                 }
             };
         }
@@ -45,6 +46,8 @@ namespace RapidCMS.Example.Shared.Data
             [MinLength(8)]
             [MaxLength(10)]
             public string? Continent { get; set; }
+
+            public string? Tag { get; set; }
         }
     }
 }

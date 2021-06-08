@@ -1,0 +1,52 @@
+﻿@inherits BaseMultiplePickerEditor
+
+@if (_options != null)
+{
+    var index = 0;
+
+    <div class="form-control form-control-select-list @(CssHelper.GetDisplayModifier(DisplayType)) @(CssHelper.GetValidationClass(State))">
+        <SearchBar OnResetView="ResetViewAsync" OnSearch="SearchAsync" />
+
+        @foreach (var option in _options)
+        {
+            index++;
+
+            <div class="form-check">
+                <div class="row">
+                    <div class="col">
+                        <label class="form-check-label row" for="@_group-option@(index)">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   value=@option.Id
+                                   id="@_group-option@(index)"
+                                   name=@_group
+                                   checked=@(IsSelected(option.Id))
+                                   disabled=@IsDisabled
+                                   @onchange=@(args => SelectElement(option.Id, (bool?)args.Value)) />
+                            @option.Labels.First()
+                        </label>
+                    </div>
+                    @foreach (var label in option.Labels.Skip(1))
+                    {
+                        <div class="col">
+                            <label class="form-check-label" for="@_group-option@(index)">
+                                @label
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <Paginator CurrentPage="@_currentPage"
+                   MaxPage="@_maxPage"
+                   OnPageChanged="@PageChangedAsync" />
+    </div>
+
+    @foreach (var message in GetValidationMessages())
+    {
+        <div class="invalid-feedback">
+            @message
+        </div>
+    }
+}

@@ -117,8 +117,7 @@ namespace RapidCMS.UI.Components.Sections
 
         protected async Task<(ListContext listContext, List<(FormEditContext editContext, IEnumerable<SectionUI> sections)> sections)> LoadSectionsAsync(ListUI listUI, IListUIResolver uiResolver)
         {
-            var query = Query.Create(listUI.PageSize, CurrentState.CurrentPage, CurrentState.SearchTerm, CurrentState.ActiveTab);
-            query.CollectionAlias = CurrentState.CollectionAlias;
+            var query = Query.Create(listUI.PageSize, CurrentState.CurrentPage, CurrentState.SearchTerm, CurrentState.ActiveTab, CurrentState.CollectionAlias);
 
             if (listUI.OrderBys != null)
             {

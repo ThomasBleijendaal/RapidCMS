@@ -7,6 +7,6 @@ namespace RapidCMS.Core.Forms.Validation
 {
     public abstract class RelationValidationAttribute : Attribute
     {
-        public abstract ValidationResult? IsValid(IEntity entity, IEnumerable<IElement> relatedElements, ValidationContext validationContext);
+        public abstract ValidationResult? IsValid(IEntity entity, IReadOnlyList<object> relatedElementIds, ValidationContext validationContext);
     }
 }

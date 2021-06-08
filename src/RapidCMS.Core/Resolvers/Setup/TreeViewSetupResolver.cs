@@ -6,11 +6,11 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class TreeViewSetupResolver : ISetupResolver<TreeViewSetup, TreeViewConfig>
+    internal class TreeViewSetupResolver : ISetupResolver<ITreeViewSetup, TreeViewConfig>
     {
-        public Task<IResolvedSetup<TreeViewSetup>> ResolveSetupAsync(TreeViewConfig config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<ITreeViewSetup>> ResolveSetupAsync(TreeViewConfig config, ICollectionSetup? collection = default)
         {
-            return Task.FromResult<IResolvedSetup<TreeViewSetup>>(new ResolvedSetup<TreeViewSetup>(new TreeViewSetup(
+            return Task.FromResult<IResolvedSetup<ITreeViewSetup>>(new ResolvedSetup<ITreeViewSetup>(new TreeViewSetup(
                 config.EntityVisibilty,
                 config.RootVisibility,
                 config.DefaultOpenEntities,

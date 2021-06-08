@@ -31,11 +31,11 @@ namespace RapidCMS.ModelMaker.DataCollections
             }
         }
 
-        public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
+        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query)
         {
             var property = _config.Properties.FirstOrDefault(x => x.Alias == _property?.PropertyAlias);
 
-            return Task.FromResult<IEnumerable<IElement>>(
+            return Task.FromResult<IReadOnlyList<IElement>>(
                 _config.Editors
                     .Where(e => property?.Editors.Any(pe => pe.Alias == e.Alias) ?? false)
                     .Select(x => new Element
@@ -45,7 +45,8 @@ namespace RapidCMS.ModelMaker.DataCollections
                         {
                             x.Name
                         }
-                    }));
+                    })
+                    .ToList());
         }
 
         public Task SetEntityAsync(FormEditContext editContext, IParent? parent)

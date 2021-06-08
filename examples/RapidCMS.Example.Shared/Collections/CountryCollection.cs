@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.Handlers;
@@ -22,7 +23,7 @@ namespace RapidCMS.Example.Shared.Collections
                         view.AddDefaultButton(DefaultButtonType.New);
 
                         view.SetPageSize(10);
-                        
+
                         view
                             .AddRow(row =>
                             {
@@ -56,7 +57,20 @@ namespace RapidCMS.Example.Shared.Collections
                         editor.AddSection(section =>
                         {
                             section.AddField(x => x.Name);
+
+                            // to enable validation on Metadata.Continent, the Metadata property on Country must be annotated with [ValidateObject]
+                            // to instruct the data annotation validator to validate the properties inside the metadata object
                             section.AddField(x => x.Metadata.Continent);
+                            section.AddField(x => x.Metadata.Tag)
+                                .SetType(EditorType.Dropdown)
+                                // the FixedOptionsDataProvider allows for adding hard-coded options, without requiring a Enum
+                                .SetDataCollection(new FixedOptionsDataProvider(
+                                    new[]
+                                    {
+                                        "Tag A",
+                                        "Tag B",
+                                        "Tab C"
+                                    }));
 
                             // this property contains a list of people it is related to
                             // you can see it as a ICollection<TRelated> property in EF Core
@@ -67,7 +81,7 @@ namespace RapidCMS.Example.Shared.Collections
 
                             section.AddField(x => x.People)
                                 // a multi-select is a list of checkboxes
-                                .SetType(EditorType.MultiSelect)
+                                .SetType(EditorType.EntitiesPicker)
                                 // this binds the PersonCollection to this collection
                                 // the CMS must know what the foreign entity and key is, you need to specify it
                                 .SetCollectionRelation<Person, int>(
@@ -88,7 +102,8 @@ namespace RapidCMS.Example.Shared.Collections
                                             .SetElementDisplayProperties(x => x.Name, x => x.Details.Email);
                                     });
                         });
-                    });
+                    })
+                    .AddSubCollection("person");
             });
         }
     }

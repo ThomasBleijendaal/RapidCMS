@@ -31,7 +31,7 @@ namespace RapidCMS.Core.Resolvers.Data
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<FormDataProvider?> GetDataProviderAsync(FieldSetup field)
+        public async Task<FormDataProvider?> GetDataProviderAsync(IFieldSetup field)
         {
             if (!(field is PropertyFieldSetup propertyField && propertyField.Relation != null))
             {

@@ -1,4 +1,6 @@
-﻿using RapidCMS.ModelMaker.Abstractions.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using RapidCMS.Core.Forms.Validation;
+using RapidCMS.ModelMaker.Abstractions.Entities;
 using RapidCMS.ModelMaker.Abstractions.Validation;
 
 namespace RapidCMS.ModelMaker.Models.Entities
@@ -9,6 +11,8 @@ namespace RapidCMS.ModelMaker.Models.Entities
 
         public string Alias { get; set; } = default!;
 
+        [Required]
+        [ValidateObject]
         public IValidatorConfig? Config { get; set; }
     }
 

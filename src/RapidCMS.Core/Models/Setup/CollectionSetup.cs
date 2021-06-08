@@ -15,15 +15,13 @@ namespace RapidCMS.Core.Models.Setup
             string? color,
             string name,
             string alias,
-            string repositoryAlias,
-            bool isRecursive = false)
+            string repositoryAlias)
         {
             Icon = icon;
             Color = color;
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
             RepositoryAlias = repositoryAlias ?? throw new ArgumentNullException(nameof(repositoryAlias));
-            Recursive = isRecursive;
         }
 
         public string? Icon { get; private set; }
@@ -31,7 +29,6 @@ namespace RapidCMS.Core.Models.Setup
         public string Name { get; private set; }
         public string Alias { get; private set; }
         public string RepositoryAlias { get; private set; }
-        public bool Recursive { get; private set; }
 
         public UsageType UsageType { get; set; }
 
@@ -61,13 +58,13 @@ namespace RapidCMS.Core.Models.Setup
                 ?? EntityVariant;
         }
 
-        public TreeViewSetup? TreeView { get; set; }
+        public ITreeViewSetup? TreeView { get; set; }
 
-        public ListSetup? ListView { get; set; }
-        public ListSetup? ListEditor { get; set; }
+        public IListSetup? ListView { get; set; }
+        public IListSetup? ListEditor { get; set; }
 
-        public NodeSetup? NodeView { get; set; }
-        public NodeSetup? NodeEditor { get; set; }
+        public INodeSetup? NodeView { get; set; }
+        public INodeSetup? NodeEditor { get; set; }
 
         public IButtonSetup? FindButton(string buttonId)
         {

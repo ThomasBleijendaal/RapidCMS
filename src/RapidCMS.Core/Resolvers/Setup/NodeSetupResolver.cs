@@ -10,14 +10,14 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class NodeSetupResolver : ISetupResolver<NodeSetup, NodeConfig>
+    internal class NodeSetupResolver : ISetupResolver<INodeSetup, NodeConfig>
     {
-        private readonly ISetupResolver<PaneSetup, PaneConfig> _paneSetupResolver;
+        private readonly ISetupResolver<IPaneSetup, PaneConfig> _paneSetupResolver;
         private readonly ISetupResolver<IButtonSetup, ButtonConfig> _buttonSetupResolver;
         private readonly IConventionBasedResolver<NodeConfig> _conventionNodeConfigResolver;
 
         public NodeSetupResolver(
-            ISetupResolver<PaneSetup, PaneConfig> paneSetupResolver,
+            ISetupResolver<IPaneSetup, PaneConfig> paneSetupResolver,
             ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver,
             IConventionBasedResolver<NodeConfig> conventionNodeConfigResolver)
         {
@@ -26,7 +26,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _conventionNodeConfigResolver = conventionNodeConfigResolver;
         }
 
-        public async Task<IResolvedSetup<NodeSetup>> ResolveSetupAsync(NodeConfig config, ICollectionSetup? collection = default)
+        public async Task<IResolvedSetup<INodeSetup>> ResolveSetupAsync(NodeConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -35,7 +35,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             if (config is IIsConventionBased isConventionBasedConfig)
             {
-                config = _conventionNodeConfigResolver.ResolveByConvention(config.BaseType, isConventionBasedConfig.GetFeatures(), collection);
+                config = await _conventionNodeConfigResolver.ResolveByConventionAsync(config.BaseType, isConventionBasedConfig.GetFeatures(), collection);
             }
 
             var cacheable = true;
@@ -43,7 +43,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             var panes = (await _paneSetupResolver.ResolveSetupAsync(config.Panes, collection)).CheckIfCachable(ref cacheable).ToList();
             var buttons = (await _buttonSetupResolver.ResolveSetupAsync(config.Buttons, collection)).CheckIfCachable(ref cacheable).ToList();
 
-            return new ResolvedSetup<NodeSetup>(new NodeSetup(
+            return new ResolvedSetup<INodeSetup>(new NodeSetup(
                 config.BaseType,
                 panes,
                 buttons),

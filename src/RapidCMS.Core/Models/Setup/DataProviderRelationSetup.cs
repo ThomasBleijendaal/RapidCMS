@@ -2,13 +2,13 @@
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class DataProviderRelationSetup : RelationSetup
+    public class DataProviderRelationSetup : RelationSetup
     {
-        internal DataProviderRelationSetup(Type dataCollectionType)
+        public DataProviderRelationSetup(Type dataCollectionType)
         {
             DataCollectionType = dataCollectionType ?? throw new ArgumentNullException(nameof(dataCollectionType));
         }
 
-        internal Type DataCollectionType { get; set; }
+        public Type DataCollectionType { get; set; }
     }
 }

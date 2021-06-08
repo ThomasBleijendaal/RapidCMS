@@ -38,7 +38,7 @@ namespace RapidCMS.Core.Abstractions.Data
         /// </summary>
         IEnumerable<IOrderBy> ActiveOrderBys { get; }
 
-        string? CollectionAlias { get; }
+        string? CollectionAlias { get; set; }
     }
 
     public interface IQuery<TEntity> : IQuery

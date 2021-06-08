@@ -13,7 +13,7 @@
 }
 
 @code {
-    protected override void AttachValidationStateChangedListener()
+    protected override void AttachListener()
     {
         if (EditContext != null)
         {
@@ -21,7 +21,7 @@
         }
     }
 
-    protected override void DetachValidationStateChangedListener()
+    protected override void DetachListener()
     {
         if (EditContext != null)
         {

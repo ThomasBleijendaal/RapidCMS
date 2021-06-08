@@ -17,7 +17,7 @@ namespace RapidCMS.Core.Providers
         public event EventHandler? OnDataChange;
 #pragma warning restore CS0067
 
-        public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
+        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query)
         {
             var values = Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
 
@@ -45,7 +45,7 @@ namespace RapidCMS.Core.Providers
                 }
             }
 
-            return Task.FromResult(list.AsEnumerable());
+            return Task.FromResult<IReadOnlyList<IElement>>(list);
         }
 
         public Task SetEntityAsync(FormEditContext editContext, IParent? parent)

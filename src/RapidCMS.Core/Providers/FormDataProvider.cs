@@ -26,7 +26,7 @@ namespace RapidCMS.Core.Providers
         {
             if (Validator != null && Collection is IRelationDataCollection relationDataCollection)
             {
-                return Validator.Validate(entity, relationDataCollection.GetCurrentRelatedElements(), serviceProvider);
+                return Validator.Validate(entity, relationDataCollection.GetCurrentRelatedElementIds(), serviceProvider);
             }
             else
             {
@@ -38,7 +38,7 @@ namespace RapidCMS.Core.Providers
         {
             if (Collection is IRelationDataCollection relationDataCollection)
             {
-                return new Relation(relationDataCollection.GetRelatedEntityType(), Property, relationDataCollection.GetCurrentRelatedElements());
+                return new Relation(relationDataCollection.GetRelatedEntityType(), Property, relationDataCollection.GetCurrentRelatedElementIds());
             }
             else
             {

@@ -42,8 +42,8 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        CustomLoginScreen = LoginRegistration.CustomLoginScreenRegistration.ToRenderFragment();
-        CustomLoginStatus = LoginRegistration.CustomLoginStatusRegistration.ToRenderFragment();
+        CustomLoginScreen = (await LoginRegistration.CustomLoginScreenRegistrationAsync())?.ToRenderFragment();
+        CustomLoginStatus = (await LoginRegistration.CustomLoginStatusRegistrationAsync())?.ToRenderFragment();
 
         await base.OnParametersSetAsync();
     }

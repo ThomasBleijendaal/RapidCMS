@@ -2,8 +2,9 @@
 {
     public enum OrderByType
     {
-        None = 0,
+        Disabled = 0,
         Ascending = 1,
-        Descending = 2
+        Descending = 2,
+        None = 99
     }
 }

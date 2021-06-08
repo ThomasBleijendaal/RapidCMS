@@ -1,4 +1,4 @@
-﻿using RapidCMS.Core.Abstractions.Config;
+﻿using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Models.Config;
@@ -7,27 +7,18 @@ namespace RapidCMS.Core.Models.Setup
 {
     internal class CmsSetup : ICms, ILogin
     {
+        private readonly CmsConfig _config;
         private readonly ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig> _typeRegistrationSetupResolver;
 
         public CmsSetup(
             CmsConfig config,
             ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig> typeRegistrationSetupResolver)
         {
+            _config = config;
             _typeRegistrationSetupResolver = typeRegistrationSetupResolver;
 
             SiteName = config.SiteName;
             IsDevelopment = config.IsDevelopment;
-
-            if (config.CustomLoginScreenRegistration != null)
-            {
-                // TODO: fix async
-                //CustomLoginScreenRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginScreenRegistration).Setup;
-            }
-            if (config.CustomLoginStatusRegistration != null)
-            {
-                // TODO: fix async
-                // CustomLoginStatusRegistration = _typeRegistrationSetupResolver.ResolveSetup(config.CustomLoginStatusRegistration).Setup;
-            }
         }
 
         internal string SiteName { get; set; }
@@ -41,6 +32,26 @@ namespace RapidCMS.Core.Models.Setup
         {
             get => IsDevelopment;
             set => IsDevelopment = value;
+        }
+
+        public async Task<ITypeRegistration?> CustomLoginScreenRegistrationAsync()
+        {
+            if (_config.CustomLoginScreenRegistration != null)
+            {
+                return (await _typeRegistrationSetupResolver.ResolveSetupAsync(_config.CustomLoginScreenRegistration)).Setup;
+            }
+
+            return default;
+        }
+
+        public async Task<ITypeRegistration?> CustomLoginStatusRegistrationAsync()
+        {
+            if (_config.CustomLoginStatusRegistration != null)
+            {
+                return (await _typeRegistrationSetupResolver.ResolveSetupAsync(_config.CustomLoginStatusRegistration)).Setup;
+            }
+
+            return default;
         }
     }
 }

@@ -6,11 +6,11 @@ using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class NodeSetup
+    internal class NodeSetup : INodeSetup
     {
         public NodeSetup(
             Type baseType, 
-            List<PaneSetup> panes, 
+            List<IPaneSetup> panes, 
             List<IButtonSetup> buttons)
         {
             BaseType = baseType ?? throw new ArgumentNullException(nameof(baseType));
@@ -18,15 +18,15 @@ namespace RapidCMS.Core.Models.Setup
             Buttons = buttons ?? throw new ArgumentNullException(nameof(buttons));
         }
 
-        internal Type BaseType { get; set; }
-        internal List<PaneSetup> Panes { get; set; }
-        internal List<IButtonSetup> Buttons { get; set; }
+        public Type BaseType { get; set; }
+        public List<IPaneSetup> Panes { get; set; }
+        public List<IButtonSetup> Buttons { get; set; }
 
-        internal IButtonSetup? FindButton(string buttonId)
+        public IButtonSetup? FindButton(string buttonId)
         {
             return GetAllButtons()?.FirstOrDefault(x => x.ButtonId == buttonId);
         }
-        internal IEnumerable<IButtonSetup>? GetAllButtons()
+        public IEnumerable<IButtonSetup>? GetAllButtons()
         {
             if (Buttons != null)
             {

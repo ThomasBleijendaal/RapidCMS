@@ -47,7 +47,6 @@
     }
 }
 @code {
-
     private string group = Guid.NewGuid().ToString().Replace("-", "");
 
     private IEnumerable<IElement>? Options;
@@ -72,7 +71,15 @@
 
         await InvokeAsync(async () =>
         {
-            Options = await DataCollection.GetAvailableElementsAsync();
+            var currentValue = GetValueAsObject();
+
+            await UpdateOptionsAsync();
+
+            if (currentValue != null && Options != null && !Options.Any(x => x.Id.Equals(currentValue)))
+            {
+                SetValueFromObject(default!);
+            }
+
             StateHasChanged();
         });
     }
@@ -84,7 +91,7 @@
             return;
         }
 
-        Options = await DataCollection.GetAvailableElementsAsync();
+        Options = await DataCollection.GetAvailableElementsAsync(Query.Default());
     }
 
     public override void Dispose()

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Extensions;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
@@ -92,6 +93,8 @@ namespace RapidCMS.ModelMaker.Repositories
 
                 await ValidateEntityAsync(typedEditContext, entity);
 
+                HandleRelations(typedEditContext);
+
                 var response = await _insertEntityCommandHandler.HandleAsync(new InsertRequest<ModelMakerEntity>(entity));
 
                 return response.Entity;
@@ -128,6 +131,8 @@ namespace RapidCMS.ModelMaker.Repositories
 
                 await ValidateEntityAsync(typedEditContext, entity);
 
+                HandleRelations(typedEditContext);
+
                 await _publishEntityCommandHandler.HandleAsync(new PublishRequest<ModelMakerEntity>(entity));
             }
         }
@@ -146,15 +151,33 @@ namespace RapidCMS.ModelMaker.Repositories
 
                         var validator = _serviceProvider.GetService<IValidator>(validatorConfig.Validator);
 
-                        if (!await validator.IsValid(entity.Get(property.Alias), validation.Config!))
+                        if (!await validator.IsValidAsync(entity.Get(property.Alias), validation.Config!))
                         {
-                            editContext.AddValidationError(property.Alias, await validator.ErrorMessage(validation.Config!));
+                            editContext.AddValidationError(property.Alias, await validator.ErrorMessageAsync(validation.Config!));
                         }
                     }
                 }
             }
 
             editContext.EnforceValidEntity();
+        }
+
+        private void HandleRelations(IEditContext<ModelMakerEntity> editContext)
+        {
+            var relationContainer = editContext.GetRelationContainer();
+            if (relationContainer == null)
+            {
+                return;
+            }
+
+            // Relations within ModelMaker are always made with List<string> of the Ids of the related entities.
+            foreach (var relation in relationContainer.Relations)
+            {
+                if (relation.Property is IFullPropertyMetadata relatedProperty)
+                {
+                    relatedProperty.Setter(editContext.Entity, relation.RelatedElementIds.OfType<string>().ToList());
+                }
+            }
         }
     }
 }

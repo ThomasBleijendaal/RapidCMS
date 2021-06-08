@@ -5,7 +5,7 @@
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
 
-    <Version>3.9.1-preview</Version>
+    <Version>3.9.2-preview</Version>
 
     <Authors>Thomas Bleijendaal</Authors>
     <Company>Thomas Bleijendaal</Company>
@@ -43,6 +43,10 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Abstractions\DataCollections\" />
   </ItemGroup>
 
 </Project>

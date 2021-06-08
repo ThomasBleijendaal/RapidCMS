@@ -2,7 +2,7 @@
 
 namespace RapidCMS.Core.Abstractions.Setup
 {
-    internal interface IPageSetup
+    public interface IPageSetup
     {
         string Icon { get; }
         string Color { get; }

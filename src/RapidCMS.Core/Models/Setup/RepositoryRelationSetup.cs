@@ -4,9 +4,9 @@ using RapidCMS.Core.Abstractions.Metadata;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class RepositoryRelationSetup : RelationSetup
+    public class RepositoryRelationSetup : RelationSetup
     {
-        internal RepositoryRelationSetup(
+        public RepositoryRelationSetup(
             string? repositoryAlias,
             string? collectionAlias,
             Type relatedEntityType,

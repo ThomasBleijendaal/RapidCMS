@@ -3,19 +3,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
-using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.UI;
 
 namespace RapidCMS.Core.Resolvers.UI
 {
     internal class NodeUIResolver : BaseUIResolver, INodeUIResolver
     {
-        private readonly NodeSetup _node;
+        private readonly INodeSetup _node;
 
         public NodeUIResolver(
-            NodeSetup node,
+            INodeSetup node,
             IDataProviderResolver dataProviderService,
             IButtonActionHandlerResolver buttonActionHandlerResolver,
             IAuthService authService) : base(dataProviderService, buttonActionHandlerResolver, authService)

@@ -7,7 +7,7 @@ using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class ListSetup
+    internal class ListSetup : IListSetup
     {
         public ListSetup(
             int? pageSize, 
@@ -15,7 +15,7 @@ namespace RapidCMS.Core.Models.Setup
             bool? reorderingAllowed, 
             ListType listType, 
             EmptyVariantColumnVisibility emptyVariantColumnVisibility, 
-            List<PaneSetup> panes, 
+            List<IPaneSetup> panes, 
             List<IButtonSetup> buttons)
         {
             PageSize = pageSize;
@@ -27,19 +27,19 @@ namespace RapidCMS.Core.Models.Setup
             Buttons = buttons ?? throw new ArgumentNullException(nameof(buttons));
         }
 
-        internal int? PageSize { get; set; }
-        internal bool? SearchBarVisible { get; set; }
-        internal bool? ReorderingAllowed { get; set; }
-        internal ListType ListType { get; set; }
-        internal EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; set; }
-        internal List<PaneSetup> Panes { get; set; }
-        internal List<IButtonSetup> Buttons { get; set; }
+        public int? PageSize { get; set; }
+        public bool? SearchBarVisible { get; set; }
+        public bool? ReorderingAllowed { get; set; }
+        public ListType ListType { get; set; }
+        public EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; set; }
+        public List<IPaneSetup> Panes { get; set; }
+        public List<IButtonSetup> Buttons { get; set; }
 
-        internal IButtonSetup? FindButton(string buttonId)
+        public IButtonSetup? FindButton(string buttonId)
         {
             return GetAllButtons()?.FirstOrDefault(x => x.ButtonId == buttonId);
         }
-        internal IEnumerable<IButtonSetup>? GetAllButtons()
+        public IEnumerable<IButtonSetup>? GetAllButtons()
         {
             if (Buttons != null)
             {

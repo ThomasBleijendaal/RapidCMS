@@ -7,6 +7,6 @@ namespace RapidCMS.Core.Abstractions.Validators
 {
     public interface IRelationValidator
     {
-        public IEnumerable<ValidationResult> Validate(IEntity entity, IEnumerable<IElement> relatedElements, IServiceProvider serviceProvider);
+        public IEnumerable<ValidationResult> Validate(IEntity entity, IReadOnlyList<object> relatedElementIds, IServiceProvider serviceProvider);
     }
 }

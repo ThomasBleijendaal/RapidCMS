@@ -48,7 +48,7 @@ namespace RapidCMS.Core.Resolvers.UI
                 .ToListAsync();
         }
 
-        protected internal async Task<SectionUI> GetSectionUIAsync(PaneSetup pane, FormEditContext editContext)
+        protected internal async Task<SectionUI> GetSectionUIAsync(IPaneSetup pane, FormEditContext editContext)
         {
             var fields = await pane.Fields.ToListAsync(async field =>
             {
@@ -85,7 +85,7 @@ namespace RapidCMS.Core.Resolvers.UI
             };
         }
 
-        protected FieldUI GetField(FieldSetup field, FormDataProvider? dataProvider)
+        protected FieldUI GetField(IFieldSetup field, FormDataProvider? dataProvider)
         {
             return field switch
             {

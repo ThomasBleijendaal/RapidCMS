@@ -12,7 +12,7 @@ namespace RapidCMS.ModelMaker.Collections
         public static void AddModelCollection(this ICmsConfig cmsConfig)
         {
             cmsConfig.AddCollection<ModelEntity, ModelRepository>(
-                "modelmakeradmin",
+                Constants.ModelMakerAdminCollectionAlias,
                 "Database",
                 "MagentaPink10",
                 "Models",
@@ -47,7 +47,6 @@ namespace RapidCMS.ModelMaker.Collections
                             section.AddDefaultButton(DefaultButtonType.Delete);
                             // TODO: implement revert + custom button handler
                             // editor.AddDefaultButton(DefaultButtonType.SaveExisting, "Revert changes");
-
 
                             section.AddField(x => x.Name);
                             section.AddField(x => x.Alias)

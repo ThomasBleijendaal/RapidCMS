@@ -5,7 +5,7 @@ using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class PaneSetup
+    internal class PaneSetup : IPaneSetup
     {
         public PaneSetup(
             Type? customType, 
@@ -13,9 +13,9 @@ namespace RapidCMS.Core.Models.Setup
             Func<object, EntityState, bool> isVisible, 
             Type variantType, 
             List<IButtonSetup> buttons, 
-            List<FieldSetup> fields, 
-            List<SubCollectionListSetup> subCollectionLists, 
-            List<RelatedCollectionListSetup> relatedCollectionLists)
+            List<IFieldSetup> fields, 
+            List<ISubCollectionListSetup> subCollectionLists, 
+            List<IRelatedCollectionListSetup> relatedCollectionLists)
         {
             CustomType = customType;
             Label = label;
@@ -27,13 +27,13 @@ namespace RapidCMS.Core.Models.Setup
             RelatedCollectionLists = relatedCollectionLists ?? throw new ArgumentNullException(nameof(relatedCollectionLists));
         }
 
-        internal Type? CustomType { get; set; }
-        internal string? Label { get; set; }
-        internal Func<object, EntityState, bool> IsVisible { get; set; }
-        internal Type VariantType { get; set; }
-        internal List<IButtonSetup> Buttons { get; set; }
-        internal List<FieldSetup> Fields { get; set; }
-        internal List<SubCollectionListSetup> SubCollectionLists { get; set; }
-        internal List<RelatedCollectionListSetup> RelatedCollectionLists { get; set; }
+        public Type? CustomType { get; set; }
+        public string? Label { get; set; }
+        public Func<object, EntityState, bool> IsVisible { get; set; }
+        public Type VariantType { get; set; }
+        public List<IButtonSetup> Buttons { get; set; }
+        public List<IFieldSetup> Fields { get; set; }
+        public List<ISubCollectionListSetup> SubCollectionLists { get; set; }
+        public List<IRelatedCollectionListSetup> RelatedCollectionLists { get; set; }
     }
 }

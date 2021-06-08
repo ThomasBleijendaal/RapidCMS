@@ -27,9 +27,7 @@ namespace RapidCMS.Core.Providers
 
         private readonly IDisposable? _eventHandle;
 
-        private List<IElement>? _elements;
-        private List<IElement>? _relatedElements;
-        private ICollection<object>? _relatedIds;
+        private List<object> _relatedIds = new List<object>();
 
         public CollectionDataProvider(
             IRepository repository,
@@ -47,32 +45,30 @@ namespace RapidCMS.Core.Providers
 
         public event EventHandler? OnDataChange;
 
-        private async Task OnRepositoryChangeAsync(object? sender, CollectionRepositoryEventArgs args)
+        private Task OnRepositoryChangeAsync(object? sender, CollectionRepositoryEventArgs args)
         {
             if ((!string.IsNullOrEmpty(_setup.RepositoryAlias) && args.RepositoryAlias == _setup.RepositoryAlias) ||
                 (string.IsNullOrEmpty(_setup.RepositoryAlias) && args.CollectionAlias == _setup.CollectionAlias))
             {
-                await SetElementsAsync(refreshCache: true);
-
                 OnDataChange?.Invoke(sender, EventArgs.Empty);
             }
+
+            return Task.CompletedTask;
         }
 
-        public async Task SetEntityAsync(FormEditContext editContext, IParent? parent)
+        public Task SetEntityAsync(FormEditContext editContext, IParent? parent)
         {
             _editContext = editContext;
             _parent = parent;
 
-            await SetElementsAsync();
-
             var data = _setup.RelatedElementsGetter?.Getter(_property.Getter(_editContext.Entity)) ?? _property.Getter(_editContext.Entity);
-            if (data is ICollection<IEntity> entityCollection)
+            if (data is IEnumerable<IEntity> entityCollection)
             {
                 _relatedIds = entityCollection.Select(x => (object)x.Id!).ToList();
             }
-            else if (data is ICollection<object> objectCollection)
+            else if (data is IEnumerable<object> objectCollection)
             {
-                _relatedIds = objectCollection;
+                _relatedIds = objectCollection.ToList();
             }
             else if (data is IEnumerable enumerable)
             {
@@ -86,19 +82,15 @@ namespace RapidCMS.Core.Providers
                 }
                 _relatedIds = list;
             }
-            else
-            {
-                return;
-            }
 
-            UpdateRelatedElements();
+            return Task.CompletedTask;
         }
 
-        private async Task SetElementsAsync(bool refreshCache = false)
+        public async Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query)
         {
             if (_editContext == null)
             {
-                return;
+                return new List<IElement>();
             }
 
             var parent = default(IParent?);
@@ -113,75 +105,40 @@ namespace RapidCMS.Core.Providers
                 parent = _setup.RepositoryParentSelector.Getter.Invoke(_parent) as IParent;
             }
 
-            var entities = await _repository.GetAllAsync(new ViewContext(_editContext.CollectionAlias, parent), Query.Default(_editContext.CollectionAlias));
+            query.CollectionAlias = _editContext.CollectionAlias;
 
-            _elements = entities
-                .Select(entity => (IElement)new Element
-                {
-                    Id = _setup.IdProperty.Getter(entity),
-                    Labels = _setup.DisplayProperties.Select(x => x.StringGetter(entity)).ToList()
-                })
-                .ToList();
+            var entities = await _repository.GetAllAsync(new ViewContext(_editContext.CollectionAlias, parent), query);
+
+            return entities
+               .Select(entity => (IElement)new Element
+               {
+                   Id = _setup.IdProperty.Getter(entity),
+                   Labels = _setup.DisplayProperties.Select(x => x.StringGetter(entity)).ToList()
+               })
+               .ToList();
         }
 
-        private void UpdateRelatedElements()
+        public async Task<IReadOnlyList<IElement>> GetRelatedElementsAsync()
         {
-            _relatedElements = _elements?.Where(x => _relatedIds?.Contains(x.Id) ?? false).ToList();
-        }
-
-        public Task<IEnumerable<IElement>> GetAvailableElementsAsync()
-        {
-            return Task.FromResult(_elements ?? Enumerable.Empty<IElement>());
-        }
-
-        public Task<IReadOnlyList<IElement>> GetRelatedElementsAsync()
-        {
-            var relatedElements = _relatedIds != null && _elements != null
-                ? _elements.Where(x => _relatedIds.Contains(x.Id)).ToList()
-                : new List<IElement>();
-
-            return Task.FromResult(relatedElements as IReadOnlyList<IElement>);
-        }
-
-        public Task AddElementAsync(IElement option)
-        {
-            if (_elements != null)
+            if (!_relatedIds.Any())
             {
-                _relatedElements?.Add(_elements.First(x => x.Id == option.Id));
+                return new List<IElement>();
             }
 
-            return Task.CompletedTask;
+            var elements = await GetAvailableElementsAsync(Query.Default());
+            return elements.Where(x => _relatedIds.Contains(x.Id)).ToList();
         }
 
-        public Task RemoveElementAsync(IElement option)
-        {
-            return Task.FromResult(_relatedElements?.RemoveAll(x => x.Id == option.Id));
-        }
+        public void AddElement(object id) => _relatedIds.Add(id);
 
-        public Task SetElementAsync(IElement option)
-        {
-            _relatedElements?.Clear();
-            if (_elements != null)
-            {
-                _relatedElements?.Add(_elements.First(x => x.Id == option.Id));
-            }
+        public void RemoveElement(object id) => _relatedIds.Remove(id);
 
-            return Task.CompletedTask;
-        }
+        public bool IsRelated(object id) => _relatedIds.Any(x => x.Equals(id));
 
-        public IReadOnlyList<IElement> GetCurrentRelatedElements()
-        {
-            return _relatedElements ?? new List<IElement>();
-        }
+        public IReadOnlyList<object> GetCurrentRelatedElementIds() => _relatedIds;
 
-        public Type GetRelatedEntityType()
-        {
-            return _setup.RelatedEntityType ?? typeof(object);
-        }
+        public Type GetRelatedEntityType() => _setup.RelatedEntityType ?? typeof(object);
 
-        public void Dispose()
-        {
-            _eventHandle?.Dispose();
-        }
+        public void Dispose() => _eventHandle?.Dispose();
     }
 }

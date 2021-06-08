@@ -6,7 +6,7 @@ namespace RapidCMS.ModelMaker.Validation.Base
     public abstract class BaseValidator<TValue, TValidatorConfig> : IValidator
         where TValidatorConfig : IValidatorConfig
     {
-        public Task<string> ErrorMessage(IValidatorConfig validatorConfig)
+        public Task<string> ErrorMessageAsync(IValidatorConfig validatorConfig)
         {
             if (validatorConfig is TValidatorConfig config)
             {
@@ -16,11 +16,11 @@ namespace RapidCMS.ModelMaker.Validation.Base
             return Task.FromResult("Unknown error");
         }
 
-        public Task<bool> IsValid(object? value, IValidatorConfig validatorConfig)
+        public Task<bool> IsValidAsync(object? value, IValidatorConfig validatorConfig)
         {
-            if (value is TValue validationValue && validatorConfig is TValidatorConfig config)
+            if (validatorConfig is TValidatorConfig config)
             {
-                return IsValid(validationValue, config);
+                return IsValid((TValue?)value, config);
             }
 
             return Task.FromResult(false);

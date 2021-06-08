@@ -104,6 +104,9 @@ namespace RapidCMS.Core.Extensions
                 .FirstOrDefault(x => x.GetType().GetInterfaces().Any(i => i == typeof(T))) as T;
         }
 
+        public static int? FindIndex<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+            => source.Select((element, index) => new { element, index }).FirstOrDefault(x => predicate.Invoke(x.element))?.index;
+
         public class Group<TKey, TElement> : IGrouping<TKey, TElement>
         {
             public Group(TKey key, List<TElement> elements)

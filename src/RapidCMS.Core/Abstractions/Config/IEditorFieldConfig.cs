@@ -43,6 +43,14 @@ namespace RapidCMS.Core.Abstractions.Config
             where TDataCollection : IDataCollection;
 
         /// <summary>
+        /// Binds a DataCollection to this field. This data collection is used by dropdowns and selects to display options.
+        /// </summary>
+        /// <typeparam name="TDataCollection"></typeparam>
+        /// <returns></returns>
+        IEditorFieldConfig<TEntity, TValue> SetDataCollection<TDataCollection>(TDataCollection dataCollection)
+            where TDataCollection : IDataCollection;
+
+        /// <summary>
         /// Binds a Collection to this field. This collection is used by dropdowns and selects to display options.
         /// </summary>
         /// <typeparam name="TRelatedEntity">Entity of the bound collection.</typeparam>

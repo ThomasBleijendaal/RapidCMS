@@ -391,7 +391,7 @@ a.current-page {
 }
 
 .btn {
-    margin-right: 5px;
+    margin-right: .2rem;
     border-radius: 0;
     background: #d2d0ce;
     border-color: #d2d0ce;
@@ -470,7 +470,7 @@ a.current-page {
         padding-right: .75em !important;
     }
 
-textarea.form-control{
+textarea.form-control {
     height: 300px;
 }
 
@@ -480,8 +480,7 @@ textarea.form-control{
 }
 
 .form-check {
-    padding: .25rem 0 .25rem 2rem;
-    margin: 0 1rem 0 -.4rem;
+    padding: .25rem 0 .25rem .5rem;
 }
 
     .form-check:hover {
@@ -490,7 +489,6 @@ textarea.form-control{
 
     .form-check.form-check-list {
         padding-left: .25rem;
-        margin-right: -.5rem;
     }
 
 pre.col-form-label {
@@ -508,16 +506,39 @@ pre.col-form-label {
     text-overflow: ellipsis;
 }
 
-.form-control-select-list {
+.form-control-select-list, .form-control-model {
     min-height: 30px;
     height: auto;
     max-height: 150px;
     overflow: auto;
-    padding-bottom: 1rem;
+    padding: 0;
 }
 
     .form-control-select-list.block {
         max-height: 300px;
+    }
+
+    .form-control-select-list .nav-tabs {
+        background: #faf9f8;
+        padding: .3rem;
+        margin: 0 0 .1rem 0;
+    }
+
+        .form-control-select-list .nav-tabs .search .btn {
+            margin-right: -0.1rem;
+        }
+
+    .form-control-select-list .pagination {
+        margin: .1rem;
+    }
+
+.form-control-model {
+    max-height: none;
+}
+
+    .form-control-model .form-row {
+        margin: 0;
+        padding: .2rem 0;
     }
 
 .form-text.text-muted {

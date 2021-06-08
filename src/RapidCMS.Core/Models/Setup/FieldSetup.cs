@@ -1,12 +1,13 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class FieldSetup
+    internal class FieldSetup : IFieldSetup
     {
         internal FieldSetup(FieldConfig field)
         {
@@ -23,19 +24,19 @@ namespace RapidCMS.Core.Models.Setup
             IsDisabled = field.IsDisabled;
         }
 
-        internal int Index { get; set; }
-        
-        internal string? Name { get; set; }
-        internal string? Description { get; set; }
-        internal MarkupString? Details { get; set; }
-        internal string? Placeholder { get; set; }
+        public int Index { get; set; }
 
-        internal IPropertyMetadata? Property { get; set; }
-        internal IExpressionMetadata? Expression { get; set; }
-        internal IPropertyMetadata? OrderByExpression { get; set; }
-        internal OrderByType DefaultOrder { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public MarkupString? Details { get; set; }
+        public string? Placeholder { get; set; }
 
-        internal Func<object, EntityState, bool> IsVisible { get; set; }
-        internal Func<object, EntityState, bool> IsDisabled { get; set; }
+        public IPropertyMetadata? Property { get; set; }
+        public IExpressionMetadata? Expression { get; set; }
+        public IPropertyMetadata? OrderByExpression { get; set; }
+        public OrderByType DefaultOrder { get; set; }
+
+        public Func<object, EntityState, bool> IsVisible { get; set; }
+        public Func<object, EntityState, bool> IsDisabled { get; set; }
     }
 }

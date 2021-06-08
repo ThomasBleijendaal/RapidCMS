@@ -8,7 +8,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class FieldSetupResolver : ISetupResolver<FieldSetup, FieldConfig>
+    internal class FieldSetupResolver : ISetupResolver<IFieldSetup, FieldConfig>
     {
         private readonly IRepositoryTypeResolver _repositoryTypeResolver;
 
@@ -17,7 +17,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _repositoryTypeResolver = repositoryTypeResolver;
         }
 
-        public Task<IResolvedSetup<FieldSetup>> ResolveSetupAsync(FieldConfig config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<IFieldSetup>> ResolveSetupAsync(FieldConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -49,13 +49,18 @@ namespace RapidCMS.Core.Resolvers.Setup
                         EntityAsParent = collectionConfig.EntityAsParent,
                         RelatedElementsGetter = collectionConfig.RelatedElementsGetter
                     },
+
                     DataProviderRelationConfig dataProviderConfig => (RelationSetup)new DataProviderRelationSetup(
                         dataProviderConfig.DataCollectionType),
+
+                    ConcreteDataProviderRelationConfig concreteDataProviderConfig => (RelationSetup)new ConcreteDataProviderRelationSetup
+                        (concreteDataProviderConfig.DataCollection),
+
                     _ => throw new InvalidOperationException("Invalid RelationConfig")
                 };
             }
 
-            return Task.FromResult<IResolvedSetup<FieldSetup>>(new ResolvedSetup<FieldSetup>(setup, true));
+            return Task.FromResult<IResolvedSetup<IFieldSetup>>(new ResolvedSetup<IFieldSetup>(setup, true));
         }
     }
 }

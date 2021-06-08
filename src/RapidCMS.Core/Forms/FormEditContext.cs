@@ -30,6 +30,20 @@ namespace RapidCMS.Core.Forms
             FormState = new FormState(Entity, serviceProvider);
         }
 
+        private FormEditContext(
+            FormEditContext parentEditContext,
+            IPropertyMetadata property) : this(
+                parentEditContext.CollectionAlias,
+                parentEditContext.RepositoryAlias,
+                parentEditContext.EntityVariantAlias,
+                (IEntity)property.Getter(parentEditContext.Entity),
+                default,
+                UsageType.Edit | UsageType.Node,
+                parentEditContext.FormState.ServiceProvider)
+        {
+            _parentEditContext = parentEditContext;
+        }
+
         internal FormEditContext(
             FormEditContext protoEditContext,
             IEntity entity,
@@ -47,6 +61,7 @@ namespace RapidCMS.Core.Forms
         }
 
         internal readonly FormState FormState;
+        private readonly FormEditContext? _parentEditContext;
 
         public string CollectionAlias { get; private set; }
         public string RepositoryAlias { get; private set; }
@@ -65,10 +80,11 @@ namespace RapidCMS.Core.Forms
 
         public event EventHandler<ValidationStateChangedEventArgs>? OnValidationStateChanged;
 
-        public static implicit operator EditContext(FormEditContext editContext)
-        {
-            return new EditContext(editContext.Entity);
-        }
+        public static implicit operator EditContext(FormEditContext editContext) 
+            => new EditContext(editContext.Entity);
+
+        public FormEditContext EntityProperty(IPropertyMetadata property) 
+            => new FormEditContext(this, property);
 
         public void NotifyReordered(string? beforeId)
         {
@@ -76,10 +92,8 @@ namespace RapidCMS.Core.Forms
             ReorderedBeforeId = beforeId;
         }
 
-        public void NotifyPropertyIncludedInForm(IPropertyMetadata property)
-        {
-            GetPropertyState(property);
-        }
+        public void NotifyPropertyIncludedInForm(IPropertyMetadata property) 
+            => GetPropertyState(property);
 
         public void NotifyPropertyChanged(IPropertyMetadata property)
         {

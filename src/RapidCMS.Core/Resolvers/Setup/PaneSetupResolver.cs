@@ -9,18 +9,18 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class PaneSetupResolver : ISetupResolver<PaneSetup, PaneConfig>
+    internal class PaneSetupResolver : ISetupResolver<IPaneSetup, PaneConfig>
     {
         private readonly ISetupResolver<IButtonSetup, ButtonConfig> _buttonSetupResolver;
-        private readonly ISetupResolver<FieldSetup, FieldConfig> _fieldSetupResolver;
-        private readonly ISetupResolver<SubCollectionListSetup, CollectionListConfig> _subCollectionSetupResolver;
-        private readonly ISetupResolver<RelatedCollectionListSetup, CollectionListConfig> _relatedCollectionSetupResolver;
+        private readonly ISetupResolver<IFieldSetup, FieldConfig> _fieldSetupResolver;
+        private readonly ISetupResolver<ISubCollectionListSetup, CollectionListConfig> _subCollectionSetupResolver;
+        private readonly ISetupResolver<IRelatedCollectionListSetup, CollectionListConfig> _relatedCollectionSetupResolver;
 
         public PaneSetupResolver(
             ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver,
-            ISetupResolver<FieldSetup, FieldConfig> fieldSetupResolver,
-            ISetupResolver<SubCollectionListSetup, CollectionListConfig> subCollectionSetupResolver,
-            ISetupResolver<RelatedCollectionListSetup, CollectionListConfig> relatedCollectionSetupResolver)
+            ISetupResolver<IFieldSetup, FieldConfig> fieldSetupResolver,
+            ISetupResolver<ISubCollectionListSetup, CollectionListConfig> subCollectionSetupResolver,
+            ISetupResolver<IRelatedCollectionListSetup, CollectionListConfig> relatedCollectionSetupResolver)
         {
             _buttonSetupResolver = buttonSetupResolver;
             _fieldSetupResolver = fieldSetupResolver;
@@ -28,7 +28,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _relatedCollectionSetupResolver = relatedCollectionSetupResolver;
         }
 
-        public async Task<IResolvedSetup<PaneSetup>> ResolveSetupAsync(PaneConfig config, ICollectionSetup? collection = default)
+        public async Task<IResolvedSetup<IPaneSetup>> ResolveSetupAsync(PaneConfig config, ICollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -42,7 +42,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             var subCollectionLists = (await _subCollectionSetupResolver.ResolveSetupAsync(config.SubCollectionLists, collection)).CheckIfCachable(ref cacheable).ToList();
             var relatedCollectionLists = (await _relatedCollectionSetupResolver.ResolveSetupAsync(config.RelatedCollectionLists, collection)).CheckIfCachable(ref cacheable).ToList();
 
-            return new ResolvedSetup<PaneSetup>(new PaneSetup(
+            return new ResolvedSetup<IPaneSetup>(new PaneSetup(
                 config.CustomType,
                 config.Label,
                 config.IsVisible,

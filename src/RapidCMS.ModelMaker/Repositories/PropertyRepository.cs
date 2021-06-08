@@ -4,19 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
-using RapidCMS.Core.Abstractions.Repositories;
-using RapidCMS.ModelMaker.Abstractions.Config;
-using RapidCMS.Core.Extensions;
-using RapidCMS.ModelMaker.Models.Entities;
-using RapidCMS.ModelMaker.Abstractions.Validation;
-using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
-using RapidCMS.ModelMaker.Models.Responses;
-using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.Core.Abstractions.Mediators;
-using RapidCMS.Core.Models.EventArgs.Mediators;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Enums;
-using RapidCMS.ModelMaker.Enums;
+using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Models.EventArgs.Mediators;
+using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
+using RapidCMS.ModelMaker.Abstractions.Config;
+using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.EqualityComparers;
 using RapidCMS.ModelMaker.Extenstions;
+using RapidCMS.ModelMaker.Models.Commands;
+using RapidCMS.ModelMaker.Models.Entities;
+using RapidCMS.ModelMaker.Models.Responses;
 
 namespace RapidCMS.ModelMaker.Repositories
 {
@@ -68,6 +68,26 @@ namespace RapidCMS.ModelMaker.Repositories
             if (viewContext.Parent?.Entity is ModelEntity model &&
                 model.DraftProperties.FirstOrDefault(x => x.Id == id) is PropertyModel property)
             {
+                var allPropertyValidations = _config.Properties
+                    .Single(prop => prop.Alias == property.PropertyAlias)
+                    .Validators
+                    .Select(validation =>
+                    {
+                        var config = Activator.CreateInstance(validation.Config) as IValidatorConfig;
+
+                        var validationModel = Activator.CreateInstance(typeof(PropertyValidationModel<>).MakeGenericType(validation.Config)) as PropertyValidationModel
+                            ?? throw new InvalidOperationException("Could not create correct PropertyValidationModel.");
+
+                        validationModel.Alias = validation.Alias;
+                        validationModel.Config = config;
+                        validationModel.Id = Guid.NewGuid().ToString();
+
+                        return validationModel;
+                    })
+                    .ToList();
+
+                property.Validations = property.Validations.Union(allPropertyValidations, new PropertyValidationModelEqualityComparer()).ToList();
+
                 return Task.FromResult<IEntity?>(property);
             }
 
@@ -84,7 +104,7 @@ namespace RapidCMS.ModelMaker.Repositories
                 model.DraftProperties.Add(newProperty);
                 model.State = model.State.Modify();
 
-                SetDefaultProperties(model, typedEditContext.Entity);
+                SavePropertyConfigs(model, typedEditContext.Entity);
 
                 if (newProperty.IsTitle)
                 {
@@ -97,8 +117,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
 
-                // TODO: this triggers a refresh of the properties pane
-                // _mediator.NotifyEvent(this, new RepositoryEventArgs(typeof(ModelRepository), default, model.Id, CrudType.Update));
+                _mediator.NotifyEvent(this, new RepositoryEventArgs(typeof(ModelRepository), default, model.Id, CrudType.Insert));
 
                 return newProperty;
             }
@@ -106,7 +125,30 @@ namespace RapidCMS.ModelMaker.Repositories
             return default;
         }
 
-        public Task<IEntity> NewAsync(IViewContext viewContext, Type? variantType) => Task.FromResult<IEntity>(new PropertyModel());
+        public Task<IEntity> NewAsync(IViewContext viewContext, Type? variantType)
+        {
+            return Task.FromResult<IEntity>(new PropertyModel
+            {
+                Validations = _config.Properties
+                    .SelectMany(validation => validation.Validators)
+                    .GroupBy(validation => validation.Alias)
+                    .Select(validation => validation.First())
+                    .Select(validation =>
+                    {
+                        var config = Activator.CreateInstance(validation.Config) as IValidatorConfig;
+
+                        var validationModel = Activator.CreateInstance(typeof(PropertyValidationModel<>).MakeGenericType(validation.Config)) as PropertyValidationModel
+                            ?? throw new InvalidOperationException("Could not create correct PropertyValidationModel.");
+
+                        validationModel.Alias = validation.Alias;
+                        validationModel.Config = config;
+                        validationModel.Id = Guid.NewGuid().ToString();
+
+                        return validationModel;
+                    })
+                    .ToList()
+            });
+        }
 
         public Task RemoveAsync(IRelatedViewContext viewContext, string id) => throw new NotSupportedException();
 
@@ -134,6 +176,9 @@ namespace RapidCMS.ModelMaker.Repositories
                 }
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
+
+                // TODO: this does not update its parent entity so when updating that one, the old order is restored
+                // if a mediator update is issued then multiple reorders get messed up as the refresh takes place after first update, while others should also be updated..
             }
         }
 
@@ -149,7 +194,7 @@ namespace RapidCMS.ModelMaker.Repositories
                 model.DraftProperties[index] = typedEditContext.Entity;
                 model.State = model.State.Modify();
 
-                SetDefaultProperties(model, typedEditContext.Entity);
+                SavePropertyConfigs(model, typedEditContext.Entity);
                 if (typedEditContext.Entity.IsTitle)
                 {
                     SetPropertyAsOnlyTitle(model, typedEditContext.Entity);
@@ -161,8 +206,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
 
-                // TODO: this triggers a refresh of the properties pane
-                // _mediator.NotifyEvent(this, new RepositoryEventArgs(typeof(ModelRepository), default, model.Id, CrudType.Update));
+                _mediator.NotifyEvent(this, new RepositoryEventArgs(typeof(ModelRepository), default, model.Id, CrudType.Update));
             }
         }
 
@@ -174,7 +218,7 @@ namespace RapidCMS.ModelMaker.Repositories
             }
         }
 
-        private void SetDefaultProperties(ModelEntity model, PropertyModel property)
+        private void SavePropertyConfigs(ModelEntity model, PropertyModel property)
         {
             if (string.IsNullOrWhiteSpace(property.Alias))
             {
@@ -184,6 +228,11 @@ namespace RapidCMS.ModelMaker.Repositories
             var propertyConfig = _config.Properties.FirstOrDefault(x => x.Alias == property.PropertyAlias);
             if (propertyConfig != null)
             {
+                if (!propertyConfig.UsableAsTitle)
+                {
+                    property.IsTitle = false;
+                }
+
                 var validations = _config.Validators.Where(x => propertyConfig.Validators.Any(v => v.Alias == x.Alias));
 
                 var newValidations = new List<PropertyValidationModel>();
@@ -193,14 +242,17 @@ namespace RapidCMS.ModelMaker.Repositories
                     var config = property.Validations.FirstOrDefault(x => x.Alias == validation.Alias)?.Config
                         ?? Activator.CreateInstance(validation.Config) as IValidatorConfig;
 
-                    var validationModel = Activator.CreateInstance(typeof(PropertyValidationModel<>).MakeGenericType(validation.Config)) as PropertyValidationModel
-                        ?? throw new InvalidOperationException("Could not create correct PropertyValidationModel.");
+                    if (config?.IsApplicable(property) == true || config?.AlwaysIncluded == true)
+                    {
+                        var validationModel = Activator.CreateInstance(typeof(PropertyValidationModel<>).MakeGenericType(validation.Config)) as PropertyValidationModel
+                            ?? throw new InvalidOperationException("Could not create correct PropertyValidationModel.");
 
-                    validationModel.Alias = validation.Alias;
-                    validationModel.Config = config;
-                    validationModel.Id = Guid.NewGuid().ToString();
+                        validationModel.Alias = validation.Alias;
+                        validationModel.Config = config;
+                        validationModel.Id = Guid.NewGuid().ToString();
 
-                    newValidations.Add(validationModel);
+                        newValidations.Add(validationModel);
+                    }
                 }
 
                 property.Validations = newValidations;

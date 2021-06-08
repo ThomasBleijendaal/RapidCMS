@@ -24,18 +24,6 @@ namespace RapidCMS.Core.Forms
             return Relations.FirstOrDefault(x => x.Property.Fingerprint == property?.Fingerprint)?.RelatedElementIdsAs<TId>() ?? default;
         }
 
-        public IReadOnlyList<IElement>? GetRelatedElementsFor<TEntity, TValue>(Expression<Func<TEntity, TValue>> propertyExpression) where TEntity : IEntity
-        {
-            var property = PropertyMetadataHelper.GetPropertyMetadata(propertyExpression);
-
-            return Relations.FirstOrDefault(x => x.Property.Fingerprint == property?.Fingerprint)?.RelatedElements ?? default;
-        }
-
-        public IReadOnlyList<IElement>? GetRelatedElementsFor<TRelatedEntity>() where TRelatedEntity : IEntity
-        {
-            return Relations.FirstOrDefault(x => x.RelatedEntityType == typeof(TRelatedEntity))?.RelatedElements ?? default;
-        }
-
         public IReadOnlyList<TId>? GetRelatedElementIdsFor<TRelatedEntity, TId>() where TRelatedEntity : IEntity
         {
             return Relations.FirstOrDefault(x => x.RelatedEntityType == typeof(TRelatedEntity))?.RelatedElementIdsAs<TId>() ?? default;

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   
   <ItemGroup>
@@ -9,6 +10,7 @@
     <ProjectReference Include="..\..\src\RapidCMS.ModelMaker\RapidCMS.ModelMaker.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.Repositories\RapidCMS.Repositories.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.UI\RapidCMS.UI.csproj" />
+    <ProjectReference Include="..\RapidCMS.Example.Shared\RapidCMS.Example.Shared.csproj" />
   </ItemGroup>
   
   <ItemGroup>

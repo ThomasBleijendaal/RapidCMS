@@ -24,7 +24,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                             _ => PageType.Collection
                         };
 
-                        return new TreeElementSetup(corp.Alias, type)
+                        return new TreeElementSetup(corp.Alias, corp.Name, type)
                         {
                             RootVisibility = (corp as CollectionConfig)?.TreeView?.RootVisibility ?? default
                         };
