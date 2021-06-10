@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using RapidCMS.Core.Extensions;
 using RapidCMS.ModelMaker.Abstractions.Entities;
 using RapidCMS.ModelMaker.Enums;
 

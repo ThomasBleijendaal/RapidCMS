@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 
 namespace RapidCMS.ModelMaker.Validation.Base
 {

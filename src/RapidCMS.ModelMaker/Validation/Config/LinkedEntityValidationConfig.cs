@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Extensions;
-using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 using RapidCMS.ModelMaker.Models.Entities;
 
 namespace RapidCMS.ModelMaker.Validation.Config

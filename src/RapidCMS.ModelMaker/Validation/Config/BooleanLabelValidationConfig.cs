@@ -3,7 +3,7 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms.Validation;
-using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.UI.Components.Editors;
 

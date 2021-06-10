@@ -57,9 +57,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.ModelMaker", "Rapi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.ModelMaker.TableStorage", "RapidCMS.ModelMaker.TableStorage\RapidCMS.ModelMaker.TableStorage.csproj", "{22E64CD4-DC0F-4C74-927E-411D1745FB92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidCMS.ModelMaker.SourceGenerator", "RapidCMS.ModelMaker.SourceGenerator\RapidCMS.ModelMaker.SourceGenerator.csproj", "{FB68633B-94D5-4017-AD53-5A54518A1C9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.ModelMaker.SourceGenerator", "RapidCMS.ModelMaker.SourceGenerator\RapidCMS.ModelMaker.SourceGenerator.csproj", "{FB68633B-94D5-4017-AD53-5A54518A1C9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidCMS.ModelMaker.SourceGenerator.EFCore", "RapidCMS.ModelMaker.SourceGenerator.EFCore\RapidCMS.ModelMaker.SourceGenerator.EFCore.csproj", "{DFE45154-AD85-44F8-9FBF-B463D969767B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.ModelMaker.SourceGenerator.EFCore", "RapidCMS.ModelMaker.SourceGenerator.EFCore\RapidCMS.ModelMaker.SourceGenerator.EFCore.csproj", "{DFE45154-AD85-44F8-9FBF-B463D969767B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests", "RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests\RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests.csproj", "{94EC174C-BBF8-4D3A-A1B3-DA5B740CC451}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -147,6 +149,10 @@ Global
 		{DFE45154-AD85-44F8-9FBF-B463D969767B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFE45154-AD85-44F8-9FBF-B463D969767B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFE45154-AD85-44F8-9FBF-B463D969767B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94EC174C-BBF8-4D3A-A1B3-DA5B740CC451}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94EC174C-BBF8-4D3A-A1B3-DA5B740CC451}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94EC174C-BBF8-4D3A-A1B3-DA5B740CC451}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94EC174C-BBF8-4D3A-A1B3-DA5B740CC451}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -172,6 +178,7 @@ Global
 		{22E64CD4-DC0F-4C74-927E-411D1745FB92} = {FAEBCE99-5CCB-4BBF-AAF3-9CE51FABD871}
 		{FB68633B-94D5-4017-AD53-5A54518A1C9A} = {FAEBCE99-5CCB-4BBF-AAF3-9CE51FABD871}
 		{DFE45154-AD85-44F8-9FBF-B463D969767B} = {FAEBCE99-5CCB-4BBF-AAF3-9CE51FABD871}
+		{94EC174C-BBF8-4D3A-A1B3-DA5B740CC451} = {A1ABBF0C-890B-43E6-AD6D-F1897CA205B6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A24D735F-6ECC-4089-B6BF-DB09B1FCB7D8}

@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 
-namespace RapidCMS.ModelMaker.Abstractions.Validation
+namespace RapidCMS.ModelMaker.Core.Abstractions.Validation
 {
     public interface IValidator
     {
-        Task<bool> IsValidAsync(object? value, IValidatorConfig validatorConfig);
+        Task<bool> IsValidAsync(object value, IValidatorConfig validatorConfig);
         Task<string> ErrorMessageAsync(IValidatorConfig validatorConfig);
     }
 }

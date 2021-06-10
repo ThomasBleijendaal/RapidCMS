@@ -34,6 +34,9 @@ namespace RapidCMS.ModelMaker
             // - 3.9.5-preview: after implementing configurable sub collections + alias working
             // - 4.0.0: after implementing complete DbContext generation by configured code
 
+            // general TODO:
+            // - move IPublishableEntity features to a sperate UI package (it's not for ModelMaker anymore)
+
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
             services.AddTransient<CollectionsDataCollection>();

@@ -1,4 +1,4 @@
-﻿namespace RapidCMS.ModelMaker.Abstractions.Validation
+﻿namespace RapidCMS.ModelMaker.Core.Abstractions.Validation
 {
     public interface IPropertyValidationModel<TValidatorConfig>
         where TValidatorConfig : IValidatorConfig

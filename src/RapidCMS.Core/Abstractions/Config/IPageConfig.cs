@@ -22,7 +22,6 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <returns></returns>
         IPageConfig AddSection(Type customSectionType);
 
-        string Name { get; }
         string Icon { get; }
         string Color { get; }
 

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Forms.Validation;
 using RapidCMS.ModelMaker.Abstractions.Entities;
-using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 
 namespace RapidCMS.ModelMaker.Models.Entities
 {

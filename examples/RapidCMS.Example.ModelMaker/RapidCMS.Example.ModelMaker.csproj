@@ -7,12 +7,13 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\src\RapidCMS.ModelMaker.SourceGenerator\RapidCMS.ModelMaker.SourceGenerator.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.ModelMaker.TableStorage\RapidCMS.ModelMaker.TableStorage.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.ModelMaker\RapidCMS.ModelMaker.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.Repositories\RapidCMS.Repositories.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.UI\RapidCMS.UI.csproj" />
     <ProjectReference Include="..\RapidCMS.Example.Shared\RapidCMS.Example.Shared.csproj" />
-    <ProjectReference Include="..\..\src\RapidCMS.ModelMaker.SourceGenerator\RapidCMS.ModelMaker.SourceGenerator.csproj" OutputItemType="Analyzer" />
+    <ProjectReference Include="..\..\src\RapidCMS.ModelMaker.SourceGenerator.EFCore\RapidCMS.ModelMaker.SourceGenerator.EFCore.csproj" OutputItemType="Analyzer" />
   </ItemGroup>
   
   <ItemGroup>

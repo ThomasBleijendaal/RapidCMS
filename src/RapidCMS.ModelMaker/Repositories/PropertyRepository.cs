@@ -11,7 +11,7 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
-using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 using RapidCMS.ModelMaker.EqualityComparers;
 using RapidCMS.ModelMaker.Extenstions;
 using RapidCMS.ModelMaker.Models.Commands;
@@ -232,6 +232,8 @@ namespace RapidCMS.ModelMaker.Repositories
                 {
                     property.IsTitle = false;
                 }
+
+                property.Type = propertyConfig.Type.FullName;
 
                 var validations = _config.Validators.Where(x => propertyConfig.Validators.Any(v => v.Alias == x.Alias));
 

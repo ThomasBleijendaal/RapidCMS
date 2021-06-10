@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using RapidCMS.Core.Enums;
-using RapidCMS.ModelMaker.Abstractions.Factories;
-using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Core.Abstractions.Factories;
+using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 using RapidCMS.ModelMaker.Validation.Base;
 using RapidCMS.UI.Components.Editors;
 
