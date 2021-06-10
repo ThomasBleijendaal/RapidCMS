@@ -36,6 +36,7 @@ namespace RapidCMS.ModelMaker
 
             // general TODO:
             // - move IPublishableEntity features to a sperate UI package (it's not for ModelMaker anymore)
+            // - implement complex validation like the old IValidator using validation pipeline + generated validators -- attribute validation is not enough for modelmakermade models
 
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
@@ -88,14 +89,14 @@ namespace RapidCMS.ModelMaker
                     "Linked entity",
                     "The value has to be one of the entities of the linked collection",
                     EditorType.Dropdown,
-                    x => x.Config.CollectionAlias);
+                    x => x.Config.LinkedEntityCollectionAlias);
 
-                config.AddPropertyValidator<LinkedEntitiesValidator, List<string>, LinkedEntityValidationConfig, string, LinkedEntityDataCollectionFactory>(
+                config.AddPropertyValidator<LinkedEntitiesValidator, List<string>, LinkedEntitiesValidationConfig, string, LinkedEntityDataCollectionFactory>(
                     Constants.Validators.LinkedEntities,
                     "Linked entity",
                     "The value has to be one or more of the entities of the linked collection",
                     EditorType.Dropdown,
-                    x => x.Config.CollectionAlias);
+                    x => x.Config.LinkedEntitiesCollectionAlias);
 
                 config.AddPropertyValidator<BooleanLabelValidator, bool, BooleanLabelValidationConfig, BooleanLabelValidationConfig.LabelsConfig, BooleanLabelDataCollectionFactory>(
                     Constants.Validators.BooleanLabels,
@@ -142,7 +143,8 @@ namespace RapidCMS.ModelMaker
                         "Link",
                         new[] { Constants.Editors.EntityPicker },
                         new[] { Constants.Validators.LinkedEntity })
-                    .CanBeUsedAsTitle(false);
+                    .CanBeUsedAsTitle(false)
+                    .RelatesToOneEntity(true);
 
                 config.AddProperty<List<string>>(
                         Constants.Properties.LinkedEntities,
@@ -150,7 +152,8 @@ namespace RapidCMS.ModelMaker
                         "Link",
                         new[] { Constants.Editors.EntitiesPicker },
                         new[] { Constants.Validators.LinkedEntities }) // TODO: min max linkedentities
-                    .CanBeUsedAsTitle(false);
+                    .CanBeUsedAsTitle(false)
+                    .RelatesToManyEntities(true);
 
                 config.AddProperty<DateTime>(
                         Constants.Properties.Date,

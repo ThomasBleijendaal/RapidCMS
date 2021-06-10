@@ -3,30 +3,20 @@ using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 
 namespace RapidCMS.ModelMaker.Validation.Base
 {
+    // TODO: Rename
     public abstract class BaseValidator<TValue, TValidatorConfig> : IValidator
         where TValidatorConfig : IValidatorConfig
     {
-        public Task<string> ErrorMessageAsync(IValidatorConfig validatorConfig)
+        public string? ValidationAttributeText(IValidatorConfig validatorConfig)
         {
             if (validatorConfig is TValidatorConfig config)
             {
-                return ErrorMessage(config);
+                return ValidationAttributeText(config);
             }
 
-            return Task.FromResult("Unknown error");
+            return default;
         }
 
-        public Task<bool> IsValidAsync(object? value, IValidatorConfig validatorConfig)
-        {
-            if (validatorConfig is TValidatorConfig config)
-            {
-                return IsValid((TValue?)value, config);
-            }
-
-            return Task.FromResult(false);
-        }
-
-        protected abstract Task<bool> IsValid(TValue? value, TValidatorConfig validatorConfig);
-        protected abstract Task<string> ErrorMessage(TValidatorConfig validatorConfig);
+        protected abstract string? ValidationAttributeText(TValidatorConfig validatorConfig);
     }
 }

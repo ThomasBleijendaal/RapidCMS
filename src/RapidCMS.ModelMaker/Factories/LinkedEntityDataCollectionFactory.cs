@@ -41,8 +41,8 @@ namespace RapidCMS.ModelMaker.Factories
 
         public async Task<RelationSetup?> GetModelRelationSetupAsync(IValidatorConfig? config)
         {
-            if (config is not LinkedEntityValidationConfig linkedEntityConfig ||
-                linkedEntityConfig.CollectionAlias is not string collectionAlias)
+            if (config is not LinkedEntitiesValidationConfig linkedEntityConfig ||
+                linkedEntityConfig.LinkedEntitiesCollectionAlias is not string collectionAlias)
             {
                 return default;
             }

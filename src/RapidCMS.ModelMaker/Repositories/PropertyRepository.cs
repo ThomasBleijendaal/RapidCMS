@@ -6,6 +6,8 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.EventArgs.Mediators;
@@ -24,15 +26,18 @@ namespace RapidCMS.ModelMaker.Repositories
     {
         private readonly IModelMakerConfig _config;
         private readonly ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse> _updateEntityCommandHandler;
+        private readonly ISetupResolver<ICollectionSetup> _collectionSetupResolver;
         private readonly IMediator _mediator;
 
         public PropertyRepository(
             IModelMakerConfig config,
             ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse> updateEntityCommandHandler,
+            ISetupResolver<ICollectionSetup> collectionSetupResolver,
             IMediator mediator)
         {
             _config = config;
             _updateEntityCommandHandler = updateEntityCommandHandler;
+            _collectionSetupResolver = collectionSetupResolver;
             _mediator = mediator;
         }
 
@@ -104,7 +109,7 @@ namespace RapidCMS.ModelMaker.Repositories
                 model.DraftProperties.Add(newProperty);
                 model.State = model.State.Modify();
 
-                SavePropertyConfigs(model, typedEditContext.Entity);
+                await SavePropertyConfigsAsync(model, typedEditContext.Entity);
 
                 if (newProperty.IsTitle)
                 {
@@ -194,7 +199,7 @@ namespace RapidCMS.ModelMaker.Repositories
                 model.DraftProperties[index] = typedEditContext.Entity;
                 model.State = model.State.Modify();
 
-                SavePropertyConfigs(model, typedEditContext.Entity);
+                await SavePropertyConfigsAsync(model, typedEditContext.Entity);
                 if (typedEditContext.Entity.IsTitle)
                 {
                     SetPropertyAsOnlyTitle(model, typedEditContext.Entity);
@@ -218,7 +223,7 @@ namespace RapidCMS.ModelMaker.Repositories
             }
         }
 
-        private void SavePropertyConfigs(ModelEntity model, PropertyModel property)
+        private async Task SavePropertyConfigsAsync(ModelEntity model, PropertyModel property)
         {
             if (string.IsNullOrWhiteSpace(property.Alias))
             {
@@ -234,6 +239,8 @@ namespace RapidCMS.ModelMaker.Repositories
                 }
 
                 property.Type = propertyConfig.Type.FullName;
+                property.IsRelationToOne = propertyConfig.IsRelationToOne;
+                property.IsRelationToMany = propertyConfig.IsRelationToMany;
 
                 var validations = _config.Validators.Where(x => propertyConfig.Validators.Any(v => v.Alias == x.Alias));
 
@@ -249,13 +256,34 @@ namespace RapidCMS.ModelMaker.Repositories
                         var validationModel = Activator.CreateInstance(typeof(PropertyValidationModel<>).MakeGenericType(validation.Config)) as PropertyValidationModel
                             ?? throw new InvalidOperationException("Could not create correct PropertyValidationModel.");
 
+                        var validator = Activator.CreateInstance(validation.Validator) as IValidator;
+
                         validationModel.Alias = validation.Alias;
                         validationModel.Config = config;
                         validationModel.Id = Guid.NewGuid().ToString();
 
+                        validationModel.Attribute = validator?.ValidationAttributeText(config);
+
                         newValidations.Add(validationModel);
                     }
                 }
+
+                try
+                {
+                    var relatedCollectionAlias = newValidations.Select(x => x.Config?.RelatedCollectionAlias).OfType<string>().SingleOrDefault();
+
+                    if (!string.IsNullOrWhiteSpace(relatedCollectionAlias))
+                    {
+                        var relatedCollectionEntityVariant = (await _collectionSetupResolver.ResolveSetupAsync(relatedCollectionAlias)).EntityVariant;
+
+                        property.Type = relatedCollectionEntityVariant.Type.FullName;
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    throw new InvalidOperationException("Cannot have 2 validation configs with RelatedCollectionAlias", ex);
+                }
+
 
                 property.Validations = newValidations;
             }

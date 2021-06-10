@@ -15,5 +15,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public bool IsApplicable(PropertyModel model)
             => model.EditorAlias.In(Constants.Editors.TextArea, Constants.Editors.TextBox);
+
+        public string? RelatedCollectionAlias => default;
     }
 }

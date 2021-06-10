@@ -139,27 +139,27 @@ namespace RapidCMS.ModelMaker.Repositories
 
         private async Task ValidateEntityAsync(IEditContext<ModelMakerEntity> editContext, ModelMakerEntity entity)
         {
-            var modelDefinition = await _getDefinitionByIdHandler.HandleAsync(new GetByAliasRequest<ModelEntity>(editContext.CollectionAlias));
+            //var modelDefinition = await _getDefinitionByIdHandler.HandleAsync(new GetByAliasRequest<ModelEntity>(editContext.CollectionAlias));
 
-            if (modelDefinition.Entity != null)
-            {
-                foreach (var property in modelDefinition.Entity.PublishedProperties)
-                {
-                    foreach (var validation in property.Validations.Where(x => x.Config?.IsEnabled == true))
-                    {
-                        var validatorConfig = _config.Validators.First(x => x.Alias == validation.Alias);
+            //if (modelDefinition.Entity != null)
+            //{
+            //    foreach (var property in modelDefinition.Entity.PublishedProperties)
+            //    {
+            //        foreach (var validation in property.Validations.Where(x => x.Config?.IsEnabled == true))
+            //        {
+            //            var validatorConfig = _config.Validators.First(x => x.Alias == validation.Alias);
 
-                        var validator = _serviceProvider.GetService<IValidator>(validatorConfig.Validator);
+            //            var validator = _serviceProvider.GetService<IValidator>(validatorConfig.Validator);
 
-                        if (!await validator.IsValidAsync(entity.Get(property.Alias), validation.Config!))
-                        {
-                            editContext.AddValidationError(property.Alias, await validator.ErrorMessageAsync(validation.Config!));
-                        }
-                    }
-                }
-            }
+            //            if (!await validator.IsValidAsync(entity.Get(property.Alias), validation.Config!))
+            //            {
+            //                editContext.AddValidationError(property.Alias, await validator.ErrorMessageAsync(validation.Config!));
+            //            }
+            //        }
+            //    }
+            //}
 
-            editContext.EnforceValidEntity();
+            //editContext.EnforceValidEntity();
         }
 
         private void HandleRelations(IEditContext<ModelMakerEntity> editContext)

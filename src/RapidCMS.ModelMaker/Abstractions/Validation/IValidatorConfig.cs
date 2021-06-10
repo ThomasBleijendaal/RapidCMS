@@ -20,5 +20,10 @@ namespace RapidCMS.ModelMaker.Core.Abstractions.Validation
         /// Indicates whether the config should always be saved when saving the model.
         /// </summary>
         bool AlwaysIncluded { get; }
+
+        /// <summary>
+        /// Indicates the collection alias of the related entity / entities.
+        /// </summary>
+        string? RelatedCollectionAlias { get; }
     }
 }

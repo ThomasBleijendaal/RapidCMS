@@ -2,9 +2,9 @@
 
 namespace RapidCMS.ModelMaker.Core.Abstractions.Validation
 {
+    // TODO: Rename or merge with IValidatorConfig
     public interface IValidator
     {
-        Task<bool> IsValidAsync(object value, IValidatorConfig validatorConfig);
-        Task<string> ErrorMessageAsync(IValidatorConfig validatorConfig);
+        string? ValidationAttributeText(IValidatorConfig validatorConfig);
     }
 }

@@ -213,7 +213,7 @@ namespace RapidCMS.ModelMaker
 
                 if (validator != null && _serviceProvider.GetService<IDataCollectionFactory>(validator.DataCollectionFactory!) is IDataCollectionFactory dataCollectionFactory)
                 {
-                    relationSetup = await dataCollectionFactory.GetModelRelationSetupAsync(property.GetValidation(validator.Alias).Config);
+                    relationSetup = await dataCollectionFactory.GetModelRelationSetupAsync(property.GetValidation(validator.Alias).Config!);
                 }
             }
             catch (InvalidOperationException ex)
@@ -351,8 +351,13 @@ namespace RapidCMS.ModelMaker
 
                         titleField,
 
-                        CreatePropertyField(EditorType.Dropdown,
+                        CreatePropertyField(EditorType.Checkbox,
                             4,
+                            "Required",
+                            PropertyMetadataHelper.GetFullPropertyMetadata<PropertyModel, bool>(x => x.IsRequired)),
+
+                        CreatePropertyField(EditorType.Dropdown,
+                            5,
                             "Property editor",
                             PropertyMetadataHelper.GetFullPropertyMetadata<PropertyModel, string?>(x => x.EditorAlias),
                            relation: new DataProviderRelationSetup(typeof(PropertyEditorDataCollection)))

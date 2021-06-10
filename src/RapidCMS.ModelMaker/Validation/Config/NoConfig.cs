@@ -10,5 +10,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
         public bool AlwaysIncluded => true;
 
         public bool IsApplicable(PropertyModel model) => false;
+
+        public string? RelatedCollectionAlias => default;
     }
 }

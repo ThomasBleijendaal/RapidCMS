@@ -5,6 +5,8 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 {
     internal sealed class PropertyInformation : InformationBase, IInformation
     {
+        private List<string> _validationAttributes = new List<string>();
+
         public PropertyInformation()
         {
         }
@@ -25,12 +27,55 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return this;
         }
 
+        public IReadOnlyList<string> ValidationAttributes => _validationAttributes;
+
+        public PropertyInformation HasValidationAttribute(string attribute)
+        {
+            _validationAttributes.Add(attribute);
+            return this;
+        }
+
+        public PropertyInformation IsRequired(bool isRequired)
+        {
+            if (isRequired)
+            {
+                _validationAttributes.Insert(0, "[Required]");
+            }
+            return this;
+        }
+
+        public bool RelatedToOneEntity { get; set; }
+        public bool RelatedToManyEntities { get; set; }
+
+        public PropertyInformation IsRelation(bool relatedToOneEntity, bool relatedToManyEntities)
+        {
+            RelatedToOneEntity = relatedToOneEntity;
+            RelatedToManyEntities = relatedToManyEntities;
+
+            if (RelatedToManyEntities)
+            {
+                _namespaces.Add("System.Collections.Generic");
+            }
+
+            return this;
+        }
+
         public bool IsValid()
         {
             return !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Type);
         }
 
         public IEnumerable<string> NamespacesUsed()
-            => _namespaces;
+        {
+            if (_validationAttributes.Count > 0)
+            {
+                yield return "System.ComponentModel.DataAnnotations";
+            }
+
+            foreach (var @namespace in _namespaces)
+            {
+                yield return @namespace;
+            }
+        }
     }
 }

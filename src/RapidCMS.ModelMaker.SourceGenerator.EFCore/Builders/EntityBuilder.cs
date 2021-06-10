@@ -8,13 +8,13 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 {
     internal sealed class EntityBuilder : BuilderBase
     {
-        private readonly string _nameSpace;
+        private readonly string _namespace;
         private readonly PropertyBuilder _propertyBuilder;
 
-        public EntityBuilder(string nameSpace,
+        public EntityBuilder(string @namespace,
             PropertyBuilder propertyBuilder)
         {
-            _nameSpace = nameSpace;
+            _namespace = @namespace;
             _propertyBuilder = propertyBuilder;
         }
 
@@ -24,7 +24,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             using var indentWriter = new IndentedTextWriter(writer, "    ");
 
             WriteUsingNamespaces(indentWriter, info.NamespacesUsed());
-            WriteOpenNamespace(indentWriter, _nameSpace);
+            WriteOpenNamespace(indentWriter, _namespace);
 
             WriteOpenEntity(indentWriter, info);
 

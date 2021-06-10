@@ -21,6 +21,8 @@ namespace RapidCMS.ModelMaker.Validation.Config
         public bool IsApplicable(PropertyModel model)
             => model.EditorAlias.In(Constants.Editors.Dropdown, Constants.Editors.Select);
 
+        public string? RelatedCollectionAlias => default;
+
         public class LabelsConfig: IEntity
         {
             [Required]

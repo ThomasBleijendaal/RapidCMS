@@ -19,6 +19,8 @@ namespace RapidCMS.ModelMaker.Models.Entities
 
         public bool IsTitle { get; set; }
 
+        public bool IsRequired { get; set; }
+
         [Required]
         public string? PropertyAlias { get; set; }
 
@@ -30,5 +32,9 @@ namespace RapidCMS.ModelMaker.Models.Entities
         public List<PropertyValidationModel> Validations { get; set; } = new List<PropertyValidationModel>();
 
         public string? Type { get; set; }
+
+        public bool IsRelationToOne { get; set; }
+
+        public bool IsRelationToMany { get; set; }
     }
 }

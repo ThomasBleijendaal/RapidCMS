@@ -94,6 +94,14 @@ namespace RapidCMS.ModelMaker.Models
             where TValidatorConfig : class, IValidatorConfig
             where TDataCollectionFactory : IDataCollectionFactory
         {
+            var property = PropertyMetadataHelper.GetPropertyMetadata(configEditor) as IFullPropertyMetadata;
+
+            if (!string.IsNullOrWhiteSpace(property?.PropertyName) && 
+                _validators.Any(x => x.ConfigToEditor?.PropertyName == property?.PropertyName))
+            {
+                throw new InvalidOperationException($"Validation models must have unique ConfigToEditor property metadata, {property.PropertyName} already used. [ValidateEnumerable] won't be able to distinguish between models.");
+            }
+
             var validator = new PropertyValidatorConfig(
                 alias,
                 name,
@@ -102,7 +110,7 @@ namespace RapidCMS.ModelMaker.Models
                 GetEditorByEditorType(editorType),
                 typeof(TValidator),
                 typeof(TValidatorConfig),
-                PropertyMetadataHelper.GetPropertyMetadata(configEditor) as IFullPropertyMetadata,
+                property,
                 typeof(TDataCollectionFactory));
 
             _validators.Add(validator);

@@ -18,5 +18,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public bool IsApplicable(PropertyModel model)
             => model.EditorAlias.In(Constants.Editors.Dropdown);
+
+        public string? RelatedCollectionAlias => default;
     }
 }

@@ -11,6 +11,8 @@ namespace RapidCMS.ModelMaker.Models.Entities
 
         public string Alias { get; set; } = default!;
 
+        public string? Attribute { get; set; }
+
         [Required]
         [ValidateObject]
         public IValidatorConfig? Config { get; set; }

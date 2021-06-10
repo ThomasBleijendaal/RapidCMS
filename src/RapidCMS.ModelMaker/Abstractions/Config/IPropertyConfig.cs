@@ -13,9 +13,14 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
 
         bool UsableAsTitle { get; }
 
+        bool IsRelationToOne { get; }
+        bool IsRelationToMany { get; }
+
         IList<IPropertyValidatorConfig> Validators { get; }
         IList<IPropertyEditorConfig> Editors { get; }
 
         IPropertyConfig CanBeUsedAsTitle(bool usedAsTitle);
+        IPropertyConfig RelatesToOneEntity(bool isRelation);
+        IPropertyConfig RelatesToManyEntities(bool isRelation);
     }
 }

@@ -29,10 +29,27 @@ namespace RapidCMS.ModelMaker.Models.Config
 
         public IList<IPropertyEditorConfig> Editors { get; }
 
+        public bool IsRelationToOne { get; private set; }
+
+        public bool IsRelationToMany { get; private set; }
 
         public IPropertyConfig CanBeUsedAsTitle(bool usedAsTitle)
         {
             UsableAsTitle = usedAsTitle;
+
+            return this;
+        }
+
+        public IPropertyConfig RelatesToOneEntity(bool isRelation)
+        {
+            IsRelationToOne = isRelation;
+
+            return this;
+        }
+
+        public IPropertyConfig RelatesToManyEntities(bool isRelation)
+        {
+            IsRelationToMany = isRelation;
 
             return this;
         }
