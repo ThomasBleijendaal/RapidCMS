@@ -22,7 +22,7 @@ namespace RapidCMS.ModelMaker.CommandHandlers.Base
             _config = config;
         }
 
-        protected string FileName(string id) => $"{_config.ModelFolder}{id.Replace("::", ".")}.json";
+        protected string FileName(string id) => $"{_config.ModelFolder}modelmaker.{id}.json";
 
         protected async Task<ModelEntity?> ReadFileToModelAsync(string fileName)
         {

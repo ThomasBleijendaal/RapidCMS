@@ -62,7 +62,7 @@ namespace RapidCMS.ModelMaker.Repositories
             if (editContext is IEditContext<ModelEntity> typedEditContext)
             {
                 var entity = typedEditContext.Entity;
-                entity.Alias = $"modelmaker::{entity.Name.ToUrlFriendlyString()}";
+                entity.Alias = entity.Name.ToUrlFriendlyString(); // TODO: ensure uniqueness
                 entity.CreatedAt = DateTime.UtcNow;
 
                 var response = await _insertEntityCommandHandler.HandleAsync(new InsertRequest<ModelEntity>(entity));

@@ -5,6 +5,6 @@ namespace RapidCMS.Example.ModelMaker.Validators
     public class BannedContentValidator : BaseValidator<string, BannedContentValidationConfig>
     {
         protected override string? ValidationAttributeText(BannedContentValidationConfig validatorConfig)
-            => $"[RegularExpression(\"[{string.Join("|", validatorConfig.BannedWords)}]\")]";
+            => $"[RegularExpression(\"[^{string.Join("|", validatorConfig.BannedWords)}$]\")]";
     }
 }

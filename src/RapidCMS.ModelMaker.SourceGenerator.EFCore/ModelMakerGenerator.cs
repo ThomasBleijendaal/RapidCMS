@@ -16,11 +16,16 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
 
         public void Execute(GeneratorExecutionContext context)
         {
+            var @namespace = "RapidCMS.ModelMaker";
+
             var propertyParser = new PropertyParser();
             var entityParser = new EntityParser(propertyParser);
 
             var propertyBuilder = new PropertyBuilder();
-            var entityBuilder = new EntityBuilder("RapidCMS.ModelMaker", propertyBuilder); // TODO: config?
+            var entityBuilder = new EntityBuilder(@namespace, propertyBuilder); // TODO: config?
+
+            var fieldBuilder = new FieldBuilder();
+            var collectionBuilder = new CollectionBuilder(@namespace, fieldBuilder);
 
             foreach (var file in context.AdditionalFiles)
             {
@@ -33,7 +38,10 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
                     if (entity.IsValid()) // TODO: unit test
                     {
                         var entitySourceText = entityBuilder.BuildEntity(entity);
-                        context.AddSource($"ModelMaker_{entity.Name}.cs", entitySourceText);
+                        context.AddSource($"ModelMaker_Entity_{entity.Name}.cs", entitySourceText);
+
+                        var collectionSourceText = collectionBuilder.BuildCollection(entity);
+                        context.AddSource($"ModelMaker_Collection_{entity.Name}.cs", collectionSourceText);
                     }
                     // context.ReportDiagnostic(Diagnostic.Create("RC0001", "", json.Value<string>("$type"), DiagnosticSeverity.Warning, DiagnosticSeverity.Warning, true, 1));
                 }

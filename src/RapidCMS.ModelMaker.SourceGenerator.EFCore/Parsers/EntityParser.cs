@@ -22,6 +22,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                 info.HasName(entityName);
             }
 
+            if (entity.Value<string>("Alias") is string alias)
+            {
+                info.HasAlias(alias);
+            }
+
             if (entity.Value<JObject>("PublishedProperties") is JObject propsRoot &&
                 propsRoot.Value<JArray>("$values") is JArray properties)
             {

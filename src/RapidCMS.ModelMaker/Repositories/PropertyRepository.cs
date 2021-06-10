@@ -238,9 +238,12 @@ namespace RapidCMS.ModelMaker.Repositories
                     property.IsTitle = false;
                 }
 
+                var editorConfig = _config.Editors.FirstOrDefault(x => x.Alias == property.EditorAlias);
+
                 property.Type = propertyConfig.Type.FullName;
                 property.IsRelationToOne = propertyConfig.IsRelationToOne;
                 property.IsRelationToMany = propertyConfig.IsRelationToMany;
+                property.EditorType = editorConfig?.Editor.FullName;
 
                 var validations = _config.Validators.Where(x => propertyConfig.Validators.Any(v => v.Alias == x.Alias));
 

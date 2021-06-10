@@ -20,9 +20,19 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                 info.IsType(propertyType);
             }
 
+            if (property.Value<string>("EditorType") is string editorType)
+            {
+                info.UsesEditor(editorType);
+            }
+
             if (property.Value<bool>("IsRequired") is bool required)
             {
                 info.IsRequired(required);
+            }
+
+            if (property.Value<bool>("IsTitle") is bool title)
+            {
+                info.IsTitle(title);
             }
 
             if (property.Value<bool>("IsRelationToOne") is bool isRelationToOne &&

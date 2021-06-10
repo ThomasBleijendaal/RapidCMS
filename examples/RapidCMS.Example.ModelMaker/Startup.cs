@@ -87,12 +87,15 @@ namespace RapidCMS.Example.ModelMaker
             services.AddScoped<BaseRepository<Person>, JsonRepository<Person>>();
             services.AddScoped<BaseRepository<Details>, JsonRepository<Details>>();
 
+            services.AddScoped<BaseRepository<Blog>, TempTestInMemoryRepository<Blog>>();
+
             services.AddRapidCMSServer(config =>
             {
                 config.AllowAnonymousUser();
 
                 config.SetSiteName("Model maker");
 
+                config.AddBlogCollection();
                 config.AddPersonCollection();
 
                 config.AddModelMakerPlugin();

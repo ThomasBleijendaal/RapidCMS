@@ -60,9 +60,27 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return this;
         }
 
+        public bool IsTitleOfEntity { get; set; }
+
+        public PropertyInformation IsTitle(bool isTitle)
+        {
+            IsTitleOfEntity = isTitle;
+            return this;
+        }
+
+        public string? EditorType { get; private set; }
+
+        public PropertyInformation UsesEditor(string type)
+        {
+            EditorType = type;
+            return this;
+        }
+
         public bool IsValid()
         {
-            return !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Type);
+            return !string.IsNullOrEmpty(Name) && 
+                !string.IsNullOrEmpty(Type) &&
+                !string.IsNullOrEmpty(EditorType);
         }
 
         public IEnumerable<string> NamespacesUsed()

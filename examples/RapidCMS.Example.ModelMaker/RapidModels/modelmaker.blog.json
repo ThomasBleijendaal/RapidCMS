@@ -1,12 +1,12 @@
 {
   "$type": "RapidCMS.ModelMaker.Models.Entities.ModelEntity, RapidCMS.ModelMaker",
-  "Id": "modelmaker::blog",
-  "Alias": "modelmaker::blog",
+  "Id": "blog",
+  "Alias": "blog",
   "ParentId": null,
   "State": 1,
   "CreatedAt": "2021-06-08T20:14:39.9059517Z",
-  "PublishedAt": "2021-06-10T19:49:47.3452351Z",
-  "UpdatedAt": "2021-06-10T19:49:47.3452363Z",
+  "PublishedAt": "2021-06-10T21:26:39.1903846Z",
+  "UpdatedAt": "2021-06-10T21:26:39.1903859Z",
   "Name": "Blog",
   "PublishedProperties": {
     "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
@@ -25,7 +25,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MinLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "d18bf737-b173-48bf-a6ac-a9f16ec6bade",
+              "Id": "f816ccba-96ac-417b-b82f-1c65fa8ceaa6",
               "Alias": "minlength",
               "Attribute": "[MinLength(1)]",
               "Config": {
@@ -38,7 +38,7 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MaxLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "8543b3e1-d8d3-485b-a9f2-9e1b411593df",
+              "Id": "ee83abf7-de91-4b9c-823a-1ab0c4bbe8b4",
               "Alias": "maxlength",
               "Attribute": "[MaxLength(127)]",
               "Config": {
@@ -51,7 +51,7 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "09bf87c8-55d5-481e-aaa7-8ff32a6524c5",
+              "Id": "8edb5666-5c72-4541-b8cb-d7d21c47936d",
               "Alias": "bannedContent",
               "Attribute": "[RegularExpression(\"[a|b|c]\")]",
               "Config": {
@@ -73,7 +73,8 @@
         },
         "Type": "System.String",
         "IsRelationToOne": false,
-        "IsRelationToMany": false
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.TextBoxEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -89,7 +90,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MinLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "880589c9-1c96-4336-9e5b-313e8c0557ec",
+              "Id": "91c44618-a5c0-458f-92be-d80260664c11",
               "Alias": "minlength",
               "Attribute": "[MinLength()]",
               "Config": {
@@ -102,7 +103,7 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "3cf6150e-73c6-4d40-a69c-4a7f64add430",
+              "Id": "08a82e28-b5ff-438d-a75e-0d5a33b3f7fa",
               "Alias": "bannedContent",
               "Attribute": "[RegularExpression(\"[]\")]",
               "Config": {
@@ -120,7 +121,8 @@
         },
         "Type": "System.String",
         "IsRelationToOne": false,
-        "IsRelationToMany": false
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.TextAreaEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -136,7 +138,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.BooleanLabelValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "bb9bf0e7-a160-4ed0-9c0d-230b3b4818b5",
+              "Id": "e9db8d38-f874-4356-86a1-083aeab33591",
               "Alias": "booleanLabels",
               "Attribute": null,
               "Config": {
@@ -155,7 +157,8 @@
         },
         "Type": "System.Boolean",
         "IsRelationToOne": false,
-        "IsRelationToMany": false
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.DropdownEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -172,7 +175,8 @@
         },
         "Type": "System.DateTime",
         "IsRelationToOne": false,
-        "IsRelationToMany": false
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.DateEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -188,7 +192,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.LinkedEntityValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "551d2499-19e9-4a3e-a08f-fef127297ff6",
+              "Id": "abdc5579-342e-499c-a964-988e2b092a9a",
               "Alias": "linkedEntity",
               "Attribute": null,
               "Config": {
@@ -203,7 +207,8 @@
         },
         "Type": "RapidCMS.Example.Shared.Data.Person",
         "IsRelationToOne": true,
-        "IsRelationToMany": false
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.EntityPickerEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -219,7 +224,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.LinkedEntitiesValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "950489b8-d7d5-44c5-8caa-466d1ca06bd1",
+              "Id": "fab4391f-4304-42d8-a6c3-d8e2972cf1e2",
               "Alias": "linkedEntities",
               "Attribute": null,
               "Config": {
@@ -234,7 +239,8 @@
         },
         "Type": "RapidCMS.Example.Shared.Data.Person",
         "IsRelationToOne": false,
-        "IsRelationToMany": true
+        "IsRelationToMany": true,
+        "EditorType": "RapidCMS.UI.Components.Editors.EntitiesPickerEditor"
       }
     ]
   },
@@ -255,7 +261,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MinLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "d18bf737-b173-48bf-a6ac-a9f16ec6bade",
+              "Id": "f816ccba-96ac-417b-b82f-1c65fa8ceaa6",
               "Alias": "minlength",
               "Attribute": "[MinLength(1)]",
               "Config": {
@@ -268,7 +274,7 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MaxLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "8543b3e1-d8d3-485b-a9f2-9e1b411593df",
+              "Id": "ee83abf7-de91-4b9c-823a-1ab0c4bbe8b4",
               "Alias": "maxlength",
               "Attribute": "[MaxLength(127)]",
               "Config": {
@@ -281,7 +287,7 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "09bf87c8-55d5-481e-aaa7-8ff32a6524c5",
+              "Id": "8edb5666-5c72-4541-b8cb-d7d21c47936d",
               "Alias": "bannedContent",
               "Attribute": "[RegularExpression(\"[a|b|c]\")]",
               "Config": {
@@ -303,7 +309,8 @@
         },
         "Type": "System.String",
         "IsRelationToOne": false,
-        "IsRelationToMany": false
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.TextBoxEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -319,7 +326,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MinLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "880589c9-1c96-4336-9e5b-313e8c0557ec",
+              "Id": "91c44618-a5c0-458f-92be-d80260664c11",
               "Alias": "minlength",
               "Attribute": "[MinLength()]",
               "Config": {
@@ -332,7 +339,7 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "3cf6150e-73c6-4d40-a69c-4a7f64add430",
+              "Id": "08a82e28-b5ff-438d-a75e-0d5a33b3f7fa",
               "Alias": "bannedContent",
               "Attribute": "[RegularExpression(\"[]\")]",
               "Config": {
@@ -350,7 +357,8 @@
         },
         "Type": "System.String",
         "IsRelationToOne": false,
-        "IsRelationToMany": false
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.TextAreaEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -366,7 +374,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.BooleanLabelValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "bb9bf0e7-a160-4ed0-9c0d-230b3b4818b5",
+              "Id": "e9db8d38-f874-4356-86a1-083aeab33591",
               "Alias": "booleanLabels",
               "Attribute": null,
               "Config": {
@@ -385,7 +393,8 @@
         },
         "Type": "System.Boolean",
         "IsRelationToOne": false,
-        "IsRelationToMany": false
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.DropdownEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -402,7 +411,8 @@
         },
         "Type": "System.DateTime",
         "IsRelationToOne": false,
-        "IsRelationToMany": false
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.DateEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -418,7 +428,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.LinkedEntityValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "551d2499-19e9-4a3e-a08f-fef127297ff6",
+              "Id": "abdc5579-342e-499c-a964-988e2b092a9a",
               "Alias": "linkedEntity",
               "Attribute": null,
               "Config": {
@@ -433,7 +443,8 @@
         },
         "Type": "RapidCMS.Example.Shared.Data.Person",
         "IsRelationToOne": true,
-        "IsRelationToMany": false
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.EntityPickerEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -449,7 +460,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.LinkedEntitiesValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "950489b8-d7d5-44c5-8caa-466d1ca06bd1",
+              "Id": "fab4391f-4304-42d8-a6c3-d8e2972cf1e2",
               "Alias": "linkedEntities",
               "Attribute": null,
               "Config": {
@@ -464,7 +475,8 @@
         },
         "Type": "RapidCMS.Example.Shared.Data.Person",
         "IsRelationToOne": false,
-        "IsRelationToMany": true
+        "IsRelationToMany": true,
+        "EditorType": "RapidCMS.UI.Components.Editors.EntitiesPickerEditor"
       }
     ]
   }

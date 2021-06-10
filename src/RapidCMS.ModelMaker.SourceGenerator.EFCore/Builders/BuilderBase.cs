@@ -36,5 +36,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.Indent--;
             indentWriter.WriteLine("}");
         }
+
+        protected void WriteClosingLambda(IndentedTextWriter indentWriter)
+        {
+            indentWriter.Indent--;
+            indentWriter.WriteLine("});");
+        }
     }
 }
