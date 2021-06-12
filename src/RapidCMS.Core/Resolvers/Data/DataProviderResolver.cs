@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Data;
@@ -6,6 +8,7 @@ using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Validators;
@@ -42,11 +45,14 @@ namespace RapidCMS.Core.Resolvers.Data
             {
                 case RepositoryRelationSetup collectionRelation:
 
+                    var collectionSetup = collectionRelation.CollectionAlias == null
+                        ? default
+                        : await _collectionSetupResolver.ResolveSetupAsync(collectionRelation.CollectionAlias);
+
                     var repo = collectionRelation.RepositoryAlias != null
                             ? _repositoryResolver.GetRepository(collectionRelation.RepositoryAlias)
-                            : collectionRelation.CollectionAlias != null
-                                ? _repositoryResolver.GetRepository(
-                                    await _collectionSetupResolver.ResolveSetupAsync(collectionRelation.CollectionAlias))
+                            : collectionSetup != null
+                                ? _repositoryResolver.GetRepository(collectionSetup)
                                 : default;
 
                     if (repo == null)
@@ -54,9 +60,31 @@ namespace RapidCMS.Core.Resolvers.Data
                         throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrectly configure relation, cannot find repository for alias {(collectionRelation.CollectionAlias ?? collectionRelation.RepositoryAlias)}.");
                     }
 
+                    // TODO: investigate whether this can be moved to Setup to allow for better caching
+                    var idProperty = collectionRelation.IdProperty
+                        ?? collectionSetup?.ElementSetup?.IdProperty
+                        ?? throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrect Id property metadata.");
+
+                    var displayProperties = collectionRelation.DisplayProperties
+                        ?? collectionSetup?.ElementSetup?.DisplayProperties
+                        ?? throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrect display properties metadata.");
+
+                    // TODO: this does not work yet with editors that were added as custom. 
+                    var relatedElementGetter = collectionRelation.RelatedElementsGetter
+                        ?? ((collectionRelation.IsRelationToMany && propertyField.Property != null && propertyField.Property.PropertyType.IsAssignableTo(typeof(IEnumerable<IEntity>)))
+                            ? PropertyMetadataHelper.GetPropertyMetadata<IEntity, IEnumerable<object?>>(x => ((IEnumerable<IEntity>)propertyField.Property.Getter(x)).Select(idProperty.Getter))
+                            : default);
+
                     var provider = new CollectionDataProvider(
                         repo,
-                        collectionRelation,
+                        collectionRelation.RepositoryAlias,
+                        collectionRelation.CollectionAlias,
+                        collectionRelation.RelatedElementsGetter,
+                        collectionRelation.EntityAsParent,
+                        collectionRelation.RepositoryParentSelector,
+                        idProperty,
+                        displayProperties,
+                        collectionRelation.RelatedEntityType ?? collectionSetup?.EntityVariant.Type ?? typeof(object),
                         propertyField.Property!,
                         _mediator);
 

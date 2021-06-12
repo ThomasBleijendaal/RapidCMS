@@ -21,7 +21,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             }
             else if (info.RelatedToManyEntities)
             {
-                indentWriter.WriteLine($"public ICollection<{info.Type}> {info.Name} {{ get; set; }}");
+                indentWriter.WriteLine($"public ICollection<{info.Type}> {info.Name} {{ get; set; }} = new List<{info.Type}>();");
             }
             else
             {

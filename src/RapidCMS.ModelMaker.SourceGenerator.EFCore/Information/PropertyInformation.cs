@@ -46,11 +46,15 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
         public bool RelatedToOneEntity { get; set; }
         public bool RelatedToManyEntities { get; set; }
+        public string? RelatedCollectionAlias { get; set; }
+        public string? DataCollectionExpression { get; set; }
 
-        public PropertyInformation IsRelation(bool relatedToOneEntity, bool relatedToManyEntities)
+        public PropertyInformation IsRelation(bool relatedToOneEntity, bool relatedToManyEntities, string? relatedCollectionAlias, string? dataCollectionExpression)
         {
             RelatedToOneEntity = relatedToOneEntity;
             RelatedToManyEntities = relatedToManyEntities;
+            RelatedCollectionAlias = relatedCollectionAlias;
+            DataCollectionExpression = dataCollectionExpression;
 
             if (RelatedToManyEntities)
             {

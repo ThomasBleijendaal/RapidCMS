@@ -16,6 +16,10 @@ namespace RapidCMS.Example.Shared.Collections
             {
                 collection
                     .SetTreeView(x => x.Name)
+                    .SetElementConfiguration(
+                        x => x.Id,
+                        x => x.Name,
+                        x => x.Details != null ? x.Details.Email : "")
                     // this repository handles all the CRUD for this collection
                     // a list view is a table that displays a row (or multiple rows) of info per entity
                     .SetListView(view =>

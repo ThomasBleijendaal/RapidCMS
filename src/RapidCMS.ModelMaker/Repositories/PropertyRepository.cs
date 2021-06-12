@@ -259,13 +259,12 @@ namespace RapidCMS.ModelMaker.Repositories
                         var validationModel = Activator.CreateInstance(typeof(PropertyValidationModel<>).MakeGenericType(validation.Config)) as PropertyValidationModel
                             ?? throw new InvalidOperationException("Could not create correct PropertyValidationModel.");
 
-                        var validator = Activator.CreateInstance(validation.Validator) as IValidator;
-
                         validationModel.Alias = validation.Alias;
                         validationModel.Config = config;
                         validationModel.Id = Guid.NewGuid().ToString();
 
-                        validationModel.Attribute = validator?.ValidationAttributeText(config);
+                        validationModel.AttributeExpression = config?.ValidationAttributeExpression;
+                        validationModel.DataCollectionExpression = config?.DataCollectionExpression;
 
                         newValidations.Add(validationModel);
                     }

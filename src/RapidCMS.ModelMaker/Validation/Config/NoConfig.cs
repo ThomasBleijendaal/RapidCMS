@@ -12,5 +12,9 @@ namespace RapidCMS.ModelMaker.Validation.Config
         public bool IsApplicable(PropertyModel model) => false;
 
         public string? RelatedCollectionAlias => default;
+
+        public string? ValidationAttributeExpression => default;
+
+        public string? DataCollectionExpression => default;
     }
 }

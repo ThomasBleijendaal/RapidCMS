@@ -42,8 +42,9 @@ namespace RapidCMS.Core.Resolvers.Setup
                         collectionConfig.RepositoryType == null ? null : _repositoryTypeResolver.GetAlias(collectionConfig.RepositoryType),
                         collectionConfig.CollectionAlias,
                         collectionConfig.RelatedEntityType!,
-                        collectionConfig.IdProperty!,
-                        collectionConfig.DisplayProperties!)
+                        collectionConfig.IdProperty,
+                        collectionConfig.DisplayProperties,
+                        collectionConfig.IsRelationToMany)
                     {
                         RepositoryParentSelector = collectionConfig.RepositoryParentProperty,
                         EntityAsParent = collectionConfig.EntityAsParent,

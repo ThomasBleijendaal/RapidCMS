@@ -31,6 +31,7 @@ namespace RapidCMS.ModelMaker.CommandHandlers.Base
                 return default;
             }
 
+            // TODO: this should open the file without any locks
             var json = await File.ReadAllTextAsync(fileName);
             return JsonConvert.DeserializeObject<ModelEntity>(json, _jsonSerializerSettings);
         }

@@ -9,7 +9,6 @@ using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Core.Abstractions.Factories;
 using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 using RapidCMS.ModelMaker.Models.Config;
-using RapidCMS.ModelMaker.Validation.Base;
 using RapidCMS.UI.Components.Editors;
 
 namespace RapidCMS.ModelMaker.Models
@@ -60,13 +59,12 @@ namespace RapidCMS.ModelMaker.Models
             return editor;
         }
 
-        public IPropertyValidatorConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TValueForEditor>(
+        public IPropertyValidatorConfig AddPropertyValidator<TValue, TValidatorConfig, TValueForEditor>(
                 string alias, 
                 string name, 
                 string? description, 
                 EditorType editorType,
                 Expression<Func<IPropertyValidationModel<TValidatorConfig>, TValueForEditor>> configEditor)
-            where TValidator : BaseValidator<TValue, TValidatorConfig>
             where TValidatorConfig : class, IValidatorConfig
         {
             var validator = new PropertyValidatorConfig(
@@ -75,7 +73,6 @@ namespace RapidCMS.ModelMaker.Models
                 description,
                 typeof(TValue),
                 GetEditorByEditorType(editorType),
-                typeof(TValidator),
                 typeof(TValidatorConfig),
                 PropertyMetadataHelper.GetPropertyMetadata(configEditor) as IFullPropertyMetadata);
 
@@ -84,13 +81,12 @@ namespace RapidCMS.ModelMaker.Models
             return validator;
         }
 
-        public IPropertyValidatorConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TValueForEditor, TDataCollectionFactory>(
+        public IPropertyValidatorConfig AddPropertyValidator<TValue, TValidatorConfig, TValueForEditor, TDataCollectionFactory>(
                 string alias,
                 string name,
                 string? description,
                 EditorType editorType,
                 Expression<Func<IPropertyValidationModel<TValidatorConfig>, TValueForEditor>> configEditor)
-            where TValidator : BaseValidator<TValue, TValidatorConfig>
             where TValidatorConfig : class, IValidatorConfig
             where TDataCollectionFactory : IDataCollectionFactory
         {
@@ -108,7 +104,6 @@ namespace RapidCMS.ModelMaker.Models
                 description,
                 typeof(TValue),
                 GetEditorByEditorType(editorType),
-                typeof(TValidator),
                 typeof(TValidatorConfig),
                 property,
                 typeof(TDataCollectionFactory));
@@ -118,8 +113,7 @@ namespace RapidCMS.ModelMaker.Models
             return validator;
         }
 
-        public IPropertyValidatorConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TCustomEditor>(string alias, string name, string? description)
-            where TValidator : BaseValidator<TValue, TValidatorConfig>
+        public IPropertyValidatorConfig AddPropertyValidator<TValue, TValidatorConfig, TCustomEditor>(string alias, string name, string? description)
             where TValidatorConfig : IValidatorConfig
             where TCustomEditor : BasePropertyEditor
         {
@@ -129,7 +123,6 @@ namespace RapidCMS.ModelMaker.Models
                 description, 
                 typeof(TValue),
                 typeof(TCustomEditor), 
-                typeof(TValidator), 
                 typeof(TValidatorConfig));
 
             _validators.Add(validator);
@@ -137,8 +130,7 @@ namespace RapidCMS.ModelMaker.Models
             return validator;
         }
 
-        public IPropertyValidatorConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TCustomEditor, TDataCollectionFactory>(string alias, string name, string? description)
-            where TValidator : BaseValidator<TValue, TValidatorConfig>
+        public IPropertyValidatorConfig AddPropertyValidator<TValue, TValidatorConfig, TCustomEditor, TDataCollectionFactory>(string alias, string name, string? description)
             where TValidatorConfig : IValidatorConfig
             where TCustomEditor : BasePropertyEditor
             where TDataCollectionFactory : IDataCollectionFactory
@@ -149,7 +141,6 @@ namespace RapidCMS.ModelMaker.Models
                 description,
                 typeof(TValue),
                 typeof(TCustomEditor),
-                typeof(TValidator),
                 typeof(TValidatorConfig),
                 default,
                 typeof(TDataCollectionFactory));
@@ -173,9 +164,6 @@ namespace RapidCMS.ModelMaker.Models
             => _editors.FirstOrDefault(x => x.Editor == typeof(TCustomEditor));
         public IPropertyEditorConfig? GetPropertyEditor(string alias)
             => _editors.FirstOrDefault(x => x.Alias == alias);
-
-        public IPropertyValidatorConfig? GetPropertyValidator<TValidator>()
-            => _validators.FirstOrDefault(x => x.Validator == typeof(TValidator));
 
         private static Type GetEditorByEditorType(EditorType editorType) 
             => editorType switch

@@ -4,30 +4,25 @@ using System.Linq.Expressions;
 using RapidCMS.Core.Enums;
 using RapidCMS.ModelMaker.Core.Abstractions.Factories;
 using RapidCMS.ModelMaker.Core.Abstractions.Validation;
-using RapidCMS.ModelMaker.Validation.Base;
 using RapidCMS.UI.Components.Editors;
 
 namespace RapidCMS.ModelMaker.Abstractions.Config
 {
     public interface IModelMakerConfig
     {
-        IPropertyValidatorConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TValueForEditor>(string alias, string name, string? description, EditorType editorType, Expression<Func<IPropertyValidationModel<TValidatorConfig>, TValueForEditor>> configEditor)
-            where TValidatorConfig : class, IValidatorConfig
-            where TValidator : BaseValidator<TValue, TValidatorConfig>;
+        IPropertyValidatorConfig AddPropertyValidator<TValue, TValidatorConfig, TValueForEditor>(string alias, string name, string? description, EditorType editorType, Expression<Func<IPropertyValidationModel<TValidatorConfig>, TValueForEditor>> configEditor)
+            where TValidatorConfig : class, IValidatorConfig;
 
-        IPropertyValidatorConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TCustomEditor>(string alias, string name, string? description)
+        IPropertyValidatorConfig AddPropertyValidator<TValue, TValidatorConfig, TCustomEditor>(string alias, string name, string? description)
             where TValidatorConfig : IValidatorConfig
-            where TValidator : BaseValidator<TValue, TValidatorConfig>
             where TCustomEditor : BasePropertyEditor;
 
-        IPropertyValidatorConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TValueForEditor, TDataCollection>(string alias, string name, string? description, EditorType editorType, Expression<Func<IPropertyValidationModel<TValidatorConfig>, TValueForEditor>> configEditor)
+        IPropertyValidatorConfig AddPropertyValidator<TValue, TValidatorConfig, TValueForEditor, TDataCollection>(string alias, string name, string? description, EditorType editorType, Expression<Func<IPropertyValidationModel<TValidatorConfig>, TValueForEditor>> configEditor)
             where TValidatorConfig : class, IValidatorConfig
-            where TValidator : BaseValidator<TValue, TValidatorConfig>
             where TDataCollection : IDataCollectionFactory;
 
-        IPropertyValidatorConfig AddPropertyValidator<TValidator, TValue, TValidatorConfig, TCustomEditor, TDataCollection>(string alias, string name, string? description)
+        IPropertyValidatorConfig AddPropertyValidator<TValue, TValidatorConfig, TCustomEditor, TDataCollection>(string alias, string name, string? description)
             where TValidatorConfig : IValidatorConfig
-            where TValidator : BaseValidator<TValue, TValidatorConfig>
             where TCustomEditor : BasePropertyEditor
             where TDataCollection : IDataCollectionFactory;
 
@@ -43,7 +38,6 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
         IPropertyEditorConfig? GetPropertyEditor(EditorType editorType);
         IPropertyEditorConfig? GetPropertyEditor<TCustomEditor>();
         IPropertyEditorConfig? GetPropertyEditor(string alias);
-        IPropertyValidatorConfig? GetPropertyValidator<TValidator>();
         IPropertyConfig? GetProperty(string alias);
 
         IEnumerable<IPropertyEditorConfig> Editors { get; }

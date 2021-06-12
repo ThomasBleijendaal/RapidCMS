@@ -16,7 +16,6 @@ using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.Models.Responses;
 using RapidCMS.ModelMaker.Repositories;
-using RapidCMS.ModelMaker.Validation;
 using RapidCMS.ModelMaker.Validation.Config;
 
 namespace RapidCMS.ModelMaker
@@ -42,6 +41,8 @@ namespace RapidCMS.ModelMaker
             // - configure what goes on the list view
             // - give option to configure default entity picker config via collection (like tree view)
             // - give option to configure collection relation only by collection alias
+            // - validate that a referenced collection has an entity that has an Id property of type int32
+            // - add support for data collections from enums
 
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
@@ -61,49 +62,49 @@ namespace RapidCMS.ModelMaker
 
             if (addDefaultPropertiesAndValidators)
             {
-                services.AddTransient<BooleanLabelValidator>();
-                services.AddTransient<LimitedOptionsValidator>();
-                services.AddTransient<LinkedEntitiesValidator>();
-                services.AddTransient<LinkedEntityValidator>();
-                services.AddTransient<MaxLengthValidator>();
-                services.AddTransient<MinLengthValidator>();
+                //services.AddTransient<BooleanLabelValidator>();
+                //services.AddTransient<LimitedOptionsValidator>();
+                //services.AddTransient<LinkedEntitiesValidator>();
+                //services.AddTransient<LinkedEntityValidator>();
+                //services.AddTransient<MaxLengthValidator>();
+                //services.AddTransient<MinLengthValidator>();
 
-                config.AddPropertyValidator<MinLengthValidator, string, MinLengthValidationConfig, int?>(
+                config.AddPropertyValidator<string, MinLengthValidationConfig, int?>(
                     Constants.Validators.MinLength,
                     "Minimum length",
                     "The value has to be at least this amount of characters.",
                     EditorType.Numeric,
                     x => x.Config.MinLength);
 
-                config.AddPropertyValidator<MaxLengthValidator, string, MaxLengthValidationConfig, int?>(
+                config.AddPropertyValidator<string, MaxLengthValidationConfig, int?>(
                     Constants.Validators.MaxLength,
                     "Maximum length",
                     "The value has to be at most this amount of characters.",
                     EditorType.Numeric,
                     x => x.Config.MaxLength);
 
-                config.AddPropertyValidator<LimitedOptionsValidator, string, LimitedOptionsValidationConfig, IList<string>, LimitedOptionsDataCollectionFactory>(
+                config.AddPropertyValidator<string, LimitedOptionsValidationConfig, IList<string>, LimitedOptionsDataCollectionFactory>(
                     Constants.Validators.LimitedOptions,
                     "Limited options",
                     "The value has to be one of these items",
                     EditorType.ListEditor,
                     x => x.Config.Options);
 
-                config.AddPropertyValidator<LinkedEntityValidator, string, LinkedEntityValidationConfig, string, LinkedEntityDataCollectionFactory>(
+                config.AddPropertyValidator<string, LinkedEntityValidationConfig, string, LinkedEntityDataCollectionFactory>(
                     Constants.Validators.LinkedEntity,
                     "Linked entity",
                     "The value has to be one of the entities of the linked collection",
                     EditorType.Dropdown,
                     x => x.Config.LinkedEntityCollectionAlias);
 
-                config.AddPropertyValidator<LinkedEntitiesValidator, List<string>, LinkedEntitiesValidationConfig, string, LinkedEntityDataCollectionFactory>(
+                config.AddPropertyValidator<List<string>, LinkedEntitiesValidationConfig, string, LinkedEntityDataCollectionFactory>(
                     Constants.Validators.LinkedEntities,
                     "Linked entity",
                     "The value has to be one or more of the entities of the linked collection",
                     EditorType.Dropdown,
                     x => x.Config.LinkedEntitiesCollectionAlias);
 
-                config.AddPropertyValidator<BooleanLabelValidator, bool, BooleanLabelValidationConfig, BooleanLabelValidationConfig.LabelsConfig, BooleanLabelDataCollectionFactory>(
+                config.AddPropertyValidator<bool, BooleanLabelValidationConfig, BooleanLabelValidationConfig.LabelsConfig, BooleanLabelDataCollectionFactory>(
                     Constants.Validators.BooleanLabels,
                     "Labels",
                     "The editor will display a dropdown instead of a checkbox",

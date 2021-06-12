@@ -48,7 +48,7 @@ namespace RapidCMS.Example.ModelMaker
                     config.GetProperty(Constants.Properties.ShortString)?.Editors.Add(customTextAreaEditor);
 
                     // custom editor validators can be inserted easily
-                    var customTextValidator = config.AddPropertyValidator<BannedContentValidator, string, BannedContentValidationConfig, List<string>>(
+                    var customTextValidator = config.AddPropertyValidator<string, BannedContentValidationConfig, List<string>>(
                         "bannedContent",
                         "Banned Content",
                         "The content is not allowed contain the following words.",
@@ -60,7 +60,7 @@ namespace RapidCMS.Example.ModelMaker
                     config.GetProperty(Constants.Properties.LongString)?.Validators.Add(customTextValidator);
 
                     // adding custom properties is also possible
-                    var enumDropdownValidator = config.AddPropertyValidator<EnumOptionsValidator<ContentType>, ContentType, NoConfig, NoConfig, EnumOptionsDataCollectionFactory<ContentType>>(
+                    var enumDropdownValidator = config.AddPropertyValidator<ContentType, NoConfig, NoConfig, EnumOptionsDataCollectionFactory<ContentType>>(
                         "contentTypeValidator",
                         "Content Type",
                         "Content Type",
@@ -78,8 +78,8 @@ namespace RapidCMS.Example.ModelMaker
             services.AddModelMakerTableStorage();
 
             // validators are resolved from DI
-            services.AddSingleton<BannedContentValidator>();
-            services.AddSingleton<EnumOptionsValidator<ContentType>>();
+            //services.AddSingleton<BannedContentValidator>();
+            //services.AddSingleton<EnumOptionsValidator<ContentType>>();
 
             // factories are also resolved from DI
             services.AddSingleton<EnumOptionsDataCollectionFactory<ContentType>>();

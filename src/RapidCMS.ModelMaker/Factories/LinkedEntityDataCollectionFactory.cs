@@ -62,7 +62,8 @@ namespace RapidCMS.ModelMaker.Factories
                         new List<IExpressionMetadata>
                         {
                             titlePropertyMetadata
-                        });
+                        },
+                        false);
                 }
                 else
                 {
@@ -81,7 +82,8 @@ namespace RapidCMS.ModelMaker.Factories
                     new List<IExpressionMetadata>
                     {
                     collectionSetup.TreeView?.Name ?? throw new InvalidOperationException("Related entity must have tree view to be referenced in model maker entity")
-                    });
+                    },
+                    false);
             }
         }
     }

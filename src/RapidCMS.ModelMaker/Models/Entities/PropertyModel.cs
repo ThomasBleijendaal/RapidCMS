@@ -38,5 +38,9 @@ namespace RapidCMS.ModelMaker.Models.Entities
         public bool IsRelationToMany { get; set; }
 
         public string? EditorType { get; set; }
+
+        public string? DataCollectionExpression { get; set; }
+
+        public string? RelatedCollectionAlias { get; set; }
     }
 }

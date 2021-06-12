@@ -17,5 +17,9 @@ namespace RapidCMS.ModelMaker.Validation.Config
             => model.EditorAlias.In(Constants.Editors.EntityPicker, Constants.Editors.EntitiesPicker);
 
         public string? RelatedCollectionAlias => IsEnabled ? LinkedEntityCollectionAlias : default;
+
+        public string? ValidationAttributeExpression => default;
+
+        public string? DataCollectionExpression => default;
     }
 }

@@ -42,7 +42,7 @@ namespace RapidCMS.ModelMaker
         public int? AuthorId { get; set; }
         public RapidCMS.Example.Shared.Data.Person Author { get; set; }
         
-        public ICollection<RapidCMS.Example.Shared.Data.Person> SupportingAuthors { get; set; }
+        public ICollection<RapidCMS.Example.Shared.Data.Person> SupportingAuthors { get; set; } = new List<RapidCMS.Example.Shared.Data.Person>();
     }
 }
 ", @"using System.Collections.Generic;
@@ -88,10 +88,10 @@ namespace RapidCMS.ModelMaker
                         {
                             section.AddField(x => x.Title).SetType(typeof(RapidCMS.UI.Components.Editors.TextBoxEditor));
                             section.AddField(x => x.Content).SetType(typeof(RapidCMS.UI.Components.Editors.TextAreaEditor));
-                            section.AddField(x => x.IsPublished).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection(new FixedOptionsDataProvider(new[] { (true, ""True""), (false, ""False"") }));
+                            section.AddField(x => x.IsPublished).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection(new RapidCMS.Core.Providers.FixedOptionsDataProvider(new (object, string)[] { (true, ""True""), (false, ""False"") }));
                             section.AddField(x => x.PublishDate).SetType(typeof(RapidCMS.UI.Components.Editors.DateEditor));
-                            section.AddField(x => x.Author).SetType(typeof(RapidCMS.UI.Components.Editors.EntityPickerEditor)).SetCollectionRelation(""person"");
-                            section.AddField(x => x.SupportingAuthors).SetType(typeof(RapidCMS.UI.Components.Editors.EntitiesPickerEditor)).SetCollectionRelation(x => x.Select(y => y.Id), ""person"");
+                            section.AddField(x => x.AuthorId).SetType(typeof(RapidCMS.UI.Components.Editors.EntityPickerEditor)).SetCollectionRelation(""person"");
+                            section.AddField(x => x.SupportingAuthors).SetType(typeof(RapidCMS.UI.Components.Editors.EntitiesPickerEditor)).SetCollectionRelation(""person"");
                         });
                     });
                 });

@@ -19,5 +19,10 @@ namespace RapidCMS.Example.ModelMaker.Validators
             => model.EditorAlias.In(Constants.Editors.TextBox, Constants.Editors.TextArea);
 
         public string? RelatedCollectionAlias => default;
+
+        public string? DataCollectionExpression => default;
+
+        public string? ValidationAttributeExpression => $"[RegularExpression(\"^[{string.Join("|", BannedWords)}]$\")]";
+
     }
 }

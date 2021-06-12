@@ -35,26 +35,40 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                 info.IsTitle(title);
             }
 
-            if (property.Value<bool>("IsRelationToOne") is bool isRelationToOne &&
-                property.Value<bool>("IsRelationToMany") is bool isRelationToMany)
-            {
-                info.IsRelation(isRelationToOne, isRelationToMany);
-            }
+            var relatedCollectionAlias = default(string?);
+            var dataCollectionExpression = default(string?);
 
             if (property.Value<JObject>("Validations") is JObject validationsRoot &&
                 validationsRoot.Value<JArray>("$values") is JArray validations)
             {
                 var enabledValidations = validations
                     .OfType<JObject>()
-                    .Where(x => x.Value<JObject>("Config")?.Value<bool>("IsEnabled") == true);
+                    .Select(x => (validationModel: x, validationConfig: x.Value<JObject>("Config")))
+                    .Where(x => x.validationConfig?.Value<bool>("IsEnabled") == true);
 
-                foreach (var validation in enabledValidations)
+                foreach (var (validation, validationConfig) in enabledValidations)
                 {
-                    if (validation.Value<string>("Attribute") is string attribute)
+                    if (validation.Value<string>("AttributeExpression") is string attribute)
                     {
                         info.HasValidationAttribute(attribute);
                     }
+
+                    if (validationConfig.Value<string>("DataCollectionExpression") is string dataCollection)
+                    {
+                        dataCollectionExpression = dataCollection;
+                    }
+
+                    if (validationConfig.Value<string>("RelatedCollectionAlias") is string related)
+                    {
+                        relatedCollectionAlias = related;
+                    }
                 }
+            }
+
+            if (property.Value<bool>("IsRelationToOne") is bool isRelationToOne &&
+                property.Value<bool>("IsRelationToMany") is bool isRelationToMany)
+            {
+                info.IsRelation(isRelationToOne, isRelationToMany, relatedCollectionAlias, dataCollectionExpression);
             }
 
             return info;

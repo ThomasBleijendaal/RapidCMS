@@ -217,5 +217,15 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <param name="showCollectionsOnStartup">When set to true, the tree will open the entities open on default.</param>
         /// <returns></returns>
         ICollectionConfig<TEntity> SetTreeView(Expression<Func<TEntity, string?>> entityNameExpression, bool showEntitiesOnStartup = false, bool showCollectionsOnStartup = false);
+
+        /// <summary>
+        /// Sets how elements in dropdowns and entity pickers should be displayed when explicit configuration is not available.
+        /// </summary>
+        /// <param name="elementIdExpression">Expression used as Id for elements</param>
+        /// <param name="elementDisplayExpressions">Expressions used as Display labels from elements</param>
+        /// <returns></returns>
+        ICollectionConfig<TEntity> SetElementConfiguration<TIdValue>(
+            Expression<Func<TEntity, TIdValue>> elementIdExpression,
+            params Expression<Func<TEntity, string?>>[] elementDisplayExpressions);
     }
 }

@@ -59,6 +59,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig>, TypeRegistrationSetupResolver>();
             services.AddSingleton<ISetupResolver<IEntityVariantSetup, EntityVariantConfig>, EntityVariantSetupResolver>();
             services.AddSingleton<ISetupResolver<ITreeViewSetup, TreeViewConfig>, TreeViewSetupResolver>();
+            services.AddSingleton<ISetupResolver<IElementSetup, ElementConfig>, ElementSetupResolver>();
             services.AddSingleton<ISetupResolver<IPaneSetup, PaneConfig>, PaneSetupResolver>();
             services.AddSingleton<ISetupResolver<IListSetup, ListConfig>, ListSetupResolver>();
             services.AddSingleton<ISetupResolver<INodeSetup, NodeConfig>, NodeSetupResolver>();

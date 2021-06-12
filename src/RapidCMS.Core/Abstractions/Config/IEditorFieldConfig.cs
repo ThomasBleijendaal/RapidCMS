@@ -52,6 +52,16 @@ namespace RapidCMS.Core.Abstractions.Config
 
         /// <summary>
         /// Binds a Collection to this field. This collection is used by dropdowns and selects to display options.
+        /// 
+        /// Uses the default Element configuration of the referenced collection to display the options.
+        /// </summary>
+        /// <typeparam name="TRelatedEntity">Entity of the bound collection.</typeparam>
+        /// <param name="collectionAlias">Alias of the collection to bind.</param>
+        /// <returns></returns>
+        IEditorFieldConfig<TEntity, TValue> SetCollectionRelation(string collectionAlias);
+
+        /// <summary>
+        /// Binds a Collection to this field. This collection is used by dropdowns and selects to display options.
         /// </summary>
         /// <typeparam name="TRelatedEntity">Entity of the bound collection.</typeparam>
         /// <param name="collectionAlias">Alias of the collection to bind.</param>

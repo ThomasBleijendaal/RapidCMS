@@ -7,9 +7,29 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
     {
         public void WriteField(IndentedTextWriter indentWriter, PropertyInformation info)
         {
-            indentWriter.Write($"section.AddField(x => x.{info.Name})");
+            if (info.RelatedToOneEntity)
+            {
+                indentWriter.Write($"section.AddField(x => x.{info.Name}Id)");
+            }
+            else
+            {
+                indentWriter.Write($"section.AddField(x => x.{info.Name})");
+            }
 
             indentWriter.Write($".SetType(typeof({info.EditorType}))");
+
+            if (!string.IsNullOrEmpty(info.DataCollectionExpression))
+            {
+                indentWriter.Write($".SetDataCollection({info.DataCollectionExpression})");
+            }
+            else if (info.RelatedToOneEntity && !string.IsNullOrEmpty(info.RelatedCollectionAlias))
+            {
+                indentWriter.Write($".SetCollectionRelation(\"{info.RelatedCollectionAlias}\")");
+            }
+            else if (info.RelatedToManyEntities && !string.IsNullOrEmpty(info.RelatedCollectionAlias))
+            {
+                indentWriter.Write($".SetCollectionRelation(\"{info.RelatedCollectionAlias}\")");
+            }
 
             indentWriter.WriteLine(";");
         }

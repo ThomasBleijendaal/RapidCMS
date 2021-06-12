@@ -17,5 +17,9 @@ namespace RapidCMS.ModelMaker.Validation.Config
             => model.EditorAlias.In(Constants.Editors.TextArea, Constants.Editors.TextBox);
 
         public string? RelatedCollectionAlias => default;
+
+        public string? ValidationAttributeExpression => $"[MaxLength({MaxLength})]";
+
+        public string? DataCollectionExpression => default;
     }
 }

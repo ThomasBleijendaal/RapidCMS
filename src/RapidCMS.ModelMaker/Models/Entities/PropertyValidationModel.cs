@@ -11,7 +11,9 @@ namespace RapidCMS.ModelMaker.Models.Entities
 
         public string Alias { get; set; } = default!;
 
-        public string? Attribute { get; set; }
+        public string? AttributeExpression { get; set; }
+
+        public string? DataCollectionExpression { get; set; }
 
         [Required]
         [ValidateObject]

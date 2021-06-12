@@ -143,7 +143,9 @@ namespace RapidCMS.Core.Models.Config
 
         IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetDataCollection<TDataCollection>()
         {
-            if (EditorType != EditorType.Custom && EditorType.GetCustomAttribute<RelationAttribute>()?.Type != RelationType.One)
+            var relationType = EditorType.GetCustomAttribute<RelationAttribute>()?.Type;
+
+            if (EditorType != EditorType.Custom && relationType != RelationType.One)
             {
                 throw new InvalidOperationException("Cannot add DataRelation to Editor with no support for RelationType.One");
             }
@@ -157,7 +159,9 @@ namespace RapidCMS.Core.Models.Config
 
         IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetDataCollection<TDataCollection>(TDataCollection dataCollection)
         {
-            if (EditorType != EditorType.Custom && EditorType.GetCustomAttribute<RelationAttribute>()?.Type != RelationType.One)
+            var relationType = EditorType.GetCustomAttribute<RelationAttribute>()?.Type;
+
+            if (EditorType != EditorType.Custom && relationType != RelationType.One)
             {
                 throw new InvalidOperationException("Cannot add DataRelation to Editor with no support for RelationType.One");
             }
@@ -169,15 +173,32 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
-        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetCollectionRelation<TRelatedEntity>(
-            string collectionAlias, Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure)
+        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetCollectionRelation(
+            string collectionAlias)
         {
-            if (EditorType != EditorType.Custom && !(EditorType.GetCustomAttribute<RelationAttribute>()?.Type.In(RelationType.One, RelationType.Many) ?? false))
+            var relationType = EditorType.GetCustomAttribute<RelationAttribute>()?.Type;
+
+            if (EditorType != EditorType.Custom && !relationType.In(RelationType.One, RelationType.Many))
             {
                 throw new InvalidOperationException("Cannot add CollectionRelation to Editor with no support for RelationType.One / RelationType.Many");
             }
 
-            var config = new RepositoryRelationConfig<TEntity, TRelatedEntity>(collectionAlias);
+            Relation = new RepositoryRelationConfig(collectionAlias);
+
+            return this;
+        }
+
+        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetCollectionRelation<TRelatedEntity>(
+            string collectionAlias, Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure)
+        {
+            var relationType = EditorType.GetCustomAttribute<RelationAttribute>()?.Type;
+
+            if (EditorType != EditorType.Custom && !relationType.In(RelationType.One, RelationType.Many))
+            {
+                throw new InvalidOperationException("Cannot add CollectionRelation to Editor with no support for RelationType.One / RelationType.Many");
+            }
+
+            var config = new RepositoryRelationConfig<TEntity, TRelatedEntity>(collectionAlias, relationType == RelationType.Many);
 
             configure.Invoke(config);
 
@@ -189,12 +210,14 @@ namespace RapidCMS.Core.Models.Config
         IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetCollectionRelation<TRelatedEntity, TRelatedRepository>(
             Action<ICollectionRelationConfig<TEntity, TRelatedEntity>> configure)
         {
-            if (EditorType != EditorType.Custom && !(EditorType.GetCustomAttribute<RelationAttribute>()?.Type.In(RelationType.One, RelationType.Many) ?? false))
+            var relationType = EditorType.GetCustomAttribute<RelationAttribute>()?.Type;
+
+            if (EditorType != EditorType.Custom && !relationType.In(RelationType.One, RelationType.Many))
             {
                 throw new InvalidOperationException("Cannot add CollectionRelation to Editor with no support for RelationType.One / RelationType.Many");
             }
 
-            var config = new RepositoryRelationConfig<TEntity, TRelatedEntity>(typeof(TRelatedRepository));
+            var config = new RepositoryRelationConfig<TEntity, TRelatedEntity>(typeof(TRelatedRepository), relationType == RelationType.Many);
 
             configure.Invoke(config);
 
@@ -211,8 +234,8 @@ namespace RapidCMS.Core.Models.Config
                 throw new InvalidOperationException("Cannot add CollectionRelation with relatedElements to Editor with no support for RelationType.Many");
             }
 
-            var relatedElementsGetter = PropertyMetadataHelper.GetPropertyMetadata(relatedElements);
-            var config = new RepositoryRelationConfig<TEntity, TRelatedEntity>(collectionAlias, relatedElementsGetter ?? throw new InvalidExpressionException(nameof(relatedElements)));
+            var relatedElementsGetter = PropertyMetadataHelper.GetPropertyMetadata(relatedElements) ?? throw new InvalidExpressionException(nameof(relatedElements));
+            var config = new RepositoryRelationConfig<TEntity, TRelatedEntity>(collectionAlias, relatedElementsGetter);
 
             configure.Invoke(config);
 
