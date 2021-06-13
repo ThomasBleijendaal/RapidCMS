@@ -5,8 +5,8 @@
   "ParentId": null,
   "State": 1,
   "CreatedAt": "2021-06-08T20:14:39.9059517Z",
-  "PublishedAt": "2021-06-13T17:19:08.3475654Z",
-  "UpdatedAt": "2021-06-13T17:19:08.3475669Z",
+  "PublishedAt": "2021-06-13T20:24:06.6067518Z",
+  "UpdatedAt": "2021-06-13T20:24:06.606753Z",
   "Name": "Blog",
   "PublishedProperties": {
     "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
@@ -25,7 +25,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MinLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "dd3def0e-97f6-4010-9eb8-7130a6fe21d4",
+              "Id": "6bd9985d-2013-4a05-ba69-34764f8b085f",
               "Alias": "minlength",
               "AttributeExpression": "[MinLength(1)]",
               "DataCollectionExpression": null,
@@ -41,7 +41,7 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MaxLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "c6da287c-996e-441b-a299-b43ff662d7fd",
+              "Id": "dd3b09c4-5792-4101-9d91-929d142ab1bd",
               "Alias": "maxlength",
               "AttributeExpression": "[MaxLength(127)]",
               "DataCollectionExpression": null,
@@ -57,25 +57,21 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "561fcef1-9124-4190-b015-3ca89592e9c2",
+              "Id": "033c9964-8b5f-4e25-b204-2f8d966b78e9",
               "Alias": "bannedContent",
-              "AttributeExpression": "[RegularExpression(\"[^a|b|c]\")]",
+              "AttributeExpression": "[RegularExpression(\"[^]\")]",
               "DataCollectionExpression": null,
               "Config": {
                 "$type": "RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker",
                 "BannedWords": {
                   "$type": "System.Collections.Generic.List`1[[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-                  "$values": [
-                    "a",
-                    "b",
-                    "c"
-                  ]
+                  "$values": []
                 },
-                "IsEnabled": true,
+                "IsEnabled": false,
                 "AlwaysIncluded": false,
                 "RelatedCollectionAlias": null,
                 "DataCollectionExpression": null,
-                "ValidationAttributeExpression": "[RegularExpression(\"[^a|b|c]\")]"
+                "ValidationAttributeExpression": "[RegularExpression(\"[^]\")]"
               }
             }
           ]
@@ -297,7 +293,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MinLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "dd3def0e-97f6-4010-9eb8-7130a6fe21d4",
+              "Id": "6bd9985d-2013-4a05-ba69-34764f8b085f",
               "Alias": "minlength",
               "AttributeExpression": "[MinLength(1)]",
               "DataCollectionExpression": null,
@@ -313,7 +309,7 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MaxLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "c6da287c-996e-441b-a299-b43ff662d7fd",
+              "Id": "dd3b09c4-5792-4101-9d91-929d142ab1bd",
               "Alias": "maxlength",
               "AttributeExpression": "[MaxLength(127)]",
               "DataCollectionExpression": null,
@@ -329,25 +325,21 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "561fcef1-9124-4190-b015-3ca89592e9c2",
+              "Id": "033c9964-8b5f-4e25-b204-2f8d966b78e9",
               "Alias": "bannedContent",
-              "AttributeExpression": "[RegularExpression(\"[^a|b|c]\")]",
+              "AttributeExpression": "[RegularExpression(\"[^]\")]",
               "DataCollectionExpression": null,
               "Config": {
                 "$type": "RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker",
                 "BannedWords": {
                   "$type": "System.Collections.Generic.List`1[[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-                  "$values": [
-                    "a",
-                    "b",
-                    "c"
-                  ]
+                  "$values": []
                 },
-                "IsEnabled": true,
+                "IsEnabled": false,
                 "AlwaysIncluded": false,
                 "RelatedCollectionAlias": null,
                 "DataCollectionExpression": null,
-                "ValidationAttributeExpression": "[RegularExpression(\"[^a|b|c]\")]"
+                "ValidationAttributeExpression": "[RegularExpression(\"[^]\")]"
               }
             }
           ]

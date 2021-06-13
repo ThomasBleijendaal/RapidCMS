@@ -43,6 +43,8 @@ namespace RapidCMS.ModelMaker
             // - validate that a referenced collection has an entity that has an Id property of type int32
             // - add support for data collections from enums
             // - add flag editor for setting enum flag properties
+            // - configure corresponding property for one-to-one, one-to-many, many-to-one and many-to-many
+            // - fix the concurrency issues with dbcontext
 
             // docs:
             // general behavior:

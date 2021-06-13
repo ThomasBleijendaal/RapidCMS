@@ -190,9 +190,9 @@ namespace RapidCMS.UI.Components.Sections
 
         private void CancelLoadAndRestart()
         {
-            var currentSource = _loadCancellationTokenSource;
-            _loadCancellationTokenSource = new CancellationTokenSource();
-            currentSource.Cancel();
+            //var currentSource = _loadCancellationTokenSource;
+            //_loadCancellationTokenSource = new CancellationTokenSource();
+            //currentSource.Cancel();
         }
     }
 }
