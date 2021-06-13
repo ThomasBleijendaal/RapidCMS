@@ -11,12 +11,18 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
         public EntityInformation()
         {
-            _namespaces.Add((Use.Entity, "RapidCMS.Core.Abstractions.Data"));
+            _namespaces.Add((Use.Entity | Use.Repository, "RapidCMS.Core.Abstractions.Data"));
             _namespaces.Add((Use.Collection, "RapidCMS.Core.Abstractions.Config"));
             _namespaces.Add((Use.Collection, "RapidCMS.Core.Enums"));
             _namespaces.Add((Use.Collection, "RapidCMS.Core.Providers"));
-            _namespaces.Add((Use.Collection, "RapidCMS.Core.Repositories"));
-            _namespaces.Add((Use.Context, "Microsoft.EntityFrameworkCore"));
+            _namespaces.Add((Use.Collection | Use.Repository, "RapidCMS.Core.Repositories"));
+            _namespaces.Add((Use.Context | Use.Repository, "Microsoft.EntityFrameworkCore"));
+            _namespaces.Add((Use.Context, "Microsoft.EntityFrameworkCore.Metadata.Builders"));
+            _namespaces.Add((Use.Repository, "System"));
+            _namespaces.Add((Use.Repository, "System.Collections.Generic"));
+            _namespaces.Add((Use.Repository, "System.Linq"));
+            _namespaces.Add((Use.Repository, "System.Threading.Tasks"));
+            _namespaces.Add((Use.Repository, "RapidCMS.Core.Abstractions.Forms"));
         }
 
         public string? Name { get; private set; }

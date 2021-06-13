@@ -9,9 +9,12 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
     {
         private List<string> _validationAttributes = new List<string>();
 
-        public PropertyInformation()
+        public PropertyInformation(bool hidden = false)
         {
+            Hidden = hidden;
         }
+
+        public bool Hidden { get; }
 
         public string? Name { get; private set; }
 
@@ -84,9 +87,17 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return this;
         }
 
+        public Use Uses { get; private set; } = Use.Collection | Use.Context | Use.Entity | Use.Repository;
+
+        public PropertyInformation UseFor(Use use)
+        {
+            Uses = use;
+            return this;
+        }
+
         public bool IsValid()
         {
-            return !string.IsNullOrEmpty(Name) && 
+            return !string.IsNullOrEmpty(Name) &&
                 !string.IsNullOrEmpty(Type) &&
                 !string.IsNullOrEmpty(EditorType);
         }

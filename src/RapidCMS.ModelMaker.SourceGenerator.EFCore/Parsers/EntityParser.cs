@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using Newtonsoft.Json.Linq;
+using RapidCMS.ModelMaker.SourceGenerator.EFCore.Contexts;
+using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Information;
 
 namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
@@ -37,6 +39,29 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
             }
 
             return info;
+        }
+
+        public void ProcessEntity(EntityInformation info, ModelMakerContext context)
+        {
+            var oneWayRelationsToThisEntity = context.Entities
+                .Where(entity => entity != info)
+                .SelectMany(entity => entity.Properties
+                    .Where(x => (x.RelatedToOneEntity || x.RelatedToManyEntities) &&
+                        x.Type == $"{context.Namespace}.{info.Name}" &&
+                        !info.Properties.Any(x => x.Type == $"{context.Namespace}.{entity.Name}"))
+                    .Select(property => new { Entity = entity, Property = property }))
+                .ToList();
+
+            foreach (var relation in oneWayRelationsToThisEntity)
+            {
+                var adHocProperty = new PropertyInformation(true)
+                    .UseFor(Use.Entity)
+                    .HasName($"{relation.Entity.Name}{relation.Property.Name}")
+                    .IsType($"{context.Namespace}.{relation.Entity.Name}")
+                    .IsRelation(false, true, relation.Property.RelatedCollectionAlias, default);
+
+                info.AddProperty(adHocProperty);
+            }
         }
     }
 }

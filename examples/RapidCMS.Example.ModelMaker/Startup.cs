@@ -87,10 +87,13 @@ namespace RapidCMS.Example.ModelMaker
             services.AddScoped<BaseRepository<Person>, JsonRepository<Person>>();
             services.AddScoped<BaseRepository<Details>, JsonRepository<Details>>();
 
-            services.AddScoped<BaseRepository<Blog>, TempTestInMemoryRepository<Blog>>();
-            services.AddScoped<BaseRepository<Category>, TempTestInMemoryRepository<Category>>();
+            services.AddScoped<BaseRepository<Blog>, BlogRepository>();
+            services.AddScoped<BaseRepository<Category>, CategoryRepository>();
 
-            services.AddDbContext<ModelMakerDbContext>(builder => builder.UseSqlServer("SqlConnectionString"));
+            services.AddDbContext<ModelMakerDbContext>(
+                builder => builder.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString")), 
+                ServiceLifetime.Transient, 
+                ServiceLifetime.Transient);
 
             services.AddRapidCMSServer(config =>
             {
@@ -107,8 +110,10 @@ namespace RapidCMS.Example.ModelMaker
             });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ModelMakerDbContext context)
         {
+            context.Database.Migrate();
+
             app.UseRapidCMS(isDevelopment: env.IsDevelopment());
 
             if (env.IsDevelopment())

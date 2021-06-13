@@ -1,7 +1,9 @@
 ﻿using System.CodeDom.Compiler;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis.Text;
+using RapidCMS.ModelMaker.SourceGenerator.EFCore.Contexts;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Information;
 
@@ -9,29 +11,26 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 {
     internal sealed class EntityBuilder : BuilderBase
     {
-        private readonly string _namespace;
         private readonly PropertyBuilder _propertyBuilder;
 
-        public EntityBuilder(string @namespace,
-            PropertyBuilder propertyBuilder)
+        public EntityBuilder(PropertyBuilder propertyBuilder)
         {
-            _namespace = @namespace;
             _propertyBuilder = propertyBuilder;
         }
 
-        public SourceText BuildEntity(EntityInformation info)
+        public SourceText BuildEntity(EntityInformation info, ModelMakerContext context)
         {
             using var writer = new StringWriter();
             using var indentWriter = new IndentedTextWriter(writer, "    ");
 
             WriteUsingNamespaces(indentWriter, info.NamespacesUsed(Use.Entity));
-            WriteOpenNamespace(indentWriter, _namespace);
+            WriteOpenNamespace(indentWriter, context.Namespace);
 
             WriteOpenEntity(indentWriter, info);
 
             WriteIdProperties(indentWriter);
 
-            foreach (var property in info.Properties)
+            foreach (var property in info.Properties.Where(x => x.Uses.HasFlag(Use.Entity)))
             {
                 _propertyBuilder.WriteProperty(indentWriter, property);
             }
@@ -44,7 +43,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
         private void WriteOpenEntity(IndentedTextWriter indentWriter, EntityInformation info)
         {
-            indentWriter.WriteLine($"public class {info.Name} : IEntity");
+            indentWriter.WriteLine($"public partial class {info.Name} : IEntity");
             indentWriter.WriteLine("{");
             indentWriter.Indent++;
         }

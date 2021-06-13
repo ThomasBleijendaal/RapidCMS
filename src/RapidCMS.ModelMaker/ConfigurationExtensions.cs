@@ -42,6 +42,7 @@ namespace RapidCMS.ModelMaker
             // - configure what goes on the list view
             // - validate that a referenced collection has an entity that has an Id property of type int32
             // - add support for data collections from enums
+            // - add flag editor for setting enum flag properties
 
             // docs:
             // general behavior:

@@ -26,7 +26,15 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
         protected void WriteOpenNamespace(IndentedTextWriter indentWriter, string nameSpace)
         {
+            indentWriter.WriteLine("#nullable enable");
+            indentWriter.WriteLine();
             indentWriter.WriteLine($"namespace {nameSpace}");
+            indentWriter.WriteLine("{");
+            indentWriter.Indent++;
+        }
+
+        protected void WriteOpeningBracket(IndentedTextWriter indentWriter)
+        {
             indentWriter.WriteLine("{");
             indentWriter.Indent++;
         }

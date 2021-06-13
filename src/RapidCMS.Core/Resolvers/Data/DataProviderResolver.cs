@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
@@ -18,17 +19,20 @@ namespace RapidCMS.Core.Resolvers.Data
     internal class DataProviderResolver : IDataProviderResolver
     {
         private readonly ISetupResolver<ICollectionSetup> _collectionSetupResolver;
+        private readonly IConcurrencyService _concurrencyService;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IMediator _mediator;
         private readonly IServiceProvider _serviceProvider;
 
         public DataProviderResolver(
             ISetupResolver<ICollectionSetup> collectionSetupResolver,
+            IConcurrencyService concurrencyService,
             IRepositoryResolver repositoryResolver,
             IMediator mediator,
             IServiceProvider serviceProvider)
         {
             _collectionSetupResolver = collectionSetupResolver;
+            _concurrencyService = concurrencyService;
             _repositoryResolver = repositoryResolver;
             _mediator = mediator;
             _serviceProvider = serviceProvider;
@@ -76,6 +80,7 @@ namespace RapidCMS.Core.Resolvers.Data
 
                     var provider = new CollectionDataProvider(
                         repo,
+                        _concurrencyService,
                         collectionRelation.RepositoryAlias,
                         collectionRelation.CollectionAlias,
                         relatedElementGetter,

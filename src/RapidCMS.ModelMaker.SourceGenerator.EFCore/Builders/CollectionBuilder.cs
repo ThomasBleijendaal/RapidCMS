@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis.Text;
+using RapidCMS.ModelMaker.SourceGenerator.EFCore.Contexts;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Information;
 
@@ -10,27 +11,26 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 {
     internal sealed class CollectionBuilder : BuilderBase
     {
-        private readonly string _namespace;
         private readonly FieldBuilder _fieldBuilder;
 
-        public CollectionBuilder(string @namespace, FieldBuilder fieldBuilder)
+        public CollectionBuilder(FieldBuilder fieldBuilder)
         {
-            _namespace = @namespace;
             _fieldBuilder = fieldBuilder;
         }
 
-        public SourceText BuildCollection(EntityInformation info)
+        public SourceText BuildCollection(EntityInformation info, ModelMakerContext context)
         {
             using var writer = new StringWriter();
             using var indentWriter = new IndentedTextWriter(writer, "    ");
 
             var namespaces = info.NamespacesUsed(Use.Collection);
             WriteUsingNamespaces(indentWriter, namespaces);
-            WriteOpenNamespace(indentWriter, _namespace);
+            WriteOpenNamespace(indentWriter, context.Namespace);
 
             WriteOpenStaticClass(indentWriter, info);
 
             WriteTreeConfig(indentWriter, info);
+            WriteElementConfig(indentWriter, info);
 
             WriteListView(indentWriter, info);
             WriteNodeEditor(indentWriter, info);
@@ -74,6 +74,13 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.WriteLine($"collection.SetTreeView(x => x.{titleProperty.Name});");
         }
 
+        public void WriteElementConfig(IndentedTextWriter indentWriter, EntityInformation info)
+        {
+            var titleProperty = info.Properties.Single(x => x.IsTitleOfEntity);
+
+            indentWriter.WriteLine($"collection.SetElementConfiguration(x => x.Id, x => x.{titleProperty.Name});");
+        }
+
         public void WriteListView(IndentedTextWriter indentWriter, EntityInformation info)
         {
             var titleProperty = info.Properties.Single(x => x.IsTitleOfEntity);
@@ -109,7 +116,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.WriteLine("{");
             indentWriter.Indent++;
 
-            foreach (var property in info.Properties)
+            foreach (var property in info.Properties.Where(x => x.Uses.HasFlag(Use.Collection)))
             {
                 _fieldBuilder.WriteField(indentWriter, property);
             }

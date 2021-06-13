@@ -17,7 +17,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             if (info.RelatedToOneEntity)
             {
                 indentWriter.WriteLine($"public int? {info.Name}Id {{ get; set; }}"); // TODO: how to detect type of ForeignKey type?
-                indentWriter.WriteLine($"public {info.Type} {info.Name} {{ get; set; }}");
+                indentWriter.WriteLine($"public {info.Type}? {info.Name} {{ get; set; }}");
             }
             else if (info.RelatedToManyEntities)
             {

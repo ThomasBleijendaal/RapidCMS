@@ -1,9 +1,9 @@
 ﻿using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis.Text;
+using RapidCMS.ModelMaker.SourceGenerator.EFCore.Contexts;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Information;
 
@@ -11,25 +11,19 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 {
     internal sealed class ContextBuilder : BuilderBase
     {
-        private readonly string _namespace;
-
-        public ContextBuilder(string @namespace)
-        {
-            _namespace = @namespace;
-        }
-
-        public SourceText BuildContext(IEnumerable<EntityInformation> info)
+        public SourceText BuildContext(ModelMakerContext context)
         {
             using var writer = new StringWriter();
             using var indentWriter = new IndentedTextWriter(writer, "    ");
 
-            var namespaces = info.SelectMany(x => x.NamespacesUsed(Use.Context));
+            var namespaces = context.Entities.SelectMany(x => x.NamespacesUsed(Use.Context));
             WriteUsingNamespaces(indentWriter, namespaces);
-            WriteOpenNamespace(indentWriter, _namespace);
+            WriteOpenNamespace(indentWriter, context.Namespace);
 
             WriteDbContext(indentWriter);
+            WriteOnModelCreating(indentWriter, context);
 
-            foreach (var entity in info)
+            foreach (var entity in context.Entities)
             {
                 WriteDbSet(indentWriter, entity);
             }
@@ -43,13 +37,28 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
         public void WriteDbContext(IndentedTextWriter indentWriter)
         {
-            indentWriter.WriteLine($"public class ModelMakerDbContext : DbContext");
-            indentWriter.WriteLine("{");
-            indentWriter.Indent++;
+            indentWriter.WriteLine($"public partial class ModelMakerDbContext : DbContext");
+            WriteOpeningBracket(indentWriter);
 
             indentWriter.WriteLine($"public ModelMakerDbContext(DbContextOptions options) : base(options)");
-            indentWriter.WriteLine("{");
-            indentWriter.Indent++;
+            WriteOpeningBracket(indentWriter);
+            WriteClosingBracket(indentWriter);
+        }
+
+        public void WriteOnModelCreating(IndentedTextWriter indentWriter, ModelMakerContext context)
+        {
+            indentWriter.WriteLine();
+            indentWriter.WriteLine("protected override void OnModelCreating(ModelBuilder modelBuilder)");
+            WriteOpeningBracket(indentWriter);
+
+            indentWriter.WriteLine("base.OnModelCreating(modelBuilder);");
+            indentWriter.WriteLine();
+            
+            foreach (var entity in context.Entities)
+            {
+                indentWriter.WriteLine($"modelBuilder.ApplyConfiguration(new {entity.Name}Configuration());");
+            }
+
             WriteClosingBracket(indentWriter);
         }
 

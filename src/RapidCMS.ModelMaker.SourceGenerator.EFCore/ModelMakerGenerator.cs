@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Newtonsoft.Json.Linq;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders;
+using RapidCMS.ModelMaker.SourceGenerator.EFCore.Contexts;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Information;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers;
 
@@ -18,18 +19,21 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
 
         public void Execute(GeneratorExecutionContext context)
         {
-            var @namespace = "RapidCMS.ModelMaker";
+            var @namespace = "RapidCMS.ModelMaker"; // TODO: config?
 
             var propertyParser = new PropertyParser();
             var entityParser = new EntityParser(propertyParser);
 
             var propertyBuilder = new PropertyBuilder();
-            var entityBuilder = new EntityBuilder(@namespace, propertyBuilder); // TODO: config?
+            var entityBuilder = new EntityBuilder(propertyBuilder);
 
             var fieldBuilder = new FieldBuilder();
-            var collectionBuilder = new CollectionBuilder(@namespace, fieldBuilder);
+            var collectionBuilder = new CollectionBuilder(fieldBuilder);
 
-            var contextBuilder = new ContextBuilder(@namespace);
+            var contextBuilder = new ContextBuilder();
+            var entityTypeConfigurationBuilder = new EntityTypeConfigurationBuilder();
+
+            var repositoryBuilder = new RepositoryBuilder();
 
             var entities = new List<EntityInformation>();
 
@@ -44,19 +48,38 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
                     if (entity.IsValid()) // TODO: unit test
                     {
                         entities.Add(entity);
-
-                        var entitySourceText = entityBuilder.BuildEntity(entity);
-                        context.AddSource($"ModelMaker_Entity_{entity.Name}.cs", entitySourceText);
-
-                        var collectionSourceText = collectionBuilder.BuildCollection(entity);
-                        context.AddSource($"ModelMaker_Collection_{entity.Name}.cs", collectionSourceText);
                     }
                     // context.ReportDiagnostic(Diagnostic.Create("RC0001", "", json.Value<string>("$type"), DiagnosticSeverity.Warning, DiagnosticSeverity.Warning, true, 1));
                 }
             }
 
-            var contextSourceText = contextBuilder.BuildContext(entities);
-            context.AddSource("ModelMaker_DbContext", contextSourceText);
+            var modelMakerContext = new ModelMakerContext(@namespace, entities);
+
+            foreach (var entity in entities)
+            {
+                entityParser.ProcessEntity(entity, modelMakerContext);
+            }
+
+            foreach (var entity in entities)
+            {
+                var entitySourceText = entityBuilder.BuildEntity(entity, modelMakerContext);
+                context.AddSource($"ModelMaker_Entity_{entity.Name}.cs", entitySourceText);
+
+                var collectionSourceText = collectionBuilder.BuildCollection(entity, modelMakerContext);
+                context.AddSource($"ModelMaker_Collection_{entity.Name}.cs", collectionSourceText);
+            }
+
+            var contextSourceText = contextBuilder.BuildContext(modelMakerContext);
+            context.AddSource("ModelMaker_DbContext.cs", contextSourceText);
+
+            foreach (var entity in entities)
+            {
+                var entityTypeConfigurationSourceText = entityTypeConfigurationBuilder.BuildEntityTypeConfiguration(entity, modelMakerContext);
+                context.AddSource($"ModelMaker_EntityTypeConfiguration_{entity.Name}.cs", entityTypeConfigurationSourceText);
+
+                var repositorySourceText = repositoryBuilder.BuildRepository(entity, modelMakerContext);
+                context.AddSource($"ModelMaker_Repository_{entity.Name}.cs", repositorySourceText);
+            }
         }
     }
 }

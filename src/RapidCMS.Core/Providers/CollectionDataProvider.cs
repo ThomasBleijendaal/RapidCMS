@@ -7,6 +7,7 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
@@ -18,6 +19,7 @@ namespace RapidCMS.Core.Providers
     internal class CollectionDataProvider : IRelationDataCollection, IDisposable
     {
         private readonly IRepository _repository;
+        private readonly IConcurrencyService _concurrencyService;
         private readonly string? _repositoryAlias;
         private readonly string? _collectionAlias;
         private readonly IPropertyMetadata? _relatedElementsGetter;
@@ -38,6 +40,7 @@ namespace RapidCMS.Core.Providers
 
         public CollectionDataProvider(
             IRepository repository,
+            IConcurrencyService concurrencyService,
             string? repositoryAlias,
             string? collectionAlias,
             IPropertyMetadata? relatedElementsGetter,
@@ -50,6 +53,7 @@ namespace RapidCMS.Core.Providers
             IMediator mediator)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _concurrencyService = concurrencyService;
             _repositoryAlias = repositoryAlias;
             _collectionAlias = collectionAlias;
             _relatedElementsGetter = relatedElementsGetter;
@@ -128,7 +132,7 @@ namespace RapidCMS.Core.Providers
 
             query.CollectionAlias = _editContext.CollectionAlias;
 
-            var entities = await _repository.GetAllAsync(new ViewContext(_editContext.CollectionAlias, parent), query);
+            var entities = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => _repository.GetAllAsync(new ViewContext(_editContext.CollectionAlias, parent), query));
 
             return entities
                .Select(entity => (IElement)new Element
