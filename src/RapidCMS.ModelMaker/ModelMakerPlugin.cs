@@ -57,26 +57,28 @@ namespace RapidCMS.ModelMaker
             {
                 return new ResolvedSetup<CollectionSetup>(await PropertyConfigurationCollectionAsync(), true);
             }
-            else
-            {
-                var response = await _getModelEntityByAliasCommandHandler.HandleAsync(new GetByAliasRequest<ModelEntity>(collectionAlias));
-                if (response.Entity != null)
-                {
-                    return await ModelCollectionAsync(response.Entity) is CollectionSetup collection
-                        ? new ResolvedSetup<CollectionSetup>(collection, false) // TODO: how to bust collection setup cache so this setup can be cached until outdated
-                        : default;
-                }
-            }
+            //else
+            //{
+            //    var response = await _getModelEntityByAliasCommandHandler.HandleAsync(new GetByAliasRequest<ModelEntity>(collectionAlias));
+            //    if (response.Entity != null)
+            //    {
+            //        return await ModelCollectionAsync(response.Entity) is CollectionSetup collection
+            //            ? new ResolvedSetup<CollectionSetup>(collection, false) // TODO: how to bust collection setup cache so this setup can be cached until outdated
+            //            : default;
+            //    }
+            //}
 
             return default;
         }
 
         public async Task<IEnumerable<ITreeElementSetup>> GetTreeElementsAsync()
         {
-            var response = await _getAllModelEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>(default));
-            return response.Entities
-                .Where(IsValidDefintion)
-                .Select(model => new TreeElementSetup(model.Alias, model.Name, PageType.Collection));
+            return Enumerable.Empty<ITreeElementSetup>();
+
+            //var response = await _getAllModelEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>(default));
+            //return response.Entities
+            //    .Where(IsValidDefintion)
+            //    .Select(model => new TreeElementSetup(model.Alias, model.Name, PageType.Collection));
         }
 
         public Type? GetRepositoryType(string collectionAlias)

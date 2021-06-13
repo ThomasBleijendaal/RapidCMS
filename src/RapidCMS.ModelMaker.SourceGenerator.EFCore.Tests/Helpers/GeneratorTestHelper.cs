@@ -11,9 +11,9 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests.Helpers
 
     public static class GeneratorTestHelper
     {
-        private static (ImmutableArray<Diagnostic>, string[]) GetGeneratedOutput(string jsonFileName)
+        private static (ImmutableArray<Diagnostic>, string[]) GetGeneratedOutput(string[] jsonFileNames)
         {
-            var json = File.ReadAllText(jsonFileName);
+            var jsons = jsonFileNames.Select(File.ReadAllText);
 
             var references = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(_ => !_.IsDynamic && !string.IsNullOrWhiteSpace(_.Location))
@@ -24,7 +24,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests.Helpers
 
             var generator = new ModelMakerGenerator();
 
-            var driver = CSharpGeneratorDriver.Create(ImmutableArray.Create<ISourceGenerator>(generator), new[] { new JsonText(json) });
+            var driver = CSharpGeneratorDriver.Create(ImmutableArray.Create<ISourceGenerator>(generator), jsons.Select(x => new JsonText(x)));
             driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out var diagnostics);
 
             var trees = outputCompilation.SyntaxTrees.ToList();
@@ -32,9 +32,9 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests.Helpers
             return (diagnostics, trees.Select(x => x.ToString()).ToArray());
         }
 
-        public static void TestGeneratedCode(string sourceText, params string[] expectedOutputSourceTexts)
+        public static void TestGeneratedCode(string[] sourceTexts, params string[] expectedOutputSourceTexts)
         {
-            var (diagnostics, output) = GetGeneratedOutput(sourceText);
+            var (diagnostics, output) = GetGeneratedOutput(sourceTexts);
 
             Assert.AreEqual(0, diagnostics.Length, string.Join(", ", diagnostics.Select(x => x.GetMessage())));
 
@@ -44,9 +44,9 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests.Helpers
             }
         }
 
-        public static void TestReportedDiagnostics(string sourceText, params string[] expectedDiagnosticErrors)
+        public static void TestReportedDiagnostics(string[] sourceTexts, params string[] expectedDiagnosticErrors)
         {
-            var (diagnostics, output) = GetGeneratedOutput(sourceText);
+            var (diagnostics, output) = GetGeneratedOutput(sourceTexts);
 
             var errorCodes = diagnostics.Select(x => x.Id).ToArray();
 

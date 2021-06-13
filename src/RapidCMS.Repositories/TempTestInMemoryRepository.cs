@@ -19,6 +19,8 @@ namespace RapidCMS.Repositories
     /// <summary>
     /// This generic repository saves TEntities in memory and has some basic support for one-to-many relations.
     /// Use *only* List<TRelatedEntity> properties for relations.
+    /// 
+    /// NOTE: This repository messes up the lifetime of an entity so don't use this.
     /// </summary>
     /// <typeparam name="TEntity">Entity to store</typeparam>
     public class TempTestInMemoryRepository<TEntity> : BaseRepository<TEntity>
@@ -233,12 +235,10 @@ namespace RapidCMS.Repositories
                         if (relation.Property is IFullPropertyMetadata fp)
                         {
                             // this is pretty ugly
-                            var inMemoryRepo = _serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
-                            var jsonRepo = _serviceProvider.GetService(typeof(JsonRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
-                            var lsRepo = _serviceProvider.GetService(typeof(LocalStorageRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
                             var baseRepo = _serviceProvider.GetService(typeof(BaseRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
+                            var inMemoryRepo = _serviceProvider.GetService(typeof(TempTestInMemoryRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
 
-                            var repo = inMemoryRepo ?? jsonRepo ?? lsRepo ?? baseRepo;
+                            var repo = baseRepo ?? inMemoryRepo;
 
                             if (repo != null)
                             {

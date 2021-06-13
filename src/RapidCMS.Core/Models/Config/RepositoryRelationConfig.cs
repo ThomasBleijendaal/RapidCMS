@@ -17,9 +17,10 @@ namespace RapidCMS.Core.Models.Config
 
         }
 
-        public RepositoryRelationConfig(string? collectionAlias)
+        public RepositoryRelationConfig(string? collectionAlias, bool isRelationToMany)
         {
             CollectionAlias = collectionAlias;
+            IsRelationToMany = isRelationToMany;
         }
 
         protected internal string? CollectionAlias { get; private set; }
@@ -37,10 +38,9 @@ namespace RapidCMS.Core.Models.Config
     internal class RepositoryRelationConfig<TEntity, TRelatedEntity> : RepositoryRelationConfig, ICollectionRelationConfig<TEntity, TRelatedEntity>
         where TEntity : IEntity
     {
-        public RepositoryRelationConfig(string collectionAlias, bool isRelationToMany) : base(collectionAlias)
+        public RepositoryRelationConfig(string collectionAlias, bool isRelationToMany) : base(collectionAlias, isRelationToMany)
         {
             RelatedEntityType = typeof(TRelatedEntity);
-            IsRelationToMany = isRelationToMany;
         }
 
         public RepositoryRelationConfig(Type relatedRepositoryType, bool isRelationToMany)
@@ -51,11 +51,10 @@ namespace RapidCMS.Core.Models.Config
             IsRelationToMany = isRelationToMany;
         }
 
-        public RepositoryRelationConfig(string collectionAlias, IPropertyMetadata relatedElements) : base(collectionAlias)
+        public RepositoryRelationConfig(string collectionAlias, IPropertyMetadata relatedElements) : base(collectionAlias, true)
         {
             RelatedEntityType = typeof(TRelatedEntity);
             RelatedElementsGetter = relatedElements;
-            IsRelationToMany = IsRelationToMany;
         }
 
         public RepositoryRelationConfig(Type relatedRepositoryType, IPropertyMetadata relatedElements)

@@ -37,12 +37,15 @@ namespace RapidCMS.ModelMaker
             // - move IPublishableEntity features to a sperate UI package (it's not for ModelMaker anymore)
             // - implement complex validation like the old IValidator using validation pipeline + generated validators -- attribute validation is not enough for modelmakermade models
             // - configure collection icon + color
+            // - configure single and plural name of collection
             // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
             // - configure what goes on the list view
-            // - give option to configure default entity picker config via collection (like tree view)
-            // - give option to configure collection relation only by collection alias
             // - validate that a referenced collection has an entity that has an Id property of type int32
             // - add support for data collections from enums
+
+            // docs:
+            // general behavior:
+            // linked entities are always one-to-many or many-to-many relations in EF Core
 
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 

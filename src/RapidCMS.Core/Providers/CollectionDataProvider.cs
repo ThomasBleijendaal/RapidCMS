@@ -29,7 +29,7 @@ namespace RapidCMS.Core.Providers
         private readonly IPropertyMetadata _property;
         private readonly IMediator _mediator;
 
-        private FormEditContext? _editContext;
+        private FormEditContext? _editContext { get; set; }
         private IParent? _parent;
 
         private readonly IDisposable? _eventHandle;

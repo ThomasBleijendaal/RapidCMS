@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using Microsoft.CodeAnalysis.Text;
+using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Information;
 
 namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
@@ -23,7 +24,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             using var writer = new StringWriter();
             using var indentWriter = new IndentedTextWriter(writer, "    ");
 
-            WriteUsingNamespaces(indentWriter, info.NamespacesUsed());
+            WriteUsingNamespaces(indentWriter, info.NamespacesUsed(Use.Entity));
             WriteOpenNamespace(indentWriter, _namespace);
 
             WriteOpenEntity(indentWriter, info);

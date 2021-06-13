@@ -22,5 +22,12 @@ namespace RapidCMS.Core.Extensions
                 .SelectMany(x => x.GetTypes())
                 .Where(x => typeToFindDerivativesOf.IsAssignableFrom(x) && x.IsClass);
         }
+
+        public static TAttribute? GetCustomAttribute<TAttribute>(this Type type)
+            where TAttribute : Attribute
+        {
+            var attribute = type.GetCustomAttributes(typeof(TAttribute), true)?.FirstOrDefault();
+            return attribute as TAttribute;
+        }
     }
 }

@@ -1,7 +1,9 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Newtonsoft.Json.Linq;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders;
+using RapidCMS.ModelMaker.SourceGenerator.EFCore.Information;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers;
 
 namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
@@ -27,6 +29,10 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
             var fieldBuilder = new FieldBuilder();
             var collectionBuilder = new CollectionBuilder(@namespace, fieldBuilder);
 
+            var contextBuilder = new ContextBuilder(@namespace);
+
+            var entities = new List<EntityInformation>();
+
             foreach (var file in context.AdditionalFiles)
             {
                 if (file.GetText() is SourceText text)
@@ -37,6 +43,8 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
 
                     if (entity.IsValid()) // TODO: unit test
                     {
+                        entities.Add(entity);
+
                         var entitySourceText = entityBuilder.BuildEntity(entity);
                         context.AddSource($"ModelMaker_Entity_{entity.Name}.cs", entitySourceText);
 
@@ -46,6 +54,9 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
                     // context.ReportDiagnostic(Diagnostic.Create("RC0001", "", json.Value<string>("$type"), DiagnosticSeverity.Warning, DiagnosticSeverity.Warning, true, 1));
                 }
             }
+
+            var contextSourceText = contextBuilder.BuildContext(entities);
+            context.AddSource("ModelMaker_DbContext", contextSourceText);
         }
     }
 }

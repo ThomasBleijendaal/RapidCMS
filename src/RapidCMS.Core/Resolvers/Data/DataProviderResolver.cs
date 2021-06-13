@@ -69,17 +69,16 @@ namespace RapidCMS.Core.Resolvers.Data
                         ?? collectionSetup?.ElementSetup?.DisplayProperties
                         ?? throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrect display properties metadata.");
 
-                    // TODO: this does not work yet with editors that were added as custom. 
                     var relatedElementGetter = collectionRelation.RelatedElementsGetter
                         ?? ((collectionRelation.IsRelationToMany && propertyField.Property != null && propertyField.Property.PropertyType.IsAssignableTo(typeof(IEnumerable<IEntity>)))
-                            ? PropertyMetadataHelper.GetPropertyMetadata<IEntity, IEnumerable<object?>>(x => ((IEnumerable<IEntity>)propertyField.Property.Getter(x)).Select(idProperty.Getter))
+                            ? PropertyMetadataHelper.GetPropertyMetadata<IEnumerable<IEntity>, IEnumerable<object?>>(x => x.Select(idProperty.Getter))
                             : default);
 
                     var provider = new CollectionDataProvider(
                         repo,
                         collectionRelation.RepositoryAlias,
                         collectionRelation.CollectionAlias,
-                        collectionRelation.RelatedElementsGetter,
+                        relatedElementGetter,
                         collectionRelation.EntityAsParent,
                         collectionRelation.RepositoryParentSelector,
                         idProperty,

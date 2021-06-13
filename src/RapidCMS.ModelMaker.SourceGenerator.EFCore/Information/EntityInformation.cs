@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Abstractions;
+using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
 
 namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 {
@@ -10,12 +11,12 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
         public EntityInformation()
         {
-            _namespaces.Add("RapidCMS.Core.Abstractions.Data"); // entity
-            _namespaces.Add("RapidCMS.Core.Abstractions.Config"); // repo
-            _namespaces.Add("RapidCMS.Core.Enums"); // repo
-            _namespaces.Add("RapidCMS.Core.Providers"); // repo
-            _namespaces.Add("RapidCMS.Core.Repositories"); // repo
-            _namespaces.Add("System.Linq"); // repo
+            _namespaces.Add((Use.Entity, "RapidCMS.Core.Abstractions.Data"));
+            _namespaces.Add((Use.Collection, "RapidCMS.Core.Abstractions.Config"));
+            _namespaces.Add((Use.Collection, "RapidCMS.Core.Enums"));
+            _namespaces.Add((Use.Collection, "RapidCMS.Core.Providers"));
+            _namespaces.Add((Use.Collection, "RapidCMS.Core.Repositories"));
+            _namespaces.Add((Use.Context, "Microsoft.EntityFrameworkCore"));
         }
 
         public string? Name { get; private set; }
@@ -50,7 +51,10 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
                 _properties.All(x => x.IsValid());
         }
 
-        public IEnumerable<string> NamespacesUsed()
-            => _namespaces.Union(_properties.SelectMany(x => x.NamespacesUsed()));
+        public IEnumerable<string> NamespacesUsed(Use use)
+            => _namespaces
+                .Where(x => x.use.HasFlag(use))
+                .Select(x => x.@namespace)
+                .Union(_properties.SelectMany(x => x.NamespacesUsed(use)));
     }
 }

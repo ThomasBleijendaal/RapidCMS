@@ -22,7 +22,7 @@ namespace RapidCMS.Example.ModelMaker.Validators
 
         public string? DataCollectionExpression => default;
 
-        public string? ValidationAttributeExpression => $"[RegularExpression(\"^[{string.Join("|", BannedWords)}]$\")]";
+        public string? ValidationAttributeExpression => $"[RegularExpression(\"[^{string.Join("|", BannedWords)}]\")]";
 
     }
 }

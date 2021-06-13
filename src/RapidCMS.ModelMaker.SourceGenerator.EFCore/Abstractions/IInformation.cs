@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
 
 namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Abstractions
 {
-    public interface IInformation
+    internal interface IInformation
     {
         bool IsValid();
 
-        IEnumerable<string> NamespacesUsed();
+        IEnumerable<string> NamespacesUsed(Use use);
     }
 }

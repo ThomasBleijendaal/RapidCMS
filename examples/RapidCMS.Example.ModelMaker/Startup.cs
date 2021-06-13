@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,7 +15,6 @@ using RapidCMS.Example.Shared.Collections;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.ModelMaker;
 using RapidCMS.ModelMaker.TableStorage;
-using RapidCMS.ModelMaker.Validation;
 using RapidCMS.ModelMaker.Validation.Config;
 using RapidCMS.Repositories;
 
@@ -88,6 +88,9 @@ namespace RapidCMS.Example.ModelMaker
             services.AddScoped<BaseRepository<Details>, JsonRepository<Details>>();
 
             services.AddScoped<BaseRepository<Blog>, TempTestInMemoryRepository<Blog>>();
+            services.AddScoped<BaseRepository<Category>, TempTestInMemoryRepository<Category>>();
+
+            services.AddDbContext<ModelMakerDbContext>(builder => builder.UseSqlServer("SqlConnectionString"));
 
             services.AddRapidCMSServer(config =>
             {
@@ -96,6 +99,8 @@ namespace RapidCMS.Example.ModelMaker
                 config.SetSiteName("Model maker");
 
                 config.AddBlogCollection();
+                config.AddCategoryCollection();
+                
                 config.AddPersonCollection();
 
                 config.AddModelMakerPlugin();

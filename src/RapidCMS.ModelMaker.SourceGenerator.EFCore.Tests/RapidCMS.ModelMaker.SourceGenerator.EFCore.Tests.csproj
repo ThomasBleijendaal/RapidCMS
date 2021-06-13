@@ -7,7 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="modelmaker.basicblog.json">
+    <None Remove="modelmaker.blog.json" />
+    <None Remove="modelmaker.category.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="modelmaker.blog.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="modelmaker.category.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Abstractions;
+using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
 
 namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 {
@@ -31,6 +33,8 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
         public PropertyInformation HasValidationAttribute(string attribute)
         {
+            _namespaces.Add((Use.Entity, "System.ComponentModel.DataAnnotations"));
+
             _validationAttributes.Add(attribute);
             return this;
         }
@@ -58,7 +62,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
             if (RelatedToManyEntities)
             {
-                _namespaces.Add("System.Collections.Generic");
+                _namespaces.Add((Use.Entity, "System.Collections.Generic"));
             }
 
             return this;
@@ -87,14 +91,9 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
                 !string.IsNullOrEmpty(EditorType);
         }
 
-        public IEnumerable<string> NamespacesUsed()
+        public IEnumerable<string> NamespacesUsed(Use use)
         {
-            if (_validationAttributes.Count > 0)
-            {
-                yield return "System.ComponentModel.DataAnnotations";
-            }
-
-            foreach (var @namespace in _namespaces)
+            foreach (var @namespace in _namespaces.Where(x => x.use.HasFlag(use)).Select(x => x.@namespace).Distinct())
             {
                 yield return @namespace;
             }
