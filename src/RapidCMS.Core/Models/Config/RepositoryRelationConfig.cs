@@ -6,15 +6,24 @@ using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Exceptions;
-using RapidCMS.Core.Forms;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.Config
 {
     internal class RepositoryRelationConfig : RelationConfig
     {
-        protected internal string? CollectionAlias { get; protected set; }
+        public RepositoryRelationConfig()
+        {
+
+        }
+
+        public RepositoryRelationConfig(string? collectionAlias, bool isRelationToMany)
+        {
+            CollectionAlias = collectionAlias;
+            IsRelationToMany = isRelationToMany;
+        }
+
+        protected internal string? CollectionAlias { get; private set; }
         protected internal Type? RepositoryType { get; protected set; }
         internal Type? RelatedEntityType { get; set; }
         protected internal Type? RelatedRepositoryType { get; protected set; }
@@ -23,27 +32,27 @@ namespace RapidCMS.Core.Models.Config
         internal bool EntityAsParent { get; set; }
         internal IPropertyMetadata? IdProperty { get; set; }
         internal List<IExpressionMetadata>? DisplayProperties { get; set; }
+        internal bool IsRelationToMany { get; set; }
     }
 
     internal class RepositoryRelationConfig<TEntity, TRelatedEntity> : RepositoryRelationConfig, ICollectionRelationConfig<TEntity, TRelatedEntity>
         where TEntity : IEntity
     {
-        public RepositoryRelationConfig(string collectionAlias)
+        public RepositoryRelationConfig(string collectionAlias, bool isRelationToMany) : base(collectionAlias, isRelationToMany)
         {
-            CollectionAlias = collectionAlias;
             RelatedEntityType = typeof(TRelatedEntity);
         }
 
-        public RepositoryRelationConfig(Type relatedRepositoryType)
+        public RepositoryRelationConfig(Type relatedRepositoryType, bool isRelationToMany)
         {
             RepositoryType = relatedRepositoryType;
             RelatedEntityType = typeof(TRelatedEntity);
             RelatedRepositoryType = relatedRepositoryType;
+            IsRelationToMany = isRelationToMany;
         }
 
-        public RepositoryRelationConfig(string collectionAlias, IPropertyMetadata relatedElements)
+        public RepositoryRelationConfig(string collectionAlias, IPropertyMetadata relatedElements) : base(collectionAlias, true)
         {
-            CollectionAlias = collectionAlias;
             RelatedEntityType = typeof(TRelatedEntity);
             RelatedElementsGetter = relatedElements;
         }
@@ -54,6 +63,7 @@ namespace RapidCMS.Core.Models.Config
             RelatedEntityType = typeof(TRelatedEntity);
             RelatedRepositoryType = relatedRepositoryType;
             RelatedElementsGetter = relatedElements;
+            IsRelationToMany = true;
         }
 
         public ICollectionRelationConfig<TEntity, TRelatedEntity> SetElementIdProperty<TValue>(Expression<Func<TRelatedEntity, TValue>> propertyExpression)

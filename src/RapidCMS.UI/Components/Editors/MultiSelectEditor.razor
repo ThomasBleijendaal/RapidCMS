@@ -1,4 +1,5 @@
 ﻿@inherits BaseRelationEditor
+@attribute [Relation(RelationType.Many)]
 
 @if (Options != null && SelectedOptions != null)
 {
@@ -49,7 +50,7 @@
     }
 }
 @code {
-    // TODO: upon update re-evaluate which items are selected or not
+	// TODO: upon update re-evaluate which items are selected or not
 
     private string group = Guid.NewGuid().ToString().Replace("-", "");
 
@@ -78,7 +79,7 @@
 
         await InvokeAsync(async () =>
         {
-            await UpdateOptionsAsync();
+			await UpdateOptionsAsync();
             StateHasChanged();
         });
     }

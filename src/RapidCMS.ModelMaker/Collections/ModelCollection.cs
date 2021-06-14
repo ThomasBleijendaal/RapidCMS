@@ -1,7 +1,5 @@
 ﻿using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Enums;
-using RapidCMS.ModelMaker.Components.Displays;
-using RapidCMS.ModelMaker.Components.Sections;
 using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.Repositories;
 
@@ -29,24 +27,18 @@ namespace RapidCMS.ModelMaker.Collections
                         {
                             row.AddField(x => x.Name);
 
-                            row.AddField(x => x.State.ToString()).SetName("").SetType(typeof(PublishStateDisplay));
-
                             row.AddDefaultButton(DefaultButtonType.Edit);
                         });
                     });
 
                     config.SetNodeEditor(editor =>
                     {
-                        editor.AddSection(typeof(ModelDetailsSection));
-
                         editor.AddSection(section =>
                         {
                             section.AddDefaultButton(DefaultButtonType.Up);
-                            section.AddDefaultButton(DefaultButtonType.SaveExisting, "Publish changed");
+                            section.AddDefaultButton(DefaultButtonType.SaveExisting);
                             section.AddDefaultButton(DefaultButtonType.SaveNew);
                             section.AddDefaultButton(DefaultButtonType.Delete);
-                            // TODO: implement revert + custom button handler
-                            // editor.AddDefaultButton(DefaultButtonType.SaveExisting, "Revert changes");
 
                             section.AddField(x => x.Name);
                             section.AddField(x => x.Alias)

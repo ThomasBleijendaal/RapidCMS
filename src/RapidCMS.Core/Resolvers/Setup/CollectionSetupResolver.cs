@@ -18,6 +18,7 @@ namespace RapidCMS.Core.Resolvers.Setup
         private readonly ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> _treeElementResolver;
         private readonly ISetupResolver<IEntityVariantSetup, EntityVariantConfig> _entityVariantResolver;
         private readonly ISetupResolver<ITreeViewSetup, TreeViewConfig> _treeViewResolver;
+        private readonly ISetupResolver<IElementSetup, ElementConfig> _elementResolver;
         private readonly ISetupResolver<IListSetup, ListConfig> _listResolver;
         private readonly ISetupResolver<INodeSetup, NodeConfig> _nodeResolver;
         private readonly IRepositoryTypeResolver _repositoryTypeResolver;
@@ -31,6 +32,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> treeElementResolver,
             ISetupResolver<IEntityVariantSetup, EntityVariantConfig> entityVariantResolver,
             ISetupResolver<ITreeViewSetup, TreeViewConfig> treeViewResolver,
+            ISetupResolver<IElementSetup, ElementConfig> elementResolver,
             ISetupResolver<IListSetup, ListConfig> listResolver,
             ISetupResolver<INodeSetup, NodeConfig> nodeResolver,
             IRepositoryTypeResolver repositoryTypeResolver,
@@ -39,6 +41,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _treeElementResolver = treeElementResolver;
             _entityVariantResolver = entityVariantResolver;
             _treeViewResolver = treeViewResolver;
+            _elementResolver = elementResolver;
             _listResolver = listResolver;
             _nodeResolver = nodeResolver;
             _repositoryTypeResolver = repositoryTypeResolver;
@@ -146,6 +149,8 @@ namespace RapidCMS.Core.Resolvers.Setup
             }
 
             collection.TreeView = config.TreeView == null ? null : (await _treeViewResolver.ResolveSetupAsync(config.TreeView, collection)).CheckIfCachable(ref cacheable);
+
+            collection.ElementSetup = config.ElementConfig == null ? null : (await _elementResolver.ResolveSetupAsync(config.ElementConfig, collection)).CheckIfCachable(ref cacheable);
 
             collection.ListView = config.ListView == null ? null : (await _listResolver.ResolveSetupAsync(config.ListView, collection)).CheckIfCachable(ref cacheable);
             collection.ListEditor = config.ListEditor == null ? null : (await _listResolver.ResolveSetupAsync(config.ListEditor, collection)).CheckIfCachable(ref cacheable);

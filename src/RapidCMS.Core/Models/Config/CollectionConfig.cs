@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
@@ -87,18 +88,11 @@ namespace RapidCMS.Core.Models.Config
         internal Type? DataViewBuilder { get; set; }
 
         internal TreeViewConfig? TreeView { get; set; }
+        internal ElementConfig? ElementConfig { get; set; }
         internal ListConfig? ListView { get; set; }
         internal ListConfig? ListEditor { get; set; }
         internal NodeConfig? NodeView { get; set; }
         internal NodeConfig? NodeEditor { get; set; }
-    }
-
-    internal class ReferencedCollectionConfig : CollectionConfig
-    {
-        internal ReferencedCollectionConfig(string alias) 
-            : base(alias, default, default, default, "reference", typeof(IRepository), new EntityVariantConfig("", typeof(IEntity)))
-        {
-        }
     }
 
     internal class CollectionConfig<TEntity> : CollectionConfig, ICollectionConfig<TEntity>
@@ -152,6 +146,18 @@ namespace RapidCMS.Core.Models.Config
                 DefaultOpenCollections = showCollections,
                 Name = entityNameExpression == null ? null : PropertyMetadataHelper.GetExpressionMetadata(entityNameExpression) ?? throw new InvalidExpressionException(nameof(entityNameExpression))
             };
+
+            var idExpression = PropertyMetadataHelper.GetPropertyMetadata<IEntity, string?>(x => x.Id) ?? throw new InvalidOperationException("IEntity.Id expression failed");
+            ElementConfig ??= new ElementConfig(idExpression, TreeView.Name ?? (IExpressionMetadata)idExpression);
+
+            return this;
+        }
+
+        public ICollectionConfig<TEntity> SetElementConfiguration<TIdValue>(Expression<Func<TEntity, TIdValue>> elementIdExpression, params Expression<Func<TEntity, string?>>[] elementDisplayExpressions)
+        {
+            ElementConfig = new ElementConfig(
+                PropertyMetadataHelper.GetPropertyMetadata(elementIdExpression) ?? throw new InvalidOperationException("Cannot convert elementIdExpression to IExpressionMetadata"),
+                elementDisplayExpressions.Select(PropertyMetadataHelper.GetExpressionMetadata).OfType<IExpressionMetadata>().ToArray());
 
             return this;
         }

@@ -58,9 +58,9 @@ namespace RapidCMS.ModelMaker.DataCollections
 
             _editContext = editContext;
 
-            if (editContext.Entity is PropertyModel property)
+            if (_editContext.Entity is PropertyModel property)
             {
-                editContext.OnFieldChanged += EditContext_OnFieldChanged;
+                _editContext.OnFieldChanged += EditContext_OnFieldChanged;
 
                 _property = property;
             }

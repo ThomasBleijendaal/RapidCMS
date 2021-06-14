@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using RapidCMS.Core.Extensions;
-using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 using RapidCMS.ModelMaker.Models.Entities;
 
 namespace RapidCMS.ModelMaker.Validation.Config
@@ -18,5 +18,11 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public bool IsApplicable(PropertyModel model)
             => model.EditorAlias.In(Constants.Editors.Dropdown);
+
+        public string? RelatedCollectionAlias => $"[RegularExpression(\"^[{string.Join("|", Options)}]\")]$";
+
+        public string? ValidationAttributeExpression => default;
+
+        public string? DataCollectionExpression => default;
     }
 }

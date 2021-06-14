@@ -4,7 +4,7 @@
 {
     @if (CurrentState?.PageType == PageType.Node)
     {
-        <div class="content">
+        <div class="content" @key=Update>
             @if (Sections == null || !Sections.Any())
             {
                 <p>Loading..</p>
@@ -48,7 +48,7 @@
         }
         else if (ListUI.ListType == ListType.Table)
         {
-            <div class="content">
+            <div class="content" @key=Update>
                 <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
                     <Tabbar Tabs="Tabs"
                             SearchBarVisible="ListUI.SearchBarVisible"

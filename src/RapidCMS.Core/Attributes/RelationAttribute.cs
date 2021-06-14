@@ -3,7 +3,7 @@ using System;
 
 namespace RapidCMS.Core.Attributes
 {
-    internal class RelationAttribute : Attribute
+    public class RelationAttribute : Attribute
     {
         public RelationAttribute(RelationType type)
         {

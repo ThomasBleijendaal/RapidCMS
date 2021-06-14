@@ -5,13 +5,17 @@ using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Enums;
+using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Collections;
+using RapidCMS.ModelMaker.CommandHandlers;
 using RapidCMS.ModelMaker.DataCollections;
 using RapidCMS.ModelMaker.Factories;
 using RapidCMS.ModelMaker.Models;
+using RapidCMS.ModelMaker.Models.Commands;
+using RapidCMS.ModelMaker.Models.Entities;
+using RapidCMS.ModelMaker.Models.Responses;
 using RapidCMS.ModelMaker.Repositories;
-using RapidCMS.ModelMaker.Validation;
 using RapidCMS.ModelMaker.Validation.Config;
 
 namespace RapidCMS.ModelMaker
@@ -24,11 +28,31 @@ namespace RapidCMS.ModelMaker
             Action<IModelMakerConfig>? configure = null)
         {
             // TODO:
-            // - 3.9.2-preview: after testing of current code
-            // - 3.9.3-preview: after implementing configurable sub collections
-            // - 3.9.4-preview: after implementing save to json instead of table storage
-            // - 3.9.5-preview: after implementing basic ModelEntity generation
+            // - 4.0.0-preview: after implementing basic ModelEntity generation
+            // - 4.0.1-preview: improved generation
+            // - 4.0.2-preview: improved validation
+            // - 4.0.3-preview: after implementing configurable sub collections + alias working
+            // - 4.0.x-preview: finish other milestone tickets
             // - 4.0.0: after implementing complete DbContext generation by configured code
+
+            // general TODO:
+            // v move IPublishableEntity features to a separate UI package (it's not for ModelMaker anymore)
+            // - implement complex validation like the old IValidator using validation pipeline + generated validators -- attribute validation is not enough for modelmakermade models
+            // - configure collection icon + color
+            // - configure single and plural name of collection
+            // v configure nice names for properties
+            // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
+            // - configure what goes on the list view
+            // - validate that a referenced collection has an entity that has an Id property of type int32
+            // - add support for data collections from enums
+            // - add flag editor for setting enum flag properties
+            // - configure corresponding property for one-to-one, one-to-many, many-to-one and many-to-many
+            // - fix search field from shifting left when picker is validated
+            // - fix delete node and get redirected to error-error
+
+            // docs:
+            // general behavior:
+            // linked entities are always one-to-many or many-to-many relations in EF Core
 
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
@@ -36,7 +60,6 @@ namespace RapidCMS.ModelMaker
             services.AddTransient<PropertyEditorDataCollection>();
             services.AddTransient<PropertyTypeDataCollection>();
 
-            services.AddScoped<ModelMakerRepository>();
             services.AddScoped<ModelRepository>();
             services.AddScoped<PropertyRepository>();
 
@@ -48,49 +71,49 @@ namespace RapidCMS.ModelMaker
 
             if (addDefaultPropertiesAndValidators)
             {
-                services.AddTransient<BooleanLabelValidator>();
-                services.AddTransient<LimitedOptionsValidator>();
-                services.AddTransient<LinkedEntitiesValidator>();
-                services.AddTransient<LinkedEntityValidator>();
-                services.AddTransient<MaxLengthValidator>();
-                services.AddTransient<MinLengthValidator>();
+                //services.AddTransient<BooleanLabelValidator>();
+                //services.AddTransient<LimitedOptionsValidator>();
+                //services.AddTransient<LinkedEntitiesValidator>();
+                //services.AddTransient<LinkedEntityValidator>();
+                //services.AddTransient<MaxLengthValidator>();
+                //services.AddTransient<MinLengthValidator>();
 
-                config.AddPropertyValidator<MinLengthValidator, string, MinLengthValidationConfig, int?>(
+                config.AddPropertyValidator<string, MinLengthValidationConfig, int?>(
                     Constants.Validators.MinLength,
                     "Minimum length",
                     "The value has to be at least this amount of characters.",
                     EditorType.Numeric,
                     x => x.Config.MinLength);
 
-                config.AddPropertyValidator<MaxLengthValidator, string, MaxLengthValidationConfig, int?>(
+                config.AddPropertyValidator<string, MaxLengthValidationConfig, int?>(
                     Constants.Validators.MaxLength,
                     "Maximum length",
                     "The value has to be at most this amount of characters.",
                     EditorType.Numeric,
                     x => x.Config.MaxLength);
 
-                config.AddPropertyValidator<LimitedOptionsValidator, string, LimitedOptionsValidationConfig, IList<string>, LimitedOptionsDataCollectionFactory>(
+                config.AddPropertyValidator<string, LimitedOptionsValidationConfig, IList<string>, LimitedOptionsDataCollectionFactory>(
                     Constants.Validators.LimitedOptions,
                     "Limited options",
                     "The value has to be one of these items",
                     EditorType.ListEditor,
                     x => x.Config.Options);
 
-                config.AddPropertyValidator<LinkedEntityValidator, string, LinkedEntityValidationConfig, string, LinkedEntityDataCollectionFactory>(
+                config.AddPropertyValidator<string, LinkedEntityValidationConfig, string, LinkedEntityDataCollectionFactory>(
                     Constants.Validators.LinkedEntity,
                     "Linked entity",
                     "The value has to be one of the entities of the linked collection",
                     EditorType.Dropdown,
-                    x => x.Config.CollectionAlias);
+                    x => x.Config.LinkedEntityCollectionAlias);
 
-                config.AddPropertyValidator<LinkedEntitiesValidator, List<string>, LinkedEntityValidationConfig, string, LinkedEntityDataCollectionFactory>(
+                config.AddPropertyValidator<List<string>, LinkedEntitiesValidationConfig, string, LinkedEntityDataCollectionFactory>(
                     Constants.Validators.LinkedEntities,
                     "Linked entity",
                     "The value has to be one or more of the entities of the linked collection",
                     EditorType.Dropdown,
-                    x => x.Config.CollectionAlias);
+                    x => x.Config.LinkedEntitiesCollectionAlias);
 
-                config.AddPropertyValidator<BooleanLabelValidator, bool, BooleanLabelValidationConfig, BooleanLabelValidationConfig.LabelsConfig, BooleanLabelDataCollectionFactory>(
+                config.AddPropertyValidator<bool, BooleanLabelValidationConfig, BooleanLabelValidationConfig.LabelsConfig, BooleanLabelDataCollectionFactory>(
                     Constants.Validators.BooleanLabels,
                     "Labels",
                     "The editor will display a dropdown instead of a checkbox",
@@ -135,7 +158,8 @@ namespace RapidCMS.ModelMaker
                         "Link",
                         new[] { Constants.Editors.EntityPicker },
                         new[] { Constants.Validators.LinkedEntity })
-                    .CanBeUsedAsTitle(false);
+                    .CanBeUsedAsTitle(false)
+                    .RelatesToOneEntity(true);
 
                 config.AddProperty<List<string>>(
                         Constants.Properties.LinkedEntities,
@@ -143,7 +167,8 @@ namespace RapidCMS.ModelMaker
                         "Link",
                         new[] { Constants.Editors.EntitiesPicker },
                         new[] { Constants.Validators.LinkedEntities }) // TODO: min max linkedentities
-                    .CanBeUsedAsTitle(false);
+                    .CanBeUsedAsTitle(false)
+                    .RelatesToManyEntities(true);
 
                 config.AddProperty<DateTime>(
                         Constants.Properties.Date,
@@ -166,6 +191,15 @@ namespace RapidCMS.ModelMaker
             configure?.Invoke(config);
 
             services.AddSingleton<IModelMakerConfig>(config);
+
+            services.AddTransient<ICommandHandler<RemoveRequest<ModelEntity>, ConfirmResponse>, RemoveModelEntityCommandHandler>();
+
+            services.AddTransient<ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>>, GetAllModelEntitiesCommandHandler>();
+            services.AddTransient<ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>>, GetModelEntityCommandHandler>();
+
+            services.AddTransient<ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>>, InsertModelEntityCommandHandler>();
+            services.AddTransient<ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse>, UpdateModelEntityCommandHandler>();
+            services.AddTransient<ICommandHandler<PublishRequest<ModelEntity>, ConfirmResponse>, PublishModelEntityCommandHandler>();
 
             return services;
         }

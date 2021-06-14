@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
@@ -65,14 +64,13 @@ namespace RapidCMS.UI.Components.Sections
                     throw new ArgumentException($"ViewModel required");
                 }
 
-                var command = await InteractionService.InteractAsync<PersistEntityRequestModel, NodeViewCommandResponseModel>(new PersistEntityRequestModel
-                {
-                    ActionId = args.ViewModel.ButtonId,
-                    CustomData = args.Data,
-                    EditContext = args.EditContext
-                }, CurrentViewState);
-
-                await HandleViewCommandAsync(command);
+                await HandleViewCommandAsync(
+                    () => InteractionService.InteractAsync<PersistEntityRequestModel, NodeViewCommandResponseModel>(new PersistEntityRequestModel
+                    {
+                        ActionId = args.ViewModel.ButtonId,
+                        CustomData = args.Data,
+                        EditContext = args.EditContext
+                    }, CurrentViewState));
             }
             catch (Exception ex)
             {

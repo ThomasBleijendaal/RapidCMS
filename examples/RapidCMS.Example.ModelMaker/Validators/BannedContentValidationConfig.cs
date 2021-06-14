@@ -2,7 +2,7 @@
 using System.Linq;
 using RapidCMS.Core.Extensions;
 using RapidCMS.ModelMaker;
-using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 using RapidCMS.ModelMaker.Models.Entities;
 
 namespace RapidCMS.Example.ModelMaker.Validators
@@ -17,5 +17,12 @@ namespace RapidCMS.Example.ModelMaker.Validators
 
         public bool IsApplicable(PropertyModel model)
             => model.EditorAlias.In(Constants.Editors.TextBox, Constants.Editors.TextArea);
+
+        public string? RelatedCollectionAlias => default;
+
+        public string? DataCollectionExpression => default;
+
+        public string? ValidationAttributeExpression => $"[RegularExpression(\"[^{string.Join("|", BannedWords)}]\")]";
+
     }
 }

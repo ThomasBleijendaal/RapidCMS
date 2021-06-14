@@ -28,6 +28,7 @@ namespace RapidCMS.Core.Abstractions.Setup
         IEntityVariantSetup GetEntityVariant(IEntity entity);
 
         ITreeViewSetup? TreeView { get; }
+        IElementSetup? ElementSetup { get; }
 
         IListSetup? ListView { get; }
         IListSetup? ListEditor { get; }

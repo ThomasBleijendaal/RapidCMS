@@ -277,6 +277,41 @@ namespace RapidCMS.Core.Helpers
             }
         }
 
+        /// <summary>
+        /// Converts a given LambdaExpression containing MemberExpressions to getters and setters, and the name of each nested object plus the name of the property.
+        /// 
+        /// (Person x) => x.Company.Owner.Name becomes:
+        /// getter: (object x) => (object)(((Person) x).get_Company().get_Owner().get_Name())
+        /// setter: (object x, object y) => ((Person) x).get_Company().get_Owner().set_Name((string)y)
+        /// objectType: Person
+        /// propertyType: string
+        /// name: CompanyOwnerName
+        /// </summary>
+        /// <typeparam name="TSubject"></typeparam>
+        /// <typeparam name="TProperty"></typeparam>
+        /// <param name="expression">The lambda expression to be converted</param>
+        /// <returns>IPropertyMetadata when successful, IFullPropertyMetadata if setter is available. Returns default when unsuccessful.</returns>
+        public static IPropertyMetadata? GetPropertyMetadata<TSubject, TProperty>(Expression<Func<TSubject, TProperty>> expression)
+            => GetPropertyMetadata((LambdaExpression)expression);
+
+        /// <summary>
+        /// Converts a given LambdaExpression containing MemberExpressions to getters and setters, and the name of each nested object plus the name of the property.
+        /// 
+        /// (Person x) => x.Company.Owner.Name becomes:
+        /// getter: (object x) => (object)(((Person) x).get_Company().get_Owner().get_Name())
+        /// setter: (object x, object y) => ((Person) x).get_Company().get_Owner().set_Name((string)y)
+        /// objectType: Person
+        /// propertyType: string
+        /// name: CompanyOwnerName
+        /// </summary>
+        /// <typeparam name="TSubject"></typeparam>
+        /// <typeparam name="TProperty"></typeparam>
+        /// <param name="expression">The lambda expression to be converted</param>
+        /// <returns>IFullPropertyMetadata</returns>
+        /// <exception cref="InvalidOperationException">Failed to convert expression to IFullPropertyMetadata</exception>
+        public static IFullPropertyMetadata GetFullPropertyMetadata<TSubject, TProperty>(Expression<Func<TSubject, TProperty>> expression)
+            => GetPropertyMetadata(expression) as IFullPropertyMetadata ?? throw new InvalidOperationException($"Could not convert expression to {nameof(IFullPropertyMetadata)}.");
+
         private static Func<object, object>? ConvertToGetterViaMethod(ParameterExpression parameterT, MethodInfo getValueMethod, Expression instanceExpression)
         {
             try

@@ -7,6 +7,7 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
@@ -18,11 +19,19 @@ namespace RapidCMS.Core.Providers
     internal class CollectionDataProvider : IRelationDataCollection, IDisposable
     {
         private readonly IRepository _repository;
-        private readonly RepositoryRelationSetup _setup;
+        private readonly IConcurrencyService _concurrencyService;
+        private readonly string? _repositoryAlias;
+        private readonly string? _collectionAlias;
+        private readonly IPropertyMetadata? _relatedElementsGetter;
+        private readonly bool _entityAsParent;
+        private readonly IPropertyMetadata? _repositoryParentSelector;
+        private readonly IPropertyMetadata _idProperty;
+        private readonly IReadOnlyList<IExpressionMetadata> _displayProperties;
+        private readonly Type _relatedEntityType;
         private readonly IPropertyMetadata _property;
         private readonly IMediator _mediator;
 
-        private FormEditContext? _editContext;
+        private FormEditContext? _editContext { get; set; }
         private IParent? _parent;
 
         private readonly IDisposable? _eventHandle;
@@ -31,14 +40,30 @@ namespace RapidCMS.Core.Providers
 
         public CollectionDataProvider(
             IRepository repository,
-            RepositoryRelationSetup setup,
+            IConcurrencyService concurrencyService,
+            string? repositoryAlias,
+            string? collectionAlias,
+            IPropertyMetadata? relatedElementsGetter,
+            bool entityAsParent,
+            IPropertyMetadata? repositoryParentSelector,
+            IPropertyMetadata idProperty,
+            IReadOnlyList<IExpressionMetadata> displayProperties,
+            Type relatedEntityType,
             IPropertyMetadata property,
             IMediator mediator)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            _setup = setup ?? throw new ArgumentNullException(nameof(setup));
+            _concurrencyService = concurrencyService;
+            _repositoryAlias = repositoryAlias;
+            _collectionAlias = collectionAlias;
+            _relatedElementsGetter = relatedElementsGetter;
+            _entityAsParent = entityAsParent;
+            _repositoryParentSelector = repositoryParentSelector;
+            _idProperty = idProperty ?? throw new ArgumentNullException(nameof(idProperty));
+            _displayProperties = displayProperties ?? throw new ArgumentNullException(nameof(displayProperties));
+            _relatedEntityType = relatedEntityType ?? throw new ArgumentNullException(nameof(relatedEntityType));
             _property = property ?? throw new ArgumentNullException(nameof(property));
-            _mediator = mediator;
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 
             _eventHandle = _mediator.RegisterCallback<CollectionRepositoryEventArgs>(OnRepositoryChangeAsync);
         }
@@ -47,8 +72,8 @@ namespace RapidCMS.Core.Providers
 
         private Task OnRepositoryChangeAsync(object? sender, CollectionRepositoryEventArgs args)
         {
-            if ((!string.IsNullOrEmpty(_setup.RepositoryAlias) && args.RepositoryAlias == _setup.RepositoryAlias) ||
-                (string.IsNullOrEmpty(_setup.RepositoryAlias) && args.CollectionAlias == _setup.CollectionAlias))
+            if ((!string.IsNullOrEmpty(_repositoryAlias) && args.RepositoryAlias == _repositoryAlias) ||
+                (string.IsNullOrEmpty(_repositoryAlias) && args.CollectionAlias == _collectionAlias))
             {
                 OnDataChange?.Invoke(sender, EventArgs.Empty);
             }
@@ -61,7 +86,7 @@ namespace RapidCMS.Core.Providers
             _editContext = editContext;
             _parent = parent;
 
-            var data = _setup.RelatedElementsGetter?.Getter(_property.Getter(_editContext.Entity)) ?? _property.Getter(_editContext.Entity);
+            var data = _relatedElementsGetter?.Getter(_property.Getter(_editContext.Entity)) ?? _property.Getter(_editContext.Entity);
             if (data is IEnumerable<IEntity> entityCollection)
             {
                 _relatedIds = entityCollection.Select(x => (object)x.Id!).ToList();
@@ -70,7 +95,7 @@ namespace RapidCMS.Core.Providers
             {
                 _relatedIds = objectCollection.ToList();
             }
-            else if (data is IEnumerable enumerable)
+            else if (data is IEnumerable enumerable && data is not string)
             {
                 var list = new List<object>();
                 foreach (var element in enumerable)
@@ -95,25 +120,25 @@ namespace RapidCMS.Core.Providers
 
             var parent = default(IParent?);
 
-            if (_setup.EntityAsParent && _editContext.EntityState != EntityState.IsNew)
+            if (_entityAsParent && _editContext.EntityState != EntityState.IsNew)
             {
                 parent = new ParentEntity(_editContext.Parent, _editContext.Entity, _editContext.RepositoryAlias);
             }
 
-            if (_setup.RepositoryParentSelector != null && _parent != null)
+            if (_repositoryParentSelector != null && _parent != null)
             {
-                parent = _setup.RepositoryParentSelector.Getter.Invoke(_parent) as IParent;
+                parent = _repositoryParentSelector.Getter.Invoke(_parent) as IParent;
             }
 
             query.CollectionAlias = _editContext.CollectionAlias;
 
-            var entities = await _repository.GetAllAsync(new ViewContext(_editContext.CollectionAlias, parent), query);
+            var entities = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => _repository.GetAllAsync(new ViewContext(_editContext.CollectionAlias, parent), query));
 
             return entities
                .Select(entity => (IElement)new Element
                {
-                   Id = _setup.IdProperty.Getter(entity),
-                   Labels = _setup.DisplayProperties.Select(x => x.StringGetter(entity)).ToList()
+                   Id = _idProperty.Getter(entity),
+                   Labels = _displayProperties.Select(x => x.StringGetter(entity)).ToList()
                })
                .ToList();
         }
@@ -137,7 +162,7 @@ namespace RapidCMS.Core.Providers
 
         public IReadOnlyList<object> GetCurrentRelatedElementIds() => _relatedIds;
 
-        public Type GetRelatedEntityType() => _setup.RelatedEntityType ?? typeof(object);
+        public Type GetRelatedEntityType() => _relatedEntityType ?? typeof(object);
 
         public void Dispose() => _eventHandle?.Dispose();
     }

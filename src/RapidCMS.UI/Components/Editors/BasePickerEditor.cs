@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Logging;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Models.Data;
 
@@ -145,6 +147,7 @@ namespace RapidCMS.UI.Components.Editors
             if (DataCollection != null)
             {
                 DataCollection.OnDataChange -= UpdateOptionsAsync;
+                DataCollection.Dispose();
             }
         }
 

@@ -9,7 +9,6 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
         string Name { get; }
         string? Description { get; }
 
-        Type Validator { get; }
         Type Value { get; }
         Type Config { get; }
         Type Editor { get; }

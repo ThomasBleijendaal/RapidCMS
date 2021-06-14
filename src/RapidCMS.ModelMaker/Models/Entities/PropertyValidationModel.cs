@@ -1,15 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Forms.Validation;
-using RapidCMS.ModelMaker.Abstractions.Entities;
-using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 
 namespace RapidCMS.ModelMaker.Models.Entities
 {
-    public class PropertyValidationModel : IModelMakerEntity
+    public class PropertyValidationModel : IEntity
     {
         public string? Id { get; set; }
 
+        [Required]
+        [MinLength(1)]
         public string Alias { get; set; } = default!;
+
+        public string? AttributeExpression { get; set; }
+
+        public string? DataCollectionExpression { get; set; }
 
         [Required]
         [ValidateObject]

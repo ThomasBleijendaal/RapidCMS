@@ -6,14 +6,15 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Abstractions.Resolvers;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
-using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 using RapidCMS.ModelMaker.EqualityComparers;
-using RapidCMS.ModelMaker.Extenstions;
 using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.Models.Responses;
@@ -24,15 +25,18 @@ namespace RapidCMS.ModelMaker.Repositories
     {
         private readonly IModelMakerConfig _config;
         private readonly ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse> _updateEntityCommandHandler;
+        private readonly ISetupResolver<ICollectionSetup> _collectionSetupResolver;
         private readonly IMediator _mediator;
 
         public PropertyRepository(
             IModelMakerConfig config,
             ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse> updateEntityCommandHandler,
+            ISetupResolver<ICollectionSetup> collectionSetupResolver,
             IMediator mediator)
         {
             _config = config;
             _updateEntityCommandHandler = updateEntityCommandHandler;
+            _collectionSetupResolver = collectionSetupResolver;
             _mediator = mediator;
         }
 
@@ -42,8 +46,7 @@ namespace RapidCMS.ModelMaker.Repositories
         {
             if (viewContext.Parent?.Entity is ModelEntity model)
             {
-                model.DraftProperties.RemoveAll(x => x.Id == id);
-                model.State = model.State.Modify();
+                model.Properties.RemoveAll(x => x.Id == id);
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
             }
@@ -53,7 +56,7 @@ namespace RapidCMS.ModelMaker.Repositories
         {
             if (viewContext.Parent?.Entity is ModelEntity model)
             {
-                return Task.FromResult<IEnumerable<IEntity>>(model.DraftProperties);
+                return Task.FromResult<IEnumerable<IEntity>>(model.Properties);
             }
 
             throw new InvalidOperationException();
@@ -66,7 +69,7 @@ namespace RapidCMS.ModelMaker.Repositories
         public Task<IEntity?> GetByIdAsync(string id, IViewContext viewContext)
         {
             if (viewContext.Parent?.Entity is ModelEntity model &&
-                model.DraftProperties.FirstOrDefault(x => x.Id == id) is PropertyModel property)
+                model.Properties.FirstOrDefault(x => x.Id == id) is PropertyModel property)
             {
                 var allPropertyValidations = _config.Properties
                     .Single(prop => prop.Alias == property.PropertyAlias)
@@ -101,10 +104,9 @@ namespace RapidCMS.ModelMaker.Repositories
             {
                 var newProperty = typedEditContext.Entity;
                 newProperty.Id = Guid.NewGuid().ToString();
-                model.DraftProperties.Add(newProperty);
-                model.State = model.State.Modify();
+                model.Properties.Add(newProperty);
 
-                SavePropertyConfigs(model, typedEditContext.Entity);
+                await SavePropertyConfigsAsync(model, typedEditContext.Entity);
 
                 if (newProperty.IsTitle)
                 {
@@ -156,23 +158,22 @@ namespace RapidCMS.ModelMaker.Repositories
         {
             if (viewContext.Parent?.Entity is ModelEntity model)
             {
-                var property = model.DraftProperties.FirstOrDefault(x => x.Id == id);
+                var property = model.Properties.FirstOrDefault(x => x.Id == id);
                 if (property == null)
                 {
                     return;
                 }
 
-                model.DraftProperties.Remove(property);
-                model.State = model.State.Modify();
+                model.Properties.Remove(property);
 
-                var targetIndex = model.DraftProperties.FindIndex(x => x.Id == beforeId);
+                var targetIndex = model.Properties.FindIndex(x => x.Id == beforeId);
                 if (targetIndex == -1)
                 {
-                    model.DraftProperties.Add(property);
+                    model.Properties.Add(property);
                 }
                 else
                 {
-                    model.DraftProperties.Insert(targetIndex, property);
+                    model.Properties.Insert(targetIndex, property);
                 }
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
@@ -187,14 +188,11 @@ namespace RapidCMS.ModelMaker.Repositories
             if (editContext is IEditContext<PropertyModel> typedEditContext &&
                 typedEditContext.Parent?.Entity is ModelEntity model)
             {
-                typedEditContext.Entity.Alias ??= typedEditContext.Entity.Name.ToUrlFriendlyString();
+                var index = model.Properties.FindIndex(x => x.Id == typedEditContext.Entity.Id);
 
-                var index = model.DraftProperties.FindIndex(x => x.Id == typedEditContext.Entity.Id);
-
-                model.DraftProperties[index] = typedEditContext.Entity;
-                model.State = model.State.Modify();
-
-                SavePropertyConfigs(model, typedEditContext.Entity);
+                model.Properties[index] = typedEditContext.Entity;
+                
+                await SavePropertyConfigsAsync(model, typedEditContext.Entity);
                 if (typedEditContext.Entity.IsTitle)
                 {
                     SetPropertyAsOnlyTitle(model, typedEditContext.Entity);
@@ -212,19 +210,14 @@ namespace RapidCMS.ModelMaker.Repositories
 
         private static void ValidateProperty(IEditContext<PropertyModel> editContext, PropertyModel property, ModelEntity model)
         {
-            if (model.DraftProperties.Count(x => x.Alias == property.Alias) > 1)
+            if (model.Properties.Count(x => x.Name == property.Name) > 1)
             {
                 editContext.AddValidationError("Alias", "Alias already used.");
             }
         }
 
-        private void SavePropertyConfigs(ModelEntity model, PropertyModel property)
+        private async Task SavePropertyConfigsAsync(ModelEntity model, PropertyModel property)
         {
-            if (string.IsNullOrWhiteSpace(property.Alias))
-            {
-                property.Alias = property.Name.ToUrlFriendlyString();
-            }
-
             var propertyConfig = _config.Properties.FirstOrDefault(x => x.Alias == property.PropertyAlias);
             if (propertyConfig != null)
             {
@@ -232,6 +225,13 @@ namespace RapidCMS.ModelMaker.Repositories
                 {
                     property.IsTitle = false;
                 }
+
+                var editorConfig = _config.Editors.FirstOrDefault(x => x.Alias == property.EditorAlias);
+
+                property.Type = propertyConfig.Type.FullName;
+                property.IsRelationToOne = propertyConfig.IsRelationToOne;
+                property.IsRelationToMany = propertyConfig.IsRelationToMany;
+                property.EditorType = editorConfig?.Editor.FullName;
 
                 var validations = _config.Validators.Where(x => propertyConfig.Validators.Any(v => v.Alias == x.Alias));
 
@@ -251,9 +251,29 @@ namespace RapidCMS.ModelMaker.Repositories
                         validationModel.Config = config;
                         validationModel.Id = Guid.NewGuid().ToString();
 
+                        validationModel.AttributeExpression = config?.ValidationAttributeExpression;
+                        validationModel.DataCollectionExpression = config?.DataCollectionExpression;
+
                         newValidations.Add(validationModel);
                     }
                 }
+
+                try
+                {
+                    var relatedCollectionAlias = newValidations.Select(x => x.Config?.RelatedCollectionAlias).OfType<string>().SingleOrDefault();
+
+                    if (!string.IsNullOrWhiteSpace(relatedCollectionAlias))
+                    {
+                        var relatedCollectionEntityVariant = (await _collectionSetupResolver.ResolveSetupAsync(relatedCollectionAlias)).EntityVariant;
+
+                        property.Type = relatedCollectionEntityVariant.Type.FullName;
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    throw new InvalidOperationException("Cannot have 2 validation configs with RelatedCollectionAlias", ex);
+                }
+
 
                 property.Validations = newValidations;
             }
@@ -261,7 +281,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
         private static void SetPropertyAsOnlyTitle(ModelEntity model, PropertyModel property)
         {
-            model.DraftProperties.Where(x => x.Alias != property.Alias).ForEach(x => x.IsTitle = false);
+            model.Properties.Where(x => x.Name != property.Name).ForEach(x => x.IsTitle = false);
         }
     }
 }

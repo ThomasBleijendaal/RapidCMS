@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace RapidCMS.ModelMaker.Abstractions.Config
 {
@@ -8,11 +9,18 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
         string Name { get; }
         string Icon { get; }
 
+        Type Type { get; }
+
         bool UsableAsTitle { get; }
+
+        bool IsRelationToOne { get; }
+        bool IsRelationToMany { get; }
 
         IList<IPropertyValidatorConfig> Validators { get; }
         IList<IPropertyEditorConfig> Editors { get; }
 
         IPropertyConfig CanBeUsedAsTitle(bool usedAsTitle);
+        IPropertyConfig RelatesToOneEntity(bool isRelation);
+        IPropertyConfig RelatesToManyEntities(bool isRelation);
     }
 }

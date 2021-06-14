@@ -59,6 +59,7 @@ namespace RapidCMS.Core.Models.Setup
         }
 
         public ITreeViewSetup? TreeView { get; set; }
+        public IElementSetup? ElementSetup { get; set; }
 
         public IListSetup? ListView { get; set; }
         public IListSetup? ListEditor { get; set; }

@@ -1,18 +1,15 @@
 ﻿using System;
-using RapidCMS.ModelMaker.Abstractions.Entities;
+using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.ModelMaker.Models.Commands
 {
     public class GetByIdRequest<TEntity>
-        where TEntity : IModelMakerEntity
+        where TEntity : IEntity
     {
-        public GetByIdRequest(string id, string alias)
+        public GetByIdRequest(string id)
         {
-            Alias = alias ?? throw new ArgumentNullException(nameof(id));
             Id = id ?? throw new ArgumentNullException(nameof(id));
         }
-
-        public string Alias { get; private set; }
 
         public string Id { get; private set; }
     }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Extensions;
-using RapidCMS.ModelMaker.Abstractions.Validation;
+using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 using RapidCMS.ModelMaker.Models.Entities;
 
 namespace RapidCMS.ModelMaker.Validation.Config
@@ -15,5 +15,11 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public bool IsApplicable(PropertyModel model)
             => model.EditorAlias.In(Constants.Editors.TextArea, Constants.Editors.TextBox);
+
+        public string? RelatedCollectionAlias => default;
+
+        public string? ValidationAttributeExpression => $"[MaxLength({MaxLength})]";
+
+        public string? DataCollectionExpression => default;
     }
 }

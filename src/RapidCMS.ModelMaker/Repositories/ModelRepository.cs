@@ -41,7 +41,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
         public async Task<IEnumerable<IEntity>> GetAllAsync(IViewContext viewContext, IQuery query)
         {
-            var response = await _getAllEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>(default));
+            var response = await _getAllEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>());
 
             return response.Entities;
         }
@@ -52,7 +52,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
         public async Task<IEntity?> GetByIdAsync(string id, IViewContext viewContext)
         {
-            var response = await _getEntityCommandHandler.HandleAsync(new GetByIdRequest<ModelEntity>(id, id));
+            var response = await _getEntityCommandHandler.HandleAsync(new GetByIdRequest<ModelEntity>(id));
 
             return response.Entity;
         }
@@ -62,8 +62,7 @@ namespace RapidCMS.ModelMaker.Repositories
             if (editContext is IEditContext<ModelEntity> typedEditContext)
             {
                 var entity = typedEditContext.Entity;
-                entity.Alias = $"modelmaker::{entity.Name.ToUrlFriendlyString()}";
-                entity.CreatedAt = DateTime.UtcNow;
+                entity.Alias = entity.Name.ToUrlFriendlyString(); // TODO: ensure uniqueness
 
                 var response = await _insertEntityCommandHandler.HandleAsync(new InsertRequest<ModelEntity>(entity));
 
@@ -83,11 +82,6 @@ namespace RapidCMS.ModelMaker.Repositories
         {
             if (editContext is IEditContext<ModelEntity> typedEditContext)
             {
-                // TODO: move logic to external provider
-                typedEditContext.Entity.State = typedEditContext.Entity.State.Publish();
-                typedEditContext.Entity.PublishedAt = DateTime.UtcNow;
-                typedEditContext.Entity.UpdatedAt = DateTime.UtcNow;
-
                 await _publishEntityCommandHandler.HandleAsync(new PublishRequest<ModelEntity>(typedEditContext.Entity));
             }
         }

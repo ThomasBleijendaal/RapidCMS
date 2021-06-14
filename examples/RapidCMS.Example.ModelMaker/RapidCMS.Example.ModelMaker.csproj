@@ -1,21 +1,38 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <ProjectUISubcaption>ASP.NET Core 5.0</ProjectUISubcaption>
+    <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <ProjectReference Include="..\..\src\RapidCMS.ModelMaker.TableStorage\RapidCMS.ModelMaker.TableStorage.csproj" />
+    <ProjectReference Include="..\..\src\RapidCMS.ModelMaker.SourceGenerator\RapidCMS.ModelMaker.SourceGenerator.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.ModelMaker\RapidCMS.ModelMaker.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.Repositories\RapidCMS.Repositories.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.UI\RapidCMS.UI.csproj" />
     <ProjectReference Include="..\RapidCMS.Example.Shared\RapidCMS.Example.Shared.csproj" />
+    <ProjectReference Include="..\..\src\RapidCMS.ModelMaker.SourceGenerator.EFCore\RapidCMS.ModelMaker.SourceGenerator.EFCore.csproj" OutputItemType="Analyzer" />
   </ItemGroup>
   
   <ItemGroup>
     <Content Update="App.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="RapidModels\modelmaker.blog.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.category.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 </Project>
