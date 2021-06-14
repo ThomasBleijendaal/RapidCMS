@@ -28,9 +28,10 @@ namespace RapidCMS.ModelMaker
             Action<IModelMakerConfig>? configure = null)
         {
             // TODO:
-            // - 3.9.3-preview: after implementing save to json instead of table storage
-            // - 3.9.4-preview: after implementing basic ModelEntity generation
-            // - 3.9.5-preview: after implementing configurable sub collections + alias working
+            // - 3.9.3-preview: after implementing basic ModelEntity generation
+            // - 3.9.4-preview: improved generation
+            // - 3.9.5-preview: improved validation
+            // - 3.9.6-preview: after implementing configurable sub collections + alias working
             // - 4.0.0: after implementing complete DbContext generation by configured code
 
             // general TODO:

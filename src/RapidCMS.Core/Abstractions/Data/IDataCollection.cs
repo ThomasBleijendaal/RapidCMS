@@ -5,7 +5,6 @@ using RapidCMS.Core.Forms;
 
 namespace RapidCMS.Core.Abstractions.Data
 {
-    // TODO: check when this object is disposed
     public interface IDataCollection : IDisposable
     {
         /// <summary>
