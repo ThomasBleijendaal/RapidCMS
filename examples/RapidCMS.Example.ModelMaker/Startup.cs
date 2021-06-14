@@ -20,7 +20,6 @@ using RapidCMS.Example.ModelMaker.Validators;
 using RapidCMS.Example.Shared.Collections;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.ModelMaker;
-using RapidCMS.ModelMaker.TableStorage;
 using RapidCMS.ModelMaker.Validation.Config;
 using RapidCMS.Repositories;
 
@@ -154,29 +153,28 @@ namespace RapidCMS.Example.ModelMaker
                     config.GetProperty(Constants.Properties.LongString)?.Validators.Add(customTextValidator);
 
                     // adding custom properties is also possible
-                    var enumDropdownValidator = config.AddPropertyValidator<ContentType, NoConfig, NoConfig, EnumOptionsDataCollectionFactory<ContentType>>(
-                        "contentTypeValidator",
-                        "Content Type",
-                        "Content Type",
-                        EditorType.None,
-                        property => property.Config);
+                    //var enumDropdownValidator = config.AddPropertyValidator<ContentType, NoConfig, NoConfig, EnumOptionsDataCollectionFactory<ContentType>>(
+                    //    "contentTypeValidator",
+                    //    "Content Type",
+                    //    "Content Type",
+                    //    EditorType.None,
+                    //    property => property.Config);
 
                     // TODO: enums gets eaten up by the json serializer
-                    config.AddProperty<ContentType>(
-                        "contentType",
-                        "Content Type",
-                        "Tag",
-                        new[] { Constants.Editors.Dropdown, Constants.Editors.Select },
-                        new[] { enumDropdownValidator.Alias });
+                    //config.AddProperty<ContentType>(
+                    //    "contentType",
+                    //    "Content Type",
+                    //    "Tag",
+                    //    new[] { Constants.Editors.Dropdown, Constants.Editors.Select },
+                    //    new[] { enumDropdownValidator.Alias });
                 });
-            services.AddModelMakerTableStorage();
 
             // validators are resolved from DI
             //services.AddSingleton<BannedContentValidator>();
             //services.AddSingleton<EnumOptionsValidator<ContentType>>();
 
             // factories are also resolved from DI
-            services.AddSingleton<EnumOptionsDataCollectionFactory<ContentType>>();
+            // services.AddSingleton<EnumOptionsDataCollectionFactory<ContentType>>();
 
             services.AddScoped<BaseRepository<Person>, JsonRepository<Person>>();
             services.AddScoped<BaseRepository<Details>, JsonRepository<Details>>();

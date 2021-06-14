@@ -3,6 +3,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <LangVersion>preview</LangVersion>
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
+    <ProjectUISubcaption>Azure Functions .NET 5.0 Isolated</ProjectUISubcaption>
     <OutputType>Exe</OutputType>
     <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
     <Nullable>enable</Nullable>

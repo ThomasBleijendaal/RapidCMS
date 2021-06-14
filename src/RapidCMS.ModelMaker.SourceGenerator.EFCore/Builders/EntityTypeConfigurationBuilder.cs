@@ -29,10 +29,12 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
         public void WriteEntityTypeConfiguration(IndentedTextWriter indentWriter, EntityInformation info)
         {
-            indentWriter.WriteLine($"public class {info.Name}Configuration : IEntityTypeConfiguration<{info.Name}>");
+            var name = ValidPascalCaseName(info.Name);
+
+            indentWriter.WriteLine($"public class {name}Configuration : IEntityTypeConfiguration<{name}>");
             WriteOpeningBracket(indentWriter);
 
-            indentWriter.WriteLine($"public void Configure(EntityTypeBuilder<{info.Name}> builder)");
+            indentWriter.WriteLine($"public void Configure(EntityTypeBuilder<{name}> builder)");
             WriteOpeningBracket(indentWriter);
 
             foreach (var property in info.Properties.Where(x => !x.Hidden && (x.RelatedToOneEntity || x.RelatedToManyEntities)))
@@ -46,18 +48,21 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
         public void WriteRelationConfig(IndentedTextWriter indentWriter, EntityInformation entity, PropertyInformation property)
         {
+            var propertyName = ValidPascalCaseName(property.Name);
+            var entityName = ValidPascalCaseName(entity.Name);
+
             indentWriter.Write("builder");
 
             if (property.RelatedToOneEntity)
             {
-                indentWriter.Write($".HasOne(x => x.{property.Name})");
+                indentWriter.Write($".HasOne(x => x.{propertyName})");
             }
             else
             {
-                indentWriter.Write($".HasMany(x => x.{property.Name})");
+                indentWriter.Write($".HasMany(x => x.{propertyName})");
             }
 
-            indentWriter.Write($".WithMany(x => x.{entity.Name}{property.Name})");
+            indentWriter.Write($".WithMany(x => x.{entityName}{propertyName})");
 
             if (property.RelatedToOneEntity)
             {

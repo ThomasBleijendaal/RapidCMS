@@ -9,11 +9,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
         {
             if (info.RelatedToOneEntity)
             {
-                indentWriter.Write($"section.AddField(x => x.{info.Name}Id)");
+                indentWriter.Write($"section.AddField(x => x.{ValidPascalCaseName(info.Name)}Id)");
             }
             else
             {
-                indentWriter.Write($"section.AddField(x => x.{info.Name})");
+                indentWriter.Write($"section.AddField(x => x.{ValidPascalCaseName(info.Name)})");
             }
 
             indentWriter.Write($".SetType(typeof({info.EditorType}))");

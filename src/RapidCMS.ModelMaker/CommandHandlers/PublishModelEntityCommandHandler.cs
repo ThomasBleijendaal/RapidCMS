@@ -28,13 +28,6 @@ namespace RapidCMS.ModelMaker.CommandHandlers
                 throw new InvalidOperationException();
             }
 
-            // TODO: move publish logic to some external resolver + check how publishing should be supported model maker wide
-            // there should be some publishing logic that activates a lot of command handlers to update models etc.
-            if (request.Entity is ModelEntity modelEntity)
-            {
-                modelEntity.PublishedProperties = modelEntity.DraftProperties;
-            }
-
             await WriteModelToFileAsync(request.Entity);
 
             return new ConfirmResponse

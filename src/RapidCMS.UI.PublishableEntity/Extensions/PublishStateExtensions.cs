@@ -1,6 +1,6 @@
-﻿using RapidCMS.ModelMaker.Enums;
+﻿using RapidCMS.UI.PublishableEntity.Enums;
 
-namespace RapidCMS.ModelMaker.Extenstions
+namespace RapidCMS.UI.PublishableEntity.Extensions
 {
     public static class PublishStateExtensions
     {

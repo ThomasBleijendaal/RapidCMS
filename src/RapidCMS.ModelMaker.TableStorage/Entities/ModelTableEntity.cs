@@ -1,14 +1,14 @@
-﻿using Microsoft.Azure.Cosmos.Table;
+﻿//using Microsoft.Azure.Cosmos.Table;
 
-namespace RapidCMS.ModelMaker.TableStorage.Entities
-{
-    internal class ModelTableEntity : TableEntity
-    {
-        public ModelTableEntity()
-        {
+//namespace RapidCMS.ModelMaker.TableStorage.Entities
+//{
+//    internal class ModelTableEntity : TableEntity
+//    {
+//        public ModelTableEntity()
+//        {
 
-        }
+//        }
 
-        public string? EntityJson { get; set; }
-    }
-}
+//        public string? EntityJson { get; set; }
+//    }
+//}

@@ -34,11 +34,11 @@ namespace RapidCMS.ModelMaker
             // - 4.0.0: after implementing complete DbContext generation by configured code
 
             // general TODO:
-            // - move IPublishableEntity features to a separate UI package (it's not for ModelMaker anymore)
+            // v move IPublishableEntity features to a separate UI package (it's not for ModelMaker anymore)
             // - implement complex validation like the old IValidator using validation pipeline + generated validators -- attribute validation is not enough for modelmakermade models
             // - configure collection icon + color
             // - configure single and plural name of collection
-            // - configure nice names for properties
+            // v configure nice names for properties
             // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
             // - configure what goes on the list view
             // - validate that a referenced collection has an entity that has an Id property of type int32
@@ -46,6 +46,7 @@ namespace RapidCMS.ModelMaker
             // - add flag editor for setting enum flag properties
             // - configure corresponding property for one-to-one, one-to-many, many-to-one and many-to-many
             // - fix search field from shifting left when picker is validated
+            // - fix delete node and get redirected to error-error
 
             // docs:
             // general behavior:
@@ -57,7 +58,6 @@ namespace RapidCMS.ModelMaker
             services.AddTransient<PropertyEditorDataCollection>();
             services.AddTransient<PropertyTypeDataCollection>();
 
-            services.AddScoped<ModelMakerRepository>();
             services.AddScoped<ModelRepository>();
             services.AddScoped<PropertyRepository>();
 
@@ -194,7 +194,6 @@ namespace RapidCMS.ModelMaker
 
             services.AddTransient<ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>>, GetAllModelEntitiesCommandHandler>();
             services.AddTransient<ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>>, GetModelEntityCommandHandler>();
-            services.AddTransient<ICommandHandler<GetByAliasRequest<ModelEntity>, EntityResponse<ModelEntity>>, GetModelEntityCommandHandler>();
 
             services.AddTransient<ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>>, InsertModelEntityCommandHandler>();
             services.AddTransient<ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse>, UpdateModelEntityCommandHandler>();

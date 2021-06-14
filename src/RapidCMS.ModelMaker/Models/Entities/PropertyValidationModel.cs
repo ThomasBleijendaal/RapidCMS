@@ -9,6 +9,10 @@ namespace RapidCMS.ModelMaker.Models.Entities
     {
         public string? Id { get; set; }
 
+        [Required]
+        [MinLength(1)]
+        public string Alias { get; set; } = default!;
+
         public string? AttributeExpression { get; set; }
 
         public string? DataCollectionExpression { get; set; }

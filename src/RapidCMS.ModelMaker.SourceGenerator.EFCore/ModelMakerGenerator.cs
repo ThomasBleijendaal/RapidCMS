@@ -63,10 +63,10 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
             foreach (var entity in entities)
             {
                 var entitySourceText = entityBuilder.BuildEntity(entity, modelMakerContext);
-                context.AddSource($"ModelMaker_Entity_{entity.Name}.cs", entitySourceText);
+                context.AddSource($"ModelMaker_Entity_{entity.Name?.Replace(" ", "_")}.cs", entitySourceText);
 
                 var collectionSourceText = collectionBuilder.BuildCollection(entity, modelMakerContext);
-                context.AddSource($"ModelMaker_Collection_{entity.Name}.cs", collectionSourceText);
+                context.AddSource($"ModelMaker_Collection_{entity.Name?.Replace(" ", "_")}.cs", collectionSourceText);
             }
 
             var contextSourceText = contextBuilder.BuildContext(modelMakerContext);
@@ -75,10 +75,10 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
             foreach (var entity in entities)
             {
                 var entityTypeConfigurationSourceText = entityTypeConfigurationBuilder.BuildEntityTypeConfiguration(entity, modelMakerContext);
-                context.AddSource($"ModelMaker_EntityTypeConfiguration_{entity.Name}.cs", entityTypeConfigurationSourceText);
+                context.AddSource($"ModelMaker_EntityTypeConfiguration_{entity.Name?.Replace(" ", "_")}.cs", entityTypeConfigurationSourceText);
 
                 var repositorySourceText = repositoryBuilder.BuildRepository(entity, modelMakerContext);
-                context.AddSource($"ModelMaker_Repository_{entity.Name}.cs", repositorySourceText);
+                context.AddSource($"ModelMaker_Repository_{entity.Name?.Replace(" ", "_")}.cs", repositorySourceText);
             }
         }
     }

@@ -71,14 +71,14 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
         {
             var titleProperty = info.Properties.Single(x => x.IsTitleOfEntity);
 
-            indentWriter.WriteLine($"collection.SetTreeView(x => x.{titleProperty.Name});");
+            indentWriter.WriteLine($"collection.SetTreeView(x => x.{ValidPascalCaseName(titleProperty.Name)});");
         }
 
         public void WriteElementConfig(IndentedTextWriter indentWriter, EntityInformation info)
         {
             var titleProperty = info.Properties.Single(x => x.IsTitleOfEntity);
 
-            indentWriter.WriteLine($"collection.SetElementConfiguration(x => x.Id, x => x.{titleProperty.Name});");
+            indentWriter.WriteLine($"collection.SetElementConfiguration(x => x.Id, x => x.{ValidPascalCaseName(titleProperty.Name)});");
         }
 
         public void WriteListView(IndentedTextWriter indentWriter, EntityInformation info)
@@ -95,7 +95,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.Indent++;
 
             indentWriter.WriteLine("row.AddField(x => x.Id.ToString()).SetName(\"Id\");");
-            indentWriter.WriteLine($"row.AddField(x => x.{titleProperty.Name});");
+            indentWriter.WriteLine($"row.AddField(x => x.{ValidPascalCaseName(titleProperty.Name)});");
             indentWriter.WriteLine("row.AddDefaultButton(DefaultButtonType.Edit);");
             indentWriter.WriteLine("row.AddDefaultButton(DefaultButtonType.Delete);");
 

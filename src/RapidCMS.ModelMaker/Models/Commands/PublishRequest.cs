@@ -1,5 +1,4 @@
 ﻿using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.ModelMaker.Abstractions.Entities;
 
 namespace RapidCMS.ModelMaker.Models.Commands
 {
