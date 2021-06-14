@@ -28,10 +28,11 @@ namespace RapidCMS.ModelMaker
             Action<IModelMakerConfig>? configure = null)
         {
             // TODO:
-            // - 3.9.3-preview: after implementing basic ModelEntity generation
-            // - 3.9.4-preview: improved generation
-            // - 3.9.5-preview: improved validation
-            // - 3.9.6-preview: after implementing configurable sub collections + alias working
+            // - 4.0.0-preview: after implementing basic ModelEntity generation
+            // - 4.0.1-preview: improved generation
+            // - 4.0.2-preview: improved validation
+            // - 4.0.3-preview: after implementing configurable sub collections + alias working
+            // - 4.0.x-preview: finish other milestone tickets
             // - 4.0.0: after implementing complete DbContext generation by configured code
 
             // general TODO:

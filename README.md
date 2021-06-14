@@ -1,6 +1,7 @@
 # RapidCMS
 
 [![#](https://img.shields.io/nuget/v/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
+[![#](https://img.shields.io/nuget/vpre/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
 
 RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS
 purely from code. It provides a basic set of editors and controls, next to allowing you to build your own razor components

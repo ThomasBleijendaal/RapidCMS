@@ -4,8 +4,8 @@
     <TargetFramework>net5.0</TargetFramework>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
-    
-    <Version>3.9.2-preview</Version>
+
+    <Version>4.0.0-preview</Version>
 
     <Authors>Thomas Bleijendaal</Authors>
     <Company>Thomas Bleijendaal</Company>
