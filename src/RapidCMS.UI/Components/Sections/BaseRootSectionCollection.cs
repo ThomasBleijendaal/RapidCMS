@@ -213,11 +213,14 @@ namespace RapidCMS.UI.Components.Sections
                     Related = CurrentState.Related
                 };
 
-                var command = CurrentState.UsageType.HasFlag(UsageType.Edit)
-                    ? (ViewCommandResponseModel)await InteractionService.InteractAsync<PersistEntitiesRequestModel, ListEditorCommandResponseModel>(request, CurrentViewState)
-                    : (ViewCommandResponseModel)await InteractionService.InteractAsync<PersistEntitiesRequestModel, ListViewCommandResponseModel>(request, CurrentViewState);
-
-                await HandleViewCommandAsync(command);
+                if (CurrentState.UsageType.HasFlag(UsageType.Edit))
+                {
+                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListEditorCommandResponseModel>(request, CurrentViewState));
+                }
+                else
+                {
+                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListViewCommandResponseModel>(request, CurrentViewState));
+                }
             }
             catch (Exception ex)
             {
@@ -229,22 +232,25 @@ namespace RapidCMS.UI.Components.Sections
         {
             try
             {
-                var command = (CurrentState.Related != null)
-                    ? await InteractionService.InteractAsync<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistRelatedEntityRequestModel
+                if (CurrentState.Related != null)
+                {
+                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistRelatedEntityRequestModel
                     {
                         ActionId = args.ViewModel.ButtonId,
                         CustomData = args.Data,
                         EditContext = args.EditContext,
                         Related = CurrentState.Related
-                    }, CurrentViewState)
-                    : await InteractionService.InteractAsync<PersistEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistEntityRequestModel
+                    }, CurrentViewState));
+                }
+                else
+                {
+                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistEntityRequestModel
                     {
                         ActionId = args.ViewModel.ButtonId,
                         CustomData = args.Data,
                         EditContext = args.EditContext,
-                    }, CurrentViewState);
-
-                await HandleViewCommandAsync(command);
+                    }, CurrentViewState));
+                }
             }
             catch (Exception ex)
             {

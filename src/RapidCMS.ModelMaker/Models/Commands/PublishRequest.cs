@@ -1,9 +1,10 @@
-﻿using RapidCMS.ModelMaker.Abstractions.Entities;
+﻿using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.ModelMaker.Abstractions.Entities;
 
 namespace RapidCMS.ModelMaker.Models.Commands
 {
     public class PublishRequest<TEntity>
-        where TEntity : IModelMakerEntity
+        where TEntity : IEntity
     {
         public PublishRequest(TEntity entity)
         {

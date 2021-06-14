@@ -1,9 +1,9 @@
-﻿using RapidCMS.ModelMaker.Abstractions.Entities;
+﻿using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.ModelMaker.Models.Commands
 {
     public class InsertRequest<TEntity>
-        where TEntity : IModelMakerEntity
+        where TEntity : IEntity
     {
         public InsertRequest(TEntity entity)
         {

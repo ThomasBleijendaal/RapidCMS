@@ -1,9 +1,10 @@
 ﻿using System;
-using RapidCMS.ModelMaker.Enums;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.UI.PublishableEntity.Enums;
 
-namespace RapidCMS.ModelMaker.Abstractions.Entities
+namespace RapidCMS.UI.PublishableEntity.Abstractions
 {
-    public interface IPublishableModelMakerEntity : IModelMakerEntity
+    public interface IPublishableModelMakerEntity : IEntity
     {
         PublishState State { get; set; }
 

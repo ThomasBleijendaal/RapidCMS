@@ -1,17 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Forms.Validation;
-using RapidCMS.ModelMaker.Abstractions.Entities;
 
 namespace RapidCMS.ModelMaker.Models.Entities
 {
-    public class PropertyModel : IModelMakerEntity
+    public class PropertyModel : IEntity
     {
         public string? Id { get; set; }
-
-        [Required]
-        [MinLength(1)]
-        public string Alias { get; set; } = default!;
 
         [Required]
         [MinLength(1)]

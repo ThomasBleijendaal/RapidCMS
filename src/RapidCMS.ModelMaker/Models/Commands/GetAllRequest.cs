@@ -1,16 +1,12 @@
-﻿using System;
-using RapidCMS.ModelMaker.Abstractions.Entities;
+﻿using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.ModelMaker.Models.Commands
 {
     public class GetAllRequest<TEntity>
-        where TEntity : IModelMakerEntity
+        where TEntity : IEntity
     {
-        public GetAllRequest(string? alias)
+        public GetAllRequest()
         {
-            Alias = alias;
         }
-
-        public string? Alias { get; private set; }
     }
 }

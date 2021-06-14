@@ -177,6 +177,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                             ParentPath = parentPath,
                             Related = request.Related
                         });
+                        response.NoOp = true;
                     }
                     break;
 
@@ -207,6 +208,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                             VariantAlias = collection.EntityVariant.Alias,
                             Id = parentId
                         });
+                        response.NoOp = true;
                     }
                     break;
 

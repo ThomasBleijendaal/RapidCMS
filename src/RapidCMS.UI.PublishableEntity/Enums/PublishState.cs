@@ -1,4 +1,4 @@
-﻿namespace RapidCMS.ModelMaker.Enums
+﻿namespace RapidCMS.UI.PublishableEntity.Enums
 {
     public enum PublishState
     {

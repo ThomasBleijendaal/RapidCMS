@@ -1,26 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using RapidCMS.ModelMaker.Abstractions.Entities;
-using RapidCMS.ModelMaker.Enums;
+using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.ModelMaker.Models.Entities
 {
-    public class ModelEntity : IPublishableModelMakerEntity
+    public class ModelEntity : IEntity
     {
-        public string? Id
-        {
-            get => Alias;
-            set => Alias = value ?? string.Empty;
-        }
+        public string? Id { get; set; }
 
-        public string Alias { get; set; } = default!;
         public string? ParentId { get; set; } = default!;
-        public PublishState State { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime PublishedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-
+        
         [Required]
         [MinLength(1)]
         public string Name { get; set; } = default!;

@@ -95,7 +95,7 @@ namespace RapidCMS.Core.Providers
             {
                 _relatedIds = objectCollection.ToList();
             }
-            else if (data is IEnumerable enumerable)
+            else if (data is IEnumerable enumerable && data is not string)
             {
                 var list = new List<object>();
                 foreach (var element in enumerable)

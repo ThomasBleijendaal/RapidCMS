@@ -33,6 +33,8 @@ namespace RapidCMS.UI.Components.Sections
         [Parameter] public bool IsRoot { get; set; }
         [Parameter] public PageStateModel InitialState { get; set; } = default!;
 
+        protected int Update { get; set; } = 0;
+
         protected bool StateIsChanging { get; set; } = false;
 
         protected PageStateModel CurrentState => PageState.GetCurrentState()!;
@@ -45,11 +47,14 @@ namespace RapidCMS.UI.Components.Sections
 
         private CancellationTokenSource _loadCancellationTokenSource = new CancellationTokenSource();
 
-        protected async Task HandleViewCommandAsync(ViewCommandResponseModel response)
+        protected async Task HandleViewCommandAsync<TViewCommandResponseModel>(Func<Task<TViewCommandResponseModel>> viewCommand)
+            where TViewCommandResponseModel : ViewCommandResponseModel
         {
             try
             {
                 StateIsChanging = true;
+
+                var response = await viewCommand.Invoke();
 
                 if (response.NoOp)
                 {
@@ -105,6 +110,8 @@ namespace RapidCMS.UI.Components.Sections
 
         private async Task LoadDataAsync(IEnumerable<string>? entityIds = null)
         {
+            Update++;
+
             CancelLoadAndRestart();
 
             if (CurrentState?.PageType == PageType.Node)
@@ -129,14 +136,13 @@ namespace RapidCMS.UI.Components.Sections
         {
             if (CurrentState == null || 
                 CurrentState.CollectionAlias == null || 
-                // TODO: really test this removal !CurrentState.UsageType.HasFlag(UsageType.View) || 
                 args.CollectionAlias != CurrentState.CollectionAlias ||
                 StateIsChanging)
             {
                 return;
             }
 
-            await InvokeAsync(async () => await LoadDataAsync());
+            await InvokeAsync(() => LoadDataAsync());
         }
 
         private async Task OnExceptionAsync(object sender, ExceptionEventArgs args)
@@ -190,9 +196,9 @@ namespace RapidCMS.UI.Components.Sections
 
         private void CancelLoadAndRestart()
         {
-            //var currentSource = _loadCancellationTokenSource;
-            //_loadCancellationTokenSource = new CancellationTokenSource();
-            //currentSource.Cancel();
+            var currentSource = _loadCancellationTokenSource;
+            _loadCancellationTokenSource = new CancellationTokenSource();
+            currentSource.Cancel();
         }
     }
 }

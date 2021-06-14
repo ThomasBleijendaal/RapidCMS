@@ -26,6 +26,7 @@ namespace RapidCMS.Core.Services.Tree
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IAuthService _authService;
         private readonly IParentService _parentService;
+        private readonly IConcurrencyService _concurrencyService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public TreeService(
@@ -36,6 +37,7 @@ namespace RapidCMS.Core.Services.Tree
             IRepositoryResolver repositoryResolver,
             IAuthService authService,
             IParentService parentService,
+            IConcurrencyService concurrencyService,
             IHttpContextAccessor httpContextAccessor)
         {
             _collectionResolver = collectionResolver;
@@ -45,6 +47,7 @@ namespace RapidCMS.Core.Services.Tree
             _repositoryResolver = repositoryResolver;
             _authService = authService;
             _parentService = parentService;
+            _concurrencyService = concurrencyService;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -63,10 +66,11 @@ namespace RapidCMS.Core.Services.Tree
             var isListView = collection.ListView != null;
             var isDetails = collection.UsageType.HasFlag(UsageType.Details) && parent?.Entity != null;
 
-            var entity = isList
-                ? await _repositoryResolver.GetRepository(collection).NewAsync(new ViewContext(collection.Alias, parent), collection.EntityVariant.Type)
-                : await _repositoryResolver.GetRepository(collection).GetByIdAsync(parent!.Entity.Id!, new ViewContext(collection.Alias, parent))
-                    ?? throw new InvalidOperationException($"Failed to get detail entity for given alias ({alias}) -- a detail entity should always exist.");
+            var respository = _repositoryResolver.GetRepository(collection);
+            var entity = await _concurrencyService.EnsureCorrectConcurrencyAsync(async () => isList
+                ? await respository.NewAsync(new ViewContext(collection.Alias, parent), collection.EntityVariant.Type)
+                : await respository.GetByIdAsync(parent!.Entity.Id!, new ViewContext(collection.Alias, parent))
+                    ?? throw new InvalidOperationException($"Failed to get detail entity for given alias ({alias}) -- a detail entity should always exist."));
 
             var canEdit = (isList && isListEditor && await _authService.IsUserAuthorizedAsync(Operations.Update, entity)) || 
                 (isDetails && await _authService.IsUserAuthorizedAsync(Operations.Update, parent!.Entity));
@@ -158,7 +162,8 @@ namespace RapidCMS.Core.Services.Tree
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
             {
                 var query = Query.Create(pageSize, pageNr, default, default);
-                var entities = await _repositoryResolver.GetRepository(collection).GetAllAsync(new ViewContext(collection.Alias, parent), query);
+                var respository = _repositoryResolver.GetRepository(collection);
+                var entities = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => respository.GetAllAsync(new ViewContext(collection.Alias, parent), query));
 
                 var list = await entities.SelectNotNullAsync(async entity =>
                 {
