@@ -1,11 +1,12 @@
 {
   "$type": "RapidCMS.ModelMaker.Models.Entities.ModelEntity, RapidCMS.ModelMaker",
-  "Id": "category",
+  "Id": "categories",
   "ParentId": null,
   "Name": "Category",
+  "PluralName": "Categories",
   "IconColor": "RedOrange10",
   "Icon": "Tag",
-  "Alias": "category",
+  "Alias": "categories",
   "Output": "Repository",
   "Properties": {
     "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker]], System.Private.CoreLib",

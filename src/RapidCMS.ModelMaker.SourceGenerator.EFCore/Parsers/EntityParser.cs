@@ -22,7 +22,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
             if (entity.Value<string>("Name") is string entityName)
             {
-                info.HasName(entityName);
+                info.HasName(entityName, entity.Value<string>("PluralName"));
             }
 
             if (entity.Value<string>("Alias") is string alias)

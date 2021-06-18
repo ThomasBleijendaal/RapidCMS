@@ -1,11 +1,12 @@
 {
   "$type": "RapidCMS.ModelMaker.Models.Entities.ModelEntity, RapidCMS.ModelMaker",
-  "Id": "blog",
+  "Id": "blogs",
   "ParentId": null,
   "Name": "Blog",
+  "PluralName": "Blogs",
   "IconColor": "Cyan30",
   "Icon": "Blog",
-  "Alias": "blog",
+  "Alias": "blogs",
   "Output": "Entity, Collection, Repository, Context",
   "Properties": {
     "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
@@ -223,10 +224,10 @@
               "DataCollectionExpression": null,
               "Config": {
                 "$type": "RapidCMS.ModelMaker.Validation.Config.LinkedEntityValidationConfig, RapidCMS.ModelMaker",
-                "LinkedEntityCollectionAlias": "category",
+                "LinkedEntityCollectionAlias": "categories",
                 "IsEnabled": true,
                 "AlwaysIncluded": false,
-                "RelatedCollectionAlias": "category",
+                "RelatedCollectionAlias": "categories",
                 "ValidationAttributeExpression": null,
                 "DataCollectionExpression": null
               }
@@ -260,10 +261,10 @@
               "DataCollectionExpression": null,
               "Config": {
                 "$type": "RapidCMS.ModelMaker.Validation.Config.LinkedEntitiesValidationConfig, RapidCMS.ModelMaker",
-                "LinkedEntitiesCollectionAlias": "category",
+                "LinkedEntitiesCollectionAlias": "categories",
                 "IsEnabled": true,
                 "AlwaysIncluded": false,
-                "RelatedCollectionAlias": "category",
+                "RelatedCollectionAlias": "categories",
                 "ValidationAttributeExpression": null,
                 "DataCollectionExpression": null
               }

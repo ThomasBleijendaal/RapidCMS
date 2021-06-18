@@ -41,14 +41,14 @@ namespace RapidCMS.ModelMaker
             var entity = await GetByIdAsync(id, parent);
             if (entity != null)
             {
-                _dbContext.Blog.Remove(entity);
+                _dbContext.Blogs.Remove(entity);
                 await _dbContext.SaveChangesAsync();
             }
         }
 
         public override async Task<IEnumerable<Blog>> GetAllAsync(IParent? parent, IQuery<Blog> query)
         {
-            return await query.ApplyOrder(query.ApplyDataView(_dbContext.Blog))
+            return await query.ApplyOrder(query.ApplyDataView(_dbContext.Blogs))
                 .Skip(query.Skip)
                 .Take(query.Take)
                 .ToListAsync();
@@ -58,7 +58,7 @@ namespace RapidCMS.ModelMaker
         {
             if (int.TryParse(id, out var intId))
             {
-                return await _dbContext.Blog.Include(x => x.Categories).FirstOrDefaultAsync(x => x.Id == intId);
+                return await _dbContext.Blogs.Include(x => x.Categories).FirstOrDefaultAsync(x => x.Id == intId);
             }
             return default;
         }
@@ -73,7 +73,7 @@ namespace RapidCMS.ModelMaker
             entity.Categories.Clear();
             categories?.ForEach(id => entity.Categories.Add(new Category { Id = id }));
 
-            var entry = _dbContext.Blog.Add(entity);
+            var entry = _dbContext.Blogs.Add(entity);
             await _dbContext.SaveChangesAsync();
             return entry.Entity;
         }
@@ -94,7 +94,7 @@ namespace RapidCMS.ModelMaker
             var itemsToRemove = entity.Categories.Where(x => !selectedIds.Contains(x.Id)).ToList();
             var idsToAdd = selectedIds.Except(existingIds).ToList();
 
-            var itemsToAdd = await _dbContext.Category.Where(x => idsToAdd.Contains(x.Id)).ToListAsync();
+            var itemsToAdd = await _dbContext.Categories.Where(x => idsToAdd.Contains(x.Id)).ToListAsync();
             
             foreach (var itemToRemove in itemsToRemove)
             {

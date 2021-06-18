@@ -63,7 +63,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.WriteLine("var entity = await GetByIdAsync(id, parent);");
             indentWriter.WriteLine("if (entity != null)");
             WriteOpeningBracket(indentWriter);
-            indentWriter.WriteLine($"_dbContext.{info.Name}.Remove(entity);");
+            indentWriter.WriteLine($"_dbContext.{info.PluralName}.Remove(entity);");
             indentWriter.WriteLine("await _dbContext.SaveChangesAsync();");
             WriteClosingBracket(indentWriter);
             WriteClosingBracket(indentWriter);
@@ -74,7 +74,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.WriteLine();
             indentWriter.WriteLine($"public override async Task<IEnumerable<{info.Name}>> GetAllAsync(IParent? parent, IQuery<{info.Name}> query)");
             WriteOpeningBracket(indentWriter);
-            indentWriter.WriteLine($"return await query.ApplyOrder(query.ApplyDataView(_dbContext.{info.Name}))");
+            indentWriter.WriteLine($"return await query.ApplyOrder(query.ApplyDataView(_dbContext.{info.PluralName}))");
             indentWriter.Indent++;
             indentWriter.WriteLine(".Skip(query.Skip)");
             indentWriter.WriteLine(".Take(query.Take)");
@@ -90,7 +90,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             WriteOpeningBracket(indentWriter);
             indentWriter.WriteLine("if (int.TryParse(id, out var intId))");
             WriteOpeningBracket(indentWriter);
-            indentWriter.WriteLine($"return await _dbContext.{info.Name}.FirstOrDefaultAsync(x => x.Id == intId);");
+            indentWriter.WriteLine($"return await _dbContext.{info.PluralName}.FirstOrDefaultAsync(x => x.Id == intId);");
             WriteClosingBracket(indentWriter);
             indentWriter.WriteLine("return default;");
             WriteClosingBracket(indentWriter);
@@ -101,7 +101,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.WriteLine();
             indentWriter.WriteLine($"public override async Task<{info.Name}?> InsertAsync(IEditContext<{info.Name}> editContext)");
             WriteOpeningBracket(indentWriter);
-            indentWriter.WriteLine($"var entry = _dbContext.{info.Name}.Add(editContext.Entity);");
+            indentWriter.WriteLine($"var entry = _dbContext.{info.PluralName}.Add(editContext.Entity);");
             indentWriter.WriteLine("await _dbContext.SaveChangesAsync();");
             indentWriter.WriteLine("return entry.Entity;");
             WriteClosingBracket(indentWriter);

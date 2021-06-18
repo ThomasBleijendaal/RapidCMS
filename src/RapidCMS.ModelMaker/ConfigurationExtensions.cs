@@ -39,7 +39,7 @@ namespace RapidCMS.ModelMaker
             // v move IPublishableEntity features to a separate UI package (it's not for ModelMaker anymore)
             // - implement complex validation like the old IValidator using validation pipeline + generated validators -- attribute validation is not enough for modelmakermade models
             // v configure collection icon + color
-            // - configure single and plural name of collection
+            // v configure single and plural name of collection
             // v configure nice names for properties
             // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
             // v configure what goes on the list view

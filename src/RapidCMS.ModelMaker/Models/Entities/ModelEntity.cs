@@ -18,6 +18,10 @@ namespace RapidCMS.ModelMaker.Models.Entities
         [MinLength(1)]
         public string Name { get; set; } = default!;
 
+        [Required]
+        [MinLength(1)]
+        public string PluralName { get; set; } = default!;
+
         [JsonConverter(typeof(StringEnumConverter))]
         public Color IconColor { get; set; } = Color.Gray40;
 

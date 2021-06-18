@@ -70,7 +70,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
         public void WriteDbSet(IndentedTextWriter indentWriter, EntityInformation info)
         {
             indentWriter.WriteLine();
-            indentWriter.WriteLine($"public DbSet<{info.Name}> {info.Name} {{ get; set; }} = default!;");
+            indentWriter.WriteLine($"public DbSet<{info.Name}> {info.PluralName} {{ get; set; }} = default!;");
         }
     }
 }

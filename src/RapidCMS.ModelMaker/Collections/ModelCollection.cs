@@ -29,6 +29,7 @@ namespace RapidCMS.ModelMaker.Collections
                         view.AddRow(row =>
                         {
                             row.AddField(x => x.Name);
+                            row.AddField(x => x.PluralName).SetName("Plural name");
 
                             row.AddDefaultButton(DefaultButtonType.Edit);
                         });
@@ -44,6 +45,9 @@ namespace RapidCMS.ModelMaker.Collections
                             section.AddDefaultButton(DefaultButtonType.Delete);
 
                             section.AddField(x => x.Name);
+
+                            section.AddField(x => x.PluralName)
+                                .SetName("Plural name");
 
                             section.AddField(x => x.IconColor)
                                 .SetDetails(new MarkupString("See Shared Colors at <a href=\"https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/shared\">https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/shared</a>."))

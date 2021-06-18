@@ -62,10 +62,10 @@ namespace RapidCMS.ModelMaker
         public static void AddCategoryCollection(this ICmsConfig config)
         {
             config.AddCollection<Category, BaseRepository<Category>>(
-                ""category"",
+                ""categories"",
                 ""Tag"",
                 ""RedOrange10"",
-                ""Category"",
+                ""Categories"",
                 collection =>
                 {
                     collection.SetTreeView(x => x.Name);
@@ -140,14 +140,14 @@ namespace RapidCMS.ModelMaker
             var entity = await GetByIdAsync(id, parent);
             if (entity != null)
             {
-                _dbContext.Category.Remove(entity);
+                _dbContext.Categories.Remove(entity);
                 await _dbContext.SaveChangesAsync();
             }
         }
         
         public override async Task<IEnumerable<Category>> GetAllAsync(IParent? parent, IQuery<Category> query)
         {
-            return await query.ApplyOrder(query.ApplyDataView(_dbContext.Category))
+            return await query.ApplyOrder(query.ApplyDataView(_dbContext.Categories))
                 .Skip(query.Skip)
                 .Take(query.Take)
                 .ToListAsync();
@@ -157,14 +157,14 @@ namespace RapidCMS.ModelMaker
         {
             if (int.TryParse(id, out var intId))
             {
-                return await _dbContext.Category.FirstOrDefaultAsync(x => x.Id == intId);
+                return await _dbContext.Categories.FirstOrDefaultAsync(x => x.Id == intId);
             }
             return default;
         }
         
         public override async Task<Category?> InsertAsync(IEditContext<Category> editContext)
         {
-            var entry = _dbContext.Category.Add(editContext.Entity);
+            var entry = _dbContext.Categories.Add(editContext.Entity);
             await _dbContext.SaveChangesAsync();
             return entry.Entity;
         }

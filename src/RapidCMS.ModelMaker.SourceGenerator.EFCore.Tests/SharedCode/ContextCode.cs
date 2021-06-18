@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests.SharedCode
+﻿namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests.SharedCode
 {
     public static class ContextCode
     {
@@ -27,9 +23,9 @@ namespace RapidCMS.ModelMaker
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
         }
         
-        public DbSet<Blog> Blog { get; set; } = default!;
+        public DbSet<Blog> Blogs { get; set; } = default!;
         
-        public DbSet<Category> Category { get; set; } = default!;
+        public DbSet<Category> Categories { get; set; } = default!;
     }
 }
 ";
@@ -54,7 +50,7 @@ namespace RapidCMS.ModelMaker
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
         }
         
-        public DbSet<Category> Category { get; set; } = default!;
+        public DbSet<Category> Categories { get; set; } = default!;
     }
 }
 ";

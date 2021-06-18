@@ -66,7 +66,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.WriteLine($"\"{info.Alias}\",");
             indentWriter.WriteLine($"\"{info.Icon ?? "Database"}\",");
             indentWriter.WriteLine($"\"{info.IconColor ?? "Gray40"}\",");
-            indentWriter.WriteLine($"\"{info.Name}\",");
+            indentWriter.WriteLine($"\"{info.PluralName}\",");
             indentWriter.WriteLine("collection =>");
             indentWriter.WriteLine("{");
             indentWriter.Indent++;

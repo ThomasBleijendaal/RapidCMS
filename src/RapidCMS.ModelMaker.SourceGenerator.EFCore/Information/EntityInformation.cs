@@ -27,10 +27,12 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
         }
 
         public string? Name { get; private set; }
+        public string? PluralName { get; private set; }
 
-        public EntityInformation HasName(string name)
+        public EntityInformation HasName(string name, string? pluralName)
         {
             Name = name;
+            PluralName = pluralName ?? name;
             return this;
         }
 
