@@ -69,28 +69,12 @@ namespace RapidCMS.UI.Extensions
             }
             else if (field is PropertyFieldUI propertyField)
             {
-                var editorType = propertyField.Type switch
-                {
-                    EditorType.Readonly => typeof(ReadonlyEditor),
-                    EditorType.Numeric => typeof(NumericEditor),
-                    EditorType.Checkbox => typeof(CheckboxEditor),
-                    EditorType.Date => typeof(DateEditor),
-                    EditorType.TextArea => typeof(TextAreaEditor),
-                    EditorType.TextBox => typeof(TextBoxEditor),
-                    EditorType.Select => typeof(SelectEditor),
-                    EditorType.MultiSelect => typeof(MultiSelectEditor),
-                    EditorType.Dropdown => typeof(DropdownEditor),
-                    EditorType.ListEditor => typeof(ListEditor),
-                    EditorType.EntityPicker => typeof(EntityPickerEditor),
-                    EditorType.EntitiesPicker => typeof(EntitiesPickerEditor),
-                    EditorType.ModelEditor => typeof(ModelEditor),
-                    _ => null
-                };
-
+                var editorType = propertyField.Type.GetEditor();
                 if (editorType == null)
                 {
                     return null;
                 }
+
                 return builder =>
                 {
                     builder.OpenComponent(0, editorType);

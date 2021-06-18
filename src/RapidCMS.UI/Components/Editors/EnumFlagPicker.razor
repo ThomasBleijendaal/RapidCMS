@@ -1,0 +1,96 @@
+﻿@inherits BaseDataEditor
+@attribute [Relation(RelationType.One)]
+
+@if (Options != null)
+{
+    var index = 0;
+
+    <div class="form-control form-control-select-list @(CssHelper.GetValidationClass(State))">
+        @foreach (var option in Options)
+        {
+            index++;
+
+            var value = (int)option.Id;
+            var check = SelectedOptions.Contains(value);
+
+            <div class="form-check form-check-inline">
+                <label class="form-check-label row" for="@group-option@(index)">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           value=@option.Id
+                           id="@group-option@(index)"
+                           name=@group
+                           checked=@check
+                           disabled=@IsDisabled
+                           @onchange=@((ChangeEventArgs __e) => OnChangeAsync(__e, (int)value)) />
+                    @option.Labels.First()
+                </label>
+            </div>
+        }
+    </div>
+
+    @foreach (var message in GetValidationMessages())
+    {
+        <div class="invalid-feedback">
+            @message
+        </div>
+    }
+}
+
+@code {
+    private string group = Guid.NewGuid().ToString().Replace("-", "");
+
+    private IEnumerable<IElement>? Options;
+    private List<int> SelectedOptions = new List<int>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (DataCollection != null)
+        {
+            if (!DataCollection.GetType().IsGenericType ||
+                DataCollection.GetType().GetGenericTypeDefinition() != typeof(RapidCMS.Core.Providers.EnumDataProvider<>))
+            {
+                throw new InvalidOperationException($"{nameof(EnumFlagPicker)} needs an {nameof(EnumDataProvider<Enum>)}.");
+            }
+
+            await DataCollection.SetEntityAsync(EditContext, Parent);
+            await UpdateOptionsAsync();
+
+            var value = (Enum)GetValueAsObject();
+
+            SelectedOptions = Enum.GetValues(Property.PropertyType)
+                .OfType<Enum>()
+                .Where(e => value.HasFlag(e))
+                .Select(e => (int?)Convert.ChangeType(e, TypeCode.Int32))
+                .Where(e => e.HasValue)
+                .Select(e => e.Value)
+                .ToList();
+        }
+    }
+
+    private async Task UpdateOptionsAsync()
+    {
+        if (DataCollection == null)
+        {
+            return;
+        }
+
+        Options = await DataCollection.GetAvailableElementsAsync(Query.Default());
+    }
+
+    private void OnChangeAsync(ChangeEventArgs e, int value)
+    {
+        if (SelectedOptions.Contains(value))
+        {
+            SelectedOptions.Remove(value);
+        }
+        else
+        {
+            SelectedOptions.Add(value);
+        }
+
+        SetValueFromObject(SelectedOptions.Sum());
+
+        EditContext.NotifyPropertyChanged(Property);
+    }
+}

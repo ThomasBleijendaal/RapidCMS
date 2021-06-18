@@ -1,5 +1,6 @@
 ﻿using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
@@ -65,6 +66,9 @@ namespace RapidCMS.Example.Shared.Collections
 
                                 section.AddField(x => x.Name);
                                 section.AddField(x => x.StartDate).SetType(EditorType.Date);
+
+                                // this field uses the EnumFlagPicker, which will set or unset flags of the Role enum
+                                section.AddField(x => x.Role).SetType(EditorType.EnumFlagPicker).SetDataCollection<EnumDataProvider<User.UserRole>>();
 
                                 // this field uses a custom editor, which must inherit BaseEditor
                                 section.AddField(x => x.Password).SetType(typeof(PasswordEditor));

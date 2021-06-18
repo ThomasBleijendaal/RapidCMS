@@ -491,6 +491,14 @@ textarea.form-control {
         padding-left: .25rem;
     }
 
+    .form-check.form-check-inline {
+        padding: .25rem 1rem .25rem 0;
+    }
+    .form-check.form-check-inline .form-check-input {
+        margin-top: .3rem;
+        margin-left: -.25rem;
+    }
+
 pre.col-form-label {
     height: auto !important;
 }

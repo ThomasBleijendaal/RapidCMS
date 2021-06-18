@@ -24,6 +24,8 @@ namespace RapidCMS.Example.Shared.Data
         public int Integer { get; set; }
         public double Double { get; set; }
 
+        public UserRole Role { get; set; }
+
         string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? "0"); }
 
         public object Clone()
@@ -37,8 +39,18 @@ namespace RapidCMS.Example.Shared.Data
                 FileBase64 = FileBase64,
                 ProfilePictureBase64 = ProfilePictureBase64,
                 Integer = Integer,
-                StartDate = StartDate
+                StartDate = StartDate,
+                Role = Role
             };
+        }
+
+        [Flags]
+        public enum UserRole
+        {
+            Viewer = 1,
+            Editor = 2,
+            Publisher = 4,
+            Admin = 8
         }
     }
 }
