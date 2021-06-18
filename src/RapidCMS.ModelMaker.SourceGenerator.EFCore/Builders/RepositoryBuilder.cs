@@ -1,4 +1,5 @@
 ﻿using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,6 +35,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             WriteNewAsync(indentWriter, info);
             WriteUpdateAsync(indentWriter, info);
 
+            foreach (var relatedProperty in info.Properties.Where(x => x.RelatedToManyEntities))
+            {
+                WriteHandleRelationMethod(indentWriter, info, relatedProperty);
+            }
+
             WriteClosingBracket(indentWriter);
 
             WriteClosingBracket(indentWriter);
@@ -60,11 +66,14 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.WriteLine();
             indentWriter.WriteLine("public override async Task DeleteAsync(string id, IParent? parent)");
             WriteOpeningBracket(indentWriter);
-            indentWriter.WriteLine("var entity = await GetByIdAsync(id, parent);");
+            indentWriter.WriteLine("if (int.TryParse(id, out var intId))");
+            WriteOpeningBracket(indentWriter);
+            indentWriter.WriteLine($"var entity = await _dbContext.{info.PluralName}{GetIncludes(info)}.FirstOrDefaultAsync(x => x.Id == intId);");
             indentWriter.WriteLine("if (entity != null)");
             WriteOpeningBracket(indentWriter);
             indentWriter.WriteLine($"_dbContext.{info.PluralName}.Remove(entity);");
             indentWriter.WriteLine("await _dbContext.SaveChangesAsync();");
+            WriteClosingBracket(indentWriter);
             WriteClosingBracket(indentWriter);
             WriteClosingBracket(indentWriter);
         }
@@ -74,12 +83,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.WriteLine();
             indentWriter.WriteLine($"public override async Task<IEnumerable<{info.Name}>> GetAllAsync(IParent? parent, IQuery<{info.Name}> query)");
             WriteOpeningBracket(indentWriter);
-            indentWriter.WriteLine($"return await query.ApplyOrder(query.ApplyDataView(_dbContext.{info.PluralName}))");
-            indentWriter.Indent++;
-            indentWriter.WriteLine(".Skip(query.Skip)");
-            indentWriter.WriteLine(".Take(query.Take)");
+            indentWriter.Write($"return await query.ApplyOrder(query.ApplyDataView(_dbContext.{info.PluralName}))");
+            indentWriter.Write(".Skip(query.Skip)");
+            indentWriter.Write(".Take(query.Take)");
+            indentWriter.Write(".AsNoTracking()");
             indentWriter.WriteLine(".ToListAsync();");
-            indentWriter.Indent--;
             WriteClosingBracket(indentWriter);
         }
 
@@ -90,7 +98,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             WriteOpeningBracket(indentWriter);
             indentWriter.WriteLine("if (int.TryParse(id, out var intId))");
             WriteOpeningBracket(indentWriter);
-            indentWriter.WriteLine($"return await _dbContext.{info.PluralName}.FirstOrDefaultAsync(x => x.Id == intId);");
+            indentWriter.WriteLine($"return await _dbContext.{info.PluralName}{GetIncludesAndAsNoTracking(info)}.FirstOrDefaultAsync(x => x.Id == intId);");
             WriteClosingBracket(indentWriter);
             indentWriter.WriteLine("return default;");
             WriteClosingBracket(indentWriter);
@@ -101,7 +109,10 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.WriteLine();
             indentWriter.WriteLine($"public override async Task<{info.Name}?> InsertAsync(IEditContext<{info.Name}> editContext)");
             WriteOpeningBracket(indentWriter);
-            indentWriter.WriteLine($"var entry = _dbContext.{info.PluralName}.Add(editContext.Entity);");
+            indentWriter.WriteLine("var entity = editContext.Entity;");
+            WriteHandleRelations(indentWriter, info);
+            indentWriter.WriteLine();
+            indentWriter.WriteLine($"var entry = _dbContext.{info.PluralName}.Add(entity);");
             indentWriter.WriteLine("await _dbContext.SaveChangesAsync();");
             indentWriter.WriteLine("return entry.Entity;");
             WriteClosingBracket(indentWriter);
@@ -121,8 +132,56 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.WriteLine();
             indentWriter.WriteLine($"public override async Task UpdateAsync(IEditContext<{info.Name}> editContext)");
             WriteOpeningBracket(indentWriter);
+            indentWriter.WriteLine($"var entity = await _dbContext.{info.PluralName}{GetIncludes(info)}.FirstAsync(x => x.Id == editContext.Entity.Id);");
+            WritePropertyMap(indentWriter, info);
+            WriteHandleRelations(indentWriter, info);
+            indentWriter.WriteLine();
             indentWriter.WriteLine("await _dbContext.SaveChangesAsync();");
             WriteClosingBracket(indentWriter);
+        }
+
+        private void WritePropertyMap(IndentedTextWriter indentWriter, EntityInformation info)
+        {
+            indentWriter.WriteLine();
+            foreach (var property in info.Properties.Where(x => !x.RelatedToManyEntities).OrderBy(x => x.Name))
+            {
+                if (property.RelatedToOneEntity)
+                {
+                    indentWriter.WriteLine($"entity.{ValidPascalCaseName(property.Name)}Id = editContext.Entity.{ValidPascalCaseName(property.Name)}Id;");
+                }
+                else
+                { 
+                    indentWriter.WriteLine($"entity.{ValidPascalCaseName(property.Name)} = editContext.Entity.{ValidPascalCaseName(property.Name)};");
+                }
+            }
+        }
+
+        private void WriteHandleRelations(IndentedTextWriter indentWriter, EntityInformation info)
+        {
+            indentWriter.WriteLine();
+            indentWriter.WriteLine("var relations = editContext.GetRelationContainer();");
+            foreach (var relatedProperty in info.Properties.Where(x => x.RelatedToManyEntities))
+            {
+                indentWriter.WriteLine($"await Handle{ValidPascalCaseName(relatedProperty.Name)}Async(entity, relations);");
+            }
+        }
+
+        private void WriteHandleRelationMethod(IndentedTextWriter indentWriter, EntityInformation entity, PropertyInformation property)
+        {
+
+        }
+
+        private string GetIncludesAndAsNoTracking(EntityInformation info)
+            => $"{string.Join("", GetAllIncludes(info))}.AsNoTracking()";
+        private string GetIncludes(EntityInformation info)
+            => $"{string.Join("", GetAllIncludes(info))}";
+
+        private IEnumerable<string> GetAllIncludes(EntityInformation info)
+        {
+            foreach (var property in info.Properties.Where(x => x.RelatedToManyEntities))
+            {
+                yield return $".Include(x => x.{property.Name})";
+            }
         }
     }
 }

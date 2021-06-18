@@ -38,27 +38,27 @@ namespace RapidCMS.ModelMaker
 
         public override async Task DeleteAsync(string id, IParent? parent)
         {
-            var entity = await GetByIdAsync(id, parent);
-            if (entity != null)
+            if (int.TryParse(id, out var intId))
             {
-                _dbContext.Blogs.Remove(entity);
-                await _dbContext.SaveChangesAsync();
+                var entity = await _dbContext.Blogs.Include(x => x.Categories).FirstOrDefaultAsync(x => x.Id == intId);
+                if (entity != null)
+                {
+                    _dbContext.Blogs.Remove(entity);
+                    await _dbContext.SaveChangesAsync();
+                }
             }
         }
 
         public override async Task<IEnumerable<Blog>> GetAllAsync(IParent? parent, IQuery<Blog> query)
         {
-            return await query.ApplyOrder(query.ApplyDataView(_dbContext.Blogs))
-                .Skip(query.Skip)
-                .Take(query.Take)
-                .ToListAsync();
+            return await query.ApplyOrder(query.ApplyDataView(_dbContext.Blogs)).Skip(query.Skip).Take(query.Take).AsNoTracking().ToListAsync();
         }
 
         public override async Task<Blog?> GetByIdAsync(string id, IParent? parent)
         {
             if (int.TryParse(id, out var intId))
             {
-                return await _dbContext.Blogs.Include(x => x.Categories).FirstOrDefaultAsync(x => x.Id == intId);
+                return await _dbContext.Blogs.Include(x => x.Categories).AsNoTracking().FirstOrDefaultAsync(x => x.Id == intId);
             }
             return default;
         }
@@ -68,10 +68,7 @@ namespace RapidCMS.ModelMaker
             var entity = editContext.Entity;
 
             var relations = editContext.GetRelationContainer();
-            var categories = relations.GetRelatedElementIdsFor<Category, int>();
-
-            entity.Categories.Clear();
-            categories?.ForEach(id => entity.Categories.Add(new Category { Id = id }));
+            await HandleCategoriesAsync(entity, relations);
 
             var entry = _dbContext.Blogs.Add(entity);
             await _dbContext.SaveChangesAsync();
@@ -87,25 +84,38 @@ namespace RapidCMS.ModelMaker
         {
             var entity = editContext.Entity;
 
-            var relations = editContext.GetRelationContainer();
-            var selectedIds = relations.GetRelatedElementIdsFor<Blog, ICollection<Category>, int>(x => x.Categories) ?? Enumerable.Empty<int>();
-            var existingIds = entity.Categories.Select(x => x.Id);
+            var dbEntity = await _dbContext.Blogs.Include(x => x.Categories).FirstAsync(x => x.Id == entity.Id);
 
-            var itemsToRemove = entity.Categories.Where(x => !selectedIds.Contains(x.Id)).ToList();
+            dbEntity.Content = entity.Content;
+            dbEntity.IsPublished = entity.IsPublished;
+            dbEntity.MainCategoryId = entity.MainCategoryId;
+            dbEntity.PublishDate = entity.PublishDate;
+            dbEntity.Title = entity.Title;
+
+            var relations = editContext.GetRelationContainer();
+            await HandleCategoriesAsync(dbEntity, relations);
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+        private async Task HandleCategoriesAsync(Blog dbEntity, IRelationContainer relations)
+        {
+            var selectedIds = relations.GetRelatedElementIdsFor<Blog, ICollection<Category>, int>(x => x.Categories) ?? Enumerable.Empty<int>();
+            var existingIds = dbEntity.Categories.Select(x => x.Id);
+
+            var itemsToRemove = dbEntity.Categories.Where(x => !selectedIds.Contains(x.Id)).ToList();
             var idsToAdd = selectedIds.Except(existingIds).ToList();
 
             var itemsToAdd = await _dbContext.Categories.Where(x => idsToAdd.Contains(x.Id)).ToListAsync();
-            
+
             foreach (var itemToRemove in itemsToRemove)
             {
-                entity.Categories.Remove(itemToRemove);
+                dbEntity.Categories.Remove(itemToRemove);
             }
             foreach (var itemToAdd in itemsToAdd)
             {
-                entity.Categories.Add(itemToAdd);
+                dbEntity.Categories.Add(itemToAdd);
             }
-
-            await _dbContext.SaveChangesAsync();
         }
     }
 }
@@ -183,8 +193,8 @@ namespace RapidCMS.Example.ModelMaker
             services.AddScoped<BaseRepository<Category>, CategoryRepository>();
 
             services.AddDbContext<ModelMakerDbContext>(
-                builder => builder.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString")), 
-                ServiceLifetime.Transient, 
+                builder => builder.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString")),
+                ServiceLifetime.Transient,
                 ServiceLifetime.Transient);
 
             services.AddRapidCMSServer(config =>
@@ -195,7 +205,7 @@ namespace RapidCMS.Example.ModelMaker
 
                 config.AddBlogCollection();
                 config.AddCategoryCollection();
-                
+
                 config.AddPersonCollection();
 
                 config.AddModelMakerPlugin();
