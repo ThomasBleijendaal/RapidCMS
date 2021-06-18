@@ -13,6 +13,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
         {
             _namespaces.Add((Use.Entity | Use.Repository, "RapidCMS.Core.Abstractions.Data"));
             _namespaces.Add((Use.Collection, "RapidCMS.Core.Abstractions.Config"));
+            _namespaces.Add((Use.Collection, "RapidCMS.Core.Extensions"));
             _namespaces.Add((Use.Collection, "RapidCMS.Core.Enums"));
             _namespaces.Add((Use.Collection, "RapidCMS.Core.Providers"));
             _namespaces.Add((Use.Collection | Use.Repository, "RapidCMS.Core.Repositories"));

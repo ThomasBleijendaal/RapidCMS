@@ -101,6 +101,10 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
             indentWriter.WriteLine("row.AddField(x => x.Id.ToString()).SetName(\"Id\");");
             indentWriter.WriteLine($"row.AddField(x => x.{ValidPascalCaseName(titleProperty.Name)});");
+            foreach (var listViewProperty in info.Properties.Where(x => x.IncludeInListView))
+            {
+                indentWriter.WriteLine($"row.AddField(x => x.{ValidPascalCaseName(listViewProperty.Name)} == null ? \"\" : x.{ValidPascalCaseName(listViewProperty.Name)}.ToString().Truncate(25)).SetName(\"{listViewProperty.Name}\");");
+            }
             indentWriter.WriteLine("row.AddDefaultButton(DefaultButtonType.Edit);");
             indentWriter.WriteLine("row.AddDefaultButton(DefaultButtonType.Delete);");
 

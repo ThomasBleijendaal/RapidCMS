@@ -15,6 +15,8 @@ namespace RapidCMS.ModelMaker.Models.Entities
 
         public bool IsTitle { get; set; }
 
+        public bool IncludeInListView { get; set; }
+
         public bool IsRequired { get; set; }
 
         [Required]

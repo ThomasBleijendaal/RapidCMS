@@ -47,9 +47,9 @@ namespace RapidCMS.ModelMaker
 }
 ";
 
-
         public const string Collection = @"using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
 

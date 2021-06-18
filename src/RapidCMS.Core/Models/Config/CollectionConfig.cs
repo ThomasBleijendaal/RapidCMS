@@ -264,6 +264,8 @@ namespace RapidCMS.Core.Models.Config
         {
             var configReceiver = new ReferencedCollectionConfig(Alias);
 
+            ParentAlias = Alias;
+
             _collections.Add(configReceiver);
 
             return this;

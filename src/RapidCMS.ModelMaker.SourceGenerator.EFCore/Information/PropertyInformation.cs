@@ -95,6 +95,15 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return this;
         }
 
+        public bool IncludeInListView { get; private set; }
+
+        public PropertyInformation ShouldBeDisplayedInListView(bool include)
+        {
+            IncludeInListView = include;
+
+            return this;
+        }
+
         public bool IsValid()
         {
             return !string.IsNullOrEmpty(Name) &&

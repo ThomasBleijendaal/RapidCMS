@@ -134,13 +134,19 @@ namespace RapidCMS.ModelMaker
         private async IAsyncEnumerable<IPaneSetup> PropertyPanesAsync()
         {
             var titleField = CreatePropertyField(EditorType.Checkbox,
-                3,
+                2,
                 "Use as entity title",
                 PropertyMetadataHelper.GetFullPropertyMetadata<PropertyModel, bool>(x => x.IsTitle));
 
             titleField.IsVisible = (m, s)
                 => m is PropertyModel property && !string.IsNullOrEmpty(property.PropertyAlias)
                     && (_config.GetProperty(property.PropertyAlias)?.UsableAsTitle ?? false);
+
+            // TODO: hide when collection is ListEditor
+            var listViewField = CreatePropertyField(EditorType.Checkbox,
+                3,
+                "Include in list view",
+                PropertyMetadataHelper.GetFullPropertyMetadata<PropertyModel, bool>(x => x.IncludeInListView));
 
             yield return
                 new PaneSetup(
@@ -167,6 +173,8 @@ namespace RapidCMS.ModelMaker
                             PropertyMetadataHelper.GetFullPropertyMetadata<PropertyModel, string?>(x => x.Name)),
 
                         titleField,
+
+                        listViewField,
 
                         CreatePropertyField(EditorType.Checkbox,
                             4,

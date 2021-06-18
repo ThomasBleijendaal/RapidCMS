@@ -35,6 +35,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                 info.IsTitle(title);
             }
 
+            if (property.Value<bool>("IncludeInListView") is bool include)
+            {
+                info.ShouldBeDisplayedInListView(include);
+            }
+
             var relatedCollectionAlias = default(string?);
             var dataCollectionExpression = default(string?);
 

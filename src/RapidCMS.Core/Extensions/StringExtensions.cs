@@ -196,5 +196,13 @@ namespace RapidCMS.Core.Extensions
             aliases = (default!, default!);
             return false;
         }
+
+        public static string Truncate(this string? input, int maxLength)
+            => input switch {
+                _ when maxLength - 2 <= 0 => "",
+                string shortInput when shortInput.Length < maxLength => shortInput,
+                string longInput when longInput.Length > maxLength - 2 => $"{longInput.Substring(0, maxLength - 2)}..",
+                _ => ""
+            };
     }
 }
