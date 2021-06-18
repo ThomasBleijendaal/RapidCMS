@@ -76,7 +76,7 @@ namespace RapidCMS.ModelMaker
                         view.AddRow(row =>
                         {
                             row.AddField(x => x.Id.ToString()).SetName(""Id"");
-                            row.AddField(x => x.Name);
+                            row.AddField(x => x.Name).SetName(""Name"");
                             row.AddDefaultButton(DefaultButtonType.Edit);
                             row.AddDefaultButton(DefaultButtonType.Delete);
                         });
@@ -88,7 +88,7 @@ namespace RapidCMS.ModelMaker
                         editor.AddDefaultButton(DefaultButtonType.SaveNew);
                         editor.AddSection(section =>
                         {
-                            section.AddField(x => x.Name).SetType(typeof(RapidCMS.UI.Components.Editors.TextBoxEditor));
+                            section.AddField(x => x.Name).SetType(typeof(RapidCMS.UI.Components.Editors.TextBoxEditor)).SetName(""Name"");
                         });
                     });
                 });

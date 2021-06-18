@@ -66,7 +66,7 @@ namespace RapidCMS.ModelMaker
                         view.AddRow(row =>
                         {
                             row.AddField(x => x.Id.ToString()).SetName(""Id"");
-                            row.AddField(x => x.Title);
+                            row.AddField(x => x.Title).SetName(""Title"");
                             row.AddField(x => x.Content == null ? """" : x.Content.ToString().Truncate(25)).SetName(""Content"");
                             row.AddDefaultButton(DefaultButtonType.Edit);
                             row.AddDefaultButton(DefaultButtonType.Delete);
@@ -79,12 +79,12 @@ namespace RapidCMS.ModelMaker
                         editor.AddDefaultButton(DefaultButtonType.SaveNew);
                         editor.AddSection(section =>
                         {
-                            section.AddField(x => x.Title).SetType(typeof(RapidCMS.UI.Components.Editors.TextBoxEditor));
-                            section.AddField(x => x.Content).SetType(typeof(RapidCMS.UI.Components.Editors.TextAreaEditor));
-                            section.AddField(x => x.IsPublished).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection(new RapidCMS.Core.Providers.FixedOptionsDataProvider(new (object, string)[] { (true, ""True""), (false, ""False"") }));
-                            section.AddField(x => x.PublishDate).SetType(typeof(RapidCMS.UI.Components.Editors.DateEditor));
-                            section.AddField(x => x.MainCategoryId).SetType(typeof(RapidCMS.UI.Components.Editors.EntityPicker)).SetCollectionRelation(""categories"");
-                            section.AddField(x => x.Categories).SetType(typeof(RapidCMS.UI.Components.Editors.EntitiesPicker)).SetCollectionRelation(""categories"");
+                            section.AddField(x => x.Title).SetType(typeof(RapidCMS.UI.Components.Editors.TextBoxEditor)).SetName(""Title"");
+                            section.AddField(x => x.Content).SetType(typeof(RapidCMS.UI.Components.Editors.TextAreaEditor)).SetName(""Content"");
+                            section.AddField(x => x.IsPublished).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection(new RapidCMS.Core.Providers.FixedOptionsDataProvider(new (object, string)[] { (true, ""True""), (false, ""False"") })).SetName(""Is Published"");
+                            section.AddField(x => x.PublishDate).SetType(typeof(RapidCMS.UI.Components.Editors.DateEditor)).SetName(""Publish Date"");
+                            section.AddField(x => x.MainCategoryId).SetType(typeof(RapidCMS.UI.Components.Editors.EntityPicker)).SetCollectionRelation(""categories"").SetName(""Main Category"");
+                            section.AddField(x => x.Categories).SetType(typeof(RapidCMS.UI.Components.Editors.EntitiesPicker)).SetCollectionRelation(""categories"").SetName(""Categories"");
                         });
                     });
                 });

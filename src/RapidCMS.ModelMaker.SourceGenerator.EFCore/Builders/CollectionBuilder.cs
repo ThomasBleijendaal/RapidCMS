@@ -100,7 +100,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.Indent++;
 
             indentWriter.WriteLine("row.AddField(x => x.Id.ToString()).SetName(\"Id\");");
-            indentWriter.WriteLine($"row.AddField(x => x.{ValidPascalCaseName(titleProperty.Name)});");
+            indentWriter.WriteLine($"row.AddField(x => x.{ValidPascalCaseName(titleProperty.Name)}).SetName(\"{titleProperty.Name}\");");
             foreach (var listViewProperty in info.Properties.Where(x => x.IncludeInListView))
             {
                 indentWriter.WriteLine($"row.AddField(x => x.{ValidPascalCaseName(listViewProperty.Name)} == null ? \"\" : x.{ValidPascalCaseName(listViewProperty.Name)}.ToString().Truncate(25)).SetName(\"{listViewProperty.Name}\");");
