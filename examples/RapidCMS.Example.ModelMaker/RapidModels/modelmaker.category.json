@@ -3,7 +3,10 @@
   "Id": "category",
   "ParentId": null,
   "Name": "Category",
+  "IconColor": "RedOrange10",
+  "Icon": "Tag",
   "Alias": "category",
+  "Output": "Entity, Collection, Repository, Context",
   "Properties": {
     "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
     "$values": [

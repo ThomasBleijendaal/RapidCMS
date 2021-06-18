@@ -11,8 +11,13 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 {
     internal sealed class ContextBuilder : BuilderBase
     {
-        public SourceText BuildContext(ModelMakerContext context)
+        public SourceText? BuildContext(ModelMakerContext context)
         {
+            if (context.Entities.All(x => !x.OutputItems.Contains(Constants.OutputContext)))
+            {
+                return default;
+            }
+
             using var writer = new StringWriter();
             using var indentWriter = new IndentedTextWriter(writer, "    ");
 
@@ -23,7 +28,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             WriteDbContext(indentWriter);
             WriteOnModelCreating(indentWriter, context);
 
-            foreach (var entity in context.Entities)
+            foreach (var entity in context.Entities.Where(x => x.OutputItems.Contains(Constants.OutputContext)))
             {
                 WriteDbSet(indentWriter, entity);
             }
@@ -54,7 +59,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.WriteLine("base.OnModelCreating(modelBuilder);");
             indentWriter.WriteLine();
             
-            foreach (var entity in context.Entities)
+            foreach (var entity in context.Entities.Where(x => x.OutputItems.Contains(Constants.OutputContext)))
             {
                 indentWriter.WriteLine($"modelBuilder.ApplyConfiguration(new {entity.Name}Configuration());");
             }

@@ -8,10 +8,26 @@
 
   <ItemGroup>
     <None Remove="modelmaker.blog.json" />
+    <None Remove="modelmaker.category.collection-only.json" />
+    <None Remove="modelmaker.category.context-only.json" />
+    <None Remove="modelmaker.category.entity-only.json" />
     <None Remove="modelmaker.category.json" />
+    <None Remove="modelmaker.category.repository-only.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="modelmaker.category.context-only.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="modelmaker.category.repository-only.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="modelmaker.category.collection-only.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="modelmaker.category.entity-only.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="modelmaker.blog.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

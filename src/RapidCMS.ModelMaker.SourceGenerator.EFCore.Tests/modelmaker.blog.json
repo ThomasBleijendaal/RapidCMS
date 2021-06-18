@@ -3,7 +3,10 @@
   "Id": "blog",
   "ParentId": null,
   "Name": "Blog",
+  "IconColor": "Cyan30",
+  "Icon": "Blog",
   "Alias": "blog",
+  "Output": "Entity, Collection, Repository, Context",
   "Properties": {
     "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
     "$values": [
@@ -228,7 +231,7 @@
         "Type": "RapidCMS.ModelMaker.Category",
         "IsRelationToOne": true,
         "IsRelationToMany": false,
-        "EditorType": "RapidCMS.UI.Components.Editors.EntityPickerEditor",
+        "EditorType": "RapidCMS.UI.Components.Editors.EntityPicker",
         "DataCollectionExpression": null,
         "RelatedCollectionAlias": null
       },
@@ -264,7 +267,7 @@
         "Type": "RapidCMS.ModelMaker.Category",
         "IsRelationToOne": false,
         "IsRelationToMany": true,
-        "EditorType": "RapidCMS.UI.Components.Editors.EntitiesPickerEditor",
+        "EditorType": "RapidCMS.UI.Components.Editors.EntitiesPicker",
         "DataCollectionExpression": null,
         "RelatedCollectionAlias": null
       }

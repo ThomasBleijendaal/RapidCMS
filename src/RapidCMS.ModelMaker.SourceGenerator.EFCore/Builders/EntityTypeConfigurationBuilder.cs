@@ -11,8 +11,13 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 {
     internal sealed class EntityTypeConfigurationBuilder : BuilderBase
     {
-        public SourceText BuildEntityTypeConfiguration(EntityInformation info, ModelMakerContext context)
+        public SourceText? BuildEntityTypeConfiguration(EntityInformation info, ModelMakerContext context)
         {
+            if (!info.OutputItems.Contains(Constants.OutputContext))
+            {
+                return default;
+            }
+
             using var writer = new StringWriter();
             using var indentWriter = new IndentedTextWriter(writer, "    ");
 

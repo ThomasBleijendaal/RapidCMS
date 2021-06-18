@@ -18,8 +18,13 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             _propertyBuilder = propertyBuilder;
         }
 
-        public SourceText BuildEntity(EntityInformation info, ModelMakerContext context)
+        public SourceText? BuildEntity(EntityInformation info, ModelMakerContext context)
         {
+            if (!info.OutputItems.Contains(Constants.OutputEntity))
+            {
+                return default;
+            }
+
             using var writer = new StringWriter();
             using var indentWriter = new IndentedTextWriter(writer, "    ");
 

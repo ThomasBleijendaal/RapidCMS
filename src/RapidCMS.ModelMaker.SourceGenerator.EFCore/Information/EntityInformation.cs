@@ -41,6 +41,26 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return this;
         }
 
+        public string? Icon { get; private set; }
+        public string? IconColor { get; private set; }
+
+        public EntityInformation HasIcon(string icon, string? iconColor)
+        {
+            Icon = icon;
+            IconColor = iconColor;
+
+            return this;
+        }
+
+        public IReadOnlyList<string> OutputItems { get; private set; } = new List<string>();
+
+        public EntityInformation ShouldOutput(IEnumerable<string> items)
+        {
+            OutputItems = items.ToList();
+
+            return this;
+        }
+
         public IReadOnlyList<PropertyInformation> Properties => _properties;
 
         public EntityInformation AddProperty(PropertyInformation property)

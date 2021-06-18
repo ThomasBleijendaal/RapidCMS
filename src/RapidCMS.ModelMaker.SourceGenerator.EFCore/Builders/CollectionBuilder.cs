@@ -18,8 +18,13 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             _fieldBuilder = fieldBuilder;
         }
 
-        public SourceText BuildCollection(EntityInformation info, ModelMakerContext context)
+        public SourceText? BuildCollection(EntityInformation info, ModelMakerContext context)
         {
+            if (!info.OutputItems.Contains(Constants.OutputCollection))
+            {
+                return default;
+            }
+
             using var writer = new StringWriter();
             using var indentWriter = new IndentedTextWriter(writer, "    ");
 
@@ -59,8 +64,8 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.Indent++;
 
             indentWriter.WriteLine($"\"{info.Alias}\",");
-            indentWriter.WriteLine($"\"Database\","); // TODO: icon
-            indentWriter.WriteLine($"\"Cyan30\","); // TODO: color
+            indentWriter.WriteLine($"\"{info.Icon ?? "Database"}\",");
+            indentWriter.WriteLine($"\"{info.IconColor ?? "Gray40"}\",");
             indentWriter.WriteLine($"\"{info.Name}\",");
             indentWriter.WriteLine("collection =>");
             indentWriter.WriteLine("{");
