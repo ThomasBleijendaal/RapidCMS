@@ -195,14 +195,14 @@ namespace RapidCMS.ModelMaker
         
         private async Task HandleCategoriesAsync(Blog dbEntity, IRelationContainer relations)
         {
-            var selectedIds = relations.GetRelatedElementIdsFor<Blog, ICollection<Category>, int>(x => x.Categories) ?? Enumerable.Empty<int>();
+            var selectedIds = relations.GetRelatedElementIdsFor<Blog, ICollection<RapidCMS.ModelMaker.Category>, int>(x => x.Categories) ?? Enumerable.Empty<int>();
             var existingIds = dbEntity.Categories.Select(x => x.Id);
-
+            
             var itemsToRemove = dbEntity.Categories.Where(x => !selectedIds.Contains(x.Id)).ToList();
             var idsToAdd = selectedIds.Except(existingIds).ToList();
-
+            
             var itemsToAdd = await _dbContext.Categories.Where(x => idsToAdd.Contains(x.Id)).ToListAsync();
-
+            
             foreach (var itemToRemove in itemsToRemove)
             {
                 dbEntity.Categories.Remove(itemToRemove);

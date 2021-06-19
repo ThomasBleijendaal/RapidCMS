@@ -137,34 +137,36 @@ namespace RapidCMS.ModelMaker
         
         public override async Task DeleteAsync(string id, IParent? parent)
         {
-            var entity = await GetByIdAsync(id, parent);
-            if (entity != null)
+            if (int.TryParse(id, out var intId))
             {
-                _dbContext.Categories.Remove(entity);
-                await _dbContext.SaveChangesAsync();
+                var entity = await _dbContext.Categories.FirstOrDefaultAsync(x => x.Id == intId);
+                if (entity != null)
+                {
+                    _dbContext.Categories.Remove(entity);
+                    await _dbContext.SaveChangesAsync();
+                }
             }
         }
         
         public override async Task<IEnumerable<Category>> GetAllAsync(IParent? parent, IQuery<Category> query)
         {
-            return await query.ApplyOrder(query.ApplyDataView(_dbContext.Categories))
-                .Skip(query.Skip)
-                .Take(query.Take)
-                .ToListAsync();
+            return await query.ApplyOrder(query.ApplyDataView(_dbContext.Categories)).Skip(query.Skip).Take(query.Take).AsNoTracking().ToListAsync();
         }
         
         public override async Task<Category?> GetByIdAsync(string id, IParent? parent)
         {
             if (int.TryParse(id, out var intId))
             {
-                return await _dbContext.Categories.FirstOrDefaultAsync(x => x.Id == intId);
+                return await _dbContext.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == intId);
             }
             return default;
         }
         
         public override async Task<Category?> InsertAsync(IEditContext<Category> editContext)
         {
-            var entry = _dbContext.Categories.Add(editContext.Entity);
+            var entity = editContext.Entity;
+            
+            var entry = _dbContext.Categories.Add(entity);
             await _dbContext.SaveChangesAsync();
             return entry.Entity;
         }
@@ -176,6 +178,10 @@ namespace RapidCMS.ModelMaker
         
         public override async Task UpdateAsync(IEditContext<Category> editContext)
         {
+            var entity = await _dbContext.Categories.FirstAsync(x => x.Id == editContext.Entity.Id);
+            
+            entity.Name = editContext.Entity.Name;
+            
             await _dbContext.SaveChangesAsync();
         }
     }

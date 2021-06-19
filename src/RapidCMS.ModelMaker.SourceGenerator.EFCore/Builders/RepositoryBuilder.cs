@@ -35,7 +35,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             WriteNewAsync(indentWriter, info);
             WriteUpdateAsync(indentWriter, info);
 
-            foreach (var relatedProperty in info.Properties.Where(x => x.RelatedToManyEntities))
+            foreach (var relatedProperty in info.Properties.Where(x => x.RelatedToManyEntities && !x.Hidden))
             {
                 WriteHandleRelationMethod(indentWriter, info, relatedProperty);
             }
@@ -143,7 +143,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
         private void WritePropertyMap(IndentedTextWriter indentWriter, EntityInformation info)
         {
             indentWriter.WriteLine();
-            foreach (var property in info.Properties.Where(x => !x.RelatedToManyEntities).OrderBy(x => x.Name))
+            foreach (var property in info.Properties.Where(x => !x.RelatedToManyEntities && !x.Hidden).OrderBy(x => x.Name))
             {
                 if (property.RelatedToOneEntity)
                 {
@@ -158,9 +158,16 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
         private void WriteHandleRelations(IndentedTextWriter indentWriter, EntityInformation info)
         {
+            var relatedProperties = info.Properties.Where(x => x.RelatedToManyEntities && !x.Hidden);
+
+            if (!relatedProperties.Any())
+            {
+                return;
+            }
+
             indentWriter.WriteLine();
             indentWriter.WriteLine("var relations = editContext.GetRelationContainer();");
-            foreach (var relatedProperty in info.Properties.Where(x => x.RelatedToManyEntities))
+            foreach (var relatedProperty in relatedProperties)
             {
                 indentWriter.WriteLine($"await Handle{ValidPascalCaseName(relatedProperty.Name)}Async(entity, relations);");
             }
@@ -168,7 +175,26 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
         private void WriteHandleRelationMethod(IndentedTextWriter indentWriter, EntityInformation entity, PropertyInformation property)
         {
-
+            indentWriter.WriteLine();
+            indentWriter.WriteLine($"private async Task Handle{ValidPascalCaseName(property.Name)}Async(Blog dbEntity, IRelationContainer relations)");
+            WriteOpeningBracket(indentWriter);
+            indentWriter.WriteLine($"var selectedIds = relations.GetRelatedElementIdsFor<Blog, ICollection<{property.Type}>, int>(x => x.{ValidPascalCaseName(property.Name)}) ?? Enumerable.Empty<int>();");
+            indentWriter.WriteLine($"var existingIds = dbEntity.{ValidPascalCaseName(property.Name)}.Select(x => x.Id);");
+            indentWriter.WriteLine();
+            indentWriter.WriteLine($"var itemsToRemove = dbEntity.{ValidPascalCaseName(property.Name)}.Where(x => !selectedIds.Contains(x.Id)).ToList();");
+            indentWriter.WriteLine("var idsToAdd = selectedIds.Except(existingIds).ToList();");
+            indentWriter.WriteLine();
+            indentWriter.WriteLine($"var itemsToAdd = await _dbContext.{ValidPascalCaseName(property.Name)}.Where(x => idsToAdd.Contains(x.Id)).ToListAsync();");
+            indentWriter.WriteLine();
+            indentWriter.WriteLine($"foreach (var itemToRemove in itemsToRemove)");
+            WriteOpeningBracket(indentWriter);
+            indentWriter.WriteLine($"dbEntity.{ValidPascalCaseName(property.Name)}.Remove(itemToRemove);");
+            WriteClosingBracket(indentWriter);
+            indentWriter.WriteLine($"foreach (var itemToAdd in itemsToAdd)");
+            WriteOpeningBracket(indentWriter);
+            indentWriter.WriteLine($"dbEntity.{ValidPascalCaseName(property.Name)}.Add(itemToAdd);");
+            WriteClosingBracket(indentWriter);
+            WriteClosingBracket(indentWriter);
         }
 
         private string GetIncludesAndAsNoTracking(EntityInformation info)
@@ -178,9 +204,9 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
         private IEnumerable<string> GetAllIncludes(EntityInformation info)
         {
-            foreach (var property in info.Properties.Where(x => x.RelatedToManyEntities))
+            foreach (var property in info.Properties.Where(x => x.RelatedToManyEntities && !x.Hidden))
             {
-                yield return $".Include(x => x.{property.Name})";
+                yield return $".Include(x => x.{ValidPascalCaseName(property.Name)})";
             }
         }
     }
