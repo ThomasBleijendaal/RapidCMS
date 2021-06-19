@@ -24,6 +24,7 @@
             public const string MaxLength = "maxlength";
             public const string MinLength = "minlength";
             public const string BooleanLabels = "booleanLabels";
+            public const string ReciprocalProperty = "reciprocal";
         }
 
         public static class Properties

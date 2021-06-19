@@ -34,15 +34,13 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
         public void WriteEntityTypeConfiguration(IndentedTextWriter indentWriter, EntityInformation info)
         {
-            var name = ValidPascalCaseName(info.Name);
-
-            indentWriter.WriteLine($"public class {name}Configuration : IEntityTypeConfiguration<{name}>");
+            indentWriter.WriteLine($"public class {info.PascalName}Configuration : IEntityTypeConfiguration<{info.PascalName}>");
             WriteOpeningBracket(indentWriter);
 
-            indentWriter.WriteLine($"public void Configure(EntityTypeBuilder<{name}> builder)");
+            indentWriter.WriteLine($"public void Configure(EntityTypeBuilder<{info.PascalName}> builder)");
             WriteOpeningBracket(indentWriter);
 
-            foreach (var property in info.Properties.Where(x => !x.Hidden && (x.RelatedToOneEntity || x.RelatedToManyEntities)))
+            foreach (var property in info.Properties.Where(x => !x.Hidden && x.Relation != Relation.None))
             {
                 WriteRelationConfig(indentWriter, info, property);
             }
@@ -53,25 +51,25 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
         public void WriteRelationConfig(IndentedTextWriter indentWriter, EntityInformation entity, PropertyInformation property)
         {
-            var propertyName = ValidPascalCaseName(property.Name);
-            var entityName = ValidPascalCaseName(entity.Name);
-
             indentWriter.Write("builder");
 
-            if (property.RelatedToOneEntity)
+            if (property.Relation.HasFlag(Relation.One))
             {
-                indentWriter.Write($".HasOne(x => x.{propertyName})");
+                indentWriter.Write($".HasOne(x => x.{property.PascalName})");
             }
             else
             {
-                indentWriter.Write($".HasMany(x => x.{propertyName})");
+                indentWriter.Write($".HasMany(x => x.{property.PascalName})");
             }
 
-            indentWriter.Write($".WithMany(x => x.{entityName}{propertyName})");
-
-            if (property.RelatedToOneEntity)
+            if (property.Relation.HasFlag(Relation.ToOne))
             {
+                indentWriter.Write($".WithOne(x => x.{property.RelatedPropertyName})");
                 indentWriter.Write(".OnDelete(DeleteBehavior.NoAction)");
+            }
+            else
+            {
+                indentWriter.Write($".WithMany(x => x.{property.RelatedPropertyName})");
             }
 
             indentWriter.WriteLine(";");

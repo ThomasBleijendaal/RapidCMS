@@ -45,7 +45,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
             {
                 foreach (var property in properties.OfType<JObject>())
                 {
-                    info.AddProperty(_propertyParser.ParseProperty(property));
+                    info.AddProperty(_propertyParser.ParseProperty(info, property));
                 }
             }
 
@@ -54,22 +54,54 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
         public void ProcessEntity(EntityInformation info, ModelMakerContext context)
         {
+            var twoWayRelationsToThisEntity = context.Entities
+                .Where(entity => entity != info)
+                .SelectMany(entity => entity.Properties
+                    .Where(x => x.Relation != Relation.None &&
+                        x.Type == $"{context.Namespace}.{info.PascalName}" &&
+                        info.Properties.Any(p => p.PascalName == x.RelatedPropertyName))
+                    .Select(property => new { Entity = entity, Property = property }))
+                .ToList();
+
+            foreach (var relation in twoWayRelationsToThisEntity)
+            {
+                var property = info.Properties.First(x => x.PascalName == relation.Property.RelatedPropertyName);
+
+                var value = relation.Property.Relation & ~(Relation.One | Relation.Many);
+
+                property.Relation |= value switch {
+                    Relation.ToOne => Relation.One,
+                    Relation.ToMany => Relation.Many,
+                    _ => Relation.None
+                };
+            }
+
             var oneWayRelationsToThisEntity = context.Entities
                 .Where(entity => entity != info)
                 .SelectMany(entity => entity.Properties
-                    .Where(x => (x.RelatedToOneEntity || x.RelatedToManyEntities) &&
-                        x.Type == $"{context.Namespace}.{info.Name}" &&
-                        !info.Properties.Any(x => x.Type == $"{context.Namespace}.{entity.Name}"))
+                    .Where(x => x.Relation != Relation.None &&
+                        x.Type == $"{context.Namespace}.{info.PascalName}" &&
+                        string.IsNullOrEmpty(x.RelatedPropertyName))
                     .Select(property => new { Entity = entity, Property = property }))
                 .ToList();
 
             foreach (var relation in oneWayRelationsToThisEntity)
             {
+                var reverseRelation = relation.Property.Relation switch
+                {
+                    Relation.ToOne => Relation.One | Relation.ToMany,
+                    Relation.ToMany => Relation.Many | Relation.ToMany,
+                    _ => throw new InvalidOperationException("Unknown relation")
+                };
+
                 var adHocProperty = new PropertyInformation(true)
                     .UseFor(Use.Entity)
-                    .HasName($"{relation.Entity.Name}{relation.Property.Name}")
-                    .IsType($"{context.Namespace}.{relation.Entity.Name}")
-                    .IsRelation(false, true, relation.Property.RelatedCollectionAlias, default);
+                    .HasName($"{relation.Entity.PascalName}{relation.Property.PascalName}")
+                    .IsType($"{context.Namespace}.{relation.Entity.PascalName}")
+                    .IsRelation(reverseRelation, relation.Property.RelatedCollectionAlias, $"{relation.Entity.PascalName}{relation.Property.PascalName}", default);
+
+                relation.Property.RelatedPropertyName ??= $"{relation.Entity.PascalName}{relation.Property.PascalName}";
+                relation.Property.Relation |= Relation.Many;
 
                 info.AddProperty(adHocProperty);
             }

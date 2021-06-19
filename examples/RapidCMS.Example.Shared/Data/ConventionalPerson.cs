@@ -11,10 +11,10 @@ namespace RapidCMS.Example.Shared.Data
     {
         public int Id { get; set; }
 
-        [Field(Name = "Email", Description = "The email of the person", ShortName = "Email", OrderByType = OrderByType.Descending)]
+        [Field(Name = "Email", Description = "The email of the person", ListName = "Email", OrderByType = OrderByType.Descending)]
         public string? Email { get; set; }
         
-        [Field(Name = "Name", Description = "The name of the person", ShortName = "Name", OrderByType = OrderByType.Ascending)]
+        [Field(Name = "Name", Description = "The name of the person", ListName = "Name", OrderByType = OrderByType.Ascending)]
         [Required]
         public string? Name { get; set; }
 

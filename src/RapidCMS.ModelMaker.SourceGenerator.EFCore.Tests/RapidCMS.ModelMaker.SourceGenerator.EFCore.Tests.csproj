@@ -13,6 +13,17 @@
     <None Remove="modelmaker.category.entity-only.json" />
     <None Remove="modelmaker.category.json" />
     <None Remove="modelmaker.category.repository-only.json" />
+    <None Remove="modelmaker.one-to-many-manys.json" />
+    <None Remove="modelmaker.one-to-many-ones.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="modelmaker.one-to-many-manys.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="modelmaker.one-to-many-ones.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

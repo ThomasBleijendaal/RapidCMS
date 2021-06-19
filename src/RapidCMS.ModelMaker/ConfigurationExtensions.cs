@@ -66,6 +66,7 @@ namespace RapidCMS.ModelMaker
             services.AddTransient<BooleanLabelDataCollectionFactory>();
             services.AddTransient<LimitedOptionsDataCollectionFactory>();
             services.AddTransient<LinkedEntityDataCollectionFactory>();
+            services.AddTransient<ReciprocalPropertyCollectionFactory>();
 
             var config = new ModelMakerConfig();
 
@@ -113,6 +114,13 @@ namespace RapidCMS.ModelMaker
                     EditorType.Dropdown,
                     x => x.Config.LinkedEntitiesCollectionAlias);
 
+                config.AddPropertyValidator<string, CorrespondingPropertyValidationConfig, string?, ReciprocalPropertyCollectionFactory>(
+                    Constants.Validators.ReciprocalProperty,
+                    "Corresponding property",
+                    "The property of the relation on the other model. If kept empty, a hidden corresponding property will be created.",
+                    EditorType.Dropdown,
+                    x => x.Config.RelatedPropertyName);
+
                 config.AddPropertyValidator<bool, BooleanLabelValidationConfig, BooleanLabelValidationConfig.LabelsConfig, BooleanLabelDataCollectionFactory>(
                     Constants.Validators.BooleanLabels,
                     "Labels",
@@ -157,7 +165,7 @@ namespace RapidCMS.ModelMaker
                         "Linked entity",
                         "Link",
                         new[] { Constants.Editors.EntityPicker },
-                        new[] { Constants.Validators.LinkedEntity })
+                        new[] { Constants.Validators.LinkedEntity, Constants.Validators.ReciprocalProperty })
                     .CanBeUsedAsTitle(false)
                     .RelatesToOneEntity(true);
 
@@ -166,7 +174,7 @@ namespace RapidCMS.ModelMaker
                         "Linked entities",
                         "Link",
                         new[] { Constants.Editors.EntitiesPicker },
-                        new[] { Constants.Validators.LinkedEntities }) // TODO: min max linkedentities
+                        new[] { Constants.Validators.LinkedEntities, Constants.Validators.ReciprocalProperty }) // TODO: min max linkedentities
                     .CanBeUsedAsTitle(false)
                     .RelatesToManyEntities(true);
 

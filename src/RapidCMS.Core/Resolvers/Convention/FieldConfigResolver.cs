@@ -25,7 +25,7 @@ namespace RapidCMS.Core.Resolvers.Convention
                     if (fieldAttribute != null)
                     {
                         if ((features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(fieldAttribute.Name)) ||
-                            (!features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(fieldAttribute.ShortName)))
+                            (!features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(fieldAttribute.ListName)))
                         {
                             return (property, fieldAttribute);
                         }
@@ -66,7 +66,7 @@ namespace RapidCMS.Core.Resolvers.Convention
                         Index = data.fieldAttribute.Index,
                         IsDisabled = (object x, EntityState y) => false,
                         IsVisible = (object x, EntityState y) => true,
-                        Name = features.HasFlag(Features.CanEdit) ? data.fieldAttribute.Name : data.fieldAttribute.ShortName,
+                        Name = features.HasFlag(Features.CanEdit) ? data.fieldAttribute.Name : data.fieldAttribute.ListName,
                         OrderByExpression = data.fieldAttribute.OrderByType == OrderByType.Disabled ? null : propertyMetadata,
                         Placeholder = data.fieldAttribute.Placeholder,
                         Property = propertyMetadata,

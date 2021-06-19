@@ -224,6 +224,12 @@ namespace RapidCMS.ModelMaker.Repositories
                 if (!propertyConfig.UsableAsTitle)
                 {
                     property.IsTitle = false;
+                    property.IncludeInListView = false;
+                }
+
+                if (property.IsTitle)
+                {
+                    property.IncludeInListView = false;
                 }
 
                 var editorConfig = _config.Editors.FirstOrDefault(x => x.Alias == property.EditorAlias);

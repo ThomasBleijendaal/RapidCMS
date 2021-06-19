@@ -52,15 +52,15 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
         public void WriteOpenStaticClass(IndentedTextWriter indentWriter, EntityInformation info)
         {
-            indentWriter.WriteLine($"public static class {info.Name}Collection");
+            indentWriter.WriteLine($"public static class {info.PascalName}Collection");
             indentWriter.WriteLine("{");
             indentWriter.Indent++;
 
-            indentWriter.WriteLine($"public static void Add{info.Name}Collection(this ICmsConfig config)");
+            indentWriter.WriteLine($"public static void Add{info.PascalName}Collection(this ICmsConfig config)");
             indentWriter.WriteLine("{");
             indentWriter.Indent++;
 
-            indentWriter.WriteLine($"config.AddCollection<{info.Name}, BaseRepository<{info.Name}>>(");
+            indentWriter.WriteLine($"config.AddCollection<{info.PascalName}, BaseRepository<{info.PascalName}>>(");
             indentWriter.Indent++;
 
             indentWriter.WriteLine($"\"{info.Alias}\",");
@@ -76,14 +76,14 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
         {
             var titleProperty = info.Properties.Single(x => x.IsTitleOfEntity);
 
-            indentWriter.WriteLine($"collection.SetTreeView(x => x.{ValidPascalCaseName(titleProperty.Name)});");
+            indentWriter.WriteLine($"collection.SetTreeView(x => x.{titleProperty.PascalName});");
         }
 
         public void WriteElementConfig(IndentedTextWriter indentWriter, EntityInformation info)
         {
             var titleProperty = info.Properties.Single(x => x.IsTitleOfEntity);
 
-            indentWriter.WriteLine($"collection.SetElementConfiguration(x => x.Id, x => x.{ValidPascalCaseName(titleProperty.Name)});");
+            indentWriter.WriteLine($"collection.SetElementConfiguration(x => x.Id, x => x.{titleProperty.PascalName});");
         }
 
         public void WriteListView(IndentedTextWriter indentWriter, EntityInformation info)
@@ -100,10 +100,10 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.Indent++;
 
             indentWriter.WriteLine("row.AddField(x => x.Id.ToString()).SetName(\"Id\");");
-            indentWriter.WriteLine($"row.AddField(x => x.{ValidPascalCaseName(titleProperty.Name)}).SetName(\"{titleProperty.Name}\");");
+            indentWriter.WriteLine($"row.AddField(x => x.{titleProperty.PascalName}).SetName(\"{titleProperty.Name}\");");
             foreach (var listViewProperty in info.Properties.Where(x => x.IncludeInListView))
             {
-                indentWriter.WriteLine($"row.AddField(x => x.{ValidPascalCaseName(listViewProperty.Name)} == null ? \"\" : x.{ValidPascalCaseName(listViewProperty.Name)}.ToString().Truncate(25)).SetName(\"{listViewProperty.Name}\");");
+                indentWriter.WriteLine($"row.AddField(x => x.{listViewProperty.PascalName} == null ? \"\" : x.{listViewProperty.PascalName}.ToString().Truncate(25)).SetName(\"{listViewProperty.Name}\");");
             }
             indentWriter.WriteLine("row.AddDefaultButton(DefaultButtonType.Edit);");
             indentWriter.WriteLine("row.AddDefaultButton(DefaultButtonType.Delete);");

@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="RapidModels\modelmaker.one-to-many-manys.json" />
+    <Content Remove="RapidModels\modelmaker.one-to-many-ones.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\RapidCMS.ModelMaker.SourceGenerator\RapidCMS.ModelMaker.SourceGenerator.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.ModelMaker\RapidCMS.ModelMaker.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.Repositories\RapidCMS.Repositories.csproj" />
@@ -25,6 +30,8 @@
   <ItemGroup>
     <AdditionalFiles Include="RapidModels\modelmaker.blogs.json" />
     <AdditionalFiles Include="RapidModels\modelmaker.categories.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.one-to-many-manys.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.one-to-many-ones.json" />
   </ItemGroup>
 
   <ItemGroup>

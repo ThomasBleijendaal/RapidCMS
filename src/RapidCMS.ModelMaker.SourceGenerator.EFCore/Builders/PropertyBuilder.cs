@@ -1,4 +1,5 @@
 ﻿using System.CodeDom.Compiler;
+using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Information;
 
 namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
@@ -9,25 +10,23 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
         {
             indentWriter.WriteLine();
 
-            var name = ValidPascalCaseName(info.Name);
-
             foreach (var attribute in info.ValidationAttributes)
             {
                 indentWriter.WriteLine(attribute);
             }
 
-            if (info.RelatedToOneEntity)
+            if (info.Relation.HasFlag(Relation.ToOne))
             {
-                indentWriter.WriteLine($"public int? {name}Id {{ get; set; }}"); // TODO: how to detect type of ForeignKey type?
-                indentWriter.WriteLine($"public {info.Type}? {name} {{ get; set; }}");
+                indentWriter.WriteLine($"public int? {info.PascalName}Id {{ get; set; }}"); // TODO: how to detect type of ForeignKey type?
+                indentWriter.WriteLine($"public {info.Type}? {info.PascalName} {{ get; set; }}");
             }
-            else if (info.RelatedToManyEntities)
+            else if (info.Relation.HasFlag(Relation.ToMany))
             {
-                indentWriter.WriteLine($"public ICollection<{info.Type}> {name} {{ get; set; }} = new List<{info.Type}>();");
+                indentWriter.WriteLine($"public ICollection<{info.Type}> {info.PascalName} {{ get; set; }} = new List<{info.Type}>();");
             }
             else
             {
-                indentWriter.WriteLine($"public {info.Type} {name} {{ get; set; }}");
+                indentWriter.WriteLine($"public {info.Type} {info.PascalName} {{ get; set; }}");
             }
         }
     }

@@ -19,7 +19,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
         public bool IsApplicable(PropertyModel model)
             => model.EditorAlias.In(Constants.Editors.Dropdown);
 
-        public string? RelatedCollectionAlias => $"[RegularExpression(\"^[{string.Join("|", Options)}]\")]$";
+        public string? RelatedCollectionAlias => default; // TODO: wut: $"[RegularExpression(\"^[{string.Join("|", Options)}]\")]$";
 
         public string? ValidationAttributeExpression => default;
 

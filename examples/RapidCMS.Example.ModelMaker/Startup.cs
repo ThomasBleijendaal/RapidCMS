@@ -85,6 +85,9 @@ namespace RapidCMS.Example.ModelMaker
             services.AddScoped<BaseRepository<Blog>, BlogRepository>();
             services.AddScoped<BaseRepository<Category>, CategoryRepository>();
 
+            services.AddScoped<BaseRepository<OnetoManyMany>, OnetoManyManyRepository>();
+            services.AddScoped<BaseRepository<OnetoManyOne>, OnetoManyOneRepository>();
+
             services.AddDbContext<ModelMakerDbContext>(
                 builder => builder.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString")),
                 ServiceLifetime.Transient,
@@ -99,6 +102,9 @@ namespace RapidCMS.Example.ModelMaker
                 config.AddBlogCollection();
                 config.AddCategoryCollection();
 
+                config.AddOnetoManyManyCollection();
+                config.AddOnetoManyOneCollection();
+
                 config.AddPersonCollection();
 
                 config.AddModelMakerPlugin();
@@ -107,7 +113,7 @@ namespace RapidCMS.Example.ModelMaker
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ModelMakerDbContext context)
         {
-            context.Database.Migrate();
+            // context.Database.Migrate();
 
             app.UseRapidCMS(isDevelopment: env.IsDevelopment());
 

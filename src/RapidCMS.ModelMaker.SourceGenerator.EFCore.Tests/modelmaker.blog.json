@@ -244,7 +244,7 @@
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
         "Id": "80221276-0404-44f3-ad4b-524b73fa81ac",
-        "Name": "Categories",
+        "Name": "Blog Categories",
         "IsTitle": false,
         "IncludeInListView": false,
         "IsRequired": false,
