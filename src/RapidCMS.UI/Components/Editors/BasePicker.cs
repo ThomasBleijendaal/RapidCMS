@@ -12,7 +12,7 @@ using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.UI.Components.Editors
 {
-    public abstract class BasePickerEditor : BaseDataEditor
+    public abstract class BasePicker : BaseDataEditor
     {
         protected string? _searchTerm;
         protected int _currentPage = 1;

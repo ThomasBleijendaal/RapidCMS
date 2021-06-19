@@ -7,7 +7,7 @@
   "IconColor": "RedOrange10",
   "Icon": "Tag",
   "Alias": "categories",
-  "Output": "Entity, Collection, Repository, Context",
+  "Output": "Entity",
   "Properties": {
     "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
     "$values": [
@@ -16,7 +16,6 @@
         "Id": "a7493699-0e57-43da-bb58-a505b779a8fc",
         "Name": "Name",
         "IsTitle": true,
-        "IncludeInListView": false,
         "IsRequired": true,
         "PropertyAlias": "shortstring",
         "EditorAlias": "textbox",

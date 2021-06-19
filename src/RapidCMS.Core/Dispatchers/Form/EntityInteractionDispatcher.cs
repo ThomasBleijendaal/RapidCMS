@@ -84,7 +84,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                         ParentPath = request.EditContext.Parent?.GetParentPath(),
                         Id = request.EditContext.Entity.Id
                     });
-                    response.NoOp = true;
+                    // TODO: test removal of: response.NoOp = true;
                     break;
 
                 case CrudType.Edit:
@@ -98,7 +98,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                         ParentPath = request.EditContext.Parent?.GetParentPath(),
                         Id = request.EditContext.Entity.Id
                     });
-                    response.NoOp = true;
+                    // TODO: test removal of: response.NoOp = true;
                     break;
 
                 case CrudType.Update:
@@ -241,7 +241,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                             CollectionAlias = request.EditContext.CollectionAlias,
                             ParentPath = parentPath
                         });
-                        response.NoOp = true;
+                        // TODO: test removal of: response.NoOp = true;
                     }
                     break;
 

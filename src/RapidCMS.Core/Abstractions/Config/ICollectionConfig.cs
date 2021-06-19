@@ -23,6 +23,8 @@ namespace RapidCMS.Core.Abstractions.Config
         /// Adds the given collection as sub collection to the current collection.
         /// 
         /// Because it's referenced only by alias, no configuration can be added to this sub collection.
+        /// 
+        /// NOTE: The reference between this sub collection and it's parent collection is weak and the sub collection will not be able to determine it is nested here. (see #101)
         /// </summary>
         /// <param name="alias"></param>
         /// <returns></returns>

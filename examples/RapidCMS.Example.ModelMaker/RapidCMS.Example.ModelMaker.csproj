@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="RapidModels\modelmaker.blog.json" />
-    <AdditionalFiles Include="RapidModels\modelmaker.category.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.blogs.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.categories.json" />
   </ItemGroup>
 
   <ItemGroup>

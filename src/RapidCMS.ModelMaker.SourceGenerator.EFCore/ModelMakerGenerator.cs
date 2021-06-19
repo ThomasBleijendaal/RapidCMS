@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Newtonsoft.Json.Linq;
@@ -63,22 +64,37 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
             foreach (var entity in entities)
             {
                 var entitySourceText = entityBuilder.BuildEntity(entity, modelMakerContext);
-                context.AddSource($"ModelMaker_Entity_{entity.Name?.Replace(" ", "_")}.cs", entitySourceText);
+                if (entitySourceText != null)
+                {
+                    context.AddSource($"ModelMaker_Entity_{entity.Name?.Replace(" ", "_")}.cs", entitySourceText);
+                }
 
                 var collectionSourceText = collectionBuilder.BuildCollection(entity, modelMakerContext);
-                context.AddSource($"ModelMaker_Collection_{entity.Name?.Replace(" ", "_")}.cs", collectionSourceText);
+                if (collectionSourceText != null)
+                {
+                    context.AddSource($"ModelMaker_Collection_{entity.Name?.Replace(" ", "_")}.cs", collectionSourceText);
+                }
             }
 
             var contextSourceText = contextBuilder.BuildContext(modelMakerContext);
-            context.AddSource("ModelMaker_DbContext.cs", contextSourceText);
+            if (contextSourceText != null)
+            {
+                context.AddSource("ModelMaker_DbContext.cs", contextSourceText);
+            }
 
             foreach (var entity in entities)
             {
                 var entityTypeConfigurationSourceText = entityTypeConfigurationBuilder.BuildEntityTypeConfiguration(entity, modelMakerContext);
-                context.AddSource($"ModelMaker_EntityTypeConfiguration_{entity.Name?.Replace(" ", "_")}.cs", entityTypeConfigurationSourceText);
+                if (entityTypeConfigurationSourceText != null)
+                {
+                    context.AddSource($"ModelMaker_EntityTypeConfiguration_{entity.Name?.Replace(" ", "_")}.cs", entityTypeConfigurationSourceText);
+                }
 
                 var repositorySourceText = repositoryBuilder.BuildRepository(entity, modelMakerContext);
-                context.AddSource($"ModelMaker_Repository_{entity.Name?.Replace(" ", "_")}.cs", repositorySourceText);
+                if (repositorySourceText != null)
+                {
+                    context.AddSource($"ModelMaker_Repository_{entity.Name?.Replace(" ", "_")}.cs", repositorySourceText);
+                }
             }
         }
     }

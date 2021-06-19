@@ -102,8 +102,7 @@ namespace RapidCMS.Example.Shared.Collections
                                             .SetElementDisplayProperties(x => x.Name, x => x.Details.Email);
                                     });
                         });
-                    })
-                    .AddSubCollection("person");
+                    });
             });
         }
     }

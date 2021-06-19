@@ -31,6 +31,8 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
                 indentWriter.Write($".SetCollectionRelation(\"{info.RelatedCollectionAlias}\")");
             }
 
+            indentWriter.Write($".SetName(\"{info.Name}\")");
+
             indentWriter.WriteLine(";");
         }
     }

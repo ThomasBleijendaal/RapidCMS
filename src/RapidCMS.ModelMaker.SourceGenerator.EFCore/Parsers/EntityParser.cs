@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Contexts;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
@@ -21,12 +22,22 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
             if (entity.Value<string>("Name") is string entityName)
             {
-                info.HasName(entityName);
+                info.HasName(entityName, entity.Value<string>("PluralName"));
             }
 
             if (entity.Value<string>("Alias") is string alias)
             {
                 info.HasAlias(alias);
+            }
+
+            if (entity.Value<string>("Icon") is string icon)
+            {
+                info.HasIcon(icon, entity.Value<string?>("IconColor"));
+            }
+
+            if (entity.Value<string>("Output") is string outputItems)
+            {
+                info.ShouldOutput(outputItems.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries));
             }
 
             if (entity.Value<JObject>("Properties") is JObject propsRoot &&

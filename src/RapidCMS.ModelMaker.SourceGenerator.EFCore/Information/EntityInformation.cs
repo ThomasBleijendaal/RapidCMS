@@ -13,6 +13,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
         {
             _namespaces.Add((Use.Entity | Use.Repository, "RapidCMS.Core.Abstractions.Data"));
             _namespaces.Add((Use.Collection, "RapidCMS.Core.Abstractions.Config"));
+            _namespaces.Add((Use.Collection, "RapidCMS.Core.Extensions"));
             _namespaces.Add((Use.Collection, "RapidCMS.Core.Enums"));
             _namespaces.Add((Use.Collection, "RapidCMS.Core.Providers"));
             _namespaces.Add((Use.Collection | Use.Repository, "RapidCMS.Core.Repositories"));
@@ -26,10 +27,12 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
         }
 
         public string? Name { get; private set; }
+        public string? PluralName { get; private set; }
 
-        public EntityInformation HasName(string name)
+        public EntityInformation HasName(string name, string? pluralName)
         {
             Name = name;
+            PluralName = pluralName ?? name;
             return this;
         }
 
@@ -38,6 +41,26 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
         public EntityInformation HasAlias(string alias)
         {
             Alias = alias;
+            return this;
+        }
+
+        public string? Icon { get; private set; }
+        public string? IconColor { get; private set; }
+
+        public EntityInformation HasIcon(string icon, string? iconColor)
+        {
+            Icon = icon;
+            IconColor = iconColor;
+
+            return this;
+        }
+
+        public IReadOnlyList<string> OutputItems { get; private set; } = new List<string>();
+
+        public EntityInformation ShouldOutput(IEnumerable<string> items)
+        {
+            OutputItems = items.ToList();
+
             return this;
         }
 

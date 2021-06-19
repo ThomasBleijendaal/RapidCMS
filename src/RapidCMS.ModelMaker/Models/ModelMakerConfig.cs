@@ -10,6 +10,7 @@ using RapidCMS.ModelMaker.Core.Abstractions.Factories;
 using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 using RapidCMS.ModelMaker.Models.Config;
 using RapidCMS.UI.Components.Editors;
+using RapidCMS.UI.Extensions;
 
 namespace RapidCMS.ModelMaker.Models
 {
@@ -165,27 +166,8 @@ namespace RapidCMS.ModelMaker.Models
         public IPropertyEditorConfig? GetPropertyEditor(string alias)
             => _editors.FirstOrDefault(x => x.Alias == alias);
 
-        private static Type GetEditorByEditorType(EditorType editorType) 
-            => editorType switch
-            {
-                EditorType.Checkbox => typeof(CheckboxEditor),
-                EditorType.Date => typeof(DateEditor),
-                EditorType.Dropdown => typeof(DropdownEditor),
-                EditorType.EntitiesPicker => typeof(EntitiesPickerEditor),
-                EditorType.EntityPicker => typeof(EntityPickerEditor),
-                EditorType.ListEditor => typeof(ListEditor),
-                EditorType.MultiSelect => typeof(MultiSelectEditor),
-                EditorType.ModelEditor => typeof(ModelEditor),
-                EditorType.Numeric => typeof(NumericEditor),
-                EditorType.Select => typeof(SelectEditor),
-                EditorType.TextBox => typeof(TextBoxEditor),
-                EditorType.TextArea => typeof(TextAreaEditor),
-
-                // TODO: perhaps an empty component?
-                EditorType.None => typeof(TextBoxEditor),
-
-                _ => throw new InvalidOperationException($"EditorType.{editorType} is not a valid option."),
-            };
+        private static Type GetEditorByEditorType(EditorType editorType)
+            => editorType.GetEditor() ?? throw new InvalidOperationException($"EditorType.{editorType} is not a valid option.");
 
         public string ModelFolder { get; private set; }
 

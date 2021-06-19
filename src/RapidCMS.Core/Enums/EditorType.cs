@@ -101,6 +101,14 @@ namespace RapidCMS.Core.Enums
         /// 
         /// Model property must be annotated with [ValidateObject] to enable validation.
         /// </summary>
-        ModelEditor
+        ModelEditor,
+
+        /// <summary>
+        /// An editor that will allow the user to select or deselect flags of an enum. The value will be saved as the composite value of the enum.
+        /// 
+        /// Requires to have the EnumDataProvider DataCollection attached and the enum must be an Int32 enum.
+        /// </summary>
+        [Relation(RelationType.One)]
+        EnumFlagPicker
     }
 }

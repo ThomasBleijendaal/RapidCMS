@@ -177,7 +177,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                             ParentPath = parentPath,
                             Related = request.Related
                         });
-                        response.NoOp = true;
+                        // TODO: test removal of: response.NoOp = true;
                     }
                     break;
 
@@ -208,7 +208,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                             VariantAlias = collection.EntityVariant.Alias,
                             Id = parentId
                         });
-                        response.NoOp = true;
+                        // TODO: test removal of: response.NoOp = true;
                     }
                     break;
 

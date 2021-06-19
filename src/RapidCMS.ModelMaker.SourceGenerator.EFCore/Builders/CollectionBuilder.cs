@@ -18,8 +18,13 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             _fieldBuilder = fieldBuilder;
         }
 
-        public SourceText BuildCollection(EntityInformation info, ModelMakerContext context)
+        public SourceText? BuildCollection(EntityInformation info, ModelMakerContext context)
         {
+            if (!info.OutputItems.Contains(Constants.OutputCollection))
+            {
+                return default;
+            }
+
             using var writer = new StringWriter();
             using var indentWriter = new IndentedTextWriter(writer, "    ");
 
@@ -59,9 +64,9 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.Indent++;
 
             indentWriter.WriteLine($"\"{info.Alias}\",");
-            indentWriter.WriteLine($"\"Database\","); // TODO: icon
-            indentWriter.WriteLine($"\"Cyan30\","); // TODO: color
-            indentWriter.WriteLine($"\"{info.Name}\",");
+            indentWriter.WriteLine($"\"{info.Icon ?? "Database"}\",");
+            indentWriter.WriteLine($"\"{info.IconColor ?? "Gray40"}\",");
+            indentWriter.WriteLine($"\"{info.PluralName}\",");
             indentWriter.WriteLine("collection =>");
             indentWriter.WriteLine("{");
             indentWriter.Indent++;
@@ -95,7 +100,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.Indent++;
 
             indentWriter.WriteLine("row.AddField(x => x.Id.ToString()).SetName(\"Id\");");
-            indentWriter.WriteLine($"row.AddField(x => x.{ValidPascalCaseName(titleProperty.Name)});");
+            indentWriter.WriteLine($"row.AddField(x => x.{ValidPascalCaseName(titleProperty.Name)}).SetName(\"{titleProperty.Name}\");");
+            foreach (var listViewProperty in info.Properties.Where(x => x.IncludeInListView))
+            {
+                indentWriter.WriteLine($"row.AddField(x => x.{ValidPascalCaseName(listViewProperty.Name)} == null ? \"\" : x.{ValidPascalCaseName(listViewProperty.Name)}.ToString().Truncate(25)).SetName(\"{listViewProperty.Name}\");");
+            }
             indentWriter.WriteLine("row.AddDefaultButton(DefaultButtonType.Edit);");
             indentWriter.WriteLine("row.AddDefaultButton(DefaultButtonType.Delete);");
 
