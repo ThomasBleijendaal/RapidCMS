@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="RapidModels\modelmaker.blogs.json" />
+    <Content Remove="RapidModels\modelmaker.categories.json" />
     <Content Remove="RapidModels\modelmaker.one-to-many-manys.json" />
     <Content Remove="RapidModels\modelmaker.one-to-many-ones.json" />
   </ItemGroup>

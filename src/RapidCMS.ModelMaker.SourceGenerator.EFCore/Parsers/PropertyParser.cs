@@ -77,15 +77,15 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                 }
             }
 
-            if (property.Value<bool>("IsRelationToOne") is bool isRelationToOne &&
-                property.Value<bool>("IsRelationToMany") is bool isRelationToMany)
-            {
-                info.IsRelation(
-                    isRelationToOne ? Relation.ToOne : isRelationToMany ? Relation.ToMany : Relation.None,
-                    relatedCollectionAlias,
-                    relatedPropertyName,
-                    dataCollectionExpression);
-            }
+            var relation = property.Value<bool>("IsRelationToOne") == true ? Relation.ToOne :
+                property.Value<bool>("IsRelationToMany") == true ? Relation.ToMany :
+                Relation.None;
+
+            info.IsRelation(
+                relation,
+                relatedCollectionAlias,
+                relatedPropertyName,
+                dataCollectionExpression);
 
             return info;
         }

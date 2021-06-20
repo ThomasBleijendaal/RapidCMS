@@ -114,7 +114,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
         public IEnumerable<string> NamespacesUsed(Use use)
         {
-            if (use == Use.Entity && Relation.HasFlag(Relation.Many))
+            if (use == Use.Entity && Relation.HasFlag(Relation.ToMany))
             {
                 yield return "System.Collections.Generic";
             }

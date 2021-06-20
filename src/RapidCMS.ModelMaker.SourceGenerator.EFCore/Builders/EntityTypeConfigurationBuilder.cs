@@ -53,7 +53,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
         {
             indentWriter.Write("builder");
 
-            if (property.Relation.HasFlag(Relation.One))
+            if (property.Relation.HasFlag(Relation.ToOne))
             {
                 indentWriter.Write($".HasOne(x => x.{property.PascalName})");
             }
@@ -62,14 +62,18 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
                 indentWriter.Write($".HasMany(x => x.{property.PascalName})");
             }
 
-            if (property.Relation.HasFlag(Relation.ToOne))
+            if (property.Relation.HasFlag(Relation.One))
             {
                 indentWriter.Write($".WithOne(x => x.{property.RelatedPropertyName})");
-                indentWriter.Write(".OnDelete(DeleteBehavior.NoAction)");
             }
             else
             {
                 indentWriter.Write($".WithMany(x => x.{property.RelatedPropertyName})");
+            }
+
+            if (property.Relation != (Relation.Many | Relation.ToMany))
+            {
+                indentWriter.Write(".OnDelete(DeleteBehavior.NoAction)");
             }
 
             indentWriter.WriteLine(";");

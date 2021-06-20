@@ -113,7 +113,7 @@ namespace RapidCMS.Example.ModelMaker
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ModelMakerDbContext context)
         {
-            // context.Database.Migrate();
+            context.Database.Migrate();
 
             app.UseRapidCMS(isDevelopment: env.IsDevelopment());
 

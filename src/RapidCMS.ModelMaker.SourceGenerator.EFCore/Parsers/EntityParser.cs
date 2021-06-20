@@ -87,6 +87,8 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
             foreach (var relation in oneWayRelationsToThisEntity)
             {
+                // TODO: detect half configured relations (A -> B, B -/-> A) and fix them (set B -> A)
+
                 var reverseRelation = relation.Property.Relation switch
                 {
                     Relation.ToOne => Relation.One | Relation.ToMany,

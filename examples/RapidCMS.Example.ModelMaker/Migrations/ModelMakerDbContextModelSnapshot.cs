@@ -21,15 +21,15 @@ namespace RapidCMS.Example.ModelMaker.Migrations
 
             modelBuilder.Entity("BlogCategory", b =>
                 {
+                    b.Property<int>("BlogBlogCategoriesId")
+                        .HasColumnType("int");
+
                     b.Property<int>("BlogCategoriesId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("int");
+                    b.HasKey("BlogBlogCategoriesId", "BlogCategoriesId");
 
-                    b.HasKey("BlogCategoriesId", "CategoriesId");
-
-                    b.HasIndex("CategoriesId");
+                    b.HasIndex("BlogCategoriesId");
 
                     b.ToTable("BlogCategory");
                 });
@@ -111,7 +111,12 @@ namespace RapidCMS.Example.ModelMaker.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("OneId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("OneId");
 
                     b.ToTable("OnetoManyOnes");
                 });
@@ -120,13 +125,13 @@ namespace RapidCMS.Example.ModelMaker.Migrations
                 {
                     b.HasOne("RapidCMS.ModelMaker.Blog", null)
                         .WithMany()
-                        .HasForeignKey("BlogCategoriesId")
+                        .HasForeignKey("BlogBlogCategoriesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("RapidCMS.ModelMaker.Category", null)
                         .WithMany()
-                        .HasForeignKey("CategoriesId")
+                        .HasForeignKey("BlogCategoriesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -142,9 +147,24 @@ namespace RapidCMS.Example.ModelMaker.Migrations
                     b.Navigation("MainCategory");
                 });
 
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoManyOne", b =>
+                {
+                    b.HasOne("RapidCMS.ModelMaker.OnetoManyMany", "One")
+                        .WithMany("Many")
+                        .HasForeignKey("OneId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("One");
+                });
+
             modelBuilder.Entity("RapidCMS.ModelMaker.Category", b =>
                 {
                     b.Navigation("BlogMainCategory");
+                });
+
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoManyMany", b =>
+                {
+                    b.Navigation("Many");
                 });
 #pragma warning restore 612, 618
         }

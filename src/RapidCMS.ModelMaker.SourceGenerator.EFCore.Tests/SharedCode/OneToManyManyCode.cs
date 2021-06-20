@@ -44,7 +44,7 @@ namespace RapidCMS.ModelMaker
                         editor.AddSection(section =>
                         {
                             section.AddField(x => x.Name).SetType(typeof(RapidCMS.UI.Components.Editors.TextBoxEditor)).SetName(""Name"");
-                            section.AddField(x => x.OneId).SetType(typeof(RapidCMS.UI.Components.Editors.EntityPicker)).SetCollectionRelation(""one-to-many-ones"").SetName(""One"");
+                            section.AddField(x => x.Many).SetType(typeof(RapidCMS.UI.Components.Editors.EntitiesPicker)).SetCollectionRelation(""one-to-many-ones"").SetName(""Many"");
                         });
                     });
                 });
@@ -63,12 +63,13 @@ namespace RapidCMS.ModelMaker
     {
         public void Configure(EntityTypeBuilder<OnetoManyMany> builder)
         {
-            builder.HasOne(x => x.One).WithMany(x => x.Relation).OnDelete(DeleteBehavior.NoAction);
+            builder.HasMany(x => x.Many).WithOne(x => x.One).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
 ";
-        public const string Entity = @"using RapidCMS.Core.Abstractions.Data;
+        public const string Entity = @"using System.Collections.Generic;
+using RapidCMS.Core.Abstractions.Data;
 
 #nullable enable
 
@@ -81,8 +82,7 @@ namespace RapidCMS.ModelMaker
         
         public System.String Name { get; set; }
         
-        public int? OneId { get; set; }
-        public RapidCMS.ModelMaker.OnetoManyOne? One { get; set; }
+        public ICollection<RapidCMS.ModelMaker.OnetoManyOne> Many { get; set; } = new List<RapidCMS.ModelMaker.OnetoManyOne>();
     }
 }
 ";
@@ -112,7 +112,7 @@ namespace RapidCMS.ModelMaker
         {
             if (int.TryParse(id, out var intId))
             {
-                var entity = await _dbContext.OnetoManyManys.FirstOrDefaultAsync(x => x.Id == intId);
+                var entity = await _dbContext.OnetoManyManys.Include(x => x.Many).FirstOrDefaultAsync(x => x.Id == intId);
                 if (entity != null)
                 {
                     _dbContext.OnetoManyManys.Remove(entity);
@@ -130,7 +130,7 @@ namespace RapidCMS.ModelMaker
         {
             if (int.TryParse(id, out var intId))
             {
-                return await _dbContext.OnetoManyManys.AsNoTracking().FirstOrDefaultAsync(x => x.Id == intId);
+                return await _dbContext.OnetoManyManys.Include(x => x.Many).AsNoTracking().FirstOrDefaultAsync(x => x.Id == intId);
             }
             return default;
         }
@@ -138,6 +138,9 @@ namespace RapidCMS.ModelMaker
         public override async Task<OnetoManyMany?> InsertAsync(IEditContext<OnetoManyMany> editContext)
         {
             var entity = editContext.Entity;
+            
+            var relations = editContext.GetRelationContainer();
+            await HandleManyAsync(entity, relations);
             
             var entry = _dbContext.OnetoManyManys.Add(entity);
             await _dbContext.SaveChangesAsync();
@@ -151,12 +154,34 @@ namespace RapidCMS.ModelMaker
         
         public override async Task UpdateAsync(IEditContext<OnetoManyMany> editContext)
         {
-            var entity = await _dbContext.OnetoManyManys.FirstAsync(x => x.Id == editContext.Entity.Id);
+            var entity = await _dbContext.OnetoManyManys.Include(x => x.Many).FirstAsync(x => x.Id == editContext.Entity.Id);
             
             entity.Name = editContext.Entity.Name;
-            entity.OneId = editContext.Entity.OneId;
+            
+            var relations = editContext.GetRelationContainer();
+            await HandleManyAsync(entity, relations);
             
             await _dbContext.SaveChangesAsync();
+        }
+        
+        private async Task HandleManyAsync(OnetoManyMany dbEntity, IRelationContainer relations)
+        {
+            var selectedIds = relations.GetRelatedElementIdsFor<OnetoManyMany, ICollection<RapidCMS.ModelMaker.OnetoManyOne>, int>(x => x.Many) ?? Enumerable.Empty<int>();
+            var existingIds = dbEntity.Many.Select(x => x.Id);
+            
+            var itemsToRemove = dbEntity.Many.Where(x => !selectedIds.Contains(x.Id)).ToList();
+            var idsToAdd = selectedIds.Except(existingIds).ToList();
+            
+            var itemsToAdd = await _dbContext.OnetoManyOnes.Where(x => idsToAdd.Contains(x.Id)).ToListAsync();
+            
+            foreach (var itemToRemove in itemsToRemove)
+            {
+                dbEntity.Many.Remove(itemToRemove);
+            }
+            foreach (var itemToAdd in itemsToAdd)
+            {
+                dbEntity.Many.Add(itemToAdd);
+            }
         }
     }
 }
