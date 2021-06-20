@@ -88,6 +88,9 @@ namespace RapidCMS.Example.ModelMaker
             services.AddScoped<BaseRepository<OnetoManyMany>, OnetoManyManyRepository>();
             services.AddScoped<BaseRepository<OnetoManyOne>, OnetoManyOneRepository>();
 
+            services.AddScoped<BaseRepository<ManytoManyManyA>, ManytoManyManyARepository>();
+            services.AddScoped<BaseRepository<ManytoManyManyB>, ManytoManyManyBRepository>();
+
             services.AddDbContext<ModelMakerDbContext>(
                 builder => builder.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString")),
                 ServiceLifetime.Transient,
@@ -104,6 +107,9 @@ namespace RapidCMS.Example.ModelMaker
 
                 config.AddOnetoManyManyCollection();
                 config.AddOnetoManyOneCollection();
+
+                config.AddManytoManyManyACollection();
+                config.AddManytoManyManyBCollection();
 
                 config.AddPersonCollection();
 

@@ -10,6 +10,8 @@
   <ItemGroup>
     <Content Remove="RapidModels\modelmaker.blogs.json" />
     <Content Remove="RapidModels\modelmaker.categories.json" />
+    <Content Remove="RapidModels\modelmaker.many-to-many-many-as.json" />
+    <Content Remove="RapidModels\modelmaker.many-to-many-many-bs.json" />
     <Content Remove="RapidModels\modelmaker.one-to-many-manys.json" />
     <Content Remove="RapidModels\modelmaker.one-to-many-ones.json" />
   </ItemGroup>
@@ -32,6 +34,8 @@
   <ItemGroup>
     <AdditionalFiles Include="RapidModels\modelmaker.blogs.json" />
     <AdditionalFiles Include="RapidModels\modelmaker.categories.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.many-to-many-many-as.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.many-to-many-many-bs.json" />
     <AdditionalFiles Include="RapidModels\modelmaker.one-to-many-manys.json" />
     <AdditionalFiles Include="RapidModels\modelmaker.one-to-many-ones.json" />
   </ItemGroup>

@@ -58,7 +58,12 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
 
             foreach (var entity in entities)
             {
-                entityParser.ProcessEntity(entity, modelMakerContext);
+                entityParser.NormalizeEntity(entity, modelMakerContext);
+            }
+
+            foreach (var entity in entities)
+            {
+                entityParser.ExtendEntity(entity, modelMakerContext);
             }
 
             foreach (var entity in entities)

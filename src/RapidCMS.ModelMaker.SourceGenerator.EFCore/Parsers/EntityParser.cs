@@ -52,8 +52,9 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
             return info;
         }
 
-        public void ProcessEntity(EntityInformation info, ModelMakerContext context)
+        public void NormalizeEntity(EntityInformation info, ModelMakerContext context)
         {
+            // both sides of the relation are configured with property names
             var twoWayRelationsToThisEntity = context.Entities
                 .Where(entity => entity != info)
                 .SelectMany(entity => entity.Properties
@@ -65,17 +66,26 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
             foreach (var relation in twoWayRelationsToThisEntity)
             {
-                var property = info.Properties.First(x => x.PascalName == relation.Property.RelatedPropertyName);
+                try
+                {
+                    var property = info.Properties.Single(x => x.PascalName == relation.Property.RelatedPropertyName);
 
-                var value = relation.Property.Relation & ~(Relation.One | Relation.Many);
+                    var value = relation.Property.Relation & ~(Relation.One | Relation.Many);
 
-                property.Relation |= value switch {
-                    Relation.ToOne => Relation.One,
-                    Relation.ToMany => Relation.Many,
-                    _ => Relation.None
-                };
+                    property.Relation |= value switch
+                    {
+                        Relation.ToOne => Relation.One,
+                        Relation.ToMany => Relation.Many,
+                        _ => Relation.None
+                    };
+                }
+                catch
+                {
+                    continue;
+                }
             }
 
+            // only one side of the relation is configured with property names
             var oneWayRelationsToThisEntity = context.Entities
                 .Where(entity => entity != info)
                 .SelectMany(entity => entity.Properties
@@ -87,13 +97,49 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
             foreach (var relation in oneWayRelationsToThisEntity)
             {
-                // TODO: detect half configured relations (A -> B, B -/-> A) and fix them (set B -> A)
+                try
+                {
+                    var reciprocalProperty = info.Properties.SingleOrDefault(x => x.RelatedPropertyName == relation.Property.PascalName);
+                    if (reciprocalProperty != null)
+                    {
+                        relation.Property.RelatedPropertyName = reciprocalProperty.PascalName;
 
+                        var value = relation.Property.Relation & ~(Relation.One | Relation.Many);
+
+                        reciprocalProperty.Relation |= value switch
+                        {
+                            Relation.ToOne => Relation.One,
+                            Relation.ToMany => Relation.Many,
+                            _ => Relation.None
+                        };
+                    }
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+        }
+
+        public void ExtendEntity(EntityInformation info, ModelMakerContext context)
+        {
+            // only one of the entities of this relation is configured
+            var oneWayRelationsToThisEntity = context.Entities
+                .Where(entity => entity != info)
+                .SelectMany(entity => entity.Properties
+                    .Where(x => x.Relation != Relation.None &&
+                        x.Type == $"{context.Namespace}.{info.PascalName}" &&
+                        string.IsNullOrEmpty(x.RelatedPropertyName))
+                    .Select(property => new { Entity = entity, Property = property }))
+                .ToList();
+
+            foreach (var relation in oneWayRelationsToThisEntity)
+            {
                 var reverseRelation = relation.Property.Relation switch
                 {
                     Relation.ToOne => Relation.One | Relation.ToMany,
                     Relation.ToMany => Relation.Many | Relation.ToMany,
-                    _ => throw new InvalidOperationException("Unknown relation")
+                    _ => Relation.None
                 };
 
                 var adHocProperty = new PropertyInformation(true)

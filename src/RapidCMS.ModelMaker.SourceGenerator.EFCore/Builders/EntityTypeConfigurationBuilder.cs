@@ -71,7 +71,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
                 indentWriter.Write($".WithMany(x => x.{property.RelatedPropertyName})");
             }
 
-            if (property.Relation != (Relation.Many | Relation.ToMany))
+            if (!property.Relation.HasFlag(Relation.Many | Relation.ToMany))
             {
                 indentWriter.Write(".OnDelete(DeleteBehavior.NoAction)");
             }

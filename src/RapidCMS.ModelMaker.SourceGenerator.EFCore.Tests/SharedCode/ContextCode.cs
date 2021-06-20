@@ -82,5 +82,33 @@ namespace RapidCMS.ModelMaker
     }
 }
 ";
+
+        public const string ManyToManyContext = @"using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+#nullable enable
+
+namespace RapidCMS.ModelMaker
+{
+    public partial class ModelMakerDbContext : DbContext
+    {
+        public ModelMakerDbContext(DbContextOptions options) : base(options)
+        {
+        }
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            
+            modelBuilder.ApplyConfiguration(new ManytoManyManyAConfiguration());
+            modelBuilder.ApplyConfiguration(new ManytoManyManyBConfiguration());
+        }
+        
+        public DbSet<ManytoManyManyA> ManytoManyManyAs { get; set; } = default!;
+        
+        public DbSet<ManytoManyManyB> ManytoManyManyBs { get; set; } = default!;
+    }
+}
+";
     }
 }

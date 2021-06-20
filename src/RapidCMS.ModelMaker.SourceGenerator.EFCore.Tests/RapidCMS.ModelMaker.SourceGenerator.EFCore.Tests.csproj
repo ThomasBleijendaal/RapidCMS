@@ -13,8 +13,19 @@
     <None Remove="modelmaker.category.entity-only.json" />
     <None Remove="modelmaker.category.json" />
     <None Remove="modelmaker.category.repository-only.json" />
+    <None Remove="modelmaker.many-to-many-many-as.json" />
+    <None Remove="modelmaker.many-to-many-many-bs.json" />
     <None Remove="modelmaker.one-to-many-manys.json" />
     <None Remove="modelmaker.one-to-many-ones.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="modelmaker.many-to-many-many-as.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="modelmaker.many-to-many-many-bs.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
