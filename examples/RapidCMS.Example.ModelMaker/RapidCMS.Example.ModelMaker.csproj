@@ -14,6 +14,8 @@
     <Content Remove="RapidModels\modelmaker.many-to-many-many-bs.json" />
     <Content Remove="RapidModels\modelmaker.one-to-many-manys.json" />
     <Content Remove="RapidModels\modelmaker.one-to-many-ones.json" />
+    <Content Remove="RapidModels\modelmaker.one-to-one-one-as.json" />
+    <Content Remove="RapidModels\modelmaker.one-to-one-one-bs.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +40,8 @@
     <AdditionalFiles Include="RapidModels\modelmaker.many-to-many-many-bs.json" />
     <AdditionalFiles Include="RapidModels\modelmaker.one-to-many-manys.json" />
     <AdditionalFiles Include="RapidModels\modelmaker.one-to-many-ones.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.one-to-one-one-as.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.one-to-one-one-bs.json" />
   </ItemGroup>
 
   <ItemGroup>

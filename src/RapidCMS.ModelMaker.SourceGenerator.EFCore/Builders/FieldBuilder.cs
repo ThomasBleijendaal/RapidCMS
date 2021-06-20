@@ -8,13 +8,18 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
     {
         public void WriteField(IndentedTextWriter indentWriter, PropertyInformation info)
         {
-            if (info.Relation.HasFlag(Relation.ToOne))
+            if (info.Relation.HasFlag(Relation.One | Relation.ToOne) && !info.Relation.HasFlag(Relation.DependentSide))
             {
-                indentWriter.Write($"section.AddField(x => x.{info.PascalName}Id)");
+                indentWriter.Write($"section.AddField(x => x.{info.PascalCaseName} == null ? 0 : x.{info.PascalCaseName}.Id)");
+                indentWriter.Write(".DisableWhen((e, s) => true)");
+            }
+            else if (info.Relation.HasFlag(Relation.ToOne))
+            {
+                indentWriter.Write($"section.AddField(x => x.{info.PascalCaseName}Id)");
             }
             else
             {
-                indentWriter.Write($"section.AddField(x => x.{info.PascalName})");
+                indentWriter.Write($"section.AddField(x => x.{info.PascalCaseName})");
             }
 
             indentWriter.Write($".SetType(typeof({info.EditorType}))");

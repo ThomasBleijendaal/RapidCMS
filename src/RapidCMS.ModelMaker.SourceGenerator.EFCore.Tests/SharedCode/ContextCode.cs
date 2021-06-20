@@ -110,5 +110,33 @@ namespace RapidCMS.ModelMaker
     }
 }
 ";
+
+        public const string OneToOneContext = @"using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+#nullable enable
+
+namespace RapidCMS.ModelMaker
+{
+    public partial class ModelMakerDbContext : DbContext
+    {
+        public ModelMakerDbContext(DbContextOptions options) : base(options)
+        {
+        }
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            
+            modelBuilder.ApplyConfiguration(new OnetoOneOneAConfiguration());
+            modelBuilder.ApplyConfiguration(new OnetoOneOneBConfiguration());
+        }
+        
+        public DbSet<OnetoOneOneA> OnetoOneOneAs { get; set; } = default!;
+        
+        public DbSet<OnetoOneOneB> OnetoOneOneBs { get; set; } = default!;
+    }
+}
+";
     }
 }

@@ -59,8 +59,8 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                 .Where(entity => entity != info)
                 .SelectMany(entity => entity.Properties
                     .Where(x => x.Relation != Relation.None &&
-                        x.Type == $"{context.Namespace}.{info.PascalName}" &&
-                        info.Properties.Any(p => p.PascalName == x.RelatedPropertyName))
+                        x.Type == $"{context.Namespace}.{info.PascalCaseName}" &&
+                        info.Properties.Any(p => p.PascalCaseName == x.RelatedPropertyName))
                     .Select(property => new { Entity = entity, Property = property }))
                 .ToList();
 
@@ -68,7 +68,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
             {
                 try
                 {
-                    var property = info.Properties.Single(x => x.PascalName == relation.Property.RelatedPropertyName);
+                    var property = info.Properties.Single(x => x.PascalCaseName == relation.Property.RelatedPropertyName);
 
                     var value = relation.Property.Relation & ~(Relation.One | Relation.Many);
 
@@ -90,7 +90,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                 .Where(entity => entity != info)
                 .SelectMany(entity => entity.Properties
                     .Where(x => x.Relation != Relation.None &&
-                        x.Type == $"{context.Namespace}.{info.PascalName}" &&
+                        x.Type == $"{context.Namespace}.{info.PascalCaseName}" &&
                         string.IsNullOrEmpty(x.RelatedPropertyName))
                     .Select(property => new { Entity = entity, Property = property }))
                 .ToList();
@@ -99,10 +99,10 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
             {
                 try
                 {
-                    var reciprocalProperty = info.Properties.SingleOrDefault(x => x.RelatedPropertyName == relation.Property.PascalName);
+                    var reciprocalProperty = info.Properties.SingleOrDefault(x => x.RelatedPropertyName == relation.Property.PascalCaseName);
                     if (reciprocalProperty != null)
                     {
-                        relation.Property.RelatedPropertyName = reciprocalProperty.PascalName;
+                        relation.Property.RelatedPropertyName = reciprocalProperty.PascalCaseName;
 
                         var value = relation.Property.Relation & ~(Relation.One | Relation.Many);
 
@@ -112,6 +112,12 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                             Relation.ToMany => Relation.Many,
                             _ => Relation.None
                         };
+
+                        if (reciprocalProperty.Relation.HasFlag(Relation.One | Relation.ToOne))
+                        {
+                            reciprocalProperty.Relation |= Relation.DependentSide;
+                            relation.Property.Relation |= Relation.One;
+                        }
                     }
                 }
                 catch
@@ -128,7 +134,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                 .Where(entity => entity != info)
                 .SelectMany(entity => entity.Properties
                     .Where(x => x.Relation != Relation.None &&
-                        x.Type == $"{context.Namespace}.{info.PascalName}" &&
+                        x.Type == $"{context.Namespace}.{info.PascalCaseName}" &&
                         string.IsNullOrEmpty(x.RelatedPropertyName))
                     .Select(property => new { Entity = entity, Property = property }))
                 .ToList();
@@ -144,11 +150,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
                 var adHocProperty = new PropertyInformation(true)
                     .UseFor(Use.Entity)
-                    .HasName($"{relation.Entity.PascalName}{relation.Property.PascalName}")
-                    .IsType($"{context.Namespace}.{relation.Entity.PascalName}")
-                    .IsRelation(reverseRelation, relation.Property.RelatedCollectionAlias, $"{relation.Entity.PascalName}{relation.Property.PascalName}", default);
+                    .HasName($"{relation.Entity.PascalCaseName}{relation.Property.PascalCaseName}")
+                    .IsType($"{context.Namespace}.{relation.Entity.PascalCaseName}")
+                    .IsRelation(reverseRelation, relation.Property.RelatedCollectionAlias, $"{relation.Entity.PascalCaseName}{relation.Property.PascalCaseName}", default);
 
-                relation.Property.RelatedPropertyName ??= $"{relation.Entity.PascalName}{relation.Property.PascalName}";
+                relation.Property.RelatedPropertyName ??= $"{relation.Entity.PascalCaseName}{relation.Property.PascalCaseName}";
                 relation.Property.Relation |= Relation.Many;
 
                 info.AddProperty(adHocProperty);

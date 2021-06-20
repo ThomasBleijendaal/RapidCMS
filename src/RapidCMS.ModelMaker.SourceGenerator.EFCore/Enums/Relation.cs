@@ -10,6 +10,8 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums
         One = 1,
         Many = 2,
         ToOne = 4,
-        ToMany = 8
+        ToMany = 8,
+
+        DependentSide = 1024
     }
 }

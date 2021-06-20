@@ -168,6 +168,45 @@ namespace RapidCMS.Example.ModelMaker.Migrations
                     b.ToTable("OnetoManyOnes");
                 });
 
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoOneOneA", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("BId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BId")
+                        .IsUnique()
+                        .HasFilter("[BId] IS NOT NULL");
+
+                    b.ToTable("OnetoOneOneAs");
+                });
+
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoOneOneB", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OnetoOneOneBs");
+                });
+
             modelBuilder.Entity("BlogCategory", b =>
                 {
                     b.HasOne("RapidCMS.ModelMaker.Blog", null)
@@ -219,6 +258,16 @@ namespace RapidCMS.Example.ModelMaker.Migrations
                     b.Navigation("One");
                 });
 
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoOneOneA", b =>
+                {
+                    b.HasOne("RapidCMS.ModelMaker.OnetoOneOneB", "B")
+                        .WithOne("A")
+                        .HasForeignKey("RapidCMS.ModelMaker.OnetoOneOneA", "BId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("B");
+                });
+
             modelBuilder.Entity("RapidCMS.ModelMaker.Category", b =>
                 {
                     b.Navigation("BlogMainCategory");
@@ -227,6 +276,11 @@ namespace RapidCMS.Example.ModelMaker.Migrations
             modelBuilder.Entity("RapidCMS.ModelMaker.OnetoManyMany", b =>
                 {
                     b.Navigation("Many");
+                });
+
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoOneOneB", b =>
+                {
+                    b.Navigation("A");
                 });
 #pragma warning restore 612, 618
         }

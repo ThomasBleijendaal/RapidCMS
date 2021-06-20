@@ -13,14 +13,29 @@
     <None Remove="modelmaker.category.entity-only.json" />
     <None Remove="modelmaker.category.json" />
     <None Remove="modelmaker.category.repository-only.json" />
-    <None Remove="modelmaker.many-to-many-many-as.json" />
+    <None Remove="modelmaker.many-to-many-many-as-explicit.json" />
+    <None Remove="modelmaker.many-to-many-many-as-implicit.json" />
     <None Remove="modelmaker.many-to-many-many-bs.json" />
     <None Remove="modelmaker.one-to-many-manys.json" />
     <None Remove="modelmaker.one-to-many-ones.json" />
+    <None Remove="modelmaker.one-to-one-one-as.json" />
+    <None Remove="modelmaker.one-to-one-one-bs-explicit.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="modelmaker.many-to-many-many-as.json">
+    <Content Include="modelmaker.one-to-one-one-as.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="modelmaker.one-to-one-one-bs-explicit.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="modelmaker.many-to-many-many-as-explicit.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="modelmaker.many-to-many-many-as-implicit.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="modelmaker.many-to-many-many-bs.json">

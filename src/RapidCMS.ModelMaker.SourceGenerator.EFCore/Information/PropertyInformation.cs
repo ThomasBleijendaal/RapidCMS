@@ -18,7 +18,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
         public string? Name { get; private set; }
 
-        public string? PascalName => ValidPascalCaseName(Name);
+        public string? PascalCaseName => ValidPascalCaseName(Name);
 
         public PropertyInformation HasName(string name)
         {
