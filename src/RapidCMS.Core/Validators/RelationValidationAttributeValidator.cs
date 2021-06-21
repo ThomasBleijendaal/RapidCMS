@@ -10,6 +10,7 @@ using RapidCMS.Core.Forms.Validation;
 
 namespace RapidCMS.Core.Validators
 {
+    [Obsolete]
     internal class RelationValidationAttributeValidator : IRelationValidator
     {
         private readonly IPropertyMetadata _property;

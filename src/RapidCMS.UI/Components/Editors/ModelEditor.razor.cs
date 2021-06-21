@@ -49,14 +49,14 @@ namespace RapidCMS.UI.Components.Editors
 
         private void EditContext_OnValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
         {
-            PropertyEditContext?.IsValid();
+            PropertyEditContext?.IsValidAsync();
         }
 
         private void PropertyEditContext_OnValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
         {
             if (!EditContext.IsValid(Property) && e.IsValid == true)
             {
-                EditContext.IsValid();
+                EditContext.IsValidAsync();
             }
         }
     }

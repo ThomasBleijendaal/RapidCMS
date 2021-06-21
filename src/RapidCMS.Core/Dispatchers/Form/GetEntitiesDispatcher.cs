@@ -76,8 +76,8 @@ namespace RapidCMS.Core.Dispatchers.Form
             }
 
             var existingEntities = await _concurrencyService.EnsureCorrectConcurrencyAsync(action);
-            var protoEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, collection.EntityVariant.Alias, protoEntity, parent, request.UsageType | UsageType.List, _serviceProvider);
-            var newEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, variant.Alias, newEntity, parent, request.UsageType | UsageType.Node, _serviceProvider);
+            var protoEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, collection.EntityVariant.Alias, protoEntity, parent, request.UsageType | UsageType.List, collection.Validators, _serviceProvider);
+            var newEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, variant.Alias, newEntity, parent, request.UsageType | UsageType.Node, collection.Validators, _serviceProvider);
 
             return new ListContext(
                 request.CollectionAlias,

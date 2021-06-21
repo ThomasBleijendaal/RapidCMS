@@ -67,6 +67,8 @@ namespace RapidCMS.Core.Models.Setup
         public INodeSetup? NodeView { get; set; }
         public INodeSetup? NodeEditor { get; set; }
 
+        public List<Type> Validators { get; set; }
+
         public IButtonSetup? FindButton(string buttonId)
         {
             return EnumerableExtensions

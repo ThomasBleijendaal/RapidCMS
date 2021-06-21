@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Metadata;
@@ -26,6 +27,7 @@ namespace RapidCMS.Core.Forms
             TEntity referenceEntity,
             IParent? parent,
             IRelationContainer relationContainer,
+            IReadOnlyList<Type> validators,
             IServiceProvider serviceProvider)
         {
             UsageType = usageType;
@@ -33,7 +35,7 @@ namespace RapidCMS.Core.Forms
             Entity = entity;
             Parent = parent;
             _relationContainer = relationContainer;
-            _formState = new FormState(entity, serviceProvider);
+            _formState = new FormState(entity, validators, serviceProvider);
             _formState.PopulatePropertyStatesUsingReferenceEntity(referenceEntity);
 
             _dataValidationProviders = _relationContainer.Relations.Select(relation => new ApiDataProvider(relation)).ToList();
@@ -55,9 +57,9 @@ namespace RapidCMS.Core.Forms
         public bool? IsModified(string propertyName)
             => GetPropertyState(propertyName)?.IsModified;
 
-        public bool IsValid()
+        public async Task<bool> IsValidAsync()
         {
-            _formState.ValidateModel(_dataValidationProviders);
+            await _formState.ValidateModelAsync(_dataValidationProviders);
 
             return !_formState.GetValidationMessages().Any();
         }
@@ -80,33 +82,30 @@ namespace RapidCMS.Core.Forms
         public void AddValidationError(string propertyName, string message)
             => GetPropertyState(propertyName)?.AddMessage(message);
 
-        public bool? Validate<TValue>(Expression<Func<TEntity, TValue>> property)
+        public async Task<bool?> ValidateAsync<TValue>(Expression<Func<TEntity, TValue>> property)
         {
             var metadata = GetMetadata(property);
 
             // force add property to the formState
             _formState.GetPropertyState(metadata, createWhenNotFound: true);
 
-            _formState.ValidateProperty(metadata, _dataValidationProviders);
+            await _formState.ValidatePropertyAsync(metadata, _dataValidationProviders);
 
             return _formState.GetPropertyState(metadata)?.GetValidationMessages().Any()
                 ?? throw new InvalidOperationException("Given expression could not be valided.");
         }
 
-        public void EnforceCompleteValidation()
+        public async Task EnforceCompleteValidationAsync()
         {
             // add all properties to the form state
             _formState.PopulateAllPropertyStates();
 
-            if (!IsValid())
-            {
-                throw new InvalidEntityException();
-            }
+            await EnforceValidEntityAsync();
         }
 
-        public void EnforceValidEntity()
+        public async Task EnforceValidEntityAsync()
         {
-            if (!IsValid())
+            if (!await IsValidAsync())
             {
                 throw new InvalidEntityException();
             }

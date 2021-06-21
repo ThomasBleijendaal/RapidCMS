@@ -131,7 +131,8 @@ namespace RapidCMS.Core.Resolvers.Setup
             {
                 DataViews = config.DataViews,
                 DataViewBuilder = config.DataViewBuilder,
-                UsageType = GetCollectionUsage(config)
+                UsageType = GetCollectionUsage(config),
+                Validators = config.Validators
             };
 
             var cacheable = true;

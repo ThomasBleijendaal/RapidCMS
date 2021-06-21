@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using RapidCMS.Core.Models;
 
-namespace RapidCMS.Core.Forms.Validation
+namespace RapidCMS.Core.Attributes
 {
     /// <summary>
     /// This attribute will instruct the entity validator to also validate each of the elements of this enumerable, instead of just the enumerable itself.
@@ -27,7 +28,7 @@ namespace RapidCMS.Core.Forms.Validation
             {
                 var context = new ValidationContext(item, validationContext, null);
 
-                Validator.TryValidateObject(item, context, results, true);   
+                Validator.TryValidateObject(item, context, results, true);
             }
 
             var compositeResults = new CompositeValidationResult($"Validation for {validationContext.DisplayName} failed!", validationContext.MemberName ?? "Unknown member");

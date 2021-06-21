@@ -78,7 +78,7 @@ namespace RapidCMS.UI.Components.Editors
                     SetValueFromObject(value);
 
                     EditContext.NotifyPropertyFinished(Property);
-                    EditContext.NotifyPropertyChanged(Property);
+                    EditContext.NotifyPropertyChangedAsync(Property);
                 }
                 catch
                 {

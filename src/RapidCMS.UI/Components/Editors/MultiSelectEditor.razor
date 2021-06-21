@@ -107,7 +107,7 @@
             RelationDataCollection!.RemoveElement(element);
         }
 
-        EditContext.NotifyPropertyChanged(Property);
+        EditContext.NotifyPropertyChangedAsync(Property);
     }
 
     public override void Dispose()

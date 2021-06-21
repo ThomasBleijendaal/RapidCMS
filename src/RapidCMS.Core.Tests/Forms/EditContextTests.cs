@@ -2,14 +2,15 @@
 using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
-using RapidCMS.Core.Forms.Validation;
 using RapidCMS.Core.Helpers;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace RapidCMS.Core.Tests.Forms
 {
@@ -28,18 +29,19 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { Id = "1" },
                 default,
                 UsageType.Edit,
+                default,
                 _serviceCollection.BuildServiceProvider());
         }
 
         [Test]
-        public void WhenPropertyIsModifiedViaMetadata_ThenFieldEventIsTriggered()
+        public async Task WhenPropertyIsModifiedViaMetadata_ThenFieldEventIsTriggeredAsync()
         {
             // arrange
             var called = false;
             _subject.OnFieldChanged += (o, e) => called = true;
 
             // act
-            _subject.NotifyPropertyChanged(_property);
+            await _subject.NotifyPropertyChangedAsync(_property);
 
             // assert
             Assert.IsTrue(called);
@@ -74,7 +76,7 @@ namespace RapidCMS.Core.Tests.Forms
         }
 
         [Test]
-        public void WhenEntityIsInvalidButNotTouched_ThenEditContextIsValid()
+        public async Task WhenEntityIsInvalidButNotTouched_ThenEditContextIsValidAsync()
         {
             // arrange
             _subject = new FormEditContext(
@@ -84,14 +86,15 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { },
                 default,
                 UsageType.Edit,
+                default,
                 _serviceCollection.BuildServiceProvider());
 
             // act & assert
-            Assert.IsTrue(_subject.IsValid());
+            Assert.IsTrue(await _subject.IsValidAsync());
         }
 
         [Test]
-        public void WhenEntityIsInvalidButTouched_ThenEditContextIsInvalid()
+        public async Task WhenEntityIsInvalidButTouched_ThenEditContextIsInvalidAsync()
         {
             // arrange
             _subject = new FormEditContext(
@@ -101,15 +104,16 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { },
                 default,
                 UsageType.Edit,
+                default,
                 _serviceCollection.BuildServiceProvider());
             _subject.NotifyPropertyIncludedInForm(_property);
 
             // act & assert
-            Assert.IsFalse(_subject.IsValid());
+            Assert.IsFalse(await _subject.IsValidAsync());
         }
 
         [Test]
-        public void WhenEntityIsValidAndTouched_ThenEditContextIsValid()
+        public async Task WhenEntityIsValidAndTouched_ThenEditContextIsValidAsync()
         {
             // arrange
             _subject = new FormEditContext(
@@ -119,11 +123,13 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { Id = "123" },
                 default,
                 UsageType.Edit,
+                default,
                 _serviceCollection.BuildServiceProvider());
-            _subject.NotifyPropertyChanged(_property);
+
+            await _subject.NotifyPropertyChangedAsync(_property);
 
             // act & assert
-            Assert.IsTrue(_subject.IsValid());
+            Assert.IsTrue(await _subject.IsValidAsync());
         }
 
         [Test]
@@ -137,6 +143,7 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { },
                 default,
                 UsageType.Edit,
+                default,
                 _serviceCollection.BuildServiceProvider());
 
             // act & assert
@@ -144,7 +151,7 @@ namespace RapidCMS.Core.Tests.Forms
         }
 
         [Test]
-        public void WhenPropertyIsInvalidButTouched_ThenEditContextIsInvalid()
+        public async Task WhenPropertyIsInvalidButTouched_ThenEditContextIsInvalidAsync()
         {
             // arrange
             _subject = new FormEditContext(
@@ -154,8 +161,10 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { },
                 default,
                 UsageType.Edit,
+                default,
                 _serviceCollection.BuildServiceProvider());
-            _subject.NotifyPropertyChanged(_property);
+
+            await _subject.NotifyPropertyChangedAsync(_property);
 
             // act & assert
             Assert.IsFalse(_subject.IsValid(_property));
@@ -172,6 +181,7 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { Id = "123" },
                 default,
                 UsageType.Edit,
+                default,
                 _serviceCollection.BuildServiceProvider());
             _subject.NotifyPropertyIncludedInForm(_property);
 
@@ -187,10 +197,10 @@ namespace RapidCMS.Core.Tests.Forms
         }
 
         [Test]
-        public void WhenEntityIsTouched_ThenEditContextIsModified()
+        public async Task WhenEntityIsTouched_ThenEditContextIsModifiedAsync()
         {
             // arrange
-            _subject.NotifyPropertyChanged(_property);
+            await _subject.NotifyPropertyChangedAsync(_property);
 
             // act & assert
             Assert.IsTrue(_subject.IsModified());
@@ -204,10 +214,10 @@ namespace RapidCMS.Core.Tests.Forms
         }
 
         [Test]
-        public void WhenPropertyIsTouched_ThenPropertyIsValidated()
+        public async Task WhenPropertyIsTouched_ThenPropertyIsValidatedAsync()
         {
             // arrange
-            _subject.NotifyPropertyChanged(_property);
+            await _subject.NotifyPropertyChangedAsync(_property);
 
             // act & assert
             Assert.IsTrue(_subject.WasValidated(_property));
@@ -235,10 +245,10 @@ namespace RapidCMS.Core.Tests.Forms
         }
 
         [Test]
-        public void WhenNestedPropertyIsTouched_ThenPropertyIsValidated()
+        public async Task WhenNestedPropertyIsTouched_ThenPropertyIsValidatedAsync()
         {
             // act
-            _subject.NotifyPropertyChanged(_nestedProperty);
+            await _subject.NotifyPropertyChangedAsync(_nestedProperty);
 
             // assert
             Assert.IsTrue(_subject.WasValidated(_nestedProperty));
@@ -246,7 +256,7 @@ namespace RapidCMS.Core.Tests.Forms
         }
 
         [Test]
-        public void WhenNestedPropertyIsTouchedAndValid_ThenPropertyIsValidatedAndValid()
+        public async Task WhenNestedPropertyIsTouchedAndValid_ThenPropertyIsValidatedAndValidAsync()
         {
             // arrange
             _subject = new FormEditContext(
@@ -256,10 +266,11 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { Id = "123", Nested = new Entity.NestedObject { Data = "456" } },
                 default,
                 UsageType.Edit,
+                default,
                 _serviceCollection.BuildServiceProvider());
 
             // act
-            _subject.NotifyPropertyChanged(_nestedProperty);
+            await _subject.NotifyPropertyChangedAsync(_nestedProperty);
 
             // assert
             Assert.IsTrue(_subject.WasValidated(_nestedProperty));

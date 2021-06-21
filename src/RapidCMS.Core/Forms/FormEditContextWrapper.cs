@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Metadata;
@@ -42,8 +43,8 @@ namespace RapidCMS.Core.Forms
         public bool? IsModified(string propertyName) 
             => GetPropertyState(propertyName)?.IsModified;
 
-        public bool IsValid()
-            => _editContext.IsValid();
+        public Task<bool> IsValidAsync()
+            => _editContext.IsValidAsync();
 
         public bool? IsValid<TValue>(Expression<Func<TEntity, TValue>> property) 
             => GetPropertyState(GetMetadata(property))?.GetValidationMessages().Any() == false;
@@ -63,27 +64,23 @@ namespace RapidCMS.Core.Forms
         public void AddValidationError(string propertyName, string message)
             => GetPropertyState(propertyName)?.AddMessage(message, isManual: true);
 
-        public bool? Validate<TValue>(Expression<Func<TEntity, TValue>> property)
+        public Task<bool?> ValidateAsync<TValue>(Expression<Func<TEntity, TValue>> property)
         {
             // make sure it will be validated
             _editContext.NotifyPropertyIncludedInForm(GetMetadata(property));
-            return IsValid(property);
+            return Task.FromResult(IsValid(property));
         }
 
-        public void EnforceCompleteValidation()
+        public async Task EnforceCompleteValidationAsync()
         {
             // add all properties to the form state
             _editContext.FormState.PopulateAllPropertyStates();
-
-            if (!IsValid())
-            {
-                throw new InvalidEntityException();
-            }
+            await EnforceValidEntityAsync();
         }
 
-        public void EnforceValidEntity()
+        public async Task EnforceValidEntityAsync()
         {
-            if (!IsValid())
+            if (!await IsValidAsync())
             {
                 throw new InvalidEntityException();
             }

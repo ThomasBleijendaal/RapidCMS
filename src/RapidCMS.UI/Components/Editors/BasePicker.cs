@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Logging;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Models.Data;
 
@@ -131,7 +127,7 @@ namespace RapidCMS.UI.Components.Editors
                         RelationDataCollection.RemoveElement(id);
                     }
 
-                    EditContext.NotifyPropertyChanged(Property);
+                    EditContext.NotifyPropertyChangedAsync(Property);
                 }
             }
             else

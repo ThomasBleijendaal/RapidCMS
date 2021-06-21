@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Abstractions.Config
@@ -229,5 +230,25 @@ namespace RapidCMS.Core.Abstractions.Config
         ICollectionConfig<TEntity> SetElementConfiguration<TIdValue>(
             Expression<Func<TEntity, TIdValue>> elementIdExpression,
             params Expression<Func<TEntity, string?>>[] elementDisplayExpressions);
+
+        /// <summary>
+        /// Adds a validator to the collection which will be used to validate the entity.
+        /// 
+        /// Specific validators for entity variants are only used for that specific variant.
+        /// </summary>
+        /// <typeparam name="TEntityValidator"></typeparam>
+        /// <returns></returns>
+        ICollectionConfig<TEntity> AddEntityValidator<TEntityValidator>()
+            where TEntityValidator : IEntityValidator;
+
+        /// <summary>
+        /// Adds an async validator to the collection which will be used to validate the entity.
+        /// 
+        /// Specific validators for entity variants are only used for that specific variant.
+        /// </summary>
+        /// <typeparam name="TEntityValidator"></typeparam>
+        /// <returns></returns>
+        ICollectionConfig<TEntity> AddAsyncEntityValidator<TAsyncEntityValidator>()
+            where TAsyncEntityValidator : IAsyncEntityValidator;
     }
 }

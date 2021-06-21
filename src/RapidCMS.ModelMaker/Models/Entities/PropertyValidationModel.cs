@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Forms.Validation;
 using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 

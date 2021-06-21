@@ -12,6 +12,7 @@ using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.DataViews;
 using RapidCMS.Example.Shared.Handlers;
+using RapidCMS.Example.Shared.Validators;
 using RapidCMS.Example.WebAssembly.Components;
 using RapidCMS.Repositories;
 using RapidCMS.Repositories.ApiBridge;
@@ -97,6 +98,9 @@ namespace RapidCMS.Example.WebAssembly
 
             builder.Services.AddTransient<ITextUploadHandler, Base64ApiTextUploadHandler>();
             builder.Services.AddTransient<IImageUploadHandler, Base64ApiImageUploadHandler>();
+
+            // the country entity is validated by a FluentValidator
+            builder.Services.AddSingleton<CountryValidator>();
 
             if (!ConfigureAuthentication)
             {

@@ -21,7 +21,7 @@ namespace RapidCMS.UI.Components.Editors
                 Property.Setter(Entity, value);
             }
 
-            EditContext.NotifyPropertyChanged(Property);
+            EditContext.NotifyPropertyChangedAsync(Property);
         }
 
         protected void SetValueFromString(string value)
