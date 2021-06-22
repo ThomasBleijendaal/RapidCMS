@@ -9,15 +9,15 @@ using RapidCMS.Core.Abstractions.Validators;
 namespace RapidCMS.Example.Shared.Validators
 {
     /// <summary>
-    /// This adapter adapts FluentValidation's AbstractValidator to TEntity part of IEntityValidator
+    /// This adapter adapts FluentValidation's AbstractValidator to the IRelationContainer part of IEntityValidator
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    public class AbstractValidatorAdapter<TEntity> : AbstractValidator<TEntity>, IEntityValidator
+    public class AbstractRelationValidatorAdapter<TEntity> : AbstractValidator<IRelationContainer>, IEntityValidator
         where TEntity : IEntity
     {
         IEnumerable<ValidationResult> IEntityValidator.Validate(IEntity entity, IRelationContainer relationContainer)
         {
-            var result = Validate((TEntity)entity);
+            var result = Validate(relationContainer);
 
             if (result.IsValid)
             {

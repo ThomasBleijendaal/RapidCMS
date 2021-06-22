@@ -5,11 +5,11 @@ using RapidCMS.Core.Abstractions.Metadata;
 
 namespace RapidCMS.Core.Abstractions.Data
 {
-    [Obsolete]
     internal interface IDataValidationProvider
     {
         IPropertyMetadata Property { get; }
 
+        [Obsolete]
         IEnumerable<ValidationResult> Validate(IEntity entity, IServiceProvider serviceProvider);
     }
 }

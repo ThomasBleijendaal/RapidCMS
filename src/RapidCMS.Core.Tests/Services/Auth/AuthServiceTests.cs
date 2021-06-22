@@ -103,7 +103,7 @@ namespace RapidCMS.Core.Tests.Services.Auth
             _buttonActionHandler.Setup(x => x.GetOperation(It.IsAny<IButton>(), It.IsAny<FormEditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
             var serviceProvider = new Mock<IServiceProvider>();
             var entity = new Mock<IEntity>();
-            var editContext = new FormEditContext("alias", "repo", "entity", entity.Object, default, usageType, default, serviceProvider.Object);
+            var editContext = new FormEditContext("alias", "repo", "entity", entity.Object, default, usageType, new List<Type>(), serviceProvider.Object);
             var button = new ButtonSetup();
 
             // act
@@ -130,7 +130,7 @@ namespace RapidCMS.Core.Tests.Services.Auth
             _buttonActionHandler.Setup(x => x.GetOperation(It.IsAny<IButton>(), It.IsAny<FormEditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
             var serviceProvider = new Mock<IServiceProvider>();
             var entity = new Mock<IEntity>();
-            var editContext = new FormEditContext("alias", "repo", "entity", entity.Object, default, usageType, default, serviceProvider.Object);
+            var editContext = new FormEditContext("alias", "repo", "entity", entity.Object, default, usageType, new List<Type>(), serviceProvider.Object);
             var button = new ButtonSetup();
             _authorizationService
                 .Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<IEntity>(), It.IsAny<IEnumerable<IAuthorizationRequirement>>()))

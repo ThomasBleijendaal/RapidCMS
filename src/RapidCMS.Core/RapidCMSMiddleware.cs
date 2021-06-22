@@ -37,6 +37,7 @@ using RapidCMS.Core.Services.Persistence;
 using RapidCMS.Core.Services.Presentation;
 using RapidCMS.Core.Services.State;
 using RapidCMS.Core.Services.Tree;
+using RapidCMS.Core.Validators;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -112,6 +113,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped(typeof(NavigateButtonActionHandler<>));
 
             services.AddScoped(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
+
+            services.AddTransient<DataAnnotationEntityValidator>();
 
             AddServicesRequiringRepositories(services, rootConfig);
 

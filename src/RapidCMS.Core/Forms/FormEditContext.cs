@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Forms;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Forms
@@ -19,7 +21,7 @@ namespace RapidCMS.Core.Forms
             IEntity entity,
             IParent? parent,
             UsageType usageType,
-            IReadOnlyList<Type>? validators,
+            IReadOnlyList<Type> validators,
             IServiceProvider serviceProvider)
         {
             CollectionAlias = collectionAlias ?? throw new ArgumentNullException(nameof(collectionAlias));
@@ -28,7 +30,7 @@ namespace RapidCMS.Core.Forms
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             Parent = parent;
             UsageType = usageType;
-            _validators = validators;
+            _validators = validators ?? throw new ArgumentNullException(nameof(validators));
             FormState = new FormState(Entity, validators, serviceProvider);
         }
 
@@ -59,13 +61,14 @@ namespace RapidCMS.Core.Forms
             Entity = entity ?? throw new ArgumentNullException(nameof(entity));
             Parent = protoEditContext.Parent;
             UsageType = usageType;
+            _validators = protoEditContext._validators;
 
             FormState = new FormState(Entity, protoEditContext._validators, serviceProvider);
         }
 
         internal readonly FormState FormState;
         private readonly FormEditContext? _parentEditContext;
-        private readonly IReadOnlyList<Type>? _validators;
+        private readonly IReadOnlyList<Type> _validators;
 
         public string CollectionAlias { get; private set; }
         public string RepositoryAlias { get; private set; }
@@ -73,21 +76,25 @@ namespace RapidCMS.Core.Forms
         public IEntity Entity { get; private set; }
         public IParent? Parent { get; private set; }
         public UsageType UsageType { get; private set; }
-         
+
         public ReorderedState ReorderedState { get; private set; }
         internal string? ReorderedBeforeId { get; private set; }
         public EntityState EntityState => UsageType.HasFlag(UsageType.New) ? EntityState.IsNew : EntityState.IsExisting;
 
         internal List<FormDataProvider> DataProviders { get; set; } = new List<FormDataProvider>();
 
+
         public event EventHandler<FieldChangedEventArgs>? OnFieldChanged;
 
         public event EventHandler<ValidationStateChangedEventArgs>? OnValidationStateChanged;
 
-        public static implicit operator EditContext(FormEditContext editContext) 
+        public static implicit operator EditContext(FormEditContext editContext)
             => new EditContext(editContext.Entity);
+        
+        public IRelationContainer GetRelationContainer()
+            => new RelationContainer(DataProviders.Select(x => x.GenerateRelation()).SelectNotNull(x => x));
 
-        public FormEditContext EntityProperty(IPropertyMetadata property) 
+        public FormEditContext EntityProperty(IPropertyMetadata property)
             => new FormEditContext(this, property);
 
         public void NotifyReordered(string? beforeId)
@@ -96,7 +103,7 @@ namespace RapidCMS.Core.Forms
             ReorderedBeforeId = beforeId;
         }
 
-        public void NotifyPropertyIncludedInForm(IPropertyMetadata property) 
+        public void NotifyPropertyIncludedInForm(IPropertyMetadata property)
             => GetPropertyState(property);
 
         public async Task NotifyPropertyChangedAsync(IPropertyMetadata property)
@@ -126,16 +133,16 @@ namespace RapidCMS.Core.Forms
             return !FormState.GetValidationMessages().Any();
         }
 
-        public bool IsModified() 
+        public bool IsModified()
             => FormState.GetPropertyStates().Any(x => x.IsModified);
 
-        public bool IsModified(IPropertyMetadata property) 
+        public bool IsModified(IPropertyMetadata property)
             => GetPropertyState(property)!.IsModified;
 
-        public bool IsReordered() 
+        public bool IsReordered()
             => ReorderedState == ReorderedState.Reordered;
 
-        public bool IsValid(IPropertyMetadata property) 
+        public bool IsValid(IPropertyMetadata property)
             => !GetPropertyState(property)!.GetValidationMessages().Any();
 
         public bool WasValidated(IPropertyMetadata property)
@@ -170,14 +177,14 @@ namespace RapidCMS.Core.Forms
 
         private async Task ValidateModelAsync()
         {
-            await FormState.ValidateModelAsync(DataProviders);
+            await FormState.ValidateModelAsync(GetRelationContainer());
 
             OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !FormState.GetValidationMessages().Any()));
         }
 
         private async Task ValidatePropertyAsync(IPropertyMetadata property)
         {
-            await FormState.ValidatePropertyAsync(property, DataProviders);
+            await FormState.ValidatePropertyAsync(property, GetRelationContainer());
 
             OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !FormState.GetValidationMessages().Any()));
         }

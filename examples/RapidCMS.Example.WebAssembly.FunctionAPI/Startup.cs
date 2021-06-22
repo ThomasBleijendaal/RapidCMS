@@ -47,6 +47,7 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
 
             // TODO: the country entity is validated by a FluentValidator
             services.AddSingleton<CountryValidator>();
+            services.AddSingleton<CountryRelationValidator>();
 
             services.AddRapidCMSFunctions(config =>
             {

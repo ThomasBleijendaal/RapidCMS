@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Helpers;
@@ -79,7 +80,7 @@ namespace RapidCMS.Core.Tests.Forms
 
         public class EntityValidator : BaseEntityValidator<Entity>
         {
-            protected override IEnumerable<ValidationResult> Validate(Entity entity)
+            protected override IEnumerable<ValidationResult> Validate(Entity entity, IRelationContainer relationContainer)
             {
                 if (!string.IsNullOrEmpty(entity.Id))
                 {

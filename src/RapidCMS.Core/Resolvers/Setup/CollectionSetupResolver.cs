@@ -10,11 +10,13 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
+using RapidCMS.Core.Validators;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class CollectionSetupResolver : ISetupResolver<ICollectionSetup>
     {
+        private readonly ICmsConfig _cmsConfig;
         private readonly ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> _treeElementResolver;
         private readonly ISetupResolver<IEntityVariantSetup, EntityVariantConfig> _entityVariantResolver;
         private readonly ISetupResolver<ITreeViewSetup, TreeViewConfig> _treeViewResolver;
@@ -38,6 +40,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             IRepositoryTypeResolver repositoryTypeResolver,
             IEnumerable<IPlugin> plugins)
         {
+            _cmsConfig = cmsConfig;
             _treeElementResolver = treeElementResolver;
             _entityVariantResolver = entityVariantResolver;
             _treeViewResolver = treeViewResolver;
@@ -46,12 +49,12 @@ namespace RapidCMS.Core.Resolvers.Setup
             _nodeResolver = nodeResolver;
             _repositoryTypeResolver = repositoryTypeResolver;
             _plugins = plugins;
-            Initialize(cmsConfig);
+            Initialize();
         }
 
-        private void Initialize(ICmsConfig cmsConfig)
+        private void Initialize()
         {
-            MapCollections(cmsConfig.CollectionsAndPages.SelectNotNull(x => x as CollectionConfig));
+            MapCollections(_cmsConfig.CollectionsAndPages.SelectNotNull(x => x as CollectionConfig));
 
             foreach (var plugin in _plugins)
             {
@@ -134,6 +137,11 @@ namespace RapidCMS.Core.Resolvers.Setup
                 UsageType = GetCollectionUsage(config),
                 Validators = config.Validators
             };
+
+            if (!_cmsConfig.Advanced.RemoveDataAnnotationEntityValidator)
+            {
+                collection.Validators.Insert(0, typeof(DataAnnotationEntityValidator));
+            }
 
             var cacheable = true;
 

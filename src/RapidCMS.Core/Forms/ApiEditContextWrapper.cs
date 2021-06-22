@@ -59,7 +59,7 @@ namespace RapidCMS.Core.Forms
 
         public async Task<bool> IsValidAsync()
         {
-            await _formState.ValidateModelAsync(_dataValidationProviders);
+            await _formState.ValidateModelAsync(_relationContainer);
 
             return !_formState.GetValidationMessages().Any();
         }
@@ -89,7 +89,7 @@ namespace RapidCMS.Core.Forms
             // force add property to the formState
             _formState.GetPropertyState(metadata, createWhenNotFound: true);
 
-            await _formState.ValidatePropertyAsync(metadata, _dataValidationProviders);
+            await _formState.ValidatePropertyAsync(metadata, _relationContainer);
 
             return _formState.GetPropertyState(metadata)?.GetValidationMessages().Any()
                 ?? throw new InvalidOperationException("Given expression could not be valided.");
