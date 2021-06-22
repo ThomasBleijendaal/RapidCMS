@@ -12,7 +12,6 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
-using RapidCMS.Core.Validators;
 
 namespace RapidCMS.Core.Resolvers.Data
 {
@@ -92,20 +91,17 @@ namespace RapidCMS.Core.Resolvers.Data
                         propertyField.Property!,
                         _mediator);
 
-                    var validator = new RelationValidationAttributeValidator(propertyField.Property!);
-
                     return new FormDataProvider(
                         propertyField.Property!,
-                        provider,
-                        validator);
+                        provider);
 
                 case DataProviderRelationSetup dataProviderRelation:
 
-                    return new FormDataProvider(propertyField.Property!, _serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType), default);
+                    return new FormDataProvider(propertyField.Property!, _serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType));
 
                 case ConcreteDataProviderRelationSetup concreteDataProvider:
 
-                    return new FormDataProvider(propertyField.Property!, concreteDataProvider.DataCollection, default);
+                    return new FormDataProvider(propertyField.Property!, concreteDataProvider.DataCollection);
 
                 default:
                     throw new InvalidOperationException();

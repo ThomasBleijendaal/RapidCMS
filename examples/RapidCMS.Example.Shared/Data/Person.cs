@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Attributes;
-using RapidCMS.Core.Forms.Validation;
 
 namespace RapidCMS.Example.Shared.Data
 {

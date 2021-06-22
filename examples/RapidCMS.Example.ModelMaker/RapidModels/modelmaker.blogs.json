@@ -25,7 +25,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MinLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "a0357e14-9672-4cab-b7ac-51455afe7a62",
+              "Id": "6e91f11c-9cdf-4dee-974a-cac5e82ee95a",
               "Alias": "minlength",
               "AttributeExpression": "[MinLength(1)]",
               "DataCollectionExpression": null,
@@ -41,7 +41,7 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MaxLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "5bfc8bd8-daf2-415d-9e6e-aa0c84668b8f",
+              "Id": "1c544bf9-f1ab-4993-9698-5166767702b8",
               "Alias": "maxlength",
               "AttributeExpression": "[MaxLength(127)]",
               "DataCollectionExpression": null,
@@ -57,25 +57,21 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "a77fdebe-eaae-4868-a144-8c6c4e2624cf",
+              "Id": "3e69edd9-aaf2-4938-a0d6-59aee1615215",
               "Alias": "bannedContent",
-              "AttributeExpression": "[RegularExpression(\"[^a|b|c]\")]",
+              "AttributeExpression": "[RegularExpression(\"[^]\")]",
               "DataCollectionExpression": null,
               "Config": {
                 "$type": "RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker",
                 "BannedWords": {
                   "$type": "System.Collections.Generic.List`1[[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-                  "$values": [
-                    "a",
-                    "b",
-                    "c"
-                  ]
+                  "$values": []
                 },
-                "IsEnabled": true,
+                "IsEnabled": false,
                 "AlwaysIncluded": false,
                 "RelatedCollectionAlias": null,
                 "DataCollectionExpression": null,
-                "ValidationAttributeExpression": "[RegularExpression(\"[^a|b|c]\")]"
+                "ValidationAttributeExpression": "[RegularExpression(\"[^]\")]"
               }
             }
           ]
@@ -83,9 +79,7 @@
         "Type": "System.String",
         "IsRelationToOne": false,
         "IsRelationToMany": false,
-        "EditorType": "RapidCMS.UI.Components.Editors.TextBoxEditor",
-        "DataCollectionExpression": null,
-        "RelatedCollectionAlias": null
+        "EditorType": "RapidCMS.UI.Components.Editors.TextBoxEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -139,9 +133,7 @@
         "Type": "System.String",
         "IsRelationToOne": false,
         "IsRelationToMany": false,
-        "EditorType": "RapidCMS.UI.Components.Editors.TextAreaEditor",
-        "DataCollectionExpression": null,
-        "RelatedCollectionAlias": null
+        "EditorType": "RapidCMS.UI.Components.Editors.TextAreaEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -180,9 +172,7 @@
         "Type": "System.Boolean",
         "IsRelationToOne": false,
         "IsRelationToMany": false,
-        "EditorType": "RapidCMS.UI.Components.Editors.DropdownEditor",
-        "DataCollectionExpression": null,
-        "RelatedCollectionAlias": null
+        "EditorType": "RapidCMS.UI.Components.Editors.DropdownEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -200,9 +190,7 @@
         "Type": "System.DateTime",
         "IsRelationToOne": false,
         "IsRelationToMany": false,
-        "EditorType": "RapidCMS.UI.Components.Editors.DateEditor",
-        "DataCollectionExpression": null,
-        "RelatedCollectionAlias": null
+        "EditorType": "RapidCMS.UI.Components.Editors.DateEditor"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -237,9 +225,7 @@
         "Type": "RapidCMS.ModelMaker.Category",
         "IsRelationToOne": true,
         "IsRelationToMany": false,
-        "EditorType": "RapidCMS.UI.Components.Editors.EntityPicker",
-        "DataCollectionExpression": null,
-        "RelatedCollectionAlias": null
+        "EditorType": "RapidCMS.UI.Components.Editors.EntityPicker"
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
@@ -274,9 +260,7 @@
         "Type": "RapidCMS.ModelMaker.Category",
         "IsRelationToOne": false,
         "IsRelationToMany": true,
-        "EditorType": "RapidCMS.UI.Components.Editors.EntitiesPicker",
-        "DataCollectionExpression": null,
-        "RelatedCollectionAlias": null
+        "EditorType": "RapidCMS.UI.Components.Editors.EntitiesPicker"
       }
     ]
   }

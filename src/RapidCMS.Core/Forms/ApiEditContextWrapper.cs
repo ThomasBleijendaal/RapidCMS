@@ -9,7 +9,6 @@ using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Forms
 {
@@ -18,7 +17,6 @@ namespace RapidCMS.Core.Forms
     {
         private readonly FormState _formState;
         private readonly IRelationContainer _relationContainer;
-        private readonly IEnumerable<IDataValidationProvider> _dataValidationProviders;
 
         public ApiEditContextWrapper(
             UsageType usageType,
@@ -37,8 +35,6 @@ namespace RapidCMS.Core.Forms
             _relationContainer = relationContainer;
             _formState = new FormState(entity, validators, serviceProvider);
             _formState.PopulatePropertyStatesUsingReferenceEntity(referenceEntity);
-
-            _dataValidationProviders = _relationContainer.Relations.Select(relation => new ApiDataProvider(relation)).ToList();
         }
 
         public UsageType UsageType { get; }
