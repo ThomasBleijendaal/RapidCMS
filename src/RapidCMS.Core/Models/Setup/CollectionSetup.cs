@@ -22,6 +22,7 @@ namespace RapidCMS.Core.Models.Setup
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
             RepositoryAlias = repositoryAlias ?? throw new ArgumentNullException(nameof(repositoryAlias));
+            Validators = new List<Type>();
         }
 
         public string? Icon { get; private set; }
@@ -70,14 +71,12 @@ namespace RapidCMS.Core.Models.Setup
         public List<Type> Validators { get; set; }
 
         public IButtonSetup? FindButton(string buttonId)
-        {
-            return EnumerableExtensions
+            => EnumerableExtensions
                 .MergeAll(
                     ListView?.GetAllButtons(),
                     ListEditor?.GetAllButtons(),
                     NodeView?.GetAllButtons(),
                     NodeEditor?.GetAllButtons())
                 .FirstOrDefault(x => x.ButtonId == buttonId);
-        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿@inherits BasePropertyEditor
 
 <textarea value=@GetValueAsString()
-          @onchange=@(args => SetValueFromString(((string?)args.Value) ?? ""))
+          @onchange=@(args => SetValueFromStringAsync(((string?)args.Value) ?? ""))
           disabled=@IsDisabled
           placeholder=@Placeholder
           class="form-control @(CssHelper.GetValidationClass(State))"

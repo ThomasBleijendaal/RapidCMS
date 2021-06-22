@@ -11,6 +11,7 @@ using RapidCMS.Core.Forms.Validation;
 namespace RapidCMS.Core.Validators
 {
     [Obsolete]
+    // TODO: replace this with a IEntityValidator somehow
     internal class RelationValidationAttributeValidator : IRelationValidator
     {
         private readonly IPropertyMetadata _property;

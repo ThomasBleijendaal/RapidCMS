@@ -23,21 +23,21 @@
 </div>
 
 @code  {
-    private void SetValue(ChangeEventArgs args)
+    private async Task SetValue(ChangeEventArgs args)
     {
         var normalized = Regex.Replace((((string?)args.Value) ?? string.Empty), "[^0-9\\.]", "");
 
         if (Nullable.GetUnderlyingType(Property.PropertyType) == null && string.IsNullOrWhiteSpace(normalized))
         {
-            SetValueFromString("0");
+            await SetValueFromStringAsync("0");
         }
         else if (Property.PropertyType == typeof(float) || Property.PropertyType == typeof(double))
         {
-            SetValueFromString(normalized);
+            await SetValueFromStringAsync(normalized);
         }
         else
         {
-            SetValueFromString(normalized.Replace(".", ""));
+            await SetValueFromStringAsync(normalized.Replace(".", ""));
         }
 
         StateHasChanged();

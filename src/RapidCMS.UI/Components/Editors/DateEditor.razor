@@ -11,7 +11,7 @@
 
 <input value=@date.Value.ToString("yyyy-MM-dd")
        disabled=@IsDisabled
-       @onchange=@(args => SetValueFromObject((DateTime.TryParse(((string?)args.Value) ?? "", out var result) ? result : DateTime.UtcNow)))
+       @onchange=@(args => SetValueFromObjectAsync((DateTime.TryParse(((string?)args.Value) ?? "", out var result) ? result : DateTime.UtcNow)))
        class="form-control @(CssHelper.GetValidationClass(State))"
        placeholder=@Placeholder
        type="date" />

@@ -80,7 +80,7 @@
                 }
                 else if (currentValue != null && !Options.Any(x => x.Id.Equals(currentValue)))
                 {
-                    SetValueFromObject(default!);
+                    await SetValueFromObjectAsync(default!);
                     SelectedIndex = -1;
                 }
             }
@@ -99,17 +99,17 @@
         Options = await DataCollection.GetAvailableElementsAsync(Query.Default());
     }
 
-    private void OnChange(ChangeEventArgs args)
+    private async Task OnChange(ChangeEventArgs args)
     {
         var index = int.Parse(((string?)args.Value) ?? "");
 
         if (index == -1)
         {
-            SetValueFromObject(default!);
+            await SetValueFromObjectAsync(default!);
         }
         else if (Options != null)
         {
-            SetValueFromObject(Options.ElementAt(index).Id);
+            await SetValueFromObjectAsync(Options.ElementAt(index).Id);
         }
 
         // reset nullable when option is selected

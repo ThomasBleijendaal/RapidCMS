@@ -52,7 +52,7 @@ namespace RapidCMS.UI.Components.Editors
 
                 if (currentValue != null && _options != null && !_options.Any(x => x.Id.Equals(currentValue)))
                 {
-                    SetValueFromObject(default!);
+                    await SetValueFromObjectAsync(default!);
                 }
 
                 StateHasChanged();
@@ -107,7 +107,7 @@ namespace RapidCMS.UI.Components.Editors
             }
         }
 
-        protected void SelectElement(object id, bool? selected)
+        protected async Task SelectElementAsync(object id, bool? selected)
         {
             if (_options == null)
             {
@@ -127,12 +127,12 @@ namespace RapidCMS.UI.Components.Editors
                         RelationDataCollection.RemoveElement(id);
                     }
 
-                    EditContext.NotifyPropertyChangedAsync(Property);
+                    await EditContext.NotifyPropertyChangedAsync(Property);
                 }
             }
             else
             {
-                SetValueFromObject(id);
+                await SetValueFromObjectAsync(id);
             }
         }
 

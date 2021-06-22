@@ -23,7 +23,7 @@
                                    name=@group
                                    checked=@(option.Id.Equals(value))
                                    disabled=@IsDisabled
-                                   @onchange=@(async args => SetValueFromObject(option.Id)) />
+                                   @onchange=@(args => SetValueFromObjectAsync(option.Id)) />
                             @option.Labels.First()
                         </label>
                     </div>
@@ -79,7 +79,7 @@
 
             if (currentValue != null && Options != null && !Options.Any(x => x.Id.Equals(currentValue)))
             {
-                SetValueFromObject(default!);
+                await SetValueFromObjectAsync(default!);
             }
 
             StateHasChanged();

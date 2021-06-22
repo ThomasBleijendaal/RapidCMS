@@ -63,7 +63,7 @@
         StateHasChanged();
     }
 
-    private void OnChange(int index, string? value)
+    private async Task OnChange(int index, string? value)
     {
         if (List == null || List.Count < index)
         {
@@ -72,7 +72,7 @@
 
         List[index] = value ?? "";
 
-        Update();
+        await UpdateAsync();
     }
 
     private void AddRow(MouseEventArgs args)
@@ -81,17 +81,17 @@
         StateHasChanged();
     }
 
-    private void RemoveRow(int index)
+    private async Task RemoveRow(int index)
     {
         List?.RemoveAt(index);
 
-        Update();
+        await UpdateAsync();
 
         StateHasChanged();
     }
 
-    private void Update()
+    private async Task UpdateAsync()
     {
-        SetValueFromObject(List?.ToList() ?? new List<string>());
+        await SetValueFromObjectAsync(List?.ToList() ?? new List<string>());
     }
 }

@@ -79,15 +79,15 @@ namespace RapidCMS.Core.Tests.Forms
 
         public class EntityValidator : BaseEntityValidator<Entity>
         {
-            protected override ValidationResult Validate(Entity entity)
+            protected override IEnumerable<ValidationResult> Validate(Entity entity)
             {
                 if (!string.IsNullOrEmpty(entity.Id))
                 {
-                    return ValidationResult.Success;
+                    yield break;
                 }
                 else
                 {
-                    return new ValidationResult("Id is null", new[] { nameof(entity.Id) });
+                    yield return new ValidationResult("Id is null", new[] { nameof(entity.Id) });
                 }
             }
         }
