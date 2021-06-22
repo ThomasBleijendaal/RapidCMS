@@ -14,38 +14,6 @@ using RapidCMS.Example.Shared.Data;
 using RapidCMS.ModelMaker;
 using RapidCMS.Repositories;
 
-//using Microsoft.EntityFrameworkCore;
-//using Microsoft.EntityFrameworkCore.Metadata.Builders;
-//using Microsoft.EntityFrameworkCore;
-//using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-//#nullable enable
-
-//namespace RapidCMS.ModelMaker
-//{
-//    public class OnetoOneOneBConfiguration : IEntityTypeConfiguration<OnetoOneOneB>
-//    {
-//        public void Configure(EntityTypeBuilder<OnetoOneOneB> builder)
-//        {
-//            builder.HasOne(x => x.A).WithOne(x => x.B).HasForeignKey<OnetoOneOneA>(x => x.BId).OnDelete(DeleteBehavior.NoAction);
-//        }
-//    }
-//}
-
-//#nullable enable
-
-//namespace RapidCMS.ModelMaker
-//{
-//    public class OnetoOneOneAConfiguration : IEntityTypeConfiguration<OnetoOneOneA>
-//    {
-//        public void Configure(EntityTypeBuilder<OnetoOneOneA> builder)
-//        {
-//            builder.HasOne(x => x.B).WithOne(x => x.A).OnDelete(DeleteBehavior.NoAction);
-//        }
-//    }
-//}
-
-
 namespace RapidCMS.Example.ModelMaker
 {
     public class Startup

@@ -20,9 +20,13 @@
     <None Remove="modelmaker.one-to-many-ones.json" />
     <None Remove="modelmaker.one-to-one-one-as.json" />
     <None Remove="modelmaker.one-to-one-one-bs-explicit.json" />
+    <None Remove="modelmaker.one-to-one-one-bs-implicit.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="modelmaker.one-to-one-one-bs-implicit.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="modelmaker.one-to-one-one-as.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

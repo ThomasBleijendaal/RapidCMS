@@ -115,7 +115,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
                 ValidateProperty(typedEditContext, newProperty, model);
 
-                typedEditContext.EnforceValidEntityAsync();
+                await typedEditContext.EnforceValidEntityAsync();
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
 
@@ -200,7 +200,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
                 ValidateProperty(typedEditContext, typedEditContext.Entity, model);
 
-                typedEditContext.EnforceValidEntityAsync();
+                await typedEditContext .EnforceValidEntityAsync();
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
 

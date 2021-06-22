@@ -129,6 +129,45 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
         public void ExtendEntity(EntityInformation info, ModelMakerContext context)
         {
+            // both sides of the relation are configured with property names
+            var twoWayOneToOneRelationsToThisEntity = context.Entities
+                .Where(entity => entity != info)
+                .SelectMany(entity => entity.Properties
+                    .Where(x => x.Relation.HasFlag(Relation.One | Relation.ToOne) &&
+                        !x.Relation.HasFlag(Relation.DependentSide) &&
+                        x.Type == $"{context.Namespace}.{info.PascalCaseName}" &&
+                        info.Properties.Any(p => p.PascalCaseName == x.RelatedPropertyName && 
+                            p.Relation.HasFlag(Relation.One | Relation.ToOne) &&
+                            !p.Relation.HasFlag(Relation.DependentSide)))
+                    .Select(property => new { Entity = entity, Property = property }))
+                .ToList();
+
+            foreach (var relation in twoWayOneToOneRelationsToThisEntity)
+            {
+                try
+                {
+                    if (info.Name?.CompareTo(relation.Entity.Name) < 0)
+                    {
+                        relation.Property.Relation |= Relation.DependentSide;
+                    }
+
+                    //var property = info.Properties.Single(x => x.PascalCaseName == relation.Property.RelatedPropertyName);
+
+                    //var value = relation.Property.Relation & ~(Relation.One | Relation.Many);
+
+                    //property.Relation |= value switch
+                    //{
+                    //    Relation.ToOne => Relation.One,
+                    //    Relation.ToMany => Relation.Many,
+                    //    _ => Relation.None
+                    //};
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+
             // only one of the entities of this relation is configured
             var oneWayRelationsToThisEntity = context.Entities
                 .Where(entity => entity != info)
