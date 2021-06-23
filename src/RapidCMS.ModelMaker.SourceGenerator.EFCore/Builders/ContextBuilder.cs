@@ -61,7 +61,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             
             foreach (var entity in context.Entities.Where(x => x.OutputItems.Contains(Constants.OutputContext)))
             {
-                indentWriter.WriteLine($"modelBuilder.ApplyConfiguration(new {entity.Name}Configuration());");
+                indentWriter.WriteLine($"modelBuilder.ApplyConfiguration(new {entity.PascalCaseName}Configuration());");
             }
 
             WriteClosingBracket(indentWriter);
@@ -70,7 +70,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
         public void WriteDbSet(IndentedTextWriter indentWriter, EntityInformation info)
         {
             indentWriter.WriteLine();
-            indentWriter.WriteLine($"public DbSet<{info.Name}> {info.PluralName} {{ get; set; }} = default!;");
+            indentWriter.WriteLine($"public DbSet<{info.PascalCaseName}> {info.PascalCasePluralName} {{ get; set; }} = default!;");
         }
     }
 }

@@ -75,10 +75,9 @@ namespace RapidCMS.UI.Components.Editors
 
                     var value = await FileUploadHandler.SaveFileAsync(new FileInfoModel(fileInfo), uploadedFile);
 
-                    SetValueFromObject(value);
+                    await SetValueFromObjectAsync(value);
 
                     EditContext.NotifyPropertyFinished(Property);
-                    EditContext.NotifyPropertyChanged(Property);
                 }
                 catch
                 {

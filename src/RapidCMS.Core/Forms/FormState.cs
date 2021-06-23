@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Abstractions.Validators;
+using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Forms.Validation;
 using RapidCMS.Core.Helpers;
+using RapidCMS.Core.Models;
 
 namespace RapidCMS.Core.Forms
 {
@@ -16,10 +20,12 @@ namespace RapidCMS.Core.Forms
         private readonly List<string> _messages = new List<string>();
         private readonly List<PropertyState> _fieldStates = new List<PropertyState>();
         private readonly IEntity _entity;
+        private readonly IReadOnlyList<Type> _validators;
 
-        public FormState(IEntity entity, IServiceProvider serviceProvider)
+        public FormState(IEntity entity, IReadOnlyList<Type> validators, IServiceProvider serviceProvider)
         {
             _entity = entity;
+            _validators = validators;
             ServiceProvider = serviceProvider;
         }
 
@@ -73,8 +79,8 @@ namespace RapidCMS.Core.Forms
         {
             GetPropertyMetadatas(reference).ForEach(property =>
             {
-                if ((property.PropertyType.IsValueType || 
-                    property.PropertyType == typeof(string)) && 
+                if ((property.PropertyType.IsValueType ||
+                    property.PropertyType == typeof(string)) &&
                     !Equals(property.Getter(reference), property.Getter(_entity)))
                 {
                     GetPropertyState(property)!.IsModified = true;
@@ -150,9 +156,9 @@ namespace RapidCMS.Core.Forms
             return fieldState;
         }
 
-        public void ValidateModel(IEnumerable<IDataValidationProvider>? dataProviders)
+        public async Task ValidateModelAsync(IRelationContainer relationContainer)
         {
-            var results = GetValidationResultsForModel(dataProviders);
+            var results = await GetValidationResultsForModelAsync(relationContainer);
 
             foreach (var result in results)
             {
@@ -172,20 +178,13 @@ namespace RapidCMS.Core.Forms
             _fieldStates.ForEach(x => x.WasValidated = true);
         }
 
-        public void ValidateProperty(IPropertyMetadata property, IEnumerable<IDataValidationProvider>? dataProviders)
+        public async Task ValidatePropertyAsync(IPropertyMetadata property, IRelationContainer relationContainer)
         {
-            IEnumerable<ValidationResult> results;
-
             // when a property must be validated which is not part of the entity (like a nested object)
             // validate the complete model, but only keep the results of that property
-            if (_entity.GetType().GetProperty(property.PropertyName) == null)
-            {
-                results = GetValidationResultsForModel(dataProviders).Where(x => x.MemberNames.Contains(property.PropertyName));
-            }
-            else
-            {
-                results = GetValidationResultsForProperty(property, dataProviders);
-            }
+            var results = (_entity.GetType().GetProperty(property.PropertyName) == null)
+                ? (await GetValidationResultsForModelAsync(relationContainer)).Where(x => x.MemberNames.Contains(property.PropertyName))
+                : await GetValidationResultsForPropertyAsync(property, relationContainer);
 
             var state = GetPropertyState(property)!;
             state.ClearMessages(clearManualMessages: true);
@@ -197,43 +196,15 @@ namespace RapidCMS.Core.Forms
             }
         }
 
-        private IEnumerable<ValidationResult> GetValidationResultsForProperty(IPropertyMetadata property, IEnumerable<IDataValidationProvider>? dataProviders)
+        private async Task<IEnumerable<ValidationResult>> GetValidationResultsForPropertyAsync(IPropertyMetadata property, IRelationContainer relationContainer)
         {
-            var results = new List<ValidationResult>();
-            var context = new ValidationContext(_entity, ServiceProvider, null)
-            {
-                MemberName = property.PropertyName
-            };
-
-            try
-            {
-                // even though this says Try, and therefore it should not throw an error, IT DOES when a given property is not part of Entity
-                Validator.TryValidateProperty(property.Getter(_entity), context, results);
-            }
-            catch { }
-
-            if (dataProviders != null)
-            {
-                foreach (var result in dataProviders.Where(p => p.Property == property).SelectMany(p => p.Validate(_entity, ServiceProvider)))
-                {
-                    results.Add(result);
-                }
-            }
-
-            return results;
+            var results = await ValidateAsync(_validators, relationContainer, property.PropertyName).ToListAsync();
+            return FlattenCompositeValidationResults(results);
         }
 
-        private IEnumerable<ValidationResult> GetValidationResultsForModel(IEnumerable<IDataValidationProvider>? dataProviders)
+        private async Task<IEnumerable<ValidationResult>> GetValidationResultsForModelAsync(IRelationContainer relationContainer)
         {
-            var context = new ValidationContext(_entity, ServiceProvider, null);
-            var results = new List<ValidationResult>();
-
-            try
-            {
-                // even though this says Try, and therefore it should not throw an error, IT DOES when a given property is not part of Entity
-                Validator.TryValidateObject(_entity, context, results, true);
-            }
-            catch { }
+            var results = await ValidateAsync(_validators, relationContainer).ToListAsync();
 
             ClearMessages();
 
@@ -243,15 +214,28 @@ namespace RapidCMS.Core.Forms
                     $"The {kv.Property.PropertyName} field indicates it is performing an asynchronous task which must be awaited.",
                     new[] { kv.Property.PropertyName })));
 
-            if (dataProviders != null)
+            return FlattenCompositeValidationResults(results);
+        }
+
+        private async IAsyncEnumerable<ValidationResult> ValidateAsync(
+            IReadOnlyList<Type> validators,
+            IRelationContainer relationContainer,
+            string? propertyName = default)
+        {
+            foreach (var validatorType in validators)
             {
-                foreach (var result in dataProviders.SelectMany(p => p.Validate(_entity, ServiceProvider)))
+                var validationResult = ServiceProvider.GetService(validatorType) switch
                 {
-                    results.Add(result);
+                    IEntityValidator validator => validator.Validate(_entity, relationContainer),
+                    IAsyncEntityValidator asyncValidator => await asyncValidator.ValidateAsync(_entity, relationContainer),
+                    _ => throw new InvalidOperationException($"Invalid entity validator given. {validatorType.Name} is not included in Service Collection or is not a {typeof(IEntityValidator).Name} or {typeof(IAsyncEntityValidator).Name}.")
+                };
+
+                foreach (var result in validationResult.Where(x => string.IsNullOrWhiteSpace(propertyName) || x.MemberNames.Contains(propertyName)))
+                {
+                    yield return result;
                 }
             }
-
-            return FlattenCompositeValidationResults(results);
         }
 
         private IEnumerable<ValidationResult> FlattenCompositeValidationResults(IEnumerable<ValidationResult> results, string? memberNamePrefix = null)

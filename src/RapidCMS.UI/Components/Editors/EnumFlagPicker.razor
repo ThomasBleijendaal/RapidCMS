@@ -63,7 +63,7 @@
                 .Where(e => value.HasFlag(e))
                 .Select(e => (int?)Convert.ChangeType(e, TypeCode.Int32))
                 .Where(e => e.HasValue)
-                .Select(e => e.Value)
+                .Select(e => e!.Value)
                 .ToList();
         }
     }
@@ -78,7 +78,7 @@
         Options = await DataCollection.GetAvailableElementsAsync(Query.Default());
     }
 
-    private void OnChangeAsync(ChangeEventArgs e, int value)
+    private async Task OnChangeAsync(ChangeEventArgs e, int value)
     {
         if (SelectedOptions.Contains(value))
         {
@@ -89,8 +89,6 @@
             SelectedOptions.Add(value);
         }
 
-        SetValueFromObject(SelectedOptions.Sum());
-
-        EditContext.NotifyPropertyChanged(Property);
+        await SetValueFromObjectAsync(SelectedOptions.Sum());
     }
 }

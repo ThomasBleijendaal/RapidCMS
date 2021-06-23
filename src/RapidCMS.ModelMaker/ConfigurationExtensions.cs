@@ -33,6 +33,7 @@ namespace RapidCMS.ModelMaker
             // - 4.0.2-preview: improved validation
             // - 4.0.3-preview: after implementing configurable sub collections + alias working
             // - 4.0.x-preview: finish other milestone tickets
+            // - 4.0.x2-preview: get WebAssembly + APIs working + updated
             // - 4.0.0: after implementing complete DbContext generation by configured code
 
             // general TODO:
@@ -46,13 +47,14 @@ namespace RapidCMS.ModelMaker
             // - validate that a referenced collection has an entity that has an Id property of type int32
             // - add support for data collections from enums
             // v add flag editor for setting enum flag properties
-            // - configure corresponding / reciprocal property for one-to-one, one-to-many, many-to-one and many-to-many
+            // v configure corresponding / reciprocal property for one-to-one, one-to-many, many-to-one and many-to-many
             // - fix search field from shifting left when picker is validated
             // - fix delete node and get redirected to error-error
+            // - fix EntityValidator for API
 
             // docs:
             // general behavior:
-            // linked entities are always one-to-many or many-to-many relations in EF Core
+            // one way linked entities are always one-to-many or many-to-many relations in EF Core
 
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
@@ -66,6 +68,7 @@ namespace RapidCMS.ModelMaker
             services.AddTransient<BooleanLabelDataCollectionFactory>();
             services.AddTransient<LimitedOptionsDataCollectionFactory>();
             services.AddTransient<LinkedEntityDataCollectionFactory>();
+            services.AddTransient<ReciprocalPropertyCollectionFactory>();
 
             var config = new ModelMakerConfig();
 
@@ -113,6 +116,13 @@ namespace RapidCMS.ModelMaker
                     EditorType.Dropdown,
                     x => x.Config.LinkedEntitiesCollectionAlias);
 
+                config.AddPropertyValidator<string, CorrespondingPropertyValidationConfig, string?, ReciprocalPropertyCollectionFactory>(
+                    Constants.Validators.ReciprocalProperty,
+                    "Corresponding property",
+                    "The property of the relation on the other model. If kept empty, a hidden corresponding property will be created.",
+                    EditorType.Dropdown,
+                    x => x.Config.RelatedPropertyName);
+
                 config.AddPropertyValidator<bool, BooleanLabelValidationConfig, BooleanLabelValidationConfig.LabelsConfig, BooleanLabelDataCollectionFactory>(
                     Constants.Validators.BooleanLabels,
                     "Labels",
@@ -157,7 +167,7 @@ namespace RapidCMS.ModelMaker
                         "Linked entity",
                         "Link",
                         new[] { Constants.Editors.EntityPicker },
-                        new[] { Constants.Validators.LinkedEntity })
+                        new[] { Constants.Validators.LinkedEntity, Constants.Validators.ReciprocalProperty })
                     .CanBeUsedAsTitle(false)
                     .RelatesToOneEntity(true);
 
@@ -166,7 +176,7 @@ namespace RapidCMS.ModelMaker
                         "Linked entities",
                         "Link",
                         new[] { Constants.Editors.EntitiesPicker },
-                        new[] { Constants.Validators.LinkedEntities }) // TODO: min max linkedentities
+                        new[] { Constants.Validators.LinkedEntities, Constants.Validators.ReciprocalProperty }) // TODO: min max linkedentities
                     .CanBeUsedAsTitle(false)
                     .RelatesToManyEntities(true);
 

@@ -4,6 +4,7 @@ using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 
 namespace RapidCMS.ModelMaker.Core.Abstractions.Factories
 {
+    // TODO: refactor
     public interface IDataCollectionFactory
     {
         /// <summary>

@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
-namespace RapidCMS.Core.Forms.Validation
+namespace RapidCMS.Core.Attributes
 {
     /// <summary>
-    /// This attribute will instruct the entity validator to also validate the properties of this object, instead of just the object itself.
+    /// This attribute will instruct the entity validator to validate the properties of this object, and use them as validation result of the object.
     /// 
-    /// Use this attribute when configuring nested properties, like: config.AddField(x => x.Object.Property).
+    /// Use this attribute when using a ModelEditor, or a custom editor which requires objects.
     /// </summary>
-    public class ValidateObjectAttribute : ValidationAttribute
+    public class ValidateObjectAsPropertyAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
@@ -24,10 +25,9 @@ namespace RapidCMS.Core.Forms.Validation
 
             if (results.Count != 0)
             {
-                var compositeResults = new CompositeValidationResult($"Validation for {validationContext.DisplayName} failed!", validationContext.MemberName ?? "Unknown member");
-                results.ForEach(compositeResults.AddResult);
-
-                return compositeResults;
+                return new ValidationResult(
+                    string.Join(" ", results.Select(x => x.ErrorMessage)),
+                    !string.IsNullOrEmpty(validationContext.MemberName) ? new[] { validationContext.MemberName } : null);
             }
 
             return ValidationResult.Success!;

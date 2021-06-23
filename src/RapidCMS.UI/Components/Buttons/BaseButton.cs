@@ -26,7 +26,7 @@ namespace RapidCMS.UI.Components.Buttons
                 IsDisabled = true;
                 StateHasChanged();
 
-                if (Model.RequiresValidForm && !(EditContext?.IsValid() ?? true))
+                if (Model.RequiresValidForm && (EditContext == null || !await EditContext.IsValidAsync()))
                 {
                     return;
                 }

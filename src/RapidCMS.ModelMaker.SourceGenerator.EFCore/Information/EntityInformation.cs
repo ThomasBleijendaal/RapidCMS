@@ -27,7 +27,9 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
         }
 
         public string? Name { get; private set; }
+        public string? PascalCaseName => ValidPascalCaseName(Name);
         public string? PluralName { get; private set; }
+        public string? PascalCasePluralName => ValidPascalCaseName(PluralName);
 
         public EntityInformation HasName(string name, string? pluralName)
         {

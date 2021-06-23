@@ -32,7 +32,7 @@ namespace RapidCMS.Api.Functions.Functions
 
             if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias) && req.Params.TryGetValue("id", out var id))
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetByIdAsync(new ApiRequestModel { Id = id, Body = JsonConvert.DeserializeObject< JsonRequestWrapper>(req.Body).Json });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetByIdAsync(new ApiRequestModel { Id = id, Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body)?.Json });
                 return new HttpResponseData(response.StatusCode, response.ResponseBody);
             }
             else
@@ -46,9 +46,9 @@ namespace RapidCMS.Api.Functions.Functions
         {
             _functionExecutionContextAccessor.FunctionExecutionContext = context;
 
-            if(req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
+            if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body).Json });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body)?.Json });
                 return new HttpResponseData(response.StatusCode, response.ResponseBody);
             }
             else
@@ -64,7 +64,7 @@ namespace RapidCMS.Api.Functions.Functions
 
             if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllRelatedAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body).Json });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllRelatedAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body)?.Json });
                 return new HttpResponseData(response.StatusCode, response.ResponseBody);
             }
             else
@@ -80,7 +80,7 @@ namespace RapidCMS.Api.Functions.Functions
 
             if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllNonRelatedAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body).Json });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllNonRelatedAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body)?.Json });
                 return new HttpResponseData(response.StatusCode, response.ResponseBody);
             }
             else
@@ -96,7 +96,7 @@ namespace RapidCMS.Api.Functions.Functions
 
             if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).NewAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body).Json });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).NewAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body)?.Json });
                 return new HttpResponseData(response.StatusCode, response.ResponseBody);
             }
             else
@@ -112,7 +112,7 @@ namespace RapidCMS.Api.Functions.Functions
 
             if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).InsertAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body).Json });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).InsertAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body)?.Json });
                 return new HttpResponseData(response.StatusCode, response.ResponseBody);
             }
             else
@@ -128,7 +128,7 @@ namespace RapidCMS.Api.Functions.Functions
 
             if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias) && req.Params.TryGetValue("id", out var id))
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).UpdateAsync(new ApiRequestModel { Id = id, Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body).Json });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).UpdateAsync(new ApiRequestModel { Id = id, Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body)?.Json });
                 return new HttpResponseData(response.StatusCode, response.ResponseBody);
             }
             else
@@ -144,7 +144,7 @@ namespace RapidCMS.Api.Functions.Functions
 
             if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias) && req.Params.TryGetValue("id", out var id))
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).DeleteAsync(new ApiRequestModel { Id = id, Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body).Json });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).DeleteAsync(new ApiRequestModel { Id = id, Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body)?.Json });
                 return new HttpResponseData(response.StatusCode, response.ResponseBody);
             }
             else
@@ -160,7 +160,7 @@ namespace RapidCMS.Api.Functions.Functions
 
             if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).AddRelationAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body).Json });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).AddRelationAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body)?.Json });
                 return new HttpResponseData(response.StatusCode, response.ResponseBody);
             }
             else
@@ -176,7 +176,7 @@ namespace RapidCMS.Api.Functions.Functions
 
             if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).RemoveRelationAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body).Json });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).RemoveRelationAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body)?.Json });
                 return new HttpResponseData(response.StatusCode, response.ResponseBody);
             }
             else
@@ -192,7 +192,7 @@ namespace RapidCMS.Api.Functions.Functions
 
             if (req.Params.TryGetValue("repositoryAlias", out var repositoryAlias))
             {
-                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).ReorderAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body).Json });
+                var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).ReorderAsync(new ApiRequestModel { Body = JsonConvert.DeserializeObject<JsonRequestWrapper>(req.Body)?.Json });
                 return new HttpResponseData(response.StatusCode, response.ResponseBody);
             }
             else

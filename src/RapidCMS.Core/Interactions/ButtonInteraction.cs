@@ -33,7 +33,7 @@ namespace RapidCMS.Core.Interactions
 
             await _authService.EnsureAuthorizedUserAsync(request.EditContext, button);
 
-            if (handler.RequiresValidForm(button, request.EditContext) && !request.EditContext.IsValid())
+            if (handler.RequiresValidForm(button, request.EditContext) && !await request.EditContext.IsValidAsync())
             {
                 throw new InvalidEntityException();
             }
@@ -58,7 +58,7 @@ namespace RapidCMS.Core.Interactions
 
             await _authService.EnsureAuthorizedUserAsync(request.EditContext, button);
 
-            if (handler.RequiresValidForm(button, request.EditContext) && !request.EditContext.IsValid())
+            if (handler.RequiresValidForm(button, request.EditContext) && !await request.EditContext.IsValidAsync())
             {
                 throw new InvalidEntityException();
             }

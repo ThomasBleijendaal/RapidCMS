@@ -23,7 +23,7 @@
                                    name=@_group
                                    checked=@(IsSelected(option.Id))
                                    disabled=@IsDisabled
-                                   @onchange=@(args => SelectElement(option.Id, (bool?)args.Value)) />
+                                   @onchange=@(args => SelectElementAsync(option.Id, (bool?)args.Value)) />
                             @option.Labels.First()
                         </label>
                     </div>

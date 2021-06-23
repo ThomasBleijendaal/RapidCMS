@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
@@ -93,6 +94,8 @@ namespace RapidCMS.Core.Models.Config
         internal ListConfig? ListEditor { get; set; }
         internal NodeConfig? NodeView { get; set; }
         internal NodeConfig? NodeEditor { get; set; }
+
+        internal List<Type> Validators { get; set; } = new List<Type>();
     }
 
     internal class CollectionConfig<TEntity> : CollectionConfig, ICollectionConfig<TEntity>
@@ -319,6 +322,20 @@ namespace RapidCMS.Core.Models.Config
             {
                 NodeEditor = new ConventionNodeEditorConfig<TEntity>();
             }
+
+            return this;
+        }
+
+        public ICollectionConfig<TEntity> AddEntityValidator<TEntityValidator>() where TEntityValidator : IEntityValidator
+        {
+            Validators.Add(typeof(TEntityValidator));
+
+            return this;
+        }
+
+        public ICollectionConfig<TEntity> AddAsyncEntityValidator<TAsyncEntityValidator>() where TAsyncEntityValidator : IAsyncEntityValidator
+        {
+            Validators.Add(typeof(TAsyncEntityValidator));
 
             return this;
         }

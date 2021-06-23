@@ -18,6 +18,8 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
         public string? Name { get; private set; }
 
+        public string? PascalCaseName => ValidPascalCaseName(Name);
+
         public PropertyInformation HasName(string name)
         {
             Name = name;
@@ -51,22 +53,21 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return this;
         }
 
-        public bool RelatedToOneEntity { get; set; }
-        public bool RelatedToManyEntities { get; set; }
+        public Relation Relation { get; set; }
         public string? RelatedCollectionAlias { get; set; }
+        public string? RelatedPropertyName { get; set; }
         public string? DataCollectionExpression { get; set; }
 
-        public PropertyInformation IsRelation(bool relatedToOneEntity, bool relatedToManyEntities, string? relatedCollectionAlias, string? dataCollectionExpression)
+        public PropertyInformation IsRelation(
+            Relation relation,
+            string? relatedCollectionAlias,
+            string? relatedPropertyName,
+            string? dataCollectionExpression)
         {
-            RelatedToOneEntity = relatedToOneEntity;
-            RelatedToManyEntities = relatedToManyEntities;
+            Relation = relation;
             RelatedCollectionAlias = relatedCollectionAlias;
+            RelatedPropertyName = relatedPropertyName;
             DataCollectionExpression = dataCollectionExpression;
-
-            if (RelatedToManyEntities)
-            {
-                _namespaces.Add((Use.Entity, "System.Collections.Generic"));
-            }
 
             return this;
         }
@@ -113,6 +114,12 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
         public IEnumerable<string> NamespacesUsed(Use use)
         {
+            if (use == Use.Entity && Relation.HasFlag(Relation.ToMany))
+            {
+                yield return "System.Collections.Generic";
+            }
+
+
             foreach (var @namespace in _namespaces.Where(x => x.use.HasFlag(use)).Select(x => x.@namespace).Distinct())
             {
                 yield return @namespace;

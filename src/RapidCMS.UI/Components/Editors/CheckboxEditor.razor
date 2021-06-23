@@ -3,7 +3,7 @@
 <div>
     <label class="form-check-label">
         <input checked=@GetValueAsObject()
-               @onchange=@(args => SetValueFromObject(((bool?)args.Value) ?? false))
+               @onchange=@(args => SetValueFromObjectAsync(((bool?)args.Value) ?? false))
                type="checkbox"
                disabled=@IsDisabled
                class="form-check-input position-static @(CssHelper.GetValidationClass(State))" />

@@ -12,18 +12,18 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests
             GeneratorTestHelper.TestGeneratedCode(
                 new[]
                 {
-                    "./modelmaker.blog.json", 
-                    "./modelmaker.category.json" 
+                    "./modelmaker.category.json",
+                    "./modelmaker.blog.json"
                 },
-                BlogCode.Entity,
-                BlogCode.Collection,
                 CategoryCode.EntityWithBlog,
                 CategoryCode.Collection,
+                BlogCode.Entity,
+                BlogCode.Collection,
                 ContextCode.BlogCategoryContext,
-                BlogCode.EntityConfiguration,
-                BlogCode.Repository,
                 CategoryCode.EntityConfiguration,
-                CategoryCode.Repository);
+                CategoryCode.Repository,
+                BlogCode.EntityConfiguration,
+                BlogCode.Repository);
         }
     }
 }

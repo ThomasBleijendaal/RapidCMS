@@ -1,6 +1,7 @@
 ﻿using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 {
@@ -49,25 +50,6 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
         {
             indentWriter.Indent--;
             indentWriter.WriteLine("});");
-        }
-
-        protected string ValidPascalCaseName(string? name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return "";
-            }
-            else
-            {
-                var trimmedName = name.Trim().Replace(" ", "");
-
-                if (trimmedName.Length == 1)
-                {
-                    return char.ToUpper(trimmedName[0]).ToString();
-                }
-
-                return $"{char.ToUpper(trimmedName[0])}{trimmedName.Substring(1)}";
-            }
         }
     }
 }

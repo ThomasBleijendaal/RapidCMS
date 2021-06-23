@@ -94,7 +94,7 @@
         Options = await RelationDataCollection.GetAvailableElementsAsync(Query.Default());
     }
 
-    private void OnChangeAsync(ChangeEventArgs e, object value)
+    private async Task OnChangeAsync(ChangeEventArgs e, object value)
     {
         var element = Options!.First(x => x.Id.Equals(value));
 
@@ -107,7 +107,7 @@
             RelationDataCollection!.RemoveElement(element);
         }
 
-        EditContext.NotifyPropertyChanged(Property);
+        await EditContext.NotifyPropertyChangedAsync(Property);
     }
 
     public override void Dispose()

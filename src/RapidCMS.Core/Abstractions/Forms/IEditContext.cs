@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
@@ -25,19 +26,19 @@ namespace RapidCMS.Core.Abstractions.Forms
         /// that were not included on the form or in the Api call.
         /// </summary>
         /// <returns></returns>
-        bool IsValid();
+        Task<bool> IsValidAsync();
 
         /// <summary>
         /// Checks all the properties of the model (regardless of their inclusion) and will throw when the model is not valid.
         /// </summary>
         /// <exception cref="InvalidEntityException">Thrown when the given entity has validation errors.</exception>
-        void EnforceCompleteValidation();
+        Task EnforceCompleteValidationAsync();
 
         /// <summary>
         /// Throws an exception when the entity is invalid.
         /// </summary>
         /// <exception cref="InvalidEntityException">Thrown when the given entity has validation errors.</exception>
-        void EnforceValidEntity();
+        Task EnforceValidEntityAsync();
 
         /// <summary>
         /// Gets the ModelStateDirectory containing all validation errors, to be used in BadRequest() responses etc.
@@ -121,7 +122,7 @@ namespace RapidCMS.Core.Abstractions.Forms
         /// <typeparam name="TValue"></typeparam>
         /// <param name="property"></param>
         /// <returns></returns>
-        bool? Validate<TValue>(Expression<Func<TEntity, TValue>> property);
+        Task<bool?> ValidateAsync<TValue>(Expression<Func<TEntity, TValue>> property);
 
         void AddValidationError<TValue>(Expression<Func<TEntity, TValue>> property, string message);
         void AddValidationError(string propertyName, string message);

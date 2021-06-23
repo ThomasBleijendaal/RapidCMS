@@ -75,7 +75,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
             await _authService.EnsureAuthorizedUserAsync(request.UsageType, entity);
 
-            return new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, request.VariantAlias, entity, parent, request.UsageType | UsageType.Node, _serviceProvider);
+            return new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, request.VariantAlias, entity, parent, request.UsageType | UsageType.Node, collection.Validators, _serviceProvider);
         }
     }
 }

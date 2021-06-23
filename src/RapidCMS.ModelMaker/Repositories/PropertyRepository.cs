@@ -115,7 +115,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
                 ValidateProperty(typedEditContext, newProperty, model);
 
-                typedEditContext.EnforceValidEntity();
+                await typedEditContext.EnforceValidEntityAsync();
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
 
@@ -200,7 +200,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
                 ValidateProperty(typedEditContext, typedEditContext.Entity, model);
 
-                typedEditContext.EnforceValidEntity();
+                await typedEditContext .EnforceValidEntityAsync();
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
 
@@ -224,6 +224,12 @@ namespace RapidCMS.ModelMaker.Repositories
                 if (!propertyConfig.UsableAsTitle)
                 {
                     property.IsTitle = false;
+                    property.IncludeInListView = false;
+                }
+
+                if (property.IsTitle)
+                {
+                    property.IncludeInListView = false;
                 }
 
                 var editorConfig = _config.Editors.FirstOrDefault(x => x.Alias == property.EditorAlias);

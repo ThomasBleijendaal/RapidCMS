@@ -103,7 +103,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
                 case CrudType.Update:
                     var updateContext = await _editContextFactory.GetEditContextWrapperAsync(request.EditContext);
-                    if (!updateContext.IsValid())
+                    if (!await updateContext.IsValidAsync())
                     {
                         throw new InvalidEntityException();
                     }
@@ -129,7 +129,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
                 case CrudType.Insert:
                     var insertContext = await _editContextFactory.GetEditContextWrapperAsync(request.EditContext);
-                    if (!insertContext.IsValid())
+                    if (!await insertContext .IsValidAsync())
                     {
                         throw new InvalidEntityException();
                     }

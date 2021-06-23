@@ -14,6 +14,7 @@ using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.DataViews;
 using RapidCMS.Example.Shared.Handlers;
+using RapidCMS.Example.Shared.Validators;
 using RapidCMS.Repositories;
 
 namespace RapidCMS.Example.Server
@@ -54,6 +55,10 @@ namespace RapidCMS.Example.Server
 
             services.AddSingleton<RandomNameActionHandler>();
             services.AddScoped<NavigateToPersonHandler>();
+
+            // the country entity is validated by a FluentValidator
+            services.AddSingleton<CountryValidator>();
+            services.AddSingleton<CountryRelationValidator>();
 
             // although it's not required to add your own interfaces to the upload handlers, the Server and WebAssembly examples use the
             // same collection configuration, so the DI configuration dictates what handler is used in each case

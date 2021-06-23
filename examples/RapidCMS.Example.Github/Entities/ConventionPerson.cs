@@ -8,7 +8,7 @@ namespace RapidCMS.Example.Github.Entities
     {
         public string? Id { get; set; }
 
-        [Field(Name = "Name", ShortName = "Name")]
+        [Field(Name = "Name", ListName = "Name")]
         public string? Name { get; set; }
 
         [Field(Name = "Email")]
@@ -17,7 +17,7 @@ namespace RapidCMS.Example.Github.Entities
         [Field(Name = "Bio", Description = "If this field gets longer than 50, the summary on the ListView will get truncated.")]
         public string? Bio { get; set; }
 
-        [Field(ShortName = "Bio summary")]
+        [Field(ListName = "Bio summary")]
         public string? ShortBio => Bio?.Substring(0, Math.Min(Bio?.Length ?? 0, 50));
 
         public object Clone()

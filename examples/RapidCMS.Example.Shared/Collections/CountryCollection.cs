@@ -5,6 +5,7 @@ using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.Handlers;
+using RapidCMS.Example.Shared.Validators;
 
 namespace RapidCMS.Example.Shared.Collections
 {
@@ -15,6 +16,10 @@ namespace RapidCMS.Example.Shared.Collections
         {
             config.AddCollection<Country, BaseRepository<Country>>("country", "Nav2DMapView", "Blue10", "Countries", collection =>
             {
+                // this collection uses a custom validator next to the data annotation validation
+                collection.AddEntityValidator<CountryValidator>();
+                collection.AddEntityValidator<CountryRelationValidator>();
+
                 collection
                     // Set showEntities to true to have this collection to fold open on default
                     .SetTreeView(x => x.Name, showEntitiesOnStartup: false)
@@ -58,8 +63,6 @@ namespace RapidCMS.Example.Shared.Collections
                         {
                             section.AddField(x => x.Name);
 
-                            // to enable validation on Metadata.Continent, the Metadata property on Country must be annotated with [ValidateObject]
-                            // to instruct the data annotation validator to validate the properties inside the metadata object
                             section.AddField(x => x.Metadata.Continent);
                             section.AddField(x => x.Metadata.Tag)
                                 .SetType(EditorType.Dropdown)

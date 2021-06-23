@@ -78,7 +78,7 @@ namespace RapidCMS.Core.Dispatchers.Api
 
             try
             {
-                if (!editContext.IsValid())
+                if (!await editContext .IsValidAsync())
                 {
                     throw new InvalidEntityException();
                 }

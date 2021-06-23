@@ -21,17 +21,32 @@ namespace RapidCMS.Example.ModelMaker.Migrations
 
             modelBuilder.Entity("BlogCategory", b =>
                 {
+                    b.Property<int>("BlogBlogCategoriesId")
+                        .HasColumnType("int");
+
                     b.Property<int>("BlogCategoriesId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("int");
+                    b.HasKey("BlogBlogCategoriesId", "BlogCategoriesId");
 
-                    b.HasKey("BlogCategoriesId", "CategoriesId");
-
-                    b.HasIndex("CategoriesId");
+                    b.HasIndex("BlogCategoriesId");
 
                     b.ToTable("BlogCategory");
+                });
+
+            modelBuilder.Entity("ManytoManyManyAManytoManyManyB", b =>
+                {
+                    b.Property<int>("AsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AsId", "BsId");
+
+                    b.HasIndex("BsId");
+
+                    b.ToTable("ManytoManyManyAManytoManyManyB");
                 });
 
             modelBuilder.Entity("RapidCMS.ModelMaker.Blog", b =>
@@ -84,17 +99,140 @@ namespace RapidCMS.Example.ModelMaker.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("RapidCMS.ModelMaker.ManytoManyManyA", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ManytoManyManyAs");
+                });
+
+            modelBuilder.Entity("RapidCMS.ModelMaker.ManytoManyManyB", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ManytoManyManyBs");
+                });
+
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoManyMany", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OnetoManyManys");
+                });
+
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoManyOne", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("OneId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OneId");
+
+                    b.ToTable("OnetoManyOnes");
+                });
+
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoOneOneA", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("BId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BId")
+                        .IsUnique()
+                        .HasFilter("[BId] IS NOT NULL");
+
+                    b.ToTable("OnetoOneOneAs");
+                });
+
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoOneOneB", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OnetoOneOneBs");
+                });
+
             modelBuilder.Entity("BlogCategory", b =>
                 {
                     b.HasOne("RapidCMS.ModelMaker.Blog", null)
                         .WithMany()
-                        .HasForeignKey("BlogCategoriesId")
+                        .HasForeignKey("BlogBlogCategoriesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("RapidCMS.ModelMaker.Category", null)
                         .WithMany()
-                        .HasForeignKey("CategoriesId")
+                        .HasForeignKey("BlogCategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ManytoManyManyAManytoManyManyB", b =>
+                {
+                    b.HasOne("RapidCMS.ModelMaker.ManytoManyManyA", null)
+                        .WithMany()
+                        .HasForeignKey("AsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RapidCMS.ModelMaker.ManytoManyManyB", null)
+                        .WithMany()
+                        .HasForeignKey("BsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -110,9 +248,39 @@ namespace RapidCMS.Example.ModelMaker.Migrations
                     b.Navigation("MainCategory");
                 });
 
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoManyOne", b =>
+                {
+                    b.HasOne("RapidCMS.ModelMaker.OnetoManyMany", "One")
+                        .WithMany("Many")
+                        .HasForeignKey("OneId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("One");
+                });
+
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoOneOneA", b =>
+                {
+                    b.HasOne("RapidCMS.ModelMaker.OnetoOneOneB", "B")
+                        .WithOne("A")
+                        .HasForeignKey("RapidCMS.ModelMaker.OnetoOneOneA", "BId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("B");
+                });
+
             modelBuilder.Entity("RapidCMS.ModelMaker.Category", b =>
                 {
                     b.Navigation("BlogMainCategory");
+                });
+
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoManyMany", b =>
+                {
+                    b.Navigation("Many");
+                });
+
+            modelBuilder.Entity("RapidCMS.ModelMaker.OnetoOneOneB", b =>
+                {
+                    b.Navigation("A");
                 });
 #pragma warning restore 612, 618
         }

@@ -27,10 +27,10 @@ namespace RapidCMS.UI.Components.Editors
 
             Fields = sections.FirstOrDefault()?.Elements?.OfType<FieldUI>();
 
-            EditContext.OnValidationStateChanged += EditContext_OnValidationStateChanged;
+            EditContext.OnValidationStateChanged += EditContext_OnValidationStateChangedAsync;
             if (PropertyEditContext != null)
             {
-                PropertyEditContext.OnValidationStateChanged += PropertyEditContext_OnValidationStateChanged;
+                PropertyEditContext.OnValidationStateChanged += PropertyEditContext_OnValidationStateChangedAsync;
             }
 
             await base.OnInitializedAsync();
@@ -38,25 +38,28 @@ namespace RapidCMS.UI.Components.Editors
 
         protected override void DetachListener()
         {
-            EditContext.OnValidationStateChanged -= EditContext_OnValidationStateChanged;
+            EditContext.OnValidationStateChanged -= EditContext_OnValidationStateChangedAsync;
             if (PropertyEditContext != null)
             {
-                PropertyEditContext.OnValidationStateChanged -= PropertyEditContext_OnValidationStateChanged;
+                PropertyEditContext.OnValidationStateChanged -= PropertyEditContext_OnValidationStateChangedAsync;
             }
 
             base.DetachListener();
         }
 
-        private void EditContext_OnValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
+        private async void EditContext_OnValidationStateChangedAsync(object? sender, ValidationStateChangedEventArgs e)
         {
-            PropertyEditContext?.IsValid();
+            if (PropertyEditContext != null)
+            {
+                await PropertyEditContext.IsValidAsync();
+            }
         }
 
-        private void PropertyEditContext_OnValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
+        private async void PropertyEditContext_OnValidationStateChangedAsync(object? sender, ValidationStateChangedEventArgs e)
         {
             if (!EditContext.IsValid(Property) && e.IsValid == true)
             {
-                EditContext.IsValid();
+                await EditContext.IsValidAsync();
             }
         }
     }

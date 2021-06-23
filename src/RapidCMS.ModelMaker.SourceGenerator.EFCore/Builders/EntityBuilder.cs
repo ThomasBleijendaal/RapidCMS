@@ -48,7 +48,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
         private void WriteOpenEntity(IndentedTextWriter indentWriter, EntityInformation info)
         {
-            indentWriter.WriteLine($"public partial class {ValidPascalCaseName(info.Name)} : IEntity");
+            indentWriter.WriteLine($"public partial class {info.PascalCaseName} : IEntity");
             indentWriter.WriteLine("{");
             indentWriter.Indent++;
         }

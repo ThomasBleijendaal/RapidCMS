@@ -148,6 +148,8 @@ namespace RapidCMS.ModelMaker
                 "Include in list view",
                 PropertyMetadataHelper.GetFullPropertyMetadata<PropertyModel, bool>(x => x.IncludeInListView));
 
+            listViewField.IsVisible = (m, s) => m is not PropertyModel prop || !prop.IsTitle;
+
             yield return
                 new PaneSetup(
                     default,

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Forms.Validation;
+using RapidCMS.Core.Attributes;
 
 namespace RapidCMS.ModelMaker.Models.Entities
 {
@@ -36,9 +36,5 @@ namespace RapidCMS.ModelMaker.Models.Entities
         public bool IsRelationToMany { get; set; }
 
         public string? EditorType { get; set; }
-
-        public string? DataCollectionExpression { get; set; }
-
-        public string? RelatedCollectionAlias { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Forms.Validation;
+using RapidCMS.Core.Attributes;
 
 namespace RapidCMS.Example.Shared.Data
 {
@@ -12,6 +12,7 @@ namespace RapidCMS.Example.Shared.Data
         [Required(AllowEmptyStrings = false)]
         public string Name { get; set; } = default!;
 
+        // use validate object to instruct validation to also validate PersonDetails
         [ValidateObject]
         public PersonDetails Details { get; set; } = new PersonDetails();
 

@@ -6,6 +6,7 @@ using RapidCMS.Example.Shared.AuthorizationHandlers;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.DataViews;
 using RapidCMS.Example.Shared.Handlers;
+using RapidCMS.Example.Shared.Validators;
 using RapidCMS.Example.WebAssembly.FunctionAPI.Authentication;
 using RapidCMS.Repositories;
 
@@ -43,6 +44,10 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
 
             services.AddAuthorizationCore();
             services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();
+
+            // TODO: the country entity is validated by a FluentValidator
+            services.AddSingleton<CountryValidator>();
+            services.AddSingleton<CountryRelationValidator>();
 
             services.AddRapidCMSFunctions(config =>
             {

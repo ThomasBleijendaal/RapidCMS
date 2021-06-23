@@ -1,12 +1,13 @@
 ﻿using System.Linq;
 using Newtonsoft.Json.Linq;
+using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Information;
 
 namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 {
     internal sealed class PropertyParser
     {
-        public PropertyInformation ParseProperty(JObject property)
+        public PropertyInformation ParseProperty(EntityInformation entity, JObject property)
         {
             var info = new PropertyInformation();
 
@@ -41,6 +42,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
             }
 
             var relatedCollectionAlias = default(string?);
+            var relatedPropertyName = default(string?);
             var dataCollectionExpression = default(string?);
 
             if (property.Value<JObject>("Validations") is JObject validationsRoot &&
@@ -67,14 +69,23 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                     {
                         relatedCollectionAlias = related;
                     }
+
+                    if (validationConfig.Value<string>("RelatedPropertyName") is string relatedPropName)
+                    {
+                        relatedPropertyName = relatedPropName;
+                    }
                 }
             }
 
-            if (property.Value<bool>("IsRelationToOne") is bool isRelationToOne &&
-                property.Value<bool>("IsRelationToMany") is bool isRelationToMany)
-            {
-                info.IsRelation(isRelationToOne, isRelationToMany, relatedCollectionAlias, dataCollectionExpression);
-            }
+            var relation = property.Value<bool>("IsRelationToOne") == true ? Relation.ToOne :
+                property.Value<bool>("IsRelationToMany") == true ? Relation.ToMany :
+                Relation.None;
+
+            info.IsRelation(
+                relation,
+                relatedCollectionAlias,
+                relatedPropertyName,
+                dataCollectionExpression);
 
             return info;
         }

@@ -32,7 +32,7 @@ namespace RapidCMS.ModelMaker
         public int? MainCategoryId { get; set; }
         public RapidCMS.ModelMaker.Category? MainCategory { get; set; }
         
-        public ICollection<RapidCMS.ModelMaker.Category> Categories { get; set; } = new List<RapidCMS.ModelMaker.Category>();
+        public ICollection<RapidCMS.ModelMaker.Category> BlogCategories { get; set; } = new List<RapidCMS.ModelMaker.Category>();
     }
 }
 ";
@@ -84,7 +84,7 @@ namespace RapidCMS.ModelMaker
                             section.AddField(x => x.IsPublished).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection(new RapidCMS.Core.Providers.FixedOptionsDataProvider(new (object, string)[] { (true, ""True""), (false, ""False"") })).SetName(""Is Published"");
                             section.AddField(x => x.PublishDate).SetType(typeof(RapidCMS.UI.Components.Editors.DateEditor)).SetName(""Publish Date"");
                             section.AddField(x => x.MainCategoryId).SetType(typeof(RapidCMS.UI.Components.Editors.EntityPicker)).SetCollectionRelation(""categories"").SetName(""Main Category"");
-                            section.AddField(x => x.Categories).SetType(typeof(RapidCMS.UI.Components.Editors.EntitiesPicker)).SetCollectionRelation(""categories"").SetName(""Categories"");
+                            section.AddField(x => x.BlogCategories).SetType(typeof(RapidCMS.UI.Components.Editors.EntitiesPicker)).SetCollectionRelation(""categories"").SetName(""Blog Categories"");
                         });
                     });
                 });
@@ -105,7 +105,7 @@ namespace RapidCMS.ModelMaker
         public void Configure(EntityTypeBuilder<Blog> builder)
         {
             builder.HasOne(x => x.MainCategory).WithMany(x => x.BlogMainCategory).OnDelete(DeleteBehavior.NoAction);
-            builder.HasMany(x => x.Categories).WithMany(x => x.BlogCategories);
+            builder.HasMany(x => x.BlogCategories).WithMany(x => x.BlogBlogCategories);
         }
     }
 }
@@ -137,7 +137,7 @@ namespace RapidCMS.ModelMaker
         {
             if (int.TryParse(id, out var intId))
             {
-                var entity = await _dbContext.Blogs.Include(x => x.Categories).FirstOrDefaultAsync(x => x.Id == intId);
+                var entity = await _dbContext.Blogs.Include(x => x.BlogCategories).FirstOrDefaultAsync(x => x.Id == intId);
                 if (entity != null)
                 {
                     _dbContext.Blogs.Remove(entity);
@@ -155,7 +155,7 @@ namespace RapidCMS.ModelMaker
         {
             if (int.TryParse(id, out var intId))
             {
-                return await _dbContext.Blogs.Include(x => x.Categories).AsNoTracking().FirstOrDefaultAsync(x => x.Id == intId);
+                return await _dbContext.Blogs.Include(x => x.BlogCategories).AsNoTracking().FirstOrDefaultAsync(x => x.Id == intId);
             }
             return default;
         }
@@ -165,7 +165,7 @@ namespace RapidCMS.ModelMaker
             var entity = editContext.Entity;
             
             var relations = editContext.GetRelationContainer();
-            await HandleCategoriesAsync(entity, relations);
+            await HandleBlogCategoriesAsync(entity, relations);
             
             var entry = _dbContext.Blogs.Add(entity);
             await _dbContext.SaveChangesAsync();
@@ -179,7 +179,7 @@ namespace RapidCMS.ModelMaker
         
         public override async Task UpdateAsync(IEditContext<Blog> editContext)
         {
-            var entity = await _dbContext.Blogs.Include(x => x.Categories).FirstAsync(x => x.Id == editContext.Entity.Id);
+            var entity = await _dbContext.Blogs.Include(x => x.BlogCategories).FirstAsync(x => x.Id == editContext.Entity.Id);
             
             entity.Content = editContext.Entity.Content;
             entity.IsPublished = editContext.Entity.IsPublished;
@@ -188,28 +188,28 @@ namespace RapidCMS.ModelMaker
             entity.Title = editContext.Entity.Title;
             
             var relations = editContext.GetRelationContainer();
-            await HandleCategoriesAsync(entity, relations);
+            await HandleBlogCategoriesAsync(entity, relations);
             
             await _dbContext.SaveChangesAsync();
         }
         
-        private async Task HandleCategoriesAsync(Blog dbEntity, IRelationContainer relations)
+        private async Task HandleBlogCategoriesAsync(Blog dbEntity, IRelationContainer relations)
         {
-            var selectedIds = relations.GetRelatedElementIdsFor<Blog, ICollection<RapidCMS.ModelMaker.Category>, int>(x => x.Categories) ?? Enumerable.Empty<int>();
-            var existingIds = dbEntity.Categories.Select(x => x.Id);
+            var selectedIds = relations.GetRelatedElementIdsFor<Blog, ICollection<RapidCMS.ModelMaker.Category>, int>(x => x.BlogCategories) ?? Enumerable.Empty<int>();
+            var existingIds = dbEntity.BlogCategories.Select(x => x.Id);
             
-            var itemsToRemove = dbEntity.Categories.Where(x => !selectedIds.Contains(x.Id)).ToList();
+            var itemsToRemove = dbEntity.BlogCategories.Where(x => !selectedIds.Contains(x.Id)).ToList();
             var idsToAdd = selectedIds.Except(existingIds).ToList();
             
             var itemsToAdd = await _dbContext.Categories.Where(x => idsToAdd.Contains(x.Id)).ToListAsync();
             
             foreach (var itemToRemove in itemsToRemove)
             {
-                dbEntity.Categories.Remove(itemToRemove);
+                dbEntity.BlogCategories.Remove(itemToRemove);
             }
             foreach (var itemToAdd in itemsToAdd)
             {
-                dbEntity.Categories.Add(itemToAdd);
+                dbEntity.BlogCategories.Add(itemToAdd);
             }
         }
     }

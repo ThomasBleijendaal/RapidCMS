@@ -37,5 +37,7 @@ namespace RapidCMS.Core.Abstractions.Setup
         INodeSetup? NodeEditor { get; }
 
         IButtonSetup? FindButton(string buttonId);
+
+        List<Type> Validators { get; }
     }
 }

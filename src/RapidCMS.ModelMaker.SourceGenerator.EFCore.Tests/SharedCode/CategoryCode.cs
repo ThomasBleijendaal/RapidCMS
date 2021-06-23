@@ -22,7 +22,7 @@ namespace RapidCMS.ModelMaker
         
         public ICollection<RapidCMS.ModelMaker.Blog> BlogMainCategory { get; set; } = new List<RapidCMS.ModelMaker.Blog>();
         
-        public ICollection<RapidCMS.ModelMaker.Blog> BlogCategories { get; set; } = new List<RapidCMS.ModelMaker.Blog>();
+        public ICollection<RapidCMS.ModelMaker.Blog> BlogBlogCategories { get; set; } = new List<RapidCMS.ModelMaker.Blog>();
     }
 }
 ";
