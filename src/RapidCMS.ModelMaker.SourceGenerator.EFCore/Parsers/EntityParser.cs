@@ -146,21 +146,10 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
             {
                 try
                 {
-                    if (info.Name?.CompareTo(relation.Entity.Name) < 0)
+                    if (info.Name?.CompareTo(relation.Entity.Name) > 0)
                     {
                         relation.Property.Relation |= Relation.DependentSide;
                     }
-
-                    //var property = info.Properties.Single(x => x.PascalCaseName == relation.Property.RelatedPropertyName);
-
-                    //var value = relation.Property.Relation & ~(Relation.One | Relation.Many);
-
-                    //property.Relation |= value switch
-                    //{
-                    //    Relation.ToOne => Relation.One,
-                    //    Relation.ToMany => Relation.Many,
-                    //    _ => Relation.None
-                    //};
                 }
                 catch
                 {
