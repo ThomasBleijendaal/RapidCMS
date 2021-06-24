@@ -52,6 +52,8 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
+using RapidCMS.ModelMaker.Validation;
+using RapidCMS.ModelMaker.Validation.Config;
 
 #nullable enable
 
@@ -70,6 +72,10 @@ namespace RapidCMS.ModelMaker
                 {
                     collection.SetTreeView(x => x.Name);
                     collection.SetElementConfiguration(x => x.Id, x => x.Name);
+                    collection.AddEntityValidator<BannedContentEntityValidator>(new BannedContentValidationConfig
+                    {
+                        BannedWords = new System.Collections.Generic.List<System.String> { ""a"", ""b"", ""c"" }
+                    });
                     collection.SetListView(view =>
                     {
                         view.AddDefaultButton(DefaultButtonType.New);
@@ -110,17 +116,6 @@ namespace RapidCMS.ModelMaker
         {
         }
     }
-}
-";
-
-        public const string EntityValidator = @"using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using RapidCMS.Core.Abstractions.Forms;
-using RapidCMS.Core.Validators;
-
-namespace RapidCMS.ModelMaker
-{
-
 }
 ";
 
