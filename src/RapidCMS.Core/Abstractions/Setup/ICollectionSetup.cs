@@ -38,6 +38,6 @@ namespace RapidCMS.Core.Abstractions.Setup
 
         IButtonSetup? FindButton(string buttonId);
 
-        List<Type> Validators { get; }
+        List<IValidationSetup> Validators { get; }
     }
 }

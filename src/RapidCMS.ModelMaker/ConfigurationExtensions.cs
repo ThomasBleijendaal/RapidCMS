@@ -30,7 +30,7 @@ namespace RapidCMS.ModelMaker
             // TODO:
             // v 4.0.0-preview: after implementing basic ModelEntity generation
             // v 4.0.1-preview: improved generation
-            // - 4.0.2-preview: improved validation
+            // v 4.0.2-preview: improved validation
             // - 4.0.3-preview: after implementing configurable sub collections + alias working
             // - 4.0.x-preview: finish other milestone tickets
             // - 4.0.x2-preview: get WebAssembly + APIs working + updated

@@ -3,21 +3,26 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using FluentValidation;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Validators;
 
 namespace RapidCMS.Example.Shared.Validators
 {
     /// <summary>
     /// This adapter adapts FluentValidation's AbstractValidator to TEntity part of IEntityValidator
+    /// 
+    /// Since the context is saved as property these validators must be added as transient services.
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     public class AbstractValidatorAdapter<TEntity> : AbstractValidator<TEntity>, IEntityValidator
         where TEntity : IEntity
     {
-        IEnumerable<ValidationResult> IEntityValidator.Validate(IEntity entity, IRelationContainer relationContainer)
+        protected IValidatorContext _context = default!;
+
+        IEnumerable<ValidationResult> IEntityValidator.Validate(IValidatorContext context)
         {
-            var result = Validate((TEntity)entity);
+            _context = context;
+
+            var result = Validate((TEntity)context.Entity);
 
             if (result.IsValid)
             {

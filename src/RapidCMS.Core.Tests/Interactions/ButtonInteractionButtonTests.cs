@@ -52,7 +52,7 @@ namespace RapidCMS.Core.Tests.Interactions
             var request = new PersistEntityRequestModel()
             {
                 ActionId = buttonId,
-                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>(), _serviceProvider.Object)
+                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object)
             };
 
             // act
@@ -70,7 +70,7 @@ namespace RapidCMS.Core.Tests.Interactions
             var request = new PersistEntityRequestModel()
             {
                 ActionId = buttonId,
-                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>(), _serviceProvider.Object)
+                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object)
             };
             _collection.Setup(x => x.FindButton(It.IsAny<string>())).Returns(default(ButtonSetup));
 
@@ -83,7 +83,7 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenUsedEditorButtonCanBeFound_ThenAuthServiceShouldBeConsulted(string buttonId)
         {
             // arrange
-            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>(), _serviceProvider.Object);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object);
             var request = new PersistEntityRequestModel()
             {
                 ActionId = buttonId,
@@ -108,7 +108,7 @@ namespace RapidCMS.Core.Tests.Interactions
                 ActionId = buttonId,
                 ListContext = new ListContext(
                     "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>(), _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -132,7 +132,7 @@ namespace RapidCMS.Core.Tests.Interactions
                 ActionId = buttonId,
                 ListContext = new ListContext(
                     "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>(), _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -149,14 +149,14 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenUsedEditorInListButtonCanBeFound_ThenAuthServiceShouldBeConsulted(string buttonId)
         {
             // arrange
-            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>(), _serviceProvider.Object);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object);
             var request = new PersistEntityCollectionRequestModel()
             {
                 ActionId = buttonId,
                 EditContext = editContext,
                 ListContext = new ListContext(
                     "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>(), _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -181,7 +181,7 @@ namespace RapidCMS.Core.Tests.Interactions
                 ActionId = buttonId,
                 ListContext = new ListContext(
                     "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>(), _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -205,7 +205,7 @@ namespace RapidCMS.Core.Tests.Interactions
                 ActionId = buttonId,
                 ListContext = new ListContext(
                     "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>(), _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -222,7 +222,7 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenUsedListButtonCanBeFound_ThenAuthServiceShouldBeConsulted(string buttonId)
         {
             // arrange
-            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>(), _serviceProvider.Object);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object);
             var request = new PersistEntitiesRequestModel()
             {
                 ActionId = buttonId,

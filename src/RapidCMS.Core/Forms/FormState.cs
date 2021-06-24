@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Metadata;
-using RapidCMS.Core.Abstractions.Validators;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models;
+using RapidCMS.Core.Validators;
 
 namespace RapidCMS.Core.Forms
 {
@@ -20,9 +21,9 @@ namespace RapidCMS.Core.Forms
         private readonly List<string> _messages = new List<string>();
         private readonly List<PropertyState> _fieldStates = new List<PropertyState>();
         private readonly IEntity _entity;
-        private readonly IReadOnlyList<Type> _validators;
+        private readonly IReadOnlyList<IValidationSetup> _validators;
 
-        public FormState(IEntity entity, IReadOnlyList<Type> validators, IServiceProvider serviceProvider)
+        public FormState(IEntity entity, IReadOnlyList<IValidationSetup> validators, IServiceProvider serviceProvider)
         {
             _entity = entity;
             _validators = validators;
@@ -180,11 +181,7 @@ namespace RapidCMS.Core.Forms
 
         public async Task ValidatePropertyAsync(IPropertyMetadata property, IRelationContainer relationContainer)
         {
-            // when a property must be validated which is not part of the entity (like a nested object)
-            // validate the complete model, but only keep the results of that property
-            var results = (_entity.GetType().GetProperty(property.PropertyName) == null)
-                ? (await GetValidationResultsForModelAsync(relationContainer)).Where(x => x.MemberNames.Contains(property.PropertyName))
-                : await GetValidationResultsForPropertyAsync(property, relationContainer);
+            var results = await GetValidationResultsForPropertyAsync(property, relationContainer);
 
             var state = GetPropertyState(property)!;
             state.ClearMessages(clearManualMessages: true);
@@ -198,13 +195,13 @@ namespace RapidCMS.Core.Forms
 
         private async Task<IEnumerable<ValidationResult>> GetValidationResultsForPropertyAsync(IPropertyMetadata property, IRelationContainer relationContainer)
         {
-            var results = await ValidateAsync(_validators, relationContainer, property.PropertyName).ToListAsync();
+            var results = await EntityValidator.ValidateAsync(_validators, relationContainer, ServiceProvider, _entity, property.PropertyName).ToListAsync();
             return FlattenCompositeValidationResults(results);
         }
 
         private async Task<IEnumerable<ValidationResult>> GetValidationResultsForModelAsync(IRelationContainer relationContainer)
         {
-            var results = await ValidateAsync(_validators, relationContainer).ToListAsync();
+            var results = await EntityValidator.ValidateAsync(_validators, relationContainer, ServiceProvider, _entity).ToListAsync();
 
             ClearMessages();
 
@@ -215,27 +212,6 @@ namespace RapidCMS.Core.Forms
                     new[] { kv.Property.PropertyName })));
 
             return FlattenCompositeValidationResults(results);
-        }
-
-        private async IAsyncEnumerable<ValidationResult> ValidateAsync(
-            IReadOnlyList<Type> validators,
-            IRelationContainer relationContainer,
-            string? propertyName = default)
-        {
-            foreach (var validatorType in validators)
-            {
-                var validationResult = ServiceProvider.GetService(validatorType) switch
-                {
-                    IEntityValidator validator => validator.Validate(_entity, relationContainer),
-                    IAsyncEntityValidator asyncValidator => await asyncValidator.ValidateAsync(_entity, relationContainer),
-                    _ => throw new InvalidOperationException($"Invalid entity validator given. {validatorType.Name} is not included in Service Collection or is not a {typeof(IEntityValidator).Name} or {typeof(IAsyncEntityValidator).Name}.")
-                };
-
-                foreach (var result in validationResult.Where(x => string.IsNullOrWhiteSpace(propertyName) || x.MemberNames.Contains(propertyName)))
-                {
-                    yield return result;
-                }
-            }
         }
 
         private IEnumerable<ValidationResult> FlattenCompositeValidationResults(IEnumerable<ValidationResult> results, string? memberNamePrefix = null)

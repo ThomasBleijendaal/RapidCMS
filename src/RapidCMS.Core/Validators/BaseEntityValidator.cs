@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Validators;
 
 namespace RapidCMS.Core.Validators
 {
-    public abstract class BaseEntityValidator<TEntity> : IEntityValidator
+    public abstract class BaseEntityValidator<TEntity> : IEntityValidator, IEntityValidator<TEntity>
         where TEntity : IEntity
     {
-        protected abstract IEnumerable<ValidationResult> Validate(TEntity entity, IRelationContainer relationContainer);
+        public abstract IEnumerable<ValidationResult> Validate(IValidatorContext<TEntity> context);
 
-        IEnumerable<ValidationResult> IEntityValidator.Validate(IEntity entity, IRelationContainer relationContainer) => Validate((TEntity)entity, relationContainer);
+        IEnumerable<ValidationResult> IEntityValidator.Validate(IValidatorContext context) 
+            => Validate(new ValidatorContext<TEntity>(context.Entity, context.RelationContainer, context.Configuration));
     }
 }

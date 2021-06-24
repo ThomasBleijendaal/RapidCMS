@@ -1,12 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Forms;
 
 namespace RapidCMS.Core.Abstractions.Validators
 {
     public interface IEntityValidator
     {
-        IEnumerable<ValidationResult> Validate(IEntity entity, IRelationContainer relationContainer);
+        IEnumerable<ValidationResult> Validate(IValidatorContext context);
+    }
+
+    public interface IEntityValidator<TEntity>
+        where TEntity : IEntity
+    {
+        IEnumerable<ValidationResult> Validate(IValidatorContext<TEntity> context);
     }
 }

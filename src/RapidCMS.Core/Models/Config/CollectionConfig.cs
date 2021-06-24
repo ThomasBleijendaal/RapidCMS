@@ -95,7 +95,7 @@ namespace RapidCMS.Core.Models.Config
         internal NodeConfig? NodeView { get; set; }
         internal NodeConfig? NodeEditor { get; set; }
 
-        internal List<Type> Validators { get; set; } = new List<Type>();
+        internal List<ValidationConfig> Validators { get; set; } = new List<ValidationConfig>();
     }
 
     internal class CollectionConfig<TEntity> : CollectionConfig, ICollectionConfig<TEntity>
@@ -328,14 +328,28 @@ namespace RapidCMS.Core.Models.Config
 
         public ICollectionConfig<TEntity> AddEntityValidator<TEntityValidator>() where TEntityValidator : IEntityValidator
         {
-            Validators.Add(typeof(TEntityValidator));
+            Validators.Add(new ValidationConfig(typeof(TEntityValidator), default));
+
+            return this;
+        }
+
+        public ICollectionConfig<TEntity> AddEntityValidator<TEntityValidator>(object configuration) where TEntityValidator : IEntityValidator
+        {
+            Validators.Add(new ValidationConfig(typeof(TEntityValidator), configuration));
 
             return this;
         }
 
         public ICollectionConfig<TEntity> AddAsyncEntityValidator<TAsyncEntityValidator>() where TAsyncEntityValidator : IAsyncEntityValidator
         {
-            Validators.Add(typeof(TAsyncEntityValidator));
+            Validators.Add(new ValidationConfig(typeof(TAsyncEntityValidator), default));
+
+            return this;
+        }
+
+        public ICollectionConfig<TEntity> AddAsyncEntityValidator<TAsyncEntityValidator>(object configuration) where TAsyncEntityValidator : IAsyncEntityValidator
+        {
+            Validators.Add(new ValidationConfig(typeof(TAsyncEntityValidator), configuration));
 
             return this;
         }

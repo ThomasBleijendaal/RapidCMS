@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace RapidCMS.Core.Tests.Forms
 {
-    public class EditContextCustomValidationTests
+    public class EditContextCustomValidationConfigurationTests
     {
         private FormEditContext _subject = default!;
         private ServiceCollection _serviceCollection = new ServiceCollection();
@@ -23,18 +23,18 @@ namespace RapidCMS.Core.Tests.Forms
         [Test]
         public async Task WhenInvalidEntityIsValidated_ThenIsValidShouldReturnFalseAsync()
         {
-            _serviceCollection.AddSingleton<EntityValidator>();
+            _serviceCollection.AddSingleton<ConfigurableEntityValidator>();
 
             _subject = new FormEditContext(
                 "alias",
                 "repoAlias",
                 "variantAlias",
-                new Entity(),
+                new Entity { Id = "abc" },
                 default,
                 UsageType.Edit,
                 new List<IValidationSetup>
                 {
-                    (IValidationSetup)new ValidationSetup(typeof(EntityValidator), default)
+                    new ValidationSetup(typeof(ConfigurableEntityValidator), new ConfigurableEntityValidator.Config { InvalidId = "abc" })
                 },
                 _serviceCollection.BuildServiceProvider());
 
@@ -48,7 +48,7 @@ namespace RapidCMS.Core.Tests.Forms
         [Test]
         public async Task WhenValidEntityIsValidated_ThenIsValidShouldReturnTrueAsync()
         {
-            _serviceCollection.AddSingleton<EntityValidator>();
+            _serviceCollection.AddSingleton<ConfigurableEntityValidator>();
 
             _subject = new FormEditContext(
                 "alias",
@@ -56,13 +56,13 @@ namespace RapidCMS.Core.Tests.Forms
                 "variantAlias",
                 new Entity
                 {
-                    Id = "valid"
+                    Id = "abcd"
                 },
                 default,
                 UsageType.Edit,
                 new List<IValidationSetup>
                 {
-                    (IValidationSetup)new ValidationSetup(typeof(EntityValidator), default)
+                    new ValidationSetup(typeof(ConfigurableEntityValidator), new ConfigurableEntityValidator.Config { InvalidId = "abc" })
                 },
                 _serviceCollection.BuildServiceProvider());
 
@@ -79,11 +79,11 @@ namespace RapidCMS.Core.Tests.Forms
             public int X { get; set; }
         }
 
-        public class EntityValidator : BaseEntityValidator<Entity>
+        public class ConfigurableEntityValidator : BaseEntityValidator<Entity>
         {
             public override IEnumerable<ValidationResult> Validate(IValidatorContext<Entity> context)
             {
-                if (!string.IsNullOrEmpty(context.Entity.Id))
+                if (!string.IsNullOrEmpty(context.Entity.Id) && context.Entity.Id != (context.Configuration as Config)?.InvalidId)
                 {
                     yield break;
                 }
@@ -91,6 +91,11 @@ namespace RapidCMS.Core.Tests.Forms
                 {
                     yield return new ValidationResult("Id is null", new[] { nameof(context.Entity.Id) });
                 }
+            }
+
+            public class Config
+            {
+                public string InvalidId { get; set; }
             }
         }
     }

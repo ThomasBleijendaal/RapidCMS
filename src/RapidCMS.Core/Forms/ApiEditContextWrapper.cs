@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Helpers;
@@ -25,7 +26,7 @@ namespace RapidCMS.Core.Forms
             TEntity referenceEntity,
             IParent? parent,
             IRelationContainer relationContainer,
-            IReadOnlyList<Type> validators,
+            IReadOnlyList<IValidationSetup> validators,
             IServiceProvider serviceProvider)
         {
             UsageType = usageType;

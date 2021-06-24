@@ -113,6 +113,17 @@ namespace RapidCMS.ModelMaker
 }
 ";
 
+        public const string EntityValidator = @"using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Validators;
+
+namespace RapidCMS.ModelMaker
+{
+
+}
+";
+
         public const string Repository = @"using System;
 using System.Collections.Generic;
 using System.Linq;

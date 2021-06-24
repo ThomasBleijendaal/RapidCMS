@@ -14,6 +14,21 @@ using RapidCMS.Example.Shared.Data;
 using RapidCMS.ModelMaker;
 using RapidCMS.Repositories;
 
+//using RapidCMS.Core.Abstractions.Forms;
+//using RapidCMS.Core.Validators;
+//using System.ComponentModel.DataAnnotations;
+
+//namespace RapidCMS.ModelMaker
+//{
+//    public class BlogValidator : BaseEntityValidator<Blog>
+//    {
+//        protected override IEnumerable<ValidationResult> Validate(Blog entity, IRelationContainer relationContainer)
+//        {
+            
+//        }
+//    }
+//}
+
 namespace RapidCMS.Example.ModelMaker
 {
     public class Startup
