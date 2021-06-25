@@ -27,6 +27,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
 
             var propertyBuilder = new PropertyBuilder();
             var entityBuilder = new EntityBuilder(propertyBuilder);
+            var entityValidatorBuilder = new EntityValidationBuilder();
 
             var fieldBuilder = new FieldBuilder();
             var collectionBuilder = new CollectionBuilder(fieldBuilder);
@@ -72,6 +73,12 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
                 if (entitySourceText != null)
                 {
                     context.AddSource($"ModelMaker_Entity_{entity.Name?.Replace(" ", "_")}.cs", entitySourceText);
+                }
+
+                var validatorSourceText = entityValidatorBuilder.BuildValidation(entity, modelMakerContext);
+                if (validatorSourceText != null)
+                {
+                    context.AddSource($"ModelMaker_EntityValidator_{entity.Name?.Replace(" ", "_")}.cs", validatorSourceText);
                 }
 
                 var collectionSourceText = collectionBuilder.BuildCollection(entity, modelMakerContext);

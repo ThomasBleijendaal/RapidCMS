@@ -18,7 +18,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public string? RelatedCollectionAlias => default;
 
-        public string? ValidationAttributeExpression => $"[MaxLength({MaxLength})]";
+        public string? ValidationMethodName => "MaximumLength";
 
         public string? DataCollectionExpression => default;
     }

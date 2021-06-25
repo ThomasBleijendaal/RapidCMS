@@ -3,7 +3,6 @@
     public static class CategoryCode
     {
         public const string EntityWithBlog = @"using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
 
 #nullable enable
@@ -15,9 +14,6 @@ namespace RapidCMS.ModelMaker
         public int Id { get; set; }
         string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? ""0""); }
         
-        [Required]
-        [MinLength(1)]
-        [MaxLength(30)]
         public System.String Name { get; set; }
         
         public ICollection<RapidCMS.ModelMaker.Blog> BlogMainCategory { get; set; } = new List<RapidCMS.ModelMaker.Blog>();
@@ -27,8 +23,7 @@ namespace RapidCMS.ModelMaker
 }
 ";
 
-        public const string EntityWithoutBlog = @"using System.ComponentModel.DataAnnotations;
-using RapidCMS.Core.Abstractions.Data;
+        public const string EntityWithoutBlog = @"using RapidCMS.Core.Abstractions.Data;
 
 #nullable enable
 
@@ -39,9 +34,6 @@ namespace RapidCMS.ModelMaker
         public int Id { get; set; }
         string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? ""0""); }
         
-        [Required]
-        [MinLength(1)]
-        [MaxLength(30)]
         public System.String Name { get; set; }
     }
 }
@@ -52,8 +44,6 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
-using RapidCMS.ModelMaker.Validation;
-using RapidCMS.ModelMaker.Validation.Config;
 
 #nullable enable
 
@@ -72,10 +62,7 @@ namespace RapidCMS.ModelMaker
                 {
                     collection.SetTreeView(x => x.Name);
                     collection.SetElementConfiguration(x => x.Id, x => x.Name);
-                    collection.AddEntityValidator<BannedContentEntityValidator>(new BannedContentValidationConfig
-                    {
-                        BannedWords = new System.Collections.Generic.List<System.String> { ""a"", ""b"", ""c"" }
-                    });
+                    collection.AddEntityValidator<CategoryValidator>();
                     collection.SetListView(view =>
                     {
                         view.AddDefaultButton(DefaultButtonType.New);
@@ -189,6 +176,26 @@ namespace RapidCMS.ModelMaker
             entity.Name = editContext.Entity.Name;
             
             await _dbContext.SaveChangesAsync();
+        }
+    }
+}
+";
+
+        public const string EntityValidator = @"using FluentValidation;
+using RapidCMS.ModelMaker.Validation;
+
+#nullable enable
+
+namespace RapidCMS.ModelMaker
+{
+    public class CategoryValidator : AbstractValidatorAdapter<Category>
+    {
+        public CategoryValidator()
+        {
+            RuleFor(x => x.Name)
+                .NotNull()
+                .MinimumLength(1)
+                .MaximumLength(30);
         }
     }
 }

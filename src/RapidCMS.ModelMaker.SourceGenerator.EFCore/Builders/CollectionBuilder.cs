@@ -36,6 +36,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
             WriteTreeConfig(indentWriter, info);
             WriteElementConfig(indentWriter, info);
+            WriteEntityValidator(indentWriter, info);
 
             WriteListView(indentWriter, info);
             WriteNodeEditor(indentWriter, info);
@@ -84,6 +85,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             var titleProperty = info.Properties.Single(x => x.IsTitleOfEntity);
 
             indentWriter.WriteLine($"collection.SetElementConfiguration(x => x.Id, x => x.{titleProperty.PascalCaseName});");
+        }
+
+        public void WriteEntityValidator(IndentedTextWriter indentWriter, EntityInformation info)
+        {
+            indentWriter.WriteLine($"collection.AddEntityValidator<{info.PascalCaseName}Validator>();");
         }
 
         public void WriteListView(IndentedTextWriter indentWriter, EntityInformation info)

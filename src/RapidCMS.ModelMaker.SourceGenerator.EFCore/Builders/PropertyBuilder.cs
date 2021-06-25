@@ -10,11 +10,6 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
         {
             indentWriter.WriteLine();
 
-            foreach (var attribute in info.ValidationAttributes)
-            {
-                indentWriter.WriteLine(attribute);
-            }
-
             if (info.Relation.HasFlag(Relation.One | Relation.ToOne) && !info.Relation.HasFlag(Relation.DependentSide))
             {
                 indentWriter.WriteLine($"public {info.Type}? {info.PascalCaseName} {{ get; set; }}");

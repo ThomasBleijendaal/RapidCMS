@@ -18,7 +18,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public string? RelatedCollectionAlias => default;
 
-        public string? ValidationAttributeExpression => $"[MinLength({MinLength})]";
+        public string? ValidationMethodName => "MinimumLength";
 
         public string? DataCollectionExpression => default;
     }

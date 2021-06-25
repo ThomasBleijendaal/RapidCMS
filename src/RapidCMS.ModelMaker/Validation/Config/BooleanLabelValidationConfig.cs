@@ -23,9 +23,9 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public string? RelatedCollectionAlias => default;
 
-        public string? ValidationAttributeExpression => default;
-
         public string? DataCollectionExpression => $"new {typeof(FixedOptionsDataProvider).FullName}(new (object, string)[] {{ (true, \"{Labels.TrueLabel}\"), (false, \"{Labels.FalseLabel}\") }})";
+
+        public string? ValidationMethodName => default;
 
         public class LabelsConfig: IEntity
         {

@@ -3,7 +3,6 @@
     public static class BlogCode
     {
         public const string Entity = @"using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
 
 #nullable enable
@@ -15,20 +14,14 @@ namespace RapidCMS.ModelMaker
         public int Id { get; set; }
         string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? ""0""); }
         
-        [MinLength(1)]
-        [MaxLength(127)]
-        [RegularExpression(""[^a|b|c]"")]
         public System.String Title { get; set; }
         
         public System.String Content { get; set; }
         
-        [Required]
         public System.Boolean IsPublished { get; set; }
         
-        [Required]
         public System.DateTime PublishDate { get; set; }
         
-        [Required]
         public int? MainCategoryId { get; set; }
         public RapidCMS.ModelMaker.Category? MainCategory { get; set; }
         
@@ -60,6 +53,7 @@ namespace RapidCMS.ModelMaker
                 {
                     collection.SetTreeView(x => x.Title);
                     collection.SetElementConfiguration(x => x.Id, x => x.Title);
+                    collection.AddEntityValidator<BlogValidator>();
                     collection.SetListView(view =>
                     {
                         view.AddDefaultButton(DefaultButtonType.New);
@@ -211,6 +205,28 @@ namespace RapidCMS.ModelMaker
             {
                 dbEntity.BlogCategories.Add(itemToAdd);
             }
+        }
+    }
+}
+";
+
+        public const string EntityValidator = @"using FluentValidation;
+using RapidCMS.Example.ModelMaker.Validators;
+using RapidCMS.ModelMaker.Validation;
+
+#nullable enable
+
+namespace RapidCMS.ModelMaker
+{
+    public class BlogValidator : AbstractValidatorAdapter<Blog>
+    {
+        public BlogValidator()
+        {
+            RuleFor(x => x.Title)
+                .NotNull()
+                .MinimumLength(1)
+                .MaximumLength(127)
+                .BannedContent(new BannedContentValidationConfig { BannedWords = new List<string> { ""a"", ""b"", ""c"" } });
         }
     }
 }

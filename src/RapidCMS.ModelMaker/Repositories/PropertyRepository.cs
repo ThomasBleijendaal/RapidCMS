@@ -257,9 +257,6 @@ namespace RapidCMS.ModelMaker.Repositories
                         validationModel.Config = config;
                         validationModel.Id = Guid.NewGuid().ToString();
 
-                        validationModel.AttributeExpression = config?.ValidationAttributeExpression;
-                        validationModel.DataCollectionExpression = config?.DataCollectionExpression;
-
                         newValidations.Add(validationModel);
                     }
                 }

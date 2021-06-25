@@ -7,8 +7,6 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 {
     internal sealed class PropertyInformation : InformationBase, IInformation
     {
-        private List<string> _validationAttributes = new List<string>();
-
         public PropertyInformation(bool hidden = false)
         {
             Hidden = hidden;
@@ -34,21 +32,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return this;
         }
 
-        public IReadOnlyList<string> ValidationAttributes => _validationAttributes;
-
-        public PropertyInformation HasValidationAttribute(string attribute)
-        {
-            _namespaces.Add((Use.Entity, "System.ComponentModel.DataAnnotations"));
-
-            _validationAttributes.Add(attribute);
-            return this;
-        }
-
         public PropertyInformation IsRequired(bool isRequired)
         {
             if (isRequired)
             {
-                _validationAttributes.Insert(0, "[Required]");
+                Validations.Add(new ValidationInformation("NotNull"));
             }
             return this;
         }
@@ -105,11 +93,21 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return this;
         }
 
+        public List<ValidationInformation> Validations { get; private set; } = new List<ValidationInformation>();
+
+        public PropertyInformation AddValidation(ValidationInformation validation)
+        {
+            Validations.Add(validation);
+
+            return this;
+        }
+
         public bool IsValid()
         {
             return !string.IsNullOrEmpty(Name) &&
                 !string.IsNullOrEmpty(Type) &&
-                !string.IsNullOrEmpty(EditorType);
+                !string.IsNullOrEmpty(EditorType) &&
+                Validations.All(x => x.IsValid());
         }
 
         public IEnumerable<string> NamespacesUsed(Use use)
@@ -121,6 +119,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
 
             foreach (var @namespace in _namespaces.Where(x => x.use.HasFlag(use)).Select(x => x.@namespace).Distinct())
+            {
+                yield return @namespace;
+            }
+
+            foreach (var @namespace in Validations.SelectMany(x => x.NamespacesUsed(use)))
             {
                 yield return @namespace;
             }

@@ -22,6 +22,8 @@ namespace RapidCMS.Example.ModelMaker.Validators
 
         public string? DataCollectionExpression => default;
 
+        public string? ValidationMethodName => default;
+
         public string? ValidationAttributeExpression => $"[RegularExpression(\"[^{string.Join("|", BannedWords)}]\")]";
 
     }

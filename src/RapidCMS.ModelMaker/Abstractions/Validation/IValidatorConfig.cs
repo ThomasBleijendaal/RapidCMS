@@ -26,11 +26,10 @@ namespace RapidCMS.ModelMaker.Core.Abstractions.Validation
         /// </summary>
         string? RelatedCollectionAlias { get; }
 
-        // TODO: move modelmaker made validation into new validation pipeline so this attribute is not required to be added
         /// <summary>
-        /// Generates the attribute expression used to annotate the property.
+        /// Name of the FluentValidation validation extension method.
         /// </summary>
-        string? ValidationAttributeExpression { get; }
+        string? ValidationMethodName { get; }
 
         // TODO: move this configuration to a generated data collection that is just referenced by type to prevent very long expressions
         /// <summary>

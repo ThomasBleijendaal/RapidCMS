@@ -13,10 +13,6 @@ namespace RapidCMS.ModelMaker.Models.Entities
         [MinLength(1)]
         public string Alias { get; set; } = default!;
 
-        public string? AttributeExpression { get; set; }
-
-        public string? DataCollectionExpression { get; set; }
-
         [Required]
         [ValidateObject]
         public IValidatorConfig? Config { get; set; }

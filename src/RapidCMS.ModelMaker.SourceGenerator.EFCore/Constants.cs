@@ -6,5 +6,6 @@
         public const string OutputEntity = "Entity";
         public const string OutputContext = "Context";
         public const string OutputRepository = "Repository";
+        public const string OutputValidation = "Validation";
     }
 }

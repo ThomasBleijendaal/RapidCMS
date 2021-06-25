@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Information;
@@ -7,6 +8,16 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 {
     internal sealed class PropertyParser
     {
+        private readonly string[] _defaultConfigProperties = new[]
+        {
+            "IsEnabled",
+            "AlwaysIncluded",
+            "RelatedCollectionAlias",
+            "DataCollectionExpression",
+            "ValidiationMethodName",
+            "$type"
+        };
+
         public PropertyInformation ParseProperty(EntityInformation entity, JObject property)
         {
             var info = new PropertyInformation();
@@ -55,11 +66,6 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
                 foreach (var (validation, validationConfig) in enabledValidations)
                 {
-                    if (validation.Value<string>("AttributeExpression") is string attribute)
-                    {
-                        info.HasValidationAttribute(attribute);
-                    }
-
                     if (validationConfig.Value<string>("DataCollectionExpression") is string dataCollection)
                     {
                         dataCollectionExpression = dataCollection;
@@ -73,6 +79,25 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                     if (validationConfig.Value<string>("RelatedPropertyName") is string relatedPropName)
                     {
                         relatedPropertyName = relatedPropName;
+                    }
+
+                    if (validationConfig.Value<string>("ValidationMethodName") is string validationMethodName)
+                    {
+                        var validationInfo = new ValidationInformation(validationMethodName);
+
+                        var configProperty = validationConfig.Properties().FirstOrDefault(x => !_defaultConfigProperties.Contains(x.Name));
+                        if (configProperty.Value is JValue value &&
+                            value.Value is object valueObject)
+                        {
+                            validationInfo.HasValue(valueObject);
+                        }
+                        else if (configProperty.Value is JObject @object && 
+                            @object.Value<Dictionary<string, string>>() is Dictionary<string, string> dictionary)
+                        {
+                            validationInfo.HasDictionary(dictionary);
+                        }
+
+                        info.AddValidation(validationInfo);
                     }
                 }
             }

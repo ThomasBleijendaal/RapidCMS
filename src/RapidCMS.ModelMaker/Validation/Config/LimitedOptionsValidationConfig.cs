@@ -21,7 +21,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public string? RelatedCollectionAlias => default; // TODO: wut: $"[RegularExpression(\"^[{string.Join("|", Options)}]\")]$";
 
-        public string? ValidationAttributeExpression => default;
+        public string? ValidationMethodName => default;
 
         public string? DataCollectionExpression => default;
     }
