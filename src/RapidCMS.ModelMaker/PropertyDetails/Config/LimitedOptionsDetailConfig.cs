@@ -7,7 +7,7 @@ using RapidCMS.ModelMaker.Models.Entities;
 
 namespace RapidCMS.ModelMaker.Validation.Config
 {
-    public class LimitedOptionsValidationConfig : IValidatorConfig
+    public class LimitedOptionsDetailConfig : IDetailConfig
     {
         [Required]
         [MinLength(1)]
@@ -23,6 +23,6 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public string? ValidationMethodName => default;
 
-        public string? DataCollectionExpression => default;
+        public string? DataCollectionType => default; // TODO
     }
 }

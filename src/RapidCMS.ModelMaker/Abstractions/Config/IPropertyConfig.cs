@@ -16,7 +16,7 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
         bool IsRelationToOne { get; }
         bool IsRelationToMany { get; }
 
-        IList<IPropertyValidatorConfig> Validators { get; }
+        IList<IPropertyDetailConfig> Validators { get; }
         IList<IPropertyEditorConfig> Editors { get; }
 
         IPropertyConfig CanBeUsedAsTitle(bool usedAsTitle);

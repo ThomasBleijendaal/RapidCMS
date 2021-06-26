@@ -180,7 +180,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                     .UseFor(Use.Entity)
                     .HasName($"{relation.Entity.PascalCaseName}{relation.Property.PascalCaseName}")
                     .IsType($"{context.Namespace}.{relation.Entity.PascalCaseName}")
-                    .IsRelation(reverseRelation, relation.Property.RelatedCollectionAlias, $"{relation.Entity.PascalCaseName}{relation.Property.PascalCaseName}", default);
+                    .IsRelation(reverseRelation, relation.Property.RelatedCollectionAlias, $"{relation.Entity.PascalCaseName}{relation.Property.PascalCaseName}");
 
                 relation.Property.RelatedPropertyName ??= $"{relation.Entity.PascalCaseName}{relation.Property.PascalCaseName}";
                 relation.Property.Relation |= Relation.Many;

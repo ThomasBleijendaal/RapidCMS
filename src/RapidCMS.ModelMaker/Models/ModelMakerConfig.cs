@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Helpers;
 using RapidCMS.ModelMaker.Abstractions.Config;
-using RapidCMS.ModelMaker.Core.Abstractions.Factories;
 using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 using RapidCMS.ModelMaker.Models.Config;
 using RapidCMS.UI.Components.Editors;
@@ -17,7 +17,7 @@ namespace RapidCMS.ModelMaker.Models
     internal class ModelMakerConfig : IModelMakerConfig
     {
         private readonly List<IPropertyEditorConfig> _editors = new List<IPropertyEditorConfig>();
-        private readonly List<IPropertyValidatorConfig> _validators = new List<IPropertyValidatorConfig>();
+        private readonly List<IPropertyDetailConfig> _validators = new List<IPropertyDetailConfig>();
         private readonly List<IPropertyConfig> _properties = new List<IPropertyConfig>();
 
         public ModelMakerConfig()
@@ -27,7 +27,7 @@ namespace RapidCMS.ModelMaker.Models
 
         public IEnumerable<IPropertyEditorConfig> Editors => _editors;
 
-        public IEnumerable<IPropertyValidatorConfig> Validators => _validators;
+        public IEnumerable<IPropertyDetailConfig> PropertyDetails => _validators;
 
         public IEnumerable<IPropertyConfig> Properties => _properties;
 
@@ -60,21 +60,20 @@ namespace RapidCMS.ModelMaker.Models
             return editor;
         }
 
-        public IPropertyValidatorConfig AddPropertyValidator<TValue, TValidatorConfig, TValueForEditor>(
+        public IPropertyDetailConfig AddPropertyDetail<TDetailConfig, TValueForEditor>(
                 string alias, 
                 string name, 
                 string? description, 
                 EditorType editorType,
-                Expression<Func<IPropertyValidationModel<TValidatorConfig>, TValueForEditor>> configEditor)
-            where TValidatorConfig : class, IValidatorConfig
+                Expression<Func<IPropertyDetailModel<TDetailConfig>, TValueForEditor>> configEditor)
+            where TDetailConfig : class, IDetailConfig
         {
-            var validator = new PropertyValidatorConfig(
+            var validator = new PropertyDetailConfig(
                 alias,
                 name,
                 description,
-                typeof(TValue),
                 GetEditorByEditorType(editorType),
-                typeof(TValidatorConfig),
+                typeof(TDetailConfig),
                 PropertyMetadataHelper.GetPropertyMetadata(configEditor) as IFullPropertyMetadata);
 
             _validators.Add(validator);
@@ -82,69 +81,57 @@ namespace RapidCMS.ModelMaker.Models
             return validator;
         }
 
-        public IPropertyValidatorConfig AddPropertyValidator<TValue, TValidatorConfig, TValueForEditor, TDataCollectionFactory>(
+        public IPropertyDetailConfig AddPropertyDetail<TDetailConfig, TCustomEditor>(string alias, string name, string? description)
+            where TDetailConfig : IDetailConfig
+            where TCustomEditor : BasePropertyEditor
+        {
+            var validator = new PropertyDetailConfig(
+                alias, 
+                name, 
+                description, 
+                typeof(TCustomEditor), 
+                typeof(TDetailConfig));
+
+            _validators.Add(validator);
+
+            return validator;
+        }
+
+        public IPropertyDetailConfig AddPropertyDetail<TDetailConfig, TValueForEditor, TDataCollection>(
                 string alias,
                 string name,
                 string? description,
                 EditorType editorType,
-                Expression<Func<IPropertyValidationModel<TValidatorConfig>, TValueForEditor>> configEditor)
-            where TValidatorConfig : class, IValidatorConfig
-            where TDataCollectionFactory : IDataCollectionFactory
+                Expression<Func<IPropertyDetailModel<TDetailConfig>, TValueForEditor>> configEditor)
+            where TDetailConfig : class, IDetailConfig
+            where TDataCollection : IDataCollection
         {
-            var property = PropertyMetadataHelper.GetPropertyMetadata(configEditor) as IFullPropertyMetadata;
-
-            if (!string.IsNullOrWhiteSpace(property?.PropertyName) && 
-                _validators.Any(x => x.ConfigToEditor?.PropertyName == property?.PropertyName))
-            {
-                throw new InvalidOperationException($"Validation models must have unique ConfigToEditor property metadata, {property.PropertyName} already used. [ValidateEnumerable] won't be able to distinguish between models.");
-            }
-
-            var validator = new PropertyValidatorConfig(
+            var validator = new PropertyDetailConfig(
                 alias,
                 name,
                 description,
-                typeof(TValue),
                 GetEditorByEditorType(editorType),
-                typeof(TValidatorConfig),
-                property,
-                typeof(TDataCollectionFactory));
+                typeof(TDetailConfig),
+                PropertyMetadataHelper.GetPropertyMetadata(configEditor) as IFullPropertyMetadata,
+                typeof(TDataCollection));
 
             _validators.Add(validator);
 
             return validator;
         }
 
-        public IPropertyValidatorConfig AddPropertyValidator<TValue, TValidatorConfig, TCustomEditor>(string alias, string name, string? description)
-            where TValidatorConfig : IValidatorConfig
+        public IPropertyDetailConfig AddPropertyDetail<TDetailConfig, TCustomEditor, TDataCollection>(string alias, string name, string? description)
+            where TDetailConfig : IDetailConfig
             where TCustomEditor : BasePropertyEditor
+            where TDataCollection : IDataCollection
         {
-            var validator = new PropertyValidatorConfig(
-                alias, 
-                name, 
-                description, 
-                typeof(TValue),
-                typeof(TCustomEditor), 
-                typeof(TValidatorConfig));
-
-            _validators.Add(validator);
-
-            return validator;
-        }
-
-        public IPropertyValidatorConfig AddPropertyValidator<TValue, TValidatorConfig, TCustomEditor, TDataCollectionFactory>(string alias, string name, string? description)
-            where TValidatorConfig : IValidatorConfig
-            where TCustomEditor : BasePropertyEditor
-            where TDataCollectionFactory : IDataCollectionFactory
-        {
-            var validator = new PropertyValidatorConfig(
+            var validator = new PropertyDetailConfig(
                 alias,
                 name,
                 description,
-                typeof(TValue),
                 typeof(TCustomEditor),
-                typeof(TValidatorConfig),
-                default,
-                typeof(TDataCollectionFactory));
+                typeof(TDetailConfig),
+                dataCollection: typeof(TDataCollection));
 
             _validators.Add(validator);
 

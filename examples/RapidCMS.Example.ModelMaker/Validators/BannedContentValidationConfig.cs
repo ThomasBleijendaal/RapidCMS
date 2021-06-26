@@ -8,7 +8,7 @@ using RapidCMS.ModelMaker.Models.Entities;
 
 namespace RapidCMS.Example.ModelMaker.Validators
 {
-    public class BannedContentValidationConfig : IValidatorConfig
+    public class BannedContentValidationConfig : IDetailConfig
     {
         public List<string> BannedWords { get; set; } = new List<string>();
 
@@ -25,7 +25,7 @@ namespace RapidCMS.Example.ModelMaker.Validators
 
         public string? ValidationMethodName => "BannedContent";
 
-        public string? ValidationAttributeExpression => $"[RegularExpression(\"[^{string.Join("|", BannedWords)}]\")]";
+        public string? DataCollectionType => default;
     }
 
     public static class BannedContentValidator

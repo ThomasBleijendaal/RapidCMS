@@ -3,10 +3,10 @@ using RapidCMS.ModelMaker.Models.Entities;
 
 namespace RapidCMS.ModelMaker.EqualityComparers
 {
-    internal class PropertyValidationModelEqualityComparer : IEqualityComparer<PropertyValidationModel>
+    internal class PropertyValidationModelEqualityComparer : IEqualityComparer<PropertyDetailModel>
     {
-        public bool Equals(PropertyValidationModel? x, PropertyValidationModel? y) => x?.Alias == y?.Alias;
+        public bool Equals(PropertyDetailModel? x, PropertyDetailModel? y) => x?.Alias == y?.Alias;
 
-        public int GetHashCode(PropertyValidationModel obj) => obj.Alias.GetHashCode();
+        public int GetHashCode(PropertyDetailModel obj) => obj.Alias.GetHashCode();
     }
 }

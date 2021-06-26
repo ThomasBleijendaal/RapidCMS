@@ -44,7 +44,7 @@ namespace RapidCMS.Example.ModelMaker
                     config.GetProperty(Constants.Properties.ShortString)?.Editors.Add(customTextAreaEditor);
 
                     // custom editor validators can be inserted easily
-                    var customTextValidator = config.AddPropertyValidator<string, BannedContentValidationConfig, List<string>>(
+                    var customTextValidator = config.AddPropertyDetail<BannedContentValidationConfig, List<string>>(
                         "bannedContent",
                         "Banned Content",
                         "The content is not allowed contain the following words.",
@@ -85,24 +85,24 @@ namespace RapidCMS.Example.ModelMaker
             services.AddScoped<BaseRepository<Blog>, BlogRepository>();
             services.AddScoped<BaseRepository<Category>, CategoryRepository>();
 
-            //services.AddScoped<BaseRepository<OnetoManyMany>, OnetoManyManyRepository>();
-            //services.AddScoped<BaseRepository<OnetoManyOne>, OnetoManyOneRepository>();
+            services.AddScoped<BaseRepository<OnetoManyMany>, OnetoManyManyRepository>();
+            services.AddScoped<BaseRepository<OnetoManyOne>, OnetoManyOneRepository>();
 
-            //services.AddScoped<BaseRepository<ManytoManyManyA>, ManytoManyManyARepository>();
-            //services.AddScoped<BaseRepository<ManytoManyManyB>, ManytoManyManyBRepository>();
+            services.AddScoped<BaseRepository<ManytoManyManyA>, ManytoManyManyARepository>();
+            services.AddScoped<BaseRepository<ManytoManyManyB>, ManytoManyManyBRepository>();
 
-            //services.AddScoped<BaseRepository<OnetoOneOneA>, OnetoOneOneARepository>();
-            //services.AddScoped<BaseRepository<OnetoOneOneB>, OnetoOneOneBRepository>();
+            services.AddScoped<BaseRepository<OnetoOneOneA>, OnetoOneOneARepository>();
+            services.AddScoped<BaseRepository<OnetoOneOneB>, OnetoOneOneBRepository>();
 
             // TODO: add generator to automatically add this to DI
             services.AddTransient<BlogValidator>();
             services.AddTransient<CategoryValidator>();
-            //services.AddTransient<OnetoManyManyValidator>();
-            //services.AddTransient<OnetoManyOneValidator>();
-            //services.AddTransient<ManytoManyManyAValidator>();
-            //services.AddTransient<ManytoManyManyBValidator>();
-            //services.AddTransient<OnetoOneOneAValidator>();
-            //services.AddTransient<OnetoOneOneBValidator>();
+            services.AddTransient<OnetoManyManyValidator>();
+            services.AddTransient<OnetoManyOneValidator>();
+            services.AddTransient<ManytoManyManyAValidator>();
+            services.AddTransient<ManytoManyManyBValidator>();
+            services.AddTransient<OnetoOneOneAValidator>();
+            services.AddTransient<OnetoOneOneBValidator>();
 
             services.AddDbContext<ModelMakerDbContext>(
                 builder => builder.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString")),
@@ -118,14 +118,14 @@ namespace RapidCMS.Example.ModelMaker
                 config.AddBlogCollection();
                 config.AddCategoryCollection();
 
-                //config.AddOnetoManyManyCollection();
-                //config.AddOnetoManyOneCollection();
+                config.AddOnetoManyManyCollection();
+                config.AddOnetoManyOneCollection();
 
-                //config.AddManytoManyManyACollection();
-                //config.AddManytoManyManyBCollection();
+                config.AddManytoManyManyACollection();
+                config.AddManytoManyManyBCollection();
 
-                //config.AddOnetoOneOneACollection();
-                //config.AddOnetoOneOneBCollection();
+                config.AddOnetoOneOneACollection();
+                config.AddOnetoOneOneBCollection();
 
                 config.AddPersonCollection();
 
@@ -135,7 +135,7 @@ namespace RapidCMS.Example.ModelMaker
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ModelMakerDbContext context)
         {
-            context.Database.Migrate();
+            //context.Database.Migrate();
 
             app.UseRapidCMS(isDevelopment: env.IsDevelopment());
 

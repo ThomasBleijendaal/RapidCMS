@@ -184,7 +184,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             if (string.IsNullOrEmpty(relatedDbContextName))
             {
                 indentWriter.WriteLine();
-                indentWriter.WriteLine($"private virtual Task Handle{property.PascalCaseName}Async({entity.PascalCaseName} dbEntity, IRelationContainer relations)");
+                indentWriter.WriteLine($"protected virtual Task Handle{property.PascalCaseName}Async({entity.PascalCaseName} dbEntity, IRelationContainer relations)");
                 WriteOpeningBracket(indentWriter);
                 indentWriter.WriteLine("return Task.CompletedTask;");
                 WriteClosingBracket(indentWriter);

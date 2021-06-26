@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Newtonsoft.Json.Linq;
@@ -27,9 +26,10 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
 
             var propertyBuilder = new PropertyBuilder();
             var entityBuilder = new EntityBuilder(propertyBuilder);
-            var entityValidatorBuilder = new EntityValidationBuilder();
+            var configObjectBuilder = new ConfigObjectBuilder();
+            var entityValidatorBuilder = new EntityValidationBuilder(configObjectBuilder);
 
-            var fieldBuilder = new FieldBuilder();
+            var fieldBuilder = new FieldBuilder(configObjectBuilder);
             var collectionBuilder = new CollectionBuilder(fieldBuilder);
 
             var contextBuilder = new ContextBuilder();

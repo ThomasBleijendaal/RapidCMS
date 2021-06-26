@@ -20,40 +20,40 @@
         "IsRequired": false,
         "PropertyAlias": "shortstring",
         "EditorAlias": "textbox",
-        "Validations": {
-          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
+        "Details": {
+          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
           "$values": [
             {
-              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MinLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "6e91f11c-9cdf-4dee-974a-cac5e82ee95a",
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.MinLengthDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "bc3a23e2-6be8-4e9e-ae99-1737fc365868",
               "Alias": "minlength",
               "Config": {
-                "$type": "RapidCMS.ModelMaker.Validation.Config.MinLengthValidationConfig, RapidCMS.ModelMaker",
+                "$type": "RapidCMS.ModelMaker.Validation.Config.MinLengthDetailConfig, RapidCMS.ModelMaker",
                 "MinLength": 1,
                 "IsEnabled": true,
                 "AlwaysIncluded": false,
                 "RelatedCollectionAlias": null,
                 "ValidationMethodName": "MinimumLength",
-                "DataCollectionExpression": null
+                "DataCollectionType": null
               }
             },
             {
-              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MaxLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "1c544bf9-f1ab-4993-9698-5166767702b8",
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.MaxLengthDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "267dedbb-7667-4dab-a3c4-18c1d63dc6d2",
               "Alias": "maxlength",
               "Config": {
-                "$type": "RapidCMS.ModelMaker.Validation.Config.MaxLengthValidationConfig, RapidCMS.ModelMaker",
+                "$type": "RapidCMS.ModelMaker.Validation.Config.MaxLengthDetailConfig, RapidCMS.ModelMaker",
                 "MaxLength": 127,
                 "IsEnabled": true,
                 "AlwaysIncluded": false,
                 "RelatedCollectionAlias": null,
                 "ValidationMethodName": "MaximumLength",
-                "DataCollectionExpression": null
+                "DataCollectionType": null
               }
             },
             {
-              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "3e69edd9-aaf2-4938-a0d6-59aee1615215",
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "3c3a802f-0b1a-48de-9d73-426b96178a84",
               "Alias": "bannedContent",
               "Config": {
                 "$type": "RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker",
@@ -70,7 +70,7 @@
                 "RelatedCollectionAlias": null,
                 "DataCollectionExpression": null,
                 "ValidationMethodName": "BannedContent",
-                "ValidationAttributeExpression": "[RegularExpression(\"[^]\")]"
+                "DataCollectionType": null
               }
             }
           ]
@@ -89,42 +89,9 @@
         "IsRequired": false,
         "PropertyAlias": "longstring",
         "EditorAlias": "textarea",
-        "Validations": {
-          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
-          "$values": [
-            {
-              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MinLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "183e5375-22c2-422b-9753-9d09f0c779c4",
-              "Alias": "minlength",
-              "Config": {
-                "$type": "RapidCMS.ModelMaker.Validation.Config.MinLengthValidationConfig, RapidCMS.ModelMaker",
-                "MinLength": null,
-                "IsEnabled": false,
-                "AlwaysIncluded": false,
-                "RelatedCollectionAlias": null,
-                "ValidationMethodName": "MinimumLength",
-                "DataCollectionExpression": null
-              }
-            },
-            {
-              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "6ab9ab9b-69ee-4bdb-a326-7b7415f9def3",
-              "Alias": "bannedContent",
-              "Config": {
-                "$type": "RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker",
-                "BannedWords": {
-                  "$type": "System.Collections.Generic.List`1[[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-                  "$values": []
-                },
-                "IsEnabled": false,
-                "AlwaysIncluded": false,
-                "RelatedCollectionAlias": null,
-                "DataCollectionExpression": null,
-                "ValidationMethodName": null,
-                "ValidationAttributeExpression": "[RegularExpression(\"[^]\")]"
-              }
-            }
-          ]
+        "Details": {
+          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
+          "$values": []
         },
         "Type": "System.String",
         "IsRelationToOne": false,
@@ -140,24 +107,24 @@
         "IsRequired": true,
         "PropertyAlias": "boolean",
         "EditorAlias": "dropdown",
-        "Validations": {
-          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
+        "Details": {
+          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
           "$values": [
             {
-              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.BooleanLabelValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "7497ad3d-59ad-4beb-8378-abb5cd590683",
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.BooleanLabelDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "ab61dc5d-ed1c-4cc5-a9f3-c05f557ffbb0",
               "Alias": "booleanLabels",
               "Config": {
-                "$type": "RapidCMS.ModelMaker.Validation.Config.BooleanLabelValidationConfig, RapidCMS.ModelMaker",
+                "$type": "RapidCMS.ModelMaker.Validation.Config.BooleanLabelDetailConfig, RapidCMS.ModelMaker",
                 "Labels": {
-                  "$type": "RapidCMS.ModelMaker.Validation.Config.BooleanLabelValidationConfig+LabelsConfig, RapidCMS.ModelMaker",
+                  "$type": "RapidCMS.ModelMaker.Validation.Config.BooleanLabelDetailConfig+LabelsConfig, RapidCMS.ModelMaker",
                   "TrueLabel": "True",
                   "FalseLabel": "False"
                 },
                 "IsEnabled": true,
                 "AlwaysIncluded": false,
                 "RelatedCollectionAlias": null,
-                "DataCollectionExpression": "new RapidCMS.Core.Providers.FixedOptionsDataProvider(new (object, string)[] { (true, \"True\"), (false, \"False\") })",
+                "DataCollectionType": "RapidCMS.ModelMaker.DataCollections.BooleanLabelDataCollection",
                 "ValidationMethodName": null
               }
             }
@@ -177,8 +144,8 @@
         "IsRequired": true,
         "PropertyAlias": "date",
         "EditorAlias": "date",
-        "Validations": {
-          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
+        "Details": {
+          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
           "$values": []
         },
         "Type": "System.DateTime",
@@ -195,21 +162,35 @@
         "IsRequired": true,
         "PropertyAlias": "linkedentity",
         "EditorAlias": "entitypicker",
-        "Validations": {
-          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
+        "Details": {
+          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
           "$values": [
             {
-              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.LinkedEntityValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "0b938367-bd5e-465c-966f-1ea5a464791a",
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.LinkedEntityDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "d2cf374d-0ce8-433c-a2b4-398baaa24f5c",
               "Alias": "linkedEntity",
               "Config": {
-                "$type": "RapidCMS.ModelMaker.Validation.Config.LinkedEntityValidationConfig, RapidCMS.ModelMaker",
+                "$type": "RapidCMS.ModelMaker.Validation.Config.LinkedEntityDetailConfig, RapidCMS.ModelMaker",
                 "LinkedEntityCollectionAlias": "categories",
                 "IsEnabled": true,
                 "AlwaysIncluded": false,
                 "RelatedCollectionAlias": "categories",
                 "ValidationMethodName": null,
-                "DataCollectionExpression": null
+                "DataCollectionType": null
+              }
+            },
+            {
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.CorrespondingPropertyDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "f204aaa6-9158-403d-83d6-ed35a03dca1f",
+              "Alias": "reciprocal",
+              "Config": {
+                "$type": "RapidCMS.ModelMaker.Validation.Config.CorrespondingPropertyDetailConfig, RapidCMS.ModelMaker",
+                "RelatedPropertyName": null,
+                "IsEnabled": false,
+                "AlwaysIncluded": false,
+                "RelatedCollectionAlias": null,
+                "ValidationMethodName": null,
+                "DataCollectionType": null
               }
             }
           ]
@@ -228,21 +209,35 @@
         "IsRequired": false,
         "PropertyAlias": "linkedentities",
         "EditorAlias": "entitiespicker",
-        "Validations": {
-          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
+        "Details": {
+          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
           "$values": [
             {
-              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.LinkedEntitiesValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "525be3e5-f658-4a3b-87c9-c0af129a8d1f",
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.LinkedEntitiesDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "2855b532-bbe7-4173-b08d-7001db04b9bf",
               "Alias": "linkedEntities",
               "Config": {
-                "$type": "RapidCMS.ModelMaker.Validation.Config.LinkedEntitiesValidationConfig, RapidCMS.ModelMaker",
+                "$type": "RapidCMS.ModelMaker.Validation.Config.LinkedEntitiesDetailConfig, RapidCMS.ModelMaker",
                 "LinkedEntitiesCollectionAlias": "categories",
                 "IsEnabled": true,
                 "AlwaysIncluded": false,
                 "RelatedCollectionAlias": "categories",
                 "ValidationMethodName": null,
-                "DataCollectionExpression": null
+                "DataCollectionType": null
+              }
+            },
+            {
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.CorrespondingPropertyDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "f426387c-5fd1-46b6-9fc4-14e2808685e3",
+              "Alias": "reciprocal",
+              "Config": {
+                "$type": "RapidCMS.ModelMaker.Validation.Config.CorrespondingPropertyDetailConfig, RapidCMS.ModelMaker",
+                "RelatedPropertyName": null,
+                "IsEnabled": false,
+                "AlwaysIncluded": false,
+                "RelatedCollectionAlias": null,
+                "ValidationMethodName": null,
+                "DataCollectionType": null
               }
             }
           ]

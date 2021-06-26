@@ -5,7 +5,7 @@ using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 
 namespace RapidCMS.ModelMaker.Models.Entities
 {
-    public class PropertyValidationModel : IEntity
+    public class PropertyDetailModel : IEntity
     {
         public string? Id { get; set; }
 
@@ -15,12 +15,12 @@ namespace RapidCMS.ModelMaker.Models.Entities
 
         [Required]
         [ValidateObject]
-        public IValidatorConfig? Config { get; set; }
+        public IDetailConfig? Config { get; set; }
     }
 
-    public class PropertyValidationModel<TValidatorConfig> : PropertyValidationModel, IPropertyValidationModel<TValidatorConfig>
-        where TValidatorConfig : class, IValidatorConfig, new()
+    public class PropertyDetailModel<TValidatorConfig> : PropertyDetailModel, IPropertyDetailModel<TValidatorConfig>
+        where TValidatorConfig : class, IDetailConfig, new()
     {
-        TValidatorConfig IPropertyValidationModel<TValidatorConfig>.Config => Config as TValidatorConfig ?? new TValidatorConfig();
+        TValidatorConfig IPropertyDetailModel<TValidatorConfig>.Config => Config as TValidatorConfig ?? new TValidatorConfig();
     }
 }

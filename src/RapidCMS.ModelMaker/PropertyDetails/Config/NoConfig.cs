@@ -3,7 +3,7 @@ using RapidCMS.ModelMaker.Models.Entities;
 
 namespace RapidCMS.ModelMaker.Validation.Config
 {
-    public class NoConfig : IValidatorConfig
+    public class NoConfig : IDetailConfig
     {
         public bool IsEnabled => true;
 
@@ -15,6 +15,6 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public string? ValidationMethodName => default;
 
-        public string? DataCollectionExpression => default;
+        public string? DataCollectionType => default;
     }
 }

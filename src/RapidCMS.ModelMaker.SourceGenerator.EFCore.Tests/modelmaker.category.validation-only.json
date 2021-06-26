@@ -7,7 +7,7 @@
   "IconColor": "RedOrange10",
   "Icon": "Tag",
   "Alias": "categories",
-  "Output": "Collection",
+  "Output": "Validation",
   "Properties": {
     "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
     "$values": [

@@ -29,5 +29,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests
         {
             GeneratorTestHelper.TestGeneratedCode(new[] { "./modelmaker.category.repository-only.json" }, CategoryCode.Repository);
         }
+
+        [Test]
+        public void WhenOnlyValidationShouldBeGenerated_ThenOnlyValidationAreGenerated()
+        {
+            GeneratorTestHelper.TestGeneratedCode(new[] { "./modelmaker.category.validation-only.json" }, CategoryCode.EntityValidator);
+        }
     }
 }

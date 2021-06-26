@@ -10,7 +10,6 @@ using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Collections;
 using RapidCMS.ModelMaker.CommandHandlers;
 using RapidCMS.ModelMaker.DataCollections;
-using RapidCMS.ModelMaker.Factories;
 using RapidCMS.ModelMaker.Models;
 using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;
@@ -38,7 +37,7 @@ namespace RapidCMS.ModelMaker
 
             // general TODO:
             // v move IPublishableEntity features to a separate UI package (it's not for ModelMaker anymore)
-            // - implement complex validation like the old IValidator using validation pipeline + generated validators -- attribute validation is not enough for modelmakermade models
+            // v implement complex validation like the old IValidator using validation pipeline + generated validators -- attribute validation is not enough for modelmakermade models
             // v configure collection icon + color
             // v configure single and plural name of collection
             // v configure nice names for properties
@@ -51,6 +50,7 @@ namespace RapidCMS.ModelMaker
             // - fix search field from shifting left when picker is validated
             // - fix delete node and get redirected to error-error
             // - fix EntityValidator for API
+            // - allow for disabling model maker without losing stuff like BooleanLabelDataCollection (for production deployment purposes)
 
             // docs:
             // general behavior:
@@ -58,17 +58,14 @@ namespace RapidCMS.ModelMaker
 
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
+            services.AddTransient<BooleanLabelDataCollection>();
             services.AddTransient<CollectionsDataCollection>();
             services.AddTransient<PropertyEditorDataCollection>();
             services.AddTransient<PropertyTypeDataCollection>();
+            services.AddTransient<ReciprocalPropertyDataCollection>();
 
             services.AddScoped<ModelRepository>();
             services.AddScoped<PropertyRepository>();
-
-            services.AddTransient<BooleanLabelDataCollectionFactory>();
-            services.AddTransient<LimitedOptionsDataCollectionFactory>();
-            services.AddTransient<LinkedEntityDataCollectionFactory>();
-            services.AddTransient<ReciprocalPropertyCollectionFactory>();
 
             var config = new ModelMakerConfig();
 
@@ -81,49 +78,49 @@ namespace RapidCMS.ModelMaker
                 //services.AddTransient<MaxLengthValidator>();
                 //services.AddTransient<MinLengthValidator>();
 
-                config.AddPropertyValidator<string, MinLengthValidationConfig, int?>(
+                config.AddPropertyDetail<MinLengthDetailConfig, int?>(
                     Constants.Validators.MinLength,
                     "Minimum length",
                     "The value has to be at least this amount of characters.",
                     EditorType.Numeric,
                     x => x.Config.MinLength);
 
-                config.AddPropertyValidator<string, MaxLengthValidationConfig, int?>(
+                config.AddPropertyDetail<MaxLengthDetailConfig, int?>(
                     Constants.Validators.MaxLength,
                     "Maximum length",
                     "The value has to be at most this amount of characters.",
                     EditorType.Numeric,
                     x => x.Config.MaxLength);
 
-                config.AddPropertyValidator<string, LimitedOptionsValidationConfig, IList<string>, LimitedOptionsDataCollectionFactory>(
+                config.AddPropertyDetail<LimitedOptionsDetailConfig, IList<string>>(
                     Constants.Validators.LimitedOptions,
                     "Limited options",
                     "The value has to be one of these items",
                     EditorType.ListEditor,
                     x => x.Config.Options);
 
-                config.AddPropertyValidator<string, LinkedEntityValidationConfig, string, LinkedEntityDataCollectionFactory>(
+                config.AddPropertyDetail<LinkedEntityDetailConfig, string, CollectionsDataCollection>(
                     Constants.Validators.LinkedEntity,
                     "Linked entity",
                     "The value has to be one of the entities of the linked collection",
                     EditorType.Dropdown,
                     x => x.Config.LinkedEntityCollectionAlias);
 
-                config.AddPropertyValidator<List<string>, LinkedEntitiesValidationConfig, string, LinkedEntityDataCollectionFactory>(
+                config.AddPropertyDetail<LinkedEntitiesDetailConfig, string, CollectionsDataCollection>(
                     Constants.Validators.LinkedEntities,
                     "Linked entity",
                     "The value has to be one or more of the entities of the linked collection",
                     EditorType.Dropdown,
                     x => x.Config.LinkedEntitiesCollectionAlias);
 
-                config.AddPropertyValidator<string, CorrespondingPropertyValidationConfig, string?, ReciprocalPropertyCollectionFactory>(
+                config.AddPropertyDetail<CorrespondingPropertyDetailConfig, string?, ReciprocalPropertyDataCollection>(
                     Constants.Validators.ReciprocalProperty,
                     "Corresponding property",
                     "The property of the relation on the other model. If kept empty, a hidden corresponding property will be created.",
                     EditorType.Dropdown,
                     x => x.Config.RelatedPropertyName);
 
-                config.AddPropertyValidator<bool, BooleanLabelValidationConfig, BooleanLabelValidationConfig.LabelsConfig, BooleanLabelDataCollectionFactory>(
+                config.AddPropertyDetail<BooleanLabelDetailConfig, BooleanLabelDetailConfig.LabelsConfig>(
                     Constants.Validators.BooleanLabels,
                     "Labels",
                     "The editor will display a dropdown instead of a checkbox",

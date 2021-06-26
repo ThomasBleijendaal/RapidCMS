@@ -36,7 +36,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
         {
             if (isRequired)
             {
-                Validations.Add(new ValidationInformation("NotNull"));
+                Details.Add(new PropertyDetailInformation("NotNull"));
             }
             return this;
         }
@@ -44,18 +44,15 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
         public Relation Relation { get; set; }
         public string? RelatedCollectionAlias { get; set; }
         public string? RelatedPropertyName { get; set; }
-        public string? DataCollectionExpression { get; set; }
 
         public PropertyInformation IsRelation(
             Relation relation,
             string? relatedCollectionAlias,
-            string? relatedPropertyName,
-            string? dataCollectionExpression)
+            string? relatedPropertyName)
         {
             Relation = relation;
             RelatedCollectionAlias = relatedCollectionAlias;
             RelatedPropertyName = relatedPropertyName;
-            DataCollectionExpression = dataCollectionExpression;
 
             return this;
         }
@@ -93,11 +90,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return this;
         }
 
-        public List<ValidationInformation> Validations { get; private set; } = new List<ValidationInformation>();
+        public List<PropertyDetailInformation> Details { get; private set; } = new List<PropertyDetailInformation>();
 
-        public PropertyInformation AddValidation(ValidationInformation validation)
+        public PropertyInformation AddDetail(PropertyDetailInformation detail)
         {
-            Validations.Add(validation);
+            Details.Add(detail);
 
             return this;
         }
@@ -107,7 +104,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return !string.IsNullOrEmpty(Name) &&
                 !string.IsNullOrEmpty(Type) &&
                 !string.IsNullOrEmpty(EditorType) &&
-                Validations.All(x => x.IsValid());
+                Details.All(x => x.IsValid());
         }
 
         public IEnumerable<string> NamespacesUsed(Use use)
@@ -123,7 +120,8 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
                 yield return @namespace;
             }
 
-            foreach (var @namespace in Validations.SelectMany(x => x.NamespacesUsed(use)))
+            
+            foreach (var @namespace in Details.SelectMany(x => x.NamespacesUsed(use)))
             {
                 yield return @namespace;
             }

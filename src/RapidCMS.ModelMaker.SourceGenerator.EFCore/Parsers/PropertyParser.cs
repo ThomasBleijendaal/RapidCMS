@@ -54,70 +54,75 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
             var relatedCollectionAlias = default(string?);
             var relatedPropertyName = default(string?);
-            var dataCollectionExpression = default(string?);
 
-            if (property.Value<JObject>("Validations") is JObject validationsRoot &&
-                validationsRoot.Value<JArray>("$values") is JArray validations)
+            if (property.Value<JObject>("Details") is JObject detailsRoot &&
+                detailsRoot.Value<JArray>("$values") is JArray details)
             {
-                var enabledValidations = validations
+                var enabledDetails = details
                     .OfType<JObject>()
                     .Select(x => (validationModel: x, validationConfig: x.Value<JObject>("Config")))
                     .Where(x => x.validationConfig?.Value<bool>("IsEnabled") == true);
 
-                foreach (var (validation, validationConfig) in enabledValidations)
+                foreach (var (detail, detailConfig) in enabledDetails)
                 {
-                    if (validationConfig.Value<string>("DataCollectionExpression") is string dataCollection)
+                    if (ParseType(detailConfig.Value<string>("$type")) is not (string @namespace, string typeName))
                     {
-                        dataCollectionExpression = dataCollection;
+                        continue;
                     }
 
-                    if (validationConfig.Value<string>("RelatedCollectionAlias") is string related)
+                    var detailInfo = new PropertyDetailInformation(typeName, @namespace);
+
+                    if (detailConfig.Value<string>("DataCollectionType") is string dataCollection)
+                    {
+                        detailInfo.HasDataCollection(dataCollection);
+                    }
+
+                    if (detailConfig.Value<string>("RelatedCollectionAlias") is string related)
                     {
                         relatedCollectionAlias = related;
                     }
 
-                    if (validationConfig.Value<string>("RelatedPropertyName") is string relatedPropName)
+                    if (detailConfig.Value<string>("RelatedPropertyName") is string relatedPropName)
                     {
                         relatedPropertyName = relatedPropName;
                     }
 
-                    if (validationConfig.Value<string>("ValidationMethodName") is string validationMethodName)
+                    if (detailConfig.Value<string>("ValidationMethodName") is string validationMethodName)
                     {
-                        var configTypeProperty = validationConfig.Value<string>("$type");
+                        detailInfo.HasValidationMethod(validationMethodName);
+                    }
 
-                        var parts = configTypeProperty?.Split(',').FirstOrDefault()?.Split('.').ToList();
-                        if (parts == null)
+                    var configProperty = detailConfig.Properties().FirstOrDefault(x => !_defaultConfigProperties.Contains(x.Name));
+
+                    if (configProperty.Value is JValue value &&
+                        value.Value is object valueObject)
+                    {
+                        detailInfo.HasConfigValue(valueObject);
+                    }
+                    else if (configProperty.Value is JObject listObject &&
+                        listObject.ContainsKey("$values") &&
+                        listObject.Value<JArray>("$values") is JArray array &&
+                        array.Values<string>() is IEnumerable<string> list)
+                    {
+                        detailInfo.HasConfigList(configProperty.Name, list.Where(x => !string.IsNullOrWhiteSpace(x)).ToList()!);
+                    }
+                    else if (configProperty.Value is JObject configObject &&
+                        configObject.ContainsKey("$type"))
+                    {
+                        if (ParseType(configObject.Value<string>("$type")) is not (string configNamespace, string configType))
                         {
                             continue;
                         }
 
-                        var typeName = parts.Last();
-                        var @namespace = parts.Count < 2 ? string.Empty : string.Join(".", parts.Take(parts.Count - 1));
+                        var dictionary = configObject.Properties()
+                            .Where(x => x.Name != "$type")
+                            .Where(x => x.Value is JValue value && value.Value is object valueObject)
+                            .ToDictionary(x => x.Name, x => ((JValue)x.Value).Value!);
 
-                        var validationInfo = new ValidationInformation(typeName, @namespace, validationMethodName);
-
-                        var configProperty = validationConfig.Properties().FirstOrDefault(x => !_defaultConfigProperties.Contains(x.Name));
-
-                        if (configProperty.Value is JValue value &&
-                            value.Value is object valueObject)
-                        {
-                            validationInfo.HasValue(valueObject);
-                        }
-                        else if (configProperty.Value is JObject listObject &&
-                            listObject.ContainsKey("$values") &&
-                            listObject.Value<JArray>("$values") is JArray array &&
-                            array.Values<string>() is IEnumerable<string> list)
-                        {
-                            validationInfo.HasList(configProperty.Name, list.Where(x => !string.IsNullOrWhiteSpace(x)).ToList()!);
-                        }
-                        else if (configProperty.Value is JObject @dictObject &&
-                            @dictObject.Value<Dictionary<string, string>>() is Dictionary<string, string> dictionary)
-                        {
-                            validationInfo.HasDictionary(dictionary);
-                        }
-
-                        info.AddValidation(validationInfo);
+                        detailInfo.HasSubClass(configProperty.Name, configType, configNamespace, dictionary);
                     }
+
+                    info.AddDetail(detailInfo);
                 }
             }
 
@@ -128,10 +133,23 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
             info.IsRelation(
                 relation,
                 relatedCollectionAlias,
-                relatedPropertyName,
-                dataCollectionExpression);
+                relatedPropertyName);
 
             return info;
+        }
+
+        private (string? @namespace, string? typeName) ParseType(string? type)
+        {
+            var parts = type?.Split(',').FirstOrDefault()?.Split('.').ToList();
+            if (parts == null)
+            {
+                return default;
+            }
+
+            var typeName = parts.Last().Replace("+", ".");
+            var @namespace = parts.Count < 2 ? string.Empty : string.Join(".", parts.Take(parts.Count - 1));
+
+            return (@namespace, typeName);
         }
     }
 }

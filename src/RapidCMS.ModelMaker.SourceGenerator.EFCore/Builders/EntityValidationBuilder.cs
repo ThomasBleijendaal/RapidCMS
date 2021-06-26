@@ -11,8 +11,16 @@ using RapidCMS.ModelMaker.SourceGenerator.EFCore.Information;
 
 namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 {
+
     internal sealed class EntityValidationBuilder : BuilderBase
     {
+        private readonly ConfigObjectBuilder _configObjectBuilder;
+
+        public EntityValidationBuilder(ConfigObjectBuilder configObjectBuilder)
+        {
+            _configObjectBuilder = configObjectBuilder;
+        }
+
         public SourceText? BuildValidation(EntityInformation info, ModelMakerContext context)
         {
             if (!info.OutputItems.Contains(Constants.OutputValidation))
@@ -32,7 +40,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.WriteLine($"public {info.PascalCaseName}Validator()");
             WriteOpeningBracket(indentWriter);
 
-            foreach (var property in info.Properties.Where(x => x.Validations.Any()))
+            foreach (var property in info.Properties.Where(x => x.Details.Any(x => !string.IsNullOrWhiteSpace(x.ValidationMethodName))))
             {
                 WriteProperty(indentWriter, property, info, context);
             } 
@@ -49,51 +57,22 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.Write($"RuleFor(x => x.{property.PascalCaseName}{(property.Relation.HasFlag(Relation.Many | Relation.ToOne) ? "Id" : "")})");
             indentWriter.Indent++;
 
-            foreach (var validation in property.Validations)
+            foreach (var detail in property.Details.Where(x => !string.IsNullOrWhiteSpace(x.ValidationMethodName)))
             {
-                WriteValidation(indentWriter, validation, property, entity, context);
+                WriteValidation(indentWriter, detail, property, entity, context);
             }
 
             indentWriter.WriteLine(";");
             indentWriter.Indent--;
         }
 
-        private void WriteValidation(IndentedTextWriter indentWriter, ValidationInformation validation, PropertyInformation property, EntityInformation entity, ModelMakerContext context)
+        private void WriteValidation(IndentedTextWriter indentWriter, PropertyDetailInformation detail, PropertyInformation property, EntityInformation entity, ModelMakerContext context)
         {
             indentWriter.WriteLine();
-            indentWriter.Write($".{validation.ValidationMethodName}(");
+            indentWriter.Write($".{detail.ValidationMethodName}(");
 
-            if (validation.Value is string stringValue)
-            {
-                indentWriter.Write($"\"{stringValue}\"");
-            }
-            else if (validation.Value is DateTime dateTimeValue)
-            {
-                indentWriter.Write($"new System.DateTime({dateTimeValue.Ticks})");
-            }
-            else if (validation.Value is object value)
-            {
-                indentWriter.Write(value.ToString());
-            }
-            else if (validation.List != null || validation.Dictionary != null)
-            {
-                // TODO: move to config writer for reuse
-                indentWriter.Write($"new {validation.ValidationConfigType} {{ ");
+            _configObjectBuilder.WriteConfigObject(indentWriter, detail);
 
-                if (validation.List is not null)
-                {
-                    indentWriter.Write($"{validation.PropertyName} = new List<string> {{ ");
-                    indentWriter.Write(string.Join(", ", validation.List.Select(x => $"\"{x}\"")));
-                    indentWriter.Write(" }");
-                }
-                else if (validation.Dictionary is not null)
-                {
-
-                } 
-
-                indentWriter.Write(" }");
-            }
-            
             indentWriter.Write(")");
         }
     }

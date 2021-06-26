@@ -6,7 +6,7 @@ namespace RapidCMS.ModelMaker.Models.Config
 {
     internal class PropertyConfig : IPropertyConfig
     {
-        public PropertyConfig(string alias, string name, string icon, Type type, IList<IPropertyValidatorConfig> validators, IList<IPropertyEditorConfig> editors)
+        public PropertyConfig(string alias, string name, string icon, Type type, IList<IPropertyDetailConfig> validators, IList<IPropertyEditorConfig> editors)
         {
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
             Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -25,7 +25,7 @@ namespace RapidCMS.ModelMaker.Models.Config
 
         public bool UsableAsTitle { get; private set; } = true;
 
-        public IList<IPropertyValidatorConfig> Validators { get; }
+        public IList<IPropertyDetailConfig> Validators { get; }
 
         public IList<IPropertyEditorConfig> Editors { get; }
 

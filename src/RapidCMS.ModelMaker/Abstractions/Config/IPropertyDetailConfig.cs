@@ -3,19 +3,17 @@ using RapidCMS.Core.Abstractions.Metadata;
 
 namespace RapidCMS.ModelMaker.Abstractions.Config
 {
-    public interface IPropertyValidatorConfig
+    public interface IPropertyDetailConfig
     {
         string Alias { get; }
         string Name { get; }
         string? Description { get; }
 
-        // TODO: remove
-        Type Value { get; }
         Type Config { get; }
         Type Editor { get; }
 
         IFullPropertyMetadata? ConfigToEditor { get; }
 
-        Type? DataCollectionFactory { get; }
+        Type? DataCollection { get; }
     }
 }
