@@ -83,16 +83,35 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
                     if (validationConfig.Value<string>("ValidationMethodName") is string validationMethodName)
                     {
-                        var validationInfo = new ValidationInformation(validationMethodName);
+                        var configTypeProperty = validationConfig.Value<string>("$type");
+
+                        var parts = configTypeProperty?.Split(',').FirstOrDefault()?.Split('.').ToList();
+                        if (parts == null)
+                        {
+                            continue;
+                        }
+
+                        var typeName = parts.Last();
+                        var @namespace = parts.Count < 2 ? string.Empty : string.Join(".", parts.Take(parts.Count - 1));
+
+                        var validationInfo = new ValidationInformation(typeName, @namespace, validationMethodName);
 
                         var configProperty = validationConfig.Properties().FirstOrDefault(x => !_defaultConfigProperties.Contains(x.Name));
+
                         if (configProperty.Value is JValue value &&
                             value.Value is object valueObject)
                         {
                             validationInfo.HasValue(valueObject);
                         }
-                        else if (configProperty.Value is JObject @object && 
-                            @object.Value<Dictionary<string, string>>() is Dictionary<string, string> dictionary)
+                        else if (configProperty.Value is JObject listObject &&
+                            listObject.ContainsKey("$values") &&
+                            listObject.Value<JArray>("$values") is JArray array &&
+                            array.Values<string>() is IEnumerable<string> list)
+                        {
+                            validationInfo.HasList(configProperty.Name, list.Where(x => !string.IsNullOrWhiteSpace(x)).ToList()!);
+                        }
+                        else if (configProperty.Value is JObject @dictObject &&
+                            @dictObject.Value<Dictionary<string, string>>() is Dictionary<string, string> dictionary)
                         {
                             validationInfo.HasDictionary(dictionary);
                         }

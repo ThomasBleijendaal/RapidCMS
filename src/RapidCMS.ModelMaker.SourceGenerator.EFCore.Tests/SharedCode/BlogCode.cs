@@ -210,9 +210,11 @@ namespace RapidCMS.ModelMaker
 }
 ";
 
-        public const string EntityValidator = @"using FluentValidation;
+        public const string EntityValidator = @"using System.Collections.Generic;
+using FluentValidation;
 using RapidCMS.Example.ModelMaker.Validators;
 using RapidCMS.ModelMaker.Validation;
+using RapidCMS.ModelMaker.Validation.Config;
 
 #nullable enable
 
@@ -223,10 +225,15 @@ namespace RapidCMS.ModelMaker
         public BlogValidator()
         {
             RuleFor(x => x.Title)
-                .NotNull()
                 .MinimumLength(1)
                 .MaximumLength(127)
                 .BannedContent(new BannedContentValidationConfig { BannedWords = new List<string> { ""a"", ""b"", ""c"" } });
+            RuleFor(x => x.IsPublished)
+                .NotNull();
+            RuleFor(x => x.PublishDate)
+                .NotNull();
+            RuleFor(x => x.MainCategoryId)
+                .NotNull();
         }
     }
 }

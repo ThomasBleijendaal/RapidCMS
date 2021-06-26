@@ -52,7 +52,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                     },
 
                     DataProviderRelationConfig dataProviderConfig => (RelationSetup)new DataProviderRelationSetup(
-                        dataProviderConfig.DataCollectionType),
+                        dataProviderConfig.DataCollectionType, dataProviderConfig.Configuration),
 
                     ConcreteDataProviderRelationConfig concreteDataProviderConfig => (RelationSetup)new ConcreteDataProviderRelationSetup
                         (concreteDataProviderConfig.DataCollection),

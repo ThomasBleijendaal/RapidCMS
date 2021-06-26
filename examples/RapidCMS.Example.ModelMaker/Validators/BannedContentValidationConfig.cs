@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FluentValidation;
 using RapidCMS.Core.Extensions;
 using RapidCMS.ModelMaker;
 using RapidCMS.ModelMaker.Core.Abstractions.Validation;
@@ -22,9 +23,19 @@ namespace RapidCMS.Example.ModelMaker.Validators
 
         public string? DataCollectionExpression => default;
 
-        public string? ValidationMethodName => default;
+        public string? ValidationMethodName => "BannedContent";
 
         public string? ValidationAttributeExpression => $"[RegularExpression(\"[^{string.Join("|", BannedWords)}]\")]";
+    }
 
+    public static class BannedContentValidator
+    {
+        public static IRuleBuilderOptions<T, string> BannedContent<T>(this IRuleBuilder<T, string> ruleBuilder, BannedContentValidationConfig config)
+        {
+            return ruleBuilder
+                .Must(value => !config.BannedWords.Any(value.Contains))
+                // this error message will be quite offecive if all banned words are displayed like this
+                .WithMessage($"The value may not contain these words: {string.Join(",", config.BannedWords)}.");
+        }
     }
 }

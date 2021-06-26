@@ -68,6 +68,8 @@ namespace RapidCMS.Core.Providers
             _eventHandle = _mediator.RegisterCallback<CollectionRepositoryEventArgs>(OnRepositoryChangeAsync);
         }
 
+        public void Configure(object configuration) { }
+
         public event EventHandler? OnDataChange;
 
         private Task OnRepositoryChangeAsync(object? sender, CollectionRepositoryEventArgs args)

@@ -21,6 +21,8 @@ namespace RapidCMS.ModelMaker.DataCollections
             _config = config;
         }
 
+        public void Configure(object configuration) { }
+
         public event EventHandler? OnDataChange;
 
         public void Dispose()

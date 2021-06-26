@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Abstractions;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
 
@@ -12,6 +11,13 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             ValidationMethodName = validationMethodName ?? throw new System.ArgumentNullException(nameof(validationMethodName));
         }
 
+        public ValidationInformation(string validationConfigType, string? validationNamespace, string validationMethodName)
+        {
+            ValidationConfigType = validationConfigType ?? throw new System.ArgumentNullException(nameof(validationConfigType));
+            ValidationNamespace = validationNamespace;
+            ValidationMethodName = validationMethodName ?? throw new System.ArgumentNullException(nameof(validationMethodName));
+        }
+
         public bool IsValid()
         {
             return true;
@@ -19,12 +25,24 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
         public IEnumerable<string> NamespacesUsed(Use use)
         {
-            if (!string.IsNullOrWhiteSpace(ConfigNamespace))
+            if (use != Use.Validation)
             {
-                yield return ConfigNamespace!;
+                yield break;
+            }
+
+            if (!string.IsNullOrWhiteSpace(ValidationNamespace))
+            {
+                yield return ValidationNamespace!;
+            }
+
+            if (List != null)
+            {
+                yield return "System.Collections.Generic";
             }
         }
 
+        public string? ValidationConfigType { get; private set; }
+        public string? ValidationNamespace { get; private set; }
         public string ValidationMethodName { get; private set; }
 
         public object? Value { get; set; }
@@ -36,28 +54,25 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return this;
         }
 
-        public string? ConfigObjectName { get; private set; }
-        public string? ConfigNamespace { get; private set; }
+        public string? PropertyName { get; set; }
 
+        public List<string>? List { get; set; }
+
+        public ValidationInformation HasList(string propertyName, List<string> list)
+        {
+            PropertyName = propertyName;
+            List = list;
+
+            return this;
+        }
+
+        public string? ConfigObjectName { get; private set; }
+        
         public IReadOnlyDictionary<string, string>? Dictionary { get; private set; }
 
         public ValidationInformation HasDictionary(Dictionary<string, string> dict)
         {
             Dictionary = dict;
-
-            if (dict.TryGetValue("$type", out var fullType))
-            {
-                var type = fullType.Split(',')[0];
-
-                var typeParts = type.Split('.');
-
-                ConfigObjectName = typeParts.Last();
-
-                if (typeParts.Length >= 2)
-                {
-                    ConfigNamespace = string.Join(".", typeParts.Take(typeParts.Length - 1));
-                }
-            }
 
             return this;
         }

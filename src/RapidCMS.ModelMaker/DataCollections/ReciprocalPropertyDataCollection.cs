@@ -30,6 +30,8 @@ namespace RapidCMS.ModelMaker.DataCollections
             _collectionSetupResolver = collectionSetupResolver;
             _modelResolver = modelResolver;
         }
+        public void Configure(object configuration) { }
+
 
         public event EventHandler? OnDataChange;
 

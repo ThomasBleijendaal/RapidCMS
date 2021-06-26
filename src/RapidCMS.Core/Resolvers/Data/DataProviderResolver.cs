@@ -97,7 +97,13 @@ namespace RapidCMS.Core.Resolvers.Data
 
                 case DataProviderRelationSetup dataProviderRelation:
 
-                    return new FormDataProvider(propertyField.Property!, _serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType));
+                    var dataCollection = _serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType);
+                    if (dataProviderRelation.Configuration != null)
+                    {
+                        dataCollection.Configure(dataProviderRelation.Configuration);
+                    }
+
+                    return new FormDataProvider(propertyField.Property!, dataCollection);
 
                 case ConcreteDataProviderRelationSetup concreteDataProvider:
 

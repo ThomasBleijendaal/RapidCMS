@@ -7,7 +7,7 @@
   "IconColor": "Cyan30",
   "Icon": "Blog",
   "Alias": "blogs",
-  "Output": "Entity, Collection, Repository, Context",
+  "Output": "Entity, Collection, Repository, Context, Validation",
   "Properties": {
     "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
     "$values": [
@@ -25,7 +25,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MinLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "6e91f11c-9cdf-4dee-974a-cac5e82ee95a",
+              "Id": "11f04347-d1b5-432d-a873-e070b62bec22",
               "Alias": "minlength",
               "Config": {
                 "$type": "RapidCMS.ModelMaker.Validation.Config.MinLengthValidationConfig, RapidCMS.ModelMaker",
@@ -39,7 +39,7 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.ModelMaker.Validation.Config.MaxLengthValidationConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "1c544bf9-f1ab-4993-9698-5166767702b8",
+              "Id": "d4915e70-ce77-4194-bde9-2f2743aa752b",
               "Alias": "maxlength",
               "Config": {
                 "$type": "RapidCMS.ModelMaker.Validation.Config.MaxLengthValidationConfig, RapidCMS.ModelMaker",
@@ -53,20 +53,24 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyValidationModel`1[[RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "3e69edd9-aaf2-4938-a0d6-59aee1615215",
+              "Id": "f410415d-77b6-45ce-8c0e-11504f0c9053",
               "Alias": "bannedContent",
               "Config": {
                 "$type": "RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker",
                 "BannedWords": {
                   "$type": "System.Collections.Generic.List`1[[System.String, System.Private.CoreLib]], System.Private.CoreLib",
-                  "$values": []
+                  "$values": [
+                    "a",
+                    "b",
+                    "c"
+                  ]
                 },
-                "IsEnabled": false,
+                "IsEnabled": true,
                 "AlwaysIncluded": false,
                 "RelatedCollectionAlias": null,
                 "DataCollectionExpression": null,
-                "ValidationMethodName": null,
-                "ValidationAttributeExpression": "[RegularExpression(\"[^]\")]"
+                "ValidationMethodName": "BannedContent",
+                "ValidationAttributeExpression": "[RegularExpression(\"[^a|b|c]\")]"
               }
             }
           ]
@@ -116,7 +120,7 @@
                 "AlwaysIncluded": false,
                 "RelatedCollectionAlias": null,
                 "DataCollectionExpression": null,
-                "ValidationMethodName": null,
+                "ValidationMethodName": "BannedContent",
                 "ValidationAttributeExpression": "[RegularExpression(\"[^]\")]"
               }
             }

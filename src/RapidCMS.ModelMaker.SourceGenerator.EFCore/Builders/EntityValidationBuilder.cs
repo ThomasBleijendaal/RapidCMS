@@ -46,7 +46,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
 
         private void WriteProperty(IndentedTextWriter indentWriter, PropertyInformation property, EntityInformation entity, ModelMakerContext context)
         {
-            indentWriter.Write($"RuleFor(x => x.{property.PascalCaseName})");
+            indentWriter.Write($"RuleFor(x => x.{property.PascalCaseName}{(property.Relation.HasFlag(Relation.Many | Relation.ToOne) ? "Id" : "")})");
             indentWriter.Indent++;
 
             foreach (var validation in property.Validations)
@@ -75,11 +75,25 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             {
                 indentWriter.Write(value.ToString());
             }
-            else if (validation.Dictionary != null)
+            else if (validation.List != null || validation.Dictionary != null)
             {
+                // TODO: move to config writer for reuse
+                indentWriter.Write($"new {validation.ValidationConfigType} {{ ");
 
+                if (validation.List is not null)
+                {
+                    indentWriter.Write($"{validation.PropertyName} = new List<string> {{ ");
+                    indentWriter.Write(string.Join(", ", validation.List.Select(x => $"\"{x}\"")));
+                    indentWriter.Write(" }");
+                }
+                else if (validation.Dictionary is not null)
+                {
+
+                } 
+
+                indentWriter.Write(" }");
             }
-
+            
             indentWriter.Write(")");
         }
     }

@@ -7,7 +7,7 @@
   "IconColor": "Cyan30",
   "Icon": "Database",
   "Alias": "one-to-many-manys",
-  "Output": "Entity, Collection, Repository, Context",
+  "Output": "Entity, Collection, Repository, Context, Validation",
   "Properties": {
     "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
     "$values": [

@@ -183,6 +183,7 @@ namespace RapidCMS.ModelMaker
 
         public const string EntityValidator = @"using FluentValidation;
 using RapidCMS.ModelMaker.Validation;
+using RapidCMS.ModelMaker.Validation.Config;
 
 #nullable enable
 
