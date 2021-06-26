@@ -34,7 +34,7 @@ namespace RapidCMS.Example.ModelMaker.Validators
         {
             return ruleBuilder
                 .Must(value => !config.BannedWords.Any(value.Contains))
-                // this error message will be quite offecive if all banned words are displayed like this
+                // this error message will be quite offensive if all banned words are displayed like this
                 .WithMessage($"The value may not contain these words: {string.Join(",", config.BannedWords)}.");
         }
     }

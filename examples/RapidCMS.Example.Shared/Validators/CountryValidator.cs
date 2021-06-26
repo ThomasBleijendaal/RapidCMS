@@ -18,7 +18,6 @@ namespace RapidCMS.Example.Shared.Validators
                 .MaximumLength(10)
                 .Must(x => x != (_context.Configuration as Config)?.ForbiddenContinentName)
                     .WithMessage(x => $"The continent cannot be '{(_context.Configuration as Config)?.ForbiddenContinentName}'.");
-            ;
             RuleFor(x => x.People)
                 .Must(original =>
                 {
