@@ -73,7 +73,7 @@ namespace RapidCMS.ModelMaker.Repositories
             {
                 var allPropertyValidations = _config.Properties
                     .Single(prop => prop.Alias == property.PropertyAlias)
-                    .Validators
+                    .Details
                     .Select(validation =>
                     {
                         var config = Activator.CreateInstance(validation.Config) as IDetailConfig;
@@ -132,7 +132,7 @@ namespace RapidCMS.ModelMaker.Repositories
             return Task.FromResult<IEntity>(new PropertyModel
             {
                 Details = _config.Properties
-                    .SelectMany(validation => validation.Validators)
+                    .SelectMany(validation => validation.Details)
                     .GroupBy(validation => validation.Alias)
                     .Select(validation => validation.First())
                     .Select(validation =>
@@ -239,7 +239,7 @@ namespace RapidCMS.ModelMaker.Repositories
                 property.IsRelationToMany = propertyConfig.IsRelationToMany;
                 property.EditorType = editorConfig?.Editor.FullName;
 
-                var validations = _config.PropertyDetails.Where(x => propertyConfig.Validators.Any(v => v.Alias == x.Alias));
+                var validations = _config.PropertyDetails.Where(x => propertyConfig.Details.Any(v => v.Alias == x.Alias));
 
                 var newValidations = new List<PropertyDetailModel>();
 

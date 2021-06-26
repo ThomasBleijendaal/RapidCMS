@@ -52,8 +52,8 @@ namespace RapidCMS.Example.ModelMaker
                         property => property.Config.BannedWords);
 
                     // adding extra validations to existing properties is possible
-                    config.GetProperty(Constants.Properties.ShortString)?.Validators.Add(customTextValidator);
-                    config.GetProperty(Constants.Properties.LongString)?.Validators.Add(customTextValidator);
+                    config.GetProperty(Constants.Properties.ShortString)?.Details.Add(customTextValidator);
+                    config.GetProperty(Constants.Properties.LongString)?.Details.Add(customTextValidator);
 
                     // adding custom properties is also possible
                     //var enumDropdownValidator = config.AddPropertyValidator<ContentType, NoConfig, NoConfig, EnumOptionsDataCollectionFactory<ContentType>>(

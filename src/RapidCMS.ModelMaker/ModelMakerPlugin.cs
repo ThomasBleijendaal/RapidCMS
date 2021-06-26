@@ -234,7 +234,7 @@ namespace RapidCMS.ModelMaker
                         return m is PropertyModel property &&
                             property.Details.FirstOrDefault(x => x.Alias == validationType.Alias) is PropertyDetailModel validation &&
                             !string.IsNullOrEmpty(property.PropertyAlias) &&
-                            _config.Properties.First(x => x.Alias == property.PropertyAlias).Validators.Any(x => x.Alias == validationType.Alias) &&
+                            _config.Properties.First(x => x.Alias == property.PropertyAlias).Details.Any(x => x.Alias == validationType.Alias) &&
                             (validation.Config?.IsApplicable(property) ?? false);
                     },
                     Property =

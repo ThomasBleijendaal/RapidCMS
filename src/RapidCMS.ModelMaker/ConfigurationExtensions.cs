@@ -30,7 +30,9 @@ namespace RapidCMS.ModelMaker
             // v 4.0.0-preview: after implementing basic ModelEntity generation
             // v 4.0.1-preview: improved generation
             // v 4.0.2-preview: improved validation
-            // - 4.0.3-preview: after implementing configurable sub collections + alias working
+            // v 4.0.3-preview: completed validation
+            // - 4.0.4-preview: all customizations working + generated correctly
+            // - 4.0.5-preview: after implementing configurable sub collections + alias working
             // - 4.0.x-preview: finish other milestone tickets
             // - 4.0.x2-preview: get WebAssembly + APIs working + updated
             // - 4.0.0: after implementing complete DbContext generation by configured code
@@ -79,49 +81,49 @@ namespace RapidCMS.ModelMaker
                 //services.AddTransient<MinLengthValidator>();
 
                 config.AddPropertyDetail<MinLengthDetailConfig, int?>(
-                    Constants.Validators.MinLength,
+                    Constants.PropertyDetails.MinLength,
                     "Minimum length",
                     "The value has to be at least this amount of characters.",
                     EditorType.Numeric,
                     x => x.Config.MinLength);
 
                 config.AddPropertyDetail<MaxLengthDetailConfig, int?>(
-                    Constants.Validators.MaxLength,
+                    Constants.PropertyDetails.MaxLength,
                     "Maximum length",
                     "The value has to be at most this amount of characters.",
                     EditorType.Numeric,
                     x => x.Config.MaxLength);
 
                 config.AddPropertyDetail<LimitedOptionsDetailConfig, IList<string>>(
-                    Constants.Validators.LimitedOptions,
+                    Constants.PropertyDetails.LimitedOptions,
                     "Limited options",
                     "The value has to be one of these items",
                     EditorType.ListEditor,
                     x => x.Config.Options);
 
                 config.AddPropertyDetail<LinkedEntityDetailConfig, string, CollectionsDataCollection>(
-                    Constants.Validators.LinkedEntity,
+                    Constants.PropertyDetails.LinkedEntity,
                     "Linked entity",
                     "The value has to be one of the entities of the linked collection",
                     EditorType.Dropdown,
                     x => x.Config.LinkedEntityCollectionAlias);
 
                 config.AddPropertyDetail<LinkedEntitiesDetailConfig, string, CollectionsDataCollection>(
-                    Constants.Validators.LinkedEntities,
+                    Constants.PropertyDetails.LinkedEntities,
                     "Linked entity",
                     "The value has to be one or more of the entities of the linked collection",
                     EditorType.Dropdown,
                     x => x.Config.LinkedEntitiesCollectionAlias);
 
                 config.AddPropertyDetail<CorrespondingPropertyDetailConfig, string?, ReciprocalPropertyDataCollection>(
-                    Constants.Validators.ReciprocalProperty,
+                    Constants.PropertyDetails.ReciprocalProperty,
                     "Corresponding property",
                     "The property of the relation on the other model. If kept empty, a hidden corresponding property will be created.",
                     EditorType.Dropdown,
                     x => x.Config.RelatedPropertyName);
 
                 config.AddPropertyDetail<BooleanLabelDetailConfig, BooleanLabelDetailConfig.LabelsConfig>(
-                    Constants.Validators.BooleanLabels,
+                    Constants.PropertyDetails.BooleanLabels,
                     "Labels",
                     "The editor will display a dropdown instead of a checkbox",
                     EditorType.ModelEditor,
@@ -143,28 +145,28 @@ namespace RapidCMS.ModelMaker
                         "Short string",
                         "Label",
                         new[] { Constants.Editors.TextBox, Constants.Editors.TextArea, Constants.Editors.Dropdown },
-                        new[] { Constants.Validators.MinLength, Constants.Validators.MaxLength, Constants.Validators.LimitedOptions });
+                        new[] { Constants.PropertyDetails.MinLength, Constants.PropertyDetails.MaxLength, Constants.PropertyDetails.LimitedOptions });
 
                 config.AddProperty<string>(
                         Constants.Properties.LongString,
                         "Long string",
                         "Label",
                         new[] { Constants.Editors.TextArea },
-                        new[] { Constants.Validators.MinLength });
+                        new[] { Constants.PropertyDetails.MinLength });
 
                 config.AddProperty<bool>(
                         Constants.Properties.Boolean,
                         "Boolean",
                         "ToggleLeft",
                         new[] { Constants.Editors.Checkbox, Constants.Editors.Dropdown, Constants.Editors.Select },
-                        new[] { Constants.Validators.BooleanLabels });
+                        new[] { Constants.PropertyDetails.BooleanLabels });
 
                 config.AddProperty<string>(
                         Constants.Properties.LinkedEntity,
                         "Linked entity",
                         "Link",
                         new[] { Constants.Editors.EntityPicker },
-                        new[] { Constants.Validators.LinkedEntity, Constants.Validators.ReciprocalProperty })
+                        new[] { Constants.PropertyDetails.LinkedEntity, Constants.PropertyDetails.ReciprocalProperty })
                     .CanBeUsedAsTitle(false)
                     .RelatesToOneEntity(true);
 
@@ -173,7 +175,7 @@ namespace RapidCMS.ModelMaker
                         "Linked entities",
                         "Link",
                         new[] { Constants.Editors.EntitiesPicker },
-                        new[] { Constants.Validators.LinkedEntities, Constants.Validators.ReciprocalProperty }) // TODO: min max linkedentities
+                        new[] { Constants.PropertyDetails.LinkedEntities, Constants.PropertyDetails.ReciprocalProperty }) // TODO: min max linkedentities
                     .CanBeUsedAsTitle(false)
                     .RelatesToManyEntities(true);
 

@@ -17,7 +17,7 @@ namespace RapidCMS.ModelMaker.Models
     internal class ModelMakerConfig : IModelMakerConfig
     {
         private readonly List<IPropertyEditorConfig> _editors = new List<IPropertyEditorConfig>();
-        private readonly List<IPropertyDetailConfig> _validators = new List<IPropertyDetailConfig>();
+        private readonly List<IPropertyDetailConfig> _details = new List<IPropertyDetailConfig>();
         private readonly List<IPropertyConfig> _properties = new List<IPropertyConfig>();
 
         public ModelMakerConfig()
@@ -27,18 +27,18 @@ namespace RapidCMS.ModelMaker.Models
 
         public IEnumerable<IPropertyEditorConfig> Editors => _editors;
 
-        public IEnumerable<IPropertyDetailConfig> PropertyDetails => _validators;
+        public IEnumerable<IPropertyDetailConfig> PropertyDetails => _details;
 
         public IEnumerable<IPropertyConfig> Properties => _properties;
 
-        public IPropertyConfig AddProperty<TValue>(string alias, string name, string icon, IEnumerable<string> editorAliases, IEnumerable<string> validatorAliases)
+        public IPropertyConfig AddProperty<TValue>(string alias, string name, string icon, IEnumerable<string> editorAliases, IEnumerable<string> detailAliases)
         {
             var property = new PropertyConfig(
                 alias,
                 name,
                 icon,
                 typeof(TValue),
-                validatorAliases.Select(x => _validators.FirstOrDefault(v => v.Alias == x) ?? throw new InvalidOperationException($"Cannot find validator with alias {x}")).ToList(),
+                detailAliases.Select(x => _details.FirstOrDefault(v => v.Alias == x) ?? throw new InvalidOperationException($"Cannot find detail with alias {x}")).ToList(),
                 editorAliases.Select(x => _editors.FirstOrDefault(e => e.Alias == x) ?? throw new InvalidOperationException($"Cannot find editor with alias {x}")).ToList());
 
             _properties.Add(property);
@@ -76,7 +76,7 @@ namespace RapidCMS.ModelMaker.Models
                 typeof(TDetailConfig),
                 PropertyMetadataHelper.GetPropertyMetadata(configEditor) as IFullPropertyMetadata);
 
-            _validators.Add(validator);
+            _details.Add(validator);
 
             return validator;
         }
@@ -92,7 +92,7 @@ namespace RapidCMS.ModelMaker.Models
                 typeof(TCustomEditor), 
                 typeof(TDetailConfig));
 
-            _validators.Add(validator);
+            _details.Add(validator);
 
             return validator;
         }
@@ -115,7 +115,7 @@ namespace RapidCMS.ModelMaker.Models
                 PropertyMetadataHelper.GetPropertyMetadata(configEditor) as IFullPropertyMetadata,
                 typeof(TDataCollection));
 
-            _validators.Add(validator);
+            _details.Add(validator);
 
             return validator;
         }
@@ -133,7 +133,7 @@ namespace RapidCMS.ModelMaker.Models
                 typeof(TDetailConfig),
                 dataCollection: typeof(TDataCollection));
 
-            _validators.Add(validator);
+            _details.Add(validator);
 
             return validator;
         }
