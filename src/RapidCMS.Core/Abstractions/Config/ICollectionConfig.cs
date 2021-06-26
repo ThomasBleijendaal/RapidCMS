@@ -242,6 +242,18 @@ namespace RapidCMS.Core.Abstractions.Config
             where TEntityValidator : IEntityValidator;
 
         /// <summary>
+        /// Adds a validator to the collection which will be used to validate the entity.
+        /// 
+        /// Specific validators for entity variants are only used for that specific variant.
+        /// 
+        /// The configuration will be passed in to the ValidatorContext.
+        /// </summary>
+        /// <typeparam name="TEntityValidator"></typeparam>
+        /// <returns></returns>
+        ICollectionConfig<TEntity> AddEntityValidator<TEntityValidator>(object configuration)
+            where TEntityValidator : IEntityValidator;
+
+        /// <summary>
         /// Adds an async validator to the collection which will be used to validate the entity.
         /// 
         /// Specific validators for entity variants are only used for that specific variant.
@@ -249,6 +261,18 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <typeparam name="TEntityValidator"></typeparam>
         /// <returns></returns>
         ICollectionConfig<TEntity> AddAsyncEntityValidator<TAsyncEntityValidator>()
+            where TAsyncEntityValidator : IAsyncEntityValidator;
+
+        /// <summary>
+        /// Adds an async validator to the collection which will be used to validate the entity.
+        /// 
+        /// Specific validators for entity variants are only used for that specific variant.
+        /// 
+        /// The configuration will be passed in to the ValidatorContext.
+        /// </summary>
+        /// <typeparam name="TEntityValidator"></typeparam>
+        /// <returns></returns>
+        ICollectionConfig<TEntity> AddAsyncEntityValidator<TAsyncEntityValidator>(object configuration)
             where TAsyncEntityValidator : IAsyncEntityValidator;
     }
 }

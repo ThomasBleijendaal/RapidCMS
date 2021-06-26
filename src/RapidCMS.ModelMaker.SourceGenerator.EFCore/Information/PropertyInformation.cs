@@ -7,8 +7,6 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 {
     internal sealed class PropertyInformation : InformationBase, IInformation
     {
-        private List<string> _validationAttributes = new List<string>();
-
         public PropertyInformation(bool hidden = false)
         {
             Hidden = hidden;
@@ -34,21 +32,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return this;
         }
 
-        public IReadOnlyList<string> ValidationAttributes => _validationAttributes;
-
-        public PropertyInformation HasValidationAttribute(string attribute)
-        {
-            _namespaces.Add((Use.Entity, "System.ComponentModel.DataAnnotations"));
-
-            _validationAttributes.Add(attribute);
-            return this;
-        }
-
         public PropertyInformation IsRequired(bool isRequired)
         {
             if (isRequired)
             {
-                _validationAttributes.Insert(0, "[Required]");
+                Details.Add(new PropertyDetailInformation("NotNull"));
             }
             return this;
         }
@@ -56,18 +44,15 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
         public Relation Relation { get; set; }
         public string? RelatedCollectionAlias { get; set; }
         public string? RelatedPropertyName { get; set; }
-        public string? DataCollectionExpression { get; set; }
 
         public PropertyInformation IsRelation(
             Relation relation,
             string? relatedCollectionAlias,
-            string? relatedPropertyName,
-            string? dataCollectionExpression)
+            string? relatedPropertyName)
         {
             Relation = relation;
             RelatedCollectionAlias = relatedCollectionAlias;
             RelatedPropertyName = relatedPropertyName;
-            DataCollectionExpression = dataCollectionExpression;
 
             return this;
         }
@@ -105,11 +90,21 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return this;
         }
 
+        public List<PropertyDetailInformation> Details { get; private set; } = new List<PropertyDetailInformation>();
+
+        public PropertyInformation AddDetail(PropertyDetailInformation detail)
+        {
+            Details.Add(detail);
+
+            return this;
+        }
+
         public bool IsValid()
         {
             return !string.IsNullOrEmpty(Name) &&
                 !string.IsNullOrEmpty(Type) &&
-                !string.IsNullOrEmpty(EditorType);
+                !string.IsNullOrEmpty(EditorType) &&
+                Details.All(x => x.IsValid());
         }
 
         public IEnumerable<string> NamespacesUsed(Use use)
@@ -121,6 +116,12 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
 
             foreach (var @namespace in _namespaces.Where(x => x.use.HasFlag(use)).Select(x => x.@namespace).Distinct())
+            {
+                yield return @namespace;
+            }
+
+            
+            foreach (var @namespace in Details.SelectMany(x => x.NamespacesUsed(use)))
             {
                 yield return @namespace;
             }

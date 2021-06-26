@@ -13,6 +13,7 @@
     <None Remove="modelmaker.category.entity-only.json" />
     <None Remove="modelmaker.category.json" />
     <None Remove="modelmaker.category.repository-only.json" />
+    <None Remove="modelmaker.category.validation-only.json" />
     <None Remove="modelmaker.many-to-many-many-as-explicit.json" />
     <None Remove="modelmaker.many-to-many-many-as-implicit.json" />
     <None Remove="modelmaker.many-to-many-many-bs.json" />
@@ -24,6 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="modelmaker.category.validation-only.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="modelmaker.one-to-one-one-bs-implicit.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

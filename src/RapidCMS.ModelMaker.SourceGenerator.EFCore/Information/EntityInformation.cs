@@ -24,6 +24,8 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             _namespaces.Add((Use.Repository, "System.Linq"));
             _namespaces.Add((Use.Repository, "System.Threading.Tasks"));
             _namespaces.Add((Use.Repository, "RapidCMS.Core.Abstractions.Forms"));
+            _namespaces.Add((Use.Validation, "FluentValidation"));
+            _namespaces.Add((Use.Validation, "RapidCMS.ModelMaker.Validation"));
         }
 
         public string? Name { get; private set; }

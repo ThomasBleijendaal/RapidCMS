@@ -16,7 +16,7 @@ namespace RapidCMS.Example.ModelMaker.Factories
             // this will allow the user to select all types of enums when configuring the model
             => Task.FromResult(default(RelationSetup));
 
-        public Task<RelationSetup?> GetModelRelationSetupAsync(IValidatorConfig? config)
+        public Task<RelationSetup?> GetModelRelationSetupAsync(IDetailConfig? config)
             // based on the selected enum (available in the config), this method could return
             // a specific EnumDataProvider for the selected enum
             => Task.FromResult<RelationSetup?>(

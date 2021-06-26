@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
+using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Server.Components;
 using RapidCMS.Example.Shared.AuthorizationHandlers;
@@ -58,7 +59,6 @@ namespace RapidCMS.Example.Server
 
             // the country entity is validated by a FluentValidator
             services.AddSingleton<CountryValidator>();
-            services.AddSingleton<CountryRelationValidator>();
 
             // although it's not required to add your own interfaces to the upload handlers, the Server and WebAssembly examples use the
             // same collection configuration, so the DI configuration dictates what handler is used in each case

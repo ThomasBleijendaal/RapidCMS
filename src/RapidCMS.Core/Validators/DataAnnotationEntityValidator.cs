@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Abstractions.Validators;
 
 namespace RapidCMS.Core.Validators
 {
@@ -15,15 +15,15 @@ namespace RapidCMS.Core.Validators
             _serviceProvider = serviceProvider;
         }
 
-        protected override IEnumerable<ValidationResult> Validate(IEntity entity, IRelationContainer relationContainer)
+        public override IEnumerable<ValidationResult> Validate(IValidatorContext<IEntity> context)
         {
             var results = new List<ValidationResult>();
 
             try
             {
-                var context = new ValidationContext(entity, _serviceProvider, null);
+                var ctx = new ValidationContext(context.Entity, _serviceProvider, null);
                 // even though this says Try, and therefore it should not throw an error, IT DOES when a given property is not part of Entity
-                Validator.TryValidateObject(entity, context, results, true);
+                Validator.TryValidateObject(context.Entity, ctx, results, true);
             }
             catch { }
 

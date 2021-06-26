@@ -5,21 +5,21 @@ using RapidCMS.ModelMaker.Models.Entities;
 
 namespace RapidCMS.ModelMaker.Validation.Config
 {
-    public class LinkedEntitiesValidationConfig : IValidatorConfig
+    public class LinkedEntityDetailConfig : IDetailConfig
     {
         [Required]
-        public string LinkedEntitiesCollectionAlias { get; set; } = string.Empty;
+        public string LinkedEntityCollectionAlias { get; set; } = string.Empty;
 
-        public bool IsEnabled => !string.IsNullOrWhiteSpace(LinkedEntitiesCollectionAlias);
+        public bool IsEnabled => !string.IsNullOrWhiteSpace(LinkedEntityCollectionAlias);
         public bool AlwaysIncluded => false;
 
         public bool IsApplicable(PropertyModel model)
             => model.EditorAlias.In(Constants.Editors.EntityPicker, Constants.Editors.EntitiesPicker);
 
-        public string? RelatedCollectionAlias => IsEnabled ? LinkedEntitiesCollectionAlias : default;
+        public string? RelatedCollectionAlias => IsEnabled ? LinkedEntityCollectionAlias : default;
 
-        public string? ValidationAttributeExpression => default;
+        public string? ValidationMethodName => default;
 
-        public string? DataCollectionExpression => default;
+        public string? DataCollectionType => default;
     }
 }

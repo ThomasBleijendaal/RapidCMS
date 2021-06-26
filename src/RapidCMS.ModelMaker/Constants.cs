@@ -16,7 +16,7 @@
             public const string TextBox = "textbox";
         }
 
-        public static class Validators
+        public static class PropertyDetails
         {
             public const string LimitedOptions = "limitedOptions";
             public const string LinkedEntities = "linkedEntities";

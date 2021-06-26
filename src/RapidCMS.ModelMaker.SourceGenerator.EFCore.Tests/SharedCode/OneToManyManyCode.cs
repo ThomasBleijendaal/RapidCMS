@@ -25,6 +25,7 @@ namespace RapidCMS.ModelMaker
                 {
                     collection.SetTreeView(x => x.Name);
                     collection.SetElementConfiguration(x => x.Id, x => x.Name);
+                    collection.AddEntityValidator<OnetoManyManyValidator>();
                     collection.SetListView(view =>
                     {
                         view.AddDefaultButton(DefaultButtonType.New);

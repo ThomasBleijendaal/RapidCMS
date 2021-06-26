@@ -12,6 +12,7 @@ using RapidCMS.Core.Forms;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Interactions;
 using RapidCMS.Core.Models.Request.Form;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Tests.Services.Dispatchers;
 using RapidCMS.Core.Validators;
 using System;
@@ -65,7 +66,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<FormEditContext>())).Returns(requiresTesting);
-            var editContext = new FormEditContext("alias", "repo", "entity", new ValidEntity(), default, UsageType.Edit, new List<Type> { typeof(DataAnnotationEntityValidator) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new ValidEntity(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             Expression<Func<ValidEntity, string>> property = x => x.Name;
             editContext.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata(property)!);
             var request = new PersistEntityRequestModel()
@@ -87,7 +88,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<FormEditContext>())).Returns(true);
-            var editContext = new FormEditContext("alias", "repo", "entity", new InvalidEntity(), default, UsageType.Edit, new List<Type> { typeof(DataAnnotationEntityValidator) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new InvalidEntity(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             Expression<Func<InvalidEntity, string>> property = x => x.Name;
             editContext.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata(property)!);
             var request = new PersistEntityRequestModel()
@@ -105,7 +106,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             var customData = new object();
-            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>{ typeof(DataAnnotationEntityValidator) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             var request = new PersistEntityRequestModel()
             {
                 ActionId = "123",
@@ -125,7 +126,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             var customData = new object();
-            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>{ typeof(DataAnnotationEntityValidator) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
 
             var request = new PersistEntityRequestModel()
             {
@@ -147,7 +148,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<FormEditContext>())).Returns(requiresTesting);
-            var editContext = new FormEditContext("alias", "repo", "entity", new ValidEntity(), default, UsageType.Edit, new List<Type>{ typeof(DataAnnotationEntityValidator) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new ValidEntity(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             var listContext = new ListContext("alias", editContext, default, UsageType.Edit, default, _serviceProvider);
             Expression<Func<ValidEntity, string>> property = x => x.Name;
             editContext.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata(property)!);
@@ -171,7 +172,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<FormEditContext>())).Returns(true);
-            var editContext = new FormEditContext("alias", "repo", "entity", new InvalidEntity(), default, UsageType.Edit, new List<Type>{ typeof(DataAnnotationEntityValidator) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new InvalidEntity(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             var listContext = new ListContext("alias", editContext, default, UsageType.Edit, default, _serviceProvider);
             Expression<Func<InvalidEntity, string>> property = x => x.Name;
             editContext.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata(property)!);
@@ -191,7 +192,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             var customData = new object();
-            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>{ typeof(DataAnnotationEntityValidator) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             var listContext = new ListContext("alias", editContext, default, UsageType.Edit, default, _serviceProvider);
             var request = new PersistEntityCollectionRequestModel()
             {
@@ -213,7 +214,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             var customData = new object();
-            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>{ typeof(DataAnnotationEntityValidator) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             var listContext = new ListContext("alias", editContext, default, UsageType.Edit, default, _serviceProvider);
             var request = new PersistEntitiesRequestModel()
             {
@@ -234,7 +235,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             var customData = new object();
-            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<Type>{ typeof(DataAnnotationEntityValidator) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             var listContext = new ListContext("alias", editContext, default, UsageType.Edit, default, _serviceProvider);
 
             var request = new PersistEntitiesRequestModel()

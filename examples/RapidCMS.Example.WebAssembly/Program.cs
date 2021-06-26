@@ -101,7 +101,6 @@ namespace RapidCMS.Example.WebAssembly
 
             // the country entity is validated by a FluentValidator
             builder.Services.AddSingleton<CountryValidator>();
-            builder.Services.AddSingleton<CountryRelationValidator>();
 
             if (!ConfigureAuthentication)
             {

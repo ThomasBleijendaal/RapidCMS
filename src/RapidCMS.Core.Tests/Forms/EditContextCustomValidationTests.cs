@@ -1,12 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Forms;
+using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Helpers;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Validators;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -31,9 +32,9 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity(),
                 default,
                 UsageType.Edit,
-                new List<Type>
+                new List<IValidationSetup>
                 {
-                    typeof(EntityValidator)
+                    (IValidationSetup)new ValidationSetup(typeof(EntityValidator), default)
                 },
                 _serviceCollection.BuildServiceProvider());
 
@@ -45,7 +46,7 @@ namespace RapidCMS.Core.Tests.Forms
         }
 
         [Test]
-        public async Task WhenValidEntityIsValidated_ThenIsValidShouldReturnFalseAsync()
+        public async Task WhenValidEntityIsValidated_ThenIsValidShouldReturnTrueAsync()
         {
             _serviceCollection.AddSingleton<EntityValidator>();
 
@@ -59,9 +60,9 @@ namespace RapidCMS.Core.Tests.Forms
                 },
                 default,
                 UsageType.Edit,
-                new List<Type>
+                new List<IValidationSetup>
                 {
-                    typeof(EntityValidator)
+                    (IValidationSetup)new ValidationSetup(typeof(EntityValidator), default)
                 },
                 _serviceCollection.BuildServiceProvider());
 
@@ -80,15 +81,15 @@ namespace RapidCMS.Core.Tests.Forms
 
         public class EntityValidator : BaseEntityValidator<Entity>
         {
-            protected override IEnumerable<ValidationResult> Validate(Entity entity, IRelationContainer relationContainer)
+            public override IEnumerable<ValidationResult> Validate(IValidatorContext<Entity> context)
             {
-                if (!string.IsNullOrEmpty(entity.Id))
+                if (!string.IsNullOrEmpty(context.Entity.Id))
                 {
                     yield break;
                 }
                 else
                 {
-                    yield return new ValidationResult("Id is null", new[] { nameof(entity.Id) });
+                    yield return new ValidationResult("Id is null", new[] { nameof(context.Entity.Id) });
                 }
             }
         }

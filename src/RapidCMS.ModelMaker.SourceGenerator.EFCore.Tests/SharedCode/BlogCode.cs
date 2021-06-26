@@ -3,7 +3,6 @@
     public static class BlogCode
     {
         public const string Entity = @"using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
 
 #nullable enable
@@ -15,20 +14,14 @@ namespace RapidCMS.ModelMaker
         public int Id { get; set; }
         string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? ""0""); }
         
-        [MinLength(1)]
-        [MaxLength(127)]
-        [RegularExpression(""[^a|b|c]"")]
         public System.String Title { get; set; }
         
         public System.String Content { get; set; }
         
-        [Required]
         public System.Boolean IsPublished { get; set; }
         
-        [Required]
         public System.DateTime PublishDate { get; set; }
         
-        [Required]
         public int? MainCategoryId { get; set; }
         public RapidCMS.ModelMaker.Category? MainCategory { get; set; }
         
@@ -37,11 +30,14 @@ namespace RapidCMS.ModelMaker
 }
 ";
 
-        public const string Collection = @"using RapidCMS.Core.Abstractions.Config;
+        public const string Collection = @"using System.Collections.Generic;
+using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
+using RapidCMS.Example.ModelMaker.Validators;
+using RapidCMS.ModelMaker.Validation.Config;
 
 #nullable enable
 
@@ -60,6 +56,7 @@ namespace RapidCMS.ModelMaker
                 {
                     collection.SetTreeView(x => x.Title);
                     collection.SetElementConfiguration(x => x.Id, x => x.Title);
+                    collection.AddEntityValidator<BlogValidator>();
                     collection.SetListView(view =>
                     {
                         view.AddDefaultButton(DefaultButtonType.New);
@@ -81,7 +78,7 @@ namespace RapidCMS.ModelMaker
                         {
                             section.AddField(x => x.Title).SetType(typeof(RapidCMS.UI.Components.Editors.TextBoxEditor)).SetName(""Title"");
                             section.AddField(x => x.Content).SetType(typeof(RapidCMS.UI.Components.Editors.TextAreaEditor)).SetName(""Content"");
-                            section.AddField(x => x.IsPublished).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection(new RapidCMS.Core.Providers.FixedOptionsDataProvider(new (object, string)[] { (true, ""True""), (false, ""False"") })).SetName(""Is Published"");
+                            section.AddField(x => x.IsPublished).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection<RapidCMS.ModelMaker.DataCollections.BooleanLabelDataCollection, BooleanLabelDetailConfig>(new BooleanLabelDetailConfig { Labels = new BooleanLabelDetailConfig.LabelsConfig { TrueLabel = ""True"", FalseLabel = ""False"" } }).SetName(""Is Published"");
                             section.AddField(x => x.PublishDate).SetType(typeof(RapidCMS.UI.Components.Editors.DateEditor)).SetName(""Publish Date"");
                             section.AddField(x => x.MainCategoryId).SetType(typeof(RapidCMS.UI.Components.Editors.EntityPicker)).SetCollectionRelation(""categories"").SetName(""Main Category"");
                             section.AddField(x => x.BlogCategories).SetType(typeof(RapidCMS.UI.Components.Editors.EntitiesPicker)).SetCollectionRelation(""categories"").SetName(""Blog Categories"");
@@ -211,6 +208,35 @@ namespace RapidCMS.ModelMaker
             {
                 dbEntity.BlogCategories.Add(itemToAdd);
             }
+        }
+    }
+}
+";
+
+        public const string EntityValidator = @"using System.Collections.Generic;
+using FluentValidation;
+using RapidCMS.Example.ModelMaker.Validators;
+using RapidCMS.ModelMaker.Validation;
+using RapidCMS.ModelMaker.Validation.Config;
+
+#nullable enable
+
+namespace RapidCMS.ModelMaker
+{
+    public class BlogValidator : AbstractValidatorAdapter<Blog>
+    {
+        public BlogValidator()
+        {
+            RuleFor(x => x.Title)
+                .MinimumLength(1)
+                .MaximumLength(127)
+                .BannedContent(new BannedContentValidationConfig { BannedWords = new List<string> { ""a"", ""b"", ""c"" } });
+            RuleFor(x => x.IsPublished)
+                .NotNull();
+            RuleFor(x => x.PublishDate)
+                .NotNull();
+            RuleFor(x => x.MainCategoryId)
+                .NotNull();
         }
     }
 }

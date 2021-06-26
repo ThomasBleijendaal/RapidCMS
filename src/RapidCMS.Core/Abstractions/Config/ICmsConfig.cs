@@ -77,7 +77,6 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <returns></returns>
         ICmsConfig AddPage(string icon, string color, string name, Action<IPageConfig> configure);
 
-        // TODO: how to configure the tree elements position
         internal ICmsConfig AddPlugin<TPlugin>()
             where TPlugin : IPlugin;
 

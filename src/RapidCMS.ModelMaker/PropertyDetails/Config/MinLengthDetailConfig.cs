@@ -5,12 +5,12 @@ using RapidCMS.ModelMaker.Models.Entities;
 
 namespace RapidCMS.ModelMaker.Validation.Config
 {
-    public class MaxLengthValidationConfig : IValidatorConfig
+    public class MinLengthDetailConfig : IDetailConfig
     {
         [Range(1, int.MaxValue)]
-        public int? MaxLength { get; set; }
+        public int? MinLength { get; set; }
 
-        public bool IsEnabled => MaxLength.HasValue;
+        public bool IsEnabled => MinLength.HasValue;
         public bool AlwaysIncluded => false;
 
         public bool IsApplicable(PropertyModel model)
@@ -18,8 +18,8 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public string? RelatedCollectionAlias => default;
 
-        public string? ValidationAttributeExpression => $"[MaxLength({MaxLength})]";
+        public string? ValidationMethodName => "MinimumLength";
 
-        public string? DataCollectionExpression => default;
+        public string? DataCollectionType => default;
     }
 }

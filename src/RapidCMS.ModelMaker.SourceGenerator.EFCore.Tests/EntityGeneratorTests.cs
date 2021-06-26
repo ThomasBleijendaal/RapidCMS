@@ -16,8 +16,10 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests
                     "./modelmaker.blog.json"
                 },
                 CategoryCode.EntityWithBlog,
+                CategoryCode.EntityValidator,
                 CategoryCode.Collection,
                 BlogCode.Entity,
+                BlogCode.EntityValidator,
                 BlogCode.Collection,
                 ContextCode.BlogCategoryContext,
                 CategoryCode.EntityConfiguration,

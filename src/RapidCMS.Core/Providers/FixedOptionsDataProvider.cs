@@ -22,6 +22,8 @@ namespace RapidCMS.Core.Providers
             _options = options ?? Enumerable.Empty<(object, string)>();
         }
 
+        public void Configure(object configuration) { }
+
 #pragma warning disable CS0067
         public event EventHandler? OnDataChange;
 #pragma warning restore CS0067

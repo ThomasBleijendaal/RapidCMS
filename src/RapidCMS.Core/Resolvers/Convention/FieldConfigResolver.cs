@@ -54,7 +54,7 @@ namespace RapidCMS.Core.Resolvers.Convention
                     var customType = editorType == EditorType.Custom ? data.fieldAttribute.EditorType : null;
 
                     var relationConfig = editorType != EditorType.Select ? null :
-                        new DataProviderRelationConfig(typeof(EnumDataProvider<>).MakeGenericType(propertyType));
+                        new DataProviderRelationConfig(typeof(EnumDataProvider<>).MakeGenericType(propertyType), default);
 
                     return new FieldConfig
                     {

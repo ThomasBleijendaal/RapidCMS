@@ -2,14 +2,14 @@
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Providers;
 using RapidCMS.ModelMaker.Core.Abstractions.Validation;
+using RapidCMS.ModelMaker.DataCollections;
 using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.UI.Components.Editors;
 
 namespace RapidCMS.ModelMaker.Validation.Config
 {
-    public class BooleanLabelValidationConfig : IValidatorConfig
+    public class BooleanLabelDetailConfig : IDetailConfig
     {
         [Required]
         [ValidateObjectAsProperty]
@@ -23,9 +23,9 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public string? RelatedCollectionAlias => default;
 
-        public string? ValidationAttributeExpression => default;
+        public string? DataCollectionType => typeof(BooleanLabelDataCollection).FullName;
 
-        public string? DataCollectionExpression => $"new {typeof(FixedOptionsDataProvider).FullName}(new (object, string)[] {{ (true, \"{Labels.TrueLabel}\"), (false, \"{Labels.FalseLabel}\") }})";
+        public string? ValidationMethodName => default;
 
         public class LabelsConfig: IEntity
         {

@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.ModelMaker.Core.Abstractions.Validation;
 
 namespace RapidCMS.ModelMaker.Core.Abstractions.Factories
 {
     // TODO: refactor
+    [Obsolete]
     public interface IDataCollectionFactory
     {
         /// <summary>
@@ -12,7 +14,7 @@ namespace RapidCMS.ModelMaker.Core.Abstractions.Factories
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
-        Task<RelationSetup?> GetModelRelationSetupAsync(IValidatorConfig config);
+        Task<RelationSetup?> GetModelRelationSetupAsync(IDetailConfig config);
 
         /// <summary>
         /// This method should return the correct RelationSetup (if applicable) when the user is configuring the model in the model maker.

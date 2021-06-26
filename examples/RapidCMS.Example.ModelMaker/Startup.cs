@@ -44,7 +44,7 @@ namespace RapidCMS.Example.ModelMaker
                     config.GetProperty(Constants.Properties.ShortString)?.Editors.Add(customTextAreaEditor);
 
                     // custom editor validators can be inserted easily
-                    var customTextValidator = config.AddPropertyValidator<string, BannedContentValidationConfig, List<string>>(
+                    var customTextValidator = config.AddPropertyDetail<BannedContentValidationConfig, List<string>>(
                         "bannedContent",
                         "Banned Content",
                         "The content is not allowed contain the following words.",
@@ -52,8 +52,8 @@ namespace RapidCMS.Example.ModelMaker
                         property => property.Config.BannedWords);
 
                     // adding extra validations to existing properties is possible
-                    config.GetProperty(Constants.Properties.ShortString)?.Validators.Add(customTextValidator);
-                    config.GetProperty(Constants.Properties.LongString)?.Validators.Add(customTextValidator);
+                    config.GetProperty(Constants.Properties.ShortString)?.Details.Add(customTextValidator);
+                    config.GetProperty(Constants.Properties.LongString)?.Details.Add(customTextValidator);
 
                     // adding custom properties is also possible
                     //var enumDropdownValidator = config.AddPropertyValidator<ContentType, NoConfig, NoConfig, EnumOptionsDataCollectionFactory<ContentType>>(
@@ -94,6 +94,16 @@ namespace RapidCMS.Example.ModelMaker
             services.AddScoped<BaseRepository<OnetoOneOneA>, OnetoOneOneARepository>();
             services.AddScoped<BaseRepository<OnetoOneOneB>, OnetoOneOneBRepository>();
 
+            // TODO: add generator to automatically add this to DI
+            services.AddTransient<BlogValidator>();
+            services.AddTransient<CategoryValidator>();
+            services.AddTransient<OnetoManyManyValidator>();
+            services.AddTransient<OnetoManyOneValidator>();
+            services.AddTransient<ManytoManyManyAValidator>();
+            services.AddTransient<ManytoManyManyBValidator>();
+            services.AddTransient<OnetoOneOneAValidator>();
+            services.AddTransient<OnetoOneOneBValidator>();
+
             services.AddDbContext<ModelMakerDbContext>(
                 builder => builder.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString")),
                 ServiceLifetime.Transient,
@@ -125,7 +135,7 @@ namespace RapidCMS.Example.ModelMaker
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ModelMakerDbContext context)
         {
-            context.Database.Migrate();
+            //context.Database.Migrate();
 
             app.UseRapidCMS(isDevelopment: env.IsDevelopment());
 

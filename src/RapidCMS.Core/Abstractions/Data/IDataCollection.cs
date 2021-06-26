@@ -8,6 +8,12 @@ namespace RapidCMS.Core.Abstractions.Data
     public interface IDataCollection : IDisposable
     {
         /// <summary>
+        /// This method is called after construction when a configuration object was provided using SetDataCollection&lt;TDataCollection, TConfig&gt;(TConfig).
+        /// </summary>
+        /// <param name="configuration"></param>
+        void Configure(object configuration);
+
+        /// <summary>
         /// Use this method to receive the EditContext for which this data collection is used. This allows for making the available elements contextual to the entity.
         /// </summary>
         /// <param name="editContext">EditContext for which this data collection is used.</param>

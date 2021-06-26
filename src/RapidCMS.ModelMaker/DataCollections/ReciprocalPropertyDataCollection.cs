@@ -30,6 +30,8 @@ namespace RapidCMS.ModelMaker.DataCollections
             _collectionSetupResolver = collectionSetupResolver;
             _modelResolver = modelResolver;
         }
+        public void Configure(object configuration) { }
+
 
         public event EventHandler? OnDataChange;
 
@@ -47,7 +49,7 @@ namespace RapidCMS.ModelMaker.DataCollections
             {
                 var collection = await _collectionSetupResolver.ResolveSetupAsync(modelEntity.Alias);
 
-                var relatedCollectionAlias = _property?.Validations.SelectNotNull(x => x.Config?.RelatedCollectionAlias).FirstOrDefault();
+                var relatedCollectionAlias = _property?.Details.SelectNotNull(x => x.Config?.RelatedCollectionAlias).FirstOrDefault();
                 if (relatedCollectionAlias is string alias)
                 {
                     var model = await _modelResolver.HandleAsync(new GetByIdRequest<ModelEntity>(alias));

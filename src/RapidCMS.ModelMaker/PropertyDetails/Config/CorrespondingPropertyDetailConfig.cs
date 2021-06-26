@@ -4,7 +4,7 @@ using RapidCMS.ModelMaker.Models.Entities;
 
 namespace RapidCMS.ModelMaker.Validation.Config
 {
-    public class CorrespondingPropertyValidationConfig : IValidatorConfig
+    public class CorrespondingPropertyDetailConfig : IDetailConfig
     {
         public string? RelatedPropertyName { get; set; }
 
@@ -16,8 +16,8 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public string? RelatedCollectionAlias => default;
 
-        public string? ValidationAttributeExpression => default;
+        public string? ValidationMethodName => default;
 
-        public string? DataCollectionExpression => default;
+        public string? DataCollectionType => default;
     }
 }

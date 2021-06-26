@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -40,7 +41,14 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests.Helpers
 
             for (var i = 0; i < expectedOutputSourceTexts.Length; i++)
             {
-                Assert.AreEqual(expectedOutputSourceTexts[i], output.ElementAtOrDefault(i) ?? "", $"Error in file index: {i}");
+                try
+                {
+                    Assert.AreEqual(expectedOutputSourceTexts[i], output.ElementAtOrDefault(i) ?? "", $"Error in file index: {i}");
+                }
+                catch
+                {
+                    throw;
+                }
             }
         }
 

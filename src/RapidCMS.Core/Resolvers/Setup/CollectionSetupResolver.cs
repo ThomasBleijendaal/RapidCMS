@@ -135,12 +135,12 @@ namespace RapidCMS.Core.Resolvers.Setup
                 DataViews = config.DataViews,
                 DataViewBuilder = config.DataViewBuilder,
                 UsageType = GetCollectionUsage(config),
-                Validators = config.Validators
+                Validators = config.Validators.ToList(x => (IValidationSetup)new ValidationSetup(x.Type, x.Configuration))
             };
 
             if (!_cmsConfig.Advanced.RemoveDataAnnotationEntityValidator)
             {
-                collection.Validators.Insert(0, typeof(DataAnnotationEntityValidator));
+                collection.Validators.Insert(0, (IValidationSetup)new ValidationSetup(typeof(DataAnnotationEntityValidator), default));
             }
 
             var cacheable = true;

@@ -167,7 +167,7 @@ namespace RapidCMS.ModelMaker
                             "Property type",
                             PropertyMetadataHelper.GetFullPropertyMetadata<PropertyModel, string?>(x => x.PropertyAlias),
                             (m, s) => s == EntityState.IsExisting,
-                            relation: new DataProviderRelationSetup(typeof(PropertyTypeDataCollection))),
+                            relation: new DataProviderRelationSetup(typeof(PropertyTypeDataCollection), default)),
 
                         CreatePropertyField(EditorType.TextBox,
                             1,
@@ -187,7 +187,7 @@ namespace RapidCMS.ModelMaker
                             5,
                             "Property editor",
                             PropertyMetadataHelper.GetFullPropertyMetadata<PropertyModel, string?>(x => x.EditorAlias),
-                           relation: new DataProviderRelationSetup(typeof(PropertyEditorDataCollection)))
+                           relation: new DataProviderRelationSetup(typeof(PropertyEditorDataCollection), default))
                     },
                     new List<ISubCollectionListSetup>
                     {
@@ -214,14 +214,13 @@ namespace RapidCMS.ModelMaker
 
         private async IAsyncEnumerable<IFieldSetup> ValidationFieldsAsync()
         {
-            foreach (var validationType in _config.Validators)
+            foreach (var validationType in _config.PropertyDetails)
             {
                 var relationSetup = default(RelationSetup);
 
-                if (validationType.DataCollectionFactory != null &&
-                    _serviceProvider.GetService<IDataCollectionFactory>(validationType.DataCollectionFactory) is IDataCollectionFactory dataCollectionFactory)
+                if (validationType.DataCollection != null)
                 {
-                    relationSetup = await dataCollectionFactory.GetModelEditorRelationSetupAsync();
+                    relationSetup = new DataProviderRelationSetup(validationType.DataCollection, default);
                 }
 
                 yield return new CustomPropertyFieldSetup(new FieldConfig
@@ -233,23 +232,23 @@ namespace RapidCMS.ModelMaker
                     IsVisible = (m, s) =>
                     {
                         return m is PropertyModel property &&
-                            property.Validations.FirstOrDefault(x => x.Alias == validationType.Alias) is PropertyValidationModel validation &&
+                            property.Details.FirstOrDefault(x => x.Alias == validationType.Alias) is PropertyDetailModel validation &&
                             !string.IsNullOrEmpty(property.PropertyAlias) &&
-                            _config.Properties.First(x => x.Alias == property.PropertyAlias).Validators.Any(x => x.Alias == validationType.Alias) &&
+                            _config.Properties.First(x => x.Alias == property.PropertyAlias).Details.Any(x => x.Alias == validationType.Alias) &&
                             (validation.Config?.IsApplicable(property) ?? false);
                     },
                     Property =
                         validationType.ConfigToEditor != null
-                        ? validationType.ConfigToEditor.Nest<PropertyModel, PropertyValidationModel>(x => x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias))
+                        ? validationType.ConfigToEditor.Nest<PropertyModel, PropertyDetailModel>(x => x.Details.FirstOrDefault(x => x.Alias == validationType.Alias))
                         : new PropertyMetadata<PropertyModel>(
                             "Config",
-                            typeof(IValidatorConfig),
-                            x => x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias)?.Config,
+                            typeof(IDetailConfig),
+                            x => x.Details.FirstOrDefault(x => x.Alias == validationType.Alias)?.Config,
                             (x, v) =>
                             {
-                                if (x.Validations.FirstOrDefault(x => x.Alias == validationType.Alias) is PropertyValidationModel validation)
+                                if (x.Details.FirstOrDefault(x => x.Alias == validationType.Alias) is PropertyDetailModel validation)
                                 {
-                                    validation.Config = v as IValidatorConfig;
+                                    validation.Config = v as IDetailConfig;
                                 }
                             },
                             "config"),

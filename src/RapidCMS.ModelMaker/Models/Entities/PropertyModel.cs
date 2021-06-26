@@ -27,7 +27,7 @@ namespace RapidCMS.ModelMaker.Models.Entities
 
         [Required]
         [ValidateEnumerable]
-        public List<PropertyValidationModel> Validations { get; set; } = new List<PropertyValidationModel>();
+        public List<PropertyDetailModel> Details { get; set; } = new List<PropertyDetailModel>();
 
         public string? Type { get; set; }
 

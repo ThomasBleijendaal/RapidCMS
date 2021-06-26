@@ -73,12 +73,12 @@ namespace RapidCMS.ModelMaker.Repositories
             {
                 var allPropertyValidations = _config.Properties
                     .Single(prop => prop.Alias == property.PropertyAlias)
-                    .Validators
+                    .Details
                     .Select(validation =>
                     {
-                        var config = Activator.CreateInstance(validation.Config) as IValidatorConfig;
+                        var config = Activator.CreateInstance(validation.Config) as IDetailConfig;
 
-                        var validationModel = Activator.CreateInstance(typeof(PropertyValidationModel<>).MakeGenericType(validation.Config)) as PropertyValidationModel
+                        var validationModel = Activator.CreateInstance(typeof(PropertyDetailModel<>).MakeGenericType(validation.Config)) as PropertyDetailModel
                             ?? throw new InvalidOperationException("Could not create correct PropertyValidationModel.");
 
                         validationModel.Alias = validation.Alias;
@@ -89,7 +89,7 @@ namespace RapidCMS.ModelMaker.Repositories
                     })
                     .ToList();
 
-                property.Validations = property.Validations.Union(allPropertyValidations, new PropertyValidationModelEqualityComparer()).ToList();
+                property.Details = property.Details.Union(allPropertyValidations, new PropertyValidationModelEqualityComparer()).ToList();
 
                 return Task.FromResult<IEntity?>(property);
             }
@@ -131,15 +131,15 @@ namespace RapidCMS.ModelMaker.Repositories
         {
             return Task.FromResult<IEntity>(new PropertyModel
             {
-                Validations = _config.Properties
-                    .SelectMany(validation => validation.Validators)
+                Details = _config.Properties
+                    .SelectMany(validation => validation.Details)
                     .GroupBy(validation => validation.Alias)
                     .Select(validation => validation.First())
                     .Select(validation =>
                     {
-                        var config = Activator.CreateInstance(validation.Config) as IValidatorConfig;
+                        var config = Activator.CreateInstance(validation.Config) as IDetailConfig;
 
-                        var validationModel = Activator.CreateInstance(typeof(PropertyValidationModel<>).MakeGenericType(validation.Config)) as PropertyValidationModel
+                        var validationModel = Activator.CreateInstance(typeof(PropertyDetailModel<>).MakeGenericType(validation.Config)) as PropertyDetailModel
                             ?? throw new InvalidOperationException("Could not create correct PropertyValidationModel.");
 
                         validationModel.Alias = validation.Alias;
@@ -239,26 +239,23 @@ namespace RapidCMS.ModelMaker.Repositories
                 property.IsRelationToMany = propertyConfig.IsRelationToMany;
                 property.EditorType = editorConfig?.Editor.FullName;
 
-                var validations = _config.Validators.Where(x => propertyConfig.Validators.Any(v => v.Alias == x.Alias));
+                var validations = _config.PropertyDetails.Where(x => propertyConfig.Details.Any(v => v.Alias == x.Alias));
 
-                var newValidations = new List<PropertyValidationModel>();
+                var newValidations = new List<PropertyDetailModel>();
 
                 foreach (var validation in validations)
                 {
-                    var config = property.Validations.FirstOrDefault(x => x.Alias == validation.Alias)?.Config
-                        ?? Activator.CreateInstance(validation.Config) as IValidatorConfig;
+                    var config = property.Details.FirstOrDefault(x => x.Alias == validation.Alias)?.Config
+                        ?? Activator.CreateInstance(validation.Config) as IDetailConfig;
 
                     if (config?.IsApplicable(property) == true || config?.AlwaysIncluded == true)
                     {
-                        var validationModel = Activator.CreateInstance(typeof(PropertyValidationModel<>).MakeGenericType(validation.Config)) as PropertyValidationModel
+                        var validationModel = Activator.CreateInstance(typeof(PropertyDetailModel<>).MakeGenericType(validation.Config)) as PropertyDetailModel
                             ?? throw new InvalidOperationException("Could not create correct PropertyValidationModel.");
 
                         validationModel.Alias = validation.Alias;
                         validationModel.Config = config;
                         validationModel.Id = Guid.NewGuid().ToString();
-
-                        validationModel.AttributeExpression = config?.ValidationAttributeExpression;
-                        validationModel.DataCollectionExpression = config?.DataCollectionExpression;
 
                         newValidations.Add(validationModel);
                     }
@@ -281,7 +278,7 @@ namespace RapidCMS.ModelMaker.Repositories
                 }
 
 
-                property.Validations = newValidations;
+                property.Details = newValidations;
             }
         }
 

@@ -8,6 +8,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums
         Entity = 1,
         Collection = 2,
         Context = 4,
-        Repository = 8
+        Repository = 8,
+        Validation = 16
     }
 }

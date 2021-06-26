@@ -142,6 +142,9 @@ namespace RapidCMS.Core.Models.Config
         }
 
         IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetDataCollection<TDataCollection>()
+            => (this as IEditorFieldConfig<TEntity, TValue>).SetDataCollection<TDataCollection, object?>(default);
+
+        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetDataCollection<TDataCollection, TConfig>(TConfig configuration)
         {
             var relationType = GetRelationType();
             if (relationType != RelationType.One)
@@ -149,7 +152,7 @@ namespace RapidCMS.Core.Models.Config
                 throw new InvalidOperationException("Cannot add DataRelation to Editor with no support for RelationType.One. Use an editor that has the attribute [Relation(RelationType.One)].");
             }
 
-            var config = new DataProviderRelationConfig(typeof(TDataCollection));
+            var config = new DataProviderRelationConfig(typeof(TDataCollection), configuration);
 
             Relation = config;
 

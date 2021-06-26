@@ -8,6 +8,7 @@ namespace RapidCMS.ModelMaker.Enums
         Entity = 1,
         Collection = 2,
         Repository = 4,
-        Context = 8
+        Context = 8,
+        Validation = 16
     }
 }
