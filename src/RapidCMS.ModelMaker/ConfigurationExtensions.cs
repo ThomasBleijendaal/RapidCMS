@@ -31,11 +31,11 @@ namespace RapidCMS.ModelMaker
             // v 4.0.1-preview: improved generation
             // v 4.0.2-preview: improved validation
             // v 4.0.3-preview: completed validation
-            // - 4.0.4-preview: all customizations working + generated correctly
-            // - 4.0.5-preview: after implementing configurable sub collections + alias working
+            // v 4.0.4-preview: all customizations working + generated correctly
             // - 4.0.x-preview: finish other milestone tickets
             // - 4.0.x2-preview: get WebAssembly + APIs working + updated
             // - 4.0.0: after implementing complete DbContext generation by configured code
+            // - 4.1.0-preview: after implementing configurable sub collections + mixing modelmaker + non-modelmaker collections
 
             // general TODO:
             // v move IPublishableEntity features to a separate UI package (it's not for ModelMaker anymore)
@@ -53,6 +53,8 @@ namespace RapidCMS.ModelMaker
             // - fix delete node and get redirected to error-error
             // - fix EntityValidator for API
             // - allow for disabling model maker without losing stuff like BooleanLabelDataCollection (for production deployment purposes)
+            // - restore max length attribute for nvarchar fix + required for relations
+            // - add support for file upload
 
             // docs:
             // general behavior:
@@ -73,13 +75,6 @@ namespace RapidCMS.ModelMaker
 
             if (addDefaultPropertiesAndValidators)
             {
-                //services.AddTransient<BooleanLabelValidator>();
-                //services.AddTransient<LimitedOptionsValidator>();
-                //services.AddTransient<LinkedEntitiesValidator>();
-                //services.AddTransient<LinkedEntityValidator>();
-                //services.AddTransient<MaxLengthValidator>();
-                //services.AddTransient<MinLengthValidator>();
-
                 config.AddPropertyDetail<MinLengthDetailConfig, int?>(
                     Constants.PropertyDetails.MinLength,
                     "Minimum length",

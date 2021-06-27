@@ -10,7 +10,7 @@ namespace RapidCMS.ModelMaker.Models.Config
             string alias,
             string name,
             string? description,
-            Type editor,
+            Type? editor,
             Type config,
             IFullPropertyMetadata? configToEditor = null,
             Type? dataCollection = null)
@@ -18,7 +18,7 @@ namespace RapidCMS.ModelMaker.Models.Config
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Description = description;
-            Editor = editor ?? throw new ArgumentNullException(nameof(editor));
+            Editor = editor;
             Config = config ?? throw new ArgumentNullException(nameof(config));
 
             ConfigToEditor = configToEditor;
@@ -28,10 +28,10 @@ namespace RapidCMS.ModelMaker.Models.Config
         public string Alias { get; }
         public string Name { get; }
         public string? Description { get; }
+        
+        public Type? Editor { get; }
 
         public Type Config { get; }
-
-        public Type Editor { get; }
 
         public IFullPropertyMetadata? ConfigToEditor { get; }
 

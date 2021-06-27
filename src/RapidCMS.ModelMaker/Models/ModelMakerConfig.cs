@@ -7,8 +7,9 @@ using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Helpers;
 using RapidCMS.ModelMaker.Abstractions.Config;
-using RapidCMS.ModelMaker.Core.Abstractions.Validation;
+using RapidCMS.ModelMaker.Abstractions.Detail;
 using RapidCMS.ModelMaker.Models.Config;
+using RapidCMS.ModelMaker.Validation.Config;
 using RapidCMS.UI.Components.Editors;
 using RapidCMS.UI.Extensions;
 
@@ -131,6 +132,22 @@ namespace RapidCMS.ModelMaker.Models
                 description,
                 typeof(TCustomEditor),
                 typeof(TDetailConfig),
+                dataCollection: typeof(TDataCollection));
+
+            _details.Add(validator);
+
+            return validator;
+        }
+
+        public IPropertyDetailConfig AddPropertyDetail<TDataCollection>(string alias, string name, string? description)
+            where TDataCollection : IDataCollection
+        {
+            var validator = new PropertyDetailConfig(
+                alias,
+                name,
+                description,
+                default,
+                typeof(DataCollectionConfig<TDataCollection>),
                 dataCollection: typeof(TDataCollection));
 
             _details.Add(validator);

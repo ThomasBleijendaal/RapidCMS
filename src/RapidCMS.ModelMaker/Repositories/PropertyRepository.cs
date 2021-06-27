@@ -13,7 +13,7 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
-using RapidCMS.ModelMaker.Core.Abstractions.Validation;
+using RapidCMS.ModelMaker.Abstractions.Detail;
 using RapidCMS.ModelMaker.EqualityComparers;
 using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;

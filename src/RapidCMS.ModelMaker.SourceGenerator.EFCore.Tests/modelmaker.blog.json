@@ -100,6 +100,38 @@
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
+        "Id": "f048d0f0-4d82-48a1-86b2-2d98d98c4a0f",
+        "Name": "Type",
+        "IsTitle": false,
+        "IncludeInListView": false,
+        "IsRequired": false,
+        "PropertyAlias": "contentType",
+        "EditorAlias": "dropdown",
+        "Details": {
+          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
+          "$values": [
+            {
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.DataCollectionConfig`1[[RapidCMS.Core.Providers.EnumDataProvider`1[[RapidCMS.Example.ModelMaker.Enums.ContentType, RapidCMS.Example.ModelMaker]], RapidCMS.Core]], RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "2f38b24e-a1ea-43e7-a134-83b1dca3311a",
+              "Alias": "contentTypeValidator",
+              "Config": {
+                "$type": "RapidCMS.ModelMaker.Validation.Config.DataCollectionConfig`1[[RapidCMS.Core.Providers.EnumDataProvider`1[[RapidCMS.Example.ModelMaker.Enums.ContentType, RapidCMS.Example.ModelMaker]], RapidCMS.Core]], RapidCMS.ModelMaker",
+                "IsEnabled": true,
+                "AlwaysIncluded": true,
+                "RelatedCollectionAlias": null,
+                "ValidationMethodName": null,
+                "DataCollectionType": "RapidCMS.Core.Providers.EnumDataProvider`1[[RapidCMS.Example.ModelMaker.Enums.ContentType, RapidCMS.Example.ModelMaker, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+              }
+            }
+          ]
+        },
+        "Type": "RapidCMS.Example.ModelMaker.Enums.ContentType",
+        "IsRelationToOne": false,
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.DropdownEditor"
+      },
+      {
+        "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
         "Id": "0ac86254-34f7-4d9d-96d8-e60acb888837",
         "Name": "Is Published",
         "IsTitle": false,

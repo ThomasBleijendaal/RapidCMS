@@ -12,28 +12,25 @@ using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.ModelMaker.Abstractions.Config;
-using RapidCMS.ModelMaker.Core.Abstractions.Factories;
-using RapidCMS.ModelMaker.Core.Abstractions.Validation;
+using RapidCMS.ModelMaker.Abstractions.Detail;
 using RapidCMS.ModelMaker.DataCollections;
 using RapidCMS.ModelMaker.Extenstions;
 using RapidCMS.ModelMaker.Metadata;
 using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.Repositories;
+using RapidCMS.UI.Components.Editors;
 
 namespace RapidCMS.ModelMaker
 {
     internal class ModelMakerPlugin : IPlugin
     {
-        private readonly IServiceProvider _serviceProvider;
         private readonly IModelMakerConfig _config;
         private readonly ISetupResolver<IButtonSetup, ButtonConfig> _buttonSetupResolver;
 
         public ModelMakerPlugin(
-            IServiceProvider serviceProvider,
             IModelMakerConfig config,
             ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver)
         {
-            _serviceProvider = serviceProvider;
             _config = config;
             _buttonSetupResolver = buttonSetupResolver;
         }
@@ -119,7 +116,7 @@ namespace RapidCMS.ModelMaker
 
             collection.NodeEditor = new NodeSetup(
                 typeof(PropertyModel),
-                await PropertyPanesAsync().ToListAsync(),
+                PropertyPanes().ToList(),
                 new List<IButtonSetup>
                 {
                     await CreateButtonAsync(collection, DefaultButtonType.Up, false, "Return", "Back"),
@@ -131,7 +128,7 @@ namespace RapidCMS.ModelMaker
             return collection;
         }
 
-        private async IAsyncEnumerable<IPaneSetup> PropertyPanesAsync()
+        private IEnumerable<IPaneSetup> PropertyPanes()
         {
             var titleField = CreatePropertyField(EditorType.Checkbox,
                 2,
@@ -207,12 +204,12 @@ namespace RapidCMS.ModelMaker
                     {
 
                     },
-                    await ValidationFieldsAsync().ToListAsync(),
+                    ValidationFields().ToList(),
                     new List<ISubCollectionListSetup>(),
                     new List<IRelatedCollectionListSetup>());
         }
 
-        private async IAsyncEnumerable<IFieldSetup> ValidationFieldsAsync()
+        private IEnumerable<IFieldSetup> ValidationFields()
         {
             foreach (var validationType in _config.PropertyDetails)
             {
@@ -229,14 +226,13 @@ namespace RapidCMS.ModelMaker
                     EditorType = EditorType.Custom,
                     Index = 1,
                     Name = validationType.Name,
-                    IsVisible = (m, s) =>
-                    {
-                        return m is PropertyModel property &&
+                    IsVisible = validationType.Editor == null 
+                        ? (m, s) => false
+                        : (m, s) => m is PropertyModel property &&
                             property.Details.FirstOrDefault(x => x.Alias == validationType.Alias) is PropertyDetailModel validation &&
                             !string.IsNullOrEmpty(property.PropertyAlias) &&
                             _config.Properties.First(x => x.Alias == property.PropertyAlias).Details.Any(x => x.Alias == validationType.Alias) &&
-                            (validation.Config?.IsApplicable(property) ?? false);
-                    },
+                            (validation.Config?.IsApplicable(property) ?? false),
                     Property =
                         validationType.ConfigToEditor != null
                         ? validationType.ConfigToEditor.Nest<PropertyModel, PropertyDetailModel>(x => x.Details.FirstOrDefault(x => x.Alias == validationType.Alias))
@@ -252,7 +248,7 @@ namespace RapidCMS.ModelMaker
                                 }
                             },
                             "config"),
-                }, validationType.Editor)
+                }, validationType.Editor ?? typeof(TextBoxEditor))
                 {
                     Relation = relationSetup
                 };
