@@ -13,7 +13,6 @@ using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Abstractions.Detail;
-using RapidCMS.ModelMaker.Core.Abstractions.Factories;
 using RapidCMS.ModelMaker.DataCollections;
 using RapidCMS.ModelMaker.Extenstions;
 using RapidCMS.ModelMaker.Metadata;
@@ -25,16 +24,13 @@ namespace RapidCMS.ModelMaker
 {
     internal class ModelMakerPlugin : IPlugin
     {
-        private readonly IServiceProvider _serviceProvider;
         private readonly IModelMakerConfig _config;
         private readonly ISetupResolver<IButtonSetup, ButtonConfig> _buttonSetupResolver;
 
         public ModelMakerPlugin(
-            IServiceProvider serviceProvider,
             IModelMakerConfig config,
             ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver)
         {
-            _serviceProvider = serviceProvider;
             _config = config;
             _buttonSetupResolver = buttonSetupResolver;
         }
