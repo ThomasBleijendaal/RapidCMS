@@ -1,4 +1,4 @@
-﻿namespace RapidCMS.ModelMaker.Core.Abstractions.Validation
+﻿namespace RapidCMS.ModelMaker.Abstractions.Detail
 {
     public interface IPropertyDetailModel<TDetailConfig>
         where TDetailConfig : IDetailConfig

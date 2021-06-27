@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Information;
@@ -72,9 +76,10 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
                     var detailInfo = new PropertyDetailInformation(typeName, @namespace);
 
-                    if (detailConfig.Value<string>("DataCollectionType") is string dataCollection)
+                    if (detailConfig.Value<string>("DataCollectionType") is string dataCollection &&
+                        ParseTypeWithNamespace(dataCollection) is string dataCollectionType)
                     {
-                        detailInfo.HasDataCollection(dataCollection);
+                        detailInfo.HasDataCollection(dataCollectionType);
                     }
 
                     if (detailConfig.Value<string>("RelatedCollectionAlias") is string related)
@@ -136,6 +141,25 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                 relatedPropertyName);
 
             return info;
+        }
+
+        public string? ParseTypeWithNamespace(string? type)
+        {
+            if (string.IsNullOrEmpty(type))
+            {
+                return default;
+            }
+
+            var replacedType = Regex.Replace(Regex.Replace(
+                type.Replace("[[", "<")
+                    .Replace("]]", ">")
+                    .Replace("],[", ", "),
+                "`[0-9]+",
+                ""),
+                @"\,\s[a-zA-Z-0-9.]+\,\sVersion=[a-zA-Z0-9.]+\,\sCulture=[a-zA-Z0-9]+\,\sPublicKeyToken=[a-zA-Z0-9]+",
+                "");
+
+            return replacedType;
         }
 
         private (string? @namespace, string? typeName) ParseType(string? type)

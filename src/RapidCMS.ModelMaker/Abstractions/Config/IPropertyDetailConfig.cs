@@ -9,8 +9,9 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
         string Name { get; }
         string? Description { get; }
 
+        Type? Editor { get; }
+
         Type Config { get; }
-        Type Editor { get; }
 
         IFullPropertyMetadata? ConfigToEditor { get; }
 

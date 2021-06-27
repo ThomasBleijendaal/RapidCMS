@@ -3,7 +3,7 @@ using System.Linq;
 using FluentValidation;
 using RapidCMS.Core.Extensions;
 using RapidCMS.ModelMaker;
-using RapidCMS.ModelMaker.Core.Abstractions.Validation;
+using RapidCMS.ModelMaker.Abstractions.Detail;
 using RapidCMS.ModelMaker.Models.Entities;
 
 namespace RapidCMS.Example.ModelMaker.Validators

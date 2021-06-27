@@ -24,12 +24,9 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
         public IEnumerable<string> NamespacesUsed(Use use)
         {
-            if (use != Use.Validation && use != Use.Collection)
-            {
-                yield break;
-            }
-
-            if (use == Use.Collection && ConfigList == null && ConfigProperties == null)
+            if ((use != Use.Validation && use != Use.Collection) ||
+               (use == Use.Validation && string.IsNullOrWhiteSpace(ValidationMethodName)) ||
+               (use == Use.Collection && ConfigList == null && ConfigProperties == null))
             {
                 yield break;
             }

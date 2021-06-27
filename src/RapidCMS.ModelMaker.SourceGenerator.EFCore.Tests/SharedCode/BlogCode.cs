@@ -18,6 +18,8 @@ namespace RapidCMS.ModelMaker
         
         public System.String Content { get; set; }
         
+        public RapidCMS.Example.ModelMaker.Enums.ContentType Type { get; set; }
+        
         public System.Boolean IsPublished { get; set; }
         
         public System.DateTime PublishDate { get; set; }
@@ -78,6 +80,7 @@ namespace RapidCMS.ModelMaker
                         {
                             section.AddField(x => x.Title).SetType(typeof(RapidCMS.UI.Components.Editors.TextBoxEditor)).SetName(""Title"");
                             section.AddField(x => x.Content).SetType(typeof(RapidCMS.UI.Components.Editors.TextAreaEditor)).SetName(""Content"");
+                            section.AddField(x => x.Type).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection<RapidCMS.Core.Providers.EnumDataProvider<RapidCMS.Example.ModelMaker.Enums.ContentType>>().SetName(""Type"");
                             section.AddField(x => x.IsPublished).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection<RapidCMS.ModelMaker.DataCollections.BooleanLabelDataCollection, BooleanLabelDetailConfig>(new BooleanLabelDetailConfig { Labels = new BooleanLabelDetailConfig.LabelsConfig { TrueLabel = ""True"", FalseLabel = ""False"" } }).SetName(""Is Published"");
                             section.AddField(x => x.PublishDate).SetType(typeof(RapidCMS.UI.Components.Editors.DateEditor)).SetName(""Publish Date"");
                             section.AddField(x => x.MainCategoryId).SetType(typeof(RapidCMS.UI.Components.Editors.EntityPicker)).SetCollectionRelation(""categories"").SetName(""Main Category"");
@@ -183,6 +186,7 @@ namespace RapidCMS.ModelMaker
             entity.MainCategoryId = editContext.Entity.MainCategoryId;
             entity.PublishDate = editContext.Entity.PublishDate;
             entity.Title = editContext.Entity.Title;
+            entity.Type = editContext.Entity.Type;
             
             var relations = editContext.GetRelationContainer();
             await HandleBlogCategoriesAsync(entity, relations);

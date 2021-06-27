@@ -53,6 +53,7 @@ namespace RapidCMS.ModelMaker
             // - fix delete node and get redirected to error-error
             // - fix EntityValidator for API
             // - allow for disabling model maker without losing stuff like BooleanLabelDataCollection (for production deployment purposes)
+            // - restore max length attribute for nvarchar fix
 
             // docs:
             // general behavior:
@@ -73,13 +74,6 @@ namespace RapidCMS.ModelMaker
 
             if (addDefaultPropertiesAndValidators)
             {
-                //services.AddTransient<BooleanLabelValidator>();
-                //services.AddTransient<LimitedOptionsValidator>();
-                //services.AddTransient<LinkedEntitiesValidator>();
-                //services.AddTransient<LinkedEntityValidator>();
-                //services.AddTransient<MaxLengthValidator>();
-                //services.AddTransient<MinLengthValidator>();
-
                 config.AddPropertyDetail<MinLengthDetailConfig, int?>(
                     Constants.PropertyDetails.MinLength,
                     "Minimum length",

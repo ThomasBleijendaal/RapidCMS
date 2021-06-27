@@ -1,6 +1,6 @@
 ﻿using RapidCMS.ModelMaker.Models.Entities;
 
-namespace RapidCMS.ModelMaker.Core.Abstractions.Validation
+namespace RapidCMS.ModelMaker.Abstractions.Detail
 {
     public interface IDetailConfig
     {

@@ -1,4 +1,7 @@
-﻿namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests")]
+namespace RapidCMS.ModelMaker.SourceGenerator.EFCore
 {
     internal static class Constants
     {

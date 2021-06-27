@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Attributes;
-using RapidCMS.ModelMaker.Core.Abstractions.Validation;
+using RapidCMS.ModelMaker.Abstractions.Detail;
 
 namespace RapidCMS.ModelMaker.Models.Entities
 {
