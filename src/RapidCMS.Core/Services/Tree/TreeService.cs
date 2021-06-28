@@ -161,7 +161,7 @@ namespace RapidCMS.Core.Services.Tree
 
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
             {
-                var query = Query.Create(pageSize, pageNr, default, default);
+                var query = Query.Create(pageSize, pageNr, default, default, collectionAlias: alias);
                 var respository = _repositoryResolver.GetRepository(collection);
                 var entities = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => respository.GetAllAsync(new ViewContext(collection.Alias, parent), query));
 

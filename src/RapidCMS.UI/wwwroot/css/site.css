@@ -542,11 +542,13 @@ pre.col-form-label {
 
 .form-control-model {
     max-height: none;
+    border: 0;
+    box-shadow: 0 3.2px 7.2px 0 rgba(0,0,0,.132),0 .6px 1.8px 0 rgba(0,0,0,.108);
+    padding: 1rem;
 }
 
     .form-control-model .form-row {
         margin: 0;
-        padding: .2rem 0;
     }
 
 .form-text.text-muted {
