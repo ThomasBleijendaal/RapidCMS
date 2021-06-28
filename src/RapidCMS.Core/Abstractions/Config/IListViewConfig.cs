@@ -6,7 +6,8 @@ namespace RapidCMS.Core.Abstractions.Config
         : IHasButtons<IListViewConfig<TEntity>>,
         IHasPageSize<IListViewConfig<TEntity>>,
         IHasSearchBar<IListViewConfig<TEntity>>,
-        IHasDisplayTable<TEntity, IListViewConfig<TEntity>>
+        IHasDisplayTable<TEntity, IListViewConfig<TEntity>>,
+        IHasColumnVisibility<IListViewConfig<TEntity>>
         where TEntity : IEntity
     {
     }

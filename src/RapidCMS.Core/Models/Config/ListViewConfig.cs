@@ -27,6 +27,13 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
+        public IListViewConfig<TEntity> SetColumnVisibility(EmptyVariantColumnVisibility columnVisibility)
+        {
+            EmptyVariantColumnVisibility = columnVisibility;
+
+            return this;
+        }
+
         public IListViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
         {
             var button = new DefaultButtonConfig
