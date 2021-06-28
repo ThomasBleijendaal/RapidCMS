@@ -25,6 +25,8 @@ namespace RapidCMS.UI.Components.Editors
 
         [Parameter] public string? Placeholder { get; set; }
 
+        [Parameter] public object? Configuration { get; set; }
+
         protected bool IsDisabled => IsDisabledFunc?.Invoke(Entity, EntityState) ?? false; 
 
         protected object GetValueAsObject()
