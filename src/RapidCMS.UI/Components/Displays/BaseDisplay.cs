@@ -15,6 +15,8 @@ namespace RapidCMS.UI.Components.Displays
 
         [Parameter] public IExpressionMetadata Expression { get; set; } = default!;
 
+        [Parameter] public object? Configuration { get; set; }
+
         protected string GetValueAsString()
         {
             return Expression.StringGetter(Entity);

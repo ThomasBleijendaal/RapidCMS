@@ -36,6 +36,8 @@ namespace RapidCMS.Core.Models.Config
 
         internal IPropertyMetadata? OrderByExpression { get; set; }
         internal OrderByType DefaultOrder { get; set; }
+
+        internal object? Configuration { get; set; }
     }
 
     internal class FieldConfig<TEntity, TValue> 
@@ -59,6 +61,13 @@ namespace RapidCMS.Core.Models.Config
         IDisplayFieldConfig<TEntity, TValue> IHasNameDescription<IDisplayFieldConfig<TEntity, TValue>>.SetDetails(MarkupString details)
         {
             Details = details;
+            return this;
+        }
+
+        IDisplayFieldConfig<TEntity, TValue> IHasConfigurability<IDisplayFieldConfig<TEntity, TValue>>.SetConfiguration<TConfig>(TConfig config)
+        {
+            Configuration = config;
+
             return this;
         }
 
@@ -111,6 +120,13 @@ namespace RapidCMS.Core.Models.Config
         IEditorFieldConfig<TEntity, TValue> IHasNameDescription<IEditorFieldConfig<TEntity, TValue>>.SetDetails(MarkupString details)
         {
             Details = details;
+            return this;
+        }
+
+        IEditorFieldConfig<TEntity, TValue> IHasConfigurability<IEditorFieldConfig<TEntity, TValue>>.SetConfiguration<TConfig>(TConfig config)
+        {
+            Configuration = config;
+
             return this;
         }
 

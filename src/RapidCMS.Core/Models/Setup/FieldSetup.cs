@@ -22,6 +22,7 @@ namespace RapidCMS.Core.Models.Setup
             DefaultOrder = field.DefaultOrder;
             IsVisible = field.IsVisible;
             IsDisabled = field.IsDisabled;
+            Configuration = field.Configuration;
         }
 
         public int Index { get; set; }
@@ -38,5 +39,7 @@ namespace RapidCMS.Core.Models.Setup
 
         public Func<object, EntityState, bool> IsVisible { get; set; }
         public Func<object, EntityState, bool> IsDisabled { get; set; }
+
+        public object? Configuration { get; set; }
     }
 }

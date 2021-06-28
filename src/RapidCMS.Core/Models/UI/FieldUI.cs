@@ -17,6 +17,7 @@ namespace RapidCMS.Core.Models.UI
             Property = field.Property;
             OrderByExpression = field.OrderByExpression;
             SortDescending = field.DefaultOrder;
+            Configuration = field.Configuration;
         }
 
         public string? Name { get; private set; }
@@ -30,5 +31,7 @@ namespace RapidCMS.Core.Models.UI
         public IExpressionMetadata? Expression { get; internal set; }
         internal IPropertyMetadata? OrderByExpression { get; private set; }
         public OrderByType SortDescending { get; set; }
+
+        public object? Configuration { get; set; }
     }
 }
