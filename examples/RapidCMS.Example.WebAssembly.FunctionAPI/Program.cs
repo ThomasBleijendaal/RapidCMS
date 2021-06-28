@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
-using Microsoft.Azure.Functions.Worker.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -24,7 +23,7 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
                 {
                     startup ??= new Startup(context.Configuration);
                     startup.ConfigureWorker(builder);
-                })
+                }, options => { })
                 .ConfigureServices((context, services) =>
                 {
                     startup ??= new Startup(context.Configuration);

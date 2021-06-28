@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Azure.Functions.Worker.Configuration;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using RapidCMS.Example.Shared.AuthorizationHandlers;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.DataViews;

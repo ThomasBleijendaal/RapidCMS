@@ -5,8 +5,8 @@ using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Middleware;
 using Microsoft.Azure.Functions.Worker.Pipeline;
-using Microsoft.Azure.WebJobs.Script.Grpc.Messages;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols;
@@ -25,37 +25,38 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI.Authentication
             _authenticationConfig = authenticationConfig.Value;
         }
 
-        public async Task InvokeAsync(FunctionExecutionContext context, FunctionExecutionDelegate next)
+        public async Task InvokeAsync(FunctionContext context, FunctionExecutionDelegate next)
         {
-            if (context.InvocationRequest is InvocationRequest invocation)
-            {
-                var req = invocation.InputData.FirstOrDefault(x => x.Name == "req");
+            // TODO:
+            //if (context.InvocationRequest is InvocationRequest invocation)
+            //{
+            //    var req = invocation.InputData.FirstOrDefault(x => x.Name == "req");
 
-                if (req?.Data?.Http != null)
-                {
-                    try
-                    {
-                        var request = new Microsoft.Azure.Functions.Worker.HttpRequestData(req.Data.Http);
+            //    if (req?.Data?.Http != null)
+            //    {
+            //        try
+            //        {
+            //            var request = new Microsoft.Azure.Functions.Worker.HttpRequestData(req.Data.Http);
 
-                        var authorizationHeader = request.Headers.FirstOrDefault(x => x.Key.Equals("authorization", StringComparison.InvariantCultureIgnoreCase));
-                        if (authorizationHeader.Value is string headerValue)
-                        {
-                            var user = await GetValidUserAsync(headerValue);
-                            if (user != null)
-                            {
-                                context.Items.Add("User", user);
-                                await next(context);
-                                return;
-                            }
-                        }
-                    }
-                    catch { }
+            //            var authorizationHeader = request.Headers.FirstOrDefault(x => x.Key.Equals("authorization", StringComparison.InvariantCultureIgnoreCase));
+            //            if (authorizationHeader.Value is string headerValue)
+            //            {
+            //                var user = await GetValidUserAsync(headerValue);
+            //                if (user != null)
+            //                {
+            //                    context.Items.Add("User", user);
+            //                    await next(context);
+            //                    return;
+            //                }
+            //            }
+            //        }
+            //        catch { }
 
-                    // NOTE: this middleware requires an authenticated uses.
-                    context.InvocationResult = new HttpResponseData(HttpStatusCode.Unauthorized);
-                    return;
-                }
-            }
+            //        // NOTE: this middleware requires an authenticated uses.
+            //        context.InvocationResult = new HttpResponseData(HttpStatusCode.Unauthorized);
+            //        return;
+            //    }
+            //}
 
             await next(context);
         }

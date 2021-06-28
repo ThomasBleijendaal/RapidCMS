@@ -15,13 +15,13 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Include="Moq" Version="4.16.0" />
-    <PackageReference Include="nunit" Version="3.13.0" />
+    <PackageReference Include="Moq" Version="4.16.1" />
+    <PackageReference Include="nunit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
   </ItemGroup>
 
   <ItemGroup>

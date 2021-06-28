@@ -6,10 +6,10 @@ namespace RapidCMS.Api.Functions.Resolvers
 {
     internal class UserResolver : IUserResolver
     {
-        private readonly IFunctionExecutionContextAccessor _functionExecutionContextAccessor;
+        private readonly IFunctionContextAccessor _functionExecutionContextAccessor;
 
         public UserResolver(
-            IFunctionExecutionContextAccessor functionExecutionContextAccessor)
+            IFunctionContextAccessor functionExecutionContextAccessor)
         {
             _functionExecutionContextAccessor = functionExecutionContextAccessor;
         }

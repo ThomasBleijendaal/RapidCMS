@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Functions.Worker.Configuration;
+﻿using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace RapidCMS.Example.WebAssembly.FunctionAPI.Authentication

@@ -6,13 +6,12 @@ using System.Net;
 using System.Threading.Tasks;
 using HttpMultipartParser;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Pipeline;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Newtonsoft.Json;
 using RapidCMS.Api.Core.Abstractions;
 using RapidCMS.Api.Functions.Abstractions;
-using RapidCMS.Api.Functions.Models;
+using RapidCMS.Api.Functions.Extensions;
 using RapidCMS.Core.Models.ApiBridge.Request;
 
 namespace RapidCMS.Api.Functions.Functions
@@ -20,71 +19,67 @@ namespace RapidCMS.Api.Functions.Functions
     public class FileUploadFunctions
     {
         private readonly IFileHandlerResolver _fileHandlerResolver;
-        private readonly IFunctionExecutionContextAccessor _functionExecutionContextAccessor;
+        private readonly IFunctionContextAccessor _functionExecutionContextAccessor;
 
         public FileUploadFunctions(
             IFileHandlerResolver fileHandlerResolver,
-            IFunctionExecutionContextAccessor functionExecutionContextAccessor)
+            IFunctionContextAccessor functionExecutionContextAccessor)
         {
             _fileHandlerResolver = fileHandlerResolver;
             _functionExecutionContextAccessor = functionExecutionContextAccessor;
         }
 
         [FunctionName(nameof(ValidateFileAsync))]
-        public async Task<HttpResponseData> ValidateFileAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{fileHandlerAlias}/file/validate")] HttpRequestData req, FunctionExecutionContext context)
+        public async Task<HttpResponseData> ValidateFileAsync(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{fileHandlerAlias}/file/validate")] HttpRequestData req,
+            string fileHandlerAlias,
+            FunctionContext context)
         {
             _functionExecutionContextAccessor.FunctionExecutionContext = context;
 
-            if (req.Params.TryGetValue("fileHandlerAlias", out var fileHandlerAlias))
+            try
             {
-                try
+                var (model, file) = await ReadBodyAsFormDataAsync(req);
+                if (file != null)
                 {
-                    var (model, file) = await ReadBodyAsFormDataAsync(req);
-                    if (file != null)
-                    {
-                        throw new InvalidOperationException();
-                    }
-
-                    var response = await _fileHandlerResolver.GetFileHandler(fileHandlerAlias).ValidateFileAsync(model);
-                    return new HttpResponseData(response.StatusCode, response.ResponseBody);
+                    throw new InvalidOperationException();
                 }
-                catch { }
-            }
 
-            return new HttpResponseData(HttpStatusCode.BadRequest);
+                var response = await _fileHandlerResolver.GetFileHandler(fileHandlerAlias).ValidateFileAsync(model);
+                return req.CreateResponse(response);
+            }
+            catch { }
+
+            return req.CreateResponse(HttpStatusCode.BadRequest);
         }
 
         [FunctionName(nameof(SaveFileAsync))]
-        public async Task<HttpResponseData> SaveFileAsync([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{fileHandlerAlias}/file")] HttpRequestData req, FunctionExecutionContext context)
+        public async Task<HttpResponseData> SaveFileAsync(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{fileHandlerAlias}/file")] HttpRequestData req,
+            string fileHandlerAlias,
+            FunctionContext context)
         {
             _functionExecutionContextAccessor.FunctionExecutionContext = context;
 
-            if (req.Params.TryGetValue("fileHandlerAlias", out var fileHandlerAlias))
+            try
             {
-                try
+                var (model, file) = await ReadBodyAsFormDataAsync(req);
+                if (file == null)
                 {
-                    var (model, file) = await ReadBodyAsFormDataAsync(req);
-                    if (file == null)
-                    {
-                        throw new InvalidOperationException();
-                    }
-
-                    var response = await _fileHandlerResolver.GetFileHandler(fileHandlerAlias).SaveFileAsync(model, file);
-                    return new HttpResponseData(response.StatusCode, response.ResponseBody);
+                    throw new InvalidOperationException();
                 }
-                catch { }
-            }
 
-            return new HttpResponseData(HttpStatusCode.BadRequest);
+                var response = await _fileHandlerResolver.GetFileHandler(fileHandlerAlias).SaveFileAsync(model, file);
+                return req.CreateResponse(response);
+            }
+            catch { }
+
+            return req.CreateResponse(HttpStatusCode.BadRequest);
         }
 
         private static async Task<(UploadFileModel model, Stream? file)> ReadBodyAsFormDataAsync(HttpRequestData req)
         {
-            var base64Bytes = JsonConvert.DeserializeObject<BytesRequestWrapper>(req.Body).Bytes;
-
-            using var memoryStream = new MemoryStream(Convert.FromBase64String(base64Bytes));
-            var result = await MultipartFormDataParser.ParseAsync(memoryStream);
-
+            var result = await MultipartFormDataParser.ParseAsync(req.Body);
             var model = new UploadFileModel()
             {
                 Name = result.Parameters.FirstOrDefault(x => x.Name == nameof(UploadFileModel.Name))?.Data!,
