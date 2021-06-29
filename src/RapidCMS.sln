@@ -63,6 +63,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.ModelMaker.SourceG
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.UI.PublishableEntity", "RapidCMS.UI.PublishableEntity\RapidCMS.UI.PublishableEntity.csproj", "{ED772F90-7EB2-4B2D-B0CD-C28653DF2A8B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AZF1", "..\bench\AZF1\AZF1.csproj", "{372A5634-3C9E-4390-A550-904833EC3DB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +155,10 @@ Global
 		{ED772F90-7EB2-4B2D-B0CD-C28653DF2A8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED772F90-7EB2-4B2D-B0CD-C28653DF2A8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED772F90-7EB2-4B2D-B0CD-C28653DF2A8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{372A5634-3C9E-4390-A550-904833EC3DB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{372A5634-3C9E-4390-A550-904833EC3DB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{372A5634-3C9E-4390-A550-904833EC3DB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{372A5634-3C9E-4390-A550-904833EC3DB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -179,6 +185,7 @@ Global
 		{DFE45154-AD85-44F8-9FBF-B463D969767B} = {FAEBCE99-5CCB-4BBF-AAF3-9CE51FABD871}
 		{94EC174C-BBF8-4D3A-A1B3-DA5B740CC451} = {A1ABBF0C-890B-43E6-AD6D-F1897CA205B6}
 		{ED772F90-7EB2-4B2D-B0CD-C28653DF2A8B} = {FAEBCE99-5CCB-4BBF-AAF3-9CE51FABD871}
+		{372A5634-3C9E-4390-A550-904833EC3DB6} = {1499887F-684A-4D1B-B6D9-4569334D1DBC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A24D735F-6ECC-4089-B6BF-DB09B1FCB7D8}

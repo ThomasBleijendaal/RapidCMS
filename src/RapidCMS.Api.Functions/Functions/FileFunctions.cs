@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using HttpMultipartParser;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using RapidCMS.Api.Core.Abstractions;
 using RapidCMS.Api.Functions.Abstractions;
 using RapidCMS.Api.Functions.Extensions;
@@ -29,7 +27,7 @@ namespace RapidCMS.Api.Functions.Functions
             _functionExecutionContextAccessor = functionExecutionContextAccessor;
         }
 
-        [FunctionName(nameof(ValidateFileAsync))]
+        [Function(nameof(ValidateFileAsync))]
         public async Task<HttpResponseData> ValidateFileAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{fileHandlerAlias}/file/validate")] HttpRequestData req,
             string fileHandlerAlias,
@@ -53,7 +51,7 @@ namespace RapidCMS.Api.Functions.Functions
             return req.CreateResponse(HttpStatusCode.BadRequest);
         }
 
-        [FunctionName(nameof(SaveFileAsync))]
+        [Function(nameof(SaveFileAsync))]
         public async Task<HttpResponseData> SaveFileAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{fileHandlerAlias}/file")] HttpRequestData req,
             string fileHandlerAlias,

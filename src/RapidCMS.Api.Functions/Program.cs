@@ -1,15 +1,19 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace RapidCMS.Example.WebAssembly.FunctionAPI
+namespace RapidCMS.Api.Functions
 {
     class Program
     {
         static async Task Main(string[] args)
         {
-            Startup? startup = null;
+            Debugger.Launch();
 
             var host = new HostBuilder()
                 .ConfigureAppConfiguration(config =>
@@ -19,13 +23,11 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
                 })
                 .ConfigureFunctionsWorker((context, builder) =>
                 {
-                    startup ??= new Startup(context.Configuration);
-                    startup.ConfigureWorker(builder);
+                    
                 }, options => { })
                 .ConfigureServices((context, services) =>
                 {
-                    startup ??= new Startup(context.Configuration);
-                    startup.ConfigureServices(services);
+                    
                 })
                 .Build();
 

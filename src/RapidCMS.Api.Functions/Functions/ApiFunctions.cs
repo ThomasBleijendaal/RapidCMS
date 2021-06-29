@@ -1,8 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using RapidCMS.Api.Core.Abstractions;
 using RapidCMS.Api.Core.Models;
 using RapidCMS.Api.Functions.Abstractions;
@@ -23,7 +21,7 @@ namespace RapidCMS.Api.Functions.Functions
             _functionExecutionContextAccessor = functionExecutionContextAccessor;
         }
 
-        [FunctionName(nameof(GetByIdAsync))]
+        [Function(nameof(GetByIdAsync))]
         public async Task<HttpResponseData> GetByIdAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/entity/{id}")] HttpRequestData req,
             string repositoryAlias,
@@ -36,7 +34,7 @@ namespace RapidCMS.Api.Functions.Functions
             return req.CreateResponse(response);
         }
 
-        [FunctionName(nameof(GetAllAsync))]
+        [Function(nameof(GetAllAsync))]
         public async Task<HttpResponseData> GetAllAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/all")] HttpRequestData req,
             string repositoryAlias,
@@ -48,7 +46,7 @@ namespace RapidCMS.Api.Functions.Functions
             return req.CreateResponse(response);
         }
 
-        [FunctionName(nameof(GetAllRelatedAsync))]
+        [Function(nameof(GetAllRelatedAsync))]
         public async Task<HttpResponseData> GetAllRelatedAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/all/related")] HttpRequestData req,
             string repositoryAlias,
@@ -60,7 +58,7 @@ namespace RapidCMS.Api.Functions.Functions
             return req.CreateResponse(response);
         }
 
-        [FunctionName(nameof(GetAllNonRelatedAsync))]
+        [Function(nameof(GetAllNonRelatedAsync))]
         public async Task<HttpResponseData> GetAllNonRelatedAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/all/nonrelated")] HttpRequestData req,
             string repositoryAlias,
@@ -72,7 +70,7 @@ namespace RapidCMS.Api.Functions.Functions
             return req.CreateResponse(response);
         }
 
-        [FunctionName(nameof(NewAsync))]
+        [Function(nameof(NewAsync))]
         public async Task<HttpResponseData> NewAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/new")] HttpRequestData req,
             string repositoryAlias,
@@ -84,7 +82,7 @@ namespace RapidCMS.Api.Functions.Functions
             return req.CreateResponse(response);
         }
 
-        [FunctionName(nameof(InsertAsync))]
+        [Function(nameof(InsertAsync))]
         public async Task<HttpResponseData> InsertAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/entity")] HttpRequestData req,
             string repositoryAlias,
@@ -96,7 +94,7 @@ namespace RapidCMS.Api.Functions.Functions
             return req.CreateResponse(response);
         }
 
-        [FunctionName(nameof(UpdateAsync))]
+        [Function(nameof(UpdateAsync))]
         public async Task<HttpResponseData> UpdateAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "_rapidcms/{repositoryAlias}/entity/{id}")] HttpRequestData req,
             string repositoryAlias,
@@ -109,7 +107,7 @@ namespace RapidCMS.Api.Functions.Functions
             return req.CreateResponse(response);
         }
 
-        [FunctionName(nameof(DeleteAsync))]
+        [Function(nameof(DeleteAsync))]
         public async Task<HttpResponseData> DeleteAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "_rapidcms/{repositoryAlias}/entity/{id}")] HttpRequestData req,
             string repositoryAlias,
@@ -122,7 +120,7 @@ namespace RapidCMS.Api.Functions.Functions
             return req.CreateResponse(response);
         }
 
-        [FunctionName(nameof(AddRelationAsync))]
+        [Function(nameof(AddRelationAsync))]
         public async Task<HttpResponseData> AddRelationAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/relate")] HttpRequestData req,
             string repositoryAlias,
@@ -134,7 +132,7 @@ namespace RapidCMS.Api.Functions.Functions
             return req.CreateResponse(response);
         }
 
-        [FunctionName(nameof(RemoveRelationAsync))]
+        [Function(nameof(RemoveRelationAsync))]
         public async Task<HttpResponseData> RemoveRelationAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "_rapidcms/{repositoryAlias}/relate")] HttpRequestData req,
             string repositoryAlias,
@@ -146,7 +144,7 @@ namespace RapidCMS.Api.Functions.Functions
             return req.CreateResponse(response);
         }
 
-        [FunctionName(nameof(ReorderAsync))]
+        [Function(nameof(ReorderAsync))]
         public async Task<HttpResponseData> ReorderAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/reorder")] HttpRequestData req,
             string repositoryAlias,
