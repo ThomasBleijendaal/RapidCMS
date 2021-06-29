@@ -23,9 +23,9 @@ namespace RapidCMS.Example.WebAssembly
     {
         private const bool ConfigureAuthentication = false;
         // web api 
-        //private static readonly Uri BaseUri = new Uri("https://localhost:5003/api/");
+        private static readonly Uri BaseUri = new Uri("https://localhost:5003/api/");
         // function api
-        private static readonly Uri BaseUri = new Uri("http://localhost:7071/api/");
+        //private static readonly Uri BaseUri = new Uri("http://localhost:7071/api/");
 
         public static async Task Main(string[] args)
         {
@@ -100,7 +100,7 @@ namespace RapidCMS.Example.WebAssembly
             builder.Services.AddTransient<IImageUploadHandler, Base64ApiImageUploadHandler>();
 
             // the country entity is validated by a FluentValidator
-            builder.Services.AddSingleton<CountryValidator>();
+            //builder.Services.AddSingleton<CountryValidator>();
 
             if (!ConfigureAuthentication)
             {

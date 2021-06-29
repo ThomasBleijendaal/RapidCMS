@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Repositories.ApiBridge;
@@ -13,14 +13,19 @@ namespace RapidCMS.Core.Models.Config.Api
 {
     internal class ApiConfig : IApiConfig
     {
+        internal ApiAdvancedConfig AdvancedConfig { get; set; } = new ApiAdvancedConfig();
+
         internal bool AllowAnonymousUsage { get; set; } = false;
         internal List<ApiRepositoryConfig> Repositories { get; set; } = new List<ApiRepositoryConfig>();
         internal List<IApiDataViewBuilderConfig> DataViews { get; set; } = new List<IApiDataViewBuilderConfig>();
         internal List<FileUploadHandlerConfig> FileUploadHandlers { get; set; } = new List<FileUploadHandlerConfig>();
+        internal List<(string entity, ValidationConfig validation)> EntityValidationConfig { get; set; } = new List<(string, ValidationConfig)>();
 
         IEnumerable<IApiRepositoryConfig> IApiConfig.Repositories => Repositories;
         IEnumerable<IApiDataViewBuilderConfig> IApiConfig.DataViews => DataViews;
         IEnumerable<IFileUploadHandlerConfig> IApiConfig.FileUploadHandlers => FileUploadHandlers;
+
+        public IAdvancedApiConfig Advanced => AdvancedConfig;
 
         public IApiConfig AllowAnonymousUser()
         {
@@ -100,6 +105,15 @@ namespace RapidCMS.Core.Models.Config.Api
                 Alias = collectionAlias,
                 DataViewBuilder = typeof(TDataViewBuilder)
             });
+
+            return this;
+        }
+
+        public IApiConfig RegisterEntityValidator<TEntity, TEntityValidator>(object? config)
+            where TEntity : IEntity
+            where TEntityValidator : IEntityValidator
+        {
+            EntityValidationConfig.Add((AliasHelper.GetEntityVariantAlias(typeof(TEntity)), new ValidationConfig(typeof(TEntityValidator), config)));
 
             return this;
         }

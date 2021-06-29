@@ -61,6 +61,7 @@ namespace RapidCMS.Core.Helpers
                 HttpStatusCode.Unauthorized => throw new UnauthorizedAccessException(),
                 HttpStatusCode.Forbidden => throw new UnauthorizedAccessException(),
                 HttpStatusCode.NotFound => throw new NotFoundException($"{request.RequestUri} not found."),
+                HttpStatusCode.BadRequest => throw new InvalidEntityException(),
 
                 _ => throw new InvalidOperationException()
             };

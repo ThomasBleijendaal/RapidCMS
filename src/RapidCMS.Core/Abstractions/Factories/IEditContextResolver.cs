@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 

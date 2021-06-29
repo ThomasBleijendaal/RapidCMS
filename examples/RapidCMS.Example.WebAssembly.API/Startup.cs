@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Example.Shared.AuthorizationHandlers;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.DataViews;
@@ -79,6 +79,8 @@ namespace RapidCMS.Example.WebAssembly.API
 
                 config.RegisterFileUploadHandler<Base64TextFileUploadHandler>();
                 config.RegisterFileUploadHandler<Base64ImageUploadHandler>();
+
+                config.RegisterEntityValidator<Country, CountryValidator>("fdsa");
             });
 
             services.AddCors();

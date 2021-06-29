@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Abstractions.Validators;
 
 namespace RapidCMS.Core.Abstractions.Config
 {
@@ -52,6 +52,16 @@ namespace RapidCMS.Core.Abstractions.Config
             where TDataViewBuilder : IDataViewBuilder;
 
         /// <summary>
+        /// Adds an entity validator for the given entity.
+        /// </summary>
+        /// <typeparam name="TEntityValidator"></typeparam>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        IApiConfig RegisterEntityValidator<TEntity, TEntityValidator>(object? config)
+            where TEntity : IEntity
+            where TEntityValidator: IEntityValidator;
+
+        /// <summary>
         /// Returns the registered repositories
         /// </summary>
         IEnumerable<IApiRepositoryConfig> Repositories { get; }
@@ -65,5 +75,10 @@ namespace RapidCMS.Core.Abstractions.Config
         /// Returns the registered file upload handlers
         /// </summary>
         IEnumerable<IFileUploadHandlerConfig> FileUploadHandlers { get; }
+
+        /// <summary>
+        /// These settings are for advanced or debugging scenarios.
+        /// </summary>
+        IAdvancedApiConfig Advanced { get; }
     }
 }

@@ -23,7 +23,15 @@ namespace RapidCMS.Core.Models.Data
 
         public IReadOnlyList<T> RelatedElementIdsAs<T>()
         {
-            return RelatedElementIds.Cast<T>().ToList();
+            if (typeof(T) == typeof(int))
+            {
+                // edge case for getting int32 when list was deserialized to int64
+                return RelatedElementIds.Select(Convert.ToInt32).OfType<T>().ToList();
+            }
+            else
+            {
+                return RelatedElementIds.OfType<T>().ToList();
+            }
         }
     }
 }

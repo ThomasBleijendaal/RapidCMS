@@ -1,4 +1,5 @@
 ﻿using System;
+using RapidCMS.Core.Abstractions.Validators;
 
 namespace RapidCMS.Core.Abstractions.Config
 {

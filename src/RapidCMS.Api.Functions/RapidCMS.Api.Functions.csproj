@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
-<OutputType>Exe</OutputType>
+    <OutputType>Exe</OutputType>
     <Version>4.0.4-preview</Version>
 
     <Authors>Thomas Bleijendaal</Authors>

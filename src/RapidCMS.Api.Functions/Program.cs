@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 namespace RapidCMS.Api.Functions
 {
+    // temporary fix. see https://github.com/Azure/azure-functions-dotnet-worker/issues/522
     class Program
     {
         static async Task Main(string[] args)
