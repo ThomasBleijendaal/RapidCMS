@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -17,11 +16,11 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
                     config.AddCommandLine(args);
                     config.AddEnvironmentVariables();
                 })
-                .ConfigureFunctionsWorker((context, builder) =>
+                .ConfigureFunctionsWorkerDefaults((context, builder) =>
                 {
                     startup ??= new Startup(context.Configuration);
                     startup.ConfigureWorker(builder);
-                }, options => { })
+                })
                 .ConfigureServices((context, services) =>
                 {
                     startup ??= new Startup(context.Configuration);

@@ -70,6 +70,7 @@ namespace RapidCMS.Core.Factories
                 referenceEntity,
                 parent,
                 container,
+                new List<IValidationSetup>(), // TODO: fix validators
                 _serviceProvider);
 
             return instance as IEditContext ?? throw new InvalidOperationException("Cannot create ApiEditContextWrapper");
