@@ -129,7 +129,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
                 case CrudType.Insert:
                     var insertContext = await _editContextFactory.GetEditContextWrapperAsync(request.EditContext);
-                    if (!await insertContext .IsValidAsync())
+                    if (!await insertContext.IsValidAsync())
                     {
                         throw new InvalidEntityException();
                     }

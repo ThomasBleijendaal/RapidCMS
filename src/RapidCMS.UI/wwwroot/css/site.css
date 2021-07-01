@@ -27,15 +27,8 @@ thead td:hover .icon {
     color: #444;
 }
 
-#app, app {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-
 .top {
     width: 100%;
-    position: fixed;
     z-index: 1000;
 }
 
@@ -57,7 +50,6 @@ thead td:hover .icon {
 
 .main {
     flex: 1;
-    margin-top: 3.5rem;
     margin-left: 100px;
 }
 

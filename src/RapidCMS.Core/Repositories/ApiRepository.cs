@@ -76,13 +76,13 @@ namespace RapidCMS.Repositories.ApiBridge
             => (await _apiRepositoryHelper.DoRequestAsync<EntityModel<TEntity>>(_apiRepositoryHelper.CreateRequest(HttpMethod.Post, $"entity/{id}", new ParentQueryModel(parent))))?.Entity;
 
         public override async Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext)
-            => (await _apiRepositoryHelper.DoRequestAsync<EntityModel<TEntity>>(_apiRepositoryHelper.CreateRequest(HttpMethod.Post, "entity", new EditContextModel<TEntity>(editContext))))?.Entity;
+            => (await _apiRepositoryHelper.DoRequestAsync<EntityModel<TEntity>>(_apiRepositoryHelper.CreateRequest(HttpMethod.Post, "entity", new EditContextModel<TEntity>(editContext)), editContext))?.Entity;
 
         public override async Task<TEntity> NewAsync(IParent? parent, Type? variantType = null)
             => (await _apiRepositoryHelper.DoRequestAsync<EntityModel<TEntity>>(_apiRepositoryHelper.CreateRequest(HttpMethod.Post, "new", new ParentQueryModel(parent, variantType))))?.Entity ?? throw new NotFoundException("Could not create new entity.");
 
         public override Task UpdateAsync(IEditContext<TEntity> editContext)
-            => _apiRepositoryHelper.DoRequestAsync(_apiRepositoryHelper.CreateRequest(HttpMethod.Put, $"entity/{editContext.Entity.Id}", new EditContextModel<TEntity>(editContext)));
+            => _apiRepositoryHelper.DoRequestAsync(_apiRepositoryHelper.CreateRequest(HttpMethod.Put, $"entity/{editContext.Entity.Id}", new EditContextModel<TEntity>(editContext)), editContext);
 
         public override Task AddAsync(IRelated related, string id)
             => _apiRepositoryHelper.DoRequestAsync(_apiRepositoryHelper.CreateRequest(HttpMethod.Post, $"relate", new RelateModel(related, id)));

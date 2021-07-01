@@ -4,7 +4,6 @@
     <TargetFramework>net5.0</TargetFramework>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
-    <OutputType>Exe</OutputType>
     <Version>4.0.4-preview</Version>
 
     <Authors>Thomas Bleijendaal</Authors>
@@ -22,15 +21,12 @@ RapidCMS is a Blazor framework which allows you to build a responsive and flexib
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageProjectUrl>https://github.com/ThomasBleijendaal/RapidCMS</PackageProjectUrl>
-    <ApplicationIcon />
-    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="HttpMultipartParser" Version="5.0.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.3.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.12" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.0.3" OutputItemType="Analyzer" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
@@ -43,13 +39,6 @@ RapidCMS is a Blazor framework which allows you to build a responsive and flexib
     <None Include="..\..\LICENSE.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="local.settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>
 </Project>

@@ -80,7 +80,11 @@ namespace RapidCMS.Example.WebAssembly.API
                 config.RegisterFileUploadHandler<Base64TextFileUploadHandler>();
                 config.RegisterFileUploadHandler<Base64ImageUploadHandler>();
 
-                config.RegisterEntityValidator<Country, CountryValidator>("fdsa");
+                config.RegisterEntityValidator<Country, CountryValidator>(new CountryValidator.Config
+                {
+                    ForbiddenContinentName = "fdsafdsa",
+                    ForbiddenCountryName = "fdsa"
+                });
             });
 
             services.AddCors();

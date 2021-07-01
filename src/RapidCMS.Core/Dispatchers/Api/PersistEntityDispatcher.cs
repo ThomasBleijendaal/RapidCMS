@@ -79,11 +79,7 @@ namespace RapidCMS.Core.Dispatchers.Api
             try
             {
                 await editContext.EnforceCompleteValidationAsync();
-                //if (!await editContext.IsValidAsync())
-                //{
-                //    throw new InvalidEntityException();
-                //}
-
+                
                 if (request.EntityState == EntityState.IsNew)
                 {
                     return new ApiPersistEntityResponseModel
