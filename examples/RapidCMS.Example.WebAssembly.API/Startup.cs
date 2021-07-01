@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Example.Shared.AuthorizationHandlers;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.DataViews;
@@ -18,7 +17,7 @@ namespace RapidCMS.Example.WebAssembly.API
 {
     public class Startup
     {
-        private const bool ConfigureAuthentication = false;
+        private const bool ConfigureAuthentication = true;
 
         public Startup(IConfiguration configuration)
         {
@@ -142,7 +141,7 @@ namespace RapidCMS.Example.WebAssembly.API
                 })
                 .AddJwtBearer(options =>
                 {
-                    Configuration.Bind("OnlineDevOIDC", options);
+                    Configuration.Bind("AzureAd", options);
                 });
         }
     }

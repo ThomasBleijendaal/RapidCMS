@@ -21,11 +21,11 @@ namespace RapidCMS.Example.WebAssembly
 {
     public class Program
     {
-        private const bool ConfigureAuthentication = false;
+        private const bool ConfigureAuthentication = true;
         // web api 
-        private static readonly Uri BaseUri = new Uri("https://localhost:5003/api/");
+        // private static readonly Uri BaseUri = new Uri("https://localhost:5003/api/");
         // function api
-        //private static readonly Uri BaseUri = new Uri("http://localhost:7071/api/");
+        private static readonly Uri BaseUri = new Uri("http://localhost:7071/api/");
 
         public static async Task Main(string[] args)
         {
@@ -100,7 +100,7 @@ namespace RapidCMS.Example.WebAssembly
             builder.Services.AddTransient<IImageUploadHandler, Base64ApiImageUploadHandler>();
 
             // the country entity is validated by a FluentValidator
-            //builder.Services.AddSingleton<CountryValidator>();
+            builder.Services.AddSingleton<CountryValidator>();
 
             if (!ConfigureAuthentication)
             {
@@ -186,16 +186,16 @@ namespace RapidCMS.Example.WebAssembly
         private static void ConfigureOpenIDConnectAuthentication(WebAssemblyHostBuilder builder)
         {
             // For OIDC
-            builder.Services.AddOidcAuthentication(config =>
-            {
-                builder.Configuration.Bind("OnlineDevOIDC", config);
-            });
+            //builder.Services.AddOidcAuthentication(config =>
+            //{
+            //    builder.Configuration.Bind("DevOIDC", config);
+            //});
 
             // For AD
-            //builder.Services.AddMsalAuthentication(options =>
-            //{
-            //    builder.Configuration.Bind("AzureAd", options.ProviderOptions);
-            //});
+            builder.Services.AddMsalAuthentication(options =>
+            {
+                builder.Configuration.Bind("AzureAd", options.ProviderOptions);
+            });
         }
     }
 }

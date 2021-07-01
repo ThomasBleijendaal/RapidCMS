@@ -6,7 +6,6 @@ using RapidCMS.Api.Core.Models;
 using RapidCMS.Api.WebApi.Extensions;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Models.ApiBridge;
-using RapidCMS.Core.Models.ApiBridge.Request;
 using RapidCMS.Core.Models.ApiBridge.Response;
 
 namespace RapidCMS.Api.WebApi.Controllers
@@ -152,7 +151,7 @@ namespace RapidCMS.Api.WebApi.Controllers
         }
 
         [HttpPost("_rapidcms/{repositoryAlias}/reorder")]
-        public async Task<ActionResult> ReorderAsync(string repositoryAlias, [FromBody] ReorderModel reorder)
+        public async Task<ActionResult> ReorderAsync(string repositoryAlias)
         {
             try
             {
