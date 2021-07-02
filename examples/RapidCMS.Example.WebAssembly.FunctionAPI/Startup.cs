@@ -15,7 +15,7 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
 {
     public class Startup
     {
-        private const bool ConfigureAuthentication = true;
+        private const bool ConfigureAuthentication = false;
 
         public Startup(IConfiguration configuration)
         {

@@ -21,11 +21,11 @@ namespace RapidCMS.Example.WebAssembly
 {
     public class Program
     {
-        private const bool ConfigureAuthentication = true;
+        private const bool ConfigureAuthentication = false;
         // web api 
-        // private static readonly Uri BaseUri = new Uri("https://localhost:5003/api/");
+        private static readonly Uri BaseUri = new Uri("https://localhost:5003/api/");
         // function api
-        private static readonly Uri BaseUri = new Uri("http://localhost:7071/api/");
+        // private static readonly Uri BaseUri = new Uri("http://localhost:7071/api/");
 
         public static async Task Main(string[] args)
         {

@@ -15,7 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace RapidCMS.Example.WebAssembly.FunctionAPI.Authentication
 {
-    // this middleware is temporary and should be replaced with something first party when Azure Functions on .NET 5.0 supports better middleware
+    // PREVIEW: this middleware is temporary and should be replaced with something first party when Azure Functions on .NET 5.0 supports better middleware
     public class AuthenticationMiddleware
     {
         private readonly AuthenticationConfig _authenticationConfig;
