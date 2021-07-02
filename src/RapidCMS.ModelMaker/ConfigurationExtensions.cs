@@ -32,9 +32,9 @@ namespace RapidCMS.ModelMaker
             // v 4.0.2-preview: improved validation
             // v 4.0.3-preview: completed validation
             // v 4.0.4-preview: all customizations working + generated correctly
-            // - 4.0.x-preview: finish other milestone tickets
-            // - 4.0.x2-preview: get WebAssembly + APIs working + updated
-            // - 4.0.0: after implementing complete DbContext generation by configured code
+            // v 4.0.x-preview: finish other milestone tickets
+            // v 4.0.x2-preview: get WebAssembly + APIs working + updated
+            // - 4.0.0: after implementing complete DbContext generation by configured code + final fixes below + docs updated
             // - 4.1.0-preview: after implementing configurable sub collections + mixing modelmaker + non-modelmaker collections
 
             // general TODO:
