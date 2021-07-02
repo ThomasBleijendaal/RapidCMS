@@ -10,7 +10,7 @@ namespace RapidCMS.Core.Abstractions.Validators
         Task<IEnumerable<ValidationResult>> ValidateAsync(IValidatorContext context);
     }
 
-    public interface IAsyncEntityValidator<TEntity>
+    public interface IAsyncEntityValidator<TEntity> : IAsyncEntityValidator
         where TEntity : IEntity
     {
         Task<IEnumerable<ValidationResult>> ValidateAsync(IValidatorContext<TEntity> context);

@@ -28,5 +28,8 @@ namespace RapidCMS.Core.Extensions
         public static TAttribute? GetCustomAttribute<TAttribute>(this Type type)
                 where TAttribute : Attribute 
             => type.GetCustomAttributes(typeof(TAttribute), true)?.FirstOrDefault() as TAttribute;
+
+        public static IEnumerable<Type> GetSubTypes(this Type type)
+            => type.Assembly.GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(type));
     }
 }

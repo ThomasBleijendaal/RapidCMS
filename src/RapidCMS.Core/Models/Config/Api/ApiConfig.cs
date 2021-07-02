@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Exceptions;
+using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Repositories.ApiBridge;
 
@@ -109,11 +110,16 @@ namespace RapidCMS.Core.Models.Config.Api
             return this;
         }
 
-        public IApiConfig RegisterEntityValidator<TEntity, TEntityValidator>(object? config)
+        public IApiConfig RegisterEntityValidator<TEntity, TEntityValidator>(object? config = default)
             where TEntity : IEntity
             where TEntityValidator : IEntityValidator
         {
             EntityValidationConfig.Add((AliasHelper.GetEntityVariantAlias(typeof(TEntity)), new ValidationConfig(typeof(TEntityValidator), config)));
+
+            foreach (var subType in typeof(TEntity).GetSubTypes())
+            {
+                EntityValidationConfig.Add((AliasHelper.GetEntityVariantAlias(subType), new ValidationConfig(typeof(TEntityValidator), config)));
+            }
 
             return this;
         }

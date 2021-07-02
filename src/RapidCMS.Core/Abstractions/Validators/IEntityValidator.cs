@@ -9,7 +9,7 @@ namespace RapidCMS.Core.Abstractions.Validators
         IEnumerable<ValidationResult> Validate(IValidatorContext context);
     }
 
-    public interface IEntityValidator<TEntity>
+    public interface IEntityValidator<TEntity> : IEntityValidator
         where TEntity : IEntity
     {
         IEnumerable<ValidationResult> Validate(IValidatorContext<TEntity> context);

@@ -57,7 +57,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <typeparam name="TEntityValidator"></typeparam>
         /// <param name="config"></param>
         /// <returns></returns>
-        IApiConfig RegisterEntityValidator<TEntity, TEntityValidator>(object? config)
+        IApiConfig RegisterEntityValidator<TEntity, TEntityValidator>(object? config = default)
             where TEntity : IEntity
             where TEntityValidator: IEntityValidator;
 

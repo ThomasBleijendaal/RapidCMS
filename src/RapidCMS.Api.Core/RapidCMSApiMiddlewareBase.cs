@@ -86,9 +86,7 @@ namespace RapidCMS.Api.Core
             var entityVariants = config.Repositories.ToDictionary(x => x.Alias, x =>
             {
                 var entityTypes = new[] { x.EntityType }
-                    .Union(x.EntityType.Assembly
-                        .GetTypes()
-                        .Where(t => !t.IsAbstract && t.IsSubclassOf(x.EntityType)))
+                    .Union(x.EntityType.GetSubTypes())
                     .ToList();
                 return (entityType: x.EntityType, variants: (IReadOnlyList<Type>)entityTypes);
             });
@@ -102,8 +100,6 @@ namespace RapidCMS.Api.Core
             if (!config.AdvancedConfig.RemoveDataAnnotationEntityValidator)
             {
                 services.AddSingleton<DataAnnotationEntityValidator>();
-
-                // TODO: add variants from user given config (if validator is given to Base, should be given to A B and C too)
 
                 foreach (var variant in entityVariants.SelectMany(x => x.Value.variants))
                 {
