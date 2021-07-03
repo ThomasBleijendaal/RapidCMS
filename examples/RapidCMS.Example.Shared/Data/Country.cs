@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Attributes;
 
 namespace RapidCMS.Example.Shared.Data
 {
@@ -31,6 +32,8 @@ namespace RapidCMS.Example.Shared.Data
             };
         }
 
+        // to enable nested properties to be correctly validated, ValidateObject is required, even if the model is validated by EntityValidators
+        [ValidateObject]
         public CountryMetadata Metadata { get; set; } = new CountryMetadata();
 
         public class CountryMetadata

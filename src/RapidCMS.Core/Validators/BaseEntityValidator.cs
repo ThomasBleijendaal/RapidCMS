@@ -5,7 +5,7 @@ using RapidCMS.Core.Abstractions.Validators;
 
 namespace RapidCMS.Core.Validators
 {
-    public abstract class BaseEntityValidator<TEntity> : IEntityValidator
+    public abstract class BaseEntityValidator<TEntity> : IEntityValidator, IEntityValidator<TEntity>
         where TEntity : IEntity
     {
         public abstract IEnumerable<ValidationResult> Validate(IValidatorContext<TEntity> context);

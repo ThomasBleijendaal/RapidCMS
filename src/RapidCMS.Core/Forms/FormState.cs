@@ -11,7 +11,6 @@ using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Models;
 using RapidCMS.Core.Validators;
 
 namespace RapidCMS.Core.Forms
@@ -196,7 +195,7 @@ namespace RapidCMS.Core.Forms
         private async Task<IEnumerable<ValidationResult>> GetValidationResultsForPropertyAsync(IPropertyMetadata property, IRelationContainer relationContainer)
         {
             var results = await EntityValidator.ValidateAsync(_validators, relationContainer, ServiceProvider, _entity, property.PropertyName).ToListAsync();
-            return FlattenCompositeValidationResults(results);
+            return results;
         }
 
         private async Task<IEnumerable<ValidationResult>> GetValidationResultsForModelAsync(IRelationContainer relationContainer)
@@ -211,29 +210,7 @@ namespace RapidCMS.Core.Forms
                     $"The {kv.Property.PropertyName} field indicates it is performing an asynchronous task which must be awaited.",
                     new[] { kv.Property.PropertyName })));
 
-            return FlattenCompositeValidationResults(results);
-        }
-
-        private IEnumerable<ValidationResult> FlattenCompositeValidationResults(IEnumerable<ValidationResult> results, string? memberNamePrefix = null)
-        {
-            foreach (var result in results)
-            {
-                if (result is CompositeValidationResult composite)
-                {
-                    foreach (var nestedResult in FlattenCompositeValidationResults(composite.Results, composite.MemberName))
-                    {
-                        yield return nestedResult;
-                    }
-                }
-                else if (string.IsNullOrWhiteSpace(memberNamePrefix))
-                {
-                    yield return result;
-                }
-                else
-                {
-                    yield return new ValidationResult(result.ErrorMessage, result.MemberNames.Select(x => $"{memberNamePrefix}.{x}"));
-                }
-            }
+            return results;
         }
     }
 }
