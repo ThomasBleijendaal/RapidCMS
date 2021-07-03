@@ -7,6 +7,7 @@ using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Models;
 
 namespace RapidCMS.Core.Validators
 {
@@ -42,11 +43,35 @@ namespace RapidCMS.Core.Validators
                         _ => throw new InvalidOperationException($"Invalid entity validator given. {validatorSetup.Type.Name} is not included in Service Collection or is not a {typeof(IEntityValidator).Name} or {typeof(IAsyncEntityValidator).Name}.")
                     };
 
-                    foreach (var result in validationResult.Where(x => string.IsNullOrWhiteSpace(propertyName) || x.MemberNames.Contains(propertyName)))
+                    foreach (var result in FlattenCompositeValidationResults(validationResult).Where(x => string.IsNullOrWhiteSpace(propertyName) || x.MemberNames.Contains(propertyName)))
                     {
                         yield return result;
                     }
                 }
+            }
+        }
+
+        private static IEnumerable<ValidationResult> FlattenCompositeValidationResults(IEnumerable<ValidationResult> results, string? memberNamePrefix = null)
+        {
+            foreach (var result in results)
+            {
+                // TODO: even after disabling the DataAnnotationValidator, entity validation is still dependent on some Attributes to work correctly
+                if (result is CompositeValidationResult composite)
+                {
+                    foreach (var nestedResult in FlattenCompositeValidationResults(composite.Results, composite.MemberName))
+                    {
+                        yield return nestedResult;
+                    }
+                }
+                else if (string.IsNullOrWhiteSpace(memberNamePrefix))
+                {
+                    yield return result;
+                }
+                else
+                {
+                    yield return new ValidationResult(result.ErrorMessage, result.MemberNames.Select(x => $"{memberNamePrefix}.{x}"));
+                }
+
             }
         }
     }

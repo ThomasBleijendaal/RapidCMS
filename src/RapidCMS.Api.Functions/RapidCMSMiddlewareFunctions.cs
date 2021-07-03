@@ -19,7 +19,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddRapidCMSApiCore(_rootConfig);
 
-            services.AddSingleton<IFunctionExecutionContextAccessor, FunctionExecutionContextAccessor>();
+            services.AddSingleton<IFunctionContextAccessor, FunctionContextAccessor>();
 
             if (!_rootConfig.AllowAnonymousUsage)
             {

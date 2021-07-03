@@ -1,16 +1,16 @@
 ﻿using System.Threading;
-using Microsoft.Azure.Functions.Worker.Pipeline;
+using Microsoft.Azure.Functions.Worker;
 using RapidCMS.Api.Functions.Abstractions;
 
 namespace RapidCMS.Api.Functions.Accessors
 {
-    // this accessor is temporary and should be replaced with something first party
+    // PREVIEW: this accessor is temporary and should be replaced with something first party
     // TODO: test this accessor in concurrent function requests
-    internal class FunctionExecutionContextAccessor : IFunctionExecutionContextAccessor
+    internal class FunctionContextAccessor : IFunctionContextAccessor
     {
         private static AsyncLocal<ContextHolder> _contextCurrent = new AsyncLocal<ContextHolder>();
 
-        FunctionExecutionContext? IFunctionExecutionContextAccessor.FunctionExecutionContext
+        FunctionContext? IFunctionContextAccessor.FunctionExecutionContext
         {
             get
             {
@@ -33,7 +33,7 @@ namespace RapidCMS.Api.Functions.Accessors
 
         private class ContextHolder
         {
-            public FunctionExecutionContext Context = default!;
+            public FunctionContext Context = default!;
         }
     }
 }

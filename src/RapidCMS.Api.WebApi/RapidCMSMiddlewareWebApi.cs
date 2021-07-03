@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Newtonsoft.Json;
 using RapidCMS.Api.Core;
 using RapidCMS.Api.WebApi.Conventions;

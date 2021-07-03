@@ -59,10 +59,16 @@ namespace RapidCMS.Core.Forms
             => GetPropertyState(propertyName)?.WasValidated;
 
         public void AddValidationError<TValue>(Expression<Func<TEntity, TValue>> property, string message)
-            => GetPropertyState(GetMetadata(property))?.AddMessage(message, isManual: true);
+        {
+            GetPropertyState(GetMetadata(property))?.AddMessage(message, isManual: true);
+            _editContext.NotifyValidationStateChanged();
+        }
 
         public void AddValidationError(string propertyName, string message)
-            => GetPropertyState(propertyName)?.AddMessage(message, isManual: true);
+        {
+            GetPropertyState(propertyName)?.AddMessage(message, isManual: true);
+            _editContext.NotifyValidationStateChanged();
+        }
 
         public Task<bool?> ValidateAsync<TValue>(Expression<Func<TEntity, TValue>> property)
         {

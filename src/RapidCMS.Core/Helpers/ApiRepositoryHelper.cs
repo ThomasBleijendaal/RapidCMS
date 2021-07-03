@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Exceptions;
+using RapidCMS.Core.Forms;
 
 namespace RapidCMS.Core.Helpers
 {
@@ -44,7 +46,7 @@ namespace RapidCMS.Core.Helpers
             return request;
         }
 
-        internal async Task<HttpResponseMessage> DoRequestAsync(HttpRequestMessage request)
+        internal async Task<HttpResponseMessage> DoRequestAsync(HttpRequestMessage request, IEditContext? editContext = default)
         {
             var httpClient = _httpClientFactory.CreateClient(_repositoryAlias);
             if (httpClient.BaseAddress == default)
@@ -55,9 +57,22 @@ namespace RapidCMS.Core.Helpers
 
             var response = await httpClient.SendAsync(request);
 
+            if (response.StatusCode == HttpStatusCode.BadRequest && editContext != null && await response.Content.ReadAsStringAsync() is string json)
+            {
+                var errors = JsonConvert.DeserializeObject<ModelStateDictionary>(json, _jsonSerializerSettings);
+                if (errors != null)
+                {
+                    foreach (var error in errors)
+                    {
+                        editContext.AddValidationError(error.Key, error.Value);
+                    }
+                }
+            }
+
             return response.StatusCode switch
             {
                 HttpStatusCode.OK => response,
+                HttpStatusCode.BadRequest => throw new InvalidEntityException(),
                 HttpStatusCode.Unauthorized => throw new UnauthorizedAccessException(),
                 HttpStatusCode.Forbidden => throw new UnauthorizedAccessException(),
                 HttpStatusCode.NotFound => throw new NotFoundException($"{request.RequestUri} not found."),
@@ -66,15 +81,14 @@ namespace RapidCMS.Core.Helpers
             };
         }
 
-        internal async Task<TResult?> DoRequestAsync<TResult>(HttpRequestMessage request)
+        internal async Task<TResult?> DoRequestAsync<TResult>(HttpRequestMessage request, IEditContext? editContext = default)
             where TResult : class
         {
             try
             {
-                var response = await DoRequestAsync(request);
+                var response = await DoRequestAsync(request, editContext);
                 var json = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<TResult>(json, _jsonSerializerSettings);
-
                 return result;
             }
             catch (NotFoundException)

@@ -7,11 +7,13 @@ using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Factories
 {
@@ -19,13 +21,16 @@ namespace RapidCMS.Core.Factories
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ISetupResolver<IEntityVariantSetup> _entityVariantResolver;
+        private readonly ISetupResolver<IReadOnlyList<IValidationSetup>> _validationResolver;
 
         public ApiEditContextWrapperFactory(
             IServiceProvider serviceProvider,
-            ISetupResolver<IEntityVariantSetup> entityVariantResolver)
+            ISetupResolver<IEntityVariantSetup> entityVariantResolver,
+            ISetupResolver<IReadOnlyList<IValidationSetup>> validationResolver)
         {
             _serviceProvider = serviceProvider;
             _entityVariantResolver = entityVariantResolver;
+            _validationResolver = validationResolver;
         }
 
         public Task<IEditContext> GetEditContextWrapperAsync(FormEditContext editContext)
@@ -33,7 +38,7 @@ namespace RapidCMS.Core.Factories
             var contextType = typeof(FormEditContextWrapper<>).MakeGenericType(editContext.Entity.GetType());
             var instance = Activator.CreateInstance(contextType, editContext);
 
-            return Task.FromResult<IEditContext>(instance as IEditContext 
+            return Task.FromResult<IEditContext>(instance as IEditContext
                 ?? throw new InvalidOperationException("Cannot create FormEditContextWrapper"));
         }
 
@@ -50,17 +55,16 @@ namespace RapidCMS.Core.Factories
             {
                 var variant = await _entityVariantResolver.ResolveSetupAsync(r.typeName);
                 var property = PropertyMetadataHelper.GetPropertyMetadata(updatedEntity.GetType(), r.propertyName);
-
                 if (property == null)
                 {
                     return null;
                 }
 
-                return new Relation(
-                    variant.Type,
-                    property,
-                    r.elements.Select(e => new Element { Id = e, Labels = Enumerable.Empty<string>() }).ToList());
+                return new Relation(variant.Type, property, r.elements.ToList());
             }).ToListAsync());
+
+            var entityVariantAlias = AliasHelper.GetEntityVariantAlias(updatedEntity.GetType());
+            var validations = await _validationResolver.ResolveSetupAsync(entityVariantAlias);
 
             var contextType = typeof(ApiEditContextWrapper<>).MakeGenericType(repositoryEntityType);
             var instance = Activator.CreateInstance(contextType,
@@ -70,6 +74,7 @@ namespace RapidCMS.Core.Factories
                 referenceEntity,
                 parent,
                 container,
+                validations,
                 _serviceProvider);
 
             return instance as IEditContext ?? throw new InvalidOperationException("Cannot create ApiEditContextWrapper");

@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Azure.Functions.Worker.Configuration;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using RapidCMS.Example.Shared.AuthorizationHandlers;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.DataViews;
@@ -40,7 +41,7 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
             services.AddTransient<Base64TextFileUploadHandler>();
             services.AddTransient<Base64ImageUploadHandler>();
 
-            services.AddOptions<AuthenticationConfig>().Bind(Configuration.GetSection("OnlineDevOIDC"));
+            services.AddOptions<AuthenticationConfig>().Bind(Configuration.GetSection("AzureAd"));
 
             services.AddAuthorizationCore();
             services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();

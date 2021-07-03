@@ -49,6 +49,8 @@ namespace RapidCMS.Core.Abstractions.Forms
         /// Alias of the collection this edit context is used in
         /// </summary>
         string CollectionAlias { get; }
+
+        void AddValidationError(string propertyName, string message);
     }
 
     public interface IEditContext<TEntity> : IEditContext
@@ -125,6 +127,5 @@ namespace RapidCMS.Core.Abstractions.Forms
         Task<bool?> ValidateAsync<TValue>(Expression<Func<TEntity, TValue>> property);
 
         void AddValidationError<TValue>(Expression<Func<TEntity, TValue>> property, string message);
-        void AddValidationError(string propertyName, string message);
     }
 }

@@ -32,9 +32,9 @@ namespace RapidCMS.ModelMaker
             // v 4.0.2-preview: improved validation
             // v 4.0.3-preview: completed validation
             // v 4.0.4-preview: all customizations working + generated correctly
-            // - 4.0.x-preview: finish other milestone tickets
-            // - 4.0.x2-preview: get WebAssembly + APIs working + updated
-            // - 4.0.0: after implementing complete DbContext generation by configured code
+            // v 4.0.x-preview: finish other milestone tickets
+            // v 4.0.x2-preview: get WebAssembly + APIs working + updated
+            // - 4.0.0: after implementing complete DbContext generation by configured code + final fixes below + docs updated
             // - 4.1.0-preview: after implementing configurable sub collections + mixing modelmaker + non-modelmaker collections
 
             // general TODO:
@@ -46,7 +46,7 @@ namespace RapidCMS.ModelMaker
             // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
             // v configure what goes on the list view
             // - validate that a referenced collection has an entity that has an Id property of type int32
-            // - add support for data collections from enums
+            // v add support for data collections from enums
             // v add flag editor for setting enum flag properties
             // v configure corresponding / reciprocal property for one-to-one, one-to-many, many-to-one and many-to-many
             // - fix search field from shifting left when picker is validated

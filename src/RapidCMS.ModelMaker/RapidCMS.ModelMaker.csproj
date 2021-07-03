@@ -5,7 +5,7 @@
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
 
-    <Version>4.0.4-preview</Version>
+    <Version>4.0.5-preview</Version>
 
     <Authors>Thomas Bleijendaal</Authors>
     <Company>Thomas Bleijendaal</Company>
@@ -32,8 +32,8 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="10.2.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.7" />
     <ProjectReference Include="..\RapidCMS.Api.Core\RapidCMS.Api.Core.csproj" />
     <ProjectReference Include="..\RapidCMS.UI\RapidCMS.UI.csproj" />
   </ItemGroup>

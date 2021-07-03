@@ -8,6 +8,7 @@ using RapidCMS.Core.Forms;
 
 namespace RapidCMS.Core.Abstractions.Factories
 {
+    // TODO: this factory has too much parameters
     internal interface IEditContextFactory
     {
         Task<IEditContext> GetEditContextWrapperAsync(FormEditContext editContext);

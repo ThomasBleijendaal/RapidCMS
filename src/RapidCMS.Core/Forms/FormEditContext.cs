@@ -127,6 +127,11 @@ namespace RapidCMS.Core.Forms
             GetPropertyState(property)!.IsBusy = false;
             OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs());
         }
+        
+        public void NotifyValidationStateChanged()
+        {
+            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !FormState.GetValidationMessages().Any()));
+        }
 
         public async Task<bool> IsValidAsync()
         {
@@ -181,14 +186,14 @@ namespace RapidCMS.Core.Forms
         {
             await FormState.ValidateModelAsync(GetRelationContainer());
 
-            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !FormState.GetValidationMessages().Any()));
+            NotifyValidationStateChanged();
         }
 
         private async Task ValidatePropertyAsync(IPropertyMetadata property)
         {
             await FormState.ValidatePropertyAsync(property, GetRelationContainer());
 
-            OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !FormState.GetValidationMessages().Any()));
+            NotifyValidationStateChanged();
         }
     }
 }

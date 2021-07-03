@@ -25,7 +25,7 @@ namespace RapidCMS.Example.WebAssembly
         // web api 
         private static readonly Uri BaseUri = new Uri("https://localhost:5003/api/");
         // function api
-        //private static readonly Uri BaseUri = new Uri("http://localhost:7074/api/");
+        // private static readonly Uri BaseUri = new Uri("http://localhost:7071/api/");
 
         public static async Task Main(string[] args)
         {
@@ -145,7 +145,7 @@ namespace RapidCMS.Example.WebAssembly
                 config.AddCountryCollection();
 
                 // Custom page with either custom Blazor components, or ListViews or ListEditors of collections
-                config.AddPage("beaker", "Some random page", config =>
+                config.AddPage("TestBeakerSolid", "Green10", "Some random page", config =>
                 {
                     config.AddSection(typeof(CustomSection));
                     config.AddSection("country", edit: false);
@@ -186,16 +186,16 @@ namespace RapidCMS.Example.WebAssembly
         private static void ConfigureOpenIDConnectAuthentication(WebAssemblyHostBuilder builder)
         {
             // For OIDC
-            builder.Services.AddOidcAuthentication(config =>
-            {
-                builder.Configuration.Bind("OnlineDevOIDC", config);
-            });
+            //builder.Services.AddOidcAuthentication(config =>
+            //{
+            //    builder.Configuration.Bind("DevOIDC", config);
+            //});
 
             // For AD
-            //builder.Services.AddMsalAuthentication(options =>
-            //{
-            //    builder.Configuration.Bind("AzureAd", options.ProviderOptions);
-            //});
+            builder.Services.AddMsalAuthentication(options =>
+            {
+                builder.Configuration.Bind("AzureAd", options.ProviderOptions);
+            });
         }
     }
 }

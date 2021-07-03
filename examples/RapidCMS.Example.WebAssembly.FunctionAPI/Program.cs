@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
-using Microsoft.Azure.Functions.Worker.Configuration;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -10,8 +8,6 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
     {
         static async Task Main(string[] args)
         {
-            Debugger.Launch();
-
             Startup? startup = null;
 
             var host = new HostBuilder()
@@ -20,7 +16,7 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
                     config.AddCommandLine(args);
                     config.AddEnvironmentVariables();
                 })
-                .ConfigureFunctionsWorker((context, builder) =>
+                .ConfigureFunctionsWorkerDefaults((context, builder) =>
                 {
                     startup ??= new Startup(context.Configuration);
                     startup.ConfigureWorker(builder);

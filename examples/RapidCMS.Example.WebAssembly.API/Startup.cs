@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -79,6 +78,12 @@ namespace RapidCMS.Example.WebAssembly.API
 
                 config.RegisterFileUploadHandler<Base64TextFileUploadHandler>();
                 config.RegisterFileUploadHandler<Base64ImageUploadHandler>();
+
+                config.RegisterEntityValidator<Country, CountryValidator>(new CountryValidator.Config
+                {
+                    ForbiddenContinentName = "fdsafdsa",
+                    ForbiddenCountryName = "fdsa"
+                });
             });
 
             services.AddCors();
@@ -136,7 +141,7 @@ namespace RapidCMS.Example.WebAssembly.API
                 })
                 .AddJwtBearer(options =>
                 {
-                    Configuration.Bind("OnlineDevOIDC", options);
+                    Configuration.Bind("AzureAd", options);
                 });
         }
     }
