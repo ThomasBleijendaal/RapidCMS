@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,8 +6,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RapidCMS.Core.Abstractions.Validators;
-using RapidCMS.Core.Validators;
 using RapidCMS.Example.Shared.AuthorizationHandlers;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.DataViews;
@@ -20,14 +15,6 @@ using RapidCMS.Repositories;
 
 namespace RapidCMS.Example.WebAssembly.API
 {
-    public class VariantValidator : BaseEntityValidator<EntityVariantBase>
-    {
-        public override IEnumerable<ValidationResult> Validate(IValidatorContext<EntityVariantBase> context)
-        {
-            return Enumerable.Empty<ValidationResult>();
-        }
-    }
-
     public class Startup
     {
         private const bool ConfigureAuthentication = false;
@@ -59,7 +46,6 @@ namespace RapidCMS.Example.WebAssembly.API
 
             // TODO: the country entity is validated by a FluentValidator
             services.AddSingleton<CountryValidator>();
-            services.AddSingleton<VariantValidator>();
 
             if (ConfigureAuthentication)
             {
@@ -98,8 +84,6 @@ namespace RapidCMS.Example.WebAssembly.API
                     ForbiddenContinentName = "fdsafdsa",
                     ForbiddenCountryName = "fdsa"
                 });
-
-                config.RegisterEntityValidator<EntityVariantBase, VariantValidator>();
             });
 
             services.AddCors();

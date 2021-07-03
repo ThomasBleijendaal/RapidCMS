@@ -17,12 +17,12 @@ namespace RapidCMS.Example.Shared.Collections
             config.AddCollection<Country, BaseRepository<Country>>("country", "Nav2DMapView", "Blue10", "Countries", collection =>
             {
                 // this collection uses a custom validator next to the data annotation validation
-                //collection.AddEntityValidator<CountryValidator>(
-                //    new CountryValidator.Config
-                //    {
-                //        ForbiddenContinentName = "fdsafdsa",
-                //        ForbiddenCountryName = "fdsa"
-                //    });
+                collection.AddEntityValidator<CountryValidator>(
+                    new CountryValidator.Config
+                    {
+                        ForbiddenContinentName = "fdsafdsa",
+                        ForbiddenCountryName = "fdsa"
+                    });
 
                 collection
                     // Set showEntities to true to have this collection to fold open on default

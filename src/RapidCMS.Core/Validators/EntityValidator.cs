@@ -55,6 +55,7 @@ namespace RapidCMS.Core.Validators
         {
             foreach (var result in results)
             {
+                // TODO: even after disabling the DataAnnotationValidator, entity validation is still dependent on some Attributes to work correctly
                 if (result is CompositeValidationResult composite)
                 {
                     foreach (var nestedResult in FlattenCompositeValidationResults(composite.Results, composite.MemberName))

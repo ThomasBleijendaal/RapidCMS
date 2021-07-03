@@ -4,9 +4,9 @@ using RapidCMS.Api.Functions.Abstractions;
 
 namespace RapidCMS.Api.Functions.Accessors
 {
-    // this accessor is temporary and should be replaced with something first party
+    // PREVIEW: this accessor is temporary and should be replaced with something first party
     // TODO: test this accessor in concurrent function requests
-    internal class FunctionExecutionContextAccessor : IFunctionContextAccessor
+    internal class FunctionContextAccessor : IFunctionContextAccessor
     {
         private static AsyncLocal<ContextHolder> _contextCurrent = new AsyncLocal<ContextHolder>();
 
