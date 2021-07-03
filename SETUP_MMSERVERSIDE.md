@@ -5,4 +5,4 @@
 3. Add `services.AddModelMaker()` to `ConfigureServices`.
 4. Add `config.AddModelMakerPlugin()` to `AddRapidCMSServer(config => {})`.
 5. Hit `F5`: you're now running a RapidCMS instance with Model Maker plugin. 
-6. Start building your CMS by configuring collections. Read [about all the features](MMFEATURES.md).
+6. Start building your CMS by configuring collections.

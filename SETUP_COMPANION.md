@@ -13,7 +13,7 @@ services.AddRapidCMSControllers();
 
 4. Hit `F5`: you're now running a completely empty RapidCMS companion Api instance.
 5. Start building your CMS Api by expanding `config => {}`. [Explore the example API](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/examples/RapidCMS.Example.WebAssembly.API)
-to get a sense on how to build such Api and get it working with your RapidCMS WebAssembly instance. Or read more [about all the features](FEATURES.md).
+to get a sense on how to build such Api and get it working with your RapidCMS WebAssembly instance.
 
 ## Function Api (.NET 5.0 isolated function -- still in preview)
 
@@ -27,4 +27,4 @@ services.AddRapidCMSFunctions(config => {});
 
 4. Run `func host start` from the Azure Function project root: you're now running a completely empty, serverless RapidCMS companion Api instance.
 5. Start building your CMS Api by expanding `config => {}`. [Explore the example Function API](https://github.com/ThomasBleijendaal/RapidCMS/tree/master/examples/RapidCMS.Example.WebAssembly.FunctionAPI)
-to get a sense on how to build such Api and get it working with your RapidCMS WebAssembly instance. Or read more [about all the features](FEATURES.md).
+to get a sense on how to build such Api and get it working with your RapidCMS WebAssembly instance.
