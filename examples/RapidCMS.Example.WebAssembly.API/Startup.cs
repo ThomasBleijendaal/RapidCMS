@@ -44,7 +44,7 @@ namespace RapidCMS.Example.WebAssembly.API
             services.AddTransient<Base64TextFileUploadHandler>();
             services.AddTransient<Base64ImageUploadHandler>();
 
-            // TODO: the country entity is validated by a FluentValidator
+            // the country entity is validated by a FluentValidator
             services.AddSingleton<CountryValidator>();
 
             if (ConfigureAuthentication)

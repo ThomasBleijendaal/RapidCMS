@@ -46,7 +46,7 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
             services.AddAuthorizationCore();
             services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();
 
-            // TODO: the country entity is validated by a FluentValidator
+            // the country entity is validated by a FluentValidator
             services.AddSingleton<CountryValidator>();
 
             services.AddRapidCMSFunctions(config =>

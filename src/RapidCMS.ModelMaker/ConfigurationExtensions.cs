@@ -38,20 +38,10 @@ namespace RapidCMS.ModelMaker
             // - 4.1.0-preview: after implementing configurable sub collections + mixing modelmaker + non-modelmaker collections
 
             // general TODO:
-            // v move IPublishableEntity features to a separate UI package (it's not for ModelMaker anymore)
-            // v implement complex validation like the old IValidator using validation pipeline + generated validators -- attribute validation is not enough for modelmakermade models
-            // v configure collection icon + color
-            // v configure single and plural name of collection
-            // v configure nice names for properties
-            // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
-            // v configure what goes on the list view
             // - validate that a referenced collection has an entity that has an Id property of type int32
-            // v add support for data collections from enums
-            // v add flag editor for setting enum flag properties
-            // v configure corresponding / reciprocal property for one-to-one, one-to-many, many-to-one and many-to-many
+            // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
             // - fix search field from shifting left when picker is validated
             // - fix delete node and get redirected to error-error
-            // - fix EntityValidator for API
             // - allow for disabling model maker without losing stuff like BooleanLabelDataCollection (for production deployment purposes)
             // - restore max length attribute for nvarchar fix + required for relations
             // - add support for file upload

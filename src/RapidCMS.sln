@@ -28,9 +28,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{89191FB4-6
 		..\AUTHclient.md = ..\AUTHclient.md
 		..\AUTHserver.md = ..\AUTHserver.md
 		..\.github\workflows\dotnetcore.yml = ..\.github\workflows\dotnetcore.yml
+		..\FEATURES.md = ..\FEATURES.md
 		..\LICENSE.md = ..\LICENSE.md
 		..\README.md = ..\README.md
-		..\SCREENSHOTS.md = ..\SCREENSHOTS.md
+		..\SETUP_CLIENTSIDE.md = ..\SETUP_CLIENTSIDE.md
+		..\SETUP_COMPANION.md = ..\SETUP_COMPANION.md
+		..\SETUP_MMCLIENTSIDE.md = ..\SETUP_MMCLIENTSIDE.md
+		..\SETUP_MMSERVERSIDE.md = ..\SETUP_MMSERVERSIDE.md
+		..\SETUP_SERVERSIDE.md = ..\SETUP_SERVERSIDE.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.WebAssembly.API", "..\examples\RapidCMS.Example.WebAssembly.API\RapidCMS.Example.WebAssembly.API.csproj", "{55D3BA00-92BE-4E5A-92DC-232959C7B8D7}"
@@ -63,7 +68,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.ModelMaker.SourceG
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.UI.PublishableEntity", "RapidCMS.UI.PublishableEntity\RapidCMS.UI.PublishableEntity.csproj", "{ED772F90-7EB2-4B2D-B0CD-C28653DF2A8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackageCMS", "..\bench\PackageCMS\PackageCMS.csproj", "{C28A7298-5B0F-41B2-A9D2-8F02EDEB4366}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackageCMS", "..\bench\PackageCMS\PackageCMS.csproj", "{C28A7298-5B0F-41B2-A9D2-8F02EDEB4366}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
