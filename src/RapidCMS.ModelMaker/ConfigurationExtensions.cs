@@ -4,7 +4,9 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Plugins;
+using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Repositories;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Collections;
@@ -16,40 +18,46 @@ using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.Models.Responses;
 using RapidCMS.ModelMaker.Repositories;
 using RapidCMS.ModelMaker.Validation.Config;
+using RapidCMS.Repositories.ApiBridge;
 
 namespace RapidCMS.ModelMaker
 {
+    // TODO:
+    // v 4.0.0-preview: after implementing basic ModelEntity generation
+    // v 4.0.1-preview: improved generation
+    // v 4.0.2-preview: improved validation
+    // v 4.0.3-preview: completed validation
+    // v 4.0.4-preview: all customizations working + generated correctly
+    // v 4.0.x-preview: finish other milestone tickets
+    // v 4.0.x2-preview: get WebAssembly + APIs working + updated
+    // - 4.0.0: after implementing complete DbContext generation by configured code + final fixes below + docs updated
+    // - 4.1.0-preview: after implementing configurable sub collections + mixing modelmaker + non-modelmaker collections
+
+    // general TODO:
+    // - validate that a referenced collection has an entity that has an Id property of type int32
+    // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
+    // - fix search field from shifting left when picker is validated
+    // - fix delete node and get redirected to error-error
+    // - allow for disabling model maker without losing stuff like BooleanLabelDataCollection (for production deployment purposes)
+    // - restore max length attribute for nvarchar fix + required for relations
+    // - add support for file upload
+
+    // docs:
+    // general behavior:
+    // one way linked entities are always one-to-many or many-to-many relations in EF Core
+
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection AddModelMaker(
+        /// <summary>
+        /// This method adds the core functionalities for Model Maker.
+        /// 
+        /// Use in RapidCMS WebAssembly or RapidCMS Server side when disabling Model Maker collection.
+        /// </summary>
+        public static IServiceCollection AddModelMakerCore(
             this IServiceCollection services,
             bool addDefaultPropertiesAndValidators = true,
             Action<IModelMakerConfig>? configure = null)
         {
-            // TODO:
-            // v 4.0.0-preview: after implementing basic ModelEntity generation
-            // v 4.0.1-preview: improved generation
-            // v 4.0.2-preview: improved validation
-            // v 4.0.3-preview: completed validation
-            // v 4.0.4-preview: all customizations working + generated correctly
-            // v 4.0.x-preview: finish other milestone tickets
-            // v 4.0.x2-preview: get WebAssembly + APIs working + updated
-            // - 4.0.0: after implementing complete DbContext generation by configured code + final fixes below + docs updated
-            // - 4.1.0-preview: after implementing configurable sub collections + mixing modelmaker + non-modelmaker collections
-
-            // general TODO:
-            // - validate that a referenced collection has an entity that has an Id property of type int32
-            // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
-            // - fix search field from shifting left when picker is validated
-            // - fix delete node and get redirected to error-error
-            // - allow for disabling model maker without losing stuff like BooleanLabelDataCollection (for production deployment purposes)
-            // - restore max length attribute for nvarchar fix + required for relations
-            // - add support for file upload
-
-            // docs:
-            // general behavior:
-            // one way linked entities are always one-to-many or many-to-many relations in EF Core
-
             services.AddTransient<IPlugin, ModelMakerPlugin>();
 
             services.AddTransient<BooleanLabelDataCollection>();
@@ -57,9 +65,6 @@ namespace RapidCMS.ModelMaker
             services.AddTransient<PropertyEditorDataCollection>();
             services.AddTransient<PropertyTypeDataCollection>();
             services.AddTransient<ReciprocalPropertyDataCollection>();
-
-            services.AddScoped<ModelRepository>();
-            services.AddScoped<PropertyRepository>();
 
             var config = new ModelMakerConfig();
 
@@ -186,6 +191,26 @@ namespace RapidCMS.ModelMaker
 
             services.AddSingleton<IModelMakerConfig>(config);
 
+            return services;
+        }
+
+        /// <summary>
+        /// This method adds the core of Model Maker next to the repositories to save Model Maker Models in this project.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="addDefaultPropertiesAndValidators"></param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddModelMaker(
+            this IServiceCollection services,
+            bool addDefaultPropertiesAndValidators = true,
+            Action<IModelMakerConfig>? configure = null)
+        {
+            services.AddModelMakerCore(addDefaultPropertiesAndValidators, configure);
+
+            services.AddScoped<ModelRepository>();
+            services.AddScoped<PropertyRepository>();
+
             services.AddTransient<ICommandHandler<RemoveRequest<ModelEntity>, ConfirmResponse>, RemoveModelEntityCommandHandler>();
 
             services.AddTransient<ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>>, GetAllModelEntitiesCommandHandler>();
@@ -198,9 +223,51 @@ namespace RapidCMS.ModelMaker
             return services;
         }
 
-        public static ICmsConfig AddModelMakerPlugin(this ICmsConfig cmsConfig)
+        /// <summary>
+        /// This method adds the core of Model Maker next to the API repositories to save Model Maker Models in the API project.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="addDefaultPropertiesAndValidators"></param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddModelMakerApi(
+            this IServiceCollection services,
+            Uri baseUri,
+            bool addDefaultPropertiesAndValidators = true,
+            Action<IModelMakerConfig>? configure = null)
+        {
+            services.AddModelMakerCore(addDefaultPropertiesAndValidators, configure);
+
+            // TODO: API authorization
+
+            services.AddRapidCMSApiRepository<ApiRepository<ModelEntity>>(baseUri);
+            services.AddRapidCMSApiRepository<ApiRepository<PropertyModel>>(baseUri);
+
+            return services;
+        }
+
+        /// <summary>
+        /// This method adds the Model Maker plugin to RapidCMS without the Model collection.
+        /// 
+        /// Use this when the code runs in production.
+        /// </summary>
+        /// <param name="cmsConfig"></param>
+        /// <returns></returns>
+        public static ICmsConfig AddModelMakerPluginCore(this ICmsConfig cmsConfig)
         {
             cmsConfig.AddPlugin<ModelMakerPlugin>();
+
+            return cmsConfig;
+        }
+
+        /// <summary>
+        /// This method adds the Model Maker plugin and collection to RapidCMS.
+        /// </summary>
+        /// <param name="cmsConfig"></param>
+        /// <returns></returns>
+        public static ICmsConfig AddModelMakerPlugin(this ICmsConfig cmsConfig)
+        {
+            cmsConfig.AddModelMakerPluginCore();
 
             cmsConfig.AddModelCollection();
 

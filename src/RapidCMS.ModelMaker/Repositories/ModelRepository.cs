@@ -13,6 +13,7 @@ using RapidCMS.ModelMaker.Models.Responses;
 
 namespace RapidCMS.ModelMaker.Repositories
 {
+    // TODO: why not derive from BaseRepository?
     internal class ModelRepository : IRepository
     {
         private readonly ICommandHandler<RemoveRequest<ModelEntity>, ConfirmResponse> _removeCommandHandler;
