@@ -1,7 +1,12 @@
 # RapidCMS
 
+#### RapidCMS
+
 [![#](https://img.shields.io/nuget/v/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
 [![#](https://img.shields.io/nuget/vpre/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
+
+#### RapidCMS Model Maker
+
 [![#](https://img.shields.io/nuget/v/RapidCMS.ModelMaker.SourceGenerator.EFCore?style=flat-square)](https://www.nuget.org/packages/RapidCMS.ModelMaker.SourceGenerator.EFCore)
 [![#](https://img.shields.io/nuget/vpre/RapidCMS.ModelMaker.SourceGenerator.EFCore?style=flat-square)](https://www.nuget.org/packages/RapidCMS.ModelMaker.SourceGenerator.EFCore)
 
@@ -42,7 +47,7 @@ Since RapidCMS can be used in various ways, please pick a deployment mode. And r
 ## How to setup RapidCMS Model Maker
 
 - [Plugin into server-side RapidCMS](SETUP_MMSERVERSIDE.md).
-- TODO: [Plugin into client-side RapidCMS with Companion API](SETUP_MMCLIENTSIDE.md).
+- [Plugin into client-side RapidCMS with Companion API](SETUP_MMCLIENTSIDE.md).
 
 ## Quick starts
 

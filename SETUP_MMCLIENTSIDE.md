@@ -4,7 +4,7 @@ Model Maker is currently not supported in RapidCMS client-side (WebAssembly), bu
 generated models and repositories can easily be integrated in a client-side RapidCMS instance.
 
 1. Create a .NET 5.0 class library.
-2. Install NuGet-package: `RapidCMS.ModelMaker.SourceGenerator.EFCore`.
+2. Install NuGet-package: `RapidCMS.ModelMaker.SourceGenerator.EFCore` (currently in preview).
 3. Setup an `IDesignTimeDbContextFactory`.
 4. [Create a RapidCMS server-side project](SETUP_SERVERSIDE.md) next to the class library.
 5. Install NuGet-package: `RapidCMS.ModelMaker`.
