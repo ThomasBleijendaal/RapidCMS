@@ -38,7 +38,7 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
-using RapidCMS.Example.ModelMaker.Validators;
+using RapidCMS.Example.ModelMaker.Models.Validators;
 using RapidCMS.ModelMaker.Validation.Config;
 
 #nullable enable
@@ -219,7 +219,7 @@ namespace RapidCMS.ModelMaker
 
         public const string EntityValidator = @"using System.Collections.Generic;
 using FluentValidation;
-using RapidCMS.Example.ModelMaker.Validators;
+using RapidCMS.Example.ModelMaker.Models.Validators;
 using RapidCMS.ModelMaker.Validation;
 using RapidCMS.ModelMaker.Validation.Config;
 
