@@ -21,7 +21,6 @@ using RapidCMS.ModelMaker.Models.Responses;
 
 namespace RapidCMS.ModelMaker.Repositories
 {
-    // TODO: why not derive from BaseRepository?
     internal class PropertyRepository : IRepository
     {
         private readonly IModelMakerConfig _config;
