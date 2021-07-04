@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using RapidCMS.Core.Repositories;
 using RapidCMS.ModelMaker;
+using RapidCMS.Repositories.ApiBridge;
 
 namespace RapidCMS.Example.ModelMaker.WebAssembly
 {
@@ -17,7 +19,13 @@ namespace RapidCMS.Example.ModelMaker.WebAssembly
 
             builder.Services.AddAuthorizationCore();
 
-            builder.Services.AddModelMakerApi(BaseUri);
+            builder.Services.AddModelMakerCoreCollections();
+
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<Blog>, ApiRepository<Blog>>(BaseUri);
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<Category>, ApiRepository<Category>>(BaseUri);
+
+            builder.Services.AddTransient<BlogValidator>();
+            builder.Services.AddTransient<CategoryValidator>();
 
             builder.Services.AddRapidCMSWebAssembly(config =>
             {
@@ -25,7 +33,8 @@ namespace RapidCMS.Example.ModelMaker.WebAssembly
 
                 config.Advanced.SemaphoreCount = 5;
 
-                config.AddModelMakerPlugin();
+                config.AddBlogCollection();
+                config.AddCategoryCollection();
             });
 
             await builder.Build().RunAsync();

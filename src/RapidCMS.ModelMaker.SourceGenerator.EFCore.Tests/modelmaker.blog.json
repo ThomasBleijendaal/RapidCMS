@@ -52,11 +52,11 @@
               }
             },
             {
-              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker]], RapidCMS.ModelMaker",
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.Example.ModelMaker.Models.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker.Models]], RapidCMS.ModelMaker",
               "Id": "3c3a802f-0b1a-48de-9d73-426b96178a84",
               "Alias": "bannedContent",
               "Config": {
-                "$type": "RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker",
+                "$type": "RapidCMS.Example.ModelMaker.Models.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker.Models",
                 "BannedWords": {
                   "$type": "System.Collections.Generic.List`1[[System.String, System.Private.CoreLib]], System.Private.CoreLib",
                   "$values": [
@@ -111,21 +111,21 @@
           "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
           "$values": [
             {
-              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.DataCollectionConfig`1[[RapidCMS.Core.Providers.EnumDataProvider`1[[RapidCMS.Example.ModelMaker.Enums.ContentType, RapidCMS.Example.ModelMaker]], RapidCMS.Core]], RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.DataCollectionConfig`1[[RapidCMS.Core.Providers.EnumDataProvider`1[[RapidCMS.Example.ModelMaker.Models.Enums.ContentType, RapidCMS.Example.ModelMaker.Models]], RapidCMS.Core]], RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
               "Id": "2f38b24e-a1ea-43e7-a134-83b1dca3311a",
               "Alias": "contentTypeValidator",
               "Config": {
-                "$type": "RapidCMS.ModelMaker.Validation.Config.DataCollectionConfig`1[[RapidCMS.Core.Providers.EnumDataProvider`1[[RapidCMS.Example.ModelMaker.Enums.ContentType, RapidCMS.Example.ModelMaker]], RapidCMS.Core]], RapidCMS.ModelMaker",
+                "$type": "RapidCMS.ModelMaker.Validation.Config.DataCollectionConfig`1[[RapidCMS.Core.Providers.EnumDataProvider`1[[RapidCMS.Example.ModelMaker.Models.Enums.ContentType, RapidCMS.Example.ModelMaker.Models]], RapidCMS.Core]], RapidCMS.ModelMaker",
                 "IsEnabled": true,
                 "AlwaysIncluded": true,
                 "RelatedCollectionAlias": null,
                 "ValidationMethodName": null,
-                "DataCollectionType": "RapidCMS.Core.Providers.EnumDataProvider`1[[RapidCMS.Example.ModelMaker.Enums.ContentType, RapidCMS.Example.ModelMaker, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
+                "DataCollectionType": "RapidCMS.Core.Providers.EnumDataProvider`1[[RapidCMS.Example.ModelMaker.Models.Enums.ContentType, RapidCMS.Example.ModelMaker.Models, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"
               }
             }
           ]
         },
-        "Type": "RapidCMS.Example.ModelMaker.Enums.ContentType",
+        "Type": "RapidCMS.Example.ModelMaker.Models.Enums.ContentType",
         "IsRelationToOne": false,
         "IsRelationToMany": false,
         "EditorType": "RapidCMS.UI.Components.Editors.DropdownEditor"

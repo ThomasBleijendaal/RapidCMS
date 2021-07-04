@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="RapidModels\modelmaker.blogs.json" />
+    <None Remove="RapidModels\modelmaker.categories.json" />
+    <None Remove="RapidModels\modelmaker.many-to-many-many-as.json" />
+    <None Remove="RapidModels\modelmaker.many-to-many-many-bs.json" />
+    <None Remove="RapidModels\modelmaker.one-to-many-manys.json" />
+    <None Remove="RapidModels\modelmaker.one-to-many-ones.json" />
+    <None Remove="RapidModels\modelmaker.one-to-one-one-as.json" />
+    <None Remove="RapidModels\modelmaker.one-to-one-one-bs.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="RapidModels\modelmaker.blogs.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.categories.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.many-to-many-many-as.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.many-to-many-many-bs.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.one-to-many-manys.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.one-to-many-ones.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.one-to-one-one-as.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.one-to-one-one-bs.json" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\RapidCMS.ModelMaker\RapidCMS.ModelMaker.csproj" />
+    <ProjectReference Include="..\..\src\RapidCMS.ModelMaker.SourceGenerator.EFCore\RapidCMS.ModelMaker.SourceGenerator.EFCore.csproj" OutputItemType="Analyzer" />
+  </ItemGroup>
+</Project>

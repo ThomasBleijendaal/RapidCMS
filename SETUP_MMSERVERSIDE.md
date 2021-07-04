@@ -1,4 +1,4 @@
-# Install ModelMaker in RapidCMS server-side
+# Install Model Maker in RapidCMS server-side
 
 1. [Create a RapidCMS server-side project](SETUP_SERVERSIDE.md).
 2. Install NuGet-package: `RapidCMS.ModelMaker.SourceGenerator.EFCore`.

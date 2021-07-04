@@ -120,7 +120,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
 
-                _mediator.NotifyEvent(this, new RepositoryEventArgs(typeof(ModelRepository), default, model.Id, CrudType.Insert));
+                _mediator.NotifyEvent(this, new RepositoryEventArgs(_config.ModelRespository, default, model.Id, CrudType.Insert));
 
                 return newProperty;
             }
@@ -205,7 +205,7 @@ namespace RapidCMS.ModelMaker.Repositories
 
                 await _updateEntityCommandHandler.HandleAsync(new UpdateRequest<ModelEntity>(model));
 
-                _mediator.NotifyEvent(this, new RepositoryEventArgs(typeof(ModelRepository), default, model.Id, CrudType.Update));
+                _mediator.NotifyEvent(this, new RepositoryEventArgs(_config.ModelRespository, default, model.Id, CrudType.Update));
             }
         }
 

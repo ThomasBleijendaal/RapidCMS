@@ -12,7 +12,11 @@ namespace RapidCMS.Api.Core.Models
 
         public ApiResponseModel(HttpStatusCode statusCode, object responseBody) : this(statusCode)
         {
-            ResponseBody = JsonConvert.SerializeObject(responseBody);
+            ResponseBody = JsonConvert.SerializeObject(responseBody, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                PreserveReferencesHandling = PreserveReferencesHandling.All
+            });
         }
 
         public HttpStatusCode StatusCode { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,13 +20,26 @@ namespace RapidCMS.Example.ModelMaker.WebAssembly.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddModelMaker();
+            services.AddScoped<BlogRepository>();
+            services.AddScoped<CategoryRepository>();
+
+            services.AddTransient<BlogValidator>();
+            services.AddTransient<CategoryValidator>();
+
+            services.AddDbContext<ModelMakerDbContext>(
+                builder => builder.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString")),
+                ServiceLifetime.Transient,
+                ServiceLifetime.Transient);
 
             services.AddRapidCMSWebApi(config =>
             {
-                // register model maker repositories
+                config.AllowAnonymousUser();
 
-                config.
+                config.RegisterEntityValidator<Blog, BlogValidator>();
+                config.RegisterEntityValidator<Category, CategoryValidator>();
+
+                config.RegisterRepository<Blog, BlogRepository>();
+                config.RegisterRepository<Category, CategoryRepository>();
             });
 
             services.AddCors();

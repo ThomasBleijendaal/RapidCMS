@@ -12,10 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\RapidCMS.Core\RapidCMS.Core.csproj" />
-    <ProjectReference Include="..\..\src\RapidCMS.Repositories\RapidCMS.Repositories.csproj" />
-    <ProjectReference Include="..\..\src\RapidCMS.UI\RapidCMS.UI.csproj" />
-    <ProjectReference Include="..\..\src\RapidCMS.ModelMaker\RapidCMS.ModelMaker.csproj" />
+    <ProjectReference Include="..\RapidCMS.Example.ModelMaker.Models\RapidCMS.Example.ModelMaker.Models.csproj" />
   </ItemGroup>
 
 </Project>

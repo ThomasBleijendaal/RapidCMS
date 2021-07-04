@@ -15,7 +15,6 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class ButtonSetupResolver : ISetupResolver<IButtonSetup, ButtonConfig>
     {
-        private static readonly IEnumerable<ButtonSetup> EmptySubButtons = Enumerable.Empty<ButtonSetup>();
         private readonly ILanguageResolver _languageResolver;
 
         public ButtonSetupResolver(ILanguageResolver languageResolver)
@@ -34,7 +33,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             var button = new ButtonSetup
             {
-                Buttons = EmptySubButtons,
+                Buttons = Enumerable.Empty<ButtonSetup>(),
 
                 Label = _languageResolver.ResolveText(config.Label ?? @default?.Label ?? "Button"),
                 Icon = config.Icon ?? @default?.Icon ?? "",
@@ -67,7 +66,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                             EntityVariant = variant,
                             DefaultButtonType = DefaultButtonType.New,
                             ButtonHandlerType = typeof(DefaultButtonActionHandler),
-                            Buttons = EmptySubButtons
+                            Buttons = Enumerable.Empty<ButtonSetup>()
                         });
                 }
             }

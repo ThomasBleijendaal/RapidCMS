@@ -9,8 +9,8 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.ModelMaker.Components;
-using RapidCMS.Example.ModelMaker.Enums;
-using RapidCMS.Example.ModelMaker.Validators;
+using RapidCMS.Example.ModelMaker.Models.Enums;
+using RapidCMS.Example.ModelMaker.Models.Validators;
 using RapidCMS.Example.Shared.Collections;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.ModelMaker;
@@ -39,6 +39,8 @@ namespace RapidCMS.Example.ModelMaker
                 addDefaultPropertiesAndValidators: true,
                 config =>
                 {
+                    config.SetModelFolder("../RapidCMS.Example.ModelMaker.Models/RapidModels/");
+
                     // extra editors can be inserted easily
                     var customTextAreaEditor = config.AddPropertyEditor<CustomTextAreaEditor>("ctae", "Big textarea");
 

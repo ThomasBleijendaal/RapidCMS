@@ -165,5 +165,15 @@ namespace RapidCMS.ModelMaker.Abstractions.Config
         /// </summary>
         /// <param name="folder"></param>
         void SetModelFolder(string folder);
+
+        /// <summary>
+        /// Gets the type of the model repository
+        /// </summary>
+        Type ModelRespository { get; internal set; }
+
+        /// <summary>
+        /// Gets the type of the property repository
+        /// </summary>
+        Type PropertyRepository { get; internal set; }
     }
 }

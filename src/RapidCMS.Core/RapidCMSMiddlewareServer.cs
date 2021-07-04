@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Services.Auth;
+using RapidCMS.Core.Enums;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -20,7 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddRapidCMSServer(this IServiceCollection services, Action<ICmsConfig>? config = null)
         {
-            var rootConfig = GetRootConfig(config);
+            var rootConfig = GetRootConfig(CmsType.ServerSide, config);
 
             services.AddTransient<IAuthService, ServerSideAuthService>();
 

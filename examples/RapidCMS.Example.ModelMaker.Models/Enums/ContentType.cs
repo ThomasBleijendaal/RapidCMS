@@ -1,4 +1,4 @@
-﻿namespace RapidCMS.Example.ModelMaker.Enums
+﻿namespace RapidCMS.Example.ModelMaker.Models.Enums
 {
     public enum ContentType
     {

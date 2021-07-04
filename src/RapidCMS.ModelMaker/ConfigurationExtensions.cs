@@ -4,9 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Plugins;
-using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Repositories;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Collections;
@@ -18,7 +16,6 @@ using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.Models.Responses;
 using RapidCMS.ModelMaker.Repositories;
 using RapidCMS.ModelMaker.Validation.Config;
-using RapidCMS.Repositories.ApiBridge;
 
 namespace RapidCMS.ModelMaker
 {
@@ -34,6 +31,8 @@ namespace RapidCMS.ModelMaker
     // - 4.1.0-preview: after implementing configurable sub collections + mixing modelmaker + non-modelmaker collections
 
     // general TODO:
+    // - add ApiRepository generator
+    // - add ConfigureServices generator
     // - validate that a referenced collection has an entity that has an Id property of type int32
     // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
     // - fix search field from shifting left when picker is validated
@@ -53,19 +52,26 @@ namespace RapidCMS.ModelMaker
         /// 
         /// Use in RapidCMS WebAssembly or RapidCMS Server side when disabling Model Maker collection.
         /// </summary>
-        public static IServiceCollection AddModelMakerCore(
+        public static IServiceCollection AddModelMakerCoreCollections(
+            this IServiceCollection services)
+        {
+            services.AddTransient<BooleanLabelDataCollection>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// This method adds the core of Model Maker next to the repositories to save Model Maker Models in this project.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="addDefaultPropertiesAndValidators"></param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddModelMaker(
             this IServiceCollection services,
             bool addDefaultPropertiesAndValidators = true,
             Action<IModelMakerConfig>? configure = null)
         {
-            services.AddTransient<IPlugin, ModelMakerPlugin>();
-
-            services.AddTransient<BooleanLabelDataCollection>();
-            services.AddTransient<CollectionsDataCollection>();
-            services.AddTransient<PropertyEditorDataCollection>();
-            services.AddTransient<PropertyTypeDataCollection>();
-            services.AddTransient<ReciprocalPropertyDataCollection>();
-
             var config = new ModelMakerConfig();
 
             if (addDefaultPropertiesAndValidators)
@@ -191,22 +197,13 @@ namespace RapidCMS.ModelMaker
 
             services.AddSingleton<IModelMakerConfig>(config);
 
-            return services;
-        }
+            services.AddTransient<IPlugin, ModelMakerPlugin>();
 
-        /// <summary>
-        /// This method adds the core of Model Maker next to the repositories to save Model Maker Models in this project.
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="addDefaultPropertiesAndValidators"></param>
-        /// <param name="configure"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddModelMaker(
-            this IServiceCollection services,
-            bool addDefaultPropertiesAndValidators = true,
-            Action<IModelMakerConfig>? configure = null)
-        {
-            services.AddModelMakerCore(addDefaultPropertiesAndValidators, configure);
+            services.AddModelMakerCoreCollections();
+            services.AddTransient<CollectionsDataCollection>();
+            services.AddTransient<PropertyEditorDataCollection>();
+            services.AddTransient<PropertyTypeDataCollection>();
+            services.AddTransient<ReciprocalPropertyDataCollection>();
 
             services.AddScoped<ModelRepository>();
             services.AddScoped<PropertyRepository>();
@@ -219,29 +216,6 @@ namespace RapidCMS.ModelMaker
             services.AddTransient<ICommandHandler<InsertRequest<ModelEntity>, EntityResponse<ModelEntity>>, InsertModelEntityCommandHandler>();
             services.AddTransient<ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse>, UpdateModelEntityCommandHandler>();
             services.AddTransient<ICommandHandler<PublishRequest<ModelEntity>, ConfirmResponse>, PublishModelEntityCommandHandler>();
-
-            return services;
-        }
-
-        /// <summary>
-        /// This method adds the core of Model Maker next to the API repositories to save Model Maker Models in the API project.
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="addDefaultPropertiesAndValidators"></param>
-        /// <param name="configure"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddModelMakerApi(
-            this IServiceCollection services,
-            Uri baseUri,
-            bool addDefaultPropertiesAndValidators = true,
-            Action<IModelMakerConfig>? configure = null)
-        {
-            services.AddModelMakerCore(addDefaultPropertiesAndValidators, configure);
-
-            // TODO: API authorization
-
-            services.AddRapidCMSApiRepository<ApiRepository<ModelEntity>>(baseUri);
-            services.AddRapidCMSApiRepository<ApiRepository<PropertyModel>>(baseUri);
 
             return services;
         }

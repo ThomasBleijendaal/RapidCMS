@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;

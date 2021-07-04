@@ -8,6 +8,7 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
@@ -17,7 +18,6 @@ using RapidCMS.ModelMaker.DataCollections;
 using RapidCMS.ModelMaker.Extenstions;
 using RapidCMS.ModelMaker.Metadata;
 using RapidCMS.ModelMaker.Models.Entities;
-using RapidCMS.ModelMaker.Repositories;
 using RapidCMS.UI.Components.Editors;
 
 namespace RapidCMS.ModelMaker
@@ -25,14 +25,10 @@ namespace RapidCMS.ModelMaker
     internal class ModelMakerPlugin : IPlugin
     {
         private readonly IModelMakerConfig _config;
-        private readonly ISetupResolver<IButtonSetup, ButtonConfig> _buttonSetupResolver;
 
-        public ModelMakerPlugin(
-            IModelMakerConfig config,
-            ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver)
+        public ModelMakerPlugin(IModelMakerConfig config)
         {
             _config = config;
-            _buttonSetupResolver = buttonSetupResolver;
         }
 
         public string CollectionPrefix => Constants.CollectionPrefix;
@@ -47,18 +43,18 @@ namespace RapidCMS.ModelMaker
             return default;
         }
 
-        public Task<IEnumerable<ITreeElementSetup>> GetTreeElementsAsync() 
+        public Task<IEnumerable<ITreeElementSetup>> GetTreeElementsAsync()
             => Task.FromResult(Enumerable.Empty<ITreeElementSetup>());
 
         public Type? GetRepositoryType(string collectionAlias)
         {
             if (collectionAlias.EndsWith("::models"))
             {
-                return typeof(ModelRepository);
+                return _config.ModelRespository;
             }
             else if (collectionAlias.EndsWith("::property"))
             {
-                return typeof(PropertyRepository);
+                return _config.PropertyRepository;
             }
 
             return default;
@@ -226,7 +222,7 @@ namespace RapidCMS.ModelMaker
                     EditorType = EditorType.Custom,
                     Index = 1,
                     Name = validationType.Name,
-                    IsVisible = validationType.Editor == null 
+                    IsVisible = validationType.Editor == null
                         ? (m, s) => false
                         : (m, s) => m is PropertyModel property &&
                             property.Details.FirstOrDefault(x => x.Alias == validationType.Alias) is PropertyDetailModel validation &&
@@ -296,24 +292,42 @@ namespace RapidCMS.ModelMaker
             };
         }
 
-        private async Task<IButtonSetup> CreateButtonAsync(
+        private Task<IButtonSetup> CreateButtonAsync(
             CollectionSetup collection,
             DefaultButtonType type,
             bool isPrimary,
             string? label = default,
             string? icon = default)
         {
-            var response = await _buttonSetupResolver.ResolveSetupAsync(new DefaultButtonConfig
+            var button = new ButtonSetup
             {
-                ButtonType = type,
-                Icon = icon,
-                Id = $"{collection.Alias}::{type}",
+                Buttons = Enumerable.Empty<IButtonSetup>(),
+
+                Label = label ?? "Button",
+                Icon = icon ?? "",
                 IsPrimary = isPrimary,
-                Label = label,
 
-            }, collection);
+                ButtonId = Guid.NewGuid().ToString(),
+                EntityVariant = collection.EntityVariant,
 
-            return response.Setup;
+                DefaultButtonType = type,
+
+                ButtonHandlerType = typeof(DefaultButtonActionHandler)
+            };
+
+            return Task.FromResult<IButtonSetup>(button);
+
+            //var response = await _buttonSetupResolver.ResolveSetupAsync(new DefaultButtonConfig
+            //{
+            //    ButtonType = type,
+            //    Icon = icon,
+            //    Id = $"{collection.Alias}::{type}",
+            //    IsPrimary = isPrimary,
+            //    Label = label,
+
+            //}, collection);
+
+            //return response.Setup;
         }
     }
 }
