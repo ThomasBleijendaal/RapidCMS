@@ -31,8 +31,6 @@ namespace RapidCMS.ModelMaker
     // - 4.1.0-preview: after implementing configurable sub collections + mixing modelmaker + non-modelmaker collections
 
     // general TODO:
-    // - add ApiRepository generator
-    // - add ConfigureServices generator
     // - validate that a referenced collection has an entity that has an Id property of type int32
     // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
     // - fix search field from shifting left when picker is validated
@@ -40,10 +38,6 @@ namespace RapidCMS.ModelMaker
     // - allow for disabling model maker without losing stuff like BooleanLabelDataCollection (for production deployment purposes)
     // - restore max length attribute for nvarchar fix + required for relations
     // - add support for file upload
-
-    // docs:
-    // general behavior:
-    // one way linked entities are always one-to-many or many-to-many relations in EF Core
 
     public static class ConfigurationExtensions
     {
