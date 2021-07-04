@@ -5,7 +5,6 @@ using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Enums;
 using RapidCMS.Core.Handlers;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Resolvers.Data;
@@ -24,7 +23,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddRapidCMSWebAssembly(this IServiceCollection services, Action<ICmsConfig>? config = null)
         {
-            var rootConfig = GetRootConfig(CmsType.ClientSide, config);
+            var rootConfig = GetRootConfig(config);
 
             services.AddTransient<IAuthService, WebAssemblyAuthService>();
             services.AddTransient<IDataViewResolver, FormDataViewResolver>();

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading;
-using Tewr.Blazor.FileReader;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Services.Auth;
-using RapidCMS.Core.Enums;
+using Tewr.Blazor.FileReader;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -21,7 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddRapidCMSServer(this IServiceCollection services, Action<ICmsConfig>? config = null)
         {
-            var rootConfig = GetRootConfig(CmsType.ServerSide, config);
+            var rootConfig = GetRootConfig(config);
 
             services.AddTransient<IAuthService, ServerSideAuthService>();
 
