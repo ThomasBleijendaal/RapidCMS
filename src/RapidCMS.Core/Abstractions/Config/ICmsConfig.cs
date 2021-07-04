@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Repositories;
+using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Abstractions.Config
 {

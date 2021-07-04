@@ -33,7 +33,7 @@ namespace RapidCMS.ModelMaker.Models.Entities
 
         [Required]
         [JsonConverter(typeof(StringEnumConverter))]
-        public OutputItem Output { get; set; } = OutputItem.Collection | OutputItem.Context | OutputItem.Entity | OutputItem.Repository;
+        public OutputItem Output { get; set; } = OutputItem.Collection | OutputItem.Context | OutputItem.Entity | OutputItem.Repository | OutputItem.Validation;
 
         public List<PropertyModel> Properties { get; set; } = new List<PropertyModel>();
     }

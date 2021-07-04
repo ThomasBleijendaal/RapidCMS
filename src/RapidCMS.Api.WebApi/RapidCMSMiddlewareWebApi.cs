@@ -57,6 +57,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 })
                 .AddNewtonsoftJson(options =>
                 {
+                    // these settings are for reading json only
                     foreach (var entityType in _rootConfig.Repositories.Select(x => x.EntityType))
                     {
                         if (Activator.CreateInstance(typeof(EntityModelJsonConverter<>).MakeGenericType(entityType)) is JsonConverter jsonConverter)

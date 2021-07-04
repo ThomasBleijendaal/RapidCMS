@@ -19,58 +19,42 @@ using RapidCMS.ModelMaker.Validation.Config;
 
 namespace RapidCMS.ModelMaker
 {
+    // TODO:
+    // - validate that a referenced collection has an entity that has an Id property of type int32
+    // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
+    // - fix search field from shifting left when picker is validated
+    // - fix delete node and get redirected to error-error
+    // - allow for disabling model maker without losing stuff like BooleanLabelDataCollection (for production deployment purposes)
+    // - restore max length attribute for nvarchar fix + required for relations
+    // - add support for file upload
+
     public static class ConfigurationExtensions
     {
+        /// <summary>
+        /// This method adds the core functionalities for Model Maker.
+        /// 
+        /// Use in RapidCMS WebAssembly or RapidCMS Server side when disabling Model Maker collection.
+        /// </summary>
+        public static IServiceCollection AddModelMakerCoreCollections(
+            this IServiceCollection services)
+        {
+            services.AddTransient<BooleanLabelDataCollection>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// This method adds the core of Model Maker next to the repositories to save Model Maker Models in this project.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="addDefaultPropertiesAndValidators"></param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
         public static IServiceCollection AddModelMaker(
             this IServiceCollection services,
             bool addDefaultPropertiesAndValidators = true,
             Action<IModelMakerConfig>? configure = null)
         {
-            // TODO:
-            // v 4.0.0-preview: after implementing basic ModelEntity generation
-            // v 4.0.1-preview: improved generation
-            // v 4.0.2-preview: improved validation
-            // v 4.0.3-preview: completed validation
-            // v 4.0.4-preview: all customizations working + generated correctly
-            // v 4.0.x-preview: finish other milestone tickets
-            // v 4.0.x2-preview: get WebAssembly + APIs working + updated
-            // - 4.0.0: after implementing complete DbContext generation by configured code + final fixes below + docs updated
-            // - 4.1.0-preview: after implementing configurable sub collections + mixing modelmaker + non-modelmaker collections
-
-            // general TODO:
-            // v move IPublishableEntity features to a separate UI package (it's not for ModelMaker anymore)
-            // v implement complex validation like the old IValidator using validation pipeline + generated validators -- attribute validation is not enough for modelmakermade models
-            // v configure collection icon + color
-            // v configure single and plural name of collection
-            // v configure nice names for properties
-            // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
-            // v configure what goes on the list view
-            // - validate that a referenced collection has an entity that has an Id property of type int32
-            // v add support for data collections from enums
-            // v add flag editor for setting enum flag properties
-            // v configure corresponding / reciprocal property for one-to-one, one-to-many, many-to-one and many-to-many
-            // - fix search field from shifting left when picker is validated
-            // - fix delete node and get redirected to error-error
-            // - fix EntityValidator for API
-            // - allow for disabling model maker without losing stuff like BooleanLabelDataCollection (for production deployment purposes)
-            // - restore max length attribute for nvarchar fix + required for relations
-            // - add support for file upload
-
-            // docs:
-            // general behavior:
-            // one way linked entities are always one-to-many or many-to-many relations in EF Core
-
-            services.AddTransient<IPlugin, ModelMakerPlugin>();
-
-            services.AddTransient<BooleanLabelDataCollection>();
-            services.AddTransient<CollectionsDataCollection>();
-            services.AddTransient<PropertyEditorDataCollection>();
-            services.AddTransient<PropertyTypeDataCollection>();
-            services.AddTransient<ReciprocalPropertyDataCollection>();
-
-            services.AddScoped<ModelRepository>();
-            services.AddScoped<PropertyRepository>();
-
             var config = new ModelMakerConfig();
 
             if (addDefaultPropertiesAndValidators)
@@ -196,6 +180,17 @@ namespace RapidCMS.ModelMaker
 
             services.AddSingleton<IModelMakerConfig>(config);
 
+            services.AddTransient<IPlugin, ModelMakerPlugin>();
+
+            services.AddModelMakerCoreCollections();
+            services.AddTransient<CollectionsDataCollection>();
+            services.AddTransient<PropertyEditorDataCollection>();
+            services.AddTransient<PropertyTypeDataCollection>();
+            services.AddTransient<ReciprocalPropertyDataCollection>();
+
+            services.AddScoped<ModelRepository>();
+            services.AddScoped<PropertyRepository>();
+
             services.AddTransient<ICommandHandler<RemoveRequest<ModelEntity>, ConfirmResponse>, RemoveModelEntityCommandHandler>();
 
             services.AddTransient<ICommandHandler<GetAllRequest<ModelEntity>, EntitiesResponse<ModelEntity>>, GetAllModelEntitiesCommandHandler>();
@@ -208,9 +203,28 @@ namespace RapidCMS.ModelMaker
             return services;
         }
 
-        public static ICmsConfig AddModelMakerPlugin(this ICmsConfig cmsConfig)
+        /// <summary>
+        /// This method adds the Model Maker plugin to RapidCMS without the Model collection.
+        /// 
+        /// Use this when the code runs in production.
+        /// </summary>
+        /// <param name="cmsConfig"></param>
+        /// <returns></returns>
+        public static ICmsConfig AddModelMakerPluginCore(this ICmsConfig cmsConfig)
         {
             cmsConfig.AddPlugin<ModelMakerPlugin>();
+
+            return cmsConfig;
+        }
+
+        /// <summary>
+        /// This method adds the Model Maker plugin and collection to RapidCMS.
+        /// </summary>
+        /// <param name="cmsConfig"></param>
+        /// <returns></returns>
+        public static ICmsConfig AddModelMakerPlugin(this ICmsConfig cmsConfig)
+        {
+            cmsConfig.AddModelMakerPluginCore();
 
             cmsConfig.AddModelCollection();
 

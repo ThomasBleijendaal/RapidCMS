@@ -14,7 +14,6 @@ using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Dispatchers.Api;
 using RapidCMS.Core.Extensions;

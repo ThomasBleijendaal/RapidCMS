@@ -52,11 +52,11 @@
               }
             },
             {
-              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker]], RapidCMS.ModelMaker",
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.Example.ModelMaker.Models.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker.Models]], RapidCMS.ModelMaker",
               "Id": "7c98b180-9c72-4d66-b753-b24868b8d9b8",
               "Alias": "bannedContent",
               "Config": {
-                "$type": "RapidCMS.Example.ModelMaker.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker",
+                "$type": "RapidCMS.Example.ModelMaker.Models.Validators.BannedContentValidationConfig, RapidCMS.Example.ModelMaker.Models",
                 "BannedWords": {
                   "$type": "System.Collections.Generic.List`1[[System.String, System.Private.CoreLib]], System.Private.CoreLib",
                   "$values": []

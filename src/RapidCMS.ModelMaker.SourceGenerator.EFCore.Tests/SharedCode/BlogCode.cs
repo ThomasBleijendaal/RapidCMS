@@ -18,7 +18,7 @@ namespace RapidCMS.ModelMaker
         
         public System.String Content { get; set; }
         
-        public RapidCMS.Example.ModelMaker.Enums.ContentType Type { get; set; }
+        public RapidCMS.Example.ModelMaker.Models.Enums.ContentType Type { get; set; }
         
         public System.Boolean IsPublished { get; set; }
         
@@ -38,7 +38,7 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
-using RapidCMS.Example.ModelMaker.Validators;
+using RapidCMS.Example.ModelMaker.Models.Validators;
 using RapidCMS.ModelMaker.Validation.Config;
 
 #nullable enable
@@ -80,7 +80,7 @@ namespace RapidCMS.ModelMaker
                         {
                             section.AddField(x => x.Title).SetType(typeof(RapidCMS.UI.Components.Editors.TextBoxEditor)).SetName(""Title"");
                             section.AddField(x => x.Content).SetType(typeof(RapidCMS.UI.Components.Editors.TextAreaEditor)).SetName(""Content"");
-                            section.AddField(x => x.Type).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection<RapidCMS.Core.Providers.EnumDataProvider<RapidCMS.Example.ModelMaker.Enums.ContentType>>().SetName(""Type"");
+                            section.AddField(x => x.Type).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection<RapidCMS.Core.Providers.EnumDataProvider<RapidCMS.Example.ModelMaker.Models.Enums.ContentType>>().SetName(""Type"");
                             section.AddField(x => x.IsPublished).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection<RapidCMS.ModelMaker.DataCollections.BooleanLabelDataCollection, BooleanLabelDetailConfig>(new BooleanLabelDetailConfig { Labels = new BooleanLabelDetailConfig.LabelsConfig { TrueLabel = ""True"", FalseLabel = ""False"" } }).SetName(""Is Published"");
                             section.AddField(x => x.PublishDate).SetType(typeof(RapidCMS.UI.Components.Editors.DateEditor)).SetName(""Publish Date"");
                             section.AddField(x => x.MainCategoryId).SetType(typeof(RapidCMS.UI.Components.Editors.EntityPicker)).SetCollectionRelation(""categories"").SetName(""Main Category"");
@@ -219,7 +219,7 @@ namespace RapidCMS.ModelMaker
 
         public const string EntityValidator = @"using System.Collections.Generic;
 using FluentValidation;
-using RapidCMS.Example.ModelMaker.Validators;
+using RapidCMS.Example.ModelMaker.Models.Validators;
 using RapidCMS.ModelMaker.Validation;
 using RapidCMS.ModelMaker.Validation.Config;
 

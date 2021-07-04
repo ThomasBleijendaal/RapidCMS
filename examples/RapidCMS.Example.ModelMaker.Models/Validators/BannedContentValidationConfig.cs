@@ -6,7 +6,7 @@ using RapidCMS.ModelMaker;
 using RapidCMS.ModelMaker.Abstractions.Detail;
 using RapidCMS.ModelMaker.Models.Entities;
 
-namespace RapidCMS.Example.ModelMaker.Validators
+namespace RapidCMS.Example.ModelMaker.Models.Validators
 {
     public class BannedContentValidationConfig : IDetailConfig
     {
@@ -19,13 +19,13 @@ namespace RapidCMS.Example.ModelMaker.Validators
         public bool IsApplicable(PropertyModel model)
             => model.EditorAlias.In(Constants.Editors.TextBox, Constants.Editors.TextArea);
 
-        public string? RelatedCollectionAlias => default;
+        public string RelatedCollectionAlias => default;
 
-        public string? DataCollectionExpression => default;
+        public string DataCollectionExpression => default;
 
-        public string? ValidationMethodName => "BannedContent";
+        public string ValidationMethodName => "BannedContent";
 
-        public string? DataCollectionType => default;
+        public string DataCollectionType => default;
     }
 
     public static class BannedContentValidator

@@ -26,7 +26,4 @@
       </group>
     </dependencies>
   </metadata>
-  <files>
-    <file src="bin\Release\net5.0\bin\RapidCMS.Api.Functions.dll" target="lib\net5.0\RapidCMS.Api.Functions.dll" />
-  </files>
 </package>

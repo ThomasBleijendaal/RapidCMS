@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading;
-using Tewr.Blazor.FileReader;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Services.Auth;
+using Tewr.Blazor.FileReader;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
