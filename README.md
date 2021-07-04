@@ -3,12 +3,10 @@
 #### RapidCMS
 
 [![#](https://img.shields.io/nuget/v/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
-[![#](https://img.shields.io/nuget/vpre/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
 
 #### RapidCMS Model Maker
 
 [![#](https://img.shields.io/nuget/v/RapidCMS.ModelMaker.SourceGenerator.EFCore?style=flat-square)](https://www.nuget.org/packages/RapidCMS.ModelMaker.SourceGenerator.EFCore)
-[![#](https://img.shields.io/nuget/vpre/RapidCMS.ModelMaker.SourceGenerator.EFCore?style=flat-square)](https://www.nuget.org/packages/RapidCMS.ModelMaker.SourceGenerator.EFCore)
 
 RapidCMS is a Blazor framework that allows you to build a CMS purely from code. It provides a comprehensive set of
 editors and controls, next to allowing you to add your own razor components for custom editors, buttons, labels, complete 
