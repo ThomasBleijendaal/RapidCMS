@@ -29,6 +29,8 @@ thead td:hover .icon {
 
 .top {
     width: 100%;
+    position: fixed;
+    top: 0;
     z-index: 1000;
 }
 
@@ -50,6 +52,7 @@ thead td:hover .icon {
 
 .main {
     flex: 1;
+    margin-top: 4.5rem;
     margin-left: 100px;
 }
 
