@@ -20,17 +20,6 @@ using RapidCMS.ModelMaker.Validation.Config;
 namespace RapidCMS.ModelMaker
 {
     // TODO:
-    // v 4.0.0-preview: after implementing basic ModelEntity generation
-    // v 4.0.1-preview: improved generation
-    // v 4.0.2-preview: improved validation
-    // v 4.0.3-preview: completed validation
-    // v 4.0.4-preview: all customizations working + generated correctly
-    // v 4.0.x-preview: finish other milestone tickets
-    // v 4.0.x2-preview: get WebAssembly + APIs working + updated
-    // - 4.0.0: after implementing complete DbContext generation by configured code + final fixes below + docs updated
-    // - 4.1.0-preview: after implementing configurable sub collections + mixing modelmaker + non-modelmaker collections
-
-    // general TODO:
     // - validate that a referenced collection has an entity that has an Id property of type int32
     // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
     // - fix search field from shifting left when picker is validated
