@@ -150,8 +150,8 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                 return default;
             }
 
-            var replacedType = Regex.Replace(Regex.Replace(
-                type.Replace("[[", "<")
+            var replacedType = Regex.Replace(Regex.Replace(type!
+                    .Replace("[[", "<")
                     .Replace("]]", ">")
                     .Replace("],[", ", "),
                 "`[0-9]+",

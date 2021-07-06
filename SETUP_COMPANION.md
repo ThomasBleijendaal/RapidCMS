@@ -3,11 +3,11 @@
 ## Web Api
 
 1. Create a new ASP.NET Core Api project.
-2. Install NuGet-package: `RapidCMS.Api.WebApi` and `Microsoft.AspNetCore.Mvc.NewtonsoftJson`.
-3. Add the following block of code to `ConfigureServices` in `Startup.cs`:
+2. Install NuGet-package: `RapidCMS.Api.WebApi`.
+3. Remove all code from `ConfigureServices` in `Startup.cs` and add the following block of code:
 
 ```c#
-services.AddRapidCMSApi(config => {});
+services.AddRapidCMSWebApi(config => { config.AllowAnonymousUser(); });
 services.AddRapidCMSControllers();
 ```
 
@@ -22,7 +22,7 @@ to get a sense on how to build such Api and get it working with your RapidCMS We
 3. Add the following block of code to `ConfigureServices` in `Program.cs`:
 
 ```c#
-services.AddRapidCMSFunctions(config => {});
+services.AddRapidCMSFunctions(config => { config.AllowAnonymousUser(); });
 ```
 
 4. Run `func host start` from the Azure Function project root: you're now running a completely empty, serverless RapidCMS companion Api instance.
