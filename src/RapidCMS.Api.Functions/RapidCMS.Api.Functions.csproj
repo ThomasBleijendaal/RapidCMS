@@ -5,7 +5,7 @@
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
     
-    <Version>4.0.6-preview</Version>
+    <Version>4.0.0</Version>
 
     <Authors>Thomas Bleijendaal</Authors>
     <Company>Thomas Bleijendaal</Company>
@@ -22,6 +22,7 @@ RapidCMS is a Blazor framework which allows you to build a responsive and flexib
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageProjectUrl>https://github.com/ThomasBleijendaal/RapidCMS</PackageProjectUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

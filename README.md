@@ -39,6 +39,8 @@ Since RapidCMS can be used in various ways, please pick a deployment mode. And r
 - [Client-side RapidCMS](SETUP_CLIENTSIDE.md) - can be statically hosted.
 - [Companion API for client-side RapidCMS](SETUP_COMPANION.md) - requires an ASP.NET Core web server or Azure Function App.
 
+### Authentication
+
 - [Add authentication to Server-side](AUTHserver.md)
 - [Add authentication to Client-side + Companion API](AUTHclient.md)
 

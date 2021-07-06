@@ -33,7 +33,7 @@ namespace RapidCMS.ModelMaker
         /// <summary>
         /// This method adds the core functionalities for Model Maker.
         /// 
-        /// Use in RapidCMS WebAssembly or RapidCMS Server side when disabling Model Maker collection.
+        /// Use in RapidCMS WebAssembly.
         /// </summary>
         public static IServiceCollection AddModelMakerCoreCollections(
             this IServiceCollection services)

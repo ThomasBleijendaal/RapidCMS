@@ -151,7 +151,7 @@ namespace RapidCMS.Core.Models.Config
             };
 
             var idExpression = PropertyMetadataHelper.GetPropertyMetadata<IEntity, string?>(x => x.Id) ?? throw new InvalidOperationException("IEntity.Id expression failed");
-            ElementConfig ??= new ElementConfig(idExpression, TreeView.Name ?? (IExpressionMetadata)idExpression);
+            ElementConfig ??= new ElementConfig(idExpression, TreeView.Name ?? PropertyMetadataHelper.GetExpressionMetadata(idExpression));
 
             return this;
         }
