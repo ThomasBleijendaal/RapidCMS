@@ -7,7 +7,7 @@
 
     <Version>4.0.0</Version>
 
-      <Authors>Thomas Bleijendaal</Authors>
+    <Authors>Thomas Bleijendaal</Authors>
     <Company>Thomas Bleijendaal</Company>
     <Description>RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS purely from code.</Description>
     <Copyright>2021</Copyright>
