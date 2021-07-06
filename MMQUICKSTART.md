@@ -324,4 +324,7 @@ to manually create repositories, you can deselect `Repository` in that property,
 
 ## Deploy without Model Maker
 
-TODO: Model Maker is a development tool which should not be deployed to production. Describe how to disable it.
+Model Maker is a development tool which should not be available in production. This can be achieved in two ways:
+
+- Run the Model Maker in a seperate ASP.NET Core application that is only run by developers locally on their machine.
+- Call `config.AddModelMakerPluginCore()` instead of `config.AddModelMakerPlugin()` when running on the production environment.
