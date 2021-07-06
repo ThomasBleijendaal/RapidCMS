@@ -10,5 +10,6 @@
 ## Install Model Maker Entity Framework Generator
 
 1. Install NuGet-package: `RapidCMS.ModelMaker.SourceGenerator.EFCore` (currently in preview).
-2. Restart VS.
-3. 
+2. Install NuGet-package: `Microsoft.EntityFrameworkCore.SqlServer`.
+3. Make sure all Model Maker JSON files are marked as "C# analyzer additional file".
+4. Look under Dependencies > Analyzers > RapidCMS.ModelMaker.SourceGenerator.EFCore to discover all the generated classes.
