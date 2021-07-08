@@ -116,8 +116,11 @@ namespace RapidCMS.Core.Helpers
                 }
 
                 var parameterTAsType = Expression.Convert(parameterT, parameterTType) as Expression;
-                var valueToType = Expression.Convert(parameterTProperty, parameterTPropertyType) as Expression;
                 var valueToObject = Expression.Convert(Expression.Parameter(parameterTPropertyType, "z"), typeof(object));
+
+                var valueToType = parameterTPropertyType.IsValueType && Nullable.GetUnderlyingType(parameterTPropertyType) == null
+                    ? Expression.Convert(Expression.Coalesce(parameterTProperty, Expression.Default(parameterTPropertyType)), parameterTPropertyType)
+                    : Expression.Convert(parameterTProperty, parameterTPropertyType) as Expression;
 
                 var instanceExpression = (getNestedObjectMethods.Count == 0)
                     ? parameterTAsType
