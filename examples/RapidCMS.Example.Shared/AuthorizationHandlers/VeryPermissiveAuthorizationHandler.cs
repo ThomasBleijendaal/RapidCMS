@@ -9,7 +9,8 @@ namespace RapidCMS.Example.Shared.AuthorizationHandlers
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, OperationAuthorizationRequirement requirement, IEntity resource)
         {
-            context.Succeed(requirement);
+            context.Fail();
+            // context.Succeed(requirement);
 
             return Task.CompletedTask;
         }
