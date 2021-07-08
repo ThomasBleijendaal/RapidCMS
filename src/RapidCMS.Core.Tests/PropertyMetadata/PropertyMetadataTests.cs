@@ -548,6 +548,42 @@ namespace RapidCMS.Core.Tests.PropertyMetadata
             Assert.AreEqual(expected, data.Getter(instance));
         }
 
+        [Test]
+        public void ReferenceTypePropertyCanHandleNull()
+        {
+            var instance = new ReferenceType { Data = "x" };
+
+            var dataProperty = (IFullPropertyMetadata)PropertyMetadataHelper.GetPropertyMetadata<ReferenceType, string>(x => x.Data);
+
+            Assert.IsNotNull(dataProperty);
+            Assert.DoesNotThrow(() => dataProperty.Setter(instance, null));
+            Assert.IsNull(instance.Data);
+        }
+
+        [Test]
+        public void ValueTypePropertyCanHandleNull()
+        {
+            var instance = new ValueType { Data = 1 };
+
+            var dataProperty = (IFullPropertyMetadata)PropertyMetadataHelper.GetPropertyMetadata<ValueType, int>(x => x.Data);
+
+            Assert.IsNotNull(dataProperty);
+            Assert.DoesNotThrow(() => dataProperty.Setter(instance, null));
+            Assert.AreEqual(0, instance.Data);
+        }
+
+        [Test]
+        public void NullableValueTypePropertyCanHandleNull()
+        {
+            var instance = new NullableValueType { Data = 1 };
+
+            var dataProperty = (IFullPropertyMetadata)PropertyMetadataHelper.GetPropertyMetadata<NullableValueType, int?>(x => x.Data);
+
+            Assert.IsNotNull(dataProperty);
+            Assert.DoesNotThrow(() => dataProperty.Setter(instance, null));
+            Assert.IsNull(instance.Data);
+        }
+
         class BasicClass
         {
             public string Test { get; set; }
@@ -579,6 +615,21 @@ namespace RapidCMS.Core.Tests.PropertyMetadata
         {
             public ICollection<BasicClass> Basics { get; set; }
             public ICollection<BasicClass> Basics2 { get; set; }
+        }
+
+        class ReferenceType
+        {
+            public string Data { get; set; }
+        }
+
+        class ValueType
+        {
+            public int Data { get; set; }
+        }
+
+        class NullableValueType
+        {
+            public int? Data { get; set; }
         }
     }
 }

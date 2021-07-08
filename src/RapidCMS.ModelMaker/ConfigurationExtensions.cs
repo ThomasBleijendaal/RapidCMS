@@ -19,15 +19,6 @@ using RapidCMS.ModelMaker.Validation.Config;
 
 namespace RapidCMS.ModelMaker
 {
-    // TODO:
-    // - validate that a referenced collection has an entity that has an Id property of type int32
-    // - configure collection shape like conventions based collections (list view + node editor / list editor / list view)
-    // - fix search field from shifting left when picker is validated
-    // - fix delete node and get redirected to error-error
-    // - allow for disabling model maker without losing stuff like BooleanLabelDataCollection (for production deployment purposes)
-    // - restore max length attribute for nvarchar fix + required for relations
-    // - add support for file upload
-
     public static class ConfigurationExtensions
     {
         /// <summary>
