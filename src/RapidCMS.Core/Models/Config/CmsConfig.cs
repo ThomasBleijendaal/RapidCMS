@@ -30,6 +30,7 @@ namespace RapidCMS.Core.Models.Config
 
         internal CustomTypeRegistrationConfig? CustomLoginScreenRegistration { get; set; }
         internal CustomTypeRegistrationConfig? CustomLoginStatusRegistration { get; set; }
+        internal CustomTypeRegistrationConfig? CustomLandingPageRegistration { get; set; }
 
         IEnumerable<ITreeElementConfig> ICollectionConfig.CollectionsAndPages => CollectionsAndPages;
 
@@ -69,6 +70,18 @@ namespace RapidCMS.Core.Models.Config
             }
 
             CustomLoginStatusRegistration = new CustomTypeRegistrationConfig(loginType);
+
+            return this;
+        }
+
+        public ICmsConfig SetEmptyLandingPage(Type loginType)
+        {
+            if (!loginType.IsSameTypeOrDerivedFrom(typeof(ComponentBase)))
+            {
+                throw new InvalidOperationException($"{nameof(loginType)} must be derived of {nameof(ComponentBase)}.");
+            }
+
+            CustomLandingPageRegistration = new CustomTypeRegistrationConfig(loginType);
 
             return this;
         }

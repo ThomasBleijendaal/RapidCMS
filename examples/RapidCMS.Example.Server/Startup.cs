@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
-using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Server.Components;
 using RapidCMS.Example.Shared.AuthorizationHandlers;
@@ -81,6 +80,10 @@ namespace RapidCMS.Example.Server
                 {
                     config.SetCustomLoginStatus(typeof(LoginStatus));
                     config.SetCustomLoginScreen(typeof(LoginScreen));
+
+                    // this landing page will be rendered on the dashboard when the dashboard because the user does
+                    // not have access to all of the sections and no other sections are defined on the dashboard
+                    config.SetEmptyLandingPage(typeof(LandingPage));
                 }
 
                 // CRUD editor for simple POCO with recursive sub collections
@@ -166,7 +169,7 @@ namespace RapidCMS.Example.Server
                 .AddCookie("Cookies")
                 .AddOpenIdConnect("OpenIdConnect", options =>
                 {
-                    Configuration.Bind("OnlineDevOIDC", options);
+                    Configuration.Bind("AzureAD", options);
 
                     IdentityModelEventSource.ShowPII = true;
 

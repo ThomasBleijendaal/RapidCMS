@@ -78,9 +78,17 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <returns></returns>
         ICmsConfig AddPage(string icon, string color, string name, Action<IPageConfig> configure);
 
+        /// <summary>
+        /// Install plugin
+        /// </summary>
+        /// <typeparam name="TPlugin"></typeparam>
+        /// <returns></returns>
         internal ICmsConfig AddPlugin<TPlugin>()
             where TPlugin : IPlugin;
 
+        /// <summary>
+        /// List of plugins
+        /// </summary>
         IEnumerable<Type> Plugins { get; }
 
         /// <summary>
@@ -109,6 +117,13 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <param name="loginType">Type of razor component.</param>
         /// <returns></returns>
         ICmsConfig SetCustomLoginStatus(Type loginType);
+
+        /// <summary>
+        /// Draws the given razor component when user has no items to display (no user rights).
+        /// </summary>
+        /// <param name="loginType">Type of razor component.</param>
+        /// <returns></returns>
+        ICmsConfig SetEmptyLandingPage(Type loginType);
 
         /// <summary>
         /// Sets the name of title in the top left bar of the CMS. Defaults to RapidCMS.

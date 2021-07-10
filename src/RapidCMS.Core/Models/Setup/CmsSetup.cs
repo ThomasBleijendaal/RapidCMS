@@ -26,6 +26,7 @@ namespace RapidCMS.Core.Models.Setup
 
         public ITypeRegistration? CustomLoginScreenRegistration { get; internal set; }
         public ITypeRegistration? CustomLoginStatusRegistration { get; internal set; }
+        public ITypeRegistration? CustomLandingPageRegistration { get; internal set; }
 
         string ICms.SiteName => SiteName;
         bool ICms.IsDevelopment
@@ -49,6 +50,16 @@ namespace RapidCMS.Core.Models.Setup
             if (_config.CustomLoginStatusRegistration != null)
             {
                 return (await _typeRegistrationSetupResolver.ResolveSetupAsync(_config.CustomLoginStatusRegistration)).Setup;
+            }
+
+            return default;
+        }
+
+        public async Task<ITypeRegistration?> CustomLandingPageRegistrationAsync()
+        {
+            if (_config.CustomLandingPageRegistration != null)
+            {
+                return (await _typeRegistrationSetupResolver.ResolveSetupAsync(_config.CustomLandingPageRegistration)).Setup;
             }
 
             return default;
