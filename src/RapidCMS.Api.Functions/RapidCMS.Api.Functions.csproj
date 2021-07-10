@@ -25,6 +25,10 @@ RapidCMS is a Blazor framework which allows you to build a responsive and flexib
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="HttpMultipartParser" Version="5.0.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.3.0" />

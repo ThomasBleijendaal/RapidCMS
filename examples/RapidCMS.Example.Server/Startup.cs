@@ -80,7 +80,10 @@ namespace RapidCMS.Example.Server
                 {
                     config.SetCustomLoginStatus(typeof(LoginStatus));
                     config.SetCustomLoginScreen(typeof(LoginScreen));
-                    config.SetEmptyLandingPage(typeof(LoginScreen));
+
+                    // this landing page will be rendered on the dashboard when the dashboard because the user does
+                    // not have access to all of the sections and no other sections are defined on the dashboard
+                    config.SetEmptyLandingPage(typeof(LandingPage));
                 }
 
                 // CRUD editor for simple POCO with recursive sub collections

@@ -5,7 +5,7 @@
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
 
-    <Version>4.0.1</Version>
+    <Version>4.0.2</Version>
     
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Thomas Bleijendaal</Authors>
@@ -21,6 +21,10 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageProjectUrl>https://github.com/ThomasBleijendaal/RapidCMS</PackageProjectUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

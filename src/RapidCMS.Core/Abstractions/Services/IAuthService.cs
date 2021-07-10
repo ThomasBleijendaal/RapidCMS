@@ -7,7 +7,7 @@ using RapidCMS.Core.Forms;
 
 namespace RapidCMS.Core.Abstractions.Services
 {
-    internal interface IAuthService
+    public interface IAuthService
     {
         Task<bool> IsUserAuthorizedAsync(UsageType usageType, IEntity entity);
         Task<bool> IsUserAuthorizedAsync(OperationAuthorizationRequirement operation, IEntity entity);
