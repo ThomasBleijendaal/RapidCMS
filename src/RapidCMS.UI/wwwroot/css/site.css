@@ -464,6 +464,9 @@ a.current-page {
     .form-control.is-valid, .form-control.is-invalid {
         padding-right: .75em !important;
     }
+    .form-control.form-control-select-list.is-valid, .form-control.form-control-select-list.is-invalid {
+        padding-right: 0 !important;
+    }
 
 textarea.form-control {
     height: 300px;
