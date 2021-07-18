@@ -27,6 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{89191FB4-6
 	ProjectSection(SolutionItems) = preProject
 		..\AUTHclient.md = ..\AUTHclient.md
 		..\AUTHserver.md = ..\AUTHserver.md
+		..\.github\workflows\dotnetcore.pr.yml = ..\.github\workflows\dotnetcore.pr.yml
 		..\.github\workflows\dotnetcore.yml = ..\.github\workflows\dotnetcore.yml
 		..\LICENSE.md = ..\LICENSE.md
 		..\MMQUICKSTART.md = ..\MMQUICKSTART.md
@@ -75,7 +76,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.ModelMaker
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.ModelMaker.WebAssembly.API", "..\examples\RapidCMS.Example.ModelMaker.WebAssembly.API\RapidCMS.Example.ModelMaker.WebAssembly.API.csproj", "{CF0ACFB8-FBDE-435D-BB01-D753A55B801A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidCMS.Example.ModelMaker.Models", "..\examples\RapidCMS.Example.ModelMaker.Models\RapidCMS.Example.ModelMaker.Models.csproj", "{D2BFA04D-D422-48AB-8C67-B0E3F51655B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.ModelMaker.Models", "..\examples\RapidCMS.Example.ModelMaker.Models\RapidCMS.Example.ModelMaker.Models.csproj", "{D2BFA04D-D422-48AB-8C67-B0E3F51655B9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{53A342E3-BC40-4721-9F8B-D259395607B6}"
 EndProject
