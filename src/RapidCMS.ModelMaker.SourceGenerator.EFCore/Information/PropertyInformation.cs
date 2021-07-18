@@ -14,6 +14,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
         public bool Hidden { get; }
 
+
         public string? Name { get; private set; }
 
         public string? PascalCaseName => ValidPascalCaseName(Name);
@@ -32,8 +33,12 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
             return this;
         }
 
+        public bool Required { get; private set; }
+
         public PropertyInformation IsRequired(bool isRequired)
         {
+            Required = isRequired;
+
             if (isRequired)
             {
                 Details.Add(new PropertyDetailInformation("NotNull"));
@@ -114,13 +119,16 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
                 yield return "System.Collections.Generic";
             }
 
+            if (use == Use.Entity && (Required || Details.Any(x => x.ValidationMethodName == "MaximumLength")))
+            {
+                yield return "System.ComponentModel.DataAnnotations";
+            }
 
             foreach (var @namespace in _namespaces.Where(x => x.use.HasFlag(use)).Select(x => x.@namespace).Distinct())
             {
                 yield return @namespace;
             }
 
-            
             foreach (var @namespace in Details.SelectMany(x => x.NamespacesUsed(use)))
             {
                 yield return @namespace;

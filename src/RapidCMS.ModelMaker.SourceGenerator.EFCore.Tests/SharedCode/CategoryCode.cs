@@ -3,6 +3,7 @@
     public static class CategoryCode
     {
         public const string EntityWithBlog = @"using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
 
 #nullable enable
@@ -14,6 +15,7 @@ namespace RapidCMS.ModelMaker
         public int Id { get; set; }
         string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? ""0""); }
         
+        [MaxLength(30)]
         public System.String Name { get; set; }
         
         public ICollection<RapidCMS.ModelMaker.Blog> BlogMainCategory { get; set; } = new List<RapidCMS.ModelMaker.Blog>();
@@ -23,7 +25,8 @@ namespace RapidCMS.ModelMaker
 }
 ";
 
-        public const string EntityWithoutBlog = @"using RapidCMS.Core.Abstractions.Data;
+        public const string EntityWithoutBlog = @"using System.ComponentModel.DataAnnotations;
+using RapidCMS.Core.Abstractions.Data;
 
 #nullable enable
 
@@ -34,6 +37,7 @@ namespace RapidCMS.ModelMaker
         public int Id { get; set; }
         string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? ""0""); }
         
+        [MaxLength(30)]
         public System.String Name { get; set; }
     }
 }

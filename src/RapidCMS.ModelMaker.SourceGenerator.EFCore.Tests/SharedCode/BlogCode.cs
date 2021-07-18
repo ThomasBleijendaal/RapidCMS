@@ -3,6 +3,7 @@
     public static class BlogCode
     {
         public const string Entity = @"using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
 
 #nullable enable
@@ -14,6 +15,7 @@ namespace RapidCMS.ModelMaker
         public int Id { get; set; }
         string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? ""0""); }
         
+        [MaxLength(127)]
         public System.String Title { get; set; }
         
         public System.String Content { get; set; }
@@ -24,6 +26,7 @@ namespace RapidCMS.ModelMaker
         
         public System.DateTime PublishDate { get; set; }
         
+        [Required]
         public int? MainCategoryId { get; set; }
         public RapidCMS.ModelMaker.Category? MainCategory { get; set; }
         
