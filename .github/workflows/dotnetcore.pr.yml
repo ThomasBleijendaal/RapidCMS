@@ -1,4 +1,4 @@
-name: .NET Core
+name: .NET Core PR
 
 on: 
     pull_request:
