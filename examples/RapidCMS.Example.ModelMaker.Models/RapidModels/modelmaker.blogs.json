@@ -178,7 +178,64 @@
         "EditorAlias": "date",
         "Details": {
           "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
-          "$values": []
+          "$values": [
+            {
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.MinDateTimeDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "73530a10-8266-4567-a19d-70012125dd07",
+              "Alias": "mindatetime",
+              "Config": {
+                "$type": "RapidCMS.ModelMaker.Validation.Config.MinDateTimeDetailConfig, RapidCMS.ModelMaker",
+                "DateTime": null,
+                "IsEnabled": false,
+                "AlwaysIncluded": false,
+                "RelatedCollectionAlias": null,
+                "ValidationMethodName": "GreaterThanOrEqualTo",
+                "DataCollectionType": null
+              }
+            },
+            {
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.MinDateTimeDeltaDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "e29417c9-1d7e-43f3-9207-aed992b4ecc5",
+              "Alias": "mindatetimedelta",
+              "Config": {
+                "$type": "RapidCMS.ModelMaker.Validation.Config.MinDateTimeDeltaDetailConfig, RapidCMS.ModelMaker",
+                "Delta": 1,
+                "IsEnabled": true,
+                "AlwaysIncluded": false,
+                "RelatedCollectionAlias": null,
+                "ValidationMethodName": "MinDateTimeDelta",
+                "DataCollectionType": null
+              }
+            },
+            {
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.MaxDateTimeDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "aecbed6b-7ffd-43c9-b60e-0ed9b8f40ec5",
+              "Alias": "maxdatetime",
+              "Config": {
+                "$type": "RapidCMS.ModelMaker.Validation.Config.MaxDateTimeDetailConfig, RapidCMS.ModelMaker",
+                "DateTime": null,
+                "IsEnabled": false,
+                "AlwaysIncluded": false,
+                "RelatedCollectionAlias": null,
+                "ValidationMethodName": "LessThanOrEqualTo",
+                "DataCollectionType": null
+              }
+            },
+            {
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.MaxDateTimeDeltaDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "142cb489-2201-42c2-9801-7d57ac0e738a",
+              "Alias": "maxdatetimedelta",
+              "Config": {
+                "$type": "RapidCMS.ModelMaker.Validation.Config.MaxDateTimeDeltaDetailConfig, RapidCMS.ModelMaker",
+                "Delta": 1,
+                "IsEnabled": true,
+                "AlwaysIncluded": false,
+                "RelatedCollectionAlias": null,
+                "ValidationMethodName": "MaxDateTimeDelta",
+                "DataCollectionType": null
+              }
+            }
+          ]
         },
         "Type": "System.DateTime",
         "IsRelationToOne": false,
@@ -246,7 +303,7 @@
           "$values": [
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.LinkedEntitiesDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "2855b532-bbe7-4173-b08d-7001db04b9bf",
+              "Id": "e3a636ae-5d75-455e-8093-5ff44e243ad2",
               "Alias": "linkedEntities",
               "Config": {
                 "$type": "RapidCMS.ModelMaker.Validation.Config.LinkedEntitiesDetailConfig, RapidCMS.ModelMaker",
@@ -260,7 +317,7 @@
             },
             {
               "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.CorrespondingPropertyDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
-              "Id": "f426387c-5fd1-46b6-9fc4-14e2808685e3",
+              "Id": "0aff684c-29c0-4d92-8cc0-137573bcfdb2",
               "Alias": "reciprocal",
               "Config": {
                 "$type": "RapidCMS.ModelMaker.Validation.Config.CorrespondingPropertyDetailConfig, RapidCMS.ModelMaker",

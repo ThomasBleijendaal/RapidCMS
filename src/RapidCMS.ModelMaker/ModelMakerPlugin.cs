@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Handlers;
@@ -299,12 +300,14 @@ namespace RapidCMS.ModelMaker
             string? label = default,
             string? icon = default)
         {
+            var @default = type.GetCustomAttribute<DefaultIconLabelAttribute>();
+
             var button = new ButtonSetup
             {
                 Buttons = Enumerable.Empty<IButtonSetup>(),
 
-                Label = label ?? "Button",
-                Icon = icon ?? "",
+                Label = label ?? @default?.Label ?? "Button",
+                Icon = icon ?? @default?.Icon ?? "",
                 IsPrimary = isPrimary,
 
                 ButtonId = Guid.NewGuid().ToString(),
@@ -316,18 +319,6 @@ namespace RapidCMS.ModelMaker
             };
 
             return Task.FromResult<IButtonSetup>(button);
-
-            //var response = await _buttonSetupResolver.ResolveSetupAsync(new DefaultButtonConfig
-            //{
-            //    ButtonType = type,
-            //    Icon = icon,
-            //    Id = $"{collection.Alias}::{type}",
-            //    IsPrimary = isPrimary,
-            //    Label = label,
-
-            //}, collection);
-
-            //return response.Setup;
         }
     }
 }

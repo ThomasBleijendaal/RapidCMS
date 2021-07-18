@@ -3,15 +3,15 @@
 @{ 
     var date = (DateTime?)GetValueAsObject();
 
-    if (!date.HasValue || date.Value == DateTime.MinValue)
+    if (date.HasValue && date.Value == DateTime.MinValue)
     {
         date = DateTime.UtcNow.Date;
     }
 }
 
-<input value=@date.Value.ToString("yyyy-MM-dd")
+<input value=@(!date.HasValue ? "" : date.Value.ToString("yyyy-MM-dd"))
        disabled=@IsDisabled
-       @onchange=@(args => SetValueFromObjectAsync((DateTime.TryParse(((string?)args.Value) ?? "", out var result) ? result : DateTime.UtcNow)))
+       @onchange=@(args => SetValueFromObjectAsync((DateTime.TryParse(((string?)args.Value) ?? "", out var result) ? result : default(DateTime?)!)))
        class="form-control @(CssHelper.GetValidationClass(State))"
        placeholder=@Placeholder
        type="date" />

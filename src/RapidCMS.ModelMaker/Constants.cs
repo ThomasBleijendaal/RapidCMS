@@ -22,7 +22,11 @@
             public const string LinkedEntities = "linkedEntities";
             public const string LinkedEntity = "linkedEntity";
             public const string MaxLength = "maxlength";
+            public const string MaxDateTime = "maxdatetime";
+            public const string MaxDateTimeDelta = "maxdatetimedelta";
             public const string MinLength = "minlength";
+            public const string MinDateTime = "mindatetime";
+            public const string MinDateTimeDelta = "mindatetimedelta";
             public const string BooleanLabels = "booleanLabels";
             public const string ReciprocalProperty = "reciprocal";
         }

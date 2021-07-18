@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Extensions;
 using RapidCMS.ModelMaker.Abstractions.Detail;
 using RapidCMS.ModelMaker.Models.Entities;

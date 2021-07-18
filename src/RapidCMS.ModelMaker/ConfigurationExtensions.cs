@@ -64,6 +64,34 @@ namespace RapidCMS.ModelMaker
                     EditorType.Numeric,
                     x => x.Config.MaxLength);
 
+                config.AddPropertyDetail<MinDateTimeDetailConfig, DateTime?>(
+                    Constants.PropertyDetails.MinDateTime,
+                    "Minimum date",
+                    "The value has to be at least this date.",
+                    EditorType.Date,
+                    x => x.Config.DateTime);
+
+                config.AddPropertyDetail<MinDateTimeDeltaDetailConfig, int?>(
+                    Constants.PropertyDetails.MinDateTimeDelta,
+                    "Minimum date delta",
+                    "The value has to be at least today - delta.",
+                    EditorType.Numeric,
+                    x => x.Config.Delta);
+
+                config.AddPropertyDetail<MaxDateTimeDetailConfig, DateTime?>(
+                    Constants.PropertyDetails.MaxDateTime,
+                    "Maximum date",
+                    "The value has to be at most this date.",
+                    EditorType.Date,
+                    x => x.Config.DateTime);
+
+                config.AddPropertyDetail<MaxDateTimeDeltaDetailConfig, int?>(
+                    Constants.PropertyDetails.MaxDateTimeDelta,
+                    "Maximum date delta",
+                    "The value has to be at most today + delta.",
+                    EditorType.Numeric,
+                    x => x.Config.Delta);
+
                 config.AddPropertyDetail<LimitedOptionsDetailConfig, IList<string>>(
                     Constants.PropertyDetails.LimitedOptions,
                     "Limited options",
@@ -145,7 +173,7 @@ namespace RapidCMS.ModelMaker
                         "Linked entities",
                         "Link",
                         new[] { Constants.Editors.EntitiesPicker },
-                        new[] { Constants.PropertyDetails.LinkedEntities, Constants.PropertyDetails.ReciprocalProperty }) // TODO: min max linkedentities
+                        new[] { Constants.PropertyDetails.LinkedEntities, Constants.PropertyDetails.ReciprocalProperty })
                     .CanBeUsedAsTitle(false)
                     .RelatesToManyEntities(true);
 
@@ -154,7 +182,7 @@ namespace RapidCMS.ModelMaker
                         "Date",
                         "Calendar",
                         new[] { Constants.Editors.Date },
-                        Enumerable.Empty<string>()); // TODO: date validation (valid ranges etc)
+                        new[] { Constants.PropertyDetails.MinDateTime, Constants.PropertyDetails.MaxDateTime, Constants.PropertyDetails.MinDateTimeDelta, Constants.PropertyDetails.MaxDateTimeDelta });
 
                 config.AddProperty<double>(
                         Constants.Properties.Numeric,
