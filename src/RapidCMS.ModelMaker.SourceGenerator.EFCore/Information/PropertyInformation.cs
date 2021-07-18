@@ -7,13 +7,14 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 {
     internal sealed class PropertyInformation : InformationBase, IInformation
     {
-        public PropertyInformation(bool hidden = false)
+        public PropertyInformation(EntityInformation entity, bool hidden = false)
         {
+            Entity = entity;
             Hidden = hidden;
         }
 
+        public EntityInformation Entity { get; }
         public bool Hidden { get; }
-
 
         public string? Name { get; private set; }
 
@@ -41,7 +42,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
             if (isRequired)
             {
-                Details.Add(new PropertyDetailInformation("NotNull"));
+                Details.Add(new PropertyDetailInformation("NotNull", "__required"));
             }
             return this;
         }
@@ -112,6 +113,14 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
                 Details.All(x => x.IsValid());
         }
 
+        public string? IsSlugForTitleProperty()
+        {
+            return Details.FirstOrDefault(x => x.Alias == "slug") is PropertyDetailInformation slug &&
+                Entity.Properties.FirstOrDefault(x => x.IsTitleOfEntity) is PropertyInformation titleProperty
+                    ? titleProperty.PascalCaseName
+                    : default;
+        }
+
         public IEnumerable<string> NamespacesUsed(Use use)
         {
             if (use == Use.Entity && Relation.HasFlag(Relation.ToMany))
@@ -119,7 +128,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
                 yield return "System.Collections.Generic";
             }
 
-            if (use == Use.Entity && (Required || Details.Any(x => x.ValidationMethodName == "MaximumLength")))
+            if (use == Use.Entity && (Required || Details.Any(x => x.Alias == "maxlength")))
             {
                 yield return "System.ComponentModel.DataAnnotations";
             }

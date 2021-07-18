@@ -18,7 +18,7 @@ namespace RapidCMS.Repositories
 {
     /// <summary>
     /// This generic repository saves TEntities in memory and has some basic support for one-to-many relations.
-    /// Use *only* List<TRelatedEntity> properties for relations.
+    /// Use *only* List&lt;TRelatedEntity&gt; properties for relations.
     /// </summary>
     /// <typeparam name="TEntity">Entity to store</typeparam>
     public class InMemoryRepository<TEntity> : BaseRepository<TEntity>

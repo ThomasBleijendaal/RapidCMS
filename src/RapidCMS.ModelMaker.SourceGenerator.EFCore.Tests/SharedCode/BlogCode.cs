@@ -20,6 +20,8 @@ namespace RapidCMS.ModelMaker
         
         public System.String Content { get; set; }
         
+        public System.String Slug { get; set; }
+        
         public RapidCMS.Example.ModelMaker.Models.Enums.ContentType Type { get; set; }
         
         public System.Boolean IsPublished { get; set; }
@@ -83,6 +85,7 @@ namespace RapidCMS.ModelMaker
                         {
                             section.AddField(x => x.Title).SetType(typeof(RapidCMS.UI.Components.Editors.TextBoxEditor)).SetName(""Title"");
                             section.AddField(x => x.Content).SetType(typeof(RapidCMS.UI.Components.Editors.TextAreaEditor)).SetName(""Content"");
+                            section.AddField(x => x.Slug).SetType(typeof(RapidCMS.UI.Components.Editors.TextBoxEditor)).SetConfiguration(new RapidCMS.Core.Models.UI.Configurability.DefaultValueEditorConfig<Blog>(x => x.Title?.ToUrlFriendlyString())).SetName(""Slug"");
                             section.AddField(x => x.Type).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection<RapidCMS.Core.Providers.EnumDataProvider<RapidCMS.Example.ModelMaker.Models.Enums.ContentType>>().SetName(""Type"");
                             section.AddField(x => x.IsPublished).SetType(typeof(RapidCMS.UI.Components.Editors.DropdownEditor)).SetDataCollection<RapidCMS.ModelMaker.DataCollections.BooleanLabelDataCollection, BooleanLabelDetailConfig>(new BooleanLabelDetailConfig { Labels = new BooleanLabelDetailConfig.LabelsConfig { TrueLabel = ""True"", FalseLabel = ""False"" } }).SetName(""Is Published"");
                             section.AddField(x => x.PublishDate).SetType(typeof(RapidCMS.UI.Components.Editors.DateEditor)).SetName(""Publish Date"");
@@ -188,6 +191,7 @@ namespace RapidCMS.ModelMaker
             entity.IsPublished = editContext.Entity.IsPublished;
             entity.MainCategoryId = editContext.Entity.MainCategoryId;
             entity.PublishDate = editContext.Entity.PublishDate;
+            entity.Slug = editContext.Entity.Slug;
             entity.Title = editContext.Entity.Title;
             entity.Type = editContext.Entity.Type;
             
@@ -238,6 +242,9 @@ namespace RapidCMS.ModelMaker
                 .MinimumLength(1)
                 .MaximumLength(127)
                 .BannedContent(new BannedContentValidationConfig { BannedWords = new List<string> { ""a"", ""b"", ""c"" } });
+            RuleFor(x => x.Slug)
+                .NotNull()
+                .UrlFriendly();
             RuleFor(x => x.IsPublished)
                 .NotNull();
             RuleFor(x => x.PublishDate)

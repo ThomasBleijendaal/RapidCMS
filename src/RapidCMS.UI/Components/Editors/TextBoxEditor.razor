@@ -1,7 +1,7 @@
 ﻿@inherits BasePropertyEditor
 
-<input value=@GetValueAsString()
-       @onchange=@(args => SetValueFromStringAsync(((string?)args.Value) ?? ""))
+<input value="@GetValue()"
+       @onchange="@(e => SetValueAsync(e.Value as string ?? ""))"
        disabled=@IsDisabled
        placeholder=@Placeholder
        class="form-control @(CssHelper.GetValidationClass(State))" />
@@ -11,4 +11,68 @@
     <div class="invalid-feedback">
         @message
     </div>
+}
+
+@code
+{
+    private DefaultValueEditorConfig? _defaultValueConfig => Configuration as DefaultValueEditorConfig;
+
+    private string PreviousValue = "";
+    private string PreviousDefaultValue = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        PreviousValue = GetValueAsString();
+
+        if (_defaultValueConfig != null)
+        {
+            PreviousDefaultValue = _defaultValueConfig.GetDefaultValue(Entity) as string ?? "";
+
+            if (string.IsNullOrEmpty(PreviousValue) && !string.IsNullOrEmpty(PreviousDefaultValue))
+            {
+                await SetValueFromStringAsync(PreviousDefaultValue);
+            }
+
+            PreviousValue = PreviousDefaultValue;
+        }
+    }
+
+    private string GetValue()
+    {
+        var value = GetValueAsString();
+
+        if (value == PreviousValue && _defaultValueConfig != null)
+        {
+            if (PreviousValue == PreviousDefaultValue)
+            {
+                PreviousDefaultValue = _defaultValueConfig.GetDefaultValue(Entity) as string ?? "";
+
+                if (PreviousValue != PreviousDefaultValue)
+                {
+                    PreviousValue = PreviousDefaultValue;
+
+                    SetValueFromString(PreviousValue);
+                }
+            }
+        }
+        else
+        {
+            PreviousValue = value ?? "";
+        }
+
+        return PreviousValue;
+    }
+
+    private async Task SetValueAsync(string value)
+    {
+        if (string.IsNullOrEmpty(value) && _defaultValueConfig != null)
+        {
+            value = _defaultValueConfig.GetDefaultValue(Entity) as string ?? "";
+
+        }
+
+        await SetValueFromStringAsync(value);
+    }
 }

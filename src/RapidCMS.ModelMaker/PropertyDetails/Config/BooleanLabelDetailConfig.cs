@@ -27,7 +27,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
 
         public string? ValidationMethodName => default;
 
-        public class LabelsConfig: IEntity
+        public class LabelsConfig : IEntity
         {
             [Required]
             [MinLength(1)]

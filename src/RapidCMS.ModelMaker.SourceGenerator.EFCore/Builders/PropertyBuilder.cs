@@ -12,7 +12,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
             indentWriter.WriteLine();
 
             if (info.Type == "System.String" && 
-                info.Details.FirstOrDefault(detail => detail.ValidationMethodName == "MaximumLength") is PropertyDetailInformation maxLengthDetail &&
+                info.Details.FirstOrDefault(detail => detail.Alias == "maxlength") is PropertyDetailInformation maxLengthDetail &&
                 maxLengthDetail.Value is long maxLength &&
                 maxLength > 0)
             {

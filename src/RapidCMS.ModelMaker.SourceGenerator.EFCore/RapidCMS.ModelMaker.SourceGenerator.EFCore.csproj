@@ -22,8 +22,6 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageProjectUrl>https://github.com/ThomasBleijendaal/RapidCMS</PackageProjectUrl>
-    <NoPackageAnalysis>true</NoPackageAnalysis>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageVersion>$(PackageVersion)</PackageVersion>
   </PropertyGroup>
 
@@ -33,6 +31,8 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <NoWarn>1701;1702;1591</NoWarn>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -50,8 +50,25 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <!--Generator dependencies-->
+  <!-- Generator dependencies (when debugging) -->
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" GeneratePathProperty="true" />
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+  </PropertyGroup>
+
+  <Target Name="GetDependencyTargetPaths" Condition="'$(Configuration)'=='Debug'">
+    <ItemGroup>
+      <TargetPathWithTargetPlatformMoniker Include="$(PKGNewtonsoft_Json)\lib\netstandard2.0\Newtonsoft.Json.dll" IncludeRuntimeDependency="false" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Generator dependencies (when building for release) -->
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" GeneratePathProperty="true" PrivateAssets="all" />
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />

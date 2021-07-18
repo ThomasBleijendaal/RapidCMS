@@ -29,6 +29,7 @@
             public const string MinDateTimeDelta = "mindatetimedelta";
             public const string BooleanLabels = "booleanLabels";
             public const string ReciprocalProperty = "reciprocal";
+            public const string Slug = "slug";
         }
 
         public static class Properties
@@ -38,6 +39,7 @@
             public const string LinkedEntities = "linkedentities";
             public const string LinkedEntity = "linkedentity";
             public const string LongString = "longstring";
+            public const string Slug = "slug";
             public const string Numeric = "double";
             public const string ShortString = "shortstring";
         }

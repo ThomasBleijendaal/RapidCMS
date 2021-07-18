@@ -37,5 +37,13 @@ namespace RapidCMS.UI.Components.Editors
                 await SetValueFromObjectAsync(obj);
             }
         }
+
+        protected internal void SetValueFromString(string value)
+        {
+            if (!IsDisabled)
+            {
+                Property.Setter(Entity, value);
+            }
+        }
     }
 }

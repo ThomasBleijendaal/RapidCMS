@@ -59,6 +59,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
                 indentWriter.Write($".SetCollectionRelation(\"{info.RelatedCollectionAlias}\")");
             }
 
+            if (info.IsSlugForTitleProperty() is string titleProperty)
+            {
+                indentWriter.Write($".SetConfiguration(new RapidCMS.Core.Models.UI.Configurability.DefaultValueEditorConfig<{info.Entity.Name}>(x => x.{titleProperty}?.ToUrlFriendlyString()))");
+            }
+
             indentWriter.Write($".SetName(\"{info.Name}\")");
 
             indentWriter.WriteLine(";");

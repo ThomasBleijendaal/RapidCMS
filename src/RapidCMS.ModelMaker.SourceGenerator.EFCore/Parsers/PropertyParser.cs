@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using RapidCMS.ModelMaker.SourceGenerator.EFCore.Enums;
@@ -24,7 +22,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
         public PropertyInformation ParseProperty(EntityInformation entity, JObject property)
         {
-            var info = new PropertyInformation();
+            var info = new PropertyInformation(entity);
 
             if (property.Value<string>("Name") is string propertyName)
             {
@@ -74,7 +72,12 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                         continue;
                     }
 
-                    var detailInfo = new PropertyDetailInformation(typeName, @namespace);
+                    if (detail.Value<string>("Alias") is not string alias)
+                    {
+                        continue;
+                    }
+
+                    var detailInfo = new PropertyDetailInformation(typeName, @namespace, alias);
 
                     if (detailConfig.Value<string>("DataCollectionType") is string dataCollection &&
                         ParseTypeWithNamespace(dataCollection) is string dataCollectionType)

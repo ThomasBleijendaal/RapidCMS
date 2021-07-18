@@ -100,6 +100,39 @@
       },
       {
         "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
+        "Id": "675f032f-34eb-4fd5-885c-536bdaafa3ce",
+        "Name": "Slug",
+        "IsTitle": false,
+        "IncludeInListView": false,
+        "IsRequired": true,
+        "PropertyAlias": "slug",
+        "EditorAlias": "textbox",
+        "Details": {
+          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
+          "$values": [
+            {
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.SlugDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "19270886-d32f-4d1f-a257-2fa16e9b718a",
+              "Alias": "slug",
+              "Config": {
+                "$type": "RapidCMS.ModelMaker.Validation.Config.SlugDetailConfig, RapidCMS.ModelMaker",
+                "Dummy": null,
+                "IsEnabled": true,
+                "AlwaysIncluded": true,
+                "RelatedCollectionAlias": null,
+                "ValidationMethodName": "UrlFriendly",
+                "DataCollectionType": null
+              }
+            }
+          ]
+        },
+        "Type": "System.String",
+        "IsRelationToOne": false,
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.TextBoxEditor"
+      },
+      {
+        "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
         "Id": "f048d0f0-4d82-48a1-86b2-2d98d98c4a0f",
         "Name": "Type",
         "IsTitle": false,

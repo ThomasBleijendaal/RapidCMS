@@ -176,7 +176,7 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
                     _ => Relation.None
                 };
 
-                var adHocProperty = new PropertyInformation(true)
+                var adHocProperty = new PropertyInformation(relation.Entity, true)
                     .UseFor(Use.Entity)
                     .HasName($"{relation.Entity.PascalCaseName}{relation.Property.PascalCaseName}")
                     .IsType($"{context.Namespace}.{relation.Entity.PascalCaseName}")

@@ -11,6 +11,7 @@ namespace RapidCMS.ModelMaker.Validation.Config
         public string LinkedEntitiesCollectionAlias { get; set; } = string.Empty;
 
         public bool IsEnabled => !string.IsNullOrWhiteSpace(LinkedEntitiesCollectionAlias);
+
         public bool AlwaysIncluded => false;
 
         public bool IsApplicable(PropertyModel model)

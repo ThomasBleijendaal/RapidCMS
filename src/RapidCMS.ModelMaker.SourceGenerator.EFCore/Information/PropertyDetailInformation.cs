@@ -6,15 +6,17 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 {
     internal sealed class PropertyDetailInformation : InformationBase, IInformation
     {
-        public PropertyDetailInformation(string validationMethodName)
+        public PropertyDetailInformation(string validationMethodName, string alias)
         {
             ValidationMethodName = validationMethodName ?? throw new System.ArgumentNullException(nameof(validationMethodName));
+            Alias = alias;
         }
 
-        public PropertyDetailInformation(string configType, string @namespace)
+        public PropertyDetailInformation(string configType, string @namespace, string alias)
         {
             ConfigType = configType ?? throw new System.ArgumentNullException(nameof(configType));
             Namespace = @namespace ?? throw new System.ArgumentNullException(nameof(@namespace));
+            Alias = alias;
         }
 
         public bool IsValid()
@@ -48,6 +50,8 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Information
 
         public string? ConfigType { get; private set; }
         public string? Namespace { get; private set; }
+
+        public string Alias { get; set; }
 
         public string? ValidationMethodName { get; private set; }
 

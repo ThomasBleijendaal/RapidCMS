@@ -127,6 +127,13 @@ namespace RapidCMS.ModelMaker
                     EditorType.ModelEditor,
                     x => x.Config.Labels);
 
+                config.AddPropertyDetail<SlugDetailConfig, string?>(
+                    Constants.PropertyDetails.Slug,
+                    "Slug",
+                    "Automatically converts the title property to the slug",
+                    EditorType.TextBox,
+                    x => x.Config.Dummy);
+
                 config.AddPropertyEditor(Constants.Editors.Checkbox, "Checkbox", EditorType.Checkbox);
                 config.AddPropertyEditor(Constants.Editors.Date, "Date", EditorType.Date);
                 config.AddPropertyEditor(Constants.Editors.Dropdown, "Dropdown", EditorType.Dropdown);
@@ -151,6 +158,13 @@ namespace RapidCMS.ModelMaker
                         "Label",
                         new[] { Constants.Editors.TextArea },
                         new[] { Constants.PropertyDetails.MinLength });
+
+                config.AddProperty<string>(
+                        Constants.Properties.Slug,
+                        "Slug",
+                        "Link",
+                        new[] { Constants.Editors.TextBox },
+                        new[] { Constants.PropertyDetails.Slug });
 
                 config.AddProperty<bool>(
                         Constants.Properties.Boolean,
