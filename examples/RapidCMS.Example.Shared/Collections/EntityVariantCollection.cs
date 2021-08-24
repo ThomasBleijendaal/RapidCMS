@@ -25,7 +25,7 @@ namespace RapidCMS.Example.Shared.Collections
                         view.AddDefaultButton(DefaultButtonType.New, label: "New {0}");
                         view.AddDefaultButton(DefaultButtonType.Return);
 
-                        view.SetColumnVisibility(EmptyVariantColumnVisibility.Visible);
+                        view.SetColumnVisibility(EmptyVariantColumnVisibility.Collapse);
 
                         view.SetPageSize(10);
 
