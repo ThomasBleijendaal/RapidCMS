@@ -100,11 +100,11 @@
 
         if ((bool?)e.Value == true)
         {
-            RelationDataCollection!.AddElement(element);
+            RelationDataCollection!.AddElement(element.Id);
         }
         else
         {
-            RelationDataCollection!.RemoveElement(element);
+            RelationDataCollection!.RemoveElement(element.Id);
         }
 
         await EditContext.NotifyPropertyChangedAsync(Property);
