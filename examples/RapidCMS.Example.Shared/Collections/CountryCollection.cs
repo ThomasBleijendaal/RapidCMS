@@ -88,7 +88,7 @@ namespace RapidCMS.Example.Shared.Collections
 
                             section.AddField(x => x.People)
                                 // a multi-select is a list of checkboxes
-                                .SetType(EditorType.EntitiesPicker)
+                                .SetType(EditorType.MultiSelect)
                                 // this binds the PersonCollection to this collection
                                 // the CMS must know what the foreign entity and key is, you need to specify it
                                 .SetCollectionRelation<Person, int>(
