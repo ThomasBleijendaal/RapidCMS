@@ -137,7 +137,8 @@ namespace RapidCMS.Core.Dispatchers.Form
                     var newEntity = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.InsertAsync(insertContext));
                     if (newEntity == null)
                     {
-                        throw new Exception("Inserting the new entity failed.");
+                        // add another
+                        break;
                     }
 
                     if (request is PersistRelatedEntityRequestModel related)
