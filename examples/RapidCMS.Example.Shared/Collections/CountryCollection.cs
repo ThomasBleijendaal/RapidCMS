@@ -91,23 +91,28 @@ namespace RapidCMS.Example.Shared.Collections
                                 .SetType(EditorType.MultiSelect)
                                 // this binds the PersonCollection to this collection
                                 // the CMS must know what the foreign entity and key is, you need to specify it
-                                .SetCollectionRelation<Person, int>(
-                                    // this selects which values are used as selected values 
-                                    people => people.Select(p => p.Id),
-                                    // alias of the related collection
-                                    "person",
-                                    // this callback allows you to specify how the multi-select should look like
-                                    relation =>
-                                    {
-                                        relation
-                                            // when the user selects an element, the value that is used as Id is used
-                                            // to set the value of the property
-                                            .SetElementIdProperty(x => x.Id)
+                                .SetCollectionRelation<Person, RandomRepo>(configure =>
+                                {
+                                    configure.SetElementDisplayProperties(x => x.Name);
+                                    configure.SetElementIdProperty(x => x.Id);
+                                });
+                                //.SetCollectionRelation<Person, int>(
+                                //    // this selects which values are used as selected values 
+                                //    people => people.Select(p => p.Id),
+                                //    // alias of the related collection
+                                //    "person",
+                                //    // this callback allows you to specify how the multi-select should look like
+                                //    relation =>
+                                //    {
+                                //        relation
+                                //            // when the user selects an element, the value that is used as Id is used
+                                //            // to set the value of the property
+                                //            .SetElementIdProperty(x => x.Id)
 
-                                            // multiple display properties can be used to display the dropdown, even
-                                            // with nested properties
-                                            .SetElementDisplayProperties(x => x.Name, x => x.Details.Email);
-                                    });
+                                //            // multiple display properties can be used to display the dropdown, even
+                                //            // with nested properties
+                                //            .SetElementDisplayProperties(x => x.Name, x => x.Details.Email);
+                                //    });
                         });
                     });
             });

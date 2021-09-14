@@ -48,6 +48,7 @@ namespace RapidCMS.Example.Server
             services.AddScoped<BaseRepository<Tag>, JsonRepository<Tag>>();
             services.AddScoped<BaseRepository<EntityVariantBase>, InMemoryRepository<EntityVariantBase>>();
             services.AddScoped<BaseRepository<Counter>, CounterRepository>();
+            services.AddScoped<RandomRepo>();
 
             services.AddScoped<BaseMappedRepository<MappedEntity, DatabaseEntity>, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
             services.AddSingleton<IConverter<MappedEntity, DatabaseEntity>, Mapper>();

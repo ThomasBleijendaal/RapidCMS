@@ -145,32 +145,35 @@ namespace Microsoft.Extensions.DependencyInjection
 
             void ProcessCollection(ICollectionConfig collection)
             {
-                var descriptor = services.FirstOrDefault(x => x.ServiceType == collection.RepositoryType);
-                if (descriptor == null)
+                foreach (var repository in collection.RepositoryTypes)
                 {
-                    throw new InvalidOperationException($"Could not find service descriptor for {collection.RepositoryType}. Please add it to the service collection.");
-                }
+                    var descriptor = services.FirstOrDefault(x => x.ServiceType == repository);
+                    if (descriptor == null)
+                    {
+                        continue;
+                    }
 
-                var implementationType = descriptor.ImplementationType;
-                if (implementationType == null)
-                {
-                    throw new InvalidOperationException($"Could not find implementation type for {collection.RepositoryType}. Please add it as type to the service collection.");
-                }
+                    var implementationType = descriptor.ImplementationType;
+                    if (implementationType == null)
+                    {
+                        continue;
+                    }
 
-                var repositoryAlias = AliasHelper.GetRepositoryAlias(implementationType);
+                    var repositoryAlias = AliasHelper.GetRepositoryAlias(implementationType);
 
-                repositoryTypeDictionary[repositoryAlias] = collection.RepositoryType;
-                reverseRepositoryTypeDictionary[collection.RepositoryType] = repositoryAlias;
-                if (implementationType != collection.RepositoryType)
-                {
-                    reverseRepositoryTypeDictionary[implementationType] = repositoryAlias;
-                }
+                    repositoryTypeDictionary[repositoryAlias] = repository;
+                    reverseRepositoryTypeDictionary[repository] = repositoryAlias;
+                    if (implementationType != repository)
+                    {
+                        reverseRepositoryTypeDictionary[implementationType] = repositoryAlias;
+                    }
 
-                if (!collectionAliasDictionary.ContainsKey(repositoryAlias))
-                {
-                    collectionAliasDictionary.Add(repositoryAlias, new List<string>());
+                    if (!collectionAliasDictionary.ContainsKey(repositoryAlias))
+                    {
+                        collectionAliasDictionary.Add(repositoryAlias, new List<string>());
+                    }
+                    collectionAliasDictionary[repositoryAlias].Add(collection.Alias);
                 }
-                collectionAliasDictionary[repositoryAlias].Add(collection.Alias);
 
                 foreach (var subCollection in collection.CollectionsAndPages.OfType<ICollectionConfig>().Where(x => x is not ReferencedCollectionConfig))
                 {
