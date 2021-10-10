@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Extensions
 {
@@ -103,6 +104,9 @@ namespace RapidCMS.Core.Extensions
             return elements
                 .FirstOrDefault(x => x.GetType().GetInterfaces().Any(i => i == typeof(T))) as T;
         }
+
+        internal static IEnumerable<Type> GetRepositoryTypes(this IEnumerable<PaneConfig> panes)
+           => panes.SelectMany(x => x.Fields.Select(x => x.Relation).OfType<RepositoryRelationConfig>().Select(x => x.RelatedRepositoryType)).OfType<Type>();
 
         public static int? FindIndex<T>(this IEnumerable<T> source, Func<T, bool> predicate)
             => source.Select((element, index) => new { element, index }).FirstOrDefault(x => predicate.Invoke(x.element))?.index;

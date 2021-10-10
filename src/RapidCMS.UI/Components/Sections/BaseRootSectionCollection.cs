@@ -47,7 +47,7 @@ namespace RapidCMS.UI.Components.Sections
             }
             else
             {
-                var listUI = uiResolver.GetListDetails();
+                var listUI = ListUI ?? uiResolver.GetListDetails();
 
                 var (listContext, sections) = await LoadSectionsAsync(listUI, uiResolver);
 
