@@ -1,6 +1,7 @@
 ﻿using System;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 
 namespace RapidCMS.Core.Models.UI
@@ -16,6 +17,7 @@ namespace RapidCMS.Core.Models.UI
             ShouldConfirm = handler.ShouldAskForConfirmation(button, editContext);
             IsPrimary = button.IsPrimary;
             RequiresValidForm = handler.RequiresValidForm(button, editContext);
+            IsVisible = button.IsVisible;
             CustomType = button.CustomType;
         }
 
@@ -25,6 +27,7 @@ namespace RapidCMS.Core.Models.UI
         public bool ShouldConfirm { get; private set; }
         public bool IsPrimary { get; private set; }
         public bool RequiresValidForm { get; private set; }
+        public Func<object, EntityState, bool> IsVisible { get; set; }
 
         public Type? CustomType { get; private set; }
     }

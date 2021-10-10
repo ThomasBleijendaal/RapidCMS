@@ -44,7 +44,7 @@ namespace RapidCMS.Core.Models.Config
             CustomType = customSectionType;
         }
 
-        private PaneConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
+        private PaneConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label, string? icon, bool isPrimary, Func<IEntity, EntityState, bool>? predicate)
         {
             var button = new DefaultButtonConfig
             {
@@ -54,12 +54,14 @@ namespace RapidCMS.Core.Models.Config
                 IsPrimary = isPrimary
             };
 
+            button.VisibleWhen(predicate);
+
             Buttons.Add(button);
 
             return this;
         }
 
-        private PaneConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
+        private PaneConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label, string? icon, Func<IEntity, EntityState, bool>? predicate)
         {
             var button = new CustomButtonConfig(buttonType, typeof(TActionHandler))
             {
@@ -67,12 +69,14 @@ namespace RapidCMS.Core.Models.Config
                 Label = label
             };
 
+            button.VisibleWhen(predicate);
+
             Buttons.Add(button);
 
             return this;
         }
 
-        private PaneConfig<TEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null)
+        private PaneConfig<TEntity> AddPaneButton(Type paneType, string? label, string? icon, Func<IEntity, EntityState, bool>? predicate)
         {
             var button = new PaneButtonConfig(paneType)
             {
@@ -80,18 +84,22 @@ namespace RapidCMS.Core.Models.Config
                 Label = label
             };
 
+            button.VisibleWhen(predicate);
+
             Buttons.Add(button);
 
             return this;
         }
 
-        public PaneConfig<TEntity> AddNavigationButton<TNavigationHandler>(string? label = null, string? icon = null)
+        public PaneConfig<TEntity> AddNavigationButton<TNavigationHandler>(string? label, string? icon, Func<IEntity, EntityState, bool>? predicate)
         {
             var button = new NavigationButtonConfig(typeof(TNavigationHandler))
             {
                 Icon = icon,
                 Label = label
             };
+
+            button.VisibleWhen(predicate);
 
             Buttons.Add(button);
 
@@ -185,17 +193,17 @@ namespace RapidCMS.Core.Models.Config
             return config;
         }
 
-        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddDefaultButton(DefaultButtonType type, string? label, string? icon, bool isPrimary) 
-            => AddDefaultButton(type, label, icon, isPrimary);
+        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddDefaultButton(DefaultButtonType type, string? label, string? icon, bool isPrimary, Func<IEntity, EntityState, bool>? isVisible) 
+            => AddDefaultButton(type, label, icon, isPrimary, isVisible);
 
-        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddCustomButton<TActionHandler>(Type buttonType, string? label, string? icon) 
-            => AddCustomButton<TActionHandler>(buttonType, label, icon);
+        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddCustomButton<TActionHandler>(Type buttonType, string? label, string? icon, Func<IEntity, EntityState, bool>? isVisible) 
+            => AddCustomButton<TActionHandler>(buttonType, label, icon, isVisible);
 
-        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddPaneButton(Type paneType, string? label, string? icon) 
-            => AddPaneButton(paneType, label, icon);
+        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddPaneButton(Type paneType, string? label, string? icon, Func<IEntity, EntityState, bool>? isVisible) 
+            => AddPaneButton(paneType, label, icon, isVisible);
 
-        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddNavigationButton<TNavigationHandler>(string? label, string? icon) 
-            => AddNavigationButton<TNavigationHandler>(label, icon);
+        IDisplayPaneConfig<TEntity> IHasButtons<IDisplayPaneConfig<TEntity>>.AddNavigationButton<TNavigationHandler>(string? label, string? icon, Func<IEntity, EntityState, bool>? isVisible) 
+            => AddNavigationButton<TNavigationHandler>(label, icon, isVisible);
 
         IDisplayPaneConfig<TEntity> IDisplayPaneConfig<TEntity>.AddSubCollectionList(string collectionAlias) 
             => AddSubCollectionList(collectionAlias);
@@ -233,17 +241,17 @@ namespace RapidCMS.Core.Models.Config
             return config;
         }
 
-        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddDefaultButton(DefaultButtonType type, string? label, string? icon, bool isPrimary) 
-            => AddDefaultButton(type, label, icon, isPrimary);
+        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddDefaultButton(DefaultButtonType type, string? label, string? icon, bool isPrimary, Func<IEntity, EntityState, bool>? isVisible) 
+            => AddDefaultButton(type, label, icon, isPrimary, isVisible);
 
-        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddCustomButton<TActionHandler>(Type buttonType, string? label, string? icon) 
-            => AddCustomButton<TActionHandler>(buttonType, label, icon);
+        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddCustomButton<TActionHandler>(Type buttonType, string? label, string? icon, Func<IEntity, EntityState, bool>? isVisible) 
+            => AddCustomButton<TActionHandler>(buttonType, label, icon, isVisible);
 
-        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddPaneButton(Type paneType, string? label, string? icon) 
-            => AddPaneButton(paneType, label, icon);
+        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddPaneButton(Type paneType, string? label, string? icon, Func<IEntity, EntityState, bool>? isVisible) 
+            => AddPaneButton(paneType, label, icon, isVisible);
 
-        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddNavigationButton<TNavigationHandler>(string? label, string? icon) 
-            => AddNavigationButton<TNavigationHandler>(label, icon);
+        IEditorPaneConfig<TEntity> IHasButtons<IEditorPaneConfig<TEntity>>.AddNavigationButton<TNavigationHandler>(string? label, string? icon, Func<IEntity, EntityState, bool>? isVisible) 
+            => AddNavigationButton<TNavigationHandler>(label, icon, isVisible);
 
         IEditorPaneConfig<TEntity> IEditorPaneConfig<TEntity>.AddSubCollectionList(string collectionAlias) 
             => AddSubCollectionList(collectionAlias);

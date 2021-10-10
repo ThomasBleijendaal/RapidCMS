@@ -13,7 +13,7 @@ namespace RapidCMS.Core.Models.Config
         {
         }
 
-        public INodeEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
+        public INodeEditorConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false, Func<IEntity, EntityState, bool>? isVisible = null)
         {
             var button = new DefaultButtonConfig
             {
@@ -23,12 +23,14 @@ namespace RapidCMS.Core.Models.Config
                 IsPrimary = isPrimary
             };
 
+            button.VisibleWhen(isVisible);
+
             Buttons.Add(button);
 
             return this;
         }
 
-        public INodeEditorConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
+        public INodeEditorConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null, Func<IEntity, EntityState, bool>? isVisible = null)
             where TActionHandler : IButtonActionHandler
         {
             var button = new CustomButtonConfig(buttonType, typeof(TActionHandler))
@@ -37,12 +39,14 @@ namespace RapidCMS.Core.Models.Config
                 Label = label
             };
 
+            button.VisibleWhen(isVisible);
+
             Buttons.Add(button);
 
             return this;
         }
 
-        public INodeEditorConfig<TEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null)
+        public INodeEditorConfig<TEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null, Func<IEntity, EntityState, bool>? isVisible = null)
         {
             var button = new PaneButtonConfig(paneType)
             {
@@ -50,12 +54,14 @@ namespace RapidCMS.Core.Models.Config
                 Label = label
             };
 
+            button.VisibleWhen(isVisible);
+
             Buttons.Add(button);
 
             return this;
         }
 
-        public INodeEditorConfig<TEntity> AddNavigationButton<TNavigationHandler>(string? label = null, string? icon = null)
+        public INodeEditorConfig<TEntity> AddNavigationButton<TNavigationHandler>(string? label = null, string? icon = null, Func<IEntity, EntityState, bool>? isVisible = null)
             where TNavigationHandler : INavigationHandler
         {
             var button = new NavigationButtonConfig(typeof(TNavigationHandler))
@@ -64,26 +70,22 @@ namespace RapidCMS.Core.Models.Config
                 Label = label
             };
 
+            button.VisibleWhen(isVisible);
+
             Buttons.Add(button);
 
             return this;
         }
 
-        public INodeEditorConfig<TEntity> AddSection(Action<IEditorPaneConfig<TEntity>>? configure)
-        {
-            return AddSection<TEntity>(configure);
-        }
+        public INodeEditorConfig<TEntity> AddSection(Action<IEditorPaneConfig<TEntity>>? configure) 
+            => AddSection<TEntity>(configure);
 
-        public INodeEditorConfig<TEntity> AddSection(Type customSectionType, Action<IEditorPaneConfig<TEntity>>? configure = null)
-        {
-            return AddSection<TEntity>(customSectionType, configure);
-        }
+        public INodeEditorConfig<TEntity> AddSection(Type customSectionType, Action<IEditorPaneConfig<TEntity>>? configure = null) 
+            => AddSection<TEntity>(customSectionType, configure);
 
         public INodeEditorConfig<TEntity> AddSection<TDerivedEntity>(Action<IEditorPaneConfig<TDerivedEntity>>? configure)
-            where TDerivedEntity : TEntity
-        {
-            return AddSection(null, configure);
-        }
+            where TDerivedEntity : TEntity 
+            => AddSection(null, configure);
 
         public INodeEditorConfig<TEntity> AddSection<TDerivedEntity>(Type? customSectionType, Action<IEditorPaneConfig<TDerivedEntity>>? configure)
             where TDerivedEntity : TEntity

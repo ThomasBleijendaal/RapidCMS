@@ -1,5 +1,4 @@
 ﻿using RapidCMS.Core.Enums;
-using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Config
 {

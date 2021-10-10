@@ -43,7 +43,7 @@ namespace RapidCMS.Core.Repositories
         /// 
         /// This query is based on the TDatabaseEntity, and not TEntity to allow for mapping.
         /// </summary>
-        /// <param name="relatedEntity"></param>
+        /// <param name="related"></param>
         /// <param name="query"></param>
         /// <returns></returns>
         public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IQuery<TDatabaseEntity> query)
@@ -54,7 +54,7 @@ namespace RapidCMS.Core.Repositories
         /// 
         /// This query is based on the TDatabaseEntity, and not TEntity to allow for mapping.
         /// </summary>
-        /// <param name="relatedEntity"></param>
+        /// <param name="related"></param>
         /// <param name="query"></param>
         /// <returns></returns>
         public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TDatabaseEntity> query)

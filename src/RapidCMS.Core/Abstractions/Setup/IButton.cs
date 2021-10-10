@@ -1,4 +1,5 @@
-﻿using RapidCMS.Core.Enums;
+﻿using System;
+using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Abstractions.Setup
 {
@@ -10,5 +11,7 @@ namespace RapidCMS.Core.Abstractions.Setup
         string Icon { get; }
 
         IEntityVariantSetup? EntityVariant { get; }
+
+        Func<object, EntityState, bool> IsVisible { get; }
     }
 }

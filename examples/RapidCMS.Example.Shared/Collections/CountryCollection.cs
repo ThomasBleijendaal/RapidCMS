@@ -61,7 +61,7 @@ namespace RapidCMS.Example.Shared.Collections
                             .AddDefaultButton(DefaultButtonType.SaveNew)
 
                             // using navigation buttons can help the user to other pages quickly
-                            .AddNavigationButton<NavigateToPersonHandler>("Create new person", "FollowUser");
+                            .AddNavigationButton<NavigateToPersonHandler>("Create new person", "FollowUser", isVisible: (country, state) => state == EntityState.IsExisting);
 
                         editor.AddSection(section =>
                         {

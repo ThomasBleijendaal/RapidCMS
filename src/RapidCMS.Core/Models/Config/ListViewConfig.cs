@@ -34,7 +34,7 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
-        public IListViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
+        public IListViewConfig<TEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false, Func<IEntity, EntityState, bool>? isVisible = null)
         {
             var button = new DefaultButtonConfig
             {
@@ -44,12 +44,14 @@ namespace RapidCMS.Core.Models.Config
                 IsPrimary = isPrimary
             };
 
+            button.VisibleWhen(isVisible);
+
             Buttons.Add(button);
 
             return this;
         }
 
-        public IListViewConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
+        public IListViewConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null, Func<IEntity, EntityState, bool>? isVisible = null)
             where TActionHandler : IButtonActionHandler
         {
             var button = new CustomButtonConfig(buttonType, typeof(TActionHandler))
@@ -58,12 +60,14 @@ namespace RapidCMS.Core.Models.Config
                 Label = label
             };
 
+            button.VisibleWhen(isVisible);
+
             Buttons.Add(button);
 
             return this;
         }
 
-        public IListViewConfig<TEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null)
+        public IListViewConfig<TEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null, Func<IEntity, EntityState, bool>? isVisible = null)
         {
             var button = new PaneButtonConfig(paneType)
             {
@@ -71,12 +75,14 @@ namespace RapidCMS.Core.Models.Config
                 Label = label
             };
 
+            button.VisibleWhen(isVisible);
+
             Buttons.Add(button);
 
             return this;
         }
 
-        public IListViewConfig<TEntity> AddNavigationButton<TNavigationHandler>(string? label = null, string? icon = null)
+        public IListViewConfig<TEntity> AddNavigationButton<TNavigationHandler>(string? label = null, string? icon = null, Func<IEntity, EntityState, bool>? isVisible = null)
             where TNavigationHandler : INavigationHandler
         {
             var button = new NavigationButtonConfig(typeof(TNavigationHandler))
@@ -84,6 +90,8 @@ namespace RapidCMS.Core.Models.Config
                 Icon = icon,
                 Label = label
             };
+
+            button.VisibleWhen(isVisible);
 
             Buttons.Add(button);
 

@@ -67,7 +67,6 @@ namespace RapidCMS.Core.Abstractions.Config
         /// 
         /// Uses the default Element configuration of the referenced collection to display the options.
         /// </summary>
-        /// <typeparam name="TRelatedEntity">Entity of the bound collection.</typeparam>
         /// <param name="collectionAlias">Alias of the collection to bind.</param>
         /// <returns></returns>
         IEditorFieldConfig<TEntity, TValue> SetCollectionRelation(string collectionAlias);
@@ -88,7 +87,6 @@ namespace RapidCMS.Core.Abstractions.Config
         /// </summary>
         /// <typeparam name="TRelatedEntity">Entity of the bound collection.</typeparam>
         /// <typeparam name="TRelatedRepository">Type of the repository.</typeparam>
-        /// <param name="collectionAlias">Alias of the collection to bind.</param>
         /// <param name="configure">Action to configure relation.</param>
         /// <returns></returns>
         IEditorFieldConfig<TEntity, TValue> SetCollectionRelation<TRelatedEntity, TRelatedRepository>(
@@ -124,7 +122,6 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <typeparam name="TKey">Type of the foreign key</typeparam>
         /// <typeparam name="TRelatedRepository">Type of the related repository</typeparam>
         /// <param name="relatedElements">Expression for selected entities.</param>
-        /// <param name="collectionAlias">Alias of the collection to bind.</param>
         /// <param name="configure">Action to configure relation.</param>
         /// <returns></returns>
         IEditorFieldConfig<TEntity, TValue> SetCollectionRelation<TRelatedEntity, TKey, TRelatedRepository>(

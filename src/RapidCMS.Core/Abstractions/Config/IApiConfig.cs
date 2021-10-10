@@ -28,6 +28,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// Registers a mapped repository and creates a Controller for it
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
+        /// <typeparam name="TMappedEntity"></typeparam>
         /// <typeparam name="TRepository"></typeparam>
         /// <returns></returns>
         IApiRepositoryConfig RegisterRepository<TEntity, TMappedEntity, TRepository>()
@@ -54,6 +55,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <summary>
         /// Adds an entity validator for the given entity.
         /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
         /// <typeparam name="TEntityValidator"></typeparam>
         /// <param name="config"></param>
         /// <returns></returns>
