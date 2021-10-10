@@ -84,7 +84,6 @@ namespace RapidCMS.Core.Dispatchers.Form
                         ParentPath = request.EditContext.Parent?.GetParentPath(),
                         Id = request.EditContext.Entity.Id
                     });
-                    // TODO: test removal of: response.NoOp = true;
                     break;
 
                 case CrudType.Edit:
@@ -98,7 +97,6 @@ namespace RapidCMS.Core.Dispatchers.Form
                         ParentPath = request.EditContext.Parent?.GetParentPath(),
                         Id = request.EditContext.Entity.Id
                     });
-                    // TODO: test removal of: response.NoOp = true;
                     break;
 
                 case CrudType.Update:
@@ -179,7 +177,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                             pageState.ReplaceState(new PageStateModel
                             {
                                 PageType = PageType.Collection,
-                                UsageType = collection.ListEditor == null ? UsageType.List : UsageType.Edit,
+                                UsageType = collection.ListEditor == null ? UsageType.View : UsageType.Edit,
 
                                 CollectionAlias = request.EditContext.CollectionAlias,
                                 ParentPath = request.EditContext.Parent?.GetParentPath()
@@ -242,7 +240,6 @@ namespace RapidCMS.Core.Dispatchers.Form
                             CollectionAlias = request.EditContext.CollectionAlias,
                             ParentPath = parentPath
                         });
-                        // TODO: test removal of: response.NoOp = true;
                     }
                     break;
 

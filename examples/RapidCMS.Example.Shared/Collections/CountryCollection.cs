@@ -59,6 +59,7 @@ namespace RapidCMS.Example.Shared.Collections
                             .AddDefaultButton(DefaultButtonType.Up, "Back to list", "Back")
                             .AddDefaultButton(DefaultButtonType.SaveExisting)
                             .AddDefaultButton(DefaultButtonType.SaveNew)
+                            .AddDefaultButton(DefaultButtonType.Delete)
 
                             // using navigation buttons can help the user to other pages quickly
                             .AddNavigationButton<NavigateToPersonHandler>("Create new person", "FollowUser");

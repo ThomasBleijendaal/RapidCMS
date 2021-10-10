@@ -36,9 +36,8 @@ namespace RapidCMS.Core.Authorization
         /// </summary>
         public static OperationAuthorizationRequirement Remove = new OperationAuthorizationRequirement { Name = nameof(Remove) };
 
-        internal static OperationAuthorizationRequirement GetOperationForUsageType(UsageType type)
-        {
-            return (type & ~(UsageType.Root | UsageType.NotRoot | UsageType.Node | UsageType.List)) switch
+        internal static OperationAuthorizationRequirement GetOperationForUsageType(UsageType type) 
+            => (type & ~(UsageType.Root | UsageType.NotRoot | UsageType.Node | UsageType.List)) switch
             {
                 UsageType.Add => Add,
                 UsageType.Edit => Update,
@@ -47,6 +46,5 @@ namespace RapidCMS.Core.Authorization
                 UsageType.View => Read,
                 _ => throw new InvalidOperationException($"Operation of type {type} is not supported.")
             };
-        }
     }
 }
