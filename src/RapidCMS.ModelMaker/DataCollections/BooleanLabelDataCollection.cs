@@ -12,7 +12,7 @@ namespace RapidCMS.ModelMaker.DataCollections
     {
         private BooleanLabelDetailConfig? _config;
 
-        public event EventHandler OnDataChange;
+        public event EventHandler? OnDataChange;
 
         public void Configure(object configuration)
         {
@@ -24,7 +24,7 @@ namespace RapidCMS.ModelMaker.DataCollections
 
         }
 
-        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query)
+        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IView view)
             => Task.FromResult<IReadOnlyList<IElement>>(new List<IElement>
             {
                 new Element

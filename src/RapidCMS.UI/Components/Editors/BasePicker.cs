@@ -82,10 +82,10 @@ namespace RapidCMS.UI.Components.Editors
                 return;
             }
 
-            var query = Query.Create(25, _currentPage, _searchTerm, default);
-            _options = await DataCollection.GetAvailableElementsAsync(query);
+            var view = View.Create(25, _currentPage, _searchTerm, default);
+            _options = await DataCollection.GetAvailableElementsAsync(view);
 
-            if (query.MoreDataAvailable)
+            if (view.MoreDataAvailable)
             {
                 _maxPage = null;
             }

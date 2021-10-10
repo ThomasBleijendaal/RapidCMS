@@ -23,20 +23,20 @@ namespace RapidCMS.Core.Resolvers.Data
             _serviceProvider = serviceProvider;
         }
 
-        public async Task ApplyDataViewToQueryAsync(IQuery query)
+        public async Task ApplyDataViewToViewAsync(IView view)
         {
-            if (string.IsNullOrEmpty(query.CollectionAlias))
+            if (string.IsNullOrEmpty(view.CollectionAlias))
             {
-                throw new ArgumentNullException($"{nameof(query)}.{nameof(query.CollectionAlias)}");
+                throw new ArgumentNullException($"{nameof(view)}.{nameof(view.CollectionAlias)}");
             }
                 
-            var dataViews = await GetDataViewsAsync(query.CollectionAlias);
-            var dataView = dataViews.FirstOrDefault(x => x.Id == query.ActiveTab)
+            var dataViews = await GetDataViewsAsync(view.CollectionAlias);
+            var dataView = dataViews.FirstOrDefault(x => x.Id == view.ActiveTab)
                     ?? dataViews.FirstOrDefault();
 
             if (dataView != null)
             {
-                query.SetDataView(dataView);
+                view.SetDataView(dataView);
             }
         }
 

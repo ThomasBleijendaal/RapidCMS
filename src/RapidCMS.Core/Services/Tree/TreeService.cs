@@ -161,9 +161,9 @@ namespace RapidCMS.Core.Services.Tree
 
             if (collection.TreeView?.EntityVisibility == EntityVisibilty.Visible)
             {
-                var query = Query.Create(pageSize, pageNr, default, default, collectionAlias: alias);
+                var view = View.Create(pageSize, pageNr, default, default, collectionAlias: alias);
                 var respository = _repositoryResolver.GetRepository(collection);
-                var entities = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => respository.GetAllAsync(new ViewContext(collection.Alias, parent), query));
+                var entities = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => respository.GetAllAsync(new ViewContext(collection.Alias, parent), view));
 
                 var list = await entities.SelectNotNullAsync(async entity =>
                 {
@@ -215,7 +215,7 @@ namespace RapidCMS.Core.Services.Tree
                     return node;
                 }).ToListAsync();
 
-                return new TreeNodesUI(list.Take(pageSize).ToList(), query.MoreDataAvailable);
+                return new TreeNodesUI(list.Take(pageSize).ToList(), view.MoreDataAvailable);
             }
             else
             {

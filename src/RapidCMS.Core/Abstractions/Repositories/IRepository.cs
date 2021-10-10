@@ -9,10 +9,10 @@ namespace RapidCMS.Core.Abstractions.Repositories
     public interface IRepository
     {
         Task<IEntity?> GetByIdAsync(string id, IViewContext viewContext);
-        Task<IEnumerable<IEntity>> GetAllAsync(IViewContext viewContext, IQuery query);
+        Task<IEnumerable<IEntity>> GetAllAsync(IViewContext viewContext, IView view);
 
-        Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelatedViewContext viewContext, IQuery query);
-        Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelatedViewContext viewContext, IQuery query);
+        Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelatedViewContext viewContext, IView view);
+        Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelatedViewContext viewContext, IView view);
 
         Task<IEntity> NewAsync(IViewContext viewContext, Type? variantType);
         Task<IEntity?> InsertAsync(IEditContext editContext);

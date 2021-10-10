@@ -4,14 +4,14 @@ using RapidCMS.Core.Abstractions.Data;
 
 namespace RapidCMS.Core.Models.Data
 {
-    public sealed class Query : IQuery
+    public sealed class View : IView
     {
         internal IDataView? DataView;
         internal IEnumerable<IOrderBy>? OrderBys;
 
-        public static Query Default(string? collectionAlias = default)
+        public static View Default(string? collectionAlias = default)
         {
-            return new Query
+            return new View
             {
                 Skip = 0,
                 Take = 1000,
@@ -19,9 +19,9 @@ namespace RapidCMS.Core.Models.Data
             };
         }
 
-        public static Query Create(int pageSize, int pageNumber, string? searchTerm, int? activeTab, string? collectionAlias = default)
+        public static View Create(int pageSize, int pageNumber, string? searchTerm, int? activeTab, string? collectionAlias = default)
         {
-            return new Query
+            return new View
             {
                 Skip = pageSize * (pageNumber - 1),
                 Take = pageSize,
@@ -31,14 +31,14 @@ namespace RapidCMS.Core.Models.Data
             };
         }
 
-        public static Query Create(IQuery query, string collectionAlias)
+        public static View Create(IView view, string collectionAlias)
         {
-            return new Query
+            return new View
             {
-                Skip = query.Skip,
-                Take = query.Take,
-                SearchTerm = query.SearchTerm,
-                ActiveTab = query.ActiveTab,
+                Skip = view.Skip,
+                Take = view.Take,
+                SearchTerm = view.SearchTerm,
+                ActiveTab = view.ActiveTab,
                 CollectionAlias = collectionAlias
             };
         }

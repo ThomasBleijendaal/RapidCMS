@@ -34,9 +34,9 @@ namespace RapidCMS.Core.Repositories
         /// This query is based on the TDatabaseEntity, and not TEntity to allow for mapping.
         /// </summary>
         /// <param name="parent"></param>
-        /// <param name="query"></param>
+        /// <param name="view"></param>
         /// <returns></returns>
-        public abstract Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TDatabaseEntity> query);
+        public abstract Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IView<TDatabaseEntity> view);
 
         /// <summary>
         /// This method gets all entities that are related to the given entity and query instruction (paging / search).
@@ -44,9 +44,9 @@ namespace RapidCMS.Core.Repositories
         /// This query is based on the TDatabaseEntity, and not TEntity to allow for mapping.
         /// </summary>
         /// <param name="related"></param>
-        /// <param name="query"></param>
+        /// <param name="view"></param>
         /// <returns></returns>
-        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IQuery<TDatabaseEntity> query)
+        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IView<TDatabaseEntity> view)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllRelatedAsync)} on the {GetType()}.");
 
         /// <summary>
@@ -55,9 +55,9 @@ namespace RapidCMS.Core.Repositories
         /// This query is based on the TDatabaseEntity, and not TEntity to allow for mapping.
         /// </summary>
         /// <param name="related"></param>
-        /// <param name="query"></param>
+        /// <param name="view"></param>
         /// <returns></returns>
-        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TDatabaseEntity> query)
+        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IView<TDatabaseEntity> view)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllNonRelatedAsync)} on the {GetType()}.");
 
         /// <summary>
@@ -132,14 +132,14 @@ namespace RapidCMS.Core.Repositories
         async Task<IEntity?> IRepository.GetByIdAsync(string id, IViewContext viewContext) 
             => await GetByIdAsync(id, viewContext.Parent);
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllAsync(IViewContext viewContext, IQuery query) 
-            => (await GetAllAsync(viewContext.Parent, TypedQuery<TDatabaseEntity>.Convert(query))).Cast<IEntity>();
+        async Task<IEnumerable<IEntity>> IRepository.GetAllAsync(IViewContext viewContext, IView view) 
+            => (await GetAllAsync(viewContext.Parent, TypedView<TDatabaseEntity>.Convert(view))).Cast<IEntity>();
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllRelatedAsync(IRelatedViewContext viewContext, IQuery query) 
-            => (await GetAllRelatedAsync(viewContext.Related, TypedQuery<TDatabaseEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+        async Task<IEnumerable<IEntity>> IRepository.GetAllRelatedAsync(IRelatedViewContext viewContext, IView view) 
+            => (await GetAllRelatedAsync(viewContext.Related, TypedView<TDatabaseEntity>.Convert(view)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllNonRelatedAsync(IRelatedViewContext viewContext, IQuery query) 
-            => (await GetAllNonRelatedAsync(viewContext.Related, TypedQuery<TDatabaseEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+        async Task<IEnumerable<IEntity>> IRepository.GetAllNonRelatedAsync(IRelatedViewContext viewContext, IView view) 
+            => (await GetAllNonRelatedAsync(viewContext.Related, TypedView<TDatabaseEntity>.Convert(view)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
 
         async Task<IEntity> IRepository.NewAsync(IViewContext viewContext, Type? variantType) 
             => await NewAsync(viewContext.Parent, variantType);

@@ -52,7 +52,7 @@ namespace RapidCMS.ModelMaker.Repositories
             }
         }
 
-        public Task<IEnumerable<IEntity>> GetAllAsync(IViewContext viewContext, IQuery query)
+        public Task<IEnumerable<IEntity>> GetAllAsync(IViewContext viewContext, IView view)
         {
             if (viewContext.Parent?.Entity is ModelEntity model)
             {
@@ -62,9 +62,9 @@ namespace RapidCMS.ModelMaker.Repositories
             throw new InvalidOperationException();
         }
 
-        public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelatedViewContext viewContext, IQuery query) => throw new NotSupportedException();
+        public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelatedViewContext viewContext, IView view) => throw new NotSupportedException();
 
-        public Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelatedViewContext viewContext, IQuery query) => throw new NotSupportedException();
+        public Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelatedViewContext viewContext, IView view) => throw new NotSupportedException();
 
         public Task<IEntity?> GetByIdAsync(string id, IViewContext viewContext)
         {

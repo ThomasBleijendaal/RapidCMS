@@ -117,18 +117,18 @@ namespace RapidCMS.UI.Components.Sections
 
         protected async Task<(ListContext listContext, List<(FormEditContext editContext, IEnumerable<SectionUI> sections)> sections)> LoadSectionsAsync(ListUI listUI, IListUIResolver uiResolver)
         {
-            var query = Query.Create(listUI.PageSize, CurrentState.CurrentPage, CurrentState.SearchTerm, CurrentState.ActiveTab, CurrentState.CollectionAlias);
+            var view = View.Create(listUI.PageSize, CurrentState.CurrentPage, CurrentState.SearchTerm, CurrentState.ActiveTab, CurrentState.CollectionAlias);
 
             if (listUI.OrderBys != null)
             {
-                query.SetOrderBys(listUI.OrderBys);
+                view.SetOrderBys(listUI.OrderBys);
             }
 
             var request = CurrentState.Related != null
                 ? (GetEntitiesRequestModel)new GetEntitiesOfRelationRequestModel
                 {
                     CollectionAlias = CurrentState.CollectionAlias,
-                    Query = query,
+                    View = view,
                     Related = CurrentState.Related,
                     UsageType = CurrentState.UsageType,
                     VariantAlias = CurrentState.VariantAlias
@@ -137,7 +137,7 @@ namespace RapidCMS.UI.Components.Sections
                 {
                     CollectionAlias = CurrentState.CollectionAlias,
                     ParentPath = CurrentState.ParentPath,
-                    Query = query,
+                    View = view,
                     UsageType = CurrentState.UsageType,
                     VariantAlias = CurrentState.VariantAlias
                 };
@@ -146,7 +146,7 @@ namespace RapidCMS.UI.Components.Sections
 
             var sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await uiResolver.GetSectionsForEditContextAsync(editContext)));
 
-            if (!query.MoreDataAvailable)
+            if (!view.MoreDataAvailable)
             {
                 CurrentState.MaxPage = CurrentState.CurrentPage;
 
@@ -157,7 +157,7 @@ namespace RapidCMS.UI.Components.Sections
                     return await LoadSectionsAsync(listUI, uiResolver);
                 }
             }
-            if (CurrentState.MaxPage == CurrentState.CurrentPage && query.MoreDataAvailable)
+            if (CurrentState.MaxPage == CurrentState.CurrentPage && view.MoreDataAvailable)
             {
                 CurrentState.MaxPage = null;
             }

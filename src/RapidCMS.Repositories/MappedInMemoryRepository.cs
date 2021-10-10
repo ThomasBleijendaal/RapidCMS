@@ -22,7 +22,8 @@ namespace RapidCMS.Repositories
     /// The IQuery's are not affected by this mapping, allowing you to define query expressions using the database entities, greatly
     /// simplifying the use of data views in these repositories.
     /// </summary>
-    /// <typeparam name="TCmsEntity">Entity to store</typeparam>
+    /// <typeparam name="TCmsEntity">Entity used in cms</typeparam>
+    /// <typeparam name="TEntity">Entity to store</typeparam>
     public class MappedInMemoryRepository<TCmsEntity, TEntity> : BaseMappedRepository<TCmsEntity, TEntity>
         where TCmsEntity : class, IEntity, new()
         where TEntity : class, IEntity, ICloneable, new()
@@ -58,27 +59,27 @@ namespace RapidCMS.Repositories
             return Task.CompletedTask;
         }
 
-        public override Task<IEnumerable<TCmsEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query)
+        public override Task<IEnumerable<TCmsEntity>> GetAllAsync(IParent? parent, IView<TEntity> view)
         {
             var dataQuery = GetListForParent(parent).AsQueryable();
 
-            dataQuery = query.ApplyDataView(dataQuery);
+            dataQuery = view.ApplyDataView(dataQuery);
 
-            if (query.SearchTerm != null)
+            if (view.SearchTerm != null)
             {
                 // this is not a very useful search function, but it's just an example
-                dataQuery = dataQuery.Where(x => x.Id == null ? false : x.Id.Contains(query.SearchTerm));
+                dataQuery = dataQuery.Where(x => x.Id == null ? false : x.Id.Contains(view.SearchTerm));
             }
 
-            dataQuery = query.ApplyOrder(dataQuery);
+            dataQuery = view.ApplyOrder(dataQuery);
 
             var data = dataQuery
-                .Skip(query.Skip)
-                .Take(query.Take)
+                .Skip(view.Skip)
+                .Take(view.Take)
                 .ToList()
                 .Select(x => _converter.Convert((TEntity)x.Clone()));
 
-            query.HasMoreData(GetListForParent(parent).Count > (query.Skip + query.Take));
+            view.HasMoreData(GetListForParent(parent).Count > (view.Skip + view.Take));
 
             return Task.FromResult(data); 
         }

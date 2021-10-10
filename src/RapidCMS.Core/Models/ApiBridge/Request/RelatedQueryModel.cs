@@ -16,13 +16,13 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
             };
         }
 
-        public RelatedQueryModel(IRelated related, IQuery query) : this(related)
+        public RelatedQueryModel(IRelated related, IView view) : this(related)
         {
-            Skip = query.Skip;
-            Take = query.Take;
-            SearchTerm = query.SearchTerm;
+            Skip = view.Skip;
+            Take = view.Take;
+            SearchTerm = view.SearchTerm;
 
-            CollectionAlias = query.CollectionAlias;
+            CollectionAlias = view.CollectionAlias;
         }
 
         public EntityDescriptorModel Related { get; set; } = default!;

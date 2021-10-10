@@ -28,7 +28,7 @@ namespace RapidCMS.ModelMaker.DataCollections
         {
         }
 
-        public async Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query)
+        public async Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IView view)
         {
             var treeElements = await _setupResolver.ResolveSetupAsync();
 

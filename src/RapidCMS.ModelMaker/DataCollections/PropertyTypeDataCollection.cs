@@ -26,7 +26,7 @@ namespace RapidCMS.ModelMaker.DataCollections
         {
         }
 
-        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query)
+        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IView view)
         {
             return Task.FromResult<IReadOnlyList<IElement>>(
                 _config.Properties.Select(x => new Element

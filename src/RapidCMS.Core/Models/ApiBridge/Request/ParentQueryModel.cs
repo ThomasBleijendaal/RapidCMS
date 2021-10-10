@@ -14,16 +14,16 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
             ParentPath = parent?.GetParentPath()?.ToPathString();
         }
 
-        public ParentQueryModel(IParent? parent, IQuery query) : this(parent)
+        public ParentQueryModel(IParent? parent, IView view) : this(parent)
         {
-            Skip = query.Skip;
-            Take = query.Take;
-            SearchTerm = query.SearchTerm;
-            ActiveTab = query.ActiveTab;
+            Skip = view.Skip;
+            Take = view.Take;
+            SearchTerm = view.SearchTerm;
+            ActiveTab = view.ActiveTab;
 
-            CollectionAlias = query.CollectionAlias ?? throw new ArgumentNullException(nameof(CollectionAlias));
+            CollectionAlias = view.CollectionAlias ?? throw new ArgumentNullException(nameof(CollectionAlias));
 
-            OrderBys = query.ActiveOrderBys
+            OrderBys = view.ActiveOrderBys
                 .Select(x => new OrderModel
                 {
                     PropertyName = x.OrderByExpression.PropertyName,
@@ -37,7 +37,7 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
             VariantAlias = variantType == null ? null : AliasHelper.GetEntityVariantAlias(variantType);
         }
 
-        public ParentQueryModel(IParent? parent, Type? variantType, IQuery query) : this(parent, query)
+        public ParentQueryModel(IParent? parent, Type? variantType, IView query) : this(parent, query)
         {
             VariantAlias = variantType == null ? null : AliasHelper.GetEntityVariantAlias(variantType);
         }

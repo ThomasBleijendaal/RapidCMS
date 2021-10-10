@@ -8,6 +8,6 @@ namespace RapidCMS.Core.Models.Request.Form
         public UsageType UsageType { get; set; }
         public string CollectionAlias { get; set; } = default!;
         public string VariantAlias { get; set; } = default!;
-        public IQuery Query { get; set; } = default!;
+        public IView View { get; set; } = default!;
     }
 }

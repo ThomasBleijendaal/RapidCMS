@@ -68,9 +68,9 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
 
             _repository = new Mock<IRepository>();
             _repository.Setup(x => x.NewAsync(It.IsAny<IViewContext>(), It.IsAny<Type>())).ReturnsAsync(_protoEntity);
-            _repository.Setup(x => x.GetAllAsync(It.IsAny<IViewContext>(), It.IsAny<IQuery>())).ReturnsAsync(_entities);
-            _repository.Setup(x => x.GetAllNonRelatedAsync(It.IsAny<IRelatedViewContext>(), It.IsAny<IQuery>())).ReturnsAsync(_entities);
-            _repository.Setup(x => x.GetAllRelatedAsync(It.IsAny<IRelatedViewContext>(), It.IsAny<IQuery>())).ReturnsAsync(_entities);
+            _repository.Setup(x => x.GetAllAsync(It.IsAny<IViewContext>(), It.IsAny<IView>())).ReturnsAsync(_entities);
+            _repository.Setup(x => x.GetAllNonRelatedAsync(It.IsAny<IRelatedViewContext>(), It.IsAny<IView>())).ReturnsAsync(_entities);
+            _repository.Setup(x => x.GetAllRelatedAsync(It.IsAny<IRelatedViewContext>(), It.IsAny<IView>())).ReturnsAsync(_entities);
 
             _repositoryResolver = new Mock<IRepositoryResolver>();
             _repositoryResolver
@@ -82,7 +82,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _parentService = new Mock<IParentService>();
             _parentService
                 .Setup(x => x.GetParentAsync(It.IsAny<ParentPath>()))
-                .ReturnsAsync((ParentPath? path) =>
+                .ReturnsAsync((ParentPath path) =>
                 {
                     var mock = new Mock<IParent>();
                     mock.Setup(x => x.GetParentPath()).Returns(path);
@@ -129,7 +129,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
 
         [TestCase(default(string))]
         [TestCase("test:1")]
-        public void WhenRequestHasParent_ThenParentServiceShouldBeUsedToFetchParent(string? path)
+        public void WhenRequestHasParent_ThenParentServiceShouldBeUsedToFetchParent(string path)
         {
             // act
             _subject.GetAsync(new GetEntitiesOfParentRequestModel { UsageType = UsageType.New, CollectionAlias = "", ParentPath = ParentPath.TryParse(path) });
@@ -175,11 +175,11 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         {
             // act
             var parentPath = ParentPath.TryParse("path:123");
-            var query = new Query();
-            _subject.GetAsync(new GetEntitiesOfParentRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", ParentPath = parentPath });
+            var view = new View();
+            _subject.GetAsync(new GetEntitiesOfParentRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias", ParentPath = parentPath });
 
             // assert
-            _repository.Verify(x => x.GetAllAsync(It.Is<IViewContext>(x => x.Parent.GetParentPath()!.ToPathString() == parentPath!.ToPathString()), It.Is<IQuery>(x => x == query)));
+            _repository.Verify(x => x.GetAllAsync(It.Is<IViewContext>(x => x.Parent.GetParentPath()!.ToPathString() == parentPath!.ToPathString()), It.Is<IView>(x => x == view)));
         }
 
         [TestCase(UsageType.Add)]
@@ -187,11 +187,11 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         {
             // act
             var related = new RelatedEntity(default, new DefaultEntityVariant(), "alias");
-            var query = new Query();
-            _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
+            var view = new View();
+            _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias", Related = related });
 
             // assert
-            _repository.Verify(x => x.GetAllNonRelatedAsync(It.Is<IRelatedViewContext>(x => x.Related == related), It.Is<IQuery>(x => x == query)));
+            _repository.Verify(x => x.GetAllNonRelatedAsync(It.Is<IRelatedViewContext>(x => x.Related == related), It.Is<IView>(x => x == view)));
         }
 
         [TestCase(UsageType.Edit)]
@@ -204,11 +204,11 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         {
             // act
             var related = new RelatedEntity(default, new DefaultEntityVariant(), "alias");
-            var query = new Query();
-            _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
+            var view = new View();
+            _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias", Related = related });
 
             // assert
-            _repository.Verify(x => x.GetAllRelatedAsync(It.Is<IRelatedViewContext>(x => x.Related == related), It.Is<IQuery>(x => x == query)));
+            _repository.Verify(x => x.GetAllRelatedAsync(It.Is<IRelatedViewContext>(x => x.Related == related), It.Is<IView>(x => x == view)));
         }
 
         [TestCase(UsageType.List)]
@@ -227,8 +227,8 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         {
             // act
             var parentPath = ParentPath.TryParse("path:123");
-            var query = new Query();
-            var response = await _subject.GetAsync(new GetEntitiesOfParentRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", ParentPath = parentPath });
+            var view = new View();
+            var response = await _subject.GetAsync(new GetEntitiesOfParentRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias", ParentPath = parentPath });
 
             // assert
             Assert.AreEqual(expectedUsageTypes1, response.EditContexts.ElementAtOrDefault(0)?.UsageType ?? 0);
@@ -242,8 +242,8 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         {
             // act
             var related = new RelatedEntity(default, new DefaultEntityVariant(), "alias");
-            var query = new Query();
-            var response = await _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias", Related = related });
+            var view = new View();
+            var response = await _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias", Related = related });
 
             // assert
             Assert.AreEqual(expectedUsageTypes1, response.EditContexts.ElementAtOrDefault(0)?.UsageType ?? 0);
@@ -260,8 +260,8 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public void WhenRequestingUnsupportedUsage_ThenExceptionShouldBeThrown(UsageType usageType)
         {
             // act & assert
-            var query = new Query();
-            Assert.ThrowsAsync(typeof(NotImplementedException), () => _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { UsageType = usageType, Query = query, CollectionAlias = "alias" }));
+            var view = new View();
+            Assert.ThrowsAsync(typeof(NotImplementedException), () => _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias" }));
         }
     }
 }

@@ -56,46 +56,46 @@ namespace RapidCMS.Repositories
             return Task.CompletedTask;
         }
 
-        public override Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query)
+        public override Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IView<TEntity> view)
         {
             var dataQuery = GetListForParent(parent).AsQueryable();
 
-            dataQuery = query.ApplyDataView(dataQuery);
+            dataQuery = view.ApplyDataView(dataQuery);
 
-            if (query.SearchTerm != null)
+            if (view.SearchTerm != null)
             {
                 var stringProperties = typeof(TEntity).GetProperties().Where(x => x.PropertyType == typeof(string)).ToList();
 
                 // this is not a very fast or sensible search function, but it's just an example that works for all entities
                 dataQuery = dataQuery
                     .Where(x => stringProperties
-                        .Any(property => (property.GetValue(x) as string) != null ? ((string)property.GetValue(x)!).Contains(query.SearchTerm, StringComparison.InvariantCultureIgnoreCase) : false));
+                        .Any(property => (property.GetValue(x) as string) != null ? ((string)property.GetValue(x)!).Contains(view.SearchTerm, StringComparison.InvariantCultureIgnoreCase) : false));
             }
 
-            dataQuery = query.ApplyOrder(dataQuery);
+            dataQuery = view.ApplyOrder(dataQuery);
 
             var dataQueryResult = dataQuery
-                .Skip(query.Skip)
-                .Take(query.Take + 1)
+                .Skip(view.Skip)
+                .Take(view.Take + 1)
                 .ToList();
 
             var data = dataQueryResult
-                .Take(query.Take)
+                .Take(view.Take)
                 .Select(x => (TEntity)x.Clone());
 
-            query.HasMoreData(dataQueryResult.Count > query.Take);
+            view.HasMoreData(dataQueryResult.Count > view.Take);
 
             return Task.FromResult(data);
         }
 
-        public override Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IQuery<TEntity> query)
+        public override Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IView<TEntity> view)
         {
             var ids = _relations.Where(x => x.Value.Contains(related.Entity.Id!)).Select(x => x.Key);
 
             return Task.FromResult(GetListForParent(related.Parent).Where(x => ids.Contains(x.Id!)))!;
         }
 
-        public override Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TEntity> query)
+        public override Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IView<TEntity> view)
         {
             var ids = _relations.Where(x => x.Value.Contains(related.Entity.Id!)).Select(x => x.Key);
 

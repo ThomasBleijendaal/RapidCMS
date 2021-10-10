@@ -43,7 +43,7 @@ namespace RapidCMS.ModelMaker.DataCollections
             }
         }
 
-        public async Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query)
+        public async Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IView view)
         {
             if (_editContext?.Parent?.Entity is ModelEntity modelEntity)
             {

@@ -81,11 +81,11 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Builders
         public void WriteGetAllAsync(IndentedTextWriter indentWriter, EntityInformation info)
         {
             indentWriter.WriteLine();
-            indentWriter.WriteLine($"public override async Task<IEnumerable<{info.PascalCaseName}>> GetAllAsync(IParent? parent, IQuery<{info.PascalCaseName}> query)");
+            indentWriter.WriteLine($"public override async Task<IEnumerable<{info.PascalCaseName}>> GetAllAsync(IParent? parent, IView<{info.PascalCaseName}> view)");
             WriteOpeningBracket(indentWriter);
-            indentWriter.Write($"return await query.ApplyOrder(query.ApplyDataView(_dbContext.{info.PascalCasePluralName}))");
-            indentWriter.Write(".Skip(query.Skip)");
-            indentWriter.Write(".Take(query.Take)");
+            indentWriter.Write($"return await view.ApplyOrder(view.ApplyDataView(_dbContext.{info.PascalCasePluralName}))");
+            indentWriter.Write(".Skip(view.Skip)");
+            indentWriter.Write(".Take(view.Take)");
             indentWriter.Write(".AsNoTracking()");
             indentWriter.WriteLine(".ToListAsync();");
             WriteClosingBracket(indentWriter);

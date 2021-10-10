@@ -91,7 +91,7 @@
             return;
         }
 
-        Options = await RelationDataCollection.GetAvailableElementsAsync(Query.Default());
+        Options = await RelationDataCollection.GetAvailableElementsAsync(View.Default());
     }
 
     private async Task OnChangeAsync(ChangeEventArgs e, object value)

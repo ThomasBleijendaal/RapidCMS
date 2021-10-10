@@ -8,21 +8,21 @@ using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Data
 {
-    internal class TypedQuery<TEntity> : IQuery, IQuery<TEntity>
+    internal class TypedView<TEntity> : IView, IView<TEntity>
     {
-        private readonly Query _query;
+        private readonly View _query;
 
-        public static IQuery<TEntity> Convert(IQuery query)
+        public static IView<TEntity> Convert(IView query)
         {
             return query switch
             {
-                Query q => new TypedQuery<TEntity>(q),
-                TypedQuery<TEntity> q => q,
+                View v => new TypedView<TEntity>(v),
+                TypedView<TEntity> v => v,
                 _ => throw new InvalidOperationException()
             };
         }
 
-        public TypedQuery(Query query)
+        public TypedView(View query)
         {
             _query = query;
         }
@@ -51,7 +51,7 @@ namespace RapidCMS.Core.Models.Data
 
         public IQueryable<TEntity> ApplyDataView(IQueryable<TEntity> queryable)
         {
-            if (!(_query.DataView?.QueryExpression is Expression<Func<TEntity, bool>> validQueryExpression))
+            if (_query.DataView?.QueryExpression is not Expression<Func<TEntity, bool>> validQueryExpression)
             {
                 return queryable;
             }

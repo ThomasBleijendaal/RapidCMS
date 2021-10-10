@@ -38,16 +38,16 @@ namespace RapidCMS.ModelMaker.Repositories
 
         public async Task DeleteAsync(string id, IViewContext viewContext) => await _removeCommandHandler.HandleAsync(new RemoveRequest<ModelEntity>(id, id));
 
-        public async Task<IEnumerable<IEntity>> GetAllAsync(IViewContext viewContext, IQuery query)
+        public async Task<IEnumerable<IEntity>> GetAllAsync(IViewContext viewContext, IView view)
         {
             var response = await _getAllEntitiesCommandHandler.HandleAsync(new GetAllRequest<ModelEntity>());
 
             return response.Entities;
         }
 
-        public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelatedViewContext viewContext, IQuery query) => throw new NotSupportedException();
+        public Task<IEnumerable<IEntity>> GetAllNonRelatedAsync(IRelatedViewContext viewContext, IView view) => throw new NotSupportedException();
 
-        public Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelatedViewContext viewContext, IQuery query) => throw new NotSupportedException();
+        public Task<IEnumerable<IEntity>> GetAllRelatedAsync(IRelatedViewContext viewContext, IView view) => throw new NotSupportedException();
 
         public async Task<IEntity?> GetByIdAsync(string id, IViewContext viewContext)
         {

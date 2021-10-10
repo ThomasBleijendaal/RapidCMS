@@ -59,13 +59,13 @@ namespace RapidCMS.Core.Dispatchers.Form
                 : await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.NewAsync(new ViewContext(collection.Alias, parent), variant.Type));
 
             await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity);
-            await _dataViewResolver.ApplyDataViewToQueryAsync(request.Query);
+            await _dataViewResolver.ApplyDataViewToViewAsync(request.View);
 
             var action = (request.UsageType & ~(UsageType.List | UsageType.Root | UsageType.NotRoot)) switch
             {
-                UsageType.Add when relatedEntity != null => () => repository.GetAllNonRelatedAsync(new RelatedViewContext(relatedEntity!, collection.Alias, parent), request.Query),
-                _ when relatedEntity != null => () => repository.GetAllRelatedAsync(new RelatedViewContext(relatedEntity!, collection.Alias, parent), request.Query),
-                _ when relatedEntity == null => () => repository.GetAllAsync(new ViewContext(collection.Alias, parent), request.Query),
+                UsageType.Add when relatedEntity != null => () => repository.GetAllNonRelatedAsync(new RelatedViewContext(relatedEntity!, collection.Alias, parent), request.View),
+                _ when relatedEntity != null => () => repository.GetAllRelatedAsync(new RelatedViewContext(relatedEntity!, collection.Alias, parent), request.View),
+                _ when relatedEntity == null => () => repository.GetAllAsync(new ViewContext(collection.Alias, parent), request.View),
 
                 _ => default(Func<Task<IEnumerable<IEntity>>>)
             };

@@ -75,7 +75,7 @@
             return;
         }
 
-        Options = await DataCollection.GetAvailableElementsAsync(Query.Default());
+        Options = await DataCollection.GetAvailableElementsAsync(View.Default());
     }
 
     private async Task OnChangeAsync(ChangeEventArgs e, int value)

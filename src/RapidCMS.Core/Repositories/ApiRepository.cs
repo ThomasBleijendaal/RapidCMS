@@ -33,41 +33,41 @@ namespace RapidCMS.Repositories.ApiBridge
         public override Task DeleteAsync(string id, IParent? parent)
             => _apiRepositoryHelper.DoRequestAsync(_apiRepositoryHelper.CreateRequest(HttpMethod.Delete, $"entity/{id}", new DeleteModel(parent)));
 
-        public override async Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IView<TEntity> view)
         {
-            var results = await _apiRepositoryHelper.DoRequestAsync<EntitiesModel<TEntity>>(_apiRepositoryHelper.CreateRequest(HttpMethod.Post, "all", new ParentQueryModel(parent, query)));
+            var results = await _apiRepositoryHelper.DoRequestAsync<EntitiesModel<TEntity>>(_apiRepositoryHelper.CreateRequest(HttpMethod.Post, "all", new ParentQueryModel(parent, view)));
             if (results == default)
             {
                 return Enumerable.Empty<TEntity>();
             }
 
-            query.HasMoreData(results.MoreDataAvailable);
+            view.HasMoreData(results.MoreDataAvailable);
 
             return results.Entities.Select(x => x.Entity);
         }
 
-        public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IView<TEntity> view)
         {
-            var results = await _apiRepositoryHelper.DoRequestAsync<EntitiesModel<TEntity>>(_apiRepositoryHelper.CreateRequest(HttpMethod.Post, "all/related", new RelatedQueryModel(related, query)));
+            var results = await _apiRepositoryHelper.DoRequestAsync<EntitiesModel<TEntity>>(_apiRepositoryHelper.CreateRequest(HttpMethod.Post, "all/related", new RelatedQueryModel(related, view)));
             if (results == default)
             {
                 return Enumerable.Empty<TEntity>();
             }
 
-            query.HasMoreData(results.MoreDataAvailable);
+            view.HasMoreData(results.MoreDataAvailable);
 
             return results.Entities.Select(x => x.Entity);
         }
 
-        public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IView<TEntity> view)
         {
-            var results = await _apiRepositoryHelper.DoRequestAsync<EntitiesModel<TEntity>>(_apiRepositoryHelper.CreateRequest(HttpMethod.Post, "all/nonrelated", new RelatedQueryModel(related, query)));
+            var results = await _apiRepositoryHelper.DoRequestAsync<EntitiesModel<TEntity>>(_apiRepositoryHelper.CreateRequest(HttpMethod.Post, "all/nonrelated", new RelatedQueryModel(related, view)));
             if (results == default)
             {
                 return Enumerable.Empty<TEntity>();
             }
 
-            query.HasMoreData(results.MoreDataAvailable);
+            view.HasMoreData(results.MoreDataAvailable);
 
             return results.Entities.Select(x => x.Entity);
         }
