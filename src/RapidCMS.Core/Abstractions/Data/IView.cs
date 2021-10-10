@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace RapidCMS.Core.Abstractions.Data
 {
-    public interface IQuery
+    public interface IView
     {
         int Skip { get; }
         int Take { get; }
@@ -41,7 +41,7 @@ namespace RapidCMS.Core.Abstractions.Data
         string? CollectionAlias { get; set; }
     }
 
-    public interface IQuery<TEntity> : IQuery
+    public interface IView<TEntity> : IView
     {
         /// <summary>
         /// Method that applies the effective data view selected by the user. 

@@ -7,6 +7,6 @@ namespace RapidCMS.Core.Models.Request.Api
     {
         public UsageType UsageType { get; set; }
         public string RepositoryAlias { get; set; } = default!;
-        public IQuery Query { get; set; } = default!;
+        public IView View { get; set; } = default!;
     }
 }

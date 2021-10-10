@@ -113,7 +113,7 @@ namespace RapidCMS.Core.Providers
             return Task.CompletedTask;
         }
 
-        public async Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query)
+        public async Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IView view)
         {
             if (_editContext == null)
             {
@@ -132,9 +132,9 @@ namespace RapidCMS.Core.Providers
                 parent = _repositoryParentSelector.Getter.Invoke(_parent) as IParent;
             }
 
-            query.CollectionAlias = _editContext.CollectionAlias;
+            view.CollectionAlias = _editContext.CollectionAlias;
 
-            var entities = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => _repository.GetAllAsync(new ViewContext(_editContext.CollectionAlias, parent), query));
+            var entities = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => _repository.GetAllAsync(new ViewContext(_editContext.CollectionAlias, parent), view));
 
             return entities
                .Select(entity => (IElement)new Element
@@ -152,7 +152,7 @@ namespace RapidCMS.Core.Providers
                 return new List<IElement>();
             }
 
-            var elements = await GetAvailableElementsAsync(Query.Default());
+            var elements = await GetAvailableElementsAsync(View.Default());
             return elements.Where(x => _relatedIds.Contains(x.Id)).ToList();
         }
 

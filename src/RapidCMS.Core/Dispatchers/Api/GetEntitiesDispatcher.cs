@@ -53,13 +53,13 @@ namespace RapidCMS.Core.Dispatchers.Api
             var protoEntity = await subjectRepository.NewAsync(new ViewContext("", parent), default);
 
             await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity);
-            await _dataViewResolver.ApplyDataViewToQueryAsync(request.Query);
+            await _dataViewResolver.ApplyDataViewToViewAsync(request.View);
 
             var action = (request.UsageType & ~(UsageType.List | UsageType.Root | UsageType.NotRoot)) switch
             {
-                UsageType.Add when related != null => async () => await subjectRepository.GetAllNonRelatedAsync(new RelatedViewContext(related, "", default), request.Query),
-                _ when related != null => async () => await subjectRepository.GetAllRelatedAsync(new RelatedViewContext(related, "", default), request.Query),
-                _ when related == null => async () => await subjectRepository.GetAllAsync(new ViewContext("", parent), request.Query),
+                UsageType.Add when related != null => async () => await subjectRepository.GetAllNonRelatedAsync(new RelatedViewContext(related, "", default), request.View),
+                _ when related != null => async () => await subjectRepository.GetAllRelatedAsync(new RelatedViewContext(related, "", default), request.View),
+                _ when related == null => async () => await subjectRepository.GetAllAsync(new ViewContext("", parent), request.View),
 
                 _ => default(Func<Task<IEnumerable<IEntity>>>)
             };
@@ -74,7 +74,7 @@ namespace RapidCMS.Core.Dispatchers.Api
             return new EntitiesResponseModel
             {
                 Entities = entities,
-                MoreDataAvailable = request.Query.MoreDataAvailable
+                MoreDataAvailable = request.View.MoreDataAvailable
             };
         }
     }

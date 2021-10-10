@@ -52,22 +52,22 @@ namespace RapidCMS.Repositories
             catch { }
         }
 
-        public override async Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IView<TEntity> view)
         {
             await _initializationTask;
-            return await base.GetAllAsync(parent, query);
+            return await base.GetAllAsync(parent, view);
         }
 
-        public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IView<TEntity> view)
         {
             await _initializationTask;
-            return await base.GetAllNonRelatedAsync(related, query);
+            return await base.GetAllNonRelatedAsync(related, view);
         }
 
-        public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IQuery<TEntity> query)
+        public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IView<TEntity> view)
         {
             await _initializationTask;
-            return await base.GetAllRelatedAsync(related, query);
+            return await base.GetAllRelatedAsync(related, view);
         }
 
         public override async Task<TEntity?> GetByIdAsync(string id, IParent? parent)

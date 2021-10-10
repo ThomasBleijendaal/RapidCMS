@@ -58,7 +58,7 @@ namespace RapidCMS.Core.Tests.ParentPathTests
 
         public class Entity : IEntity
         {
-            public string? Id { get; set; }
+            public string Id { get; set; }
         }
     }
 }

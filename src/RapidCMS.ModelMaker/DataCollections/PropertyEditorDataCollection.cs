@@ -33,7 +33,7 @@ namespace RapidCMS.ModelMaker.DataCollections
             }
         }
 
-        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query)
+        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IView view)
         {
             var property = _config.Properties.FirstOrDefault(x => x.Alias == _property?.PropertyAlias);
 

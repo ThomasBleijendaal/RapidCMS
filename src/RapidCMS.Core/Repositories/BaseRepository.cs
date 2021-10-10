@@ -30,26 +30,26 @@ namespace RapidCMS.Core.Repositories
         /// This method gets all entities belonging to the given parent(s) and query instructions (paging / search).
         /// </summary>
         /// <param name="parent"></param>
-        /// <param name="query"></param>
+        /// <param name="view"></param>
         /// <returns></returns>
-        public abstract Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IQuery<TEntity> query);
+        public abstract Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IView<TEntity> view);
 
         /// <summary>
         /// This method gets all entities that are related to the given entity and query instruction (paging / search).
         /// </summary>
         /// <param name="related"></param>
-        /// <param name="query"></param>
+        /// <param name="view"></param>
         /// <returns></returns>
-        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IQuery<TEntity> query)
+        public virtual Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IView<TEntity> view)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllRelatedAsync)} on the {GetType()}.");
 
         /// <summary>
         /// This method gets all entities that match the given query instruction (paging / search) but are not related to the given entity.
         /// </summary>
         /// <param name="related"></param>
-        /// <param name="query"></param>
+        /// <param name="view"></param>
         /// <returns></returns>
-        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IQuery<TEntity> query)
+        public virtual Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IView<TEntity> view)
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(GetAllNonRelatedAsync)} on the {GetType()}.");
 
         /// <summary>
@@ -124,14 +124,14 @@ namespace RapidCMS.Core.Repositories
         async Task<IEntity?> IRepository.GetByIdAsync(string id, IViewContext viewContext) 
             => await GetByIdAsync(id, viewContext.Parent);
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllAsync(IViewContext viewContext, IQuery query) 
-            => (await GetAllAsync(viewContext.Parent, TypedQuery<TEntity>.Convert(query))).Cast<IEntity>();
+        async Task<IEnumerable<IEntity>> IRepository.GetAllAsync(IViewContext viewContext, IView view) 
+            => (await GetAllAsync(viewContext.Parent, TypedView<TEntity>.Convert(view))).Cast<IEntity>();
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllRelatedAsync(IRelatedViewContext viewContext, IQuery query) 
-            => (await GetAllRelatedAsync(viewContext.Related, TypedQuery<TEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+        async Task<IEnumerable<IEntity>> IRepository.GetAllRelatedAsync(IRelatedViewContext viewContext, IView view) 
+            => (await GetAllRelatedAsync(viewContext.Related, TypedView<TEntity>.Convert(view)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
 
-        async Task<IEnumerable<IEntity>> IRepository.GetAllNonRelatedAsync(IRelatedViewContext viewContext, IQuery query) 
-            => (await GetAllNonRelatedAsync(viewContext.Related, TypedQuery<TEntity>.Convert(query)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
+        async Task<IEnumerable<IEntity>> IRepository.GetAllNonRelatedAsync(IRelatedViewContext viewContext, IView view) 
+            => (await GetAllNonRelatedAsync(viewContext.Related, TypedView<TEntity>.Convert(view)))?.Cast<IEntity>() ?? Enumerable.Empty<IEntity>();
 
         async Task<IEntity> IRepository.NewAsync(IViewContext viewContext, Type? variantType) 
             => await NewAsync(viewContext.Parent, variantType);

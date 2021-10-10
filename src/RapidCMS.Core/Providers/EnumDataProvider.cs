@@ -19,7 +19,7 @@ namespace RapidCMS.Core.Providers
 
         public void Configure(object configuration) { }
 
-        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IQuery query)
+        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IView view)
         {
             var values = Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
 

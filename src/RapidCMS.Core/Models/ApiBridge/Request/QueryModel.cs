@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Helpers;
-using static RapidCMS.Core.Models.Data.Query;
+using static RapidCMS.Core.Models.Data.View;
 
 namespace RapidCMS.Core.Models.ApiBridge.Request
 {
@@ -21,17 +21,17 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
 
         public IEnumerable<OrderModel>? OrderBys { get; set; }
 
-        public IQuery GetQuery<TEntity>() => GetQuery(typeof(TEntity));
+        public IView GetView<TEntity>() => GetView(typeof(TEntity));
 
-        public IQuery GetQuery(Type entityType)
+        public IView GetView(Type entityType)
         {
-            var query = Create(Take, 1 + Skip / Math.Max(1, Take), SearchTerm, ActiveTab);
+            var view = Create(Take, 1 + Skip / Math.Max(1, Take), SearchTerm, ActiveTab);
 
-            query.CollectionAlias = CollectionAlias;
+            view.CollectionAlias = CollectionAlias;
 
             if (OrderBys != null)
             {
-                query.SetOrderBys(OrderBys
+                view.SetOrderBys(OrderBys
                     .Select(x =>
                     {
                         var property = PropertyMetadataHelper.GetPropertyMetadata(entityType, x.PropertyName);
@@ -47,7 +47,7 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
                         return new OrderByModel(x.OrderByType, property);
                     }));
             }
-            return query;
+            return view;
         }
     }
 }

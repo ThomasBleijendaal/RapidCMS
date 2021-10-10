@@ -136,7 +136,7 @@ namespace RapidCMS.Api.Core.Handlers
                     RepositoryAlias = RepositoryAlias,
                     ParentPath = query.ParentPath,
                     UsageType = UsageType.List | UsageType.Edit,
-                    Query = query.GetQuery<TDatabaseEntity>()
+                    View = query.GetView<TDatabaseEntity>()
                 });
 
                 return new ApiResponseModel(HttpStatusCode.OK, new EntitiesModel<IEntity>
@@ -171,7 +171,7 @@ namespace RapidCMS.Api.Core.Handlers
                 {
                     RepositoryAlias = RepositoryAlias,
                     UsageType = UsageType.List | UsageType.Add,
-                    Query = query.GetQuery<TDatabaseEntity>(),
+                    View = query.GetView<TDatabaseEntity>(),
                     Related = new EntityDescriptor(query.Related.Id, query.Related.RepositoryAlias, query.Related.ParentPath, default)
                 });
 
@@ -207,7 +207,7 @@ namespace RapidCMS.Api.Core.Handlers
                 {
                     RepositoryAlias = RepositoryAlias,
                     UsageType = UsageType.List | UsageType.Edit,
-                    Query = query.GetQuery<TDatabaseEntity>(),
+                    View = query.GetView<TDatabaseEntity>(),
                     Related = new EntityDescriptor(query.Related.Id, query.Related.RepositoryAlias, query.Related.ParentPath, default)
                 });
 
