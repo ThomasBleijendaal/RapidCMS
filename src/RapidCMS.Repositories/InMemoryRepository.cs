@@ -72,7 +72,7 @@ namespace RapidCMS.Repositories
                         .Any(property => (property.GetValue(x) as string) != null ? ((string)property.GetValue(x)!).Contains(query.SearchTerm, StringComparison.InvariantCultureIgnoreCase) : false));
             }
 
-            // dataQuery = query.ApplyOrder(dataQuery);
+            dataQuery = query.ApplyOrder(dataQuery);
 
             var dataQueryResult = dataQuery
                 .Skip(query.Skip)
