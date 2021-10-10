@@ -1,17 +1,21 @@
 ﻿@if (Buttons != null && Buttons.Any())
 {
-    <div class="top-row">
-        @foreach (var button in Buttons)
-        {
-            var model = button.ToViewModel();
-            model.OnClick = OnButtonClick;
+	<div class="top-row">
+		@foreach (var button in Buttons)
+		{
+			if (button.IsVisible(EditContext.Entity, EditContext.EntityState))
+			{
+				var model = button.ToViewModel();
+				model.OnClick = OnButtonClick;
 
-            @button.ToRenderFragment(model);
-        }
-    </div>
+				@button.ToRenderFragment(model);
+			}
+		}
+	</div>
 }
 
 @code {
-    [Parameter] public IEnumerable<ButtonUI>? Buttons { get; set; }
-    [Parameter] public EventCallback<ButtonClickEventArgs> OnButtonClick { get; set; }
+	[Parameter] public IEnumerable<ButtonUI>? Buttons { get; set; }
+	[Parameter] public EventCallback<ButtonClickEventArgs> OnButtonClick { get; set; }
+	[Parameter] public FormEditContext EditContext { get; set; } = default!;
 }

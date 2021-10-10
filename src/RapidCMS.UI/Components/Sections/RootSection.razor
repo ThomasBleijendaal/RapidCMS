@@ -16,7 +16,7 @@
                     var index = 0;
 
                     <CascadingEditContext EditContext=@mainSection.editContext>
-                        <ButtonBar Buttons="Buttons" OnButtonClick="ButtonOnClickAsync" />
+                        <ButtonBar Buttons="Buttons" OnButtonClick="ButtonOnClickAsync" EditContext=@mainSection.editContext />
 
                         <EditContextStrayErrors />
 
@@ -55,7 +55,7 @@
                             State="CurrentState"
                             OnSearch="SearchAsync"
                             OnTabChange="TabChangeAsync" />
-                    <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
+                    <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" EditContext=@ListContext.ProtoEditContext />
                 </CascadingEditContext>
 
                 <TableSection UI="ListUI"
@@ -78,7 +78,7 @@
                                 State="CurrentState"
                                 OnSearch="SearchAsync"
                                 OnTabChange="TabChangeAsync" />
-                        <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" />
+                        <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" EditContext=@ListContext.ProtoEditContext />
                     </CascadingEditContext>
                 </div>
             }

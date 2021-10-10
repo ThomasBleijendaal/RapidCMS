@@ -25,20 +25,20 @@ namespace RapidCMS.Core.Models.Config
             NodeEditor = _detailNodeEditor;
         }
 
-        public INodeEditorConfig<TDetailEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null)
+        public INodeEditorConfig<TDetailEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null, Func<IEntity, EntityState, bool>? isVisible = null)
             where TActionHandler : IButtonActionHandler
-            => _detailNodeEditor.AddCustomButton<TActionHandler>(buttonType, label, icon);
+            => _detailNodeEditor.AddCustomButton<TActionHandler>(buttonType, label, icon, isVisible);
 
 
-        public INodeEditorConfig<TDetailEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false)
-            => _detailNodeEditor.AddDefaultButton(type, label, icon, isPrimary);
+        public INodeEditorConfig<TDetailEntity> AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false, Func<IEntity, EntityState, bool>? isVisible = null)
+            => _detailNodeEditor.AddDefaultButton(type, label, icon, isPrimary, isVisible);
 
-        public INodeEditorConfig<TDetailEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null)
-            => _detailNodeEditor.AddPaneButton(paneType, label, icon);
+        public INodeEditorConfig<TDetailEntity> AddPaneButton(Type paneType, string? label = null, string? icon = null, Func<IEntity, EntityState, bool>? isVisible = null)
+            => _detailNodeEditor.AddPaneButton(paneType, label, icon, isVisible);
 
-        public INodeEditorConfig<TDetailEntity> AddNavigationButton<TNavigationHandler>(string? label = null, string? icon = null)
+        public INodeEditorConfig<TDetailEntity> AddNavigationButton<TNavigationHandler>(string? label = null, string? icon = null, Func<IEntity, EntityState, bool>? isVisible = null)
             where TNavigationHandler : INavigationHandler
-            => _detailNodeEditor.AddNavigationButton<TNavigationHandler>(label, icon);
+            => _detailNodeEditor.AddNavigationButton<TNavigationHandler>(label, icon, isVisible);
 
         public INodeEditorConfig<TDetailEntity> AddSection(Action<IEditorPaneConfig<TDetailEntity>> configure)
             => _detailNodeEditor.AddSection(configure);

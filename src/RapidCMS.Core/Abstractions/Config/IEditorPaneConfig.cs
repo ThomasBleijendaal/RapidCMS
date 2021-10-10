@@ -22,9 +22,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// 
         /// Not visible when EntityState is New.
         /// </summary>
-        /// <typeparam name="TSubEntity">Type of the sub collections entity</typeparam>
         /// <param name="collectionAlias">Alias of the sub collection</param>
-        /// <param name="configure">Action to configure the use of this sub collection</param>
         /// <returns></returns>
         IEditorPaneConfig<TEntity> AddSubCollectionList(string collectionAlias);
 
@@ -34,6 +32,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// Not visible when EntityState is New.
         /// </summary>
         /// <typeparam name="TSubEntity">Type of the sub collections entity</typeparam>
+        /// <typeparam name="TSubRepository">Type of the sub repository</typeparam>
         /// <param name="configure">Action to configure the use of this sub collection</param>
         /// <returns></returns>
         IEditorPaneConfig<TEntity> AddSubCollectionList<TSubEntity, TSubRepository>(Action<ISubCollectionListEditorConfig<TSubEntity, TSubRepository>>? configure = null)

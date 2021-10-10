@@ -38,6 +38,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 Label = _languageResolver.ResolveText(config.Label ?? @default?.Label ?? "Button"),
                 Icon = config.Icon ?? @default?.Icon ?? "",
                 IsPrimary = config.IsPrimary,
+                IsVisible = config.IsVisible,
 
                 ButtonId = config.Id ?? throw new ArgumentNullException(nameof(config.Id)),
                 EntityVariant = collection.EntityVariant

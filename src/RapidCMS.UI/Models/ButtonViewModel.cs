@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 
 namespace RapidCMS.UI.Models
@@ -30,6 +32,7 @@ namespace RapidCMS.UI.Models
 
         public bool ShouldConfirm { get; set; }
         public bool IsPrimary { get; set; }
+        public Func<object, EntityState, bool> IsVisible { get; set; } = default!;
         public bool RequiresValidForm { get; set; }
     }
 }

@@ -135,10 +135,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds a plain HttpClient for the given file upload handler which is hosted at the given baseAddress.
         /// The ApiFileHandler uses this HttpClient to communicate to the server.
         /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
+        /// <typeparam name="TFileHandler"></typeparam>
         /// <param name="services"></param>
-        /// <param name="baseAddress">Base address of the api, for example: https://example.com</param>
-        /// <param name="collectionAlias"></param>
+        /// <param name="baseUri">Base address of the api, for example: https://example.com</param>
         /// <returns></returns>
         public static IHttpClientBuilder AddRapidCMSFileUploadApiHttpClient<TFileHandler>(this IServiceCollection services, Uri baseUri)
             where TFileHandler : IFileUploadHandler
@@ -155,10 +154,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds a plain HttpClient for the given file upload handler which is hosted at the given baseAddress.
         /// The ApiFileHandler uses this HttpClient to communicate to the server.
         /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
+        /// <typeparam name="TFileHandler"></typeparam>
+        /// <typeparam name="TDelegatingHandler"></typeparam>
         /// <param name="services"></param>
-        /// <param name="baseAddress">Base address of the api, for example: https://example.com</param>
-        /// <param name="collectionAlias"></param>
+        /// <param name="baseUri">Base address of the api, for example: https://example.com</param>
         /// <returns></returns>
         public static IHttpClientBuilder AddRapidCMSAuthenticatedFileUploadApiHttpClient<TFileHandler, TDelegatingHandler>(this IServiceCollection services, Uri baseUri)
             where TFileHandler : IFileUploadHandler
