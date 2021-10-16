@@ -15,7 +15,7 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
 {
     public class Startup
     {
-        private const bool ConfigureAuthentication = false;
+        private const bool ConfigureAuthentication = true;
 
         public Startup(IConfiguration configuration)
         {
@@ -41,7 +41,7 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
             services.AddTransient<Base64TextFileUploadHandler>();
             services.AddTransient<Base64ImageUploadHandler>();
 
-            services.AddOptions<AuthenticationConfig>().Bind(Configuration.GetSection("AzureAd"));
+            services.AddOptions<AuthenticationConfig>().Bind(Configuration.GetSection("DevOIDC"));
 
             services.AddAuthorizationCore();
             services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();
@@ -74,6 +74,8 @@ namespace RapidCMS.Example.WebAssembly.FunctionAPI
 
         public void ConfigureWorker(IFunctionsWorkerApplicationBuilder builder)
         {
+            builder.UseRapidCMS();
+
             if (ConfigureAuthentication)
             {
                 builder.UseAuthorization();

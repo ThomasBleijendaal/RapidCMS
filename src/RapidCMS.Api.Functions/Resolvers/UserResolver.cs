@@ -15,8 +15,8 @@ namespace RapidCMS.Api.Functions.Resolvers
         }
 
         public ClaimsPrincipal? GetUser()
-            => _functionExecutionContextAccessor.FunctionExecutionContext != null &&
-                _functionExecutionContextAccessor.FunctionExecutionContext.Items.TryGetValue("User", out var userObject) &&
+            => _functionExecutionContextAccessor.FunctionContext != null &&
+                _functionExecutionContextAccessor.FunctionContext.Items.TryGetValue("User", out var userObject) &&
                 userObject is ClaimsPrincipal user
                 ? user
                 : default;

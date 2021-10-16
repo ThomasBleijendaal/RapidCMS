@@ -21,7 +21,7 @@ namespace RapidCMS.Example.Server
 {
     public class Startup
     {
-        private const bool ConfigureAuthentication = false;
+        private const bool ConfigureAuthentication = true;
 
         public Startup(IConfiguration configuration)
         {

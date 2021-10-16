@@ -28,7 +28,7 @@ namespace RapidCMS.Api.Functions.Functions
             string id,
             FunctionContext context)
         {
-            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+            _functionExecutionContextAccessor.FunctionContext = context;
 
             var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetByIdAsync(new ApiRequestModel { Id = id, Body = await req.ReadAsStringAsync() });
             return req.CreateResponse(response);
@@ -40,7 +40,7 @@ namespace RapidCMS.Api.Functions.Functions
             string repositoryAlias,
              FunctionContext context)
         {
-            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+            _functionExecutionContextAccessor.FunctionContext = context;
 
             var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllAsync(new ApiRequestModel { Body = await req.ReadAsStringAsync() });
             return req.CreateResponse(response);
@@ -52,7 +52,7 @@ namespace RapidCMS.Api.Functions.Functions
             string repositoryAlias,
              FunctionContext context)
         {
-            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+            _functionExecutionContextAccessor.FunctionContext = context;
 
             var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllRelatedAsync(new ApiRequestModel { Body = await req.ReadAsStringAsync() });
             return req.CreateResponse(response);
@@ -64,7 +64,7 @@ namespace RapidCMS.Api.Functions.Functions
             string repositoryAlias,
             FunctionContext context)
         {
-            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+            _functionExecutionContextAccessor.FunctionContext = context;
 
             var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).GetAllNonRelatedAsync(new ApiRequestModel { Body = await req.ReadAsStringAsync() });
             return req.CreateResponse(response);
@@ -76,7 +76,7 @@ namespace RapidCMS.Api.Functions.Functions
             string repositoryAlias,
             FunctionContext context)
         {
-            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+            _functionExecutionContextAccessor.FunctionContext = context;
 
             var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).NewAsync(new ApiRequestModel { Body = await req.ReadAsStringAsync() });
             return req.CreateResponse(response);
@@ -88,7 +88,7 @@ namespace RapidCMS.Api.Functions.Functions
             string repositoryAlias,
             FunctionContext context)
         {
-            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+            _functionExecutionContextAccessor.FunctionContext = context;
 
             var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).InsertAsync(new ApiRequestModel { Body = await req.ReadAsStringAsync() });
             return req.CreateResponse(response);
@@ -101,7 +101,7 @@ namespace RapidCMS.Api.Functions.Functions
             string id,
             FunctionContext context)
         {
-            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+            _functionExecutionContextAccessor.FunctionContext = context;
 
             var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).UpdateAsync(new ApiRequestModel { Id = id, Body = await req.ReadAsStringAsync() });
             return req.CreateResponse(response);
@@ -114,7 +114,7 @@ namespace RapidCMS.Api.Functions.Functions
             string id,
             FunctionContext context)
         {
-            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+            _functionExecutionContextAccessor.FunctionContext = context;
 
             var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).DeleteAsync(new ApiRequestModel { Id = id, Body = await req.ReadAsStringAsync() });
             return req.CreateResponse(response);
@@ -126,7 +126,7 @@ namespace RapidCMS.Api.Functions.Functions
             string repositoryAlias,
             FunctionContext context)
         {
-            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+            _functionExecutionContextAccessor.FunctionContext = context;
 
             var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).AddRelationAsync(new ApiRequestModel { Body = await req.ReadAsStringAsync() });
             return req.CreateResponse(response);
@@ -138,7 +138,7 @@ namespace RapidCMS.Api.Functions.Functions
             string repositoryAlias,
             FunctionContext context)
         {
-            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+            _functionExecutionContextAccessor.FunctionContext = context;
 
             var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).RemoveRelationAsync(new ApiRequestModel { Body = await req.ReadAsStringAsync() });
             return req.CreateResponse(response);
@@ -150,7 +150,7 @@ namespace RapidCMS.Api.Functions.Functions
             string repositoryAlias,
             FunctionContext context)
         {
-            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+            _functionExecutionContextAccessor.FunctionContext = context;
 
             var response = await _apiHandlerResolver.GetApiHandler(repositoryAlias).ReorderAsync(new ApiRequestModel { Body = await req.ReadAsStringAsync() });
             return req.CreateResponse(response);

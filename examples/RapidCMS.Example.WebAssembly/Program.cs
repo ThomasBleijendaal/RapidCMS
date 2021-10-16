@@ -21,7 +21,7 @@ namespace RapidCMS.Example.WebAssembly
 {
     public class Program
     {
-        private const bool ConfigureAuthentication = false;
+        private const bool ConfigureAuthentication = true;
         // web api 
         private static readonly Uri BaseUri = new Uri("https://localhost:5003/api/");
         // function api
@@ -186,16 +186,16 @@ namespace RapidCMS.Example.WebAssembly
         private static void ConfigureOpenIDConnectAuthentication(WebAssemblyHostBuilder builder)
         {
             // For OIDC
-            //builder.Services.AddOidcAuthentication(config =>
-            //{
-            //    builder.Configuration.Bind("DevOIDC", config);
-            //});
+            builder.Services.AddOidcAuthentication(config =>
+            {
+                builder.Configuration.Bind("OnlineDevOIDC", config);
+            });
 
             // For AD
-            builder.Services.AddMsalAuthentication(options =>
-            {
-                builder.Configuration.Bind("AzureAd", options.ProviderOptions);
-            });
+            //builder.Services.AddMsalAuthentication(options =>
+            //{
+            //    builder.Configuration.Bind("AzureAd", options.ProviderOptions);
+            //});
         }
     }
 }

@@ -10,7 +10,7 @@ namespace RapidCMS.Api.Functions.Accessors
     {
         private static AsyncLocal<ContextHolder> _contextCurrent = new AsyncLocal<ContextHolder>();
 
-        FunctionContext? IFunctionContextAccessor.FunctionExecutionContext
+        FunctionContext? IFunctionContextAccessor.FunctionContext
         {
             get
             {

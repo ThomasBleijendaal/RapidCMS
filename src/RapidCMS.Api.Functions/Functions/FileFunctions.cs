@@ -33,7 +33,7 @@ namespace RapidCMS.Api.Functions.Functions
             string fileHandlerAlias,
             FunctionContext context)
         {
-            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+            _functionExecutionContextAccessor.FunctionContext = context;
 
             try
             {
@@ -57,7 +57,7 @@ namespace RapidCMS.Api.Functions.Functions
             string fileHandlerAlias,
             FunctionContext context)
         {
-            _functionExecutionContextAccessor.FunctionExecutionContext = context;
+            _functionExecutionContextAccessor.FunctionContext = context;
 
             try
             {

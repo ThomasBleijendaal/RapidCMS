@@ -1,7 +1,10 @@
 ﻿using System;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Hosting;
 using RapidCMS.Api.Core;
 using RapidCMS.Api.Functions.Abstractions;
 using RapidCMS.Api.Functions.Accessors;
+using RapidCMS.Api.Functions.Middlewares;
 using RapidCMS.Api.Functions.Resolvers;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Resolvers;
@@ -28,6 +31,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return services;
         }
+
+        public static IFunctionsWorkerApplicationBuilder UseRapidCMS(this IFunctionsWorkerApplicationBuilder builder)
+            => builder.UseMiddleware<FunctionContextAccessorMiddleware>();
+
 
         private static ApiConfig GetRootConfig(Action<IApiConfig>? config = null)
         {

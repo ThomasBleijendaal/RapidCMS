@@ -7,6 +7,6 @@ namespace RapidCMS.Api.Functions.Abstractions
     /// </summary>
     public interface IFunctionContextAccessor
     {
-        FunctionContext? FunctionExecutionContext { get; set; }
+        FunctionContext? FunctionContext { get; set; }
     }
 }
