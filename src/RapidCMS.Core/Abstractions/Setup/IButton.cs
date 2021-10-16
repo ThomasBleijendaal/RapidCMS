@@ -12,6 +12,6 @@ namespace RapidCMS.Core.Abstractions.Setup
 
         IEntityVariantSetup? EntityVariant { get; }
 
-        Func<object, EntityState, bool> IsVisible { get; }
+        Func<object, EntityState, bool>? IsVisible { get; }
     }
 }

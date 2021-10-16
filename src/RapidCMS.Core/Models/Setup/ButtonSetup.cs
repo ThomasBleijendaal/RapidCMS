@@ -17,7 +17,7 @@ namespace RapidCMS.Core.Models.Setup
         public string Icon { get; internal set; } = default!;
         public bool IsPrimary { get; internal set; }
 
-        public Func<object, EntityState, bool> IsVisible { get; internal set; } = default!;
+        public Func<object, EntityState, bool>? IsVisible { get; internal set; }
 
         public IEnumerable<IButtonSetup> Buttons { get; internal set; } = default!;
 

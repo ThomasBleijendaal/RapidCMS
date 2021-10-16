@@ -3,7 +3,7 @@
     {
         @foreach (var button in Buttons)
         {
-            if (button.IsVisible(EditContext.Entity, EditContext.EntityState))
+            if (button.IsVisible?.Invoke(EditContext.Entity, EditContext.EntityState) ?? true)
             {
                 var model = button.ToViewModel();
                 model.OnClick = OnButtonClick;

@@ -10,7 +10,7 @@ namespace RapidCMS.Core.Models.Config
         internal string? Label { get; set; }
         internal string? Icon { get; set; }
         internal bool IsPrimary { get; set; }
-        internal Func<object, EntityState, bool> IsVisible { get; private set; } = (e, s) => true;
+        internal Func<object, EntityState, bool>? IsVisible { get; private set; }
 
         internal ButtonConfig VisibleWhen(Func<IEntity, EntityState, bool>? predicate)
         {

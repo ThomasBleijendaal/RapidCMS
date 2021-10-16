@@ -27,7 +27,7 @@ namespace RapidCMS.Core.Models.UI
         public bool ShouldConfirm { get; private set; }
         public bool IsPrimary { get; private set; }
         public bool RequiresValidForm { get; private set; }
-        public Func<object, EntityState, bool> IsVisible { get; set; }
+        public Func<object, EntityState, bool>? IsVisible { get; set; }
 
         public Type? CustomType { get; private set; }
     }

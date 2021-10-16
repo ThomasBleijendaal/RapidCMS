@@ -38,6 +38,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\RapidCMS.ModelMaker\RapidCMS.ModelMaker.csproj" />
-    <PackageReference Include="RapidCMS.ModelMaker.SourceGenerator.EFCore" Version="4.0.10-rc" />
+    <PackageReference Include="RapidCMS.ModelMaker.SourceGenerator.EFCore" Version="4.1.0" />
   </ItemGroup>
 </Project>
