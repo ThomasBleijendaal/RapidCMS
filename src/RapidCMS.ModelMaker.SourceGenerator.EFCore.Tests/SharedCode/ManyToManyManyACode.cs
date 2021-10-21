@@ -122,9 +122,9 @@ namespace RapidCMS.ModelMaker
             }
         }
         
-        public override async Task<IEnumerable<ManytoManyManyA>> GetAllAsync(IParent? parent, IQuery<ManytoManyManyA> query)
+        public override async Task<IEnumerable<ManytoManyManyA>> GetAllAsync(IParent? parent, IView<ManytoManyManyA> view)
         {
-            return await query.ApplyOrder(query.ApplyDataView(_dbContext.ManytoManyManyAs)).Skip(query.Skip).Take(query.Take).AsNoTracking().ToListAsync();
+            return await view.ApplyOrder(view.ApplyDataView(_dbContext.ManytoManyManyAs)).Skip(view.Skip).Take(view.Take).AsNoTracking().ToListAsync();
         }
         
         public override async Task<ManytoManyManyA?> GetByIdAsync(string id, IParent? parent)

@@ -186,16 +186,16 @@ namespace RapidCMS.Example.WebAssembly
         private static void ConfigureOpenIDConnectAuthentication(WebAssemblyHostBuilder builder)
         {
             // For OIDC
-            builder.Services.AddOidcAuthentication(config =>
-            {
-                builder.Configuration.Bind("OnlineDevOIDC", config);
-            });
+            //builder.Services.AddOidcAuthentication(config =>
+            //{
+            //    builder.Configuration.Bind("DevOIDC", config);
+            //});
 
             // For AD
-            //builder.Services.AddMsalAuthentication(options =>
-            //{
-            //    builder.Configuration.Bind("AzureAd", options.ProviderOptions);
-            //});
+            builder.Services.AddMsalAuthentication(options =>
+            {
+                builder.Configuration.Bind("AzureAd", options.ProviderOptions);
+            });
         }
     }
 }
