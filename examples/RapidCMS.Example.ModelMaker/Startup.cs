@@ -73,31 +73,13 @@ namespace RapidCMS.Example.ModelMaker
                         new[] { enumDropdownDetail.Alias });
                 });
 
-            services.AddScoped<BaseRepository<Person>, JsonRepository<Person>>();
             services.AddScoped<BaseRepository<Details>, JsonRepository<Details>>();
 
-            services.AddScoped<BaseRepository<Blog>, BlogRepository>();
-            services.AddScoped<BaseRepository<Category>, CategoryRepository>();
+            services.AddScoped<BaseRepository<Identity>, IdentityRepository>();
+            
 
-            services.AddScoped<BaseRepository<OnetoManyMany>, OnetoManyManyRepository>();
-            services.AddScoped<BaseRepository<OnetoManyOne>, OnetoManyOneRepository>();
-
-            services.AddScoped<BaseRepository<ManytoManyManyA>, ManytoManyManyARepository>();
-            services.AddScoped<BaseRepository<ManytoManyManyB>, ManytoManyManyBRepository>();
-
-            services.AddScoped<BaseRepository<OnetoOneOneA>, OnetoOneOneARepository>();
-            services.AddScoped<BaseRepository<OnetoOneOneB>, OnetoOneOneBRepository>();
-
-            // TODO: add generator to automatically add this to DI
-            services.AddTransient<BlogValidator>();
-            services.AddTransient<CategoryValidator>();
-            services.AddTransient<OnetoManyManyValidator>();
-            services.AddTransient<OnetoManyOneValidator>();
-            services.AddTransient<ManytoManyManyAValidator>();
-            services.AddTransient<ManytoManyManyBValidator>();
-            services.AddTransient<OnetoOneOneAValidator>();
-            services.AddTransient<OnetoOneOneBValidator>();
-
+            //// TODO: add generator to automatically add this to DI
+            services.AddTransient<IdentityValidator>();
             services.AddDbContext<ModelMakerDbContext>(
                 builder => builder.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString")),
                 ServiceLifetime.Transient,
@@ -109,19 +91,8 @@ namespace RapidCMS.Example.ModelMaker
 
                 config.SetSiteName("Model maker");
 
-                config.AddBlogCollection();
-                config.AddCategoryCollection();
 
-                config.AddOnetoManyManyCollection();
-                config.AddOnetoManyOneCollection();
-
-                config.AddManytoManyManyACollection();
-                config.AddManytoManyManyBCollection();
-
-                config.AddOnetoOneOneACollection();
-                config.AddOnetoOneOneBCollection();
-
-                config.AddPersonCollection();
+                config.AddIdentityCollection();
 
                 config.AddModelMakerPlugin();
             });

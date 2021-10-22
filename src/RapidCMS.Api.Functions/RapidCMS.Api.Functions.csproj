@@ -1,15 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <LangVersion>9.0</LangVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
-    
     <Authors>Thomas Bleijendaal</Authors>
     <Company>Thomas Bleijendaal</Company>
-    <Description>Package for creating a companion Function API which allows you to easily create backend repositories for front-end collections in RapidCMS WebAssembly.
+    <Description>
+      Package for creating a companion Function API which allows you to easily create backend repositories for front-end collections in RapidCMS WebAssembly.
 
-RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS purely from code.</Description>
+      RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS purely from code.
+    </Description>
     <Copyright>2021</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/ThomasBleijendaal/RapidCMS</RepositoryUrl>
@@ -33,9 +34,9 @@ RapidCMS is a Blazor framework which allows you to build a responsive and flexib
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HttpMultipartParser" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.3.0" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.12" />
+    <PackageReference Include="HttpMultipartParser" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.5.2" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 

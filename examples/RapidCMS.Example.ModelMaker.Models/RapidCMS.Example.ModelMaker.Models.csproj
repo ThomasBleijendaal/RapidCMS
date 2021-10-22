@@ -1,43 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="RapidModels\modelmaker.blogs.json" />
-    <None Remove="RapidModels\modelmaker.categories.json" />
-    <None Remove="RapidModels\modelmaker.many-to-many-many-as.json" />
-    <None Remove="RapidModels\modelmaker.many-to-many-many-bs.json" />
-    <None Remove="RapidModels\modelmaker.one-to-many-manys.json" />
-    <None Remove="RapidModels\modelmaker.one-to-many-ones.json" />
-    <None Remove="RapidModels\modelmaker.one-to-one-one-as.json" />
-    <None Remove="RapidModels\modelmaker.one-to-one-one-bs.json" />
+    <None Remove="RapidModels\modelmaker.identity.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="RapidModels\modelmaker.blogs.json" />
-    <AdditionalFiles Include="RapidModels\modelmaker.categories.json" />
-    <AdditionalFiles Include="RapidModels\modelmaker.many-to-many-many-as.json" />
-    <AdditionalFiles Include="RapidModels\modelmaker.many-to-many-many-bs.json" />
-    <AdditionalFiles Include="RapidModels\modelmaker.one-to-many-manys.json" />
-    <AdditionalFiles Include="RapidModels\modelmaker.one-to-many-ones.json" />
-    <AdditionalFiles Include="RapidModels\modelmaker.one-to-one-one-as.json" />
-    <AdditionalFiles Include="RapidModels\modelmaker.one-to-one-one-bs.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.identity.json" />
   </ItemGroup>
 
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.7">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0-rc.2.21480.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0-rc.2.21480.5" />
+    <PackageReference Include="RapidCMS.ModelMaker.SourceGenerator.EFCore" Version="4.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\RapidCMS.ModelMaker\RapidCMS.ModelMaker.csproj" />
-    <PackageReference Include="RapidCMS.ModelMaker.SourceGenerator.EFCore" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 </Project>

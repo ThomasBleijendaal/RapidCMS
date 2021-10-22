@@ -20,11 +20,9 @@ namespace RapidCMS.Example.ModelMaker.WebAssembly.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<BlogRepository>();
-            services.AddScoped<CategoryRepository>();
-
-            services.AddTransient<BlogValidator>();
-            services.AddTransient<CategoryValidator>();
+            
+            services.AddScoped<IdentityValidator>();
+            services.AddScoped<IdentityRepository>();
 
             services.AddDbContext<ModelMakerDbContext>(
                 builder => builder.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString")),
@@ -35,11 +33,8 @@ namespace RapidCMS.Example.ModelMaker.WebAssembly.API
             {
                 config.AllowAnonymousUser();
 
-                config.RegisterEntityValidator<Blog, BlogValidator>();
-                config.RegisterEntityValidator<Category, CategoryValidator>();
-
-                config.RegisterRepository<Blog, BlogRepository>();
-                config.RegisterRepository<Category, CategoryRepository>();
+                config.RegisterEntityValidator<Identity, IdentityValidator>();
+                config.RegisterRepository<Identity, IdentityRepository>();
             });
 
             services.AddCors();
