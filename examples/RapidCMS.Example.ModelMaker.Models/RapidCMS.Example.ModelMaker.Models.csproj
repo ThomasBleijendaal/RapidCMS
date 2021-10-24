@@ -6,10 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="RapidModels\modelmaker.buisness.json" />
     <None Remove="RapidModels\modelmaker.identity.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="RapidModels\modelmaker.buisness.json" />
     <AdditionalFiles Include="RapidModels\modelmaker.identity.json" />
   </ItemGroup>
 

@@ -76,10 +76,12 @@ namespace RapidCMS.Example.ModelMaker
             services.AddScoped<BaseRepository<Details>, JsonRepository<Details>>();
 
             services.AddScoped<BaseRepository<Identity>, IdentityRepository>();
-            
+            services.AddScoped<BaseRepository<Buisness>, BuisnessRepository>();
+
 
             //// TODO: add generator to automatically add this to DI
             services.AddTransient<IdentityValidator>();
+            services.AddTransient<BuisnessValidator>();
             services.AddDbContext<ModelMakerDbContext>(
                 builder => builder.UseSqlServer(Configuration.GetConnectionString("SqlConnectionString")),
                 ServiceLifetime.Transient,
@@ -93,14 +95,15 @@ namespace RapidCMS.Example.ModelMaker
 
 
                 config.AddIdentityCollection();
+                config.AddBuisnessCollection();
 
                 config.AddModelMakerPlugin();
             });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ModelMakerDbContext context)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            context.Database.Migrate();
+            //context.Database.Migrate();
 
             app.UseRapidCMS(isDevelopment: env.IsDevelopment());
 

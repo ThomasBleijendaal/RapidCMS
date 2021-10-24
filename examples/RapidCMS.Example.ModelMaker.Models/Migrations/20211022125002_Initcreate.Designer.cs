@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RapidCMS.ModelMaker;
 
@@ -10,9 +11,10 @@ using RapidCMS.ModelMaker;
 namespace RapidCMS.Example.ModelMaker.Models.Migrations
 {
     [DbContext(typeof(ModelMakerDbContext))]
-    partial class ModelMakerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211022125002_Initcreate")]
+    partial class Initcreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,27 +22,6 @@ namespace RapidCMS.Example.ModelMaker.Models.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("RapidCMS.ModelMaker.Buisness", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Buisness");
-                });
 
             modelBuilder.Entity("RapidCMS.ModelMaker.Identity", b =>
                 {
