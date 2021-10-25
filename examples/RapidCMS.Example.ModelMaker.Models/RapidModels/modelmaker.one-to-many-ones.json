@@ -1,0 +1,81 @@
+{
+  "$type": "RapidCMS.ModelMaker.Models.Entities.ModelEntity, RapidCMS.ModelMaker",
+  "Id": "one-to-many-ones",
+  "ParentId": null,
+  "Name": "One to Many - One",
+  "PluralName": "One to Many - Ones",
+  "IconColor": "Cyan30",
+  "Icon": "Database",
+  "Alias": "one-to-many-ones",
+  "Output": "Entity, Collection, Repository, Context, Validation",
+  "Properties": {
+    "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
+    "$values": [
+      {
+        "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
+        "Id": "bba63203-9d39-42a7-9b3e-80778d386ac3",
+        "Name": "Name",
+        "IsTitle": true,
+        "IncludeInListView": false,
+        "IsRequired": false,
+        "PropertyAlias": "shortstring",
+        "EditorAlias": "textbox",
+        "Details": {
+          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
+          "$values": []
+        },
+        "Type": "System.String",
+        "IsRelationToOne": false,
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.TextBoxEditor"
+      },
+      {
+        "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyModel, RapidCMS.ModelMaker",
+        "Id": "8a605348-8956-4d97-a907-fa6a6e89f686",
+        "Name": "One",
+        "IsTitle": false,
+        "IncludeInListView": false,
+        "IsRequired": false,
+        "PropertyAlias": "linkedentity",
+        "EditorAlias": "entitypicker",
+        "Details": {
+          "$type": "System.Collections.Generic.List`1[[RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel, RapidCMS.ModelMaker]], System.Private.CoreLib",
+          "$values": [
+            {
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.LinkedEntityDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "f3fd7215-458d-46fd-a308-82f04b188432",
+              "Alias": "linkedEntity",
+              "Config": {
+                "$type": "RapidCMS.ModelMaker.Validation.Config.LinkedEntityDetailConfig, RapidCMS.ModelMaker",
+                "LinkedEntityCollectionAlias": "one-to-many-manys",
+                "IsEnabled": true,
+                "AlwaysIncluded": false,
+                "RelatedCollectionAlias": "one-to-many-manys",
+                "ValidationMethodName": null,
+                "DataCollectionType": null
+              }
+            },
+            {
+              "$type": "RapidCMS.ModelMaker.Models.Entities.PropertyDetailModel`1[[RapidCMS.ModelMaker.Validation.Config.CorrespondingPropertyDetailConfig, RapidCMS.ModelMaker]], RapidCMS.ModelMaker",
+              "Id": "de861ea1-89d8-42a9-986d-6f5b172123b8",
+              "Alias": "reciprocal",
+              "Config": {
+                "$type": "RapidCMS.ModelMaker.Validation.Config.CorrespondingPropertyDetailConfig, RapidCMS.ModelMaker",
+                "RelatedPropertyName": "Many",
+                "IsEnabled": true,
+                "AlwaysIncluded": false,
+                "RelatedCollectionAlias": null,
+                "ValidationMethodName": null,
+                "DataCollectionType": null
+              }
+            }
+          ]
+        },
+        "Type": "RapidCMS.ModelMaker.OnetoManyMany",
+        "IsRelationToOne": true,
+        "IsRelationToMany": false,
+        "EditorType": "RapidCMS.UI.Components.Editors.EntityPicker"
+      }
+    ]
+  }
+}

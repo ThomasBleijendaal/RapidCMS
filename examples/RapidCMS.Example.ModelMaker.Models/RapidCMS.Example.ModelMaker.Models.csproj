@@ -6,13 +6,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="RapidModels\modelmaker.buisness.json" />
-    <None Remove="RapidModels\modelmaker.identity.json" />
+    <None Remove="RapidModels\modelmaker.blogs.json" />
+    <None Remove="RapidModels\modelmaker.categories.json" />
+    <None Remove="RapidModels\modelmaker.many-to-many-many-as.json" />
+    <None Remove="RapidModels\modelmaker.many-to-many-many-bs.json" />
+    <None Remove="RapidModels\modelmaker.one-to-many-manys.json" />
+    <None Remove="RapidModels\modelmaker.one-to-many-ones.json" />
+    <None Remove="RapidModels\modelmaker.one-to-one-one-as.json" />
+    <None Remove="RapidModels\modelmaker.one-to-one-one-bs.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="RapidModels\modelmaker.buisness.json" />
-    <AdditionalFiles Include="RapidModels\modelmaker.identity.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.blogs.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.categories.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.many-to-many-many-as.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.many-to-many-many-bs.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.one-to-many-manys.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.one-to-many-ones.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.one-to-one-one-as.json" />
+    <AdditionalFiles Include="RapidModels\modelmaker.one-to-one-one-bs.json" />
   </ItemGroup>
 
   <ItemGroup>

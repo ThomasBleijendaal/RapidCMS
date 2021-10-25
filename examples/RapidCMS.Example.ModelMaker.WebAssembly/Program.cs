@@ -18,20 +18,27 @@ namespace RapidCMS.Example.ModelMaker.WebAssembly
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddAuthorizationCore();
-            builder.Services.AddRapidCMSApiRepository<BaseRepository<Identity>, ApiRepository<Identity>>(BaseUri);
-            builder.Services.AddTransient<IdentityValidator>();
 
             builder.Services.AddModelMakerCoreCollections();
+
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<Blog>, ApiRepository<Blog>>(BaseUri);
+            builder.Services.AddRapidCMSApiRepository<BaseRepository<Category>, ApiRepository<Category>>(BaseUri);
+
+            builder.Services.AddTransient<BlogValidator>();
+            builder.Services.AddTransient<CategoryValidator>();
 
             builder.Services.AddRapidCMSWebAssembly(config =>
             {
                 config.AllowAnonymousUser();
-                config.AddIdentityCollection();
 
                 config.Advanced.SemaphoreCount = 5;
+
+                config.AddBlogCollection();
+                config.AddCategoryCollection();
             });
 
             await builder.Build().RunAsync();
         }
     }
 }
+

@@ -4,7 +4,7 @@
 
 namespace RapidCMS.Example.ModelMaker.Models.Migrations
 {
-    public partial class Initcreate : Migration
+    public partial class ContentType : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

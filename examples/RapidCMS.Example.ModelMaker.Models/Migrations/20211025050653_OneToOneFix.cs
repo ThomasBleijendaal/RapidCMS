@@ -4,7 +4,7 @@
 
 namespace RapidCMS.Example.ModelMaker.Models.Migrations
 {
-    public partial class Init : Migration
+    public partial class OneToOneFix : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
