@@ -4,7 +4,7 @@ using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class TreeViewSetup : ITreeViewSetup
+    public class TreeViewSetup : ITreeViewSetup
     {
         public TreeViewSetup(EntityVisibilty entityVisibility, CollectionRootVisibility rootVisibility, bool defaultOpenEntities, bool defaultOpenCollections, IExpressionMetadata? name)
         {

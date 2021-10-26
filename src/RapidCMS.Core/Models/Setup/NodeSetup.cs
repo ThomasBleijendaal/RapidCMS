@@ -6,7 +6,7 @@ using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class NodeSetup : INodeSetup
+    public class NodeSetup : INodeSetup
     {
         public NodeSetup(
             Type baseType, 

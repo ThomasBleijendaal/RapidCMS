@@ -7,7 +7,7 @@ using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class FieldSetup : IFieldSetup
+    public class FieldSetup : IFieldSetup
     {
         internal FieldSetup(FieldConfig field)
         {

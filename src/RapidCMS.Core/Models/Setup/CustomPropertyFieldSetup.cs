@@ -3,7 +3,7 @@ using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class CustomPropertyFieldSetup : PropertyFieldSetup
+    public class CustomPropertyFieldSetup : PropertyFieldSetup
     {
         internal CustomPropertyFieldSetup(FieldConfig field, Type customFieldType) : base(field)
         {

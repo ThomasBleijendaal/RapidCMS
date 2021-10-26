@@ -5,7 +5,7 @@ using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class PaneSetup : IPaneSetup
+    public class PaneSetup : IPaneSetup
     {
         public PaneSetup(
             Type? customType, 

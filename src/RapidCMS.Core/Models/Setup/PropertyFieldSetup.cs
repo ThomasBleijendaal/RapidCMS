@@ -4,7 +4,7 @@ using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class PropertyFieldSetup : FieldSetup
+    public class PropertyFieldSetup : FieldSetup
     {
         internal PropertyFieldSetup(FieldConfig field) : base(field)
         {

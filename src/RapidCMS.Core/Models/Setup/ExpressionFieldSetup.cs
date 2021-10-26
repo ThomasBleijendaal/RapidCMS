@@ -6,7 +6,7 @@ using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class ExpressionFieldSetup : FieldSetup
+    public class ExpressionFieldSetup : FieldSetup
     {
         internal ExpressionFieldSetup(FieldConfig field, IExpressionMetadata expression) : base(field)
         {

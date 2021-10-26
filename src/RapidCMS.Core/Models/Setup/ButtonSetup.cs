@@ -5,7 +5,7 @@ using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class ButtonSetup : IButtonSetup
+    public class ButtonSetup : IButtonSetup
     {
         public DefaultButtonType DefaultButtonType { get; internal set; }
 
