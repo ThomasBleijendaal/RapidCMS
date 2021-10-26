@@ -121,9 +121,9 @@ namespace RapidCMS.ModelMaker
             }
         }
         
-        public override async Task<IEnumerable<OnetoOneOneA>> GetAllAsync(IParent? parent, IQuery<OnetoOneOneA> query)
+        public override async Task<IEnumerable<OnetoOneOneA>> GetAllAsync(IParent? parent, IView<OnetoOneOneA> view)
         {
-            return await query.ApplyOrder(query.ApplyDataView(_dbContext.OnetoOneOneAs)).Skip(query.Skip).Take(query.Take).AsNoTracking().ToListAsync();
+            return await view.ApplyOrder(view.ApplyDataView(_dbContext.OnetoOneOneAs)).Skip(view.Skip).Take(view.Take).AsNoTracking().ToListAsync();
         }
         
         public override async Task<OnetoOneOneA?> GetByIdAsync(string id, IParent? parent)
