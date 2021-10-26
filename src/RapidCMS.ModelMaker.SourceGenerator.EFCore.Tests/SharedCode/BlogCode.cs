@@ -146,9 +146,9 @@ namespace RapidCMS.ModelMaker
             }
         }
         
-        public override async Task<IEnumerable<Blog>> GetAllAsync(IParent? parent, IQuery<Blog> query)
+        public override async Task<IEnumerable<Blog>> GetAllAsync(IParent? parent, IView<Blog> view)
         {
-            return await query.ApplyOrder(query.ApplyDataView(_dbContext.Blogs)).Skip(query.Skip).Take(query.Take).AsNoTracking().ToListAsync();
+            return await view.ApplyOrder(view.ApplyDataView(_dbContext.Blogs)).Skip(view.Skip).Take(view.Take).AsNoTracking().ToListAsync();
         }
         
         public override async Task<Blog?> GetByIdAsync(string id, IParent? parent)
