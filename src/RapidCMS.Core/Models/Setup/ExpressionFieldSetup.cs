@@ -19,7 +19,12 @@ namespace RapidCMS.Core.Models.Setup
             Expression = PropertyMetadataHelper.GetExpressionMetadata(expression ?? throw new ArgumentNullException(nameof(expression)));
             DisplayType = field.DisplayType;
         }
-        
+
+        public ExpressionFieldSetup() : base(default)
+        {
+
+        }
+
         internal DisplayType DisplayType { get; set; } = DisplayType.Label;
     }
 }

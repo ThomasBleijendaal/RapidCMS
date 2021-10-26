@@ -10,6 +10,11 @@ namespace RapidCMS.Core.Models.Setup
             CustomType = customFieldType ?? throw new ArgumentNullException(nameof(customFieldType));
         }
 
+        public CustomPropertyFieldSetup(Type customFieldType) : base()
+        {
+            CustomType = customFieldType ?? throw new ArgumentNullException(nameof(customFieldType));
+        }
+
         internal Type CustomType { get; set; }
     }
 }

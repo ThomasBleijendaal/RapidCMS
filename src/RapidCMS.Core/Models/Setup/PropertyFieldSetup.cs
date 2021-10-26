@@ -11,6 +11,11 @@ namespace RapidCMS.Core.Models.Setup
             Property = field.Property ?? throw new ArgumentNullException(nameof(field.Property));
             EditorType = field.EditorType;
         }
+
+        public PropertyFieldSetup() : base(default)
+        {
+
+        }
         
         internal EditorType EditorType { get; set; } = EditorType.Readonly;
 

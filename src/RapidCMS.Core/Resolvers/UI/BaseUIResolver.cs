@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
@@ -95,7 +96,7 @@ namespace RapidCMS.Core.Resolvers.UI
                 CustomPropertyFieldSetup x => new CustomPropertyFieldUI(x, dataProvider),
                 PropertyFieldSetup x => new PropertyFieldUI(x, dataProvider),
 
-                _ => default!
+                _ => throw new InvalidOperationException($"Cannot return FieldUI for given field of type {field?.GetType()}")
             };
         }
     }

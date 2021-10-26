@@ -21,5 +21,7 @@ namespace RapidCMS.Core.Abstractions.Setup
 
         public Func<object, EntityState, bool> IsVisible { get; set; }
         public Func<object, EntityState, bool> IsDisabled { get; set; }
+
+        public object? Configuration { get; set; }
     }
 }

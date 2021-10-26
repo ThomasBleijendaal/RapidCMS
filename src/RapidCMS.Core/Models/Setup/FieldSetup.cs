@@ -9,8 +9,15 @@ namespace RapidCMS.Core.Models.Setup
 {
     public class FieldSetup : IFieldSetup
     {
-        internal FieldSetup(FieldConfig field)
+        internal FieldSetup(FieldConfig? field)
         {
+            if (field == null)
+            {
+                IsVisible = (o, s) => true;
+                IsDisabled = (o, s) => true;
+                return;
+            } 
+
             Index = field.Index;
             Description = field.Description;
             Details = field.Details;
