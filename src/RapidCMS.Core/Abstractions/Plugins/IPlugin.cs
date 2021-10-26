@@ -7,7 +7,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Plugins
 {
-    internal interface IPlugin
+    public interface IPlugin
     {
         Task<IEnumerable<ITreeElementSetup>> GetTreeElementsAsync();
 

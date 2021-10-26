@@ -8,9 +8,9 @@ using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class CollectionSetup : ICollectionSetup
+    public class CollectionSetup : ICollectionSetup
     {
-        internal CollectionSetup(
+        public CollectionSetup(
             string? icon,
             string? color,
             string name,

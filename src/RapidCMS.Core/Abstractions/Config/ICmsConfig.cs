@@ -83,7 +83,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// </summary>
         /// <typeparam name="TPlugin"></typeparam>
         /// <returns></returns>
-        internal ICmsConfig AddPlugin<TPlugin>()
+        public ICmsConfig AddPlugin<TPlugin>()
             where TPlugin : IPlugin;
 
         /// <summary>
