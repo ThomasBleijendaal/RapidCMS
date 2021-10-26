@@ -16,6 +16,6 @@ namespace RapidCMS.Core.Models.Setup
             CustomType = customFieldType ?? throw new ArgumentNullException(nameof(customFieldType));
         }
 
-        internal Type CustomType { get; set; }
+        public Type CustomType { get; set; }
     }
 }

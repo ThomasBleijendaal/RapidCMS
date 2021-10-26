@@ -25,6 +25,6 @@ namespace RapidCMS.Core.Models.Setup
 
         }
 
-        internal DisplayType DisplayType { get; set; } = DisplayType.Label;
+        public DisplayType DisplayType { get; set; } = DisplayType.Label;
     }
 }

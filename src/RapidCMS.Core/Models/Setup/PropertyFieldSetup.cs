@@ -16,9 +16,9 @@ namespace RapidCMS.Core.Models.Setup
         {
 
         }
-        
-        internal EditorType EditorType { get; set; } = EditorType.Readonly;
 
-        internal RelationSetup? Relation { get; set; }
+        public EditorType EditorType { get; set; } = EditorType.Readonly;
+
+        public RelationSetup? Relation { get; set; }
     }
 }
