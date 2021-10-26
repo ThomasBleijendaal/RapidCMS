@@ -60,7 +60,7 @@ namespace RapidCMS.Example.ModelMaker
                     config.GetProperty(Constants.Properties.LongString)?.Details.Add(customTextValidator);
 
                     // adding custom properties is also possible
-                    var enumDropdownDetail = config.AddPropertyDetail<EnumDataProvider<ContentType>> (
+                    var enumDropdownDetail = config.AddPropertyDetail<EnumDataProvider<ContentType>>(
                         "contentTypeValidator",
                         "Content Type",
                         "Content Type");

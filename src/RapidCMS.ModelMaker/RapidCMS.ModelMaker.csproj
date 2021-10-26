@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <LangVersion>9.0</LangVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
-
     <Authors>Thomas Bleijendaal</Authors>
     <Company>Thomas Bleijendaal</Company>
     <Description>
@@ -39,13 +38,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.2.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.7" />
+    <PackageReference Include="FluentValidation" Version="10.3.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.0-rc.2.21480.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0-rc.2.21480.10" />
     <ProjectReference Include="..\RapidCMS.Api.Core\RapidCMS.Api.Core.csproj" />
     <ProjectReference Include="..\RapidCMS.UI\RapidCMS.UI.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Include="..\..\LICENSE.md">
       <Pack>True</Pack>

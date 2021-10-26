@@ -41,3 +41,4 @@ namespace RapidCMS.Example.ModelMaker.WebAssembly
         }
     }
 }
+
