@@ -10,7 +10,7 @@ using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Core.Handlers
 {
-    internal class NavigateButtonActionHandler<TNavigationHandler> : DefaultButtonActionHandler
+    public class NavigateButtonActionHandler<TNavigationHandler> : DefaultButtonActionHandler
         where TNavigationHandler : INavigationHandler
     {
         private readonly TNavigationHandler _navigationHandler;
