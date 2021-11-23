@@ -35,9 +35,9 @@
 
   <ItemGroup>
     <PackageReference Include="HttpMultipartParser" Version="5.0.1" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.5.2" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
