@@ -38,11 +38,13 @@ namespace RapidCMS.UI.Components.Sections
             {
                 var sections = await ReloadSectionsAsync(reloadEntityIds, uiResolver);
 
-                if (cancellationToken.IsCancellationRequested)
+                if (cancellationToken.IsCancellationRequested || ListContext == null)
                 {
                     return;
                 }
 
+                ListContext.EditContexts.Clear();
+                ListContext.EditContexts.AddRange(sections.Select(x => x.editContext));
                 Sections = sections;
             }
             else
