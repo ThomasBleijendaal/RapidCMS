@@ -7,7 +7,7 @@ using RapidCMS.Core.Models.EventArgs.Mediators;
 
 namespace RapidCMS.Core.Handlers
 {
-    internal class OpenPaneButtonActionHandler<TSidePane> : DefaultButtonActionHandler
+    public class OpenPaneButtonActionHandler<TSidePane> : DefaultButtonActionHandler
     {
         private readonly IMediator _mediator;
 

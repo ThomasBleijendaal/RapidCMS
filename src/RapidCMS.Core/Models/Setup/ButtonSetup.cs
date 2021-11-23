@@ -5,23 +5,23 @@ using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class ButtonSetup : IButtonSetup
+    public class ButtonSetup : IButtonSetup
     {
-        public DefaultButtonType DefaultButtonType { get; internal set; }
+        public DefaultButtonType DefaultButtonType { get; set; }
 
-        public string ButtonId { get; internal set; } = default!;
-        public Type? CustomType { get; internal set; }
-        public Type ButtonHandlerType { get; internal set; } = default!;
+        public string ButtonId { get; set; } = default!;
+        public Type? CustomType { get; set; }
+        public Type ButtonHandlerType { get; set; } = default!;
 
-        public string Label { get; internal set; } = default!;
-        public string Icon { get; internal set; } = default!;
-        public bool IsPrimary { get; internal set; }
+        public string Label { get; set; } = default!;
+        public string Icon { get; set; } = default!;
+        public bool IsPrimary { get; set; }
 
-        public Func<object, EntityState, bool>? IsVisible { get; internal set; }
+        public Func<object, EntityState, bool>? IsVisible { get; set; }
 
-        public IEnumerable<IButtonSetup> Buttons { get; internal set; } = default!;
+        public IEnumerable<IButtonSetup> Buttons { get; set; } = default!;
 
-        public IEntityVariantSetup? EntityVariant { get; internal set; }
+        public IEntityVariantSetup? EntityVariant { get; set; }
 
         DefaultButtonType IButton.DefaultButtonType => DefaultButtonType;
         string IButton.Label => Label;

@@ -4,7 +4,7 @@ using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class SubCollectionListSetup : ISubCollectionListSetup
+    public class SubCollectionListSetup : ISubCollectionListSetup
     {
         public SubCollectionListSetup(int index, string collectionAlias)
         {

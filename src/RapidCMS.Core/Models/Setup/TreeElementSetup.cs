@@ -4,7 +4,7 @@ using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class TreeElementSetup : ITreeElementSetup
+    public class TreeElementSetup : ITreeElementSetup
     {
         public TreeElementSetup(string alias, string name, PageType type)
         {

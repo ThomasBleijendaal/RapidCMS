@@ -2,7 +2,7 @@
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal struct ResolvedSetup<T> : IResolvedSetup<T>
+    public struct ResolvedSetup<T> : IResolvedSetup<T>
     {
         public ResolvedSetup(T setup, bool cachable)
         {

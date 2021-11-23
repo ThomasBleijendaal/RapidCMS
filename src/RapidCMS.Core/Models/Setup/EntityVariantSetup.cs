@@ -3,7 +3,7 @@ using RapidCMS.Core.Abstractions.Setup;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class EntityVariantSetup : IEntityVariantSetup
+    public class EntityVariantSetup : IEntityVariantSetup
     {
         public static EntityVariantSetup Undefined = new EntityVariantSetup();
 

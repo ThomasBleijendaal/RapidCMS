@@ -11,7 +11,7 @@ using RapidCMS.Core.Forms;
 
 namespace RapidCMS.Core.Handlers
 {
-    internal class DefaultButtonActionHandler : IButtonActionHandler
+    public class DefaultButtonActionHandler : IButtonActionHandler
     {
         public Task ButtonClickAfterRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context)
         {

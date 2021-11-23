@@ -7,7 +7,7 @@ using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class ListSetup : IListSetup
+    public class ListSetup : IListSetup
     {
         public ListSetup(
             int? pageSize, 

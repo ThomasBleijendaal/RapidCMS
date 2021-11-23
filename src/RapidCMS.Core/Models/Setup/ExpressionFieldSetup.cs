@@ -6,7 +6,7 @@ using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class ExpressionFieldSetup : FieldSetup
+    public class ExpressionFieldSetup : FieldSetup
     {
         internal ExpressionFieldSetup(FieldConfig field, IExpressionMetadata expression) : base(field)
         {
@@ -19,7 +19,12 @@ namespace RapidCMS.Core.Models.Setup
             Expression = PropertyMetadataHelper.GetExpressionMetadata(expression ?? throw new ArgumentNullException(nameof(expression)));
             DisplayType = field.DisplayType;
         }
-        
-        internal DisplayType DisplayType { get; set; } = DisplayType.Label;
+
+        public ExpressionFieldSetup() : base(default)
+        {
+
+        }
+
+        public DisplayType DisplayType { get; set; } = DisplayType.Label;
     }
 }
