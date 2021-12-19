@@ -14,21 +14,21 @@ namespace RapidCMS.UI.Components.Sections
     {
         protected async Task LoadNodeDataAsync(CancellationToken cancellationToken)
         {
-            if (CurrentState == null)
+            if (CurrentNavigationState == null)
             {
                 throw new InvalidOperationException();
             }
 
             var editContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, FormEditContext>(new GetEntityRequestModel
             {
-                CollectionAlias = CurrentState.CollectionAlias,
-                Id = CurrentState.Id,
-                ParentPath = CurrentState.ParentPath,
-                UsageType = CurrentState.UsageType,
-                VariantAlias = CurrentState.VariantAlias
+                CollectionAlias = CurrentNavigationState.CollectionAlias,
+                Id = CurrentNavigationState.Id,
+                ParentPath = CurrentNavigationState.ParentPath,
+                UsageType = CurrentNavigationState.UsageType,
+                VariantAlias = CurrentNavigationState.VariantAlias
             });
 
-            var resolver = await UIResolverFactory.GetNodeUIResolverAsync(CurrentState.UsageType, CurrentState.CollectionAlias);
+            var resolver = await UIResolverFactory.GetNodeUIResolverAsync(CurrentNavigationState.UsageType, CurrentNavigationState.CollectionAlias);
 
             var buttons = await resolver.GetButtonsForEditContextAsync(editContext);
             var sections = new[] { (editContext, await resolver.GetSectionsForEditContextAsync(editContext)) }.ToList();
@@ -64,13 +64,13 @@ namespace RapidCMS.UI.Components.Sections
                     throw new ArgumentException($"ViewModel required");
                 }
 
-                await HandleViewCommandAsync(
-                    () => InteractionService.InteractAsync<PersistEntityRequestModel, NodeViewCommandResponseModel>(new PersistEntityRequestModel
-                    {
-                        ActionId = args.ViewModel.ButtonId,
-                        CustomData = args.Data,
-                        EditContext = args.EditContext
-                    }, CurrentViewState));
+                //await HandleViewCommandAsync(
+                //    () => InteractionService.InteractAsync<PersistEntityRequestModel, NodeViewCommandResponseModel>(new PersistEntityRequestModel
+                //    {
+                //        ActionId = args.ViewModel.ButtonId,
+                //        CustomData = args.Data,
+                //        EditContext = args.EditContext
+                //    }, CurrentViewState));
             }
             catch (Exception ex)
             {

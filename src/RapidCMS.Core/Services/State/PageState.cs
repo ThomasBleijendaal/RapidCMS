@@ -73,7 +73,7 @@ namespace RapidCMS.Core.Services.State
             {
                 var currentState = _currentState.Last();
 
-                _mediator.NotifyEvent(this, new NavigationEventArgs(currentState, _updateState));
+                // _mediator.NotifyEvent(this, new NavigationEventArgs(currentState, _updateState));
             }
         }
     }

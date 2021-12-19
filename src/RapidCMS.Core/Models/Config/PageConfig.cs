@@ -34,6 +34,7 @@ namespace RapidCMS.Core.Models.Config
                     typeof(ICollectionConfig),
                     new Dictionary<string, object> {
                         {
+                            // TODO: update
                             "InitialState",
                             new PageStateModel
                             {

@@ -8,9 +8,9 @@ namespace RapidCMS.UI.Components.Sections
     {
         protected async Task LoadPageDataAsync(CancellationToken cancellationToken)
         {
-            var contents = await PresentationService.GetPageAsync(CurrentState.PageType == PageType.Dashboard
+            var contents = await PresentationService.GetPageAsync(CurrentNavigationState.PageType == PageType.Dashboard
                 ? "__dashboard"
-                : CurrentState.CollectionAlias);
+                : CurrentNavigationState.CollectionAlias);
 
             if (cancellationToken.IsCancellationRequested)
             {

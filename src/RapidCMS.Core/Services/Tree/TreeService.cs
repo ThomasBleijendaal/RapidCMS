@@ -12,8 +12,8 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Data;
-using RapidCMS.Core.Models.State;
 using RapidCMS.Core.Models.UI;
+using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Services.Tree
 {
@@ -94,39 +94,29 @@ namespace RapidCMS.Core.Services.Tree
             {
                 if (isList)
                 {
-                    tree.State = new PageStateModel
-                    {
-                        CollectionAlias = collection.Alias,
-                        PageType = PageType.Collection,
-                        ParentPath = parentPath,
-                        UsageType = UsageType.Edit | ((parentPath != null) ? UsageType.NotRoot : UsageType.Root)
-                    };
+                    tree.NavigateTo = new NavigationState(
+                        collection.Alias, 
+                        parentPath,
+                        UsageType.Edit);
                 }
                 else if (isDetails)
                 {
                     var entityVariant = collection.GetEntityVariant(entity);
 
-                    tree.State = new PageStateModel
-                    {
-                        CollectionAlias = collection.Alias,
-                        Id = parent!.Entity.Id,
-                        PageType = PageType.Node,
-                        ParentPath = parentPath,
-                        UsageType = UsageType.Edit,
-                        VariantAlias = entityVariant.Alias
-                    };
+                    tree.NavigateTo = new NavigationState(
+                        collection.Alias, parentPath, 
+                        entityVariant.Alias, 
+                        parent!.Entity.Id, 
+                        UsageType.Edit);
                 }
                 
             }
             else if (canView)
             {
-                tree.State = new PageStateModel
-                {
-                    CollectionAlias = collection.Alias,
-                    PageType = PageType.Collection,
-                    ParentPath = parentPath,
-                    UsageType = UsageType.View | ((parentPath != null) ? UsageType.NotRoot : UsageType.Root)
-                };
+                tree.NavigateTo = new NavigationState(
+                    collection.Alias,
+                    parentPath,
+                    UsageType.View);
             }
 
             return tree;
@@ -140,11 +130,7 @@ namespace RapidCMS.Core.Services.Tree
                 throw new InvalidOperationException($"Failed to get page for given alias ({alias}).");
             }
 
-            return new TreePageUI(page.Name, page.Icon, page.Color, new PageStateModel
-            {
-                CollectionAlias = page.Alias,
-                PageType = PageType.Page
-            });
+            return new TreePageUI(page.Name, page.Icon, page.Color, new NavigationState(page.Alias, UsageType.View));
         }
 
         public async Task<TreeNodesUI?> GetNodesAsync(string alias, ParentPath? parentPath, int pageNr, int pageSize)
@@ -189,27 +175,21 @@ namespace RapidCMS.Core.Services.Tree
 
                     if (canEdit)
                     {
-                        node.State = new PageStateModel
-                        {
-                            CollectionAlias = collection.Alias,
-                            Id = entity.Id,
-                            PageType = PageType.Node,
-                            ParentPath = parentPath,
-                            UsageType = UsageType.Edit,
-                            VariantAlias = entityVariant.Alias
-                        };
+                        node.NavigateTo = new NavigationState(
+                            collection.Alias,
+                            parentPath,
+                            entityVariant.Alias,
+                            entity.Id,
+                            UsageType.Edit);
                     }
                     else if (canView)
                     {
-                        node.State = new PageStateModel
-                        {
-                            CollectionAlias = collection.Alias,
-                            Id = entity.Id,
-                            PageType = PageType.Node,
-                            ParentPath = parentPath,
-                            UsageType = UsageType.View,
-                            VariantAlias = entityVariant.Alias
-                        };
+                        node.NavigateTo = new NavigationState(
+                            collection.Alias,
+                            parentPath,
+                            entityVariant.Alias,
+                            entity.Id,
+                            UsageType.View);
                     }
 
                     return node;
@@ -230,10 +210,7 @@ namespace RapidCMS.Core.Services.Tree
 
             return new TreeRootUI("-1", AliasHelper.GetRepositoryAlias(typeof(object)), _cms.SiteName, collections)
             {
-                State = new PageStateModel
-                {
-                    PageType = PageType.Dashboard
-                }
+                NavigateTo = new NavigationState()
             };
         }
     }

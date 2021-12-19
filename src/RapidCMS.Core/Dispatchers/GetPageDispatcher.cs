@@ -42,6 +42,7 @@ namespace RapidCMS.Core.Dispatchers
             {
                 if (section.Type == typeof(ICollectionConfig) && 
                     section.Parameters != null &&
+                    // TODO: wut?
                     section.Parameters.TryGetValue("InitialState", out var obj) &&
                     obj is PageStateModel state)
                 {

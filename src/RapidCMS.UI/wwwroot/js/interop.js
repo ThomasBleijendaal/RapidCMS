@@ -1,5 +1,6 @@
 ﻿window['RapidCMS'] = {
     navigateTo: function (uri) {
-        history.replaceState(null, /* ignored title */ '', uri);
+        // TODO: push the navigation state here..
+        history.pushState(null, /* ignored title */ '', uri);
     }
 };

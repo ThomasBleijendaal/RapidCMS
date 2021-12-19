@@ -4,17 +4,8 @@
 
 @layout MainLayout
 
-@page "/"
-@page "/page/{CollectionAlias}"
-@page "/collection/{Action}/{CollectionAlias}"
-@page "/collection/{Action}/{Path}/{CollectionAlias}"
-@page "/node/{Action}/{CollectionAlias}/{VariantAlias}"
-@page "/node/{Action}/{CollectionAlias}/{VariantAlias}/{Id}"
-@page "/node/{Action}/{Path}/{CollectionAlias}/{VariantAlias}/{Id}"
+@page "/{*PageRoute}"
 
-@if (State != null)
-{
-    <AuthorizeView>
-        <RootSection InitialState="State" IsRoot="true" />
-    </AuthorizeView>
-}
+<AuthorizeView>
+    <RootSection />
+</AuthorizeView>

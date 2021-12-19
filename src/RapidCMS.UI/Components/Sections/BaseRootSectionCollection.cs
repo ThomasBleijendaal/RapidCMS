@@ -27,12 +27,9 @@ namespace RapidCMS.UI.Components.Sections
 
         protected async Task LoadCollectionDataAsync(CancellationToken cancellationToken, IEnumerable<string>? reloadEntityIds = null)
         {
-            if (CurrentState == null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            var uiResolver = await UIResolverFactory.GetListUIResolverAsync(CurrentState.UsageType, CurrentState.CollectionAlias);
+            var uiResolver = await UIResolverFactory.GetListUIResolverAsync(
+                CurrentNavigationState.UsageType, 
+                CurrentNavigationState.CollectionAlias ?? throw new InvalidOperationException());
 
             if (reloadEntityIds?.Any() == true)
             {
@@ -86,7 +83,7 @@ namespace RapidCMS.UI.Components.Sections
                 return;
             }
 
-            CurrentState.CurrentPage = page;
+            // CurrentState.CurrentPage = page;
 
             await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
         }
@@ -98,8 +95,8 @@ namespace RapidCMS.UI.Components.Sections
                 return;
             }
 
-            CurrentState.CurrentPage = 1;
-            CurrentState.SearchTerm = search;
+            //CurrentState.CurrentPage = 1;
+            //CurrentState.SearchTerm = search;
 
             await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
         }
@@ -111,58 +108,61 @@ namespace RapidCMS.UI.Components.Sections
                 return;
             }
 
-            CurrentState.ActiveTab = tabId;
-            CurrentState.CurrentPage = 1;
+            //CurrentState.ActiveTab = tabId;
+            //CurrentState.CurrentPage = 1;
 
             await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
         }
 
         protected async Task<(ListContext listContext, List<(FormEditContext editContext, IEnumerable<SectionUI> sections)> sections)> LoadSectionsAsync(ListUI listUI, IListUIResolver uiResolver)
         {
-            var view = View.Create(listUI.PageSize, CurrentState.CurrentPage, CurrentState.SearchTerm, CurrentState.ActiveTab, CurrentState.CollectionAlias);
+            //var view = new View(); // TODO: implement in CurrentNavigationState View.Create(listUI.PageSize, CurrentState.CurrentPage, CurrentState.SearchTerm, CurrentState.ActiveTab, CurrentState.CollectionAlias);
 
-            if (listUI.OrderBys != null)
-            {
-                view.SetOrderBys(listUI.OrderBys);
-            }
+            //if (listUI.OrderBys != null)
+            //{
+            //    view.SetOrderBys(listUI.OrderBys);
+            //}
 
-            var request = CurrentState.Related != null
+            var view = CurrentNavigationState.GetCurrentView(listUI);
+
+            var request = false /* TODO: CurrentState.Related != null*/
                 ? (GetEntitiesRequestModel)new GetEntitiesOfRelationRequestModel
                 {
-                    CollectionAlias = CurrentState.CollectionAlias,
+                    CollectionAlias = CurrentNavigationState.CollectionAlias,
                     View = view,
-                    Related = CurrentState.Related,
-                    UsageType = CurrentState.UsageType,
-                    VariantAlias = CurrentState.VariantAlias
+                    Related = default, // CurrentNavigationState.Related,
+                    UsageType = CurrentNavigationState.UsageType,
+                    VariantAlias = CurrentNavigationState.VariantAlias
                 }
                 : (GetEntitiesRequestModel)new GetEntitiesOfParentRequestModel
                 {
-                    CollectionAlias = CurrentState.CollectionAlias,
-                    ParentPath = CurrentState.ParentPath,
+                    CollectionAlias = CurrentNavigationState.CollectionAlias,
+                    ParentPath = CurrentNavigationState.ParentPath,
                     View = view,
-                    UsageType = CurrentState.UsageType,
-                    VariantAlias = CurrentState.VariantAlias
+                    UsageType = CurrentNavigationState.UsageType,
+                    VariantAlias = CurrentNavigationState.VariantAlias
                 };
 
             var listContext = await PresentationService.GetEntitiesAsync<GetEntitiesRequestModel, ListContext>(request);
 
             var sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await uiResolver.GetSectionsForEditContextAsync(editContext)));
 
-            if (!view.MoreDataAvailable)
-            {
-                CurrentState.MaxPage = CurrentState.CurrentPage;
+            // TODO:
+            //if (!view.MoreDataAvailable)
+            //{
+            //    CurrentState.MaxPage = CurrentState.CurrentPage;
 
-                if (CurrentState.CurrentPage > 1 && sections?.Any() != true)
-                {
-                    CurrentState.CurrentPage--;
-                    CurrentState.MaxPage = null;
-                    return await LoadSectionsAsync(listUI, uiResolver);
-                }
-            }
-            if (CurrentState.MaxPage == CurrentState.CurrentPage && view.MoreDataAvailable)
-            {
-                CurrentState.MaxPage = null;
-            }
+            //    if (CurrentState.CurrentPage > 1 && sections?.Any() != true)
+            //    {
+            //        CurrentState.CurrentPage--;
+            //        CurrentState.MaxPage = null;
+            //        return await LoadSectionsAsync(listUI, uiResolver);
+            //    }
+            //}
+            //if (CurrentState.MaxPage == CurrentState.CurrentPage && view.MoreDataAvailable)
+            //{
+            //    CurrentState.MaxPage = null;
+            //}
 
             return (listContext, sections);
         }
@@ -202,7 +202,7 @@ namespace RapidCMS.UI.Components.Sections
         {
             try
             {
-                if (CurrentState == null)
+                if (CurrentNavigationState == null)
                 {
                     throw new InvalidOperationException();
                 }
@@ -212,16 +212,16 @@ namespace RapidCMS.UI.Components.Sections
                     ActionId = args.ViewModel.ButtonId,
                     CustomData = args.Data,
                     ListContext = ListContext!,
-                    Related = CurrentState.Related
+                    Related = default // TODO CurrentState.Related
                 };
 
-                if (CurrentState.UsageType.HasFlag(UsageType.Edit))
+                if (CurrentNavigationState.UsageType.HasFlag(UsageType.Edit))
                 {
-                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListEditorCommandResponseModel>(request, CurrentViewState));
+                    //await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListEditorCommandResponseModel>(request, CurrentViewState));
                 }
                 else
                 {
-                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListViewCommandResponseModel>(request, CurrentViewState));
+                    //await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListViewCommandResponseModel>(request, CurrentViewState));
                 }
             }
             catch (Exception ex)
@@ -232,32 +232,32 @@ namespace RapidCMS.UI.Components.Sections
 
         protected async Task NodeButtonOnClickAsync(ButtonClickEventArgs args)
         {
-            try
-            {
-                if (CurrentState.Related != null)
-                {
-                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistRelatedEntityRequestModel
-                    {
-                        ActionId = args.ViewModel.ButtonId,
-                        CustomData = args.Data,
-                        EditContext = args.EditContext,
-                        Related = CurrentState.Related
-                    }, CurrentViewState));
-                }
-                else
-                {
-                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistEntityRequestModel
-                    {
-                        ActionId = args.ViewModel.ButtonId,
-                        CustomData = args.Data,
-                        EditContext = args.EditContext,
-                    }, CurrentViewState));
-                }
-            }
-            catch (Exception ex)
-            {
-                Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
-            }
+            //try
+            //{
+            //    if (CurrentState.Related != null)
+            //    {
+            //        await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistRelatedEntityRequestModel
+            //        {
+            //            ActionId = args.ViewModel.ButtonId,
+            //            CustomData = args.Data,
+            //            EditContext = args.EditContext,
+            //            Related = CurrentState.Related
+            //        }, CurrentViewState));
+            //    }
+            //    else
+            //    {
+            //        await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistEntityRequestModel
+            //        {
+            //            ActionId = args.ViewModel.ButtonId,
+            //            CustomData = args.Data,
+            //            EditContext = args.EditContext,
+            //        }, CurrentViewState));
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
+            //}
         }
 
         protected void OnRowDragged(RowDragEventArgs args)

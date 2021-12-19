@@ -9,6 +9,7 @@ using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Mediators;
+using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
@@ -24,6 +25,7 @@ using RapidCMS.Core.Interactions;
 using RapidCMS.Core.Mediators;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
+using RapidCMS.Core.Navigation;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Resolvers.Buttons;
 using RapidCMS.Core.Resolvers.Convention;
@@ -100,6 +102,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IButtonInteraction, ButtonInteraction>();
             services.AddTransient<IDragInteraction, DragInteraction>();
             services.AddTransient<IInteractionService, InteractionService>();
+
+            services.AddScoped<INavigationStateProvider, NavigationStateProvider>();
 
             services.AddTransient<IConcurrencyService, ConcurrencyService>();
             services.AddTransient<IPageState, PageState>();

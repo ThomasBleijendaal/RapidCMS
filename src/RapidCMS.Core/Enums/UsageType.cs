@@ -18,6 +18,7 @@ namespace RapidCMS.Core.Enums
         Node = 131072,
         Details = 262144,
 
+        // TODO: why these elements? -- document why
         Root = 2097152,
         NotRoot = 4194304
     }

@@ -7,9 +7,11 @@
 
     [Inject] private IMediator Mediator { get; set; } = default!;
 
+    [Inject] private INavigationStateProvider NavigationStateProvider { get; set; } = default!;
+
     [Parameter] public RenderFragment ChildContent { get; set; } = default!;
 
-    [Parameter] public PageStateModel NewState { get; set; } = default!;
+    [Parameter] public NavigationState NavigateTo { get; set; } = default!;
 
     protected override void OnInitialized()
     {
@@ -30,19 +32,20 @@
     {
         await InvokeAsync(() =>
         {
-            _isActive = args.State.Equals(NewState);
-            StateHasChanged();
+            _isActive = false; // TODO: args.State.Equals(NewState);
+        StateHasChanged();
         });
     }
 
     private void OnLocationChanged(object? sender, PageStateModel model)
     {
-        _isActive = NewState.Equals(model);
+        _isActive = false; // TODO: NewState.Equals(model);
         StateHasChanged();
     }
 
     private void OnLinkClick(MouseEventArgs args)
     {
-        Mediator.NotifyEvent(this, new NavigationEventArgs(NewState));
+        // Mediator.NotifyEvent(this, new NavigationEventArgs(NewState));
+        NavigationStateProvider.AppendNavigationState(NavigateTo);
     }
 }

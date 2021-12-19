@@ -10,7 +10,7 @@ using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.UI;
 
-namespace RapidCMS.UI.Components.Shared
+namespace RapidCMS.UI.Components.Shared.Tree
 {
     public partial class Nodes
     {

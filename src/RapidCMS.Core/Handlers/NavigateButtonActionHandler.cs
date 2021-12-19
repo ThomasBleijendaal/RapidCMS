@@ -41,15 +41,15 @@ namespace RapidCMS.Core.Handlers
                     : request.IsEdit ? UsageType.Edit
                     : UsageType.View;
 
-                _mediator.NotifyEvent(this, new NavigationEventArgs(new PageStateModel
-                {
-                    CollectionAlias = request.CollectionAlias,
-                    Id = request.Id,
-                    PageType = pageType,
-                    ParentPath = request.ParentPath,
-                    UsageType = usageType,
-                    VariantAlias = request.VariantAlias ?? collection?.EntityVariant.Alias ?? string.Empty
-                }, true));
+                //_mediator.NotifyEvent(this, new NavigationEventArgs(new PageStateModel
+                //{
+                //    CollectionAlias = request.CollectionAlias,
+                //    Id = request.Id,
+                //    PageType = pageType,
+                //    ParentPath = request.ParentPath,
+                //    UsageType = usageType,
+                //    VariantAlias = request.VariantAlias ?? collection?.EntityVariant.Alias ?? string.Empty
+                //}, true));
             }
 
             return CrudType.None;
