@@ -50,19 +50,21 @@ namespace RapidCMS.Core.Dispatchers.Form
             _mediator = mediator;
         }
 
-        Task<ListViewCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request, IPageState pageState)
+        Task<ListViewCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request)
         {
-            return InvokeAsync(request, new ListViewCommandResponseModel(), pageState);
+            return InvokeAsync(request, new ListViewCommandResponseModel());
         }
 
-        Task<ListEditorCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListEditorCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request, IPageState pageState)
+        Task<ListEditorCommandResponseModel> IInteractionDispatcher<PersistEntitiesRequestModel, ListEditorCommandResponseModel>.InvokeAsync(PersistEntitiesRequestModel request)
         {
-            return InvokeAsync(request, new ListEditorCommandResponseModel(), pageState);
+            return InvokeAsync(request, new ListEditorCommandResponseModel());
         }
 
-        private async Task<T> InvokeAsync<T>(PersistEntitiesRequestModel request, T response, IPageState pageState)
+        private async Task<T> InvokeAsync<T>(PersistEntitiesRequestModel request, T response)
             where T : ViewCommandResponseModel
         {
+            var pageState = default(IPageState);
+
             var collection = await _collectionResolver.ResolveSetupAsync(request.ListContext.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 

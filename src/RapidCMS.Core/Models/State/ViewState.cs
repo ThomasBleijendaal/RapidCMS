@@ -3,6 +3,7 @@ using RapidCMS.Core.Abstractions.State;
 
 namespace RapidCMS.Core.Models.State
 {
+    [Obsolete]
     public class ViewState
     {
         public static ViewState Api => new ViewState();

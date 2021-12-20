@@ -29,7 +29,7 @@ namespace RapidCMS.Core.Dispatchers.Api
             _authService = authService;
         }
 
-        public async Task<ApiCommandResponseModel> InvokeAsync(PersistReorderRequestModel request, IPageState pageState)
+        public async Task<ApiCommandResponseModel> InvokeAsync(PersistReorderRequestModel request)
         {
             if (string.IsNullOrWhiteSpace(request.Subject.RepositoryAlias) ||
                 string.IsNullOrWhiteSpace(request.Subject.Id))

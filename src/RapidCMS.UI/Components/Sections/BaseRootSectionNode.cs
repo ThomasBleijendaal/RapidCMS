@@ -64,13 +64,13 @@ namespace RapidCMS.UI.Components.Sections
                     throw new ArgumentException($"ViewModel required");
                 }
 
-                //await HandleViewCommandAsync(
-                //    () => InteractionService.InteractAsync<PersistEntityRequestModel, NodeViewCommandResponseModel>(new PersistEntityRequestModel
-                //    {
-                //        ActionId = args.ViewModel.ButtonId,
-                //        CustomData = args.Data,
-                //        EditContext = args.EditContext
-                //    }, CurrentViewState));
+                await HandleViewCommandAsync(
+                    () => InteractionService.InteractAsync<PersistEntityRequestModel, NodeViewCommandResponseModel>(new PersistEntityRequestModel
+                    {
+                        ActionId = args.ViewModel.ButtonId,
+                        CustomData = args.Data,
+                        EditContext = args.EditContext
+                    }));
             }
             catch (Exception ex)
             {

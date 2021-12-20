@@ -174,7 +174,7 @@ namespace RapidCMS.UI.Components.Sections
 
         private async Task OnExceptionAsync(object sender, ExceptionEventArgs args)
         {
-            // TODO: reimplement similar
+            // TODO: reimplement similar but better
             //await InvokeAsync(() =>
             //{
             //    if (args.Exception is UnauthorizedAccessException)

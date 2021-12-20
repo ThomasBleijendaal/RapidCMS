@@ -29,7 +29,7 @@ namespace RapidCMS.Core.Dispatchers.Api
             _parentService = parentService;
         }
 
-        public async Task<ApiCommandResponseModel> InvokeAsync(PersistRelatedEntityRequestModel request, IPageState pageState)
+        public async Task<ApiCommandResponseModel> InvokeAsync(PersistRelatedEntityRequestModel request)
         {
             if (string.IsNullOrWhiteSpace(request.Subject.RepositoryAlias) ||
                 string.IsNullOrWhiteSpace(request.Subject.Id) ||

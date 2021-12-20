@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -122,8 +123,9 @@ namespace RapidCMS.Example.Server
                 config.AddActiveCollection();
 
                 // the dashboard can be build up of custom Blazor components, or the ListViews or ListEditors of collections
-                config.Dashboard.AddSection(typeof(DashboardSection));
-                config.Dashboard.AddSection("user", edit: true);
+                // TODO: fix
+                //config.Dashboard.AddSection(typeof(DashboardSection));
+                //config.Dashboard.AddSection("user", edit: true);
             });
         }
 

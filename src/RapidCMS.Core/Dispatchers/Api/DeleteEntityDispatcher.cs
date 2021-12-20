@@ -29,7 +29,7 @@ namespace RapidCMS.Core.Dispatchers.Api
             _parentService = parentService;
         }
 
-        public async Task<ApiCommandResponseModel> InvokeAsync(DeleteEntityRequestModel request, IPageState pageState)
+        public async Task<ApiCommandResponseModel> InvokeAsync(DeleteEntityRequestModel request)
         {
             if (string.IsNullOrWhiteSpace(request.Descriptor.RepositoryAlias) ||
                 string.IsNullOrWhiteSpace(request.Descriptor.Id))

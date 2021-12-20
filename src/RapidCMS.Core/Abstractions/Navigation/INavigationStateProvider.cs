@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using RapidCMS.Core.Navigation;
+﻿using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Abstractions.Navigation
 {
@@ -10,5 +9,9 @@ namespace RapidCMS.Core.Abstractions.Navigation
         NavigationState Initialize(string url);
 
         void AppendNavigationState(NavigationState state);
+
+        void ReplaceNavigationState(NavigationState state);
+
+        void RemoveNavigationState();
     }
 }

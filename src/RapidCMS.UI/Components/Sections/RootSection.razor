@@ -49,57 +49,57 @@
         else if (ListUI.ListType == ListType.Table)
         {
             <div class="content" @key=Update>
-                @*<CascadingEditContext EditContext=@ListContext.ProtoEditContext>
+                            @*TODO: State="CurrentNavigationState"*@
+                <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
                     <Tabbar Tabs="Tabs"
                             SearchBarVisible="ListUI.SearchBarVisible"
-                            State="CurrentState"
                             OnSearch="SearchAsync"
                             OnTabChange="TabChangeAsync" />
                     <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" EditContext=@ListContext.ProtoEditContext />
                 </CascadingEditContext>
-
+                @*TODO: CurrentState.CurrentPage"*@
+                @*TODO: CurrentState.MaxPage"*@
                 <TableSection UI="ListUI"
                               Sections="Sections"
-                              CurrentPage="CurrentState.CurrentPage"
-                              MaxPage="CurrentState.MaxPage"
+                              CurrentPage="1" 
+                              MaxPage="null" 
                               OnButtonClick="NodeButtonOnClickAsync"
                               OnRowDragged="OnRowDragged"
-                              OnPageChanged="PageChangedAsync" />*@
+                              OnPageChanged="PageChangedAsync" />
             </div>
         }
         else if (ListUI.ListType == ListType.Block)
         {
-            @*if (Buttons?.Any() == true)
+            if (Buttons?.Any() == true)
             {
                 <div class="content buttons-only">
+                                @*TODO: State="CurrentState"*@
                     <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
                         <Tabbar Tabs="Tabs"
                                 SearchBarVisible="ListUI.SearchBarVisible"
-                                State="CurrentState"
                                 OnSearch="SearchAsync"
                                 OnTabChange="TabChangeAsync" />
                         <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" EditContext=@ListContext.ProtoEditContext />
                     </CascadingEditContext>
                 </div>
             }
-
+            @*TODO: CurrentState.CurrentPage"*@
+            @*TODO: CurrentState.MaxPage"*@
             <BlocksSection Sections="Sections"
-                           CurrentPage="CurrentState.CurrentPage"
-                           MaxPage="CurrentState.MaxPage"
+                           CurrentPage="1" 
+                           MaxPage="null" 
                            OnButtonClick="NodeButtonOnClickAsync"
-                           OnPageChanged="PageChangedAsync" />*@
+                           OnPageChanged="PageChangedAsync" />
         }
     }
     else if ((CurrentNavigationState.PageType == PageType.Page || CurrentNavigationState.PageType == PageType.Dashboard) && PageContents != null)
     {
-        @*
-        TODO: fix    
         <CascadingValue Name="Embedded" Value="true">
             @foreach (var section in PageContents)
             {
                 @RenderType(section);
             }
-        </CascadingValue>*@
+        </CascadingValue>
     }
     else if (CurrentNavigationState.PageType == PageType.Unauthorized)
     {

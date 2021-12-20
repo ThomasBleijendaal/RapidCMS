@@ -36,11 +36,11 @@ namespace RapidCMS.UI.Components.Pages
             base.OnInitialized();
 
             DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(LocationChangedAsync));
+            NavigationState.Initialize(PageRoute ?? "");
         }
 
         protected override void OnParametersSet()
         {
-            NavigationState.Initialize(PageRoute ?? "");
 
             //State = null;
 

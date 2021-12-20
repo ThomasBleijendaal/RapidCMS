@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Core.Abstractions.State
 {
+    [Obsolete]
     public interface IPageState
     {
         void UpdateNavigationStateWhenStateChanges();

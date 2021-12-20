@@ -37,7 +37,7 @@ namespace RapidCMS.Core.Dispatchers.Api
             _editContextFactory = editContextFactory;
         }
 
-        public async Task<ApiCommandResponseModel> InvokeAsync(PersistEntityRequestModel request, IPageState pageState)
+        public async Task<ApiCommandResponseModel> InvokeAsync(PersistEntityRequestModel request)
         {
             if (string.IsNullOrWhiteSpace(request.Descriptor.RepositoryAlias))
             {

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.JSInterop;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Navigation;
@@ -99,6 +97,8 @@ namespace RapidCMS.Core.Navigation
         //    throw new NotImplementedException();
         //}
 
+
+
         public override string ToString()
             => UriHelper.Combine(
                 PageType.ToString().ToLower(),
@@ -109,23 +109,18 @@ namespace RapidCMS.Core.Navigation
                 Id);
     }
 
-    internal class NavigationStateProvider : INavigationStateProvider, IDisposable
+    internal class NavigationStateProvider : INavigationStateProvider
     {
         private readonly IMediator _mediator;
         private readonly NavigationManager _navigationManager;
-        private readonly IJSRuntime _jsRuntime;
         private List<NavigationState> _states = new();
 
         public NavigationStateProvider(
             IMediator mediator,
-            NavigationManager navigationManager,
-            IJSRuntime jsRuntime)
+            NavigationManager navigationManager)
         {
             _mediator = mediator;
             _navigationManager = navigationManager;
-            _jsRuntime = jsRuntime;
-
-            _navigationManager.LocationChanged += LocationChanged;
         }
 
 
@@ -136,8 +131,6 @@ namespace RapidCMS.Core.Navigation
             _mediator.NotifyEvent(this, new NavigationEventArgs(state));
 
             _navigationManager.NavigateTo(state.ToString());
-
-            //_jsRuntime.InvokeVoidAsync("RapidCMS.navigateTo", state.ToString());
         }
 
         public NavigationState GetCurrentState()
@@ -161,23 +154,31 @@ namespace RapidCMS.Core.Navigation
             return newState;
         }
 
-        private void LocationChanged(object? sender, LocationChangedEventArgs e)
+        public void RemoveNavigationState()
         {
-            foreach (var state in _states.AsEnumerable().Reverse().ToList())
-            {
-                if (state.ToString().Equals(e.Location, StringComparison.OrdinalIgnoreCase))
-                {
-                    _mediator.NotifyEvent(this, new NavigationEventArgs(state));
-                    break;
-                }
+            RemoveLastState();
 
-                _states.Remove(state);
-            }
+            var newState = GetCurrentState();
+
+            _mediator.NotifyEvent(this, new NavigationEventArgs(newState));
+
+            _navigationManager.NavigateTo(newState.ToString());
         }
 
-        public void Dispose()
+        public void ReplaceNavigationState(NavigationState state)
         {
-            _navigationManager.LocationChanged -= LocationChanged;
+            RemoveLastState();
+            AppendNavigationState(state);
+        }
+
+        private void RemoveLastState()
+        {
+            var itemToRemove = _states.LastOrDefault();
+
+            if (itemToRemove != null)
+            {
+                _states.Remove(itemToRemove);
+            }
         }
     }
 }

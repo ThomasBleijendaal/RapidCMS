@@ -7,6 +7,7 @@ using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.State;
+using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Dispatchers
 {
@@ -42,9 +43,8 @@ namespace RapidCMS.Core.Dispatchers
             {
                 if (section.Type == typeof(ICollectionConfig) && 
                     section.Parameters != null &&
-                    // TODO: wut?
-                    section.Parameters.TryGetValue("InitialState", out var obj) &&
-                    obj is PageStateModel state)
+                    section.Parameters.TryGetValue("NavigationState", out var obj) &&
+                    obj is NavigationState state)
                 {
                     var collection = await _collectionResolver.ResolveSetupAsync(state.CollectionAlias);
                     var repository = _repositoryResolver.GetRepository(collection);
