@@ -59,7 +59,7 @@ namespace RapidCMS.Core.Navigation
 
             var qs = HttpUtility.ParseQueryString(queryString);
             var tab = int.TryParse(qs.Get("tab"), out var t) ? t : default(int?);
-            var searchTerm = qs.Get("s");
+            var searchTerm = qs.Get("q");
             var currentPage = int.TryParse(qs.Get("p"), out var p) ? p : 1;
 
             CollectionState = new CollectionState(tab, searchTerm, currentPage);
