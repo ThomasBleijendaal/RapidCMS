@@ -35,6 +35,7 @@ namespace RapidCMS.Core.Factories
             _conventionBasedNodeSetupResolver = conventionBasedNodeSetupResolver;
         }
 
+        // TODO: accept CurrentNavigationState + create NodeUIResolver that will talk to INavigationStateProvider
         public async Task<INodeUIResolver> GetNodeUIResolverAsync(UsageType usageType, string collectionAlias)
         {
             var collection = await _collectionResolver.ResolveSetupAsync(collectionAlias);
@@ -51,6 +52,7 @@ namespace RapidCMS.Core.Factories
             return nodeUI;
         }
 
+        // TODO: accept CurrentNavigationState + create ListUIResolver that will talk to INavigationStateProvider
         public async Task<IListUIResolver> GetListUIResolverAsync(UsageType usageType, string collectionAlias)
         {
             var collection = await _collectionResolver.ResolveSetupAsync(collectionAlias);

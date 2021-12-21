@@ -156,6 +156,7 @@ namespace RapidCMS.UI.Components.Sections
                 return await LoadSectionsAsync(listUI, uiResolver);
             }
 
+            // TODO: why the null warnings here?
             return (listContext, sections);
         }
 
