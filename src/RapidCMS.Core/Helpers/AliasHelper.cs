@@ -26,7 +26,7 @@ namespace RapidCMS.Core.Helpers
         public static string GetEntityVariantAlias(Type entityType)
         {
             var name = entityType?.FullName;
-            var alias = name?.ToSha256Base64String("entity") ?? "unknown-entity";
+            var alias = name?.ToSha256Base64String("entity")[0..6] ?? "unknown-entity";
 
             return alias;
         }

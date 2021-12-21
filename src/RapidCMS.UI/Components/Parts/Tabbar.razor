@@ -44,14 +44,13 @@
     [Parameter] public EventCallback<string?> OnSearch { get; set; }
     [Parameter] public EventCallback<int?> OnTabChange { get; set; }
 
-    // TODO: implement
-    //[Parameter] public PageStateModel? State { get; set; }
+    [Parameter] public CollectionState State { get; set; } = default!;
 
-    //protected override void OnInitialized()
-    //{
-    //    activeTab = State?.ActiveTab ?? Tabs?.FirstOrDefault()?.Id;
-    //    searchTerm = State?.SearchTerm;
-    //}
+    protected override void OnInitialized()
+    {
+        activeTab = State?.ActiveTab ?? Tabs?.FirstOrDefault()?.Id;
+        searchTerm = State?.SearchTerm;
+    }
 
     async void Search(string searchValue)
     {

@@ -49,20 +49,18 @@
         else if (ListUI.ListType == ListType.Table)
         {
             <div class="content" @key=Update>
-                            @*TODO: State="CurrentNavigationState"*@
                 <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
                     <Tabbar Tabs="Tabs"
                             SearchBarVisible="ListUI.SearchBarVisible"
+                            State="CurrentNavigationState.CollectionState"
                             OnSearch="SearchAsync"
                             OnTabChange="TabChangeAsync" />
                     <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" EditContext=@ListContext.ProtoEditContext />
                 </CascadingEditContext>
-                @*TODO: CurrentState.CurrentPage"*@
-                @*TODO: CurrentState.MaxPage"*@
                 <TableSection UI="ListUI"
                               Sections="Sections"
-                              CurrentPage="1" 
-                              MaxPage="null" 
+                              CurrentPage="CurrentNavigationState.CollectionState.CurrentPage" 
+                              MaxPage="CurrentNavigationState.CollectionState.MaxPage" 
                               OnButtonClick="NodeButtonOnClickAsync"
                               OnRowDragged="OnRowDragged"
                               OnPageChanged="PageChangedAsync" />
@@ -73,21 +71,19 @@
             if (Buttons?.Any() == true)
             {
                 <div class="content buttons-only">
-                                @*TODO: State="CurrentState"*@
                     <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
                         <Tabbar Tabs="Tabs"
                                 SearchBarVisible="ListUI.SearchBarVisible"
+                                State="CurrentNavigationState.CollectionState"
                                 OnSearch="SearchAsync"
                                 OnTabChange="TabChangeAsync" />
                         <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" EditContext=@ListContext.ProtoEditContext />
                     </CascadingEditContext>
                 </div>
             }
-            @*TODO: CurrentState.CurrentPage"*@
-            @*TODO: CurrentState.MaxPage"*@
             <BlocksSection Sections="Sections"
-                           CurrentPage="1" 
-                           MaxPage="null" 
+                           CurrentPage="CurrentNavigationState.CollectionState.CurrentPage" 
+                           MaxPage="CurrentNavigationState.CollectionState.MaxPage" 
                            OnButtonClick="NodeButtonOnClickAsync"
                            OnPageChanged="PageChangedAsync" />
         }

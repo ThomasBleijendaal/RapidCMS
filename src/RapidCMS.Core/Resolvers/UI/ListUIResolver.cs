@@ -71,8 +71,7 @@ namespace RapidCMS.Core.Resolvers.UI
             var type = editContext.Entity.GetType();
             return await _list.Panes
                 .Where(pane => pane.VariantType.IsSameTypeOrDerivedFrom(type))
-                .ToListAsync(pane => GetSectionUIAsync(pane, editContext))
-                ;
+                .ToListAsync(pane => GetSectionUIAsync(pane, editContext));
         }
 
         public async Task<IEnumerable<TabUI>?> GetTabsAsync(FormEditContext editContext)

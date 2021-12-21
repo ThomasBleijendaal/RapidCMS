@@ -9,14 +9,11 @@ using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Response;
-using RapidCMS.Core.Models.State;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.Core.Navigation;
 
@@ -37,15 +34,12 @@ namespace RapidCMS.UI.Components.Sections
         protected bool StateIsChanging { get; set; } = false;
 
         protected NavigationState CurrentNavigationState { get; private set; } = default!;
-        [Parameter] public NavigationState? NestedState { get; set; }
 
-        // protected PageStateModel CurrentState => PageState.GetCurrentState()!;
+        [Parameter] public NavigationState? NestedState { get; set; }
 
         protected IEnumerable<ButtonUI>? Buttons { get; set; }
         protected List<(FormEditContext editContext, IEnumerable<SectionUI> sections)>? Sections { get; set; }
         protected IEnumerable<ITypeRegistration>? PageContents { get; set; }
-
-        // protected ViewState CurrentViewState => new ViewState(PageState);
 
         private CancellationTokenSource _loadCancellationTokenSource = new CancellationTokenSource();
 

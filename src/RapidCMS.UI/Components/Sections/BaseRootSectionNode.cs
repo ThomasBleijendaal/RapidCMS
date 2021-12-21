@@ -25,7 +25,7 @@ namespace RapidCMS.UI.Components.Sections
                 Id = CurrentNavigationState.Id,
                 ParentPath = CurrentNavigationState.ParentPath,
                 UsageType = CurrentNavigationState.UsageType,
-                VariantAlias = CurrentNavigationState.VariantAlias
+                VariantAlias = CurrentNavigationState.VariantAlias ?? throw new InvalidOperationException()
             });
 
             var resolver = await UIResolverFactory.GetNodeUIResolverAsync(CurrentNavigationState.UsageType, CurrentNavigationState.CollectionAlias);

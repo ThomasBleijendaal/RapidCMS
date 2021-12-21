@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -36,7 +37,8 @@ namespace RapidCMS.UI.Components.Pages
             base.OnInitialized();
 
             DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(LocationChangedAsync));
-            NavigationState.Initialize(PageRoute ?? "");
+
+            NavigationState.Initialize(PageRoute ?? "", new Uri(NavigationManager.Uri).Query);
         }
 
         protected override void OnParametersSet()

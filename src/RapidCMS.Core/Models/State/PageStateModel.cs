@@ -7,6 +7,7 @@ using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.State
 {
+    [Obsolete]
     public class PageStateModel : IEquatable<PageStateModel>
     {
         public PageType PageType { get; set; }

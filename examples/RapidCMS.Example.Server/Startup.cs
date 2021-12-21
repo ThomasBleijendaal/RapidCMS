@@ -93,34 +93,35 @@ namespace RapidCMS.Example.Server
 
                 // CRUD editor with support for one-to-many relation + validation
                 // --> see Collections/CountryCollection for one-to-many relation with validation
-                config.AddCountryCollection();
+                //config.AddCountryCollection();
 
                 // Custom page with either custom Blazor components, or ListViews or ListEditors of collections
-                config.AddPage("TestBeakerSolid", "Green10", "Some random page", config =>
-                {
-                    config.AddSection(typeof(CustomSection));
-                    config.AddSection("country", edit: false);
-                });
+                //config.AddPage("TestBeakerSolid", "Green10", "Some random page", config =>
+                //{
+                //    config.AddSection(typeof(CustomSection));
+                //    config.AddSection("country", edit: false);
+                //});
 
                 // CRUD editor with validation attributes, custom editor and custom button panes
                 // --> see Collections/UserCollection 
-                config.AddUserCollection();
+                //config.AddUserCollection();
 
                 // CRUD editor with nested collection
                 // --> see Collections/TagCollection
-                config.AddTagCollection();
+                // TODO: has recursion bug that will blow up computer
+                //config.AddTagCollection();
 
                 // CRUD editor with entity mapping
-                config.AddMappedCollection();
+                //config.AddMappedCollection();
 
                 // CRUD editor based on conventions for even more rapid development
-                config.AddConventionCollection();
+                //config.AddConventionCollection();
 
                 // CRUD editor with entity variants, so multiple types of entities can be mixed in a single collection
-                config.AddEntityVariantCollection();
+                //config.AddEntityVariantCollection();
 
                 // CRUD editor displaying live data, an external process updates the data every second
-                config.AddActiveCollection();
+                //config.AddActiveCollection();
 
                 // the dashboard can be build up of custom Blazor components, or the ListViews or ListEditors of collections
                 // TODO: fix
