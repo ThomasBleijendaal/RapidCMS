@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Enums;
+using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Abstractions.Factories
 {
     public interface IUIResolverFactory
     {
-        // TODO: accept CurrentNavigationState
-        Task<INodeUIResolver> GetNodeUIResolverAsync(UsageType usageType, string collectionAlias);
+        Task<INodeUIResolver> GetNodeUIResolverAsync(NavigationState navigationState);
 
-        // TODO: accept CurrentNavigationState
-        Task<IListUIResolver> GetListUIResolverAsync(UsageType usageType, string collectionAlias);
+        Task<IListUIResolver> GetListUIResolverAsync(NavigationState navigationState);
 
         Task<INodeUIResolver> GetConventionNodeUIResolverAsync(Type model);
     }

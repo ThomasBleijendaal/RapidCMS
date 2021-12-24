@@ -29,9 +29,7 @@ namespace RapidCMS.UI.Components.Sections
 
         protected async Task LoadCollectionDataAsync(CancellationToken cancellationToken, IEnumerable<string>? reloadEntityIds = null)
         {
-            var uiResolver = await UIResolverFactory.GetListUIResolverAsync(
-                CurrentNavigationState.UsageType, 
-                CurrentNavigationState.CollectionAlias);
+            var uiResolver = await UIResolverFactory.GetListUIResolverAsync(CurrentNavigationState);
 
             if (reloadEntityIds?.Any() == true)
             {
@@ -149,7 +147,7 @@ namespace RapidCMS.UI.Components.Sections
 
             var listContext = await PresentationService.GetEntitiesAsync<GetEntitiesRequestModel, ListContext>(request);
 
-            var sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await uiResolver.GetSectionsForEditContextAsync(editContext)));
+            var sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await uiResolver.GetSectionsForEditContextAsync(editContext, CurrentNavigationState)));
 
             if (!NavigationStateProvider.TryProcessView(view, sections?.Any() == true))
             {
@@ -180,7 +178,7 @@ namespace RapidCMS.UI.Components.Sections
                         VariantAlias = x.editContext.EntityVariantAlias
                     });
 
-                    return (reloadedEditContext, await uiResolver.GetSectionsForEditContextAsync(reloadedEditContext));
+                    return (reloadedEditContext, await uiResolver.GetSectionsForEditContextAsync(reloadedEditContext, CurrentNavigationState));
                 }
                 else
                 {

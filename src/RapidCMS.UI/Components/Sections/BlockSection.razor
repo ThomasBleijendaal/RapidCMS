@@ -51,36 +51,14 @@
         }
         else if (element is SubCollectionUI subCollection)
         {
-            var parentPath = ParentPath.AddLevel(EditContext.Parent?.GetParentPath(), EditContext.RepositoryAlias, EditContext.Entity.Id!);
-
-            var state = new PageStateModel
-            {
-                PageType = PageType.Collection,
-                UsageType = subCollection.FindSupportedUsageType(EditContext.UsageType),
-
-                CollectionAlias = subCollection.CollectionAlias,
-                ParentPath = parentPath
-            };
-
             <div class="nested-content">
-                @*<RootSection /> TODO FIX *@
+                <RootSection NestedState="@subCollection.NestedNavigationState" />
             </div>
         }
         else if (element is RelatedCollectionUI relatedCollection)
         {
-            var related = new RelatedEntity(EditContext);
-
-            var state = new PageStateModel
-            {
-                PageType = PageType.Collection,
-                UsageType = relatedCollection.FindSupportedUsageType(EditContext.UsageType),
-
-                CollectionAlias = relatedCollection.CollectionAlias,
-                Related = related
-            };
-
             <div class="nested-content">
-                @*<RootSection /> TODO FIX *@
+                <RootSection NestedState="@relatedCollection.NestedNavigationState" />
             </div>
         }
     }

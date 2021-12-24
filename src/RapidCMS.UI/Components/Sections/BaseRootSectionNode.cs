@@ -7,7 +7,6 @@ using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
-using RapidCMS.Core.Models.UI;
 using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Components.Sections
@@ -30,26 +29,12 @@ namespace RapidCMS.UI.Components.Sections
                 VariantAlias = CurrentNavigationState.VariantAlias ?? throw new InvalidOperationException()
             });
 
-            var resolver = await UIResolverFactory.GetNodeUIResolverAsync(CurrentNavigationState.UsageType, CurrentNavigationState.CollectionAlias);
+            var resolver = await UIResolverFactory.GetNodeUIResolverAsync(CurrentNavigationState);
 
             var buttons = await resolver.GetButtonsForEditContextAsync(editContext);
 
-            var nodeSection = await resolver.GetSectionsForEditContextAsync(editContext);
+            var nodeSection = await resolver.GetSectionsForEditContextAsync(editContext, CurrentNavigationState);
             var sections = new[] { (editContext, nodeSection) }.ToList();
-
-            // TODO: move this to NodeUIResolver
-            foreach (var element in nodeSection.SelectNotNull(x => x.Elements).SelectMany(x => x))
-            {
-                if (element is SubCollectionUI subCollection)
-                {
-
-                }
-
-                if (element is RelatedCollectionUI relatedCollection)
-                {
-
-                }
-            }
 
             if (cancellationToken.IsCancellationRequested)
             {

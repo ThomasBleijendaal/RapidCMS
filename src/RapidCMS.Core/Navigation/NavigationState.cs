@@ -7,6 +7,7 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs.Mediators;
@@ -14,7 +15,7 @@ using RapidCMS.Core.Models.UI;
 
 namespace RapidCMS.Core.Navigation
 {
-    public class NavigationState // TODO: : IEquatable<NavigationState>
+    public class NavigationState : IEquatable<NavigationState>, ICloneable
     {
         private readonly string? _collectionAlias;
 
@@ -84,14 +85,24 @@ namespace RapidCMS.Core.Navigation
         public NavigationState(string collectionAlias, ParentPath? parentPath, UsageType usageType)
         {
             PageType = PageType.Collection;
-            UsageType = usageType | ((parentPath == null) ? UsageType.Root : UsageType.NotRoot);
+            UsageType = usageType | ((parentPath == null) ? UsageType.Root : UsageType.NotRoot); // TODO: why root?
             _collectionAlias = collectionAlias;
             ParentPath = parentPath;
 
             CollectionState = new CollectionState();
         }
 
-        public NavigationState(string collectionAlias, ParentPath? parentPath, IRelated related, UsageType usageType)
+        public NavigationState(string collectionAlias, IRelated? related, UsageType usageType)
+        {
+            PageType = PageType.Collection;
+            UsageType = usageType;
+            _collectionAlias = collectionAlias;
+            Related = related;
+
+            CollectionState = new CollectionState();
+        }
+
+        public NavigationState(string collectionAlias, ParentPath? parentPath, IRelated? related, UsageType usageType)
         {
             PageType = PageType.Collection;
             UsageType = usageType | ((parentPath == null) ? UsageType.Root : UsageType.NotRoot);
@@ -114,6 +125,19 @@ namespace RapidCMS.Core.Navigation
             CollectionState = new CollectionState();
         }
 
+        private NavigationState(string? collectionAlias, PageType pageType, UsageType usageType, string? variantAlias, ParentPath? parentPath, IRelated? related, string? id)
+        {
+            _collectionAlias = collectionAlias;
+            PageType = pageType;
+            UsageType = usageType;
+            VariantAlias = variantAlias;
+            ParentPath = parentPath;
+            Related = related;
+            Id = id;
+
+            CollectionState = new CollectionState();
+        }
+
         public PageType PageType { get; }
         public UsageType UsageType { get; }
         public string CollectionAlias => _collectionAlias ?? throw new InvalidOperationException("CollectionAlias is null");
@@ -125,23 +149,36 @@ namespace RapidCMS.Core.Navigation
         public CollectionState CollectionState { get; set; }
 
         // TODO: make dictionary with key resolvable to nested state (so a history back event restores search / page / sorting in nested collections)
-        public IEnumerable<NavigationState> NestedStates { get; } = new List<NavigationState>();
+        public IList<NavigationState> NestedStates { get; } = new List<NavigationState>();
 
-        //public bool Equals(NavigationState? other)
-        //{
-        //    // TODO; compare by tostring?
-        //    throw new NotImplementedException();
-        //}
+        public bool Equals(NavigationState? other)
+        {
+            return PageType == other?.PageType && 
+                UsageType == other?.UsageType && 
+                CollectionAlias == other?.CollectionAlias && 
+                VariantAlias == other?.VariantAlias &&
+                ParentPath?.ToPathString() == other?.ParentPath?.ToPathString() &&
+                Related == other?.Related &&
+                Id == other?.Id;
+        }
 
         public override string ToString()
-            => UriHelper.CombinePath(
+        {
+            var nestedStates = NestedStates.Any() ? $"[{string.Join(";", NestedStates.Select(x => x.ToString()))}]" : null;
+
+            return UriHelper.CombinePath(
                 PageType.ToString().ToLower(),
                 (UsageType.HasFlag(UsageType.Edit) ? UsageType.Edit : UsageType.View).ToString().ToLower(),
                 CollectionAlias,
                 VariantAlias,
                 ParentPath?.ToPathString(),
                 Id,
+                nestedStates,
                 CollectionState.ToString());
+        }
+
+        public object Clone() 
+            => new NavigationState(CollectionAlias, PageType, UsageType, VariantAlias, ParentPath, Related, Id);
     }
 
     public record CollectionState(
@@ -176,11 +213,23 @@ namespace RapidCMS.Core.Navigation
         // TODO: this method should duplicate, otherwise the state will keep its page state
         public void AppendNavigationState(NavigationState state)
         {
-            _states.Add(state);
+            var newState = (NavigationState)state.Clone();
 
-            _mediator.NotifyEvent(this, new NavigationEventArgs(state));
+            _states.Add(newState);
 
-            UpdateUrl(state);
+            _mediator.NotifyEvent(this, new NavigationEventArgs(newState));
+
+            UpdateUrl(newState);
+        }
+
+        public void NestNavigationState(NavigationState state, NavigationState nestedState)
+        {
+            var currentState = GetCurrentState();
+            var stateToAddNestedStateTo = FindState(new[] { currentState }, state);
+
+            stateToAddNestedStateTo?.NestedStates.Add(nestedState);
+
+            UpdateUrl(currentState);
         }
 
         public NavigationState GetCurrentState()
@@ -204,15 +253,17 @@ namespace RapidCMS.Core.Navigation
             return newState;
         }
 
-        public void RemoveNavigationState()
+        public bool RemoveNavigationState()
         {
-            RemoveLastState();
+            var hasRemovedState = RemoveLastState();
 
             var newState = GetCurrentState();
 
             _mediator.NotifyEvent(this, new NavigationEventArgs(newState));
 
             _navigationManager.NavigateTo(newState.ToString());
+
+            return hasRemovedState;
         }
 
         public void ReplaceNavigationState(NavigationState state)
@@ -221,18 +272,21 @@ namespace RapidCMS.Core.Navigation
             AppendNavigationState(state);
         }
 
-        private void RemoveLastState()
+        private bool RemoveLastState()
         {
             var itemToRemove = _states.LastOrDefault();
 
             if (itemToRemove != null)
             {
                 _states.Remove(itemToRemove);
+                return true;
             }
+            return false;
         }
 
         public void UpdateCollectionState(CollectionState state)
         {
+            // TODO: add to correct navigation state
             var currentState = GetCurrentState();
             currentState.CollectionState = state;
 
@@ -277,6 +331,12 @@ namespace RapidCMS.Core.Navigation
         private void UpdateUrl(NavigationState state)
         {
             _navigationManager.NavigateTo(state.ToString());
+        }
+
+        private NavigationState? FindState(IEnumerable<NavigationState> states, NavigationState state)
+        {
+            return states.FirstOrDefault(x => x.Equals(state)) 
+                ?? FindState(states.SelectManyNotNull(x => x.NestedStates), state);
         }
     }
 }

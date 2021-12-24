@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.UI;
+using RapidCMS.Core.Navigation;
 using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Resolvers.UI
@@ -18,15 +21,18 @@ namespace RapidCMS.Core.Resolvers.UI
         private readonly IDataProviderResolver _dataProviderResolver;
         private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
         protected readonly IAuthService _authService;
+        private readonly INavigationStateProvider _navigationStateProvider;
 
         protected BaseUIResolver(
             IDataProviderResolver dataProviderResolver,
             IButtonActionHandlerResolver buttonActionHandlerResolver,
-            IAuthService authService)
+            IAuthService authService,
+            INavigationStateProvider navigationStateProvider)
         {
             _dataProviderResolver = dataProviderResolver;
             _buttonActionHandlerResolver = buttonActionHandlerResolver;
             _authService = authService;
+            _navigationStateProvider = navigationStateProvider;
         }
 
         protected async Task<List<ButtonUI>> GetButtonsAsync(IEnumerable<IButtonSetup> buttons, FormEditContext editContext)
@@ -49,7 +55,7 @@ namespace RapidCMS.Core.Resolvers.UI
                 .ToListAsync();
         }
 
-        protected internal async Task<SectionUI> GetSectionUIAsync(IPaneSetup pane, FormEditContext editContext)
+        protected internal async Task<SectionUI> GetSectionUIAsync(IPaneSetup pane, FormEditContext editContext, NavigationState navigationState)
         {
             var fields = await pane.Fields.ToListAsync(async field =>
             {
@@ -64,12 +70,33 @@ namespace RapidCMS.Core.Resolvers.UI
 
             var subCollections = pane.SubCollectionLists.Select(subCollection =>
             {
-                return (index: subCollection.Index, element: (ElementUI)new SubCollectionUI(subCollection));
+                var parentPath = ParentPath.AddLevel(editContext.Parent?.GetParentPath(), editContext.RepositoryAlias, editContext.Entity.Id!);
+
+                // TODO: this does not read back the state
+                var nestedState = new NavigationState(
+                    subCollection.CollectionAlias,
+                    parentPath,
+                    subCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType));
+
+                _navigationStateProvider.NestNavigationState(navigationState, nestedState);
+
+                return (index: subCollection.Index, element: (ElementUI)new SubCollectionUI(subCollection, nestedState));
             });
 
             var relatedCollections = pane.RelatedCollectionLists.Select(relatedCollection =>
             {
-                return (index: relatedCollection.Index, element: (ElementUI)new RelatedCollectionUI(relatedCollection));
+                var parentPath = ParentPath.AddLevel(editContext.Parent?.GetParentPath(), editContext.RepositoryAlias, editContext.Entity.Id!);
+
+                // TODO: this does not read back the state
+                var nestedState = new NavigationState(
+                    relatedCollection.CollectionAlias,
+                    parentPath,
+                    new RelatedEntity(editContext),
+                    relatedCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType));
+
+                _navigationStateProvider.NestNavigationState(navigationState, nestedState);
+
+                return (index: relatedCollection.Index, element: (ElementUI)new RelatedCollectionUI(relatedCollection, nestedState));
             });
 
             return new SectionUI(pane.IsVisible)

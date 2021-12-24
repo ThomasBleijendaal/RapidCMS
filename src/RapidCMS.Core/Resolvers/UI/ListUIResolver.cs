@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
@@ -10,6 +11,7 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.UI;
+using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Resolvers.UI
 {
@@ -26,7 +28,8 @@ namespace RapidCMS.Core.Resolvers.UI
             IDataProviderResolver dataProviderService,
             IDataViewResolver dataViewResolver,
             IButtonActionHandlerResolver buttonActionHandlerResolver,
-            IAuthService authService) : base(dataProviderService, buttonActionHandlerResolver, authService)
+            INavigationStateProvider navigationStateProvider,
+            IAuthService authService) : base(dataProviderService, buttonActionHandlerResolver, authService, navigationStateProvider)
         {
             _list = list;
             _dataViewResolver = dataViewResolver;
@@ -66,12 +69,12 @@ namespace RapidCMS.Core.Resolvers.UI
             };
         }
 
-        public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(FormEditContext editContext)
+        public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(FormEditContext editContext, NavigationState navigationState)
         {
             var type = editContext.Entity.GetType();
             return await _list.Panes
                 .Where(pane => pane.VariantType.IsSameTypeOrDerivedFrom(type))
-                .ToListAsync(pane => GetSectionUIAsync(pane, editContext));
+                .ToListAsync(pane => GetSectionUIAsync(pane, editContext, navigationState));
         }
 
         public async Task<IEnumerable<TabUI>?> GetTabsAsync(FormEditContext editContext)

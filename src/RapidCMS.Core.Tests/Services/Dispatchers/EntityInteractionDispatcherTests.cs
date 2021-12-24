@@ -5,6 +5,7 @@ using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Mediators;
+using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
@@ -30,6 +31,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
 
         private Mock<IPageState> _pageState = default!;
 
+        private Mock<INavigationStateProvider> _navigationStateProvider = default!;
         private Mock<ISetupResolver<ICollectionSetup>> _collectionResolver = default!;
         private Mock<ICollectionSetup> _collection = default!;
         private Mock<IEntityVariantSetup> _entityVariant = default!;
@@ -44,6 +46,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         {
             _serviceProviderMock = new Mock<IServiceProvider>();
 
+            _navigationStateProvider = new Mock<INavigationStateProvider>();
             _pageState = new Mock<IPageState>();
 
             _entityVariant = new Mock<IEntityVariantSetup>();
@@ -63,6 +66,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _mediator = new Mock<IMediator>();
 
             _subject = new EntityInteractionDispatcher(
+                _navigationStateProvider.Object,
                 _collectionResolver.Object,
                 _repositoryResolver.Object,
                 _concurrencyService,

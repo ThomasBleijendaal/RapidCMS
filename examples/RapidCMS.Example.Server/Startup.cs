@@ -93,7 +93,7 @@ namespace RapidCMS.Example.Server
 
                 // CRUD editor with support for one-to-many relation + validation
                 // --> see Collections/CountryCollection for one-to-many relation with validation
-                //config.AddCountryCollection();
+                config.AddCountryCollection();
 
                 // Custom page with either custom Blazor components, or ListViews or ListEditors of collections
                 //config.AddPage("TestBeakerSolid", "Green10", "Some random page", config =>
@@ -108,8 +108,7 @@ namespace RapidCMS.Example.Server
 
                 // CRUD editor with nested collection
                 // --> see Collections/TagCollection
-                // TODO: has recursion bug that will blow up computer
-                //config.AddTagCollection();
+                config.AddTagCollection();
 
                 // CRUD editor with entity mapping
                 //config.AddMappedCollection();

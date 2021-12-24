@@ -12,9 +12,11 @@ namespace RapidCMS.Core.Abstractions.Navigation
 
         void AppendNavigationState(NavigationState state);
 
+        void NestNavigationState(NavigationState state, NavigationState nestedState);
+
         void ReplaceNavigationState(NavigationState state);
 
-        void RemoveNavigationState();
+        bool RemoveNavigationState();
 
         void UpdateCollectionState(CollectionState state);
 

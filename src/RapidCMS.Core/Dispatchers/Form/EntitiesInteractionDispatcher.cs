@@ -7,6 +7,7 @@ using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Mediators;
+using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
@@ -20,6 +21,7 @@ using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.State;
+using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Dispatchers.Form
 {
@@ -27,6 +29,7 @@ namespace RapidCMS.Core.Dispatchers.Form
         IInteractionDispatcher<PersistEntitiesRequestModel, ListViewCommandResponseModel>,
         IInteractionDispatcher<PersistEntitiesRequestModel, ListEditorCommandResponseModel>
     {
+        private readonly INavigationStateProvider _navigationStateProvider;
         private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IConcurrencyService _concurrencyService;
@@ -35,6 +38,7 @@ namespace RapidCMS.Core.Dispatchers.Form
         private readonly IMediator _mediator;
 
         public EntitiesInteractionDispatcher(
+            INavigationStateProvider navigationStateProvider,
             ISetupResolver<ICollectionSetup> collectionResolver,
             IRepositoryResolver repositoryResolver,
             IConcurrencyService concurrencyService,
@@ -42,6 +46,7 @@ namespace RapidCMS.Core.Dispatchers.Form
             IEditContextFactory editContextFactory,
             IMediator mediator)
         {
+            _navigationStateProvider = navigationStateProvider;
             _collectionResolver = collectionResolver;
             _repositoryResolver = repositoryResolver;
             _concurrencyService = concurrencyService;
@@ -63,8 +68,6 @@ namespace RapidCMS.Core.Dispatchers.Form
         private async Task<T> InvokeAsync<T>(PersistEntitiesRequestModel request, T response)
             where T : ViewCommandResponseModel
         {
-            var pageState = default(IPageState);
-
             var collection = await _collectionResolver.ResolveSetupAsync(request.ListContext.CollectionAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
@@ -78,40 +81,54 @@ namespace RapidCMS.Core.Dispatchers.Form
                         throw new InvalidOperationException($"Button of type {CrudType.Create} must have an EntityVariant.");
                     }
 
-                    var currentState = pageState.GetCurrentState();
+                    // var currentState = pageState.GetCurrentState();
 
-                    if (response is ListViewCommandResponseModel || ShouldFallbackToNavigatingToNodeEditor(collection, currentState))
+                    if (response is ListViewCommandResponseModel || ShouldFallbackToNavigatingToNodeEditor(collection))
                     {
-                        pageState.PushState(new PageStateModel
-                        {
-                            PageType = PageType.Node,
-                            UsageType = UsageType.New,
+                        _navigationStateProvider.AppendNavigationState(
+                            new NavigationState(
+                                request.ListContext.CollectionAlias,
+                                request.ListContext.Parent?.GetParentPath(),
+                                request.Related,
+                                UsageType.New));
 
-                            CollectionAlias = request.ListContext.CollectionAlias,
-                            VariantAlias = entityVariant.Alias,
-                            ParentPath = request.ListContext.Parent?.GetParentPath(),
-                            Related = request.Related
-                        });
+                        //pageState.PushState(new PageStateModel
+                        //{
+                        //    PageType = PageType.Node,
+                        //    UsageType = UsageType.New,
+
+                        //    CollectionAlias = request.ListContext.CollectionAlias,
+                        //    VariantAlias = entityVariant.Alias,
+                        //    ParentPath = request.ListContext.Parent?.GetParentPath(),
+                        //    Related = request.Related
+                        //});
                     }
                     else
                     {
-                        pageState.PushState(new PageStateModel
-                        {
-                            PageType = PageType.Collection,
-                            UsageType = UsageType.New,
+                        _navigationStateProvider.AppendNavigationState(
+                            new NavigationState(
+                                request.ListContext.CollectionAlias,
+                                request.ListContext.Parent?.GetParentPath(),
+                                request.Related,
+                                UsageType.New));
+
+                        //        pageState.PushState(new PageStateModel
+                        //{
+                        //    PageType = PageType.Collection,
+                        //    UsageType = UsageType.New,
 
 
-                            CollectionAlias = request.ListContext.CollectionAlias,
-                            VariantAlias = entityVariant.Alias,
-                            ParentPath = request.ListContext.Parent?.GetParentPath(),
-                            Related = request.Related,
+                        //    CollectionAlias = request.ListContext.CollectionAlias,
+                        //    VariantAlias = entityVariant.Alias,
+                        //    ParentPath = request.ListContext.Parent?.GetParentPath(),
+                        //    Related = request.Related,
 
-                            // is this the best place here?
-                            ActiveTab = currentState?.ActiveTab,
-                            CurrentPage = currentState?.CurrentPage ?? 1,
-                            MaxPage = currentState?.MaxPage,
-                            SearchTerm = currentState?.SearchTerm
-                        });
+                        //    // is this the best place here?
+                        //    ActiveTab = currentState?.ActiveTab,
+                        //    CurrentPage = currentState?.CurrentPage ?? 1,
+                        //    MaxPage = currentState?.MaxPage,
+                        //    SearchTerm = currentState?.SearchTerm
+                        //});
                     }
                     break;
 
@@ -166,24 +183,20 @@ namespace RapidCMS.Core.Dispatchers.Form
                     break;
 
                 case CrudType.Return:
-                    if (pageState.PopState() == null)
+                    if (!_navigationStateProvider.RemoveNavigationState())
                     {
                         var parentPath = request.ListContext.Parent?.GetParentPath();
-                        pageState.ReplaceState(new PageStateModel
-                        {
-                            PageType = PageType.Collection,
-                            UsageType = (collection.ListEditor == null ? UsageType.View : UsageType.Edit)
-                             | ((parentPath != null) ? UsageType.NotRoot : UsageType.Root),
-
-                            CollectionAlias = request.ListContext.CollectionAlias,
-                            ParentPath = parentPath,
-                            Related = request.Related
-                        });
+                        _navigationStateProvider.AppendNavigationState(
+                            new NavigationState(
+                                request.ListContext.CollectionAlias,
+                                parentPath,
+                                request.Related,
+                                collection.ListEditor == null ? UsageType.View : UsageType.Edit));
                     }
                     break;
 
                 case CrudType.Up:
-                    if (pageState.PopState() == null)
+                    if (!_navigationStateProvider.RemoveNavigationState())
                     {
                         var (newParentPath, repositoryAlias, parentId) = ParentPath.RemoveLevel(request.ListContext.Parent?.GetParentPath());
 
@@ -198,29 +211,42 @@ namespace RapidCMS.Core.Dispatchers.Form
                             throw new InvalidOperationException("Cannot go Up on collection that is root.");
                         }
 
-                        pageState.ReplaceState(new PageStateModel
-                        {
-                            PageType = PageType.Node,
-                            UsageType = (parentCollection.NodeEditor == null ? UsageType.View : UsageType.Edit)
-                             | ((newParentPath != null) ? UsageType.NotRoot : UsageType.Root),
+                        _navigationStateProvider.AppendNavigationState(
+                            new NavigationState(
+                                request.ListContext.CollectionAlias,
+                                newParentPath,
+                                request.Related,
+                                collection.ListEditor == null ? UsageType.View : UsageType.Edit));
 
-                            CollectionAlias = parentCollection.Alias,
-                            ParentPath = newParentPath,
-                            VariantAlias = collection.EntityVariant.Alias,
-                            Id = parentId
-                        });
+                        //pageState.ReplaceState(new PageStateModel
+                        //{
+                        //    PageType = PageType.Node,
+                        //    UsageType = (parentCollection.NodeEditor == null ? UsageType.View : UsageType.Edit)
+                        //     | ((newParentPath != null) ? UsageType.NotRoot : UsageType.Root),
+
+                        //    CollectionAlias = parentCollection.Alias,
+                        //    ParentPath = newParentPath,
+                        //    VariantAlias = collection.EntityVariant.Alias,
+                        //    Id = parentId
+                        //});
                     }
                     break;
 
                 case CrudType.Add when request.Related != null:
-                    pageState.PushState(new PageStateModel
-                    {
-                        PageType = PageType.Collection,
-                        UsageType = UsageType.Add,
+                    _navigationStateProvider.AppendNavigationState(
+                        new NavigationState(
+                            request.ListContext.CollectionAlias,
+                            request.Related,
+                            UsageType.Add));
 
-                        CollectionAlias = request.ListContext.CollectionAlias,
-                        Related = request.Related
-                    });
+                    //pageState.PushState(new PageStateModel
+                    //{
+                    //    PageType = PageType.Collection,
+                    //    UsageType = UsageType.Add,
+
+                    //    CollectionAlias = request.ListContext.CollectionAlias,
+                    //    Related = request.Related
+                    //});
                     break;
 
                 default:
@@ -232,7 +258,7 @@ namespace RapidCMS.Core.Dispatchers.Form
             return response;
         }
 
-        private static bool ShouldFallbackToNavigatingToNodeEditor(ICollectionSetup collection, PageStateModel? currentState)
+        private static bool ShouldFallbackToNavigatingToNodeEditor(ICollectionSetup collection)
         {
             return collection.NodeEditor != null;
         }

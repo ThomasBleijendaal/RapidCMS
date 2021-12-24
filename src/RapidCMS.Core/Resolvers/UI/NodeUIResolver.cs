@@ -1,26 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.UI;
+using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Resolvers.UI
 {
     internal class NodeUIResolver : BaseUIResolver, INodeUIResolver
     {
         private readonly INodeSetup _node;
+        private readonly INavigationStateProvider _navigationStateProvider;
 
         public NodeUIResolver(
             INodeSetup node,
             IDataProviderResolver dataProviderService,
             IButtonActionHandlerResolver buttonActionHandlerResolver,
-            IAuthService authService) : base(dataProviderService, buttonActionHandlerResolver, authService)
+            INavigationStateProvider navigationStateProvider,
+            IAuthService authService) : base(dataProviderService, buttonActionHandlerResolver, authService, navigationStateProvider)
         {
             _node = node;
+            _navigationStateProvider = navigationStateProvider;
         }
 
         public async Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(FormEditContext editContext)
@@ -33,7 +38,7 @@ namespace RapidCMS.Core.Resolvers.UI
             return await GetButtonsAsync(_node.Buttons, editContext);
         }
 
-        public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(FormEditContext editContext)
+        public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(FormEditContext editContext, NavigationState navigationState)
         {
             if (_node.Panes == null)
             {
@@ -42,9 +47,11 @@ namespace RapidCMS.Core.Resolvers.UI
 
             var type = editContext.Entity.GetType();
 
-            return await _node.Panes
+            var panes = await _node.Panes
                 .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(type))
-                .ToListAsync(pane => GetSectionUIAsync(pane, editContext));
+                .ToListAsync(pane => GetSectionUIAsync(pane, editContext, navigationState));
+            
+            return panes;
         }
     }
 }
