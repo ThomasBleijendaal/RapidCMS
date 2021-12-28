@@ -9,7 +9,6 @@ using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.EqualityComparers;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
-using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.Core.Navigation;
 

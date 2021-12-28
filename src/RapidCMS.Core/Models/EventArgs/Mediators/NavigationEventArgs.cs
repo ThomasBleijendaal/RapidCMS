@@ -6,10 +6,10 @@ namespace RapidCMS.Core.Models.EventArgs.Mediators
 {
     public class NavigationEventArgs : IMediatorEventArgs
     {
-        public NavigationEventArgs(NavigationState state)
+        public NavigationEventArgs(NavigationState? oldState, NavigationState newState)
         {
-            State = state ?? throw new ArgumentNullException(nameof(state));
-            // UpdateUrl = true;
+            OldState = oldState;
+            NewState = newState ?? throw new ArgumentNullException(nameof(newState));
         }
 
         //public NavigationEventArgs(PageStateModel state, bool forceUpdate)
@@ -18,7 +18,8 @@ namespace RapidCMS.Core.Models.EventArgs.Mediators
         //    UpdateUrl = forceUpdate;
         //}
 
-        public NavigationState State { get; set; }
+        public NavigationState? OldState { get; set; }
+        public NavigationState NewState { get; set; }
         // public bool UpdateUrl { get; set; }
     }
 }

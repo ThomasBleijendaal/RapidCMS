@@ -46,7 +46,7 @@ namespace RapidCMS.UI.Components.Sections
             }
             else
             {
-                var listUI = ListUI ?? uiResolver.GetListDetails();
+                var listUI = uiResolver.GetListDetails();
 
                 var (listContext, sections) = await LoadSectionsAsync(listUI, uiResolver);
 
@@ -83,12 +83,12 @@ namespace RapidCMS.UI.Components.Sections
                 return;
             }
 
-            NavigationStateProvider.UpdateCollectionState(CollectionState with
+            NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
             {
                 CurrentPage = page
             });
 
-            await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
+            // await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
         }
 
         protected async Task SearchAsync(string? search)
@@ -98,13 +98,13 @@ namespace RapidCMS.UI.Components.Sections
                 return;
             }
 
-            NavigationStateProvider.UpdateCollectionState(CollectionState with
+            NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
             {
                 CurrentPage = 1,
                 SearchTerm = search
             });
 
-            await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
+            // await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
         }
 
         protected async Task TabChangeAsync(int? tabId)
@@ -114,18 +114,18 @@ namespace RapidCMS.UI.Components.Sections
                 return;
             }
 
-            NavigationStateProvider.UpdateCollectionState(CollectionState with
+            NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
             {
                 ActiveTab = tabId,
                 CurrentPage = 1
             });
 
-            await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
+            // await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
         }
 
         protected async Task<(ListContext listContext, List<(FormEditContext editContext, IEnumerable<SectionUI> sections)> sections)> LoadSectionsAsync(ListUI listUI, IListUIResolver uiResolver)
         {
-            var view = NavigationStateProvider.GetCurrentView(listUI);
+            var view = NavigationStateProvider.GetCurrentView(CurrentNavigationState, listUI);
 
             var request = CurrentNavigationState.Related != null
                 ? (GetEntitiesRequestModel)new GetEntitiesOfRelationRequestModel
@@ -149,7 +149,7 @@ namespace RapidCMS.UI.Components.Sections
 
             var sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await uiResolver.GetSectionsForEditContextAsync(editContext, CurrentNavigationState)));
 
-            if (!NavigationStateProvider.TryProcessView(view, sections?.Any() == true))
+            if (!NavigationStateProvider.TryProcessView(CurrentNavigationState, view, sections?.Any() == true))
             {
                 return await LoadSectionsAsync(listUI, uiResolver);
             }
@@ -203,7 +203,8 @@ namespace RapidCMS.UI.Components.Sections
                     ActionId = args.ViewModel.ButtonId,
                     CustomData = args.Data,
                     ListContext = ListContext!,
-                    Related = CurrentNavigationState.Related
+                    Related = CurrentNavigationState.Related,
+                    NavigationState = CurrentNavigationState
                 };
 
                 if (CurrentNavigationState.UsageType.HasFlag(UsageType.Edit))
@@ -232,7 +233,8 @@ namespace RapidCMS.UI.Components.Sections
                         ActionId = args.ViewModel.ButtonId,
                         CustomData = args.Data,
                         EditContext = args.EditContext,
-                        Related = CurrentNavigationState.Related
+                        Related = CurrentNavigationState.Related,
+                        NavigationState = CurrentNavigationState
                     }));
                 }
                 else
@@ -242,6 +244,7 @@ namespace RapidCMS.UI.Components.Sections
                         ActionId = args.ViewModel.ButtonId,
                         CustomData = args.Data,
                         EditContext = args.EditContext,
+                        NavigationState = CurrentNavigationState
                     }));
                 }
             }

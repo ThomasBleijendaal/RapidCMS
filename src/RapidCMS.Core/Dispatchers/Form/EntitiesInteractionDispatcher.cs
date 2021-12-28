@@ -81,36 +81,29 @@ namespace RapidCMS.Core.Dispatchers.Form
                         throw new InvalidOperationException($"Button of type {CrudType.Create} must have an EntityVariant.");
                     }
 
-                    // var currentState = pageState.GetCurrentState();
-
                     if (response is ListViewCommandResponseModel || ShouldFallbackToNavigatingToNodeEditor(collection))
                     {
                         _navigationStateProvider.AppendNavigationState(
+                            request.NavigationState,
                             new NavigationState(
                                 request.ListContext.CollectionAlias,
                                 request.ListContext.Parent?.GetParentPath(),
+                                entityVariant.Alias,
                                 request.Related,
                                 UsageType.New));
-
-                        //pageState.PushState(new PageStateModel
-                        //{
-                        //    PageType = PageType.Node,
-                        //    UsageType = UsageType.New,
-
-                        //    CollectionAlias = request.ListContext.CollectionAlias,
-                        //    VariantAlias = entityVariant.Alias,
-                        //    ParentPath = request.ListContext.Parent?.GetParentPath(),
-                        //    Related = request.Related
-                        //});
                     }
                     else
                     {
                         _navigationStateProvider.AppendNavigationState(
+                            request.NavigationState,
                             new NavigationState(
                                 request.ListContext.CollectionAlias,
                                 request.ListContext.Parent?.GetParentPath(),
                                 request.Related,
-                                UsageType.New));
+                                UsageType.New,
+                                PageType.Collection));
+
+                        // TODO: copy over pagination state?
 
                         //        pageState.PushState(new PageStateModel
                         //{
@@ -183,20 +176,22 @@ namespace RapidCMS.Core.Dispatchers.Form
                     break;
 
                 case CrudType.Return:
-                    if (!_navigationStateProvider.RemoveNavigationState())
+                    if (!_navigationStateProvider.RemoveNavigationState(request.NavigationState))
                     {
                         var parentPath = request.ListContext.Parent?.GetParentPath();
                         _navigationStateProvider.AppendNavigationState(
+                            request.NavigationState,
                             new NavigationState(
                                 request.ListContext.CollectionAlias,
                                 parentPath,
                                 request.Related,
-                                collection.ListEditor == null ? UsageType.View : UsageType.Edit));
+                                collection.ListEditor == null ? UsageType.View : UsageType.Edit,
+                                PageType.Collection));
                     }
                     break;
 
                 case CrudType.Up:
-                    if (!_navigationStateProvider.RemoveNavigationState())
+                    if (!_navigationStateProvider.RemoveNavigationState(request.NavigationState))
                     {
                         var (newParentPath, repositoryAlias, parentId) = ParentPath.RemoveLevel(request.ListContext.Parent?.GetParentPath());
 
@@ -212,11 +207,13 @@ namespace RapidCMS.Core.Dispatchers.Form
                         }
 
                         _navigationStateProvider.AppendNavigationState(
+                            request.NavigationState,
                             new NavigationState(
                                 request.ListContext.CollectionAlias,
                                 newParentPath,
                                 request.Related,
-                                collection.ListEditor == null ? UsageType.View : UsageType.Edit));
+                                collection.ListEditor == null ? UsageType.View : UsageType.Edit,
+                                PageType.Node));
 
                         //pageState.ReplaceState(new PageStateModel
                         //{
@@ -234,6 +231,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
                 case CrudType.Add when request.Related != null:
                     _navigationStateProvider.AppendNavigationState(
+                        request.NavigationState,
                         new NavigationState(
                             request.ListContext.CollectionAlias,
                             request.Related,

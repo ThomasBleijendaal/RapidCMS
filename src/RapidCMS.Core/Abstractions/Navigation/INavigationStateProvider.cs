@@ -11,17 +11,18 @@ namespace RapidCMS.Core.Abstractions.Navigation
         NavigationState Initialize(string url, string queryString);
 
         void AppendNavigationState(NavigationState state);
+        void AppendNavigationState(NavigationState currentState, NavigationState state);
 
-        void NestNavigationState(NavigationState state, NavigationState nestedState);
+        void NestNavigationState(NavigationState currentState, NavigationState nestedState);
 
-        void ReplaceNavigationState(NavigationState state);
+        void ReplaceNavigationState(NavigationState currentState, NavigationState state);
 
-        bool RemoveNavigationState();
+        bool RemoveNavigationState(NavigationState currentState);
 
-        void UpdateCollectionState(CollectionState state);
+        void UpdateCollectionState(NavigationState currentState, CollectionState collectionState);
 
-        IView GetCurrentView(ListUI list);
+        IView GetCurrentView(NavigationState currentState, ListUI list);
 
-        bool TryProcessView(IView view, bool hasSections);
+        bool TryProcessView(NavigationState currentState, IView view, bool hasSections);
     }
 }

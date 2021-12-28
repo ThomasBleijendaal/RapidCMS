@@ -35,6 +35,7 @@ namespace RapidCMS.UI.Components.Sections
 
         protected NavigationState CurrentNavigationState { get; private set; } = default!;
 
+        // TODO: rename this to a more logical name (its the given state to this section, the section is nested, not the state itself)
         [Parameter] public NavigationState? NestedState { get; set; }
 
         protected IEnumerable<ButtonUI>? Buttons { get; set; }
@@ -57,6 +58,7 @@ namespace RapidCMS.UI.Components.Sections
                     return;
                 }
 
+                // TODO: this should be removed?
                 await LoadDataAsync(response.RefreshIds);
             }
             catch (Exception ex)
@@ -80,11 +82,8 @@ namespace RapidCMS.UI.Components.Sections
 
         protected override async Task OnParametersSetAsync()
         {
-            if (NestedState == null)
-            {
-                DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(OnNavigationAsync));
-            }
-
+            DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(OnNavigationAsync));
+            
             CurrentNavigationState = NestedState ?? NavigationStateProvider.GetCurrentState();
 
             await LoadDataAsync();
@@ -92,9 +91,9 @@ namespace RapidCMS.UI.Components.Sections
 
         protected async Task OnNavigationAsync(object sender, NavigationEventArgs args)
         {
-            if (NestedState == null)
+            if ((NestedState == null && args.OldState == null) || CurrentNavigationState == args.OldState)
             {
-                CurrentNavigationState = args.State;
+                CurrentNavigationState = args.NewState;
 
                 await LoadDataAsync();
 

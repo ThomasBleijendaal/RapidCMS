@@ -26,7 +26,7 @@ namespace RapidCMS.UI.Components.Sections
                 Id = CurrentNavigationState.Id,
                 ParentPath = CurrentNavigationState.ParentPath,
                 UsageType = CurrentNavigationState.UsageType,
-                VariantAlias = CurrentNavigationState.VariantAlias ?? throw new InvalidOperationException()
+                VariantAlias = CurrentNavigationState.VariantAlias
             });
 
             var resolver = await UIResolverFactory.GetNodeUIResolverAsync(CurrentNavigationState);
@@ -72,7 +72,8 @@ namespace RapidCMS.UI.Components.Sections
                     {
                         ActionId = args.ViewModel.ButtonId,
                         CustomData = args.Data,
-                        EditContext = args.EditContext
+                        EditContext = args.EditContext,
+                        NavigationState = CurrentNavigationState
                     }));
             }
             catch (Exception ex)

@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
@@ -92,7 +93,8 @@ namespace RapidCMS.Core.Resolvers.UI
                     relatedCollection.CollectionAlias,
                     parentPath,
                     new RelatedEntity(editContext),
-                    relatedCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType));
+                    relatedCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType),
+                    PageType.Collection);
 
                 _navigationStateProvider.NestNavigationState(navigationState, nestedState);
 

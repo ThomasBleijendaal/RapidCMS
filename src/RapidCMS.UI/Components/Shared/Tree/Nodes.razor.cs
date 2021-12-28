@@ -56,7 +56,7 @@ namespace RapidCMS.UI.Components.Shared.Tree
 
             foreach (var node in UI.Nodes)
             {
-                if (ParentPath.IsBaseOf(args.State.ParentPath, node.RepositoryAlias, node.Id))
+                if (ParentPath.IsBaseOf(args.NewState.ParentPath, node.RepositoryAlias, node.Id))
                 {
                     await InvokeAsync(() =>
                     {

@@ -32,16 +32,16 @@
     {
         await InvokeAsync(() =>
         {
-            _isActive = false; // TODO: args.State.Equals(NewState);
-        StateHasChanged();
+            _isActive = args.NewState.Equals(NavigateTo);
+            StateHasChanged();
         });
     }
 
-    private void OnLocationChanged(object? sender, PageStateModel model)
-    {
-        _isActive = false; // TODO: NewState.Equals(model);
-        StateHasChanged();
-    }
+    //private void OnLocationChanged(object? sender, PageStateModel model)
+    //{
+    //    _isActive = model.NewState.Equals(model);
+    //    StateHasChanged();
+    //}
 
     private void OnLinkClick(MouseEventArgs args)
     {

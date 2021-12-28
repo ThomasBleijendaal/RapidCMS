@@ -64,8 +64,8 @@ namespace RapidCMS.UI.Components.Shared.Tree
                 return;
             }
 
-            if ((ParentPath?.ToPathString() == args.State.ParentPath?.ToPathString() && args.State.CollectionAlias == CollectionAlias) ||
-                ParentPath.IsBaseOf(args.State.ParentPath, UI.RepositoryAlias, default))
+            if ((ParentPath?.ToPathString() == args.NewState.ParentPath?.ToPathString() && args.NewState.CollectionAlias == CollectionAlias) ||
+                ParentPath.IsBaseOf(args.NewState.ParentPath, UI.RepositoryAlias, default))
             {
                 await InvokeAsync(() =>
                 {

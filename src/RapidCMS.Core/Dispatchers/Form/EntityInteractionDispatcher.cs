@@ -77,7 +77,7 @@ namespace RapidCMS.Core.Dispatchers.Form
             switch (crudType)
             {
                 case CrudType.View:
-                    _navigationStateProvider.AppendNavigationState(new NavigationState(
+                    _navigationStateProvider.AppendNavigationState(request.NavigationState, new NavigationState(
                         request.EditContext.CollectionAlias,
                         request.EditContext.Parent?.GetParentPath(),
                         entityVariant.Alias,
@@ -86,7 +86,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                     break;
 
                 case CrudType.Edit:
-                    _navigationStateProvider.AppendNavigationState(new NavigationState(
+                    _navigationStateProvider.AppendNavigationState(request.NavigationState, new NavigationState(
                         request.EditContext.CollectionAlias,
                         request.EditContext.Parent?.GetParentPath(),
                         entityVariant.Alias,
@@ -141,7 +141,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
                     if (response is NodeViewCommandResponseModel)
                     {
-                        _navigationStateProvider.AppendNavigationState(new NavigationState(
+                        _navigationStateProvider.AppendNavigationState(request.NavigationState, new NavigationState(
                             request.EditContext.CollectionAlias,
                             request.EditContext.Parent?.GetParentPath(),
                             entityVariant.Alias,
@@ -163,7 +163,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
                     if (response is NodeViewCommandResponseModel)
                     {
-                        _navigationStateProvider.ReplaceNavigationState(new NavigationState(
+                        _navigationStateProvider.ReplaceNavigationState(request.NavigationState, new NavigationState(
                             request.EditContext.CollectionAlias,
                             request.EditContext.Parent?.GetParentPath(),
                             collection.ListEditor == null ? UsageType.View : UsageType.Edit));
@@ -212,7 +212,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                     break;
 
                 case CrudType.Up:
-                    _navigationStateProvider.ReplaceNavigationState(new NavigationState(
+                    _navigationStateProvider.ReplaceNavigationState(request.NavigationState, new NavigationState(
                         request.EditContext.CollectionAlias,
                         request.EditContext.Parent?.GetParentPath(),
                         collection.ListEditor == null ? UsageType.View : UsageType.Edit)); // TODO: notroot / root?
