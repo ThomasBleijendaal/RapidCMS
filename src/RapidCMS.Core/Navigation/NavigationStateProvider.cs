@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components.Routing;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Navigation;
-using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.UI;
@@ -17,6 +16,10 @@ namespace RapidCMS.Core.Navigation
     {
         private readonly IMediator _mediator;
         private readonly NavigationManager _navigationManager;
+
+        // TODO: if a list of states in the NestedStates of each NavigationStates is kept, then it would be possible to update the url also for nested collection navigation events
+        // this will restore the navigation state of collections via urls completely, but will be a bit hard when parsing the urls
+        // (and experimental -- perhaps hide it behind Advanced flag)
         private List<NavigationState> _states = new();
 
         public NavigationStateProvider(
