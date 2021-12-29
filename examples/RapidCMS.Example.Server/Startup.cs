@@ -104,23 +104,23 @@ namespace RapidCMS.Example.Server
 
                 // CRUD editor with validation attributes, custom editor and custom button panes
                 // --> see Collections/UserCollection 
-                //config.AddUserCollection();
+                config.AddUserCollection();
 
                 // CRUD editor with nested collection
                 // --> see Collections/TagCollection
                 config.AddTagCollection();
 
                 // CRUD editor with entity mapping
-                //config.AddMappedCollection();
+                config.AddMappedCollection();
 
                 // CRUD editor based on conventions for even more rapid development
-                //config.AddConventionCollection();
+                config.AddConventionCollection();
 
                 // CRUD editor with entity variants, so multiple types of entities can be mixed in a single collection
-                //config.AddEntityVariantCollection();
+                config.AddEntityVariantCollection();
 
                 // CRUD editor displaying live data, an external process updates the data every second
-                //config.AddActiveCollection();
+                config.AddActiveCollection();
 
                 // the dashboard can be build up of custom Blazor components, or the ListViews or ListEditors of collections
                 // TODO: fix

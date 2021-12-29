@@ -41,7 +41,7 @@ namespace RapidCMS.Core.Navigation
                 VariantAlias = urlItems[3] ?? null;
                 // TODO: test if url with 5 is really this kind of url
                 ParentPath = ParentPath.TryParse(urlItems[4]);
-                // Id = urlItems[4];
+                Id = ParentPath == null ? urlItems[4] : null;
             }
             else if (urlItems.Length == 6)
             {

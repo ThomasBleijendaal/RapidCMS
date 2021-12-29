@@ -36,6 +36,21 @@ namespace RapidCMS.Core.Tests.Navigation
                     }
                 };
 
+                // TODO: these two urls are messy
+                yield return new object[]
+                {
+                    "/node/edit/person-convention/VNRDry/428281356/",
+                    "",
+                    new NavigationState("person-convention", default(ParentPath), "VNRDry", "428281356", UsageType.Edit)
+                };
+
+                yield return new object[]
+                {
+                    "node/new/variants/aOkLV_",
+                    "",
+                    new NavigationState("variants", default(ParentPath), "aOkLV_", default(string), UsageType.New)
+                };
+
                 yield return new object[]
                 {
                     "/node/new/person/yY4Nc6/Da9Ic3-Sv5oVVgQDwmEuxhfvCEs7j6maatAe46OuNgA:439326248;Da9Ic3-Sv5oVVgQDwmEuxhfvCEs7j6maatAe46OuNgA:654154684;Da9Ic3-Sv5oVVgQDwmEuxhfvCEs7j6maatAe46OuNgA:1594109173/",
