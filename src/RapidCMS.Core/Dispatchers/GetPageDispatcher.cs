@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Dispatchers;
+using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Forms;
-using RapidCMS.Core.Models.State;
 using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Dispatchers
@@ -18,23 +18,28 @@ namespace RapidCMS.Core.Dispatchers
         private readonly IAuthService _authService;
         private readonly ILogin _loginRegistration;
         private readonly ISetupResolver<IPageSetup> _pageResolver;
+        private readonly INavigationStateProvider _navigationStateProvider;
 
         public GetPageDispatcher(
             ISetupResolver<ICollectionSetup> collectionResolver,
             IRepositoryResolver repositoryResolver,
             IAuthService authService,
             ILogin loginRegistration,
-            ISetupResolver<IPageSetup> pageResolver)
+            ISetupResolver<IPageSetup> pageResolver,
+            INavigationStateProvider navigationStateProvider)
         {
             _collectionResolver = collectionResolver;
             _repositoryResolver = repositoryResolver;
             _authService = authService;
             _loginRegistration = loginRegistration;
             _pageResolver = pageResolver;
+            _navigationStateProvider = navigationStateProvider;
         }
 
         public async Task<IEnumerable<ITypeRegistration>> GetAsync(string request)
         {
+            var currentNavigationState = _navigationStateProvider.GetCurrentState();
+
             var configuredSections = (await _pageResolver.ResolveSetupAsync(request)).Sections;
             var sections = new List<ITypeRegistration>();
             var isAuthorized = default(bool?);
@@ -43,9 +48,11 @@ namespace RapidCMS.Core.Dispatchers
             {
                 if (section.Type == typeof(ICollectionConfig) && 
                     section.Parameters != null &&
-                    section.Parameters.TryGetValue("NavigationState", out var obj) &&
+                    section.Parameters.TryGetValue("InitialState", out var obj) &&
                     obj is NavigationState state)
                 {
+                    _navigationStateProvider.NestNavigationState(currentNavigationState, state);
+
                     var collection = await _collectionResolver.ResolveSetupAsync(state.CollectionAlias);
                     var repository = _repositoryResolver.GetRepository(collection);
 

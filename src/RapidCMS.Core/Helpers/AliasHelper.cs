@@ -18,7 +18,7 @@ namespace RapidCMS.Core.Helpers
         public static string GetRepositoryAlias(Type repositoryType)
         {
             var name = repositoryType?.FullName;
-            var alias = name?.ToSha256Base64String("repo") ?? "unknown-repository";
+            var alias = name?.ToSha256Base64String("repo")[0..12] ?? "unknown-repository";
 
             return alias;
         }

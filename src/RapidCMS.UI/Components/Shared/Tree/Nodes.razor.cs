@@ -49,7 +49,7 @@ namespace RapidCMS.UI.Components.Shared.Tree
 
         private async Task LocationChangedAsync(object sender, NavigationEventArgs args)
         {
-            if (sender is NavigationLink || UI == null || CollectionsVisible == null)
+            if (sender is NavigationLink || UI == null || CollectionsVisible == null || args.OldState != null || !args.NewState.HasCollectionAlias)
             {
                 return;
             }

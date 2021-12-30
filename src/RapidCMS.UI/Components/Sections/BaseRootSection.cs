@@ -10,6 +10,7 @@ using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
@@ -35,8 +36,7 @@ namespace RapidCMS.UI.Components.Sections
 
         protected NavigationState CurrentNavigationState { get; private set; } = default!;
 
-        // TODO: rename this to a more logical name (its the given state to this section, the section is nested, not the state itself)
-        [Parameter] public NavigationState? NestedState { get; set; }
+        [Parameter] public NavigationState? InitialState { get; set; }
 
         protected IEnumerable<ButtonUI>? Buttons { get; set; }
         protected List<(FormEditContext editContext, IEnumerable<SectionUI> sections)>? Sections { get; set; }
@@ -49,7 +49,7 @@ namespace RapidCMS.UI.Components.Sections
         {
             try
             {
-                StateIsChanging = true;
+                //StateIsChanging = true;
 
                 var response = await viewCommand.Invoke();
 
@@ -59,7 +59,7 @@ namespace RapidCMS.UI.Components.Sections
                 }
 
                 // TODO: this should be removed?
-                await LoadDataAsync(response.RefreshIds);
+                // await LoadDataAsync(response.RefreshIds);
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace RapidCMS.UI.Components.Sections
             }
             finally
             {
-                StateIsChanging = false;
+                //StateIsChanging = false;
                 StateHasChanged();
             }
         }
@@ -84,14 +84,14 @@ namespace RapidCMS.UI.Components.Sections
         {
             DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(OnNavigationAsync));
             
-            CurrentNavigationState = NestedState ?? NavigationStateProvider.GetCurrentState();
+            CurrentNavigationState = InitialState ?? NavigationStateProvider.GetCurrentState();
 
             await LoadDataAsync();
         }
 
         protected async Task OnNavigationAsync(object sender, NavigationEventArgs args)
         {
-            if ((NestedState == null && args.OldState == null) || CurrentNavigationState == args.OldState)
+            if ((InitialState == null && args.OldState == null) || CurrentNavigationState.Equals(args.OldState))
             {
                 CurrentNavigationState = args.NewState;
 
@@ -100,32 +100,6 @@ namespace RapidCMS.UI.Components.Sections
                 StateHasChanged();
             }
         }
-
-        //protected override async Task OnParametersSetAsync()
-        //{
-        //    try
-        //    {
-        //        Buttons = null;
-        //        Sections = null;
-        //        ListContext = null;
-        //        Tabs = null;
-        //        ListUI = null;
-        //        PageContents = null;
-
-        //        PageState.ResetState(InitialState);
-
-        //        if (IsRoot)
-        //        {
-        //            PageState.UpdateNavigationStateWhenStateChanges();
-        //        }
-
-        //        await LoadDataAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
-        //    }
-        //}
 
         private async Task LoadDataAsync(IEnumerable<string>? entityIds = null)
         {
@@ -153,40 +127,36 @@ namespace RapidCMS.UI.Components.Sections
 
         private async Task OnRepositoryActionAsync(object sender, CollectionRepositoryEventArgs args)
         {
-            // TODO: reimplement
-            //if (CurrentState == null || 
-            //    CurrentState.CollectionAlias == null || 
-            //    args.CollectionAlias != CurrentState.CollectionAlias ||
-            //    StateIsChanging)
-            //{
-            //    return;
-            //}
+            if (!CurrentNavigationState.HasCollectionAlias || args.CollectionAlias != CurrentNavigationState.CollectionAlias)
+            {
+                return;
+            }
 
-            //await InvokeAsync(() => LoadDataAsync());
+            await InvokeAsync(() => LoadDataAsync());
         }
 
         private async Task OnExceptionAsync(object sender, ExceptionEventArgs args)
         {
             // TODO: reimplement similar but better
-            //await InvokeAsync(() =>
-            //{
-            //    if (args.Exception is UnauthorizedAccessException)
-            //    {
-            //        PageState.ResetState(new PageStateModel { PageType = PageType.Unauthorized });
-            //    }
-            //    else if (args.Exception is InvalidEntityException)
-            //    {
-            //        Mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Error, "Failed to perform action, Entity is in invalid state."));
-            //    }
-            //    else if (!Cms.IsDevelopment)
-            //    {
-            //        Mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Error, $"Failed to perform action: {args.Exception.Message}."));
-            //    }
-            //    else
-            //    { 
-            //        PageState.ResetState(new PageStateModel { PageType = PageType.Error });
-            //    }
-            //});
+            await InvokeAsync(() =>
+            {
+                if (args.Exception is UnauthorizedAccessException)
+                {
+                    NavigationStateProvider.ReplaceNavigationState(CurrentNavigationState, new NavigationState(PageType.Unauthorized));
+                }
+                else if (args.Exception is InvalidEntityException)
+                {
+                    Mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Error, "Failed to perform action, Entity is in invalid state."));
+                }
+                else if (!Cms.IsDevelopment)
+                {
+                    Mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Error, $"Failed to perform action: {args.Exception.Message}."));
+                }
+                else
+                {
+                    NavigationStateProvider.ReplaceNavigationState(CurrentNavigationState, new NavigationState(PageType.Error));
+                }
+            });
         }
 
         protected static RenderFragment RenderType(ITypeRegistration section)

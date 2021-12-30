@@ -6,7 +6,7 @@ namespace RapidCMS.Core.Forms
 {
     internal class RelatedViewContext : ViewContext, IRelatedViewContext
     {
-        public RelatedViewContext(IRelated related, string collectionAlias, IParent? parent) : base(collectionAlias, parent)
+        public RelatedViewContext(IRelated related, string? collectionAlias, IParent? parent) : base(collectionAlias, parent)
         {
             Related = related ?? throw new ArgumentNullException(nameof(related));
         }

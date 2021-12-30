@@ -50,9 +50,9 @@ namespace RapidCMS.Core.Dispatchers.Api
 
             var action = (request.UsageType & ~(UsageType.Node | UsageType.Root | UsageType.NotRoot)) switch
             {
-                UsageType.View => () => repository.GetByIdAsync(request.Subject.Id!, new ViewContext("", parent)),
-                UsageType.Edit => () => repository.GetByIdAsync(request.Subject.Id!, new ViewContext("", parent)),
-                UsageType.New => () => repository.NewAsync(new ViewContext("", parent), entityVariant?.Type)!,
+                UsageType.View => () => repository.GetByIdAsync(request.Subject.Id!, new ViewContext(null, parent)),
+                UsageType.Edit => () => repository.GetByIdAsync(request.Subject.Id!, new ViewContext(null, parent)),
+                UsageType.New => () => repository.NewAsync(new ViewContext(null, parent), entityVariant?.Type)!,
 
                 _ => default(Func<Task<IEntity?>>)
             };

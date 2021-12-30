@@ -56,7 +56,6 @@ namespace RapidCMS.Core.Navigation
             UpdateUrl(newState);
         }
 
-
         public void AppendNavigationState(NavigationState currentState, NavigationState newState)
         {
             var clonedState = (NavigationState)newState.Clone();
@@ -100,6 +99,8 @@ namespace RapidCMS.Core.Navigation
 
             return _states.Last();
         }
+
+        public bool IsRootState(NavigationState state) => _states.Any(x => x.Equals(state));
 
         public NavigationState Initialize(string url, string queryString)
         {

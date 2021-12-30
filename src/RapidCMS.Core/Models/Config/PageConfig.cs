@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
-using RapidCMS.Core.Models.State;
+using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Models.Config
 {
@@ -34,14 +35,8 @@ namespace RapidCMS.Core.Models.Config
                     typeof(ICollectionConfig),
                     new Dictionary<string, object> {
                         {
-                            // TODO: update
                             "InitialState",
-                            new PageStateModel
-                            {
-                                PageType = PageType.Collection,
-                                UsageType = edit ? UsageType.Edit : UsageType.View,
-                                CollectionAlias = collectionAlias
-                            }
+                            new NavigationState(collectionAlias, default(IRelated), edit ? UsageType.Edit : UsageType.View)
                         }
                     }));
 

@@ -150,7 +150,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                         if (editContext.IsReordered())
                         {
                             await _concurrencyService.EnsureCorrectConcurrencyAsync(
-                                () => repository.ReorderAsync(editContext.ReorderedBeforeId, editContext.Entity.Id!, new ViewContext("", editContext.Parent)));
+                                () => repository.ReorderAsync(editContext.ReorderedBeforeId, editContext.Entity.Id!, new ViewContext(null, editContext.Parent)));
                         }
 
                         affectedEntities.Add(editContext.Entity);

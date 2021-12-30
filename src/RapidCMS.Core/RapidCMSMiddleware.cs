@@ -14,7 +14,6 @@ using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Dispatchers;
 using RapidCMS.Core.Dispatchers.Form;
@@ -37,7 +36,6 @@ using RapidCMS.Core.Services.Concurrency;
 using RapidCMS.Core.Services.Parent;
 using RapidCMS.Core.Services.Persistence;
 using RapidCMS.Core.Services.Presentation;
-using RapidCMS.Core.Services.State;
 using RapidCMS.Core.Services.Tree;
 using RapidCMS.Core.Validators;
 
@@ -106,7 +104,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<INavigationStateProvider, NavigationStateProvider>();
 
             services.AddTransient<IConcurrencyService, ConcurrencyService>();
-            services.AddTransient<IPageState, PageState>();
             services.AddTransient<IParentService, ParentService>();
             services.AddTransient<ITreeService, TreeService>();
 

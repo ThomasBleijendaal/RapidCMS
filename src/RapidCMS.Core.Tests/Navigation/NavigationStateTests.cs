@@ -36,12 +36,25 @@ namespace RapidCMS.Core.Tests.Navigation
                     }
                 };
 
-                // TODO: these two urls are messy
                 yield return new object[]
                 {
-                    "/node/edit/person-convention/VNRDry/428281356/",
+                    "/node/edit/person-convention/VNRDry/-/428281356/",
                     "",
                     new NavigationState("person-convention", default(ParentPath), "VNRDry", "428281356", UsageType.Edit)
+                };
+
+                yield return new object[]
+                {
+                    "/node/edit/person-convention/VNRDry/fdsa:123/428281356/",
+                    "",
+                    new NavigationState("person-convention", ParentPath.TryParse("fdsa:123"), "VNRDry", "428281356", UsageType.Edit)
+                };
+
+                yield return new object[]
+                {
+                    "/node/edit/person-convention/VNRDry/fdsa:123;fdsafdsa:12345/428281356/",
+                    "",
+                    new NavigationState("person-convention", ParentPath.TryParse("fdsa:123;fdsafdsa:12345"), "VNRDry", "428281356", UsageType.Edit)
                 };
 
                 yield return new object[]

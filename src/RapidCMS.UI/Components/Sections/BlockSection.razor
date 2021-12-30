@@ -52,13 +52,13 @@
         else if (element is SubCollectionUI subCollection)
         {
             <div class="nested-content">
-                <RootSection NestedState="@subCollection.NestedNavigationState" />
+                <RootSection InitialState="@subCollection.NestedNavigationState" />
             </div>
         }
         else if (element is RelatedCollectionUI relatedCollection)
         {
             <div class="nested-content">
-                <RootSection NestedState="@relatedCollection.NestedNavigationState" />
+                <RootSection InitialState="@relatedCollection.NestedNavigationState" />
             </div>
         }
     }

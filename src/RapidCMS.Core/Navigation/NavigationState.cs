@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Enums;
@@ -20,37 +21,37 @@ namespace RapidCMS.Core.Navigation
             {
                 PageType = PageType.Dashboard;
             }
-            else if (urlItems.Length == 3)
+            else
             {
                 PageType = Enum.TryParse<PageType>(urlItems[0], true, out var pageType) ? pageType : PageType.Dashboard;
-                UsageType = Enum.TryParse<UsageType>(urlItems[1], true, out var usageType) ? usageType : UsageType.View;
-                _collectionAlias = urlItems[2] ?? null;
-            }
-            else if (urlItems.Length == 4)
-            {
-                PageType = Enum.TryParse<PageType>(urlItems[0], true, out var pageType) ? pageType : PageType.Dashboard;
-                UsageType = Enum.TryParse<UsageType>(urlItems[1], true, out var usageType) ? usageType : UsageType.View;
-                _collectionAlias = urlItems[2] ?? null;
-                ParentPath = ParentPath.TryParse(urlItems[3]);
-            }
-            else if (urlItems.Length == 5)
-            {
-                PageType = Enum.TryParse<PageType>(urlItems[0], true, out var pageType) ? pageType : PageType.Dashboard;
-                UsageType = Enum.TryParse<UsageType>(urlItems[1], true, out var usageType) ? usageType : UsageType.View;
-                _collectionAlias = urlItems[2] ?? null;
-                VariantAlias = urlItems[3] ?? null;
-                // TODO: test if url with 5 is really this kind of url
-                ParentPath = ParentPath.TryParse(urlItems[4]);
-                Id = ParentPath == null ? urlItems[4] : null;
-            }
-            else if (urlItems.Length == 6)
-            {
-                PageType = Enum.TryParse<PageType>(urlItems[0], true, out var pageType) ? pageType : PageType.Dashboard;
-                UsageType = Enum.TryParse<UsageType>(urlItems[1], true, out var usageType) ? usageType : UsageType.View;
-                _collectionAlias = urlItems[2] ?? null;
-                VariantAlias = urlItems[3] ?? null;
-                ParentPath = ParentPath.TryParse(urlItems[4]);
-                Id = urlItems[5];
+
+                if (urlItems.Length > 1)
+                {
+                    switch (PageType)
+                    {
+                        case PageType.Collection:
+
+                            UsageType = Enum.TryParse<UsageType>(urlItems.ElementAtOrDefault(1), true, out var usageType1) ? usageType1 : UsageType.View;
+                            _collectionAlias = urlItems.ElementAtOrDefault(2);
+                            ParentPath = ParentPath.TryParse(urlItems.ElementAtOrDefault(3));
+                            break;
+
+                        case PageType.Node:
+
+                            UsageType = Enum.TryParse<UsageType>(urlItems.ElementAtOrDefault(1), true, out var usageType2) ? usageType2 : UsageType.View;
+                            _collectionAlias = urlItems.ElementAtOrDefault(2);
+                            VariantAlias = urlItems.ElementAtOrDefault(3);
+                            ParentPath = ParentPath.TryParse(urlItems.ElementAtOrDefault(4));
+                            Id = urlItems.ElementAtOrDefault(5);
+                            break;
+
+                        case PageType.Page:
+
+                            _collectionAlias = urlItems.ElementAtOrDefault(1);
+
+                            break;
+                    }
+                }
             }
 
             var qs = HttpUtility.ParseQueryString(queryString);
@@ -64,6 +65,13 @@ namespace RapidCMS.Core.Navigation
         public NavigationState()
         {
             PageType = PageType.Dashboard;
+
+            CollectionState = new CollectionState();
+        }
+
+        public NavigationState(PageType pageType)
+        {
+            PageType = pageType;
 
             CollectionState = new CollectionState();
         }
@@ -166,6 +174,8 @@ namespace RapidCMS.Core.Navigation
         public IRelated? Related { get; set; }
         public string? Id { get; }
 
+        public bool HasCollectionAlias => !string.IsNullOrEmpty(_collectionAlias);
+
         public CollectionState CollectionState { get; set; }
 
         // TODO: make dictionary with key resolvable to nested state (so a history back event restores search / page / sorting in nested collections)
@@ -175,7 +185,18 @@ namespace RapidCMS.Core.Navigation
         {
             return PageType == other?.PageType &&
                 UsageType == other?.UsageType &&
-                CollectionAlias == other?.CollectionAlias &&
+                _collectionAlias == other?._collectionAlias &&
+                VariantAlias == other?.VariantAlias &&
+                ParentPath?.ToPathString() == other?.ParentPath?.ToPathString() &&
+                Related == other?.Related &&
+                Id == other?.Id;
+        }
+
+        public bool IsSimilar(NavigationState? other)
+        {
+            return PageType == other?.PageType &&
+                // UsageType == other?.UsageType &&
+                _collectionAlias == other?._collectionAlias &&
                 VariantAlias == other?.VariantAlias &&
                 ParentPath?.ToPathString() == other?.ParentPath?.ToPathString() &&
                 Related == other?.Related &&
@@ -188,19 +209,23 @@ namespace RapidCMS.Core.Navigation
         {
             // var nestedStates = NestedStates.Any() ? $"[{string.Join(";", NestedStates.Select(x => x.ToString(true)))}]" : null;
 
-            return UriHelper.CombinePath(
-                PageType.ToString().ToLower(),
-                (UsageType.HasFlag(UsageType.Edit) ? UsageType.Edit : 
+            var usageType = (UsageType.HasFlag(UsageType.Edit) ? UsageType.Edit :
                     UsageType.HasFlag(UsageType.New) ? UsageType.New :
-                    UsageType.View).ToString().ToLower(),
-                CollectionAlias,
-                VariantAlias,
-                ParentPath?.ToPathString(),
-                Id,
-                nested ? default : CollectionState.ToString());
+                    UsageType.View).ToString().ToLower();
+
+            return PageType switch
+            {
+                PageType.Collection => UriHelper.CombinePath("collection", usageType, _collectionAlias, ParentPath?.ToPathString(), nested ? default : CollectionState.ToString()),
+                PageType.Dashboard => "",
+                PageType.Error => "error",
+                PageType.Node => UriHelper.CombinePath("node", usageType, _collectionAlias, VariantAlias, ParentPath?.ToPathString() ?? "-", Id),
+                PageType.Page => $"page/{_collectionAlias}",
+                PageType.Unauthorized => "unauthorized",
+                _ => ""
+            };
         }
 
         public object Clone()
-            => new NavigationState(CollectionAlias, PageType, UsageType, VariantAlias, ParentPath, Related, Id);
+            => new NavigationState(_collectionAlias, PageType, UsageType, VariantAlias, ParentPath, Related, Id);
     }
 }

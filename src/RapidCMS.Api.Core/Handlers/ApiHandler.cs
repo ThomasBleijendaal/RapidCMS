@@ -17,7 +17,6 @@ using RapidCMS.Core.Models.ApiBridge.Request;
 using RapidCMS.Core.Models.ApiBridge.Response;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
-using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Api.Core.Handlers
 {

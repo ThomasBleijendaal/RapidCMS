@@ -30,22 +30,20 @@
 
     private async Task LocationChangedAsync(object sender, NavigationEventArgs args)
     {
+        if (!NavigationStateProvider.IsRootState(args.NewState))
+        {
+            return;
+        }
+
         await InvokeAsync(() =>
         {
-            _isActive = args.NewState.Equals(NavigateTo);
+            _isActive = args.NewState.IsSimilar(NavigateTo);
             StateHasChanged();
         });
     }
 
-    //private void OnLocationChanged(object? sender, PageStateModel model)
-    //{
-    //    _isActive = model.NewState.Equals(model);
-    //    StateHasChanged();
-    //}
-
     private void OnLinkClick(MouseEventArgs args)
     {
-        // Mediator.NotifyEvent(this, new NavigationEventArgs(NewState));
         NavigationStateProvider.AppendNavigationState(NavigateTo);
     }
 }

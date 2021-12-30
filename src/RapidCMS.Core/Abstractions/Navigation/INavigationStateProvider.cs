@@ -8,6 +8,8 @@ namespace RapidCMS.Core.Abstractions.Navigation
     {
         NavigationState GetCurrentState();
 
+        bool IsRootState(NavigationState state);
+
         NavigationState Initialize(string url, string queryString);
 
         void AppendNavigationState(NavigationState state);

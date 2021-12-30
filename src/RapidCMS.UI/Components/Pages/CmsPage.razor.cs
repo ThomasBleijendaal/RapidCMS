@@ -3,13 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using RapidCMS.Core;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Navigation;
-using RapidCMS.Core.Enums;
-using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs.Mediators;
-using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.UI.Components.Pages
 {
@@ -36,7 +32,7 @@ namespace RapidCMS.UI.Components.Pages
         {
             base.OnInitialized();
 
-            DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(LocationChangedAsync));
+            //DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(LocationChangedAsync));
 
             NavigationState.Initialize(PageRoute ?? "", new Uri(NavigationManager.Uri).Query);
         }
@@ -73,7 +69,7 @@ namespace RapidCMS.UI.Components.Pages
 
         private async Task LocationChangedAsync(object sender, NavigationEventArgs args)
         {
-            StateHasChanged();
+            //StateHasChanged();
 
             //if (args.UpdateUrl)
             //{
