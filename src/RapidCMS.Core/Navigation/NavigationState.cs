@@ -88,7 +88,7 @@ namespace RapidCMS.Core.Navigation
         public NavigationState(string collectionAlias, ParentPath? parentPath, UsageType usageType)
         {
             PageType = PageType.Collection;
-            UsageType = usageType; // | ((parentPath == null) ? UsageType.Root : UsageType.NotRoot); // TODO: why root?
+            UsageType = usageType;
             _collectionAlias = collectionAlias;
             ParentPath = parentPath;
 
@@ -108,7 +108,7 @@ namespace RapidCMS.Core.Navigation
         public NavigationState(string collectionAlias, ParentPath? parentPath, IRelated? related, UsageType usageType, PageType pageType)
         {
             PageType = pageType;
-            UsageType = usageType; // | ((parentPath == null) ? UsageType.Root : UsageType.NotRoot);
+            UsageType = usageType;
             _collectionAlias = collectionAlias;
             ParentPath = parentPath;
             Related = related;
@@ -207,6 +207,7 @@ namespace RapidCMS.Core.Navigation
 
         private string ToString(bool nested)
         {
+            // TODO: when supporting nested states from urls this will become useful
             // var nestedStates = NestedStates.Any() ? $"[{string.Join(";", NestedStates.Select(x => x.ToString(true)))}]" : null;
 
             var usageType = (UsageType.HasFlag(UsageType.Edit) ? UsageType.Edit :

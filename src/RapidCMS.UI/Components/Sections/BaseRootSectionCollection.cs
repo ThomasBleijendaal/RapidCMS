@@ -76,7 +76,7 @@ namespace RapidCMS.UI.Components.Sections
             StateHasChanged();
         }
 
-        protected async Task PageChangedAsync(int page)
+        protected void PageChanged(int page)
         {
             if (ListUI == null)
             {
@@ -87,11 +87,9 @@ namespace RapidCMS.UI.Components.Sections
             {
                 CurrentPage = page
             });
-
-            // await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
         }
 
-        protected async Task SearchAsync(string? search)
+        protected void Search(string? search)
         {
             if (ListUI == null)
             {
@@ -103,11 +101,9 @@ namespace RapidCMS.UI.Components.Sections
                 CurrentPage = 1,
                 SearchTerm = search
             });
-
-            // await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
         }
 
-        protected async Task TabChangeAsync(int? tabId)
+        protected void TabChange(int? tabId)
         {
             if (ListUI == null)
             {
@@ -119,8 +115,6 @@ namespace RapidCMS.UI.Components.Sections
                 ActiveTab = tabId,
                 CurrentPage = 1
             });
-
-            // await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
         }
 
         protected async Task<(ListContext listContext, List<(FormEditContext editContext, IEnumerable<SectionUI> sections)> sections)> LoadSectionsAsync(ListUI listUI, IListUIResolver uiResolver)
@@ -151,12 +145,11 @@ namespace RapidCMS.UI.Components.Sections
 
             var sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await uiResolver.GetSectionsForEditContextAsync(editContext, CurrentNavigationState)));
 
-            if (!NavigationStateProvider.TryProcessView(CurrentNavigationState, view, sections?.Any() == true))
+            if (!NavigationStateProvider.TryProcessView(CurrentNavigationState, view, sections.Any() == true))
             {
                 return await LoadSectionsAsync(listUI, uiResolver);
             }
 
-            // TODO: why the null warnings here?
             return (listContext, sections);
         }
 

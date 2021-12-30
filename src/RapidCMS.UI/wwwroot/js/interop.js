@@ -1,5 +1,3 @@
-﻿//window['RapidCMS'] = {
-//    navigateTo: function (uri) {
-//        history.replaceState(null, /* ignored title */ '', uri);
-//    }
-//};
+﻿window['RapidCMS'] = {
+    // reserved for future use
+};

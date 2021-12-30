@@ -61,7 +61,7 @@ namespace RapidCMS.Core.Dispatchers.Form
             await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity);
             await _dataViewResolver.ApplyDataViewToViewAsync(request.View);
 
-            var action = (request.UsageType & ~(UsageType.List/* | UsageType.Root | UsageType.NotRoot*/)) switch
+            var action = (request.UsageType & ~(UsageType.List)) switch
             {
                 UsageType.Add when relatedEntity != null => () => repository.GetAllNonRelatedAsync(new RelatedViewContext(relatedEntity!, collection.Alias, parent), request.View),
                 _ when relatedEntity != null => () => repository.GetAllRelatedAsync(new RelatedViewContext(relatedEntity!, collection.Alias, parent), request.View),

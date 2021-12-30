@@ -159,7 +159,6 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
                     It.Is<NavigationState>(state =>
                         state.PageType == pageType &&
                         state.UsageType == usageType)));
-            // _pageState.Verify(x => x.PushState(It.Is<PageStateModel>(x => x.PageType == pageType && x.UsageType == usageType)));
         }
     }
 }
