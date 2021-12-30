@@ -18,8 +18,9 @@ namespace RapidCMS.Core.Enums
         Node = 131072,
         Details = 262144,
 
-        // TODO: why these elements? -- document why
+        // Root = root of page
         Root = 2097152,
+        // NotRoot = embedded collection on a page
         NotRoot = 4194304
     }
 }

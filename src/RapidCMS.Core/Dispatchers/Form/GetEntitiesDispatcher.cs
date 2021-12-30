@@ -61,7 +61,7 @@ namespace RapidCMS.Core.Dispatchers.Form
             await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity);
             await _dataViewResolver.ApplyDataViewToViewAsync(request.View);
 
-            var action = (request.UsageType & ~(UsageType.List | UsageType.Root | UsageType.NotRoot)) switch
+            var action = (request.UsageType & ~(UsageType.List/* | UsageType.Root | UsageType.NotRoot*/)) switch
             {
                 UsageType.Add when relatedEntity != null => () => repository.GetAllNonRelatedAsync(new RelatedViewContext(relatedEntity!, collection.Alias, parent), request.View),
                 _ when relatedEntity != null => () => repository.GetAllRelatedAsync(new RelatedViewContext(relatedEntity!, collection.Alias, parent), request.View),
@@ -75,9 +75,16 @@ namespace RapidCMS.Core.Dispatchers.Form
                 throw new InvalidOperationException($"UsageType {request.UsageType} is invalid for this method");
             }
 
+            var isRoot = parent == null || request.IsEmbedded;
+
+            // TODO: why is Node in UsageType for entities?
+            var usage = (request.UsageType.HasFlag(UsageType.Edit) ? UsageType.Edit : UsageType.View)
+                 | (isRoot ? UsageType.Root : UsageType.NotRoot);
+
+            var protoEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, collection.EntityVariant.Alias, protoEntity, parent, usage | UsageType.List, collection.Validators, _serviceProvider);
+            var newEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, variant.Alias, newEntity, parent, usage | UsageType.Node, collection.Validators, _serviceProvider);
+
             var existingEntities = await _concurrencyService.EnsureCorrectConcurrencyAsync(action);
-            var protoEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, collection.EntityVariant.Alias, protoEntity, parent, request.UsageType | UsageType.List, collection.Validators, _serviceProvider);
-            var newEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, variant.Alias, newEntity, parent, request.UsageType | UsageType.Node, collection.Validators, _serviceProvider);
 
             return new ListContext(
                 request.CollectionAlias,

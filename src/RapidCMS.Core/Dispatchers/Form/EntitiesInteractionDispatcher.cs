@@ -189,44 +189,30 @@ namespace RapidCMS.Core.Dispatchers.Form
                     break;
 
                 case CrudType.Up:
-                    if (!_navigationStateProvider.RemoveNavigationState(request.NavigationState))
+                    var (newParentPath, repositoryAlias, parentId) = ParentPath.RemoveLevel(request.ListContext.Parent?.GetParentPath());
+
+                    if (repositoryAlias == null)
                     {
-                        var (newParentPath, repositoryAlias, parentId) = ParentPath.RemoveLevel(request.ListContext.Parent?.GetParentPath());
-
-                        if (repositoryAlias == null)
-                        {
-                            break;
-                        }
-
-                        var parentCollection = collection.Parent != null && collection.Parent.Type == PageType.Collection ? await _collectionResolver.ResolveSetupAsync(collection.Parent.Alias) : default;
-                        if (parentCollection == null)
-                        {
-                            throw new InvalidOperationException("Cannot go Up on collection that is root.");
-                        }
-
-                        _navigationStateProvider.AppendNavigationState(
-                            request.NavigationState,
-                            new NavigationState(
-                                request.ListContext.CollectionAlias,
-                                newParentPath,
-                                request.Related,
-                                collection.ListEditor == null ? UsageType.View : UsageType.Edit,
-                                PageType.Node));
-
-                        //pageState.ReplaceState(new PageStateModel
-                        //{
-                        //    PageType = PageType.Node,
-                        //    UsageType = (parentCollection.NodeEditor == null ? UsageType.View : UsageType.Edit)
-                        //     | ((newParentPath != null) ? UsageType.NotRoot : UsageType.Root),
-
-                        //    CollectionAlias = parentCollection.Alias,
-                        //    ParentPath = newParentPath,
-                        //    VariantAlias = collection.EntityVariant.Alias,
-                        //    Id = parentId
-                        //});
+                        break;
                     }
+
+                    var parentCollection = collection.Parent != null && collection.Parent.Type == PageType.Collection ? await _collectionResolver.ResolveSetupAsync(collection.Parent.Alias) : default;
+                    if (parentCollection == null)
+                    {
+                        throw new InvalidOperationException("Cannot go Up on collection that is root.");
+                    }
+
+                    _navigationStateProvider.AppendNavigationState(
+                        request.NavigationState,
+                        new NavigationState(
+                            request.ListContext.CollectionAlias,
+                            newParentPath,
+                            parentCollection.EntityVariant.Alias,
+                            parentId,
+                            collection.ListEditor == null ? UsageType.View : UsageType.Edit));
                     break;
 
+                    // TODO: test add and remove
                 case CrudType.Add when request.Related != null:
                     _navigationStateProvider.AppendNavigationState(
                         request.NavigationState,
@@ -234,15 +220,6 @@ namespace RapidCMS.Core.Dispatchers.Form
                             request.ListContext.CollectionAlias,
                             request.Related,
                             UsageType.Add));
-
-                    //pageState.PushState(new PageStateModel
-                    //{
-                    //    PageType = PageType.Collection,
-                    //    UsageType = UsageType.Add,
-
-                    //    CollectionAlias = request.ListContext.CollectionAlias,
-                    //    Related = request.Related
-                    //});
                     break;
 
                 default:

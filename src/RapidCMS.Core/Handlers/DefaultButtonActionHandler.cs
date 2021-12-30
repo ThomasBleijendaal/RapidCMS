@@ -69,7 +69,9 @@ namespace RapidCMS.Core.Handlers
         public bool IsCompatible(IButton button, FormEditContext editContext)
         {
             var usages = button.DefaultButtonType.GetCustomAttribute<ActionsAttribute>()?.Usages;
-            return usages?.Any(x => editContext.UsageType.HasFlag(x)) ?? false;
+            var isCompatible = usages?.Any(x => editContext.UsageType.HasFlag(x)) ?? false;
+
+            return isCompatible;
         }
 
         public bool RequiresValidForm(IButton button, FormEditContext editContext)

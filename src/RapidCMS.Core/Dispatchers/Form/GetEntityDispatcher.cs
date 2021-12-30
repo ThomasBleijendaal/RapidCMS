@@ -53,7 +53,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
             var parent = await _parentService.GetParentAsync(request.ParentPath);
 
-            var action = (request.UsageType & ~(UsageType.Node | UsageType.Root | UsageType.NotRoot)) switch
+            var action = (request.UsageType & ~(UsageType.Node/* | UsageType.Root | UsageType.NotRoot*/)) switch
             {
                 UsageType.View => () => repository.GetByIdAsync(request.Id!, new ViewContext(collection.Alias, parent)),
                 UsageType.Edit => () => repository.GetByIdAsync(request.Id!, new ViewContext(collection.Alias, parent)),

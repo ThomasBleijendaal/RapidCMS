@@ -134,7 +134,8 @@ namespace RapidCMS.UI.Components.Sections
                     View = view,
                     Related = CurrentNavigationState.Related,
                     UsageType = CurrentNavigationState.UsageType,
-                    VariantAlias = CurrentNavigationState.VariantAlias
+                    VariantAlias = CurrentNavigationState.VariantAlias,
+                    IsEmbedded = !NavigationStateProvider.IsRootState(CurrentNavigationState)
                 }
                 : (GetEntitiesRequestModel)new GetEntitiesOfParentRequestModel
                 {
@@ -142,7 +143,8 @@ namespace RapidCMS.UI.Components.Sections
                     ParentPath = CurrentNavigationState.ParentPath,
                     View = view,
                     UsageType = CurrentNavigationState.UsageType,
-                    VariantAlias = CurrentNavigationState.VariantAlias
+                    VariantAlias = CurrentNavigationState.VariantAlias,
+                    IsEmbedded = !NavigationStateProvider.IsRootState(CurrentNavigationState)
                 };
 
             var listContext = await PresentationService.GetEntitiesAsync<GetEntitiesRequestModel, ListContext>(request);

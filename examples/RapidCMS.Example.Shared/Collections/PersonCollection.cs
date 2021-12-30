@@ -155,6 +155,12 @@ namespace RapidCMS.Example.Shared.Collections
                                     // Favouite grand parent: config.SetRepositoryParent(x => x.Parent != null ? x.Parent.Parent : default); // ?. is not yet supported in expressions..
                                 });
                         });
+
+
+                        editor.AddSection(section =>
+                        {
+                            section.AddSubCollectionList("person");
+                        });
                     })
                     .SetNodeView(view =>
                     {
