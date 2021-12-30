@@ -4,7 +4,7 @@
     @if (TreeRoot != null)
     {
         <div class="logo">
-            <NavigationLink NewState="@TreeRoot.State">@TreeRoot.Name</NavigationLink>
+            <NavigationLink NavigateTo="@TreeRoot.NavigateTo">@TreeRoot.Name</NavigationLink>
         </div>
     }
 

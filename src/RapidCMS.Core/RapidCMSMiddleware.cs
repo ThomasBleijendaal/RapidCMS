@@ -9,11 +9,11 @@ using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Mediators;
+using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Dispatchers;
 using RapidCMS.Core.Dispatchers.Form;
@@ -24,6 +24,7 @@ using RapidCMS.Core.Interactions;
 using RapidCMS.Core.Mediators;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
+using RapidCMS.Core.Navigation;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Resolvers.Buttons;
 using RapidCMS.Core.Resolvers.Convention;
@@ -35,7 +36,6 @@ using RapidCMS.Core.Services.Concurrency;
 using RapidCMS.Core.Services.Parent;
 using RapidCMS.Core.Services.Persistence;
 using RapidCMS.Core.Services.Presentation;
-using RapidCMS.Core.Services.State;
 using RapidCMS.Core.Services.Tree;
 using RapidCMS.Core.Validators;
 
@@ -53,6 +53,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton<ISetupResolver<IPageSetup>, PageSetupResolver>();
             services.AddSingleton<ISetupResolver<ICollectionSetup>, CollectionSetupResolver>();
+            services.AddSingleton(sp => new Lazy<ISetupResolver<ICollectionSetup>>(() => sp.GetRequiredService<ISetupResolver<ICollectionSetup>>()));
             services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>>, TreeElementsSetupResolver>();
             services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>, TreeElementSetupResolver>();
 
@@ -101,8 +102,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IDragInteraction, DragInteraction>();
             services.AddTransient<IInteractionService, InteractionService>();
 
+            services.AddScoped<INavigationStateProvider, NavigationStateProvider>();
+
             services.AddTransient<IConcurrencyService, ConcurrencyService>();
-            services.AddTransient<IPageState, PageState>();
             services.AddTransient<IParentService, ParentService>();
             services.AddTransient<ITreeService, TreeService>();
 

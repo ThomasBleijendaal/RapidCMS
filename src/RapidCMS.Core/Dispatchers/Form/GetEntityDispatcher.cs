@@ -48,12 +48,12 @@ namespace RapidCMS.Core.Dispatchers.Form
             }
 
             var collection = await _collectionResolver.ResolveSetupAsync(request.CollectionAlias);
-            var variant = collection.GetEntityVariant(request.VariantAlias);
+            var variant = request.VariantAlias == null ? collection.EntityVariant : collection.GetEntityVariant(request.VariantAlias);
             var repository = _repositoryResolver.GetRepository(collection);
 
             var parent = await _parentService.GetParentAsync(request.ParentPath);
 
-            var action = (request.UsageType & ~(UsageType.Node | UsageType.Root | UsageType.NotRoot)) switch
+            var action = (request.UsageType & ~(UsageType.Node)) switch
             {
                 UsageType.View => () => repository.GetByIdAsync(request.Id!, new ViewContext(collection.Alias, parent)),
                 UsageType.Edit => () => repository.GetByIdAsync(request.Id!, new ViewContext(collection.Alias, parent)),
@@ -75,7 +75,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
             await _authService.EnsureAuthorizedUserAsync(request.UsageType, entity);
 
-            return new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, request.VariantAlias, entity, parent, request.UsageType | UsageType.Node, collection.Validators, _serviceProvider);
+            return new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, variant.Alias, entity, parent, request.UsageType | UsageType.Node, collection.Validators, _serviceProvider);
         }
     }
 }

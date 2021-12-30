@@ -66,6 +66,23 @@ namespace RapidCMS.Core.Tests.ParentPathTests
         }
 
         [Test]
+        public void RemoveLevelRemoveLevel()
+        {
+            // arrange
+
+            // act
+            var path = ParentPath.TryParse("test:123;test2:1234");
+            var (intPath, _, _) = ParentPath.RemoveLevel(path);
+            var (newPath, collectionAlias, id) = ParentPath.RemoveLevel(intPath);
+
+            // assert
+            Assert.AreEqual("test:123;test2:1234", path!.ToPathString());
+            Assert.AreEqual(null, newPath);
+            Assert.AreEqual("test", collectionAlias);
+            Assert.AreEqual("123", id);
+        }
+
+        [Test]
         public void RemoveLevelFromNull()
         {
             // arrange

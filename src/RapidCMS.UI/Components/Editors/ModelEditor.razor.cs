@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.UI;
+using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.UI.Components.Editors
 {
@@ -23,7 +24,7 @@ namespace RapidCMS.UI.Components.Editors
 
             var nodeUI = await UIResolverFactory.GetConventionNodeUIResolverAsync(Property.PropertyType);
 
-            var sections = await nodeUI.GetSectionsForEditContextAsync(PropertyEditContext);
+            var sections = await nodeUI.GetSectionsForEditContextAsync(PropertyEditContext, new NavigationState());
 
             Fields = sections.FirstOrDefault()?.Elements?.OfType<FieldUI>();
 

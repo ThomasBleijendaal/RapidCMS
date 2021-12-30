@@ -37,7 +37,7 @@ namespace RapidCMS.Core.Authorization
         public static OperationAuthorizationRequirement Remove = new OperationAuthorizationRequirement { Name = nameof(Remove) };
 
         internal static OperationAuthorizationRequirement GetOperationForUsageType(UsageType type) 
-            => (type & ~(UsageType.Root | UsageType.NotRoot | UsageType.Node | UsageType.List)) switch
+            => (type & ~(UsageType.Node | UsageType.List)) switch
             {
                 UsageType.Add => Add,
                 UsageType.Edit => Update,

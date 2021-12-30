@@ -115,7 +115,7 @@ namespace RapidCMS.Core.Models.Config
 
         private PaneConfig<TEntity> AddSubCollectionList(string collectionAlias)
         {
-            var config = new CollectionListConfig(collectionAlias)
+            var config = new ReferencedCollectionListConfig(collectionAlias)
             {
                 Index = FieldIndex++
             };
@@ -127,7 +127,7 @@ namespace RapidCMS.Core.Models.Config
 
         private PaneConfig<TEntity> AddRelatedCollectionList(string collectionAlias)
         {
-            var config = new CollectionListConfig(collectionAlias)
+            var config = new ReferencedCollectionListConfig(collectionAlias)
             {
                 Index = FieldIndex++
             };

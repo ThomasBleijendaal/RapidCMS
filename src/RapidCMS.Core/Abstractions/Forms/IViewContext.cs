@@ -7,7 +7,7 @@ namespace RapidCMS.Core.Abstractions.Forms
         /// <summary>
         /// Alias of the collection this view is used
         /// </summary>
-        string CollectionAlias { get; }
+        string? CollectionAlias { get; }
 
         /// <summary>
         /// Possible parent(s) of the subject

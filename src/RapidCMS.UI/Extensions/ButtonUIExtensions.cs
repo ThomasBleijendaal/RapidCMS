@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.UI.Components.Buttons;
 using RapidCMS.UI.Models;
@@ -15,7 +16,7 @@ namespace RapidCMS.UI.Extensions
                 Label = button.Label ?? "",
                 ShouldConfirm = button.ShouldConfirm,
                 IsPrimary = button.IsPrimary,
-                IsVisible = button.IsVisible,
+                IsVisible = button.IsVisible ?? ((object o, EntityState s) => true),
                 RequiresValidForm = button.RequiresValidForm
             };
 

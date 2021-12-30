@@ -5,10 +5,10 @@ using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Mediators;
+using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Dispatchers.Form;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
@@ -27,8 +27,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
 
         private Mock<IServiceProvider> _serviceProviderMock = default!;
 
-        private Mock<IPageState> _pageState = default!;
-
+        private Mock<INavigationStateProvider> _navigationStateProvider = default!;
         private Mock<ISetupResolver<ICollectionSetup>> _collectionResolver = default!;
         private Mock<ICollectionSetup> _collection = default!;
         private Mock<IEntityVariantSetup> _entityVariant = default!;
@@ -43,8 +42,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         {
             _serviceProviderMock = new Mock<IServiceProvider>();
 
-            _pageState = new Mock<IPageState>();
-
+            _navigationStateProvider = new Mock<INavigationStateProvider>();
             _entityVariant = new Mock<IEntityVariantSetup>();
             _collection = new Mock<ICollectionSetup>();
             _collection
@@ -62,6 +60,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _mediator = new Mock<IMediator>();
 
             _subject = new EntitiesInteractionDispatcher(
+                _navigationStateProvider.Object,
                 _collectionResolver.Object,
                 _repositoryResolver.Object,
                 _concurrencyService,
@@ -77,11 +76,11 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // arrange
             var request = new PersistEntitiesRequestModel
             {
-                ListContext = new ListContext(alias, new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, new List<IValidationSetup>(), _serviceProviderMock.Object),default, UsageType.Add, default, _serviceProviderMock.Object)
+                ListContext = new ListContext(alias, new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, new List<IValidationSetup>(), _serviceProviderMock.Object), default, UsageType.Add, default, _serviceProviderMock.Object)
             };
 
             // act
-            _subject.InvokeAsync(request, _pageState.Object);
+            _subject.InvokeAsync(request);
 
             // assert
             _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == alias)));
@@ -98,7 +97,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             };
 
             // act
-            _subject.InvokeAsync(request, _pageState.Object);
+            _subject.InvokeAsync(request);
 
             // assert
             _repositoryResolver.Verify(x => x.GetRepository(It.Is<ICollectionSetup>(x => x == _collection.Object)));
@@ -115,7 +114,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             };
 
             // act
-            _subject.InvokeAsync(request, _pageState.Object);
+            _subject.InvokeAsync(request);
 
             // assert
             _buttonInteraction.Verify(x => x.ValidateButtonInteractionAsync(It.Is<IListButtonInteractionRequestModel>(x => x == request)));
@@ -132,7 +131,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             };
 
             // act
-            _subject.InvokeAsync(request, _pageState.Object);
+            _subject.InvokeAsync(request);
 
             // assert
             _buttonInteraction.Verify(x => x.CompleteButtonInteractionAsync(It.Is<IListButtonInteractionRequestModel>(x => x == request)));

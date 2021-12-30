@@ -31,9 +31,9 @@ else if (UI.RootVisible)
             </button>
         }
 
-        @if (UI.State != null)
+        @if (UI.NavigateTo != null)
         {
-            <NavigationLink NewState="@UI.State"><Icon Name="@UI.Icon" Color="@UI.Color" /> @UI.Name</NavigationLink>
+            <NavigationLink NavigateTo="@UI.NavigateTo"><Icon Name="@UI.Icon" Color="@UI.Color" /> @UI.Name</NavigationLink>
         }
         else
         {

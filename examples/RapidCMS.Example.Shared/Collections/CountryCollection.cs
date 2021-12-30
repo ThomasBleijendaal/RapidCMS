@@ -110,6 +110,32 @@ namespace RapidCMS.Example.Shared.Collections
                                             .SetElementDisplayProperties(x => x.Name, x => x.Details.Email);
                                     });
                         });
+
+                        editor.AddSection(section =>
+                        {
+                            section.SetLabel("Related people");
+
+                            section.AddRelatedCollectionList<Person, BaseRepository<Person>>(relation =>
+                            {
+                                relation.SetListEditor(editor =>
+                                {
+                                    editor.AddDefaultButton(DefaultButtonType.Return);
+                                    editor.AddDefaultButton(DefaultButtonType.Add);
+                                    editor.AddDefaultButton(DefaultButtonType.New);
+
+                                    editor.AddSection(row =>
+                                    {
+                                        row.AddField(x => x.Name);
+
+                                        row.AddDefaultButton(DefaultButtonType.Pick);
+                                        row.AddDefaultButton(DefaultButtonType.Remove);
+                                        row.AddDefaultButton(DefaultButtonType.SaveExisting);
+                                        row.AddDefaultButton(DefaultButtonType.SaveNew);
+                                        row.AddDefaultButton(DefaultButtonType.Delete);
+                                    });
+                                });
+                            });
+                        });
                     });
             });
         }

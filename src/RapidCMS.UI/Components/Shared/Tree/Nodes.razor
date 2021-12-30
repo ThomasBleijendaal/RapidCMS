@@ -26,9 +26,9 @@
                     </button>
                 }
 
-                @if (node.State != null)
+                @if (node.NavigateTo != null)
                 {
-                    <NavigationLink NewState="@node.State">@node.Name</NavigationLink>
+                    <NavigationLink NavigateTo="@node.NavigateTo">@node.Name</NavigationLink>
                 }
                 else
                 {

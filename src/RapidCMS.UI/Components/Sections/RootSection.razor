@@ -2,7 +2,7 @@
 
 @if (!StateIsChanging)
 {
-    @if (CurrentState?.PageType == PageType.Node)
+    @if (CurrentNavigationState.PageType == PageType.Node)
     {
         <div class="content" @key=Update>
             @if (Sections == null || !Sections.Any())
@@ -38,7 +38,7 @@
             }
         </div>
     }
-    else if (CurrentState?.PageType == PageType.Collection)
+    else if (CurrentNavigationState.PageType == PageType.Collection)
     {
         @if (ListContext == null || ListUI == null || Sections == null)
         {
@@ -52,19 +52,18 @@
                 <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
                     <Tabbar Tabs="Tabs"
                             SearchBarVisible="ListUI.SearchBarVisible"
-                            State="CurrentState"
-                            OnSearch="SearchAsync"
-                            OnTabChange="TabChangeAsync" />
+                            State="CurrentNavigationState.CollectionState"
+                            OnSearch="Search"
+                            OnTabChange="TabChange" />
                     <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" EditContext=@ListContext.ProtoEditContext />
                 </CascadingEditContext>
-
                 <TableSection UI="ListUI"
                               Sections="Sections"
-                              CurrentPage="CurrentState.CurrentPage"
-                              MaxPage="CurrentState.MaxPage"
+                              CurrentPage="CurrentNavigationState.CollectionState.CurrentPage" 
+                              MaxPage="CurrentNavigationState.CollectionState.MaxPage" 
                               OnButtonClick="NodeButtonOnClickAsync"
                               OnRowDragged="OnRowDragged"
-                              OnPageChanged="PageChangedAsync" />
+                              OnPageChanged="PageChanged" />
             </div>
         }
         else if (ListUI.ListType == ListType.Block)
@@ -75,22 +74,21 @@
                     <CascadingEditContext EditContext=@ListContext.ProtoEditContext>
                         <Tabbar Tabs="Tabs"
                                 SearchBarVisible="ListUI.SearchBarVisible"
-                                State="CurrentState"
-                                OnSearch="SearchAsync"
-                                OnTabChange="TabChangeAsync" />
+                                State="CurrentNavigationState.CollectionState"
+                                OnSearch="Search"
+                                OnTabChange="TabChange" />
                         <ButtonBar Buttons="Buttons" OnButtonClick="ListButtonOnClickAsync" EditContext=@ListContext.ProtoEditContext />
                     </CascadingEditContext>
                 </div>
             }
-
             <BlocksSection Sections="Sections"
-                           CurrentPage="CurrentState.CurrentPage"
-                           MaxPage="CurrentState.MaxPage"
+                           CurrentPage="CurrentNavigationState.CollectionState.CurrentPage" 
+                           MaxPage="CurrentNavigationState.CollectionState.MaxPage" 
                            OnButtonClick="NodeButtonOnClickAsync"
-                           OnPageChanged="PageChangedAsync" />
+                           OnPageChanged="PageChanged" />
         }
     }
-    else if ((CurrentState?.PageType == PageType.Page || CurrentState?.PageType == PageType.Dashboard) && PageContents != null)
+    else if ((CurrentNavigationState.PageType == PageType.Page || CurrentNavigationState.PageType == PageType.Dashboard) && PageContents != null)
     {
         <CascadingValue Name="Embedded" Value="true">
             @foreach (var section in PageContents)
@@ -99,11 +97,11 @@
             }
         </CascadingValue>
     }
-    else if (CurrentState?.PageType == PageType.Unauthorized)
+    else if (CurrentNavigationState.PageType == PageType.Unauthorized)
     {
         <UnauthorizedSection />
     }
-    else if (CurrentState?.PageType == PageType.Error)
+    else if (CurrentNavigationState.PageType == PageType.Error)
     {
         <ErrorSection />
     }

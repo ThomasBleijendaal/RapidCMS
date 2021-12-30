@@ -8,7 +8,7 @@ using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.UI;
 
-namespace RapidCMS.UI.Components.Shared
+namespace RapidCMS.UI.Components.Shared.Tree
 {
     public partial class Collections
     {
@@ -59,13 +59,13 @@ namespace RapidCMS.UI.Components.Shared
 
         private async Task LocationChangedAsync(object sender, NavigationEventArgs args)
         {
-            if (sender is NavigationLink || UI == null)
+            if (sender is NavigationLink || UI == null || args.OldState != null || !args.NewState.HasCollectionAlias)
             {
                 return;
             }
 
-            if ((ParentPath?.ToPathString() == args.State.ParentPath?.ToPathString() && args.State.CollectionAlias == CollectionAlias) ||
-                ParentPath.IsBaseOf(args.State.ParentPath, UI.RepositoryAlias, default))
+            if ((ParentPath?.ToPathString() == args.NewState.ParentPath?.ToPathString() && args.NewState.CollectionAlias == CollectionAlias) ||
+                ParentPath.IsBaseOf(args.NewState.ParentPath, UI.RepositoryAlias, default))
             {
                 await InvokeAsync(() =>
                 {

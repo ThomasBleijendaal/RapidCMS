@@ -10,7 +10,7 @@ using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.UI;
 
-namespace RapidCMS.UI.Components.Shared
+namespace RapidCMS.UI.Components.Shared.Tree
 {
     public partial class Nodes
     {
@@ -49,14 +49,14 @@ namespace RapidCMS.UI.Components.Shared
 
         private async Task LocationChangedAsync(object sender, NavigationEventArgs args)
         {
-            if (sender is NavigationLink || UI == null || CollectionsVisible == null)
+            if (sender is NavigationLink || UI == null || CollectionsVisible == null || args.OldState != null || !args.NewState.HasCollectionAlias)
             {
                 return;
             }
 
             foreach (var node in UI.Nodes)
             {
-                if (ParentPath.IsBaseOf(args.State.ParentPath, node.RepositoryAlias, node.Id))
+                if (ParentPath.IsBaseOf(args.NewState.ParentPath, node.RepositoryAlias, node.Id))
                 {
                     await InvokeAsync(() =>
                     {

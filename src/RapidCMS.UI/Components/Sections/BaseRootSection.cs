@@ -6,44 +6,41 @@ using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Mediators;
+using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Abstractions.State;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Response;
-using RapidCMS.Core.Models.State;
 using RapidCMS.Core.Models.UI;
+using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.UI.Components.Sections
 {
     public abstract partial class BaseRootSection : DisposableComponent
     {
         [Inject] protected ICms Cms { get; set; } = default!;
-        [Inject] protected IPageState PageState { get; set; } = default!;
         [Inject] protected IMediator Mediator { get; set; } = default!;
+        [Inject] private INavigationStateProvider NavigationStateProvider { get; set; } = default!;
 
         [Inject] protected IPresentationService PresentationService { get; set; } = default!;
         [Inject] protected IInteractionService InteractionService { get; set; } = default!;
         [Inject] protected IUIResolverFactory UIResolverFactory { get; set; } = default!;
 
-        [Parameter] public bool IsRoot { get; set; }
-        [Parameter] public PageStateModel InitialState { get; set; } = default!;
-
         protected int Update { get; set; } = 0;
 
         protected bool StateIsChanging { get; set; } = false;
 
-        protected PageStateModel CurrentState => PageState.GetCurrentState()!;
+        protected NavigationState CurrentNavigationState { get; private set; } = default!;
+
+        [Parameter] public NavigationState? InitialState { get; set; }
 
         protected IEnumerable<ButtonUI>? Buttons { get; set; }
         protected List<(FormEditContext editContext, IEnumerable<SectionUI> sections)>? Sections { get; set; }
         protected IEnumerable<ITypeRegistration>? PageContents { get; set; }
-
-        protected ViewState CurrentViewState => new ViewState(PageState);
 
         private CancellationTokenSource _loadCancellationTokenSource = new CancellationTokenSource();
 
@@ -60,8 +57,6 @@ namespace RapidCMS.UI.Components.Sections
                 {
                     return;
                 }
-
-                await LoadDataAsync(response.RefreshIds);
             }
             catch (Exception ex)
             {
@@ -84,27 +79,22 @@ namespace RapidCMS.UI.Components.Sections
 
         protected override async Task OnParametersSetAsync()
         {
-            try
+            DisposeWhenDisposing(Mediator.RegisterCallback<NavigationEventArgs>(OnNavigationAsync));
+            
+            CurrentNavigationState = InitialState ?? NavigationStateProvider.GetCurrentState();
+
+            await LoadDataAsync();
+        }
+
+        protected async Task OnNavigationAsync(object sender, NavigationEventArgs args)
+        {
+            if ((InitialState == null && args.OldState == null) || CurrentNavigationState.Equals(args.OldState))
             {
-                Buttons = null;
-                Sections = null;
-                ListContext = null;
-                Tabs = null;
-                ListUI = null;
-                PageContents = null;
-
-                PageState.ResetState(InitialState);
-
-                if (IsRoot)
-                {
-                    PageState.UpdateNavigationStateWhenStateChanges();
-                }
+                CurrentNavigationState = args.NewState;
 
                 await LoadDataAsync();
-            }
-            catch (Exception ex)
-            {
-                Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
+
+                StateHasChanged();
             }
         }
 
@@ -114,19 +104,19 @@ namespace RapidCMS.UI.Components.Sections
 
             CancelLoadAndRestart();
 
-            if (CurrentState?.PageType == PageType.Node)
+            if (CurrentNavigationState.PageType == PageType.Node)
             {
                 await LoadNodeDataAsync(_loadCancellationTokenSource.Token);
             }
-            else if (CurrentState?.PageType == PageType.Collection)
+            else if (CurrentNavigationState.PageType == PageType.Collection)
             {
                 await LoadCollectionDataAsync(_loadCancellationTokenSource.Token, entityIds);
             }
-            else if (CurrentState?.PageType == PageType.Page)
+            else if (CurrentNavigationState.PageType == PageType.Page)
             {
                 await LoadPageDataAsync(_loadCancellationTokenSource.Token);
             }
-            else if (CurrentState?.PageType == PageType.Dashboard)
+            else if (CurrentNavigationState.PageType == PageType.Dashboard)
             {
                 await LoadPageDataAsync(_loadCancellationTokenSource.Token);
             }
@@ -134,10 +124,7 @@ namespace RapidCMS.UI.Components.Sections
 
         private async Task OnRepositoryActionAsync(object sender, CollectionRepositoryEventArgs args)
         {
-            if (CurrentState == null || 
-                CurrentState.CollectionAlias == null || 
-                args.CollectionAlias != CurrentState.CollectionAlias ||
-                StateIsChanging)
+            if (!CurrentNavigationState.HasCollectionAlias || args.CollectionAlias != CurrentNavigationState.CollectionAlias)
             {
                 return;
             }
@@ -151,7 +138,7 @@ namespace RapidCMS.UI.Components.Sections
             {
                 if (args.Exception is UnauthorizedAccessException)
                 {
-                    PageState.ResetState(new PageStateModel { PageType = PageType.Unauthorized });
+                    NavigationStateProvider.ReplaceNavigationState(CurrentNavigationState, new NavigationState(PageType.Unauthorized));
                 }
                 else if (args.Exception is InvalidEntityException)
                 {
@@ -162,13 +149,13 @@ namespace RapidCMS.UI.Components.Sections
                     Mediator.NotifyEvent(this, new MessageEventArgs(MessageType.Error, $"Failed to perform action: {args.Exception.Message}."));
                 }
                 else
-                { 
-                    PageState.ResetState(new PageStateModel { PageType = PageType.Error });
+                {
+                    NavigationStateProvider.ReplaceNavigationState(CurrentNavigationState, new NavigationState(PageType.Error));
                 }
             });
         }
 
-        protected static RenderFragment RenderType(ITypeRegistration section) 
+        protected static RenderFragment RenderType(ITypeRegistration section)
             => builder =>
             {
                 var type = section.Type == typeof(ICollectionConfig)

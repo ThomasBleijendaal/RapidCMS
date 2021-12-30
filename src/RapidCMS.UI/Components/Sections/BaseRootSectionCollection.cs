@@ -7,12 +7,12 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
-using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.UI;
+using RapidCMS.Core.Navigation;
 using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Components.Sections
@@ -25,14 +25,11 @@ namespace RapidCMS.UI.Components.Sections
 
         protected ListUI? ListUI { get; set; }
 
+        private CollectionState CollectionState => CurrentNavigationState.CollectionState;
+
         protected async Task LoadCollectionDataAsync(CancellationToken cancellationToken, IEnumerable<string>? reloadEntityIds = null)
         {
-            if (CurrentState == null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            var uiResolver = await UIResolverFactory.GetListUIResolverAsync(CurrentState.UsageType, CurrentState.CollectionAlias);
+            var uiResolver = await UIResolverFactory.GetListUIResolverAsync(CurrentNavigationState);
 
             if (reloadEntityIds?.Any() == true)
             {
@@ -49,7 +46,7 @@ namespace RapidCMS.UI.Components.Sections
             }
             else
             {
-                var listUI = ListUI ?? uiResolver.GetListDetails();
+                var listUI = uiResolver.GetListDetails();
 
                 var (listContext, sections) = await LoadSectionsAsync(listUI, uiResolver);
 
@@ -79,89 +76,78 @@ namespace RapidCMS.UI.Components.Sections
             StateHasChanged();
         }
 
-        protected async Task PageChangedAsync(int page)
+        protected void PageChanged(int page)
         {
             if (ListUI == null)
             {
                 return;
             }
 
-            CurrentState.CurrentPage = page;
-
-            await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
+            NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
+            {
+                CurrentPage = page
+            });
         }
 
-        protected async Task SearchAsync(string? search)
+        protected void Search(string? search)
         {
             if (ListUI == null)
             {
                 return;
             }
 
-            CurrentState.CurrentPage = 1;
-            CurrentState.SearchTerm = search;
-
-            await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
+            NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
+            {
+                CurrentPage = 1,
+                SearchTerm = search
+            });
         }
 
-        protected async Task TabChangeAsync(int? tabId)
+        protected void TabChange(int? tabId)
         {
             if (ListUI == null)
             {
                 return;
             }
 
-            CurrentState.ActiveTab = tabId;
-            CurrentState.CurrentPage = 1;
-
-            await LoadCollectionDataAsync(_loadCancellationTokenSource.Token);
+            NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
+            {
+                ActiveTab = tabId,
+                CurrentPage = 1
+            });
         }
 
         protected async Task<(ListContext listContext, List<(FormEditContext editContext, IEnumerable<SectionUI> sections)> sections)> LoadSectionsAsync(ListUI listUI, IListUIResolver uiResolver)
         {
-            var view = View.Create(listUI.PageSize, CurrentState.CurrentPage, CurrentState.SearchTerm, CurrentState.ActiveTab, CurrentState.CollectionAlias);
+            var view = NavigationStateProvider.GetCurrentView(CurrentNavigationState, listUI);
 
-            if (listUI.OrderBys != null)
-            {
-                view.SetOrderBys(listUI.OrderBys);
-            }
-
-            var request = CurrentState.Related != null
+            var request = CurrentNavigationState.Related != null
                 ? (GetEntitiesRequestModel)new GetEntitiesOfRelationRequestModel
                 {
-                    CollectionAlias = CurrentState.CollectionAlias,
+                    CollectionAlias = CurrentNavigationState.CollectionAlias,
                     View = view,
-                    Related = CurrentState.Related,
-                    UsageType = CurrentState.UsageType,
-                    VariantAlias = CurrentState.VariantAlias
+                    Related = CurrentNavigationState.Related,
+                    UsageType = CurrentNavigationState.UsageType,
+                    VariantAlias = CurrentNavigationState.VariantAlias,
+                    IsEmbedded = !NavigationStateProvider.IsRootState(CurrentNavigationState)
                 }
                 : (GetEntitiesRequestModel)new GetEntitiesOfParentRequestModel
                 {
-                    CollectionAlias = CurrentState.CollectionAlias,
-                    ParentPath = CurrentState.ParentPath,
+                    CollectionAlias = CurrentNavigationState.CollectionAlias,
+                    ParentPath = CurrentNavigationState.ParentPath,
                     View = view,
-                    UsageType = CurrentState.UsageType,
-                    VariantAlias = CurrentState.VariantAlias
+                    UsageType = CurrentNavigationState.UsageType,
+                    VariantAlias = CurrentNavigationState.VariantAlias,
+                    IsEmbedded = !NavigationStateProvider.IsRootState(CurrentNavigationState)
                 };
 
             var listContext = await PresentationService.GetEntitiesAsync<GetEntitiesRequestModel, ListContext>(request);
 
-            var sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await uiResolver.GetSectionsForEditContextAsync(editContext)));
+            var sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await uiResolver.GetSectionsForEditContextAsync(editContext, CurrentNavigationState)));
 
-            if (!view.MoreDataAvailable)
+            if (!NavigationStateProvider.TryProcessView(CurrentNavigationState, view, sections.Any() == true))
             {
-                CurrentState.MaxPage = CurrentState.CurrentPage;
-
-                if (CurrentState.CurrentPage > 1 && sections?.Any() != true)
-                {
-                    CurrentState.CurrentPage--;
-                    CurrentState.MaxPage = null;
-                    return await LoadSectionsAsync(listUI, uiResolver);
-                }
-            }
-            if (CurrentState.MaxPage == CurrentState.CurrentPage && view.MoreDataAvailable)
-            {
-                CurrentState.MaxPage = null;
+                return await LoadSectionsAsync(listUI, uiResolver);
             }
 
             return (listContext, sections);
@@ -187,7 +173,7 @@ namespace RapidCMS.UI.Components.Sections
                         VariantAlias = x.editContext.EntityVariantAlias
                     });
 
-                    return (reloadedEditContext, await uiResolver.GetSectionsForEditContextAsync(reloadedEditContext));
+                    return (reloadedEditContext, await uiResolver.GetSectionsForEditContextAsync(reloadedEditContext, CurrentNavigationState));
                 }
                 else
                 {
@@ -202,7 +188,7 @@ namespace RapidCMS.UI.Components.Sections
         {
             try
             {
-                if (CurrentState == null)
+                if (CurrentNavigationState == null)
                 {
                     throw new InvalidOperationException();
                 }
@@ -212,16 +198,17 @@ namespace RapidCMS.UI.Components.Sections
                     ActionId = args.ViewModel.ButtonId,
                     CustomData = args.Data,
                     ListContext = ListContext!,
-                    Related = CurrentState.Related
+                    Related = CurrentNavigationState.Related,
+                    NavigationState = CurrentNavigationState
                 };
 
-                if (CurrentState.UsageType.HasFlag(UsageType.Edit))
+                if (CurrentNavigationState.UsageType.HasFlag(UsageType.Edit))
                 {
-                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListEditorCommandResponseModel>(request, CurrentViewState));
+                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListEditorCommandResponseModel>(request));
                 }
                 else
                 {
-                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListViewCommandResponseModel>(request, CurrentViewState));
+                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListViewCommandResponseModel>(request));
                 }
             }
             catch (Exception ex)
@@ -234,15 +221,16 @@ namespace RapidCMS.UI.Components.Sections
         {
             try
             {
-                if (CurrentState.Related != null)
+                if (CurrentNavigationState.Related != null)
                 {
                     await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistRelatedEntityRequestModel
                     {
                         ActionId = args.ViewModel.ButtonId,
                         CustomData = args.Data,
                         EditContext = args.EditContext,
-                        Related = CurrentState.Related
-                    }, CurrentViewState));
+                        Related = CurrentNavigationState.Related,
+                        NavigationState = CurrentNavigationState
+                    }));
                 }
                 else
                 {
@@ -251,7 +239,8 @@ namespace RapidCMS.UI.Components.Sections
                         ActionId = args.ViewModel.ButtonId,
                         CustomData = args.Data,
                         EditContext = args.EditContext,
-                    }, CurrentViewState));
+                        NavigationState = CurrentNavigationState
+                    }));
                 }
             }
             catch (Exception ex)

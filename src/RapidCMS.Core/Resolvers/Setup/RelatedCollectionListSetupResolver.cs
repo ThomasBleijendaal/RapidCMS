@@ -7,6 +7,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
+    // TODO: implement same as SubCollectionListSetupResolver
     internal class RelatedCollectionListSetupResolver : ISetupResolver<IRelatedCollectionListSetup, CollectionListConfig>
     {
         public Task<IResolvedSetup<IRelatedCollectionListSetup>> ResolveSetupAsync(CollectionListConfig config, ICollectionSetup? collection = default)

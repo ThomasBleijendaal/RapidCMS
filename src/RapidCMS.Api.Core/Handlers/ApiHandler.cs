@@ -17,7 +17,6 @@ using RapidCMS.Core.Models.ApiBridge.Request;
 using RapidCMS.Core.Models.ApiBridge.Response;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
-using RapidCMS.Core.Models.State;
 
 namespace RapidCMS.Api.Core.Handlers
 {
@@ -68,7 +67,7 @@ namespace RapidCMS.Api.Core.Handlers
                     Related = new EntityDescriptor(relate.Related.Id, relate.Related.RepositoryAlias, relate.Related.ParentPath, default),
                     Subject = new EntityDescriptor(relate.Id, RepositoryAlias, default, default),
                     Action = PersistRelatedEntityRequestModel.Actions.Add
-                }, ViewState.Api);
+                });
 
                 return new ApiResponseModel(HttpStatusCode.OK);
             }
@@ -101,7 +100,7 @@ namespace RapidCMS.Api.Core.Handlers
                 await _interactionService.InteractAsync<DeleteEntityRequestModel, ApiCommandResponseModel>(new DeleteEntityRequestModel
                 {
                     Descriptor = new EntityDescriptor(request.Id, RepositoryAlias, delete.ParentPath, default)
-                }, ViewState.Api);
+                });
 
                 return new ApiResponseModel(HttpStatusCode.OK);
             }
@@ -279,7 +278,7 @@ namespace RapidCMS.Api.Core.Handlers
                     Entity = editContextModel.EntityModel.Entity,
                     EntityState = EntityState.IsNew,
                     Relations = editContextModel.GetRelations()
-                }, ViewState.Api);
+                });
 
                 return response switch
                 {
@@ -357,7 +356,7 @@ namespace RapidCMS.Api.Core.Handlers
                     Related = new EntityDescriptor(relate.Related.Id, relate.Related.RepositoryAlias, relate.Related.ParentPath, default),
                     Subject = new EntityDescriptor(relate.Id, RepositoryAlias, default, default),
                     Action = PersistRelatedEntityRequestModel.Actions.Remove
-                }, ViewState.Api);
+                });
 
                 return new ApiResponseModel(HttpStatusCode.OK);
             }
@@ -391,7 +390,7 @@ namespace RapidCMS.Api.Core.Handlers
                 {
                     BeforeId = reorder.BeforeId,
                     Subject = new EntityDescriptor(reorder.Subject.Id, RepositoryAlias, reorder.Subject.ParentPath, default)
-                }, ViewState.Api);
+                });
 
                 return new ApiResponseModel(HttpStatusCode.OK);
             }
@@ -427,7 +426,7 @@ namespace RapidCMS.Api.Core.Handlers
                     Entity = editContextModel.EntityModel.Entity,
                     EntityState = EntityState.IsExisting,
                     Relations = editContextModel.GetRelations()
-                }, ViewState.Api);
+                });
 
                 return response switch
                 {

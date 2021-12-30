@@ -34,7 +34,7 @@ namespace RapidCMS.UI.Components.Editors
             else
             {
                 var obj = TypeDescriptor.GetConverter(Property.PropertyType).ConvertFromString(value);
-                await SetValueFromObjectAsync(obj);
+                await SetValueFromObjectAsync(obj!);
             }
         }
     }

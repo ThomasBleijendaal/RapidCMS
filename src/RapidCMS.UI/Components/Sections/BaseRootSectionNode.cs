@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
@@ -14,24 +15,26 @@ namespace RapidCMS.UI.Components.Sections
     {
         protected async Task LoadNodeDataAsync(CancellationToken cancellationToken)
         {
-            if (CurrentState == null)
+            if (CurrentNavigationState == null)
             {
                 throw new InvalidOperationException();
             }
 
             var editContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, FormEditContext>(new GetEntityRequestModel
             {
-                CollectionAlias = CurrentState.CollectionAlias,
-                Id = CurrentState.Id,
-                ParentPath = CurrentState.ParentPath,
-                UsageType = CurrentState.UsageType,
-                VariantAlias = CurrentState.VariantAlias
+                CollectionAlias = CurrentNavigationState.CollectionAlias,
+                Id = CurrentNavigationState.Id,
+                ParentPath = CurrentNavigationState.ParentPath,
+                UsageType = CurrentNavigationState.UsageType,
+                VariantAlias = CurrentNavigationState.VariantAlias
             });
 
-            var resolver = await UIResolverFactory.GetNodeUIResolverAsync(CurrentState.UsageType, CurrentState.CollectionAlias);
+            var resolver = await UIResolverFactory.GetNodeUIResolverAsync(CurrentNavigationState);
 
             var buttons = await resolver.GetButtonsForEditContextAsync(editContext);
-            var sections = new[] { (editContext, await resolver.GetSectionsForEditContextAsync(editContext)) }.ToList();
+
+            var nodeSection = await resolver.GetSectionsForEditContextAsync(editContext, CurrentNavigationState);
+            var sections = new[] { (editContext, nodeSection) }.ToList();
 
             if (cancellationToken.IsCancellationRequested)
             {
@@ -69,8 +72,9 @@ namespace RapidCMS.UI.Components.Sections
                     {
                         ActionId = args.ViewModel.ButtonId,
                         CustomData = args.Data,
-                        EditContext = args.EditContext
-                    }, CurrentViewState));
+                        EditContext = args.EditContext,
+                        NavigationState = CurrentNavigationState
+                    }));
             }
             catch (Exception ex)
             {

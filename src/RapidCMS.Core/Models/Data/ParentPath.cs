@@ -46,7 +46,7 @@ namespace RapidCMS.Core.Models.Data
             return newPath;
         }
 
-        public static (ParentPath newPath, string? repositoryAlias, string? id) RemoveLevel(ParentPath? currentPath)
+        public static (ParentPath? newPath, string? repositoryAlias, string? id) RemoveLevel(ParentPath? currentPath)
         {
             if (currentPath == null)
             {
@@ -54,7 +54,9 @@ namespace RapidCMS.Core.Models.Data
             }
             else
             {
-                return (new ParentPath(currentPath._path.Take(currentPath._path.Count - 1).ToList()), currentPath._path.Last().repositoryAlias, currentPath._path.Last().id);
+                var remainingPath = currentPath._path.Take(currentPath._path.Count - 1).ToList();
+
+                return (remainingPath.Count == 0 ? null : new ParentPath(remainingPath), currentPath._path.Last().repositoryAlias, currentPath._path.Last().id);
             }
         }
 

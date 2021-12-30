@@ -45,21 +45,21 @@ namespace RapidCMS.Core.Dispatchers.Api
             if (request is GetEntitiesOfRelationRequestModel relatedRequest)
             {
                 var relatedRepository = _repositoryResolver.GetRepository(relatedRequest.Related.RepositoryAlias ?? throw new ArgumentNullException());
-                var relatedEntity = await relatedRepository.GetByIdAsync(relatedRequest.Related.Id ?? throw new ArgumentNullException(), new ViewContext("", default))
+                var relatedEntity = await relatedRepository.GetByIdAsync(relatedRequest.Related.Id ?? throw new ArgumentNullException(), new ViewContext(null, default))
                     ?? throw new NotFoundException("Could not find related entity");
                 related = new RelatedEntity(parent, relatedEntity, relatedRequest.Related.RepositoryAlias);
             }
 
-            var protoEntity = await subjectRepository.NewAsync(new ViewContext("", parent), default);
+            var protoEntity = await subjectRepository.NewAsync(new ViewContext(null, parent), default);
 
             await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity);
             await _dataViewResolver.ApplyDataViewToViewAsync(request.View);
 
-            var action = (request.UsageType & ~(UsageType.List | UsageType.Root | UsageType.NotRoot)) switch
+            var action = (request.UsageType & ~(UsageType.List)) switch
             {
-                UsageType.Add when related != null => async () => await subjectRepository.GetAllNonRelatedAsync(new RelatedViewContext(related, "", default), request.View),
-                _ when related != null => async () => await subjectRepository.GetAllRelatedAsync(new RelatedViewContext(related, "", default), request.View),
-                _ when related == null => async () => await subjectRepository.GetAllAsync(new ViewContext("", parent), request.View),
+                UsageType.Add when related != null => async () => await subjectRepository.GetAllNonRelatedAsync(new RelatedViewContext(related, null, default), request.View),
+                _ when related != null => async () => await subjectRepository.GetAllRelatedAsync(new RelatedViewContext(related, null, default), request.View),
+                _ when related == null => async () => await subjectRepository.GetAllAsync(new ViewContext(null, parent), request.View),
 
                 _ => default(Func<Task<IEnumerable<IEntity>>>)
             };

@@ -248,7 +248,7 @@ namespace RapidCMS.Repositories
                                     .OfType<string>()
                                     .ToListAsync(async id =>
                                     {
-                                        var entity = await repo.GetByIdAsync(id!, new ViewContext("", default));
+                                        var entity = await repo.GetByIdAsync(id!, new ViewContext(null, default));
                                         return entity;
                                     });
 

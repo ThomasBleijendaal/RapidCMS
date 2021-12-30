@@ -44,7 +44,7 @@
     [Parameter] public EventCallback<string?> OnSearch { get; set; }
     [Parameter] public EventCallback<int?> OnTabChange { get; set; }
 
-    [Parameter] public PageStateModel? State { get; set; }
+    [Parameter] public CollectionState State { get; set; } = default!;
 
     protected override void OnInitialized()
     {

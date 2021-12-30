@@ -48,11 +48,11 @@ namespace RapidCMS.Core.Dispatchers.Api
             var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Subject.ParentPath));
             var entityVariant = request.Subject.VariantAlias == null ? default : await _entityVariantResolver.ResolveSetupAsync(request.Subject.VariantAlias);
 
-            var action = (request.UsageType & ~(UsageType.Node | UsageType.Root | UsageType.NotRoot)) switch
+            var action = (request.UsageType & ~(UsageType.Node)) switch
             {
-                UsageType.View => () => repository.GetByIdAsync(request.Subject.Id!, new ViewContext("", parent)),
-                UsageType.Edit => () => repository.GetByIdAsync(request.Subject.Id!, new ViewContext("", parent)),
-                UsageType.New => () => repository.NewAsync(new ViewContext("", parent), entityVariant?.Type)!,
+                UsageType.View => () => repository.GetByIdAsync(request.Subject.Id!, new ViewContext(null, parent)),
+                UsageType.Edit => () => repository.GetByIdAsync(request.Subject.Id!, new ViewContext(null, parent)),
+                UsageType.New => () => repository.NewAsync(new ViewContext(null, parent), entityVariant?.Type)!,
 
                 _ => default(Func<Task<IEntity?>>)
             };

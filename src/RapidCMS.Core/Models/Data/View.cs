@@ -53,7 +53,7 @@ namespace RapidCMS.Core.Models.Data
             DataView = dataView;
         }
 
-        public void SetOrderBys(IEnumerable<IOrderBy> orderBys)
+        public void SetOrderBys(IEnumerable<IOrderBy>? orderBys)
         {
             OrderBys = orderBys;
         }

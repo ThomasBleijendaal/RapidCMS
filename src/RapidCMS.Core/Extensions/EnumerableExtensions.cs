@@ -69,6 +69,15 @@ namespace RapidCMS.Core.Extensions
             }
         }
 
+        public static IEnumerable<TResult> SelectManyNotNull<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, IEnumerable<TResult?>?> predicate)
+        {
+            return source
+                .Select(x => predicate(x))
+                .Where(x => x != null)
+                .SelectMany(x => x!)
+                .OfType<TResult>();
+        }
+
         public static async IAsyncEnumerable<TResult> SelectNotNullAsync<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, Task<TResult?>> conditionalCast)
             where TResult : class
         {

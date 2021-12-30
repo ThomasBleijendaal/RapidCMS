@@ -36,6 +36,7 @@ namespace RapidCMS.UI.Components.Editors
 
         protected string GetValueAsString()
         {
+            // TODO: should this be ""  or null?
             return TypeDescriptor.GetConverter(Property.PropertyType).ConvertToString(GetValueAsObject());
         }
 

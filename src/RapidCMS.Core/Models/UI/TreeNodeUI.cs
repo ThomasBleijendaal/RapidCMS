@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using RapidCMS.Core.Enums;
-using RapidCMS.Core.Models.State;
+using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Models.UI
 {
@@ -18,7 +18,7 @@ namespace RapidCMS.Core.Models.UI
         public string Id { get; private set; }
         public string RepositoryAlias { get; private set; }
         public string Name { get; private set; }
-        public PageStateModel? State { get; internal set; }
+        public NavigationState? NavigateTo { get; internal set; }
         public bool RootVisibleOfCollections { get; internal set; }
         public bool DefaultOpenCollections { get; internal set; }
         public List<(string alias, PageType type)> Collections { get; private set; }

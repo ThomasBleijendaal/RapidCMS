@@ -99,19 +99,19 @@ namespace RapidCMS.ModelMaker.SourceGenerator.EFCore.Parsers
 
                     var configProperty = detailConfig.Properties().FirstOrDefault(x => !_defaultConfigProperties.Contains(x.Name));
 
-                    if (configProperty.Value is JValue value &&
+                    if (configProperty?.Value is JValue value &&
                         value.Value is object valueObject)
                     {
                         detailInfo.HasConfigValue(valueObject);
                     }
-                    else if (configProperty.Value is JObject listObject &&
+                    else if (configProperty?.Value is JObject listObject &&
                         listObject.ContainsKey("$values") &&
                         listObject.Value<JArray>("$values") is JArray array &&
                         array.Values<string>() is IEnumerable<string> list)
                     {
                         detailInfo.HasConfigList(configProperty.Name, list.Where(x => !string.IsNullOrWhiteSpace(x)).ToList()!);
                     }
-                    else if (configProperty.Value is JObject configObject &&
+                    else if (configProperty?.Value is JObject configObject &&
                         configObject.ContainsKey("$type"))
                     {
                         if (ParseType(configObject.Value<string>("$type")) is not (string configNamespace, string configType))
