@@ -8,7 +8,6 @@ namespace RapidCMS.Core.Tests.Navigation
 {
     public class NavigationStateTests
     {
-
         [TestCaseSource(typeof(NavigationStateTestCases))]
         public void WhenUrlIsGiven_ThenUrlIsParsed(string url, string query, NavigationState expectedState)
         {

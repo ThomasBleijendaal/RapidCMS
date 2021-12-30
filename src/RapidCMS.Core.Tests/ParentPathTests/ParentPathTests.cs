@@ -64,6 +64,7 @@ namespace RapidCMS.Core.Tests.ParentPathTests
             Assert.AreEqual("test2", collectionAlias);
             Assert.AreEqual("1234", id);
         }
+
         [Test]
         public void RemoveLevelRemoveLevel()
         {

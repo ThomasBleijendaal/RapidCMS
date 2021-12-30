@@ -45,7 +45,7 @@ namespace RapidCMS.Example.Shared.Collections
                     // a list editor takes precedence over a list view, so when navigating to the Person collection, this view will be displayed
                     .SetListEditor(editor =>
                     {
-                        editor.SetPageSize(2);
+                        editor.SetPageSize(20);
 
                         // adding Up to the button bar allows the user to get to the level above the current page (base upon the tree)
                         // this button will be hidden automatically when the user is at the root
@@ -156,7 +156,7 @@ namespace RapidCMS.Example.Shared.Collections
                                 });
                         });
 
-
+                        // add the sub collection as element to the node editor
                         editor.AddSection(section =>
                         {
                             section.AddSubCollectionList("person");

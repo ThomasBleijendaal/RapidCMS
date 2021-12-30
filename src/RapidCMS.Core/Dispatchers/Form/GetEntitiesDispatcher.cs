@@ -77,10 +77,10 @@ namespace RapidCMS.Core.Dispatchers.Form
 
             var isRoot = parent == null || request.IsEmbedded;
 
-            var usage = request.UsageType | (isRoot ? UsageType.Root : UsageType.NotRoot);
+            var protoEditContextUsage = request.UsageType | (isRoot ? UsageType.Root : UsageType.NotRoot);
 
-            var protoEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, collection.EntityVariant.Alias, protoEntity, parent, usage | UsageType.List, collection.Validators, _serviceProvider);
-            var newEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, variant.Alias, newEntity, parent, usage | UsageType.Node, collection.Validators, _serviceProvider);
+            var protoEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, collection.EntityVariant.Alias, protoEntity, parent, protoEditContextUsage | UsageType.List, collection.Validators, _serviceProvider);
+            var newEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, variant.Alias, newEntity, parent, request.UsageType | UsageType.Node, collection.Validators, _serviceProvider);
 
             var existingEntities = await _concurrencyService.EnsureCorrectConcurrencyAsync(action);
 
