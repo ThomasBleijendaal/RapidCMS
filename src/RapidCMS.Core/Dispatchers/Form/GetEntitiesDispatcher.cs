@@ -77,9 +77,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
             var isRoot = parent == null || request.IsEmbedded;
 
-            // TODO: why is Node in UsageType for entities?
-            var usage = (request.UsageType.HasFlag(UsageType.Edit) ? UsageType.Edit : UsageType.View)
-                 | (isRoot ? UsageType.Root : UsageType.NotRoot);
+            var usage = request.UsageType | (isRoot ? UsageType.Root : UsageType.NotRoot);
 
             var protoEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, collection.EntityVariant.Alias, protoEntity, parent, usage | UsageType.List, collection.Validators, _serviceProvider);
             var newEditContext = new FormEditContext(request.CollectionAlias, collection.RepositoryAlias, variant.Alias, newEntity, parent, usage | UsageType.Node, collection.Validators, _serviceProvider);

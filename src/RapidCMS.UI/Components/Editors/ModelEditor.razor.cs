@@ -24,7 +24,6 @@ namespace RapidCMS.UI.Components.Editors
 
             var nodeUI = await UIResolverFactory.GetConventionNodeUIResolverAsync(Property.PropertyType);
 
-            // TODO: check if navigation state here makes sense
             var sections = await nodeUI.GetSectionsForEditContextAsync(PropertyEditContext, new NavigationState());
 
             Fields = sections.FirstOrDefault()?.Elements?.OfType<FieldUI>();

@@ -16,7 +16,6 @@ namespace RapidCMS.Core.Extensions
                 var attribute = member
                     .GetCustomAttributes(typeof(TAttribute), true)
                     ?.FirstOrDefault();
-                ;
 
                 return attribute as TAttribute;
             }
@@ -24,18 +23,7 @@ namespace RapidCMS.Core.Extensions
             return default;
         }
 
-        public static UsageType FindSupportedUsageType(this UsageType supportsUsageType, UsageType requestedUsageType)
-        {
-            if (requestedUsageType.HasFlag(supportsUsageType))
-            {
-                return requestedUsageType;
-            }
-            else
-            {
-                // The SupportUsageType is only Edit or View, so remove those from requested type and add the supported
-                // so it won't mess with Node / List UsageTypes
-                return (requestedUsageType & ~(UsageType.Edit | UsageType.View)) | supportsUsageType;
-            }
-        }
+        public static UsageType FindSupportedUsageType(this UsageType supportsUsageType, UsageType requestedUsageType) 
+            => supportsUsageType & requestedUsageType;
     }
 }

@@ -99,27 +99,10 @@ namespace RapidCMS.Core.Dispatchers.Form
                                 request.ListContext.Parent?.GetParentPath(),
                                 request.Related,
                                 UsageType.New,
-                                PageType.Collection));
-
-                        // TODO: copy over pagination state?
-
-                        //        pageState.PushState(new PageStateModel
-                        //{
-                        //    PageType = PageType.Collection,
-                        //    UsageType = UsageType.New,
-
-
-                        //    CollectionAlias = request.ListContext.CollectionAlias,
-                        //    VariantAlias = entityVariant.Alias,
-                        //    ParentPath = request.ListContext.Parent?.GetParentPath(),
-                        //    Related = request.Related,
-
-                        //    // is this the best place here?
-                        //    ActiveTab = currentState?.ActiveTab,
-                        //    CurrentPage = currentState?.CurrentPage ?? 1,
-                        //    MaxPage = currentState?.MaxPage,
-                        //    SearchTerm = currentState?.SearchTerm
-                        //});
+                                PageType.Collection)
+                            {
+                                CollectionState = request.NavigationState.CollectionState
+                            });
                     }
                     break;
 
@@ -212,7 +195,6 @@ namespace RapidCMS.Core.Dispatchers.Form
                             collection.ListEditor == null ? UsageType.View : UsageType.Edit));
                     break;
 
-                    // TODO: test add and remove
                 case CrudType.Add when request.Related != null:
                     _navigationStateProvider.AppendNavigationState(
                         request.NavigationState,

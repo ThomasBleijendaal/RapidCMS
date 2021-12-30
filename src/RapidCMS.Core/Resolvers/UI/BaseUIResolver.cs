@@ -73,11 +73,11 @@ namespace RapidCMS.Core.Resolvers.UI
             {
                 var parentPath = ParentPath.AddLevel(editContext.Parent?.GetParentPath(), editContext.RepositoryAlias, editContext.Entity.Id!);
 
-                // TODO: this does not read back the state
+                // TODO: this does not read back the state (needed when nested states are saved in url)
                 var nestedState = new NavigationState(
                     subCollection.CollectionAlias,
                     parentPath,
-                    subCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType));
+                    subCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType) | UsageType.List);
 
                 _navigationStateProvider.NestNavigationState(navigationState, nestedState);
 
@@ -88,12 +88,12 @@ namespace RapidCMS.Core.Resolvers.UI
             {
                 var parentPath = ParentPath.AddLevel(editContext.Parent?.GetParentPath(), editContext.RepositoryAlias, editContext.Entity.Id!);
 
-                // TODO: this does not read back the state
+                // TODO: this does not read back the state (needed when nested states are saved in url)
                 var nestedState = new NavigationState(
                     relatedCollection.CollectionAlias,
                     parentPath,
                     new RelatedEntity(editContext),
-                    relatedCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType),
+                    relatedCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType) | UsageType.List,
                     PageType.Collection);
 
                 _navigationStateProvider.NestNavigationState(navigationState, nestedState);
@@ -115,9 +115,8 @@ namespace RapidCMS.Core.Resolvers.UI
             };
         }
 
-        protected FieldUI GetField(IFieldSetup field, FormDataProvider? dataProvider)
-        {
-            return field switch
+        protected static FieldUI GetField(IFieldSetup field, FormDataProvider? dataProvider) 
+            => field switch
             {
                 CustomExpressionFieldSetup x => new CustomExpressionFieldUI(x),
                 ExpressionFieldSetup x => new ExpressionFieldUI(x),
@@ -127,6 +126,5 @@ namespace RapidCMS.Core.Resolvers.UI
 
                 _ => throw new InvalidOperationException($"Cannot return FieldUI for given field of type {field?.GetType()}")
             };
-        }
     }
 }

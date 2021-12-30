@@ -53,6 +53,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton<ISetupResolver<IPageSetup>, PageSetupResolver>();
             services.AddSingleton<ISetupResolver<ICollectionSetup>, CollectionSetupResolver>();
+            services.AddSingleton<Lazy<ISetupResolver<ICollectionSetup>>>(sp => new Lazy<ISetupResolver<ICollectionSetup>>(() => sp.GetRequiredService<ISetupResolver<ICollectionSetup>>()));
             services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>>, TreeElementsSetupResolver>();
             services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>, TreeElementSetupResolver>();
 

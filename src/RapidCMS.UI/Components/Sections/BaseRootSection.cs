@@ -49,7 +49,7 @@ namespace RapidCMS.UI.Components.Sections
         {
             try
             {
-                //StateIsChanging = true;
+                StateIsChanging = true;
 
                 var response = await viewCommand.Invoke();
 
@@ -57,9 +57,6 @@ namespace RapidCMS.UI.Components.Sections
                 {
                     return;
                 }
-
-                // TODO: this should be removed?
-                // await LoadDataAsync(response.RefreshIds);
             }
             catch (Exception ex)
             {
@@ -67,7 +64,7 @@ namespace RapidCMS.UI.Components.Sections
             }
             finally
             {
-                //StateIsChanging = false;
+                StateIsChanging = false;
                 StateHasChanged();
             }
         }
@@ -137,7 +134,6 @@ namespace RapidCMS.UI.Components.Sections
 
         private async Task OnExceptionAsync(object sender, ExceptionEventArgs args)
         {
-            // TODO: reimplement similar but better
             await InvokeAsync(() =>
             {
                 if (args.Exception is UnauthorizedAccessException)

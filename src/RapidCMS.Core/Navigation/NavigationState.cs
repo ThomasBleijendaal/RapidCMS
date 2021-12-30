@@ -226,6 +226,9 @@ namespace RapidCMS.Core.Navigation
         }
 
         public object Clone()
-            => new NavigationState(_collectionAlias, PageType, UsageType, VariantAlias, ParentPath, Related, Id);
+            => new NavigationState(_collectionAlias, PageType, UsageType, VariantAlias, ParentPath, Related, Id)
+            { 
+                CollectionState = CollectionState 
+            };
     }
 }
