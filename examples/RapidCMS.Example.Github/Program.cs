@@ -260,7 +260,7 @@ namespace RapidCMS.Example.Github
                     collection.AddSelfAsRecursiveCollection();
                 });
 
-                config.AddCollection<ConventionPerson, LocalStorageRepository<ConventionPerson>>("recursive-person-view", "UserSync", "YellowGreen10", "Recursive Person - By Convention (read-only)", collection =>
+                config.AddCollection<ConventionPerson, LocalStorageRepository<ConventionPerson>>("recursive-person-view", "UserSync", "YellowGreen10", "Recursive Person (read-only)", collection =>
                 {
                     collection
                         .SetTreeView(x => x.Name)

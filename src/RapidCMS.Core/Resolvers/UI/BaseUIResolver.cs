@@ -80,7 +80,7 @@ namespace RapidCMS.Core.Resolvers.UI
                     var nestedState = new NavigationState(
                         subCollection.CollectionAlias,
                         parentPath,
-                        subCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType) | UsageType.View | UsageType.List);
+                        subCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType) | UsageType.List);
 
                     _navigationStateProvider.NestNavigationState(navigationState, nestedState);
 
