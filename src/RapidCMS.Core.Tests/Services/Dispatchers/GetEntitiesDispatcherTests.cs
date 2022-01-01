@@ -25,7 +25,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
 {
     public class GetEntitiesDispatcherTests
     {
-        private IPresentationDispatcher<Models.Request.Form.GetEntitiesRequestModel, ListContext> _subject = default!;
+        private IPresentationDispatcher<GetEntitiesRequestModel, ListContext> _subject = default!;
 
         private Mock<ISetupResolver<ICollectionSetup>> _collectionResolver = default!;
         private Mock<IRepository> _repository = default!;
@@ -110,7 +110,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public void WhenRequestHasCollectionAlias_ThenCollectionResolverIsUsedToFetchCollectionWithThatAlias(string alias)
         {
             // act
-            _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { UsageType = UsageType.New, CollectionAlias = alias });
+            _subject.GetAsync(new GetEntitiesRequestModel { UsageType = UsageType.New, CollectionAlias = alias });
 
             // assert
             _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == alias)));
@@ -121,7 +121,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public void WhenRequestHasCollectionAlias_ThenRepositoryResolverIsUsedToFetchRepositoryWithCollectionThatHasThatAlias(string alias)
         {
             // act
-            _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { UsageType = UsageType.New, CollectionAlias = alias });
+            _subject.GetAsync(new GetEntitiesRequestModel { UsageType = UsageType.New, CollectionAlias = alias });
 
             // assert
             _repositoryResolver.Verify(x => x.GetRepository(It.Is<CollectionSetup>(x => x.Alias == alias)));
@@ -142,7 +142,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public void WhenRequestMade_ThenRepositoryShouldBeUsedToFetchProtoEntity()
         {
             // act
-            _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { CollectionAlias = "name" });
+            _subject.GetAsync(new GetEntitiesRequestModel { CollectionAlias = "name" });
 
             // assert
             _repository.Verify(x => x.NewAsync(It.IsAny<IViewContext>(), It.IsAny<Type>()));
@@ -159,7 +159,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public void WhenRequestMade_ThenAuthServiceShouldBeUsedToValidateActionAgainstProtoEntity(UsageType usageType)
         {
             // act
-            _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { CollectionAlias = "name", UsageType = usageType });
+            _subject.GetAsync(new GetEntitiesRequestModel { CollectionAlias = "name", UsageType = usageType });
 
             // assert
             _authService.Verify(x => x.EnsureAuthorizedUserAsync(It.Is<UsageType>(x => x == usageType), It.Is<IEntity>(x => x == _protoEntity)));
@@ -188,7 +188,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // act
             var related = new RelatedEntity(default, new DefaultEntityVariant(), "alias");
             var view = new View();
-            _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias", Related = related });
+            _subject.GetAsync(new GetEntitiesOfRelationRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias", Related = related });
 
             // assert
             _repository.Verify(x => x.GetAllNonRelatedAsync(It.Is<IRelatedViewContext>(x => x.Related == related), It.Is<IView>(x => x == view)));
@@ -205,7 +205,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // act
             var related = new RelatedEntity(default, new DefaultEntityVariant(), "alias");
             var view = new View();
-            _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias", Related = related });
+            _subject.GetAsync(new GetEntitiesOfRelationRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias", Related = related });
 
             // assert
             _repository.Verify(x => x.GetAllRelatedAsync(It.Is<IRelatedViewContext>(x => x.Related == related), It.Is<IView>(x => x == view)));
@@ -217,7 +217,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         public void WhenRequestingToPerformUnsupportedAction_ThenInvalidOperationShouldBeThrown(UsageType usageType)
         {
             // act & assert
-            Assert.ThrowsAsync(typeof(NotImplementedException), () => _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { UsageType = usageType, CollectionAlias = "alias" }));
+            Assert.ThrowsAsync(typeof(InvalidOperationException), () => _subject.GetAsync(new GetEntitiesRequestModel { UsageType = usageType, CollectionAlias = "alias" }));
         }
 
         [TestCase(UsageType.Edit, UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.Edit, UsageType.Node | UsageType.Edit, null)]
@@ -243,7 +243,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // act
             var related = new RelatedEntity(default, new DefaultEntityVariant(), "alias");
             var view = new View();
-            var response = await _subject.GetAsync(new Models.Request.Form.GetEntitiesOfRelationRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias", Related = related });
+            var response = await _subject.GetAsync(new GetEntitiesOfRelationRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias", Related = related });
 
             // assert
             Assert.AreEqual(expectedUsageTypes1, response.EditContexts.ElementAtOrDefault(0)?.UsageType ?? 0);
@@ -261,7 +261,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         {
             // act & assert
             var view = new View();
-            Assert.ThrowsAsync(typeof(NotImplementedException), () => _subject.GetAsync(new Models.Request.Form.GetEntitiesRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias" }));
+            Assert.ThrowsAsync(typeof(InvalidOperationException), () => _subject.GetAsync(new GetEntitiesRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias" }));
         }
     }
 }
