@@ -27,7 +27,7 @@ in the browser.
 
 ## Demo
 
-A demo of the WebAssembly variant of the CMS (running version 4.0.x) can be found here: 
+A demo of the WebAssembly variant of the CMS (running version 4.3.x) can be found here: 
 [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/). This uses a repository that saves its data to the 
 local storage of the browser. .NET 5.0 WebAssembly tends to load slowly the first time but that will be fixed when .NET 6.0 is released.
 
