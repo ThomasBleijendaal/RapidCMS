@@ -169,7 +169,7 @@ namespace RapidCMS.Example.Server
                 .AddCookie("Cookies")
                 .AddOpenIdConnect("OpenIdConnect", options =>
                 {
-                    Configuration.Bind("DevOIDC", options);
+                    Configuration.Bind("AzureAd", options);
 
                     IdentityModelEventSource.ShowPII = true;
 

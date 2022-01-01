@@ -67,7 +67,7 @@ namespace RapidCMS.Core.Resolvers.Convention
                         IsVisible = (entity, state) => state == EntityState.IsExisting,
                         SubCollectionLists = new List<CollectionListConfig>
                         {
-                            new CollectionListConfig(subCollection.Alias)
+                            new ReferencedCollectionListConfig(subCollection.Alias)
                         }
                     });
                 }

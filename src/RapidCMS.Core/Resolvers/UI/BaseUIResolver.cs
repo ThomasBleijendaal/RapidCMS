@@ -69,37 +69,43 @@ namespace RapidCMS.Core.Resolvers.UI
                 return (index: field.Index, element: (ElementUI)GetField(field, dataProvider));
             });
 
-            var subCollections = pane.SubCollectionLists.Select(subCollection =>
-            {
-                var parentPath = ParentPath.AddLevel(editContext.Parent?.GetParentPath(), editContext.RepositoryAlias, editContext.Entity.Id!);
+            var subCollections = pane.SubCollectionLists
+                // do not display sub collections that do not support it in that view (like a List View embedded in Node Editor, Node Editors always want List Editors (for now))
+                .Where(subCollection => (subCollection.SupportsUsageType & editContext.UsageType & (UsageType.Edit | UsageType.View)) > UsageType.None)
+                .Select(subCollection =>
+                {
+                    var parentPath = ParentPath.AddLevel(editContext.Parent?.GetParentPath(), editContext.RepositoryAlias, editContext.Entity.Id!);
 
-                // TODO: this does not read back the state (needed when nested states are saved in url)
-                var nestedState = new NavigationState(
-                    subCollection.CollectionAlias,
-                    parentPath,
-                    subCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType) | UsageType.List);
+                    // TODO: this does not read back the state (needed when nested states are saved in url)
+                    var nestedState = new NavigationState(
+                        subCollection.CollectionAlias,
+                        parentPath,
+                        subCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType) | UsageType.View | UsageType.List);
 
-                _navigationStateProvider.NestNavigationState(navigationState, nestedState);
+                    _navigationStateProvider.NestNavigationState(navigationState, nestedState);
 
-                return (index: subCollection.Index, element: (ElementUI)new SubCollectionUI(subCollection, nestedState));
-            });
+                    return (index: subCollection.Index, element: (ElementUI)new SubCollectionUI(subCollection, nestedState));
+                });
 
-            var relatedCollections = pane.RelatedCollectionLists.Select(relatedCollection =>
-            {
-                var parentPath = ParentPath.AddLevel(editContext.Parent?.GetParentPath(), editContext.RepositoryAlias, editContext.Entity.Id!);
+            var relatedCollections = pane.RelatedCollectionLists
+                // do not display sub collections that do not support it in that view (like a List View embedded in Node Editor, Node Editors always want List Editors (for now))
+                .Where(relatedCollection => (relatedCollection.SupportsUsageType & editContext.UsageType & (UsageType.Edit | UsageType.View)) > UsageType.None)
+                .Select(relatedCollection =>
+                {
+                    var parentPath = ParentPath.AddLevel(editContext.Parent?.GetParentPath(), editContext.RepositoryAlias, editContext.Entity.Id!);
 
-                // TODO: this does not read back the state (needed when nested states are saved in url)
-                var nestedState = new NavigationState(
-                    relatedCollection.CollectionAlias,
-                    parentPath,
-                    new RelatedEntity(editContext),
-                    relatedCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType) | UsageType.List,
-                    PageType.Collection);
+                    // TODO: this does not read back the state (needed when nested states are saved in url)
+                    var nestedState = new NavigationState(
+                        relatedCollection.CollectionAlias,
+                        parentPath,
+                        new RelatedEntity(editContext),
+                        relatedCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType) | UsageType.List,
+                        PageType.Collection);
 
-                _navigationStateProvider.NestNavigationState(navigationState, nestedState);
+                    _navigationStateProvider.NestNavigationState(navigationState, nestedState);
 
-                return (index: relatedCollection.Index, element: (ElementUI)new RelatedCollectionUI(relatedCollection, nestedState));
-            });
+                    return (index: relatedCollection.Index, element: (ElementUI)new RelatedCollectionUI(relatedCollection, nestedState));
+                });
 
             return new SectionUI(pane.IsVisible)
             {

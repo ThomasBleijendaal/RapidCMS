@@ -126,7 +126,7 @@ namespace RapidCMS.Core.Dispatchers.Form
             }
             else
             {
-                throw new NotImplementedException($"Failed to process {request.UsageType} for collection {request.CollectionAlias}");
+                throw new InvalidOperationException($"Failed to process {request.UsageType} for collection {request.CollectionAlias}");
             }
         }
     }

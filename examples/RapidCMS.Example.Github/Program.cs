@@ -38,7 +38,7 @@ namespace RapidCMS.Example.Github
 
                 config.Dashboard.AddSection(typeof(Dashboard));
 
-                config.AddCollection<Person, LocalStorageRepository<Person>>("person", "Person", collection =>
+                config.AddCollection<Person, LocalStorageRepository<Person>>("person", "FabricUserFolder", "Red10", "Person", collection =>
                 {
                     collection
                         .SetTreeView(x => x.Name)
@@ -77,7 +77,7 @@ namespace RapidCMS.Example.Github
                         });
                 });
 
-                config.AddCollection<Person, LocalStorageRepository<Person>>("sort-person", "Sortable Person", collection =>
+                config.AddCollection<Person, LocalStorageRepository<Person>>("sort-person", "Sort", "Green10", "Sortable Person", collection =>
                 {
                     collection
                         .SetTreeView(x => x.Name)
@@ -117,7 +117,7 @@ namespace RapidCMS.Example.Github
                         });
                 });
 
-                config.AddCollection<Country, LocalStorageRepository<Country>>("country", "Countries", collection =>
+                config.AddCollection<Country, LocalStorageRepository<Country>>("country", "MapPin", "GreenCyan10", "Countries", collection =>
                 {
                     collection
                         .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
@@ -149,7 +149,7 @@ namespace RapidCMS.Example.Github
                         });
                 });
 
-                config.AddCollection<ValidationPerson, LocalStorageRepository<ValidationPerson>>("validation-person", "Validation Person", collection =>
+                config.AddCollection<ValidationPerson, LocalStorageRepository<ValidationPerson>>("validation-person", "UserFollowed", "Magenta10", "Validation Person", collection =>
                 {
                     collection
                         .SetTreeView(x => x.Name)
@@ -188,7 +188,7 @@ namespace RapidCMS.Example.Github
                         });
                 });
 
-                config.AddCollection<Person, LocalStorageRepository<Person>>("person-with-inline-countries", "Person With Inline Countries", collection =>
+                config.AddCollection<Person, LocalStorageRepository<Person>>("person-with-inline-countries", "FabricUserFolder", "RedOrange10", "Person With Inline Countries", collection =>
                 {
                     collection
                         .SetTreeView(x => x.Name)
@@ -251,7 +251,7 @@ namespace RapidCMS.Example.Github
                         });
                 });
 
-                config.AddCollection<ConventionPerson, LocalStorageRepository<ConventionPerson>>("recursive-person", "Recursive Person", collection =>
+                config.AddCollection<ConventionPerson, LocalStorageRepository<ConventionPerson>>("recursive-person", "UserSync", "Cyan30", "Recursive Person - By Convention", collection =>
                 {
                     collection
                         .SetTreeView(x => x.Name)
@@ -260,7 +260,16 @@ namespace RapidCMS.Example.Github
                     collection.AddSelfAsRecursiveCollection();
                 });
 
-                config.AddCollection<CountryPerson, LocalStorageRepository<CountryPerson>>("person-with-countries", "Person With Countries", collection =>
+                config.AddCollection<ConventionPerson, LocalStorageRepository<ConventionPerson>>("recursive-person-view", "UserSync", "YellowGreen10", "Recursive Person - By Convention (read-only)", collection =>
+                {
+                    collection
+                        .SetTreeView(x => x.Name)
+                        .ConfigureByConvention(CollectionConvention.ListViewNodeView);
+
+                    collection.AddSelfAsRecursiveCollection();
+                });
+
+                config.AddCollection<CountryPerson, LocalStorageRepository<CountryPerson>>("person-with-countries", "FabricUserFolder", "Cyan10", "Person With Countries", collection =>
                 {
                     collection
                         .SetTreeView(x => x.Name)
@@ -346,7 +355,7 @@ namespace RapidCMS.Example.Github
                     });
                 });
 
-                config.AddCollection<Country, LocalStorageRepository<Country>>("static-data-view-country", "Countries With Static Data Views", collection =>
+                config.AddCollection<Country, LocalStorageRepository<Country>>("static-data-view-country", "TabTwoColumn", "PinkRed10", "Countries With Static Data Views", collection =>
                 {
                     collection
                         .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
@@ -377,7 +386,7 @@ namespace RapidCMS.Example.Github
                         });
                 });
 
-                config.AddCollection<Country, LocalStorageRepository<Country>>("dynamic-data-view-country", "Countries With Dynamic Data Views", collection =>
+                config.AddCollection<Country, LocalStorageRepository<Country>>("dynamic-data-view-country", "TabThreeColumn", "Red20", "Countries With Dynamic Data Views", collection =>
                 {
                     collection
                         .SetTreeView(EntityVisibilty.Hidden, x => x.Name)
@@ -407,7 +416,7 @@ namespace RapidCMS.Example.Github
                         });
                 });
 
-                config.AddCollection<RelatablePerson, LocalStorageRepository<RelatablePerson>>("person-relation", "Person With Relations", collection =>
+                config.AddCollection<RelatablePerson, LocalStorageRepository<RelatablePerson>>("person-relation", "Relationship", "BlueMagenta30", "Person With Relations", collection =>
                 {
                     collection
                         .SetTreeView(x => x.Name)
@@ -462,7 +471,7 @@ namespace RapidCMS.Example.Github
                         });
                 });
 
-                config.AddCollection<Relatable2Person, LocalStorageRepository<Relatable2Person>>("person-relation-collection", "Person With Relations Collection", collection =>
+                config.AddCollection<Relatable2Person, LocalStorageRepository<Relatable2Person>>("person-relation-collection", "Relationship", "Magenta20", "Person With Relations Collection", collection =>
                 {
                     collection
                         .SetTreeView(x => x.Name)
