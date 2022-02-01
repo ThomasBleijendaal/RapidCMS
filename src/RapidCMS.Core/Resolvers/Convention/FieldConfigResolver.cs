@@ -24,8 +24,11 @@ namespace RapidCMS.Core.Resolvers.Convention
                     var fieldAttribute = property.GetCustomAttribute<FieldAttribute>();
                     if (fieldAttribute != null)
                     {
-                        if ((features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(fieldAttribute.Name)) ||
-                            (!features.HasFlag(Features.CanEdit) && !string.IsNullOrEmpty(fieldAttribute.ListName)))
+                        var useListName = !features.HasFlag(Features.CanEdit) || features.HasFlag(Features.CanGoToEdit);
+                        var useName = features.HasFlag(Features.CanEdit) && !useListName;
+
+                        if ((useName && !string.IsNullOrEmpty(fieldAttribute.Name)) ||
+                            (useListName && !string.IsNullOrEmpty(fieldAttribute.ListName)))
                         {
                             return (property, fieldAttribute);
                         }
@@ -66,7 +69,9 @@ namespace RapidCMS.Core.Resolvers.Convention
                         Index = data.fieldAttribute.Index,
                         IsDisabled = (object x, EntityState y) => false,
                         IsVisible = (object x, EntityState y) => true,
-                        Name = features.HasFlag(Features.CanEdit) ? data.fieldAttribute.Name : data.fieldAttribute.ListName,
+                        Name = !features.HasFlag(Features.CanEdit) || !features.HasFlag(Features.CanGoToEdit) 
+                            ? data.fieldAttribute.ListName
+                            : data.fieldAttribute.Name,
                         OrderByExpression = data.fieldAttribute.OrderByType == OrderByType.Disabled ? null : propertyMetadata,
                         Placeholder = data.fieldAttribute.Placeholder,
                         Property = propertyMetadata,
