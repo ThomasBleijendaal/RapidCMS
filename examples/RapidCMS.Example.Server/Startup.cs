@@ -55,6 +55,7 @@ namespace RapidCMS.Example.Server
 
             services.AddSingleton<RandomNameActionHandler>();
             services.AddScoped<NavigateToPersonHandler>();
+            services.AddTransient<ResetAllPasswordsButtonHandler>();
 
             // the country entity is validated by a FluentValidator
             services.AddSingleton<CountryValidator>();

@@ -95,6 +95,7 @@ namespace RapidCMS.Example.WebAssembly
 
             builder.Services.AddSingleton<RandomNameActionHandler>();
             builder.Services.AddSingleton<NavigateToPersonHandler>();
+            builder.Services.AddTransient<ResetAllPasswordsButtonHandler>();
 
             builder.Services.AddTransient<ITextUploadHandler, Base64ApiTextUploadHandler>();
             builder.Services.AddTransient<IImageUploadHandler, Base64ApiImageUploadHandler>();
