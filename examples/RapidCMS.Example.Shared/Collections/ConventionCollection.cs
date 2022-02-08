@@ -24,22 +24,20 @@ namespace RapidCMS.Example.Shared.Collections
                 //   The corresponding node editor will display an editor with fields for each the properties that sport a [Field] attribute, and uses
                 //   the Name and Description of said attribute.
                 //
-                // - The ListView will only display a readonly list view without edit options.
-                collection.ConfigureByConvention(CollectionConvention.ListViewNodeEditor);
+                // - The ListView will only display a read only list view without edit options.
+                collection.ConfigureByConvention(CollectionConvention.ListEditorNodeEditor);
 
-                // There are three combo's that should be used:
+                // There are these combo's that should be used:
+
                 // - collection.SetTreeView(EntityVisibilty.Visible, x => x.Property);
                 // - collection.ConfigureByConvention(CollectionConvention.ListViewNodeEditor);
 
-                // There are three combo's that should be used:
                 // - collection.SetTreeView(EntityVisibilty.Hidden, x => x.Property);
                 // - collection.ConfigureByConvention(CollectionConvention.ListView);
 
-                // There are three combo's that should be used:
                 // - collection.SetTreeView(EntityVisibilty.Visible, x => x.Property);
                 // - collection.ConfigureByConvention(CollectionConvention.ListViewNodeView);
 
-                // There are three combo's that should be used:
                 // - collection.SetTreeView(EntityVisibilty.Hidden, x => x.Property);
                 // - collection.ConfigureByConvention(CollectionConvention.ListEditor);
 

@@ -5,6 +5,7 @@ using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.Handlers;
+using RapidCMS.UI.Components.Buttons;
 using RapidCMS.UI.Components.Editors;
 using RapidCMS.UI.Components.Preview;
 
@@ -31,12 +32,13 @@ namespace RapidCMS.Example.Shared.Collections
                         editor.AddDefaultButton(DefaultButtonType.New);
                         // this pane button opens a sidepane displaying the ResetAllPane Razor component. 
                         // this component must inherit BaseSidePane and allows for more complex flows and confirmations.
-                        editor.AddPaneButton(typeof(ResetAllPane), "Reset all passwords", "LockSolid");
+                        editor.AddPaneButton(typeof(ResetAllPane), "Reset all passwords (via pane)", "LockSolid");
 
                         // custom buttons are also allowed:
-                        // editor.AddCustomButton<TActionHandler>(typeof(ButtonType));
+                        editor.AddCustomButton<ResetAllPasswordsButtonHandler>(typeof(DefaultButton), "Reset all passwords (via handler)", "LockSolid");
                         // they must reference a BaseButton derived Razor component, as well as a ActionHandler which handles
                         // the click from the user. 
+                        // if your custom button does not require anything special, you can also use DefaultButton
 
                         editor
                             .AddSection(section =>

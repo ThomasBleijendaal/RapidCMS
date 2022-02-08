@@ -126,7 +126,7 @@ namespace RapidCMS.Core.Abstractions.Config
             where TDetailRepository : IRepository;
 
         /// <summary>
-        /// Adds a data view to the collection. Data views are displayed as seperate tabs on the collection, and allow
+        /// Adds a data view to the collection. Data views are displayed as separate tabs on the collection, and allow
         /// the user to filter the collection data easily.
         /// </summary>
         /// <param name="label">Human readable label of this data view</param>

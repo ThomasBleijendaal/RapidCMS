@@ -89,7 +89,7 @@ namespace RapidCMS.Core.Forms
             await _formState.ValidatePropertyAsync(metadata, _relationContainer);
 
             return _formState.GetPropertyState(metadata)?.GetValidationMessages().Any()
-                ?? throw new InvalidOperationException("Given expression could not be valided.");
+                ?? throw new InvalidOperationException("Given expression could not be validated.");
         }
 
         public async Task EnforceCompleteValidationAsync()

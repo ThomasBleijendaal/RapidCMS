@@ -9,7 +9,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <summary>
         /// Adds a section to the current editor.
         /// 
-        /// In a ListEditor, a section is a seperate block.
+        /// In a ListEditor, a section is a separate block.
         /// In a TableEditor, a section is a row.
         /// </summary>
         /// <param name="configure">Action to configure the section.</param>
@@ -19,7 +19,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <summary>
         /// Adds a section to the current editor.
         /// 
-        /// In a ListEditor, a section is a seperate block.
+        /// In a ListEditor, a section is a separate block.
         /// In a TableEditor, a section is a row.
         /// </summary>
         /// <param name="customSectionType">Custom razor component that will be used to render this section. Must be derived from BaseSection.</param>
@@ -30,7 +30,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <summary>
         /// Adds a section to the current editor, tailored for the specific TDerivedEntity EntityVariant. Only entities of that type will use this section.
         /// 
-        /// In a ListEditor, a section is a seperate block.
+        /// In a ListEditor, a section is a separate block.
         /// In a TableEditor, a section is a row.
         /// </summary>
         /// <typeparam name="TDerivedEntity">Type of the EntityVariant.</typeparam>
@@ -42,7 +42,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <summary>
         /// Adds a section to the current editor, tailored for the specific TDerivedEntity. Only entities of that type will use this section.
         /// 
-        /// In a ListEditor, a section is a seperate block.
+        /// In a ListEditor, a section is a separate block.
         /// In a TableEditor, a section is a row.
         /// </summary>
         /// <typeparam name="TDerivedEntity">Type of the EntityVariant.</typeparam>

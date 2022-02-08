@@ -39,7 +39,7 @@ namespace RapidCMS.Core.Models.ApiBridge.Request
                         if (property == null || x.Fingerprint != property.Fingerprint)
                         {
                             throw new InvalidOperationException("The used orderByExpression could not be converted back into IPropertyMetadata. " +
-                                "Only properties are supported for conversion, so x.Property or x.Property.NestedProperty. More complicated expressions cannot" +
+                                "Only properties are supported for conversion, so x.Property or x.Property.NestedProperty. More complicated expressions cannot " +
                                 "be converted to and from strings easily and will not work with ApiRepositories. If these complex expressions are required, " +
                                 "please convert to ServerSide RapidCMS.");
                         }

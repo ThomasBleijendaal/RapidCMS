@@ -42,7 +42,7 @@
         <dd>
             This collection demonstrates one of the key features of RapidCMS, and that is that this uses an inline defined sub collection
             for countries that have a person as parent class. The Country repository saves these countries under each Person, so each
-            Person has a seperate set of Countries. This is comparable to a one-to-many relation in which the sub objects are not shared
+            Person has a separate set of Countries. This is comparable to a one-to-many relation in which the sub objects are not shared
             between the parents (like folders and files). The sub collection is also not available in the tree on the left, because it is
             inline.
         </dd>
@@ -64,14 +64,14 @@
 
         <dt>Countries With Static Data Views</dt>
         <dd>
-            Another useful feature is Data Views. These can be defined staticly (or in the next example dynamically) and are send to the
+            Another useful feature is Data Views. These can be defined statically (or in the next example dynamically) and are send to the
             backing repository as an expression so they can be used in Entity Framework and executed on the database.
         </dd>
 
         <dt>Countries With Dynamic Data Views</dt>
         <dd>
             Dynamic Data Views require a <code>DataViewBuilder</code> which can generate the data views based on some logic you provide.
-            These can be really useful in making the CMS easy to use, and specific to your needs. The example returns a set of hardcoded
+            These can be really useful in making the CMS easy to use, and specific to your needs. The example returns a set of hard-coded
             data views, but as DI is available for the builder, you can inject the db context and do some aggregate query to fetch a set
             of useful views.
         </dd>
@@ -79,7 +79,7 @@
         <dt>Person With Relations</dt>
         <dd>
             This collection allows the user to add or remove Countries to a Person entity using a many-to-many relation. It contains
-            a multi-select allowing the user to pick multipe Countries.
+            a multi-select allowing the user to pick multiple Countries.
         </dd>
 
         <dt>Person With Relations Collections</dt>

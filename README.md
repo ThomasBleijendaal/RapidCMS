@@ -22,7 +22,7 @@ a RapidCMS setup right inside RapidCMS. Model Maker currently generates an EF Co
 validation and repositories. Just provide a connection string and create migrations after using Model Maker, and you are up and running.
 
 You either run RapidCMS as a Blazor Server-side application, or as a Blazor WebAssembly application directly in the browser. Using the
-Api companion you can run your repositories on a seperate web server, or an Azure Function app, or choose to run the repositories directly
+Api companion you can run your repositories on a separate web server, or an Azure Function app, or choose to run the repositories directly
 in the browser.
 
 ## Demo

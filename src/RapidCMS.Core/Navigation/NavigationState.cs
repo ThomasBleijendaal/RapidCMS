@@ -189,7 +189,9 @@ namespace RapidCMS.Core.Navigation
                 VariantAlias == other?.VariantAlias &&
                 ParentPath?.ToPathString() == other?.ParentPath?.ToPathString() &&
                 Related == other?.Related &&
-                Id == other?.Id;
+                Id == other?.Id &&
+                CollectionState.ActiveTab == other?.CollectionState.ActiveTab &&
+                CollectionState.CurrentPage == other?.CollectionState.CurrentPage;
         }
 
         public bool IsSimilar(NavigationState? other)

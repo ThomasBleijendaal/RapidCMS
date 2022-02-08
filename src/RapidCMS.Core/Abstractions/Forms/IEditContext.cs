@@ -20,7 +20,7 @@ namespace RapidCMS.Core.Abstractions.Forms
         /// 
         /// In the case of using Api RapidCMS: The EditContext will only validate the properties that were
         /// modified by the Api call, so [Required] parameters won't always be caught (the Api cannot be sure whether
-        /// the omited property was included on the form.
+        /// the omitted property was included on the form.
         /// 
         /// Use EnforceCompleteValidation to strictly validate the complete model, which will also check properties
         /// that were not included on the form or in the Api call.

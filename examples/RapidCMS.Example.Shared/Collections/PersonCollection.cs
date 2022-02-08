@@ -41,7 +41,7 @@ namespace RapidCMS.Example.Shared.Collections
                             row.AddDefaultButton(DefaultButtonType.Edit);
                         });
                     })
-                    // a list editor is similair to a list view, but every column contains an editor so multiple entities can be edited in one go
+                    // a list editor is similar to a list view, but every column contains an editor so multiple entities can be edited in one go
                     // a list editor takes precedence over a list view, so when navigating to the Person collection, this view will be displayed
                     .SetListEditor(editor =>
                     {
@@ -94,14 +94,14 @@ namespace RapidCMS.Example.Shared.Collections
                         // if an entity can be deleted, add a button for it, so the user can delete the entity
                         editor.AddDefaultButton(DefaultButtonType.Delete);
 
-                        // an node editor can have multiple sections, which are displayed as seperte blocks
+                        // an node editor can have multiple sections, which are displayed as separate blocks
                         editor.AddSection(section =>
                         {
                             // the DisableWhen expression is evaluated every time any property of the entity is updated
                             // so this allows you to make response forms which show or hide parts based upon the entity and its state
                             section.AddField(x => x.Id).DisableWhen((person, state) => true);
 
-                            // it is allowed to use DisplayType fields in Editors, so some readonly data can easily be displayed
+                            // it is allowed to use DisplayType fields in Editors, so some read only data can easily be displayed
                             section.AddField(x => x.Name); //.SetType(DisplayType.Label);
 
                             // if properties are in nested objects (like owned entities in EF), the editors support those as well
@@ -110,7 +110,7 @@ namespace RapidCMS.Example.Shared.Collections
                             // by default, all the properties will be combined to form the Name of the property (DetailsEmail in this example)
                             // so using SetName this can be set to something more user friendly
                                 .SetName("Email")
-                                .SetDetails(new MarkupString("<p>An emailadress looks like <code>name@domain.tld</code>.</p>"));
+                                .SetDetails(new MarkupString("<p>An email adress looks like <code>name@domain.tld</code>.</p>"));
                         });
 
                         // you can even have sections specifically for an entity type.
@@ -134,7 +134,7 @@ namespace RapidCMS.Example.Shared.Collections
                             // relations with other entities, collections and repositories are first-class in RapidCMS
                             // so this field will allow the user to select an entity that is one level deeper in the person-tree
                             section.AddField(x => x.FavouriteChildId)
-                                .SetName("Favourite child")
+                                .SetName("Favorite child")
                                 .SetType(EditorType.Select)
                                 .VisibleWhen((person, state) => state == EntityState.IsExisting)
                                 .SetCollectionRelation<Person>("person", config =>
@@ -150,9 +150,9 @@ namespace RapidCMS.Example.Shared.Collections
                                     config.SetEntityAsParent();
 
                                     // any level from the tree can be picked:
-                                    // Favouite sibling: config.SetRepositoryParent(x => x); 
-                                    // Favouite parent: config.SetRepositoryParent(x => x.Parent); 
-                                    // Favouite grand parent: config.SetRepositoryParent(x => x.Parent != null ? x.Parent.Parent : default); // ?. is not yet supported in expressions..
+                                    // Favorite sibling: config.SetRepositoryParent(x => x); 
+                                    // Favorite parent: config.SetRepositoryParent(x => x.Parent); 
+                                    // Favorite grand parent: config.SetRepositoryParent(x => x.Parent != null ? x.Parent.Parent : default); // ?. is not yet supported in expressions..
                                 });
                         });
 
@@ -172,7 +172,7 @@ namespace RapidCMS.Example.Shared.Collections
                         view.AddSection(section =>
                         {
                             // views also allow for customization of how the data should be displayed
-                            // you can use the availablep DisplayType's, or create your own Razor components (must be derived from BaseDisplay)
+                            // you can use the available DisplayType's, or create your own Razor components (must be derived from BaseDisplay)
                             section.AddField(x => x.Id.ToString()).SetName("ID").SetType(DisplayType.Pre);
                             section.AddField(x => x.Name).SetType(DisplayType.Label);
                             section.AddField(x => x.Details.Email).SetType(typeof(EmailDisplay));
@@ -187,9 +187,9 @@ namespace RapidCMS.Example.Shared.Collections
                 collection.AddSelfAsRecursiveCollection();
 
                 // if the regular node editor of an entity is getting too cluttered, or if you want to move some of the functionality
-                // to a seperate page, a detail page can be quite useful.
+                // to a separate page, a detail page can be quite useful.
                 // a detail page is always a NodeEditor, and is only visible on existing entity. 
-                // the respository it fetches its data from can have its own entity type, but the ID that is used to query for the data 
+                // the repository it fetches its data from can have its own entity type, but the ID that is used to query for the data 
                 // is the same as the entity the page is part of. 
                 // it is also possible to create a navigation button to navigate to a details page, by building a INavigationHandler that
                 // calls NavigationRequest.NavigateToDetails (see NavigateToPersonHandler)

@@ -318,9 +318,13 @@ namespace RapidCMS.Core.Models.Config
                     canGoToNodeView: convention == CollectionConvention.ListViewNodeView);
             }
 
-            if (convention == CollectionConvention.ListEditor || convention == CollectionConvention.ListBlockEditor)
+            if (convention == CollectionConvention.ListEditor ||
+                convention == CollectionConvention.ListBlockEditor ||
+                convention == CollectionConvention.ListEditorNodeEditor)
             {
-                ListEditor = new ConventionListEditorConfig<TEntity>(convention == CollectionConvention.ListBlockEditor ? ListType.Block : ListType.Table);
+                ListEditor = new ConventionListEditorConfig<TEntity>(
+                    canGoToNodeEditor: convention == CollectionConvention.ListEditorNodeEditor,
+                    convention == CollectionConvention.ListBlockEditor ? ListType.Block : ListType.Table);
             }
 
             if (convention == CollectionConvention.ListViewNodeView)
@@ -328,7 +332,8 @@ namespace RapidCMS.Core.Models.Config
                 NodeView = new ConventionNodeViewConfig<TEntity>();
             }
 
-            if (convention == CollectionConvention.ListViewNodeEditor)
+            if (convention == CollectionConvention.ListViewNodeEditor ||
+                convention == CollectionConvention.ListEditorNodeEditor)
             {
                 NodeEditor = new ConventionNodeEditorConfig<TEntity>();
             }

@@ -54,6 +54,10 @@ namespace RapidCMS.Core.Repositories
 
         /// <summary>
         /// This method creates a new entity in-memory, and does not affect the database.
+        /// 
+        /// This method is used frequently to create entities for use in Resource Based authorization. This authorization
+        /// is based on concrete objects and this method is used to create those concrete objects. This method must therefore
+        /// always be implemented, even if the repository does not support saving new entities.
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="variantType"></param>
@@ -91,7 +95,7 @@ namespace RapidCMS.Core.Repositories
         public abstract Task DeleteAsync(string id, IParent? parent);
 
         /// <summary>
-        /// This methods adds an releated entity to the entity that corresponds with the given id. 
+        /// This methods adds an related entity to the entity that corresponds with the given id. 
         /// This method is used when an new many-to-many relation between two entities is made.
         /// </summary>
         /// <param name="related"></param>
@@ -101,7 +105,7 @@ namespace RapidCMS.Core.Repositories
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(AddAsync)} on the {GetType()}.");
 
         /// <summary>
-        /// This methods removes an releated entity from the entity that corresponds with the given id. 
+        /// This methods removes an related entity from the entity that corresponds with the given id. 
         /// This method is used when a many-to-many relation between two entities is removed.
         /// </summary>
         /// <param name="related"></param>
@@ -111,7 +115,7 @@ namespace RapidCMS.Core.Repositories
             => throw new NotImplementedException($"In order to use many-to-many list editors, implement {nameof(RemoveAsync)} on the {GetType()}.");
 
         /// <summary>
-        /// This method is called when an entity is reorderd and put in before of the given beforeId.
+        /// This method is called when an entity is reordered and put in before of the given beforeId.
         /// If the beforeId is null, the entity is put in as last.
         /// </summary>
         /// <param name="beforeId"></param>

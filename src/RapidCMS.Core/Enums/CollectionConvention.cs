@@ -6,6 +6,7 @@
         ListViewNodeView = 2,
         ListViewNodeEditor = 3,
         ListEditor = 4,
-        ListBlockEditor = 5
+        ListBlockEditor = 5,
+        ListEditorNodeEditor = 6
     }
 }

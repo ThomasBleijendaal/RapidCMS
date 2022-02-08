@@ -18,7 +18,7 @@ namespace RapidCMS.Core.Abstractions.Config
         IEditorFieldConfig<TEntity, TValue> AddField<TValue>(Expression<Func<TEntity, TValue>> propertyExpression, Action<IEditorFieldConfig<TEntity, TValue>>? configure = null);
 
         /// <summary>
-        /// Adds a sub collection to the pane. A sub collection is defined seperately, and only referenced by alias.
+        /// Adds a sub collection to the pane. A sub collection is defined separately, and only referenced by alias.
         /// 
         /// Not visible when EntityState is New.
         /// </summary>
@@ -27,7 +27,7 @@ namespace RapidCMS.Core.Abstractions.Config
         IEditorPaneConfig<TEntity> AddSubCollectionList(string collectionAlias);
 
         /// <summary>
-        /// Adds a sub collection to the pane. A sub collection is defined seperately, and only referenced by alias.
+        /// Adds a sub collection to the pane. A sub collection is defined separately, and only referenced by alias.
         /// 
         /// Not visible when EntityState is New.
         /// </summary>

@@ -56,7 +56,7 @@ namespace RapidCMS.Example.Shared.Collections
                                 // adding a subcollection in a View will be a ListView.
 
                                 // the entity of this editor will be passed in as IParent in the repository of the 
-                                // sub collection, making it possible to access the parents properties in the childrens repository
+                                // sub collection, making it possible to access the parents properties in the child repository
                                 section.AddSubCollectionList<Tag, BaseRepository<Tag>>(config =>
                                 {
                                     config.SetListEditor(editor =>

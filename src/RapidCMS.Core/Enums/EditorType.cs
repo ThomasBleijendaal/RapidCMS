@@ -53,7 +53,7 @@ namespace RapidCMS.Core.Enums
         Dropdown,
 
         /// <summary>
-        /// A list of options accepting a string, requires a data provider to privide the options.
+        /// A list of options accepting a string, requires a data provider to provide the options.
         /// 
         /// NOTE: Consider using EntityPicker. That control has better UX but is somewhat bigger.
         ///  

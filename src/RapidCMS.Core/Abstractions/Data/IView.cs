@@ -27,7 +27,7 @@ namespace RapidCMS.Core.Abstractions.Data
         /// <summary>
         /// Gets the active dataview selected by the user. Use ApplyDataView to apply the QueryExpression to your IQueryable.
         /// 
-        /// Use this property to determine what the active data view Id is, when your respository does not support IQueryable.
+        /// Use this property to determine what the active data view Id is, when your repository does not support IQueryable.
         /// </summary>
         IDataView? ActiveDataView { get; }
 
