@@ -24,7 +24,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <summary>
         /// Sets the parent for the related collection.
         /// </summary>
-        /// <param name="propertyExpression">Expression selectiong the parent</param>
+        /// <param name="propertyExpression">Expression selecting the parent</param>
         /// <returns></returns>
         ICollectionRelationConfig<TEntity, TRelatedEntity> SetRepositoryParent(Expression<Func<IParent, IParent?>> propertyExpression);
 

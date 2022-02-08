@@ -32,7 +32,7 @@ config.AddCollection&lt;CountryPerson, LocalStorageRepository&lt;CountryPerson>>
                 section.AddField(x => x.Email);
 
                 section.AddField(x => x.FavouriteCountryId1)
-                    .SetName("Favourite country (based on sub collection)")
+                    .SetName("Favorite country (based on sub collection)")
                     .SetType(EditorType.Select)
                     .SetCollectionRelation&lt;Country, LocalStorageRepository&lt;Country>>(field =>
                     {
@@ -42,7 +42,7 @@ config.AddCollection&lt;CountryPerson, LocalStorageRepository&lt;CountryPerson>>
                     });
 
                 section.AddField(x => x.FavouriteCountryId2)
-                    .SetName("Favourite country (based on country collection)")
+                    .SetName("Favorite country (based on country collection)")
                     .SetType(EditorType.Select)
                     .SetCollectionRelation&lt;Country, LocalStorageRepository&lt;Country>>(field =>
                     {

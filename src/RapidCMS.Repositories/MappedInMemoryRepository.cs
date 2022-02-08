@@ -16,7 +16,7 @@ namespace RapidCMS.Repositories
     /// No support for relations.
     /// 
     /// This MappedInMemoryRepository maps the objects to and from a different entity, allowing for using a different type of entity
-    /// to be used for the database than which is used in the CMS view. This is usefull when the database entity is incompatible with
+    /// to be used for the database than which is used in the CMS view. This is useful when the database entity is incompatible with
     /// the CMS, or if validation attributes cannot be placed on the database entities.
     /// 
     /// The IQuery's are not affected by this mapping, allowing you to define query expressions using the database entities, greatly

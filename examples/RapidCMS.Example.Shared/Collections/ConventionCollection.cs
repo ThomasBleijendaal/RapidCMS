@@ -24,7 +24,7 @@ namespace RapidCMS.Example.Shared.Collections
                 //   The corresponding node editor will display an editor with fields for each the properties that sport a [Field] attribute, and uses
                 //   the Name and Description of said attribute.
                 //
-                // - The ListView will only display a readonly list view without edit options.
+                // - The ListView will only display a read only list view without edit options.
                 collection.ConfigureByConvention(CollectionConvention.ListEditorNodeEditor);
 
                 // There are these combo's that should be used:

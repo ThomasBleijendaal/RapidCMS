@@ -47,7 +47,7 @@ namespace RapidCMS.Example.WebAssembly
             }
 
             // with LocalStorageRepository collections can store their data in the local storage of
-            // the user, making personalisation quite easy
+            // the user, making personalization quite easy
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddScoped<BaseRepository<User>, LocalStorageRepository<User>>();
 

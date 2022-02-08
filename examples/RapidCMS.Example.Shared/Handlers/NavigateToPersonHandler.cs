@@ -11,7 +11,7 @@ namespace RapidCMS.Example.Shared.Handlers
         public Task<NavigationRequest?> CreateNavigationRequestAsync(IButton button, FormEditContext editContext)
         {
             // this method can return a NavigationRequest to instruct the CMS to go to that page
-            // if null is returned, the action is cancelled.
+            // if null is returned, the action is canceled.
             return Task.FromResult(NavigationRequest.NavigateToCreateNewEntity("person", default))!;
         }
     }

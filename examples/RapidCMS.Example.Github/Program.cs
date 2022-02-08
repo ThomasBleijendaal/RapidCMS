@@ -299,7 +299,7 @@ namespace RapidCMS.Example.Github
                                 section.AddField(x => x.Email);
 
                                 section.AddField(x => x.FavouriteCountryId1)
-                                    .SetName("Favourite country (based on sub collection)")
+                                    .SetName("Favorite country (based on sub collection)")
                                     .SetType(EditorType.Select)
                                     .SetCollectionRelation<Country, LocalStorageRepository<Country>>(field =>
                                     {
@@ -309,7 +309,7 @@ namespace RapidCMS.Example.Github
                                     });
 
                                 section.AddField(x => x.FavouriteCountryId2)
-                                    .SetName("Favourite country (based on country collection)")
+                                    .SetName("Favorite country (based on country collection)")
                                     .SetType(EditorType.Select)
                                     .SetCollectionRelation<Country, LocalStorageRepository<Country>>(field =>
                                     {
