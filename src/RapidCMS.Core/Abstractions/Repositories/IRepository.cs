@@ -6,6 +6,11 @@ using RapidCMS.Core.Abstractions.Forms;
 
 namespace RapidCMS.Core.Abstractions.Repositories
 {
+    /// <summary>
+    /// This interface is used everywhere there is data needed. 
+    /// 
+    /// This is not the best starting point for custom developed repositories, it is better to see whether the repository can be developed using BaseRepository / BaseMappedRespository as base type.
+    /// </summary>
     public interface IRepository
     {
         Task<IEntity?> GetByIdAsync(string id, IViewContext viewContext);
