@@ -77,9 +77,9 @@ services.AddRapidCMSServer(config =>
 });
 ```
 
-You must register the generatoed repository under its base class. This opens up the possibility to introduce your
+You must register the generated repository under its base class. This opens up the possibility to introduce your
 own repository when you do not want to use the generated one. Furthermore, the entity validator must also be added
-to the DI container. Validators have their own lifetime, and can also requiest additional services via their constructor.
+to the DI container. Validators have their own lifetime, and can also request additional services via their constructor.
 
 Adding the collection to RapidCMS is easy, just call the generated extension method `AddPersonCollection()`.
 
@@ -132,7 +132,7 @@ If no corresponding property is configured, the relation is considered blind and
 
 ### One-to-many (with corresponding property)
 
-When a model has a Linked Entity property configured, and the related model has a Linked Entities property configured and the corresonding
+When a model has a Linked Entity property configured, and the related model has a Linked Entities property configured and the corresponding
 properties are configured correctly, both properties will be referencing the same relation and that relation can be configured from
 both ends. 
 
@@ -326,5 +326,5 @@ to manually create repositories, you can deselect `Repository` in that property,
 
 Model Maker is a development tool which should not be available in production. This can be achieved in two ways:
 
-- Run the Model Maker in a seperate ASP.NET Core application that is only run by developers locally on their machine.
+- Run the Model Maker in a separate ASP.NET Core application that is only run by developers locally on their machine.
 - Call `config.AddModelMakerPluginCore()` instead of `config.AddModelMakerPlugin()` when running on the production environment.

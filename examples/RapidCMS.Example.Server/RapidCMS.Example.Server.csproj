@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <ProjectUISubcaption>ASP.NET Core 6.0</ProjectUISubcaption>
+    <ProjectUISubcaption>ASP.NET Core 6.0 Razor Pages</ProjectUISubcaption>
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 

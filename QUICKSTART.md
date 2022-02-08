@@ -59,7 +59,7 @@ services.AddRapidCMSServer(config =>
 Okay, lots of things happen here. First, include the `RapidCMS.Repositories` NuGet package
 in your project, since that project contains the `InMemoryRepository` example repository which
 we will use for now (you can also switch to `JsonRepository` if you want persistent storage). 
-This respository also expects that the `Person` implements `ICloneable`, so let's go ahead and do that:
+This repository also expects that the `Person` implements `ICloneable`, so let's go ahead and do that:
 
 ```c#
 public class Person : IEntity, ICloneable
@@ -95,7 +95,7 @@ is doing, and then continue on making the CMS work correctly.
 ### Repositories
 
 In RapidCMS, you are responsible for implementing the data layer, and that's why the `InMemoryRepository` 
-is added to the `IServiceCollection` as a seperate instruction:
+is added to the `IServiceCollection` as a separate instruction:
 
 ```c#
 services.AddScoped<InMemoryRepository<Person>>();
@@ -117,7 +117,7 @@ fixing the multiple threads issue.
 
 Just as repositories, authorization in RapidCMS must be configured by including the correct
 `AuthorizationHandler`s in the `IServiceCollection`. To make your live easier when starting developing
-with RapidCMS, `config.AllowAnonymousUser();` adds a very permissive `AthorizationHandler` to the service
+with RapidCMS, `config.AllowAnonymousUser();` adds a very permissive `AuthorizationHandler` to the service
 collection, and allows everybody to do anything.
 
 The `AuthorizationHandler` is part of the [ASP.NET Core Authorization Infrastructure](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/resourcebased?view=aspnetcore-2.2).
@@ -150,7 +150,7 @@ to search for the correct icons that suit your need.
 
 As you can see, the UI is missing a lot of buttons. A paginator is present, but there is no way of creating,
 updating or deleting any `Person`. That is because RapidCMS does not assume what buttons should be displayed. You
-have to specifiy them yourself.
+have to specify them yourself.
 
 So let's add some buttons, and get this CMS fully working:
 
@@ -229,7 +229,7 @@ This button will take the user to the editor for the entity it is bound to, so t
 
 #### View
 
-This button is similair to Edito, but will take the user to the `NodeView`, where the user cannot edit
+This button is similar to Edito, but will take the user to the `NodeView`, where the user cannot edit
 the entity.
 
 #### Add, Remove, Pick, Return
@@ -488,7 +488,7 @@ public class Country : IEntity
 }
 ```
 
-There are two stategies for supporting many-to-many relations in RapidCMS. One is via a somewhat more complex editor, and one is
+There are two strategies for supporting many-to-many relations in RapidCMS. One is via a somewhat more complex editor, and one is
 via a dedicated sub collection editor. Both methods are fine, but have some implications on how the relation is saved.
 
 #### Sub collection editor

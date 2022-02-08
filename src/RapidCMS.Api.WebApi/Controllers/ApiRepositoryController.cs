@@ -59,7 +59,7 @@ namespace RapidCMS.Api.WebApi.Controllers
             return BadRequest();
         }
 
-        [HttpPost("_rapidcms/{repositoryAlias}/all/nonrelated")]
+        [HttpPost("_rapidcms/{repositoryAlias}/all/non-related")]
         public async Task<ActionResult<EntitiesModel<IEntity>>> GetAllNonRelatedAsync(string repositoryAlias)
         {
             try

@@ -31,7 +31,7 @@ namespace RapidCMS.Core.Abstractions.Config
                where TActionHandler : IButtonActionHandler;
 
         /// <summary>
-        /// Adds a pane button. A pane button is a default button that opens a modal which displays the given razor component in it. The razor component must be drived from BaseSideBar. 
+        /// Adds a pane button. A pane button is a default button that opens a modal which displays the given razor component in it. The razor component must be derived from BaseSideBar. 
         /// </summary>
         /// <param name="paneType">Type of the razor component</param>
         /// <param name="label">Text to display on the button</param>

@@ -11,7 +11,7 @@
         Create = 2,
         Edit = 3,
 
-        // modifyers
+        // modifiers
         Insert = 4,
         Update = 5,
         Delete = 6,
