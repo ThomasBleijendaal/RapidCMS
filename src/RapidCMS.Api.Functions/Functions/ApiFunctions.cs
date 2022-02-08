@@ -60,7 +60,7 @@ namespace RapidCMS.Api.Functions.Functions
 
         [Function(nameof(GetAllNonRelatedAsync))]
         public async Task<HttpResponseData> GetAllNonRelatedAsync(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/all/non-related")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "_rapidcms/{repositoryAlias}/all/nonrelated")] HttpRequestData req,
             string repositoryAlias,
             FunctionContext context)
         {

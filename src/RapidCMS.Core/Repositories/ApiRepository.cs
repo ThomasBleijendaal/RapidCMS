@@ -61,7 +61,7 @@ namespace RapidCMS.Repositories.ApiBridge
 
         public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IView<TEntity> view)
         {
-            var results = await _apiRepositoryHelper.DoRequestAsync<EntitiesModel<TEntity>>(_apiRepositoryHelper.CreateRequest(HttpMethod.Post, "all/non-related", new RelatedQueryModel(related, view)));
+            var results = await _apiRepositoryHelper.DoRequestAsync<EntitiesModel<TEntity>>(_apiRepositoryHelper.CreateRequest(HttpMethod.Post, "all/nonrelated", new RelatedQueryModel(related, view)));
             if (results == default)
             {
                 return Enumerable.Empty<TEntity>();
