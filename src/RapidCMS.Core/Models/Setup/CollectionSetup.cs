@@ -8,7 +8,7 @@ using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    public class CollectionSetup : ICollectionSetup
+    public class CollectionSetup
     {
         public CollectionSetup(
             string? icon,
@@ -22,7 +22,7 @@ namespace RapidCMS.Core.Models.Setup
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Alias = alias ?? throw new ArgumentNullException(nameof(alias));
             RepositoryAlias = repositoryAlias ?? throw new ArgumentNullException(nameof(repositoryAlias));
-            Validators = new List<IValidationSetup>();
+            Validators = new List<ValidationSetup>();
         }
 
         public string? Icon { get; private set; }
@@ -36,13 +36,13 @@ namespace RapidCMS.Core.Models.Setup
         public ITreeElementSetup? Parent { get; set; }
         public List<ITreeElementSetup> Collections { get; set; } = new List<ITreeElementSetup>();
 
-        public List<IEntityVariantSetup>? SubEntityVariants { get; set; }
-        public IEntityVariantSetup EntityVariant { get; set; } = EntityVariantSetup.Undefined;
+        public List<EntityVariantSetup>? SubEntityVariants { get; set; }
+        public EntityVariantSetup EntityVariant { get; set; } = EntityVariantSetup.Undefined;
 
         public List<IDataView>? DataViews { get; set; }
         public Type? DataViewBuilder { get; set; }
 
-        public IEntityVariantSetup GetEntityVariant(string? alias)
+        public EntityVariantSetup GetEntityVariant(string? alias)
         {
             if (string.IsNullOrWhiteSpace(alias) || SubEntityVariants == null || EntityVariant.Alias == alias)
             {
@@ -53,24 +53,24 @@ namespace RapidCMS.Core.Models.Setup
                 return SubEntityVariants.FirstOrDefault(x => x.Alias == alias) ?? throw new InvalidOperationException($"Entity variant with alias {alias} does not exist.");
             }
         }
-        public IEntityVariantSetup GetEntityVariant(IEntity entity)
+        public EntityVariantSetup GetEntityVariant(IEntity entity)
         {
             return SubEntityVariants?.FirstOrDefault(x => x.Type == entity.GetType())
                 ?? EntityVariant;
         }
 
         public ITreeViewSetup? TreeView { get; set; }
-        public IElementSetup? ElementSetup { get; set; }
+        public ElementSetup? ElementSetup { get; set; }
 
-        public IListSetup? ListView { get; set; }
-        public IListSetup? ListEditor { get; set; }
+        public ListSetup? ListView { get; set; }
+        public ListSetup? ListEditor { get; set; }
 
-        public INodeSetup? NodeView { get; set; }
-        public INodeSetup? NodeEditor { get; set; }
+        public NodeSetup? NodeView { get; set; }
+        public NodeSetup? NodeEditor { get; set; }
 
-        public List<IValidationSetup> Validators { get; set; }
+        public List<ValidationSetup> Validators { get; set; }
 
-        public IButtonSetup? FindButton(string buttonId)
+        public ButtonSetup? FindButton(string buttonId)
             => EnumerableExtensions
                 .MergeAll(
                     ListView?.GetAllButtons(),

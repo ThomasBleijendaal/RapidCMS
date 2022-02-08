@@ -3,7 +3,7 @@ using RapidCMS.Core.Abstractions.Setup;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class PageRegistrationSetup : IPageSetup
+    internal class PageSetup 
     {
         public string Name { get; set; } = default!;
         public string Alias { get; set; } = default!;

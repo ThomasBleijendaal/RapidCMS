@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Resolvers
 {
@@ -12,6 +12,6 @@ namespace RapidCMS.Core.Abstractions.Resolvers
     public interface ISetupResolver<TSetup, TConfig>
         where TConfig : notnull
     {
-        Task<IResolvedSetup<TSetup>> ResolveSetupAsync(TConfig config, ICollectionSetup? collection = default);
+        Task<IResolvedSetup<TSetup>> ResolveSetupAsync(TConfig config, CollectionSetup? collection = default);
     }
 }

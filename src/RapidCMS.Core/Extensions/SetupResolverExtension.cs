@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Extensions
 {
     internal static class SetupResolverExtension
     {
-        public static async Task<IResolvedSetup<IEnumerable<TSetup>>> ResolveSetupAsync<TSetup, TConfig>(this ISetupResolver<TSetup, TConfig> resolver, IEnumerable<TConfig> configs, ICollectionSetup? collection = default)
+        public static async Task<IResolvedSetup<IEnumerable<TSetup>>> ResolveSetupAsync<TSetup, TConfig>(this ISetupResolver<TSetup, TConfig> resolver, IEnumerable<TConfig> configs, CollectionSetup? collection = default)
             where TConfig : notnull
         {
             var allCachable = true;

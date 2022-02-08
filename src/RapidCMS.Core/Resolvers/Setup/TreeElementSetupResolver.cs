@@ -12,7 +12,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class TreeElementSetupResolver : ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>
     {
-        public Task<IResolvedSetup<IEnumerable<ITreeElementSetup>>> ResolveSetupAsync(IEnumerable<ITreeElementConfig> config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<IEnumerable<ITreeElementSetup>>> ResolveSetupAsync(IEnumerable<ITreeElementConfig> config, CollectionSetup? collection = default)
         {
             return Task.FromResult< IResolvedSetup<IEnumerable<ITreeElementSetup>>>(
                 new ResolvedSetup<IEnumerable<ITreeElementSetup>>(

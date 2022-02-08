@@ -17,7 +17,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _treeElementResolver = treeElementResolver;
         }
 
-        public async Task<IResolvedSetup<IEnumerable<ITreeElementSetup>>> ResolveSetupAsync(IPlugin config, ICollectionSetup? collection = null)
+        public async Task<IResolvedSetup<IEnumerable<ITreeElementSetup>>> ResolveSetupAsync(IPlugin config, CollectionSetup? collection = null)
         {
             return new ResolvedSetup<IEnumerable<ITreeElementSetup>>(await config.GetTreeElementsAsync(), false);
 

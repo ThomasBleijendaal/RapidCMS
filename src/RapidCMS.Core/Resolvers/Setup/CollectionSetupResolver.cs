@@ -14,15 +14,15 @@ using RapidCMS.Core.Validators;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class CollectionSetupResolver : ISetupResolver<ICollectionSetup>
+    internal class CollectionSetupResolver : ISetupResolver<CollectionSetup>
     {
         private readonly ICmsConfig _cmsConfig;
         private readonly ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> _treeElementResolver;
-        private readonly ISetupResolver<IEntityVariantSetup, EntityVariantConfig> _entityVariantResolver;
+        private readonly ISetupResolver<EntityVariantSetup, EntityVariantConfig> _entityVariantResolver;
         private readonly ISetupResolver<ITreeViewSetup, TreeViewConfig> _treeViewResolver;
-        private readonly ISetupResolver<IElementSetup, ElementConfig> _elementResolver;
-        private readonly ISetupResolver<IListSetup, ListConfig> _listResolver;
-        private readonly ISetupResolver<INodeSetup, NodeConfig> _nodeResolver;
+        private readonly ISetupResolver<ElementSetup, ElementConfig> _elementResolver;
+        private readonly ISetupResolver<ListSetup, ListConfig> _listResolver;
+        private readonly ISetupResolver<NodeSetup, NodeConfig> _nodeResolver;
         private readonly IRepositoryTypeResolver _repositoryTypeResolver;
         private readonly IEnumerable<IPlugin> _plugins;
 
@@ -32,11 +32,11 @@ namespace RapidCMS.Core.Resolvers.Setup
 
         public CollectionSetupResolver(ICmsConfig cmsConfig,
             ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> treeElementResolver,
-            ISetupResolver<IEntityVariantSetup, EntityVariantConfig> entityVariantResolver,
+            ISetupResolver<EntityVariantSetup, EntityVariantConfig> entityVariantResolver,
             ISetupResolver<ITreeViewSetup, TreeViewConfig> treeViewResolver,
-            ISetupResolver<IElementSetup, ElementConfig> elementResolver,
-            ISetupResolver<IListSetup, ListConfig> listResolver,
-            ISetupResolver<INodeSetup, NodeConfig> nodeResolver,
+            ISetupResolver<ElementSetup, ElementConfig> elementResolver,
+            ISetupResolver<ListSetup, ListConfig> listResolver,
+            ISetupResolver<NodeSetup, NodeConfig> nodeResolver,
             IRepositoryTypeResolver repositoryTypeResolver,
             IEnumerable<IPlugin> plugins)
         {
@@ -79,12 +79,12 @@ namespace RapidCMS.Core.Resolvers.Setup
             }
         }
 
-        Task<ICollectionSetup> ISetupResolver<ICollectionSetup>.ResolveSetupAsync()
+        Task<CollectionSetup> ISetupResolver<CollectionSetup>.ResolveSetupAsync()
         {
             throw new InvalidOperationException("Cannot resolve collection or page without alias.");
         }
 
-        async Task<ICollectionSetup> ISetupResolver<ICollectionSetup>.ResolveSetupAsync(string alias)
+        async Task<CollectionSetup> ISetupResolver<CollectionSetup>.ResolveSetupAsync(string alias)
         {
             if (_cachedCollectionMap.TryGetValue(alias, out var collectionSetup))
             {
@@ -135,12 +135,12 @@ namespace RapidCMS.Core.Resolvers.Setup
                 DataViews = config.DataViews,
                 DataViewBuilder = config.DataViewBuilder,
                 UsageType = GetCollectionUsage(config),
-                Validators = config.Validators.ToList(x => (IValidationSetup)new ValidationSetup(x.Type, x.Configuration))
+                Validators = config.Validators.ToList(x => new ValidationSetup(x.Type, x.Configuration))
             };
 
             if (!_cmsConfig.Advanced.RemoveDataAnnotationEntityValidator)
             {
-                collection.Validators.Insert(0, (IValidationSetup)new ValidationSetup(typeof(DataAnnotationEntityValidator), default));
+                collection.Validators.Insert(0, new ValidationSetup(typeof(DataAnnotationEntityValidator), default));
             }
 
             var cacheable = true;

@@ -8,7 +8,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class TypeRegistrationSetupResolver : ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig>
     {
-        public Task<IResolvedSetup<ITypeRegistration>> ResolveSetupAsync(CustomTypeRegistrationConfig config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<ITypeRegistration>> ResolveSetupAsync(CustomTypeRegistrationConfig config, CollectionSetup? collection = default)
         {
             return Task.FromResult<IResolvedSetup<ITypeRegistration>>(
                 new ResolvedSetup<ITypeRegistration>(

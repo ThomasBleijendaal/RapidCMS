@@ -11,7 +11,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class GlobalEntityVariantSetupResolver : ISetupResolver<IEntityVariantSetup>
+    internal class GlobalEntityVariantSetupResolver : ISetupResolver<EntityVariantSetup>
     {
         private readonly IReadOnlyDictionary<string, Type> _types;
 
@@ -20,19 +20,19 @@ namespace RapidCMS.Core.Resolvers.Setup
             _types = typeof(IEntity).GetImplementingTypes().ToDictionary(x => AliasHelper.GetEntityVariantAlias(x));
         }
 
-        public Task<IEntityVariantSetup> ResolveSetupAsync()
+        public Task<EntityVariantSetup> ResolveSetupAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEntityVariantSetup> ResolveSetupAsync(string alias)
+        public Task<EntityVariantSetup> ResolveSetupAsync(string alias)
         {
             if (!_types.TryGetValue(alias, out var type))
             {
                 throw new InvalidOperationException($"Cannot find type with alias {alias}.");
             }
 
-            return Task.FromResult<IEntityVariantSetup>(new EntityVariantSetup(alias, default, type, alias));
+            return Task.FromResult(new EntityVariantSetup(alias, default, type, alias));
         }
     }
 }

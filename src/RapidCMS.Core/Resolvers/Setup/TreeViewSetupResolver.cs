@@ -8,7 +8,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class TreeViewSetupResolver : ISetupResolver<ITreeViewSetup, TreeViewConfig>
     {
-        public Task<IResolvedSetup<ITreeViewSetup>> ResolveSetupAsync(TreeViewConfig config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<ITreeViewSetup>> ResolveSetupAsync(TreeViewConfig config, CollectionSetup? collection = default)
         {
             return Task.FromResult<IResolvedSetup<ITreeViewSetup>>(new ResolvedSetup<ITreeViewSetup>(new TreeViewSetup(
                 config.EntityVisibilty,
