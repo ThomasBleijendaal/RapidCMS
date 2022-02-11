@@ -70,8 +70,7 @@ namespace RapidCMS.Core.Resolvers.UI
             });
 
             var subCollections = pane.SubCollectionLists
-                // do not display sub collections that do not support it in that view (like a List View embedded in Node Editor, Node Editors always want List Editors (for now))
-                .Where(subCollection => (subCollection.SupportsUsageType & editContext.UsageType & (UsageType.Edit | UsageType.View)) > UsageType.None)
+                .Where(subCollection => subCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType) > UsageType.None)
                 .Select(subCollection =>
                 {
                     var parentPath = ParentPath.AddLevel(editContext.Parent?.GetParentPath(), editContext.RepositoryAlias, editContext.Entity.Id!);
@@ -88,8 +87,7 @@ namespace RapidCMS.Core.Resolvers.UI
                 });
 
             var relatedCollections = pane.RelatedCollectionLists
-                // do not display sub collections that do not support it in that view (like a List View embedded in Node Editor, Node Editors always want List Editors (for now))
-                .Where(relatedCollection => (relatedCollection.SupportsUsageType & editContext.UsageType & (UsageType.Edit | UsageType.View)) > UsageType.None)
+                .Where(relatedCollection => relatedCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType) > UsageType.None)
                 .Select(relatedCollection =>
                 {
                     var parentPath = ParentPath.AddLevel(editContext.Parent?.GetParentPath(), editContext.RepositoryAlias, editContext.Entity.Id!);
