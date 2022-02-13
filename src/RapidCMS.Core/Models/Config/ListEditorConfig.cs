@@ -72,7 +72,7 @@ namespace RapidCMS.Core.Models.Config
         }
 
         public IListEditorConfig<TEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null, Func<IEntity, EntityState, bool>? isVisible = null)
-            where TActionHandler : IButtonSetupActionHandler
+            where TActionHandler : IButtonActionHandler
         {
             var button = new CustomButtonConfig(buttonType, typeof(TActionHandler))
             {

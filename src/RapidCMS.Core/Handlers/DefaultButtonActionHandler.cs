@@ -11,7 +11,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Handlers
 {
-    public class DefaultButtonActionHandler : IButtonSetupActionHandler
+    public class DefaultButtonActionHandler : IButtonActionHandler
     {
         public Task ButtonClickAfterRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context)
         {

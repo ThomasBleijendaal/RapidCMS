@@ -28,7 +28,7 @@ namespace RapidCMS.Core.Abstractions.Config
         /// <param name="isVisible">Indicates whether the button should be visible or not</param>
         /// <returns></returns>
         TReturn AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null, Func<IEntity, EntityState, bool>? isVisible = null)
-               where TActionHandler : IButtonSetupActionHandler;
+               where TActionHandler : IButtonActionHandler;
 
         /// <summary>
         /// Adds a pane button. A pane button is a default button that opens a modal which displays the given razor component in it. The razor component must be derived from BaseSideBar. 

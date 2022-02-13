@@ -5,6 +5,6 @@ namespace RapidCMS.Core.Abstractions.Resolvers
 {
     internal interface IButtonSetupActionHandlerResolver
     {
-        IButtonSetupActionHandler GetButtonActionHandler(ButtonSetup button);
+        IButtonActionHandler GetButtonActionHandler(ButtonSetup button);
     }
 }

@@ -26,7 +26,7 @@ namespace RapidCMS.Core.Models.Config
         }
 
         public INodeEditorConfig<TDetailEntity> AddCustomButton<TActionHandler>(Type buttonType, string? label = null, string? icon = null, Func<IEntity, EntityState, bool>? isVisible = null)
-            where TActionHandler : IButtonSetupActionHandler
+            where TActionHandler : IButtonActionHandler
             => _detailNodeEditor.AddCustomButton<TActionHandler>(buttonType, label, icon, isVisible);
 
 

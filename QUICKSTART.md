@@ -687,7 +687,7 @@ TL;DR:
 
 1. Create a custom button an have it `@inherit BaseButton`.
 2. Have an editor use your button by calling `editor.AddCustomButton<YourCustomActionHandler>(typeof(YourCustomButton))` 
-and create a `YourCustomActionHandler` which implements `ButtonSetupActionHandler`.
+and create a `YourCustomActionHandler` which implements `IButtonActionHandler`.
 
 ## Creating custom modals
 

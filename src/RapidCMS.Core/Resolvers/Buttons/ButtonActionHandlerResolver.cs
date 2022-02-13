@@ -15,9 +15,9 @@ namespace RapidCMS.Core.Resolvers.Buttons
             _serviceProvider = serviceProvider;
         }
 
-        public IButtonSetupActionHandler GetButtonActionHandler(ButtonSetup button)
+        public IButtonActionHandler GetButtonActionHandler(ButtonSetup button)
         {
-            return _serviceProvider.GetService<IButtonSetupActionHandler>(button.ButtonHandlerType);
+            return _serviceProvider.GetService<IButtonActionHandler>(button.ButtonHandlerType);
         }
     }
 }

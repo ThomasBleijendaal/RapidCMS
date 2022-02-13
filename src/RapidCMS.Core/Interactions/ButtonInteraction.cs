@@ -88,7 +88,7 @@ namespace RapidCMS.Core.Interactions
             await handler.ButtonClickAfterRepositoryActionAsync(button, request.ListContext.ProtoEditContext, context);
         }
 
-        private async Task<(IButtonSetupActionHandler handler, ButtonSetup button)> FindButtonHandlerAsync(string collectionAlias, string buttonId)
+        private async Task<(IButtonActionHandler handler, ButtonSetup button)> FindButtonHandlerAsync(string collectionAlias, string buttonId)
         {
             var collection = await _collectionResolver.ResolveSetupAsync(collectionAlias);
 

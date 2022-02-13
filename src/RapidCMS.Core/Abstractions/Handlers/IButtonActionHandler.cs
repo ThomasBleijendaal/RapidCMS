@@ -6,7 +6,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Handlers
 {
-    public interface IButtonSetupActionHandler
+    public interface IButtonActionHandler
     {
         OperationAuthorizationRequirement GetOperation(ButtonSetup button, FormEditContext editContext);
 

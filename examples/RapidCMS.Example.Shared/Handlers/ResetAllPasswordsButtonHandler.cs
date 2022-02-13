@@ -9,7 +9,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Example.Shared.Handlers
 {
-    public class ResetAllPasswordsButtonHandler : IButtonSetupActionHandler
+    public class ResetAllPasswordsButtonHandler : IButtonActionHandler
     {
         public OperationAuthorizationRequirement GetOperation(ButtonSetup button, FormEditContext editContext)
         {

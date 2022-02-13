@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using RapidCMS.Core.Abstractions.Handlers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
@@ -11,7 +10,7 @@ using RapidCMS.Example.Shared.Data;
 
 namespace RapidCMS.Example.Shared.Handlers
 {
-    public class RandomNameActionHandler : IButtonSetupActionHandler
+    public class RandomNameActionHandler : IButtonActionHandler
     {
         // this method is called just before the IRepository action is performed, based upon the CrudType this button returns
         public Task<CrudType> ButtonClickBeforeRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context)
