@@ -21,6 +21,8 @@ namespace RapidCMS.Core.Enums
         // Root = root of page
         Root = 2097152,
         // NotRoot = embedded collection on a page
-        NotRoot = 4194304
+        NotRoot = 4194304,
+
+        ViewOrEdit = View | Edit
     }
 }

@@ -23,7 +23,18 @@ namespace RapidCMS.Core.Extensions
             return default;
         }
 
-        public static UsageType FindSupportedUsageType(this UsageType supportsUsageType, UsageType requestedUsageType) 
-            => supportsUsageType & requestedUsageType;
+        public static UsageType FindSupportedUsageType(this UsageType supportsUsageType, UsageType requestedUsageType)
+        {
+            var supportedUsageType = (supportsUsageType & requestedUsageType) & UsageType.ViewOrEdit;
+
+            if (supportedUsageType > 0)
+            {
+                return supportedUsageType;
+            }
+            else
+            {
+                return UsageType.View | (requestedUsageType & ~UsageType.ViewOrEdit);
+            } 
+        }
     }
 }
