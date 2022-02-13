@@ -34,7 +34,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         private Mock<EntityVariantSetup> _entityVariant = default!;
         private Mock<IRepositoryResolver> _repositoryResolver = default!;
         private IConcurrencyService _concurrencyService = default!;
-        private Mock<IButtonSetupInteraction> _buttonInteraction = default!;
+        private Mock<IButtonInteraction> _buttonInteraction = default!;
         private Mock<IEditContextFactory> _editContextFactory = default!;
         private Mock<IMediator> _mediator = default!;
 
@@ -57,7 +57,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
 
             _repositoryResolver = new Mock<IRepositoryResolver>();
             _concurrencyService = new ConcurrencyService(new SemaphoreSlim(1, 1));
-            _buttonInteraction = new Mock<IButtonSetupInteraction>();
+            _buttonInteraction = new Mock<IButtonInteraction>();
             _editContextFactory = new Mock<IEditContextFactory>();
             _mediator = new Mock<IMediator>();
 

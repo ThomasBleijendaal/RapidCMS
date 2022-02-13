@@ -11,7 +11,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Interactions
 {
-    internal class ButtonInteraction : IButtonSetupInteraction
+    internal class ButtonInteraction : IButtonInteraction
     {
         private readonly ISetupResolver<CollectionSetup> _collectionResolver;
         private readonly IButtonSetupActionHandlerResolver _buttonActionHandlerResolver;

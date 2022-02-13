@@ -28,7 +28,7 @@ namespace RapidCMS.Core.Dispatchers.Form
         private readonly ISetupResolver<CollectionSetup> _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IConcurrencyService _concurrencyService;
-        private readonly IButtonSetupInteraction _buttonInteraction;
+        private readonly IButtonInteraction _buttonInteraction;
         private readonly IEditContextFactory _editContextFactory;
         private readonly IMediator _mediator;
 
@@ -37,7 +37,7 @@ namespace RapidCMS.Core.Dispatchers.Form
             ISetupResolver<CollectionSetup> collectionResolver,
             IRepositoryResolver repositoryResolver,
             IConcurrencyService concurrencyService,
-            IButtonSetupInteraction buttonInteraction,
+            IButtonInteraction buttonInteraction,
             IEditContextFactory editContextFactory,
             IMediator mediator)
         {

@@ -4,7 +4,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Interactions
 {
-    internal interface IButtonSetupInteraction
+    internal interface IButtonInteraction
     {
         Task<CrudType> ValidateButtonInteractionAsync(IEditorButtonInteractionRequestModel request);
         Task CompleteButtonInteractionAsync(IEditorButtonInteractionRequestModel request);

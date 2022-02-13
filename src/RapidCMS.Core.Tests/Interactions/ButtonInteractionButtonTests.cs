@@ -16,7 +16,7 @@ namespace RapidCMS.Core.Tests.Interactions
 {
     public class ButtonInteractionButtonTests
     {
-        private IButtonSetupInteraction _subject = default!;
+        private IButtonInteraction _subject = default!;
 
         private Mock<ISetupResolver<CollectionSetup>> _collectionResolver = default!;
         private Mock<IButtonSetupActionHandlerResolver> _buttonActionHandlerResolver = default!;

@@ -22,7 +22,7 @@ namespace RapidCMS.Core.Tests.Interactions
 {
     public class ButtonInteractionHandlerTests
     {
-        private IButtonSetupInteraction _subject = default!;
+        private IButtonInteraction _subject = default!;
 
         private Mock<ISetupResolver<CollectionSetup>> _collectionResolver = default!;
         private Mock<IButtonActionHandler> _buttonActionHandler = default!;
