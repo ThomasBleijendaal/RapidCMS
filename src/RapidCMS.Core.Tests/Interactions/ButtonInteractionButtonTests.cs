@@ -21,18 +21,41 @@ namespace RapidCMS.Core.Tests.Interactions
         private Mock<ISetupResolver<CollectionSetup>> _collectionResolver = default!;
         private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
         private Mock<IAuthService> _authService = default!;
-        private Mock<CollectionSetup> _collection = default!;
         private Mock<IServiceProvider> _serviceProvider = default!;
+
+        private CollectionSetup _collection = default!;
 
         [SetUp]
         public void Setup()
         {
-            _collection = new Mock<CollectionSetup>();
+            _collection = new CollectionSetup("icon", "color", "name", "alias", "repo")
+            {
+                ListEditor = new ListSetup(
+                    null, 
+                    null, 
+                    null, 
+                    ListType.Table, 
+                    EmptyVariantColumnVisibility.Visible, 
+                    new List<PaneSetup>(), 
+                    new List<ButtonSetup>
+                    {
+                        new ButtonSetup
+                        {
+                            ButtonId = "abc",
+                            Buttons = new List<ButtonSetup>()
+                        },
+                        new ButtonSetup
+                        {
+                            ButtonId = "def",
+                            Buttons = new List<ButtonSetup>()
+                        }
+                    })
+            };
 
             _collectionResolver = new Mock<ISetupResolver<CollectionSetup>>();
             _collectionResolver
                 .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
-                .ReturnsAsync(_collection.Object);
+                .ReturnsAsync(_collection);
 
             _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
 
@@ -40,40 +63,6 @@ namespace RapidCMS.Core.Tests.Interactions
             _serviceProvider = new Mock<IServiceProvider>();
 
             _subject = new ButtonInteraction(_collectionResolver.Object, _buttonActionHandlerResolver.Object, _authService.Object);
-        }
-
-        [TestCase("abc")]
-        [TestCase("def")]
-        public void WhenValidationOfEditorButtonIsRequested_ThenUsedButtonShouldBeFetched(string buttonId)
-        {
-            // arrange
-            var request = new PersistEntityRequestModel()
-            {
-                ActionId = buttonId,
-                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object)
-            };
-
-            // act
-            _subject.ValidateButtonInteractionAsync(request);
-
-            // assert
-            _collection.Verify(x => x.FindButton(It.Is<string>(x => x == buttonId)));
-        }
-
-        [TestCase("abc")]
-        [TestCase("def")]
-        public void WhenUsedEditorButtonCannotBeFound_ThenExceptionShouldBeThrown(string buttonId)
-        {
-            // arrange
-            var request = new PersistEntityRequestModel()
-            {
-                ActionId = buttonId,
-                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object)
-            };
-            _collection.Setup(x => x.FindButton(It.IsAny<string>())).Returns(default(ButtonSetup));
-
-            // act & assert
-            Assert.ThrowsAsync(typeof(Exception), () => _subject.ValidateButtonInteractionAsync(request));
         }
 
         [TestCase("abc")]
@@ -87,59 +76,12 @@ namespace RapidCMS.Core.Tests.Interactions
                 ActionId = buttonId,
                 EditContext = editContext
             };
-            _collection.Setup(x => x.FindButton(It.IsAny<string>())).Returns(new ButtonSetup { ButtonId = buttonId });
 
             // act
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
             _authService.Verify(x => x.EnsureAuthorizedUserAsync(It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonSetup>(x => x.ButtonId == buttonId)));
-        }
-
-        [TestCase("abc")]
-        [TestCase("def")]
-        public void WhenValidationOfEditorInListButtonIsRequested_ThenUsedButtonShouldBeFetched(string buttonId)
-        {
-            // arrange
-            var request = new PersistEntityCollectionRequestModel()
-            {
-                ActionId = buttonId,
-                ListContext = new ListContext(
-                    "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object),
-                    default,
-                    UsageType.Edit,
-                    default,
-                    _serviceProvider.Object)
-            };
-
-            // act
-            _subject.ValidateButtonInteractionAsync(request);
-
-            // assert
-            _collection.Verify(x => x.FindButton(It.Is<string>(x => x == buttonId)));
-        }
-
-        [TestCase("abc")]
-        [TestCase("def")]
-        public void WhenUsedEditorInListButtonCannotBeFound_ThenExceptionShouldBeThrown(string buttonId)
-        {
-            // arrange
-            var request = new PersistEntityCollectionRequestModel()
-            {
-                ActionId = buttonId,
-                ListContext = new ListContext(
-                    "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object),
-                    default,
-                    UsageType.Edit,
-                    default,
-                    _serviceProvider.Object)
-            };
-            _collection.Setup(x => x.FindButton(It.IsAny<string>())).Returns(default(ButtonSetup));
-
-            // act & assert
-            Assert.ThrowsAsync(typeof(Exception), () => _subject.ValidateButtonInteractionAsync(request));
         }
 
         [TestCase("abc")]
@@ -160,59 +102,12 @@ namespace RapidCMS.Core.Tests.Interactions
                     default,
                     _serviceProvider.Object)
             };
-            _collection.Setup(x => x.FindButton(It.IsAny<string>())).Returns(new ButtonSetup { ButtonId = buttonId });
 
             // act
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
             _authService.Verify(x => x.EnsureAuthorizedUserAsync(It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonSetup>(x => x.ButtonId == buttonId)));
-        }
-
-        [TestCase("abc")]
-        [TestCase("def")]
-        public void WhenValidationOfListButtonIsRequested_ThenUsedButtonShouldBeFetched(string buttonId)
-        {
-            // arrange
-            var request = new PersistEntitiesRequestModel()
-            {
-                ActionId = buttonId,
-                ListContext = new ListContext(
-                    "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object),
-                    default,
-                    UsageType.Edit,
-                    default,
-                    _serviceProvider.Object)
-            };
-
-            // act
-            _subject.ValidateButtonInteractionAsync(request);
-
-            // assert
-            _collection.Verify(x => x.FindButton(It.Is<string>(x => x == buttonId)));
-        }
-
-        [TestCase("abc")]
-        [TestCase("def")]
-        public void WhenUsedListButtonCannotBeFound_ThenExceptionShouldBeThrown(string buttonId)
-        {
-            // arrange
-            var request = new PersistEntitiesRequestModel()
-            {
-                ActionId = buttonId,
-                ListContext = new ListContext(
-                    "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object),
-                    default,
-                    UsageType.Edit,
-                    default,
-                    _serviceProvider.Object)
-            };
-            _collection.Setup(x => x.FindButton(It.IsAny<string>())).Returns(default(ButtonSetup));
-
-            // act & assert
-            Assert.ThrowsAsync(typeof(Exception), () => _subject.ValidateButtonInteractionAsync(request));
         }
 
         [TestCase("abc")]
@@ -232,7 +127,6 @@ namespace RapidCMS.Core.Tests.Interactions
                     default,
                     _serviceProvider.Object)
             };
-            _collection.Setup(x => x.FindButton(It.IsAny<string>())).Returns(new ButtonSetup { ButtonId = buttonId });
 
             // act
             _subject.ValidateButtonInteractionAsync(request);

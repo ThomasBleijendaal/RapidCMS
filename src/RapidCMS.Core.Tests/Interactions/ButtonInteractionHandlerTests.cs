@@ -28,24 +28,38 @@ namespace RapidCMS.Core.Tests.Interactions
         private Mock<IButtonActionHandler> _buttonActionHandler = default!;
         private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
         private Mock<IAuthService> _authService = default!;
-        private Mock<ButtonSetup> _button = default!;
-        private Mock<CollectionSetup> _collection = default!;
+        private ButtonSetup _button = default!;
+        private CollectionSetup _collection = default!;
         private IServiceProvider _serviceProvider = default!;
 
         [SetUp]
         public void Setup()
         {
-            _button = new Mock<ButtonSetup>();
+            _button = new ButtonSetup
+            {
+                ButtonId = "123",
+                Buttons = new List<ButtonSetup>()
+            };
 
-            _collection = new Mock<CollectionSetup>();
-            _collection
-                .Setup(x => x.FindButton(It.IsAny<string>()))
-                .Returns(_button.Object);
+            _collection = new CollectionSetup("icon", "color", "name", "alias", "repo")
+            {
+                ListEditor = new ListSetup(
+                    null,
+                    null,
+                    null,
+                    ListType.Table,
+                    EmptyVariantColumnVisibility.Visible,
+                    new List<PaneSetup>(),
+                    new List<ButtonSetup>
+                    {
+                        _button
+                    })
+            };
 
             _collectionResolver = new Mock<ISetupResolver<CollectionSetup>>();
             _collectionResolver
                 .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
-                .ReturnsAsync(_collection.Object);
+                .ReturnsAsync(_collection);
 
             _buttonActionHandler = new Mock<IButtonActionHandler>();
             _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();

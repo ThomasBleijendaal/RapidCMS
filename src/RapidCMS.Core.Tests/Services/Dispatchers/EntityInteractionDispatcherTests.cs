@@ -30,8 +30,8 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
 
         private Mock<INavigationStateProvider> _navigationStateProvider = default!;
         private Mock<ISetupResolver<CollectionSetup>> _collectionResolver = default!;
-        private Mock<CollectionSetup> _collection = default!;
-        private Mock<EntityVariantSetup> _entityVariant = default!;
+        private CollectionSetup _collection = default!;
+        private EntityVariantSetup _entityVariant = default!;
         private Mock<IRepositoryResolver> _repositoryResolver = default!;
         private IConcurrencyService _concurrencyService = default!;
         private Mock<IButtonInteraction> _buttonInteraction = default!;
@@ -45,15 +45,15 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
 
             _navigationStateProvider = new Mock<INavigationStateProvider>();
 
-            _entityVariant = new Mock<EntityVariantSetup>();
-            _collection = new Mock<CollectionSetup>();
-            _collection
-                .Setup(x => x.GetEntityVariant(It.IsAny<IEntity>()))
-                .Returns(_entityVariant.Object);
+            _entityVariant = new EntityVariantSetup("ev", "icon", typeof(IEntity), "alias");
+            _collection = new CollectionSetup("icon", "color", "name", "alias", "repo")
+            {
+                EntityVariant = _entityVariant
+            };
             _collectionResolver = new Mock<ISetupResolver<CollectionSetup>>();
             _collectionResolver
                 .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
-                .ReturnsAsync(_collection.Object);
+                .ReturnsAsync(_collection);
 
             _repositoryResolver = new Mock<IRepositoryResolver>();
             _concurrencyService = new ConcurrencyService(new SemaphoreSlim(1, 1));
@@ -102,7 +102,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _subject.InvokeAsync(request);
 
             // assert
-            _repositoryResolver.Verify(x => x.GetRepository(It.Is<CollectionSetup>(x => x == _collection.Object)));
+            _repositoryResolver.Verify(x => x.GetRepository(It.Is<CollectionSetup>(x => x == _collection)));
         }
 
         [TestCase("alias1")]
