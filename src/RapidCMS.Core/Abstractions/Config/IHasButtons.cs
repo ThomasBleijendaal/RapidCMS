@@ -19,7 +19,7 @@ namespace RapidCMS.Core.Abstractions.Config
         TReturn AddDefaultButton(DefaultButtonType type, string? label = null, string? icon = null, bool isPrimary = false, Func<IEntity, EntityState, bool>? isVisible = null);
 
         /// <summary>
-        /// Adds a custom button. A custom button is a razor component derived from BaseButton, and has a IButtonSetupActionHandler that is invoked when the button is clicked.
+        /// Adds a custom button. A custom button is a razor component derived from BaseButton, and has a IButtonActionHandler that is invoked when the button is clicked.
         /// </summary>
         /// <typeparam name="TActionHandler">Type of the button action handler</typeparam>
         /// <param name="buttonType">Type of the razor component</param>
