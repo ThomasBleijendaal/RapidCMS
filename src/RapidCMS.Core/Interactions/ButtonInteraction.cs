@@ -4,21 +4,21 @@ using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Interactions
 {
     internal class ButtonInteraction : IButtonInteraction
     {
-        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
+        private readonly ISetupResolver<CollectionSetup> _collectionResolver;
         private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
         private readonly IAuthService _authService;
 
         public ButtonInteraction(
-            ISetupResolver<ICollectionSetup> collectionResolver,
+            ISetupResolver<CollectionSetup> collectionResolver,
             IButtonActionHandlerResolver buttonActionHandlerResolver,
             IAuthService authService)
         {
@@ -68,7 +68,7 @@ namespace RapidCMS.Core.Interactions
             return await handler.ButtonClickBeforeRepositoryActionAsync(button, request.EditContext, context);
         }
 
-        public async Task<(CrudType crudType, IEntityVariantSetup? entityVariant)> ValidateButtonInteractionAsync(IListButtonInteractionRequestModel request)
+        public async Task<(CrudType crudType, EntityVariantSetup? entityVariant)> ValidateButtonInteractionAsync(IListButtonInteractionRequestModel request)
         {
             var (handler, button) = await FindButtonHandlerAsync(request.ListContext.CollectionAlias, request.ActionId);
 
@@ -88,7 +88,7 @@ namespace RapidCMS.Core.Interactions
             await handler.ButtonClickAfterRepositoryActionAsync(button, request.ListContext.ProtoEditContext, context);
         }
 
-        private async Task<(IButtonActionHandler handler, IButtonSetup button)> FindButtonHandlerAsync(string collectionAlias, string buttonId)
+        private async Task<(IButtonActionHandler handler, ButtonSetup button)> FindButtonHandlerAsync(string collectionAlias, string buttonId)
         {
             var collection = await _collectionResolver.ResolveSetupAsync(collectionAlias);
 

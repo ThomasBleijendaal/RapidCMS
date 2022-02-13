@@ -1,9 +1,8 @@
 ﻿using System;
-using RapidCMS.Core.Abstractions.Setup;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    public class ValidationSetup : IValidationSetup
+    public class ValidationSetup
     {
         public ValidationSetup(Type type, object? configuration)
         {

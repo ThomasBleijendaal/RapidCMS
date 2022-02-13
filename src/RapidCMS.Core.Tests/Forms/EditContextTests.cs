@@ -35,7 +35,7 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { Id = "1" },
                 default,
                 UsageType.Edit,
-                new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
+                new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
                 _serviceCollection.BuildServiceProvider());
         }
 
@@ -92,7 +92,7 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { },
                 default,
                 UsageType.Edit,
-                new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
+                new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
                 _serviceCollection.BuildServiceProvider());
 
             // act & assert
@@ -110,7 +110,7 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { },
                 default,
                 UsageType.Edit,
-                new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
+                new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
                 _serviceCollection.BuildServiceProvider());
             _subject.NotifyPropertyIncludedInForm(_property);
 
@@ -129,7 +129,7 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { Id = "123" },
                 default,
                 UsageType.Edit,
-                new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
+                new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
                 _serviceCollection.BuildServiceProvider());
 
             await _subject.NotifyPropertyChangedAsync(_property);
@@ -149,7 +149,7 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { },
                 default,
                 UsageType.Edit,
-                new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
+                new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
                 _serviceCollection.BuildServiceProvider());
 
             // act & assert
@@ -167,7 +167,7 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { },
                 default,
                 UsageType.Edit,
-                new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
+                new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
                 _serviceCollection.BuildServiceProvider());
 
             await _subject.NotifyPropertyChangedAsync(_property);
@@ -187,7 +187,7 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { Id = "123" },
                 default,
                 UsageType.Edit,
-                new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
+                new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
                 _serviceCollection.BuildServiceProvider());
             _subject.NotifyPropertyIncludedInForm(_property);
 
@@ -272,7 +272,7 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { Id = "123", Nested = new Entity.NestedObject { Data = "456" } },
                 default,
                 UsageType.Edit,
-                new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
+                new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) },
                 _serviceCollection.BuildServiceProvider());
 
             // act

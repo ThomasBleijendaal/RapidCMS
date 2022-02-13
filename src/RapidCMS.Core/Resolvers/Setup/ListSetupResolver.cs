@@ -10,15 +10,15 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class ListSetupResolver : ISetupResolver<IListSetup, ListConfig>
+    internal class ListSetupResolver : ISetupResolver<ListSetup, ListConfig>
     {
-        private readonly ISetupResolver<IPaneSetup, PaneConfig> _paneSetupResolver;
-        private readonly ISetupResolver<IButtonSetup, ButtonConfig> _buttonSetupResolver;
+        private readonly ISetupResolver<PaneSetup, PaneConfig> _paneSetupResolver;
+        private readonly ISetupResolver<ButtonSetup, ButtonConfig> _buttonSetupResolver;
         private readonly IConventionBasedResolver<ListConfig> _conventionListConfigResolver;
 
         public ListSetupResolver(
-            ISetupResolver<IPaneSetup, PaneConfig> paneSetupResolver,
-            ISetupResolver<IButtonSetup, ButtonConfig> buttonSetupResolver,
+            ISetupResolver<PaneSetup, PaneConfig> paneSetupResolver,
+            ISetupResolver<ButtonSetup, ButtonConfig> buttonSetupResolver,
             IConventionBasedResolver<ListConfig> conventionListConfigResolver)
         {
             _paneSetupResolver = paneSetupResolver;
@@ -26,7 +26,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _conventionListConfigResolver = conventionListConfigResolver;
         }
 
-        public async Task<IResolvedSetup<IListSetup>> ResolveSetupAsync(ListConfig config, ICollectionSetup? collection = default)
+        public async Task<IResolvedSetup<ListSetup>> ResolveSetupAsync(ListConfig config, CollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -43,7 +43,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             var panes = (await _paneSetupResolver.ResolveSetupAsync(config.Panes, collection)).CheckIfCachable(ref cacheable).ToList();
             var buttons = (await _buttonSetupResolver.ResolveSetupAsync(config.Buttons, collection)).CheckIfCachable(ref cacheable).ToList();
 
-            return new ResolvedSetup<IListSetup>(new ListSetup(
+            return new ResolvedSetup<ListSetup>(new ListSetup(
                 config.PageSize,
                 config.SearchBarVisible,
                 config.ReorderingAllowed,

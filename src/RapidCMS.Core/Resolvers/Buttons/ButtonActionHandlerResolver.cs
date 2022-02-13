@@ -1,8 +1,8 @@
 ﻿using System;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Buttons
 {
@@ -15,7 +15,7 @@ namespace RapidCMS.Core.Resolvers.Buttons
             _serviceProvider = serviceProvider;
         }
 
-        public IButtonActionHandler GetButtonActionHandler(IButtonSetup button)
+        public IButtonActionHandler GetButtonActionHandler(ButtonSetup button)
         {
             return _serviceProvider.GetService<IButtonActionHandler>(button.ButtonHandlerType);
         }

@@ -2,9 +2,9 @@
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Handlers
@@ -13,12 +13,12 @@ namespace RapidCMS.Core.Handlers
         where TNavigationHandler : INavigationHandler
     {
         private readonly TNavigationHandler _navigationHandler;
-        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
+        private readonly ISetupResolver<CollectionSetup> _collectionResolver;
         private readonly INavigationStateProvider _navigationStateProvider;
 
         public NavigateButtonActionHandler(
             TNavigationHandler navigationHandler,
-            ISetupResolver<ICollectionSetup> collectionResolver,
+            ISetupResolver<CollectionSetup> collectionResolver,
             INavigationStateProvider navigationStateProvider)
         {
             _navigationHandler = navigationHandler;
@@ -26,7 +26,7 @@ namespace RapidCMS.Core.Handlers
             _navigationStateProvider = navigationStateProvider;
         }
 
-        public override async Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context)
+        public override async Task<CrudType> ButtonClickBeforeRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context)
         {
             var request = await _navigationHandler.CreateNavigationRequestAsync(button, editContext);
             if (request != null)

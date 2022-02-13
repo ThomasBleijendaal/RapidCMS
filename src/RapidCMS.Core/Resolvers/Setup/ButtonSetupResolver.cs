@@ -12,7 +12,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class ButtonSetupResolver : ISetupResolver<IButtonSetup, ButtonConfig>
+    internal class ButtonSetupResolver : ISetupResolver<ButtonSetup, ButtonConfig>
     {
         private readonly ILanguageResolver _languageResolver;
 
@@ -21,7 +21,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _languageResolver = languageResolver;
         }
 
-        public Task<IResolvedSetup<IButtonSetup>> ResolveSetupAsync(ButtonConfig config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<ButtonSetup>> ResolveSetupAsync(ButtonConfig config, CollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -90,7 +90,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 throw new InvalidOperationException();
             }
 
-            return Task.FromResult<IResolvedSetup<IButtonSetup>>(new ResolvedSetup<IButtonSetup>(button, true));
+            return Task.FromResult<IResolvedSetup<ButtonSetup>>(new ResolvedSetup<ButtonSetup>(button, true));
         }
     }
 }

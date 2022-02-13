@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Metadata;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Validators;
 
 namespace RapidCMS.Core.Forms
@@ -20,9 +20,9 @@ namespace RapidCMS.Core.Forms
         private readonly List<string> _messages = new List<string>();
         private readonly List<PropertyState> _fieldStates = new List<PropertyState>();
         private readonly IEntity _entity;
-        private readonly IReadOnlyList<IValidationSetup> _validators;
+        private readonly IReadOnlyList<ValidationSetup> _validators;
 
-        public FormState(IEntity entity, IReadOnlyList<IValidationSetup> validators, IServiceProvider serviceProvider)
+        public FormState(IEntity entity, IReadOnlyList<ValidationSetup> validators, IServiceProvider serviceProvider)
         {
             _entity = entity;
             _validators = validators;

@@ -4,12 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
-using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Models.Commands;
 using RapidCMS.ModelMaker.Models.Entities;
 using RapidCMS.ModelMaker.Models.Responses;
@@ -18,13 +17,13 @@ namespace RapidCMS.ModelMaker.DataCollections
 {
     internal class ReciprocalPropertyDataCollection : IDataCollection
     {
-        private readonly ISetupResolver<ICollectionSetup> _collectionSetupResolver;
+        private readonly ISetupResolver<CollectionSetup> _collectionSetupResolver;
         private readonly ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>> _modelResolver;
         private PropertyModel? _property;
         private FormEditContext? _editContext;
 
         public ReciprocalPropertyDataCollection(
-            ISetupResolver<ICollectionSetup> collectionSetupResolver,
+            ISetupResolver<CollectionSetup> collectionSetupResolver,
             ICommandHandler<GetByIdRequest<ModelEntity>, EntityResponse<ModelEntity>> modelResolver)
         {
             _collectionSetupResolver = collectionSetupResolver;

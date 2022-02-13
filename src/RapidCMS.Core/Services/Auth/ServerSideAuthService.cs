@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Components.Authorization;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Services.Auth
 {
@@ -64,14 +64,14 @@ namespace RapidCMS.Core.Services.Auth
             }
         }
 
-        public Task<bool> IsUserAuthorizedAsync(FormEditContext editContext, IButtonSetup button)
+        public Task<bool> IsUserAuthorizedAsync(FormEditContext editContext, ButtonSetup button)
         {
             var handler = _buttonActionHandlerResolver.GetButtonActionHandler(button);
 
             return IsUserAuthorizedAsync(handler.GetOperation(button, editContext), editContext.Entity);
         }
 
-        public async Task EnsureAuthorizedUserAsync(FormEditContext editContext, IButtonSetup button)
+        public async Task EnsureAuthorizedUserAsync(FormEditContext editContext, ButtonSetup button)
         {
             if (!await IsUserAuthorizedAsync(editContext, button))
             {

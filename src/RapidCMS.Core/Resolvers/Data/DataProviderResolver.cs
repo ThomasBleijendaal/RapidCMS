@@ -7,7 +7,6 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Setup;
@@ -17,14 +16,14 @@ namespace RapidCMS.Core.Resolvers.Data
 {
     internal class DataProviderResolver : IDataProviderResolver
     {
-        private readonly ISetupResolver<ICollectionSetup> _collectionSetupResolver;
+        private readonly ISetupResolver<CollectionSetup> _collectionSetupResolver;
         private readonly IConcurrencyService _concurrencyService;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IMediator _mediator;
         private readonly IServiceProvider _serviceProvider;
 
         public DataProviderResolver(
-            ISetupResolver<ICollectionSetup> collectionSetupResolver,
+            ISetupResolver<CollectionSetup> collectionSetupResolver,
             IConcurrencyService concurrencyService,
             IRepositoryResolver repositoryResolver,
             IMediator mediator,
@@ -37,7 +36,7 @@ namespace RapidCMS.Core.Resolvers.Data
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<FormDataProvider?> GetDataProviderAsync(IFieldSetup field)
+        public async Task<FormDataProvider?> GetDataProviderAsync(FieldSetup field)
         {
             if (!(field is PropertyFieldSetup propertyField && propertyField.Relation != null))
             {

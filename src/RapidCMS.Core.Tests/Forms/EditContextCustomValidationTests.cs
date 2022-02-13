@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
@@ -32,9 +31,9 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity(),
                 default,
                 UsageType.Edit,
-                new List<IValidationSetup>
+                new List<ValidationSetup>
                 {
-                    (IValidationSetup)new ValidationSetup(typeof(EntityValidator), default)
+                    (ValidationSetup)new ValidationSetup(typeof(EntityValidator), default)
                 },
                 _serviceCollection.BuildServiceProvider());
 
@@ -60,9 +59,9 @@ namespace RapidCMS.Core.Tests.Forms
                 },
                 default,
                 UsageType.Edit,
-                new List<IValidationSetup>
+                new List<ValidationSetup>
                 {
-                    (IValidationSetup)new ValidationSetup(typeof(EntityValidator), default)
+                    (ValidationSetup)new ValidationSetup(typeof(EntityValidator), default)
                 },
                 _serviceCollection.BuildServiceProvider());
 

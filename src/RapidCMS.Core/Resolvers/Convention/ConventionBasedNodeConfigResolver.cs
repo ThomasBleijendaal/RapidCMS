@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Config;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Convention
 {
@@ -18,7 +18,7 @@ namespace RapidCMS.Core.Resolvers.Convention
             _fieldConfigResolver = fieldConfigResolver;
         }
 
-        public Task<NodeConfig> ResolveByConventionAsync(Type subject, Features features, ICollectionSetup? collection)
+        public Task<NodeConfig> ResolveByConventionAsync(Type subject, Features features, CollectionSetup? collection)
         {
             var result = new NodeConfig(subject);
 

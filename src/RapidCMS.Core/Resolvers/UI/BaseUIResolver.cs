@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
@@ -36,7 +35,7 @@ namespace RapidCMS.Core.Resolvers.UI
             _navigationStateProvider = navigationStateProvider;
         }
 
-        protected async Task<List<ButtonUI>> GetButtonsAsync(IEnumerable<IButtonSetup> buttons, FormEditContext editContext)
+        protected async Task<List<ButtonUI>> GetButtonsAsync(IEnumerable<ButtonSetup> buttons, FormEditContext editContext)
         {
             return await buttons
                 .GetAllButtons()
@@ -56,7 +55,7 @@ namespace RapidCMS.Core.Resolvers.UI
                 .ToListAsync();
         }
 
-        protected internal async Task<SectionUI> GetSectionUIAsync(IPaneSetup pane, FormEditContext editContext, NavigationState navigationState)
+        protected internal async Task<SectionUI> GetSectionUIAsync(PaneSetup pane, FormEditContext editContext, NavigationState navigationState)
         {
             var fields = await pane.Fields.ToListAsync(async field =>
             {
@@ -119,7 +118,7 @@ namespace RapidCMS.Core.Resolvers.UI
             };
         }
 
-        protected static FieldUI GetField(IFieldSetup field, FormDataProvider? dataProvider) 
+        protected static FieldUI GetField(FieldSetup field, FormDataProvider? dataProvider) 
             => field switch
             {
                 CustomExpressionFieldSetup x => new CustomExpressionFieldUI(x),

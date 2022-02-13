@@ -1,9 +1,8 @@
 ﻿using System;
-using RapidCMS.Core.Abstractions.Setup;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    public class EntityVariantSetup : IEntityVariantSetup
+    public class EntityVariantSetup 
     {
         public static EntityVariantSetup Undefined = new EntityVariantSetup();
 

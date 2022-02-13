@@ -43,8 +43,8 @@ namespace RapidCMS.ModelMaker
             return default;
         }
 
-        public Task<IEnumerable<ITreeElementSetup>> GetTreeElementsAsync()
-            => Task.FromResult(Enumerable.Empty<ITreeElementSetup>());
+        public Task<IEnumerable<TreeElementSetup>> GetTreeElementsAsync()
+            => Task.FromResult(Enumerable.Empty<TreeElementSetup>());
 
         public Type? GetRepositoryType(string collectionAlias)
         {
@@ -85,25 +85,25 @@ namespace RapidCMS.ModelMaker
                 true,
                 ListType.Table,
                 EmptyVariantColumnVisibility.Collapse,
-                new List<IPaneSetup>
+                new List<PaneSetup>
                 {
                     new PaneSetup(
                         default,
                         default,
                         (m, s) => true,
                         typeof(PropertyModel),
-                        new List<IButtonSetup>
+                        new List<ButtonSetup>
                         {
                             await CreateButtonAsync(collection, DefaultButtonType.Edit, true)
                         },
-                        new List<IFieldSetup>
+                        new List<FieldSetup>
                         {
                             CreateExpressionField(DisplayType.Label, EditorType.None, 1, "Property name", new ExpressionMetadata<PropertyModel>("Name", x => x.Name))
                         },
-                        new List<ISubCollectionListSetup>(),
-                        new List<IRelatedCollectionListSetup>())
+                        new List<SubCollectionListSetup>(),
+                        new List<RelatedCollectionListSetup>())
                 },
-                new List<IButtonSetup>
+                new List<ButtonSetup>
                 {
                     await CreateButtonAsync(collection, DefaultButtonType.Return, false, "Cancel", "Back"),
                     await CreateButtonAsync(collection, DefaultButtonType.New, true, "Add property", "Add"),
@@ -113,7 +113,7 @@ namespace RapidCMS.ModelMaker
             collection.NodeEditor = new NodeSetup(
                 typeof(PropertyModel),
                 PropertyPanes().ToList(),
-                new List<IButtonSetup>
+                new List<ButtonSetup>
                 {
                     await CreateButtonAsync(collection, DefaultButtonType.Up, false, "Return", "Back"),
                     await CreateButtonAsync(collection, DefaultButtonType.SaveNew, true, "Insert"),
@@ -124,7 +124,7 @@ namespace RapidCMS.ModelMaker
             return collection;
         }
 
-        private IEnumerable<IPaneSetup> PropertyPanes()
+        private IEnumerable<PaneSetup> PropertyPanes()
         {
             var titleField = CreatePropertyField(EditorType.Checkbox,
                 2,
@@ -149,11 +149,11 @@ namespace RapidCMS.ModelMaker
                     default,
                     (m, s) => true,
                     typeof(PropertyModel),
-                    new List<IButtonSetup>
+                    new List<ButtonSetup>
                     {
 
                     },
-                    new List<IFieldSetup>
+                    new List<FieldSetup>
                     {
                         CreatePropertyField(EditorType.Dropdown,
                             0,
@@ -182,10 +182,10 @@ namespace RapidCMS.ModelMaker
                             PropertyMetadataHelper.GetFullPropertyMetadata<PropertyModel, string?>(x => x.EditorAlias),
                            relation: new DataProviderRelationSetup(typeof(PropertyEditorDataCollection), default))
                     },
-                    new List<ISubCollectionListSetup>
+                    new List<SubCollectionListSetup>
                     {
                     },
-                    new List<IRelatedCollectionListSetup>
+                    new List<RelatedCollectionListSetup>
                     {
 
                     });
@@ -196,16 +196,16 @@ namespace RapidCMS.ModelMaker
                     default,
                     (m, s) => true,
                     typeof(PropertyModel),
-                    new List<IButtonSetup>
+                    new List<ButtonSetup>
                     {
 
                     },
                     ValidationFields().ToList(),
-                    new List<ISubCollectionListSetup>(),
-                    new List<IRelatedCollectionListSetup>());
+                    new List<SubCollectionListSetup>(),
+                    new List<RelatedCollectionListSetup>());
         }
 
-        private IEnumerable<IFieldSetup> ValidationFields()
+        private IEnumerable<FieldSetup> ValidationFields()
         {
             foreach (var validationType in _config.PropertyDetails)
             {
@@ -292,7 +292,7 @@ namespace RapidCMS.ModelMaker
             };
         }
 
-        private Task<IButtonSetup> CreateButtonAsync(
+        private Task<ButtonSetup> CreateButtonAsync(
             CollectionSetup collection,
             DefaultButtonType type,
             bool isPrimary,
@@ -301,7 +301,7 @@ namespace RapidCMS.ModelMaker
         {
             var button = new ButtonSetup
             {
-                Buttons = Enumerable.Empty<IButtonSetup>(),
+                Buttons = Enumerable.Empty<ButtonSetup>(),
 
                 Label = label ?? "Button",
                 Icon = icon ?? "",
@@ -315,7 +315,7 @@ namespace RapidCMS.ModelMaker
                 ButtonHandlerType = typeof(DefaultButtonActionHandler)
             };
 
-            return Task.FromResult<IButtonSetup>(button);
+            return Task.FromResult<ButtonSetup>(button);
 
             //var response = await _buttonSetupResolver.ResolveSetupAsync(new DefaultButtonConfig
             //{

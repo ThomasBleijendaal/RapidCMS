@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Mediators;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Handlers
 {
@@ -16,7 +16,7 @@ namespace RapidCMS.Core.Handlers
             _mediator = mediator;
         }
 
-        public override Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context) 
+        public override Task<CrudType> ButtonClickBeforeRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context) 
             => _mediator.NotifyEventAsync(this, new PaneRequestEventArgs(typeof(TSidePane), editContext, context));
     }
 }

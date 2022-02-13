@@ -1,18 +1,17 @@
 ﻿using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class TypeRegistrationSetupResolver : ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig>
+    internal class TypeRegistrationSetupResolver : ISetupResolver<TypeRegistrationSetup, CustomTypeRegistrationConfig>
     {
-        public Task<IResolvedSetup<ITypeRegistration>> ResolveSetupAsync(CustomTypeRegistrationConfig config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<TypeRegistrationSetup>> ResolveSetupAsync(CustomTypeRegistrationConfig config, CollectionSetup? collection = default)
         {
-            return Task.FromResult<IResolvedSetup<ITypeRegistration>>(
-                new ResolvedSetup<ITypeRegistration>(
-                    new CustomTypeRegistrationSetup
+            return Task.FromResult<IResolvedSetup<TypeRegistrationSetup>>(
+                new ResolvedSetup<TypeRegistrationSetup>(
+                    new TypeRegistrationSetup
                     {
                         Type = config.Type == typeof(CollectionConfig) ? typeof(CollectionSetup) : config.Type,
                         Alias = config.Alias,

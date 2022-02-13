@@ -5,17 +5,17 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Factories
 {
     internal class FormEditContextWrapperFactory : IEditContextFactory
     {
-        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
+        private readonly ISetupResolver<CollectionSetup> _collectionResolver;
 
-        public FormEditContextWrapperFactory(ISetupResolver<ICollectionSetup> collectionResolver)
+        public FormEditContextWrapperFactory(ISetupResolver<CollectionSetup> collectionResolver)
         {
             _collectionResolver = collectionResolver;
         }

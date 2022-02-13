@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Authorization.Infrastructure;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Api.Core.Services
 {
@@ -59,12 +59,12 @@ namespace RapidCMS.Api.Core.Services
             }
         }
 
-        public Task<bool> IsUserAuthorizedAsync(FormEditContext editContext, IButtonSetup button)
+        public Task<bool> IsUserAuthorizedAsync(FormEditContext editContext, ButtonSetup button)
         {
             throw new NotImplementedException("This method is not implemented in ApiAuthService as it makes no sense here.");
         }
 
-        public async Task EnsureAuthorizedUserAsync(FormEditContext editContext, IButtonSetup button)
+        public async Task EnsureAuthorizedUserAsync(FormEditContext editContext, ButtonSetup button)
         {
             if (!await IsUserAuthorizedAsync(editContext, button))
             {

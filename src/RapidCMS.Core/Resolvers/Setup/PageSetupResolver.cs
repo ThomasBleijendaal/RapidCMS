@@ -4,33 +4,32 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class PageSetupResolver : ISetupResolver<IPageSetup>
+    internal class PageSetupResolver : ISetupResolver<PageSetup>
     {
         private readonly ICmsConfig _cmsConfig;
-        private readonly ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig> _typeRegistrationSetupResolver;
-        private readonly Dictionary<string, IPageSetup> _cache = new Dictionary<string, IPageSetup>();
+        private readonly ISetupResolver<TypeRegistrationSetup, CustomTypeRegistrationConfig> _typeRegistrationSetupResolver;
+        private readonly Dictionary<string, PageSetup> _cache = new Dictionary<string, PageSetup>();
 
         public PageSetupResolver(
             ICmsConfig cmsConfig,
-            ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig> typeRegistrationSetupResolver)
+            ISetupResolver<TypeRegistrationSetup, CustomTypeRegistrationConfig> typeRegistrationSetupResolver)
         {
             _cmsConfig = cmsConfig;
             _typeRegistrationSetupResolver = typeRegistrationSetupResolver;
         }
 
-        Task<IPageSetup> ISetupResolver<IPageSetup>.ResolveSetupAsync()
+        Task<PageSetup> ISetupResolver<PageSetup>.ResolveSetupAsync()
         {
             throw new InvalidOperationException("Cannot resolve page without alias.");
         }
 
-        async Task<IPageSetup> ISetupResolver<IPageSetup>.ResolveSetupAsync(string alias)
+        async Task<PageSetup> ISetupResolver<PageSetup>.ResolveSetupAsync(string alias)
         {
             if (_cache.TryGetValue(alias, out var pageSetup))
             {
@@ -45,7 +44,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
             var cacheable = true;
 
-            pageSetup = new PageRegistrationSetup
+            pageSetup = new PageSetup
             {
                 Name = config.Name,
                 Alias = config.Alias,

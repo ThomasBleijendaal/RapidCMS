@@ -1,14 +1,14 @@
 ﻿using System;
 using RapidCMS.Core.Abstractions.Handlers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Models.UI
 {
     public class ButtonUI
     {
-        internal ButtonUI(IButtonActionHandler handler, IButtonSetup button, FormEditContext editContext)
+        internal ButtonUI(IButtonActionHandler handler, ButtonSetup button, FormEditContext editContext)
         {
             ButtonId = button.ButtonId ?? throw new ArgumentNullException(nameof(button.ButtonId));
 

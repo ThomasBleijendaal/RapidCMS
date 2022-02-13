@@ -5,20 +5,20 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class TreeElementsSetupResolver : ISetupResolver<IEnumerable<ITreeElementSetup>>
+    internal class TreeElementsSetupResolver : ISetupResolver<IEnumerable<TreeElementSetup>>
     {
         private readonly ICmsConfig _cmsConfig;
-        private readonly ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> _treeElementResolver;
-        private readonly ISetupResolver<IEnumerable<ITreeElementSetup>, IPlugin> _pluginTreeElementResolver;
+        private readonly ISetupResolver<IEnumerable<TreeElementSetup>, IEnumerable<ITreeElementConfig>> _treeElementResolver;
+        private readonly ISetupResolver<IEnumerable<TreeElementSetup>, IPlugin> _pluginTreeElementResolver;
         private readonly IEnumerable<IPlugin> _plugins;
 
         public TreeElementsSetupResolver(ICmsConfig cmsConfig,
-            ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> treeElementResolver,
-            ISetupResolver<IEnumerable<ITreeElementSetup>, IPlugin> pluginTreeElementResolver,
+            ISetupResolver<IEnumerable<TreeElementSetup>, IEnumerable<ITreeElementConfig>> treeElementResolver,
+            ISetupResolver<IEnumerable<TreeElementSetup>, IPlugin> pluginTreeElementResolver,
             IEnumerable<IPlugin> plugins)
         {
             _cmsConfig = cmsConfig;
@@ -27,9 +27,9 @@ namespace RapidCMS.Core.Resolvers.Setup
             _plugins = plugins;
         }
 
-        async Task<IEnumerable<ITreeElementSetup>> ISetupResolver<IEnumerable<ITreeElementSetup>>.ResolveSetupAsync()
+        async Task<IEnumerable<TreeElementSetup>> ISetupResolver<IEnumerable<TreeElementSetup>>.ResolveSetupAsync()
         {
-            var results = new List<ITreeElementSetup>();
+            var results = new List<TreeElementSetup>();
 
             foreach (var plugin in _plugins)
             {
@@ -43,7 +43,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             return results;
         }
 
-        Task<IEnumerable<ITreeElementSetup>> ISetupResolver<IEnumerable<ITreeElementSetup>>.ResolveSetupAsync(string alias)
+        Task<IEnumerable<TreeElementSetup>> ISetupResolver<IEnumerable<TreeElementSetup>>.ResolveSetupAsync(string alias)
         {
             throw new InvalidOperationException("Cannot resolve root collections with alias.");
         }

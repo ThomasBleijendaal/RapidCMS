@@ -1,20 +1,20 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Handlers
 {
     public interface IButtonActionHandler
     {
-        OperationAuthorizationRequirement GetOperation(IButton button, FormEditContext editContext);
+        OperationAuthorizationRequirement GetOperation(ButtonSetup button, FormEditContext editContext);
 
-        bool IsCompatible(IButton button, FormEditContext editContext);
-        bool ShouldAskForConfirmation(IButton button, FormEditContext editContext);
-        bool RequiresValidForm(IButton button, FormEditContext editContext);
+        bool IsCompatible(ButtonSetup button, FormEditContext editContext);
+        bool ShouldAskForConfirmation(ButtonSetup button, FormEditContext editContext);
+        bool RequiresValidForm(ButtonSetup button, FormEditContext editContext);
 
-        Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context);
-        Task ButtonClickAfterRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context);
+        Task<CrudType> ButtonClickBeforeRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context);
+        Task ButtonClickAfterRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context);
     }
 }

@@ -7,7 +7,6 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
@@ -38,7 +37,7 @@ namespace RapidCMS.Core.Tests.Services.Auth
             _buttonActionHandler = new Mock<IButtonActionHandler>();
             _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
             _buttonActionHandlerResolver
-                .Setup(x => x.GetButtonActionHandler(It.IsAny<IButtonSetup>()))
+                .Setup(x => x.GetButtonActionHandler(It.IsAny<ButtonSetup>()))
                 .Returns(_buttonActionHandler.Object);
 
             var state = new AuthenticationState(_user);
@@ -100,10 +99,10 @@ namespace RapidCMS.Core.Tests.Services.Auth
         public void WhenCheckingButtonIsAllowed_AuthorizationServiceShouldBeConsulted(UsageType usageType, string requirement)
         {
             // arrange
-            _buttonActionHandler.Setup(x => x.GetOperation(It.IsAny<IButton>(), It.IsAny<FormEditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
+            _buttonActionHandler.Setup(x => x.GetOperation(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
             var serviceProvider = new Mock<IServiceProvider>();
             var entity = new Mock<IEntity>();
-            var editContext = new FormEditContext("alias", "repo", "entity", entity.Object, default, usageType, new List<IValidationSetup>(), serviceProvider.Object);
+            var editContext = new FormEditContext("alias", "repo", "entity", entity.Object, default, usageType, new List<ValidationSetup>(), serviceProvider.Object);
             var button = new ButtonSetup();
 
             // act
@@ -127,10 +126,10 @@ namespace RapidCMS.Core.Tests.Services.Auth
         public void WhenButtonIsNotAllowed_AuthServiceShouldThrowUnauthorizedAccessException(UsageType usageType, string requirement)
         {
             // arrange
-            _buttonActionHandler.Setup(x => x.GetOperation(It.IsAny<IButton>(), It.IsAny<FormEditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
+            _buttonActionHandler.Setup(x => x.GetOperation(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
             var serviceProvider = new Mock<IServiceProvider>();
             var entity = new Mock<IEntity>();
-            var editContext = new FormEditContext("alias", "repo", "entity", entity.Object, default, usageType, new List<IValidationSetup>(), serviceProvider.Object);
+            var editContext = new FormEditContext("alias", "repo", "entity", entity.Object, default, usageType, new List<ValidationSetup>(), serviceProvider.Object);
             var button = new ButtonSetup();
             _authorizationService
                 .Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<IEntity>(), It.IsAny<IEnumerable<IAuthorizationRequirement>>()))

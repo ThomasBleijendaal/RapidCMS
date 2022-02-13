@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    public class ListSetup : IListSetup
+    public class ListSetup
     {
         public ListSetup(
             int? pageSize, 
@@ -15,8 +14,8 @@ namespace RapidCMS.Core.Models.Setup
             bool? reorderingAllowed, 
             ListType listType, 
             EmptyVariantColumnVisibility emptyVariantColumnVisibility, 
-            List<IPaneSetup> panes, 
-            List<IButtonSetup> buttons)
+            List<PaneSetup> panes, 
+            List<ButtonSetup> buttons)
         {
             PageSize = pageSize;
             SearchBarVisible = searchBarVisible;
@@ -32,14 +31,14 @@ namespace RapidCMS.Core.Models.Setup
         public bool? ReorderingAllowed { get; set; }
         public ListType ListType { get; set; }
         public EmptyVariantColumnVisibility EmptyVariantColumnVisibility { get; set; }
-        public List<IPaneSetup> Panes { get; set; }
-        public List<IButtonSetup> Buttons { get; set; }
+        public List<PaneSetup> Panes { get; set; }
+        public List<ButtonSetup> Buttons { get; set; }
 
-        public IButtonSetup? FindButton(string buttonId)
+        public ButtonSetup? FindButton(string buttonId)
         {
             return GetAllButtons()?.FirstOrDefault(x => x.ButtonId == buttonId);
         }
-        public IEnumerable<IButtonSetup>? GetAllButtons()
+        public IEnumerable<ButtonSetup>? GetAllButtons()
         {
             if (Buttons != null)
             {

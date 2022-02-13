@@ -51,32 +51,31 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ICms, CmsSetup>();
             services.AddSingleton(x => (ILogin)x.GetRequiredService(typeof(ICms)));
 
-            services.AddSingleton<ISetupResolver<IPageSetup>, PageSetupResolver>();
-            services.AddSingleton<ISetupResolver<ICollectionSetup>, CollectionSetupResolver>();
-            services.AddSingleton(sp => new Lazy<ISetupResolver<ICollectionSetup>>(() => sp.GetRequiredService<ISetupResolver<ICollectionSetup>>()));
-            services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>>, TreeElementsSetupResolver>();
-            services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>, TreeElementSetupResolver>();
+            services.AddSingleton<ISetupResolver<PageSetup>, PageSetupResolver>();
+            services.AddSingleton<ISetupResolver<CollectionSetup>, CollectionSetupResolver>();
+            services.AddSingleton(sp => new Lazy<ISetupResolver<CollectionSetup>>(() => sp.GetRequiredService<ISetupResolver<CollectionSetup>>()));
+            services.AddSingleton<ISetupResolver<IEnumerable<TreeElementSetup>>, TreeElementsSetupResolver>();
+            services.AddSingleton<ISetupResolver<IEnumerable<TreeElementSetup>, IEnumerable<ITreeElementConfig>>, TreeElementSetupResolver>();
 
-            // TODO: convert *Config to I*Config
-            services.AddSingleton<ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig>, TypeRegistrationSetupResolver>();
-            services.AddSingleton<ISetupResolver<IEntityVariantSetup, EntityVariantConfig>, EntityVariantSetupResolver>();
-            services.AddSingleton<ISetupResolver<ITreeViewSetup, TreeViewConfig>, TreeViewSetupResolver>();
-            services.AddSingleton<ISetupResolver<IElementSetup, ElementConfig>, ElementSetupResolver>();
-            services.AddSingleton<ISetupResolver<IPaneSetup, PaneConfig>, PaneSetupResolver>();
-            services.AddSingleton<ISetupResolver<IListSetup, ListConfig>, ListSetupResolver>();
-            services.AddSingleton<ISetupResolver<INodeSetup, NodeConfig>, NodeSetupResolver>();
-            services.AddSingleton<ISetupResolver<IFieldSetup, FieldConfig>, FieldSetupResolver>();
-            services.AddSingleton<ISetupResolver<IButtonSetup, ButtonConfig>, ButtonSetupResolver>();
-            services.AddSingleton<ISetupResolver<ISubCollectionListSetup, CollectionListConfig>, SubCollectionListSetupResolver>();
-            services.AddSingleton<ISetupResolver<IRelatedCollectionListSetup, CollectionListConfig>, RelatedCollectionListSetupResolver>();
+            services.AddSingleton<ISetupResolver<TypeRegistrationSetup, CustomTypeRegistrationConfig>, TypeRegistrationSetupResolver>();
+            services.AddSingleton<ISetupResolver<EntityVariantSetup, EntityVariantConfig>, EntityVariantSetupResolver>();
+            services.AddSingleton<ISetupResolver<TreeViewSetup, TreeViewConfig>, TreeViewSetupResolver>();
+            services.AddSingleton<ISetupResolver<ElementSetup, ElementConfig>, ElementSetupResolver>();
+            services.AddSingleton<ISetupResolver<PaneSetup, PaneConfig>, PaneSetupResolver>();
+            services.AddSingleton<ISetupResolver<ListSetup, ListConfig>, ListSetupResolver>();
+            services.AddSingleton<ISetupResolver<NodeSetup, NodeConfig>, NodeSetupResolver>();
+            services.AddSingleton<ISetupResolver<FieldSetup, FieldConfig>, FieldSetupResolver>();
+            services.AddSingleton<ISetupResolver<ButtonSetup, ButtonConfig>, ButtonSetupResolver>();
+            services.AddSingleton<ISetupResolver<SubCollectionListSetup, CollectionListConfig>, SubCollectionListSetupResolver>();
+            services.AddSingleton<ISetupResolver<RelatedCollectionListSetup, CollectionListConfig>, RelatedCollectionListSetupResolver>();
 
             services.AddSingleton<IConventionBasedResolver<ListConfig>, ConventionBasedListConfigResolver>();
             services.AddSingleton<IConventionBasedResolver<NodeConfig>, ConventionBasedNodeConfigResolver>();
-            services.AddSingleton<IConventionBasedResolver<INodeSetup>, ConventionBasedNodeSetupResolver>();
+            services.AddSingleton<IConventionBasedResolver<NodeSetup>, ConventionBasedNodeSetupResolver>();
             services.AddSingleton<IFieldConfigResolver, FieldConfigResolver>();
             services.AddSingleton<ILanguageResolver, LanguageResolver>();
 
-            services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>, IPlugin>, PluginTreeElementsSetupResolver>();
+            services.AddSingleton<ISetupResolver<IEnumerable<TreeElementSetup>, IPlugin>, PluginTreeElementsSetupResolver>();
 
             if (rootConfig.AllowAnonymousUsage)
             {

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using RapidCMS.Core.Abstractions.Metadata;
-using RapidCMS.Core.Abstractions.Setup;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class ElementSetup : IElementSetup
+    public class ElementSetup
     {
         public ElementSetup(IPropertyMetadata id, IReadOnlyList<IExpressionMetadata> labels)
         {

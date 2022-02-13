@@ -6,8 +6,6 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
@@ -20,13 +18,13 @@ namespace RapidCMS.Core.Factories
     internal class ApiEditContextWrapperFactory : IEditContextFactory
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ISetupResolver<IEntityVariantSetup> _entityVariantResolver;
-        private readonly ISetupResolver<IReadOnlyList<IValidationSetup>> _validationResolver;
+        private readonly ISetupResolver<EntityVariantSetup> _entityVariantResolver;
+        private readonly ISetupResolver<IReadOnlyList<ValidationSetup>> _validationResolver;
 
         public ApiEditContextWrapperFactory(
             IServiceProvider serviceProvider,
-            ISetupResolver<IEntityVariantSetup> entityVariantResolver,
-            ISetupResolver<IReadOnlyList<IValidationSetup>> validationResolver)
+            ISetupResolver<EntityVariantSetup> entityVariantResolver,
+            ISetupResolver<IReadOnlyList<ValidationSetup>> validationResolver)
         {
             _serviceProvider = serviceProvider;
             _entityVariantResolver = entityVariantResolver;

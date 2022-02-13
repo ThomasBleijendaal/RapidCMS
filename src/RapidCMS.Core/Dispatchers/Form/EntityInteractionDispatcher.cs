@@ -14,6 +14,7 @@ using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Dispatchers.Form
@@ -24,7 +25,7 @@ namespace RapidCMS.Core.Dispatchers.Form
         IInteractionDispatcher<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>
     {
         private readonly INavigationStateProvider _navigationStateProvider;
-        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
+        private readonly ISetupResolver<CollectionSetup> _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IConcurrencyService _concurrencyService;
         private readonly IButtonInteraction _buttonInteraction;
@@ -33,7 +34,7 @@ namespace RapidCMS.Core.Dispatchers.Form
 
         public EntityInteractionDispatcher(
             INavigationStateProvider navigationStateProvider,
-            ISetupResolver<ICollectionSetup> collectionResolver,
+            ISetupResolver<CollectionSetup> collectionResolver,
             IRepositoryResolver repositoryResolver,
             IConcurrencyService concurrencyService,
             IButtonInteraction buttonInteraction,

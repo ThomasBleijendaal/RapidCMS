@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Services
 {
@@ -9,6 +9,6 @@ namespace RapidCMS.Core.Abstractions.Services
         Task<TResult> GetEntityAsync<TRequest, TResult>(TRequest request) where TResult : class;
         Task<TResult> GetEntitiesAsync<TRequest, TResult>(TRequest request) where TResult : class;
 
-        Task<IEnumerable<ITypeRegistration>> GetPageAsync(string pageAlias);
+        Task<IEnumerable<TypeRegistrationSetup>> GetPageAsync(string pageAlias);
     }
 }

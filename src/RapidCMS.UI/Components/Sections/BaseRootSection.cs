@@ -15,6 +15,7 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Response;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.Core.Navigation;
 
@@ -40,7 +41,7 @@ namespace RapidCMS.UI.Components.Sections
 
         protected IEnumerable<ButtonUI>? Buttons { get; set; }
         protected List<(FormEditContext editContext, IEnumerable<SectionUI> sections)>? Sections { get; set; }
-        protected IEnumerable<ITypeRegistration>? PageContents { get; set; }
+        protected IEnumerable<TypeRegistrationSetup>? PageContents { get; set; }
 
         private CancellationTokenSource _loadCancellationTokenSource = new CancellationTokenSource();
 
@@ -155,7 +156,7 @@ namespace RapidCMS.UI.Components.Sections
             });
         }
 
-        protected static RenderFragment RenderType(ITypeRegistration section)
+        protected static RenderFragment RenderType(TypeRegistrationSetup section)
             => builder =>
             {
                 var type = section.Type == typeof(ICollectionConfig)

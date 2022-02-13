@@ -1,10 +1,9 @@
 ﻿using System;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    internal class RelatedCollectionListSetup : IRelatedCollectionListSetup
+    public class RelatedCollectionListSetup
     {
         public RelatedCollectionListSetup(int index, string collectionAlias)
         {

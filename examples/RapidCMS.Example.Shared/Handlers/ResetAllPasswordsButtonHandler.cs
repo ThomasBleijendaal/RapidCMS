@@ -5,12 +5,13 @@ using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Example.Shared.Handlers
 {
     public class ResetAllPasswordsButtonHandler : IButtonActionHandler
     {
-        public OperationAuthorizationRequirement GetOperation(IButton button, FormEditContext editContext)
+        public OperationAuthorizationRequirement GetOperation(ButtonSetup button, FormEditContext editContext)
         {
             // use the RapidCMS.Core.Authorization.Operations to define what action this button represents
             // and how the authorization handler must challenge the current logged in user with to see whether they
@@ -18,25 +19,25 @@ namespace RapidCMS.Example.Shared.Handlers
             return Operations.Delete;
         }
 
-        public bool IsCompatible(IButton button, FormEditContext editContext)
+        public bool IsCompatible(ButtonSetup button, FormEditContext editContext)
         {
             // check if the button is compatible with the current view and hide it when it is not compatible
             return true;
         }
 
-        public bool RequiresValidForm(IButton button, FormEditContext editContext)
+        public bool RequiresValidForm(ButtonSetup button, FormEditContext editContext)
         {
             // enables this button to block the action when the form associated with the button is not valid
             return false;
         }
 
-        public bool ShouldAskForConfirmation(IButton button, FormEditContext editContext)
+        public bool ShouldAskForConfirmation(ButtonSetup button, FormEditContext editContext)
         {
             // triggers a confirm
             return false;
         }
 
-        public async Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context)
+        public async Task<CrudType> ButtonClickBeforeRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context)
         {
             await Task.Delay(1000);
 
@@ -44,7 +45,7 @@ namespace RapidCMS.Example.Shared.Handlers
             return CrudType.Refresh;
         }
 
-        public Task ButtonClickAfterRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context)
+        public Task ButtonClickAfterRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context)
         {
             // this method is invoked after the repository has performed their action
             return Task.CompletedTask;

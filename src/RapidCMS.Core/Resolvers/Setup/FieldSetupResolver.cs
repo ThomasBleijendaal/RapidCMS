@@ -8,7 +8,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
-    internal class FieldSetupResolver : ISetupResolver<IFieldSetup, FieldConfig>
+    internal class FieldSetupResolver : ISetupResolver<FieldSetup, FieldConfig>
     {
         private readonly IRepositoryTypeResolver _repositoryTypeResolver;
 
@@ -17,7 +17,7 @@ namespace RapidCMS.Core.Resolvers.Setup
             _repositoryTypeResolver = repositoryTypeResolver;
         }
 
-        public Task<IResolvedSetup<IFieldSetup>> ResolveSetupAsync(FieldConfig config, ICollectionSetup? collection = default)
+        public Task<IResolvedSetup<FieldSetup>> ResolveSetupAsync(FieldConfig config, CollectionSetup? collection = default)
         {
             if (collection == null)
             {
@@ -61,7 +61,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 };
             }
 
-            return Task.FromResult<IResolvedSetup<IFieldSetup>>(new ResolvedSetup<IFieldSetup>(setup, true));
+            return Task.FromResult<IResolvedSetup<FieldSetup>>(new ResolvedSetup<FieldSetup>(setup, true));
         }
     }
 }

@@ -5,8 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Repositories
 {
@@ -26,7 +26,7 @@ namespace RapidCMS.Core.Resolvers.Repositories
             _plugins = plugins;
         }
 
-        IRepository IRepositoryResolver.GetRepository(ICollectionSetup collection)
+        IRepository IRepositoryResolver.GetRepository(CollectionSetup collection)
             => (this as IRepositoryResolver).GetRepository(collection.RepositoryAlias);
 
         IRepository IRepositoryResolver.GetRepository(string repositoryAlias)

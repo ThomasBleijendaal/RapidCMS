@@ -1,13 +1,12 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Metadata;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Config;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    public class FieldSetup : IFieldSetup
+    public class FieldSetup
     {
         internal FieldSetup(FieldConfig? field)
         {

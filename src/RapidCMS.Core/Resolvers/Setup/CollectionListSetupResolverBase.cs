@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Config;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Setup
 {
     internal class CollectionListSetupResolverBase
     {
-        protected readonly Lazy<ISetupResolver<ICollectionSetup>> _setupResolver;
+        protected readonly Lazy<ISetupResolver<CollectionSetup>> _setupResolver;
 
-        public CollectionListSetupResolverBase(Lazy<ISetupResolver<ICollectionSetup>> setupResolver)
+        public CollectionListSetupResolverBase(Lazy<ISetupResolver<CollectionSetup>> setupResolver)
         {
             _setupResolver = setupResolver;
         }
 
-        protected async Task<UsageType> GetUsageTypeAsync(CollectionListConfig config, ICollectionSetup? collection)
+        protected async Task<UsageType> GetUsageTypeAsync(CollectionListConfig config, CollectionSetup? collection)
         {
             if (config is ReferencedCollectionListConfig referencedCollectionList)
             {
