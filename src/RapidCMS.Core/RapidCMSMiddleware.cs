@@ -54,12 +54,12 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ISetupResolver<PageSetup>, PageSetupResolver>();
             services.AddSingleton<ISetupResolver<CollectionSetup>, CollectionSetupResolver>();
             services.AddSingleton(sp => new Lazy<ISetupResolver<CollectionSetup>>(() => sp.GetRequiredService<ISetupResolver<CollectionSetup>>()));
-            services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>>, TreeElementsSetupResolver>();
-            services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>>, TreeElementSetupResolver>();
+            services.AddSingleton<ISetupResolver<IEnumerable<TreeElementSetup>>, TreeElementsSetupResolver>();
+            services.AddSingleton<ISetupResolver<IEnumerable<TreeElementSetup>, IEnumerable<ITreeElementConfig>>, TreeElementSetupResolver>();
 
-            services.AddSingleton<ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig>, TypeRegistrationSetupResolver>();
+            services.AddSingleton<ISetupResolver<TypeRegistrationSetup, CustomTypeRegistrationConfig>, TypeRegistrationSetupResolver>();
             services.AddSingleton<ISetupResolver<EntityVariantSetup, EntityVariantConfig>, EntityVariantSetupResolver>();
-            services.AddSingleton<ISetupResolver<ITreeViewSetup, TreeViewConfig>, TreeViewSetupResolver>();
+            services.AddSingleton<ISetupResolver<TreeViewSetup, TreeViewConfig>, TreeViewSetupResolver>();
             services.AddSingleton<ISetupResolver<ElementSetup, ElementConfig>, ElementSetupResolver>();
             services.AddSingleton<ISetupResolver<PaneSetup, PaneConfig>, PaneSetupResolver>();
             services.AddSingleton<ISetupResolver<ListSetup, ListConfig>, ListSetupResolver>();
@@ -75,7 +75,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IFieldConfigResolver, FieldConfigResolver>();
             services.AddSingleton<ILanguageResolver, LanguageResolver>();
 
-            services.AddSingleton<ISetupResolver<IEnumerable<ITreeElementSetup>, IPlugin>, PluginTreeElementsSetupResolver>();
+            services.AddSingleton<ISetupResolver<IEnumerable<TreeElementSetup>, IPlugin>, PluginTreeElementsSetupResolver>();
 
             if (rootConfig.AllowAnonymousUsage)
             {
@@ -86,7 +86,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IEditContextFactory, FormEditContextWrapperFactory>();
             services.AddTransient<IUIResolverFactory, UIResolverFactory>();
 
-            services.AddTransient<IButtonActionHandlerResolver, ButtonActionHandlerResolver>();
+            services.AddTransient<IButtonSetupActionHandlerResolver, ButtonActionHandlerResolver>();
             services.AddTransient<IDataProviderResolver, DataProviderResolver>();
             services.AddTransient<IRepositoryResolver, RepositoryResolver>();
 
@@ -97,7 +97,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddTransient<IInteractionDispatcher, EntityInteractionDispatcher>();
             services.AddTransient<IInteractionDispatcher, EntitiesInteractionDispatcher>();
-            services.AddTransient<IButtonInteraction, ButtonInteraction>();
+            services.AddTransient<IButtonSetupInteraction, ButtonInteraction>();
             services.AddTransient<IDragInteraction, DragInteraction>();
             services.AddTransient<IInteractionService, InteractionService>();
 

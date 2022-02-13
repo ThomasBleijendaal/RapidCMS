@@ -6,17 +6,17 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Request.Form;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Dispatchers.Form
 {
     internal class GetEntitiesDispatcher : IPresentationDispatcher<GetEntitiesRequestModel, ListContext>
     {
-        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
+        private readonly ISetupResolver<CollectionSetup> _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IDataViewResolver _dataViewResolver;
         private readonly IParentService _parentService;
@@ -25,7 +25,7 @@ namespace RapidCMS.Core.Dispatchers.Form
         private readonly IServiceProvider _serviceProvider;
 
         public GetEntitiesDispatcher(
-            ISetupResolver<ICollectionSetup> collectionResolver,
+            ISetupResolver<CollectionSetup> collectionResolver,
             IRepositoryResolver repositoryResolver,
             IDataViewResolver dataViewResolver,
             IParentService parentService,

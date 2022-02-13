@@ -1,12 +1,12 @@
-﻿using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Enums;
+﻿using RapidCMS.Core.Enums;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Models.UI
 {
     public class RelatedCollectionUI : ElementUI
     {
-        internal RelatedCollectionUI(IRelatedCollectionListSetup relatedCollection, NavigationState nestedNavigationState) 
+        internal RelatedCollectionUI(RelatedCollectionListSetup relatedCollection, NavigationState nestedNavigationState) 
             : base((x, state) => state == EntityState.IsExisting, (x, y) => false)
         {
             CollectionAlias = relatedCollection.CollectionAlias;

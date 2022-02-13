@@ -10,7 +10,6 @@ using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Extensions;
@@ -19,6 +18,7 @@ using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Dispatchers.Form
@@ -28,19 +28,19 @@ namespace RapidCMS.Core.Dispatchers.Form
         IInteractionDispatcher<PersistEntitiesRequestModel, ListEditorCommandResponseModel>
     {
         private readonly INavigationStateProvider _navigationStateProvider;
-        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
+        private readonly ISetupResolver<CollectionSetup> _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IConcurrencyService _concurrencyService;
-        private readonly IButtonInteraction _buttonInteraction;
+        private readonly IButtonSetupInteraction _buttonInteraction;
         private readonly IEditContextFactory _editContextFactory;
         private readonly IMediator _mediator;
 
         public EntitiesInteractionDispatcher(
             INavigationStateProvider navigationStateProvider,
-            ISetupResolver<ICollectionSetup> collectionResolver,
+            ISetupResolver<CollectionSetup> collectionResolver,
             IRepositoryResolver repositoryResolver,
             IConcurrencyService concurrencyService,
-            IButtonInteraction buttonInteraction,
+            IButtonSetupInteraction buttonInteraction,
             IEditContextFactory editContextFactory,
             IMediator mediator)
         {
@@ -213,7 +213,7 @@ namespace RapidCMS.Core.Dispatchers.Form
             return response;
         }
 
-        private static bool ShouldFallbackToNavigatingToNodeEditor(ICollectionSetup collection)
+        private static bool ShouldFallbackToNavigatingToNodeEditor(CollectionSetup collection)
         {
             return collection.NodeEditor != null;
         }

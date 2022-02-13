@@ -13,7 +13,6 @@ using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Dispatchers.Api;
 using RapidCMS.Core.Extensions;
@@ -49,7 +48,7 @@ namespace RapidCMS.Api.Core
                 services.AddSingleton<IUserResolver, AnonymousUserResolver>();
             }
 
-            services.AddSingleton<ISetupResolver<IEntityVariantSetup>, GlobalEntityVariantSetupResolver>();
+            services.AddSingleton<ISetupResolver<EntityVariantSetup>, GlobalEntityVariantSetupResolver>();
 
             services.AddTransient<IDataViewResolver, ApiDataViewResolver>();
             services.AddTransient<IRepositoryResolver, RepositoryResolver>();
@@ -108,9 +107,9 @@ namespace RapidCMS.Api.Core
 
             var validations = config.EntityValidationConfig
                 .GroupBy(x => x.entity)
-                .ToDictionary(x => x.Key, x => x.ToList(x => new ValidationSetup(x.validation.Type, x.validation.Configuration) as IValidationSetup) as IReadOnlyList<IValidationSetup>);
+                .ToDictionary(x => x.Key, x => x.ToList(x => new ValidationSetup(x.validation.Type, x.validation.Configuration) as ValidationSetup) as IReadOnlyList<ValidationSetup>);
 
-            services.AddSingleton<ISetupResolver<IReadOnlyList<IValidationSetup>>>(new ValidationSetupResolver(validations));
+            services.AddSingleton<ISetupResolver<IReadOnlyList<ValidationSetup>>>(new ValidationSetupResolver(validations));
 
             return services;
         }

@@ -3,7 +3,6 @@ using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Interactions;
@@ -17,17 +16,17 @@ namespace RapidCMS.Core.Tests.Interactions
 {
     public class ButtonInteractionCollectionTests
     {
-        private IButtonInteraction _subject = default!;
+        private IButtonSetupInteraction _subject = default!;
 
-        private Mock<ISetupResolver<ICollectionSetup>> _collectionResolver = default!;
-        private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
+        private Mock<ISetupResolver<CollectionSetup>> _collectionResolver = default!;
+        private Mock<IButtonSetupActionHandlerResolver> _buttonActionHandlerResolver = default!;
         private Mock<IAuthService> _authService = default!;
         private Mock<IServiceProvider> _serviceProvider = default!;
 
         [SetUp]
         public void Setup()
         {
-            _collectionResolver = new Mock<ISetupResolver<ICollectionSetup>>();
+            _collectionResolver = new Mock<ISetupResolver<CollectionSetup>>();
             _collectionResolver
                 .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
                 .ReturnsAsync((string alias) =>
@@ -40,7 +39,7 @@ namespace RapidCMS.Core.Tests.Interactions
                         EntityVariant = new EntityVariantSetup("default", default, typeof(DefaultEntityVariant), "alias")
                     });
 
-            _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
+            _buttonActionHandlerResolver = new Mock<IButtonSetupActionHandlerResolver>();
 
             _authService = new Mock<IAuthService>();
             _serviceProvider = new Mock<IServiceProvider>();
@@ -54,7 +53,7 @@ namespace RapidCMS.Core.Tests.Interactions
             // arrange
             var request = new PersistEntityRequestModel()
             {
-                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object)
+                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object)
             };
 
             // act
@@ -70,7 +69,7 @@ namespace RapidCMS.Core.Tests.Interactions
             // arrange
             var request = new PersistEntityRequestModel()
             {
-                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object)
+                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object)
             };
 
             // act
@@ -88,7 +87,7 @@ namespace RapidCMS.Core.Tests.Interactions
             {
                 ListContext = new ListContext(
                     "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -110,7 +109,7 @@ namespace RapidCMS.Core.Tests.Interactions
             {
                 ListContext = new ListContext(
                     "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,
@@ -132,7 +131,7 @@ namespace RapidCMS.Core.Tests.Interactions
             {
                 ListContext = new ListContext(
                     "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup>(), _serviceProvider.Object),
+                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object),
                     default,
                     UsageType.Edit,
                     default,

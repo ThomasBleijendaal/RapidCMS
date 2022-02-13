@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
@@ -14,12 +13,12 @@ namespace RapidCMS.Core.Resolvers.Setup
     internal class PageSetupResolver : ISetupResolver<PageSetup>
     {
         private readonly ICmsConfig _cmsConfig;
-        private readonly ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig> _typeRegistrationSetupResolver;
+        private readonly ISetupResolver<TypeRegistrationSetup, CustomTypeRegistrationConfig> _typeRegistrationSetupResolver;
         private readonly Dictionary<string, PageSetup> _cache = new Dictionary<string, PageSetup>();
 
         public PageSetupResolver(
             ICmsConfig cmsConfig,
-            ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig> typeRegistrationSetupResolver)
+            ISetupResolver<TypeRegistrationSetup, CustomTypeRegistrationConfig> typeRegistrationSetupResolver)
         {
             _cmsConfig = cmsConfig;
             _typeRegistrationSetupResolver = typeRegistrationSetupResolver;

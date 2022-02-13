@@ -4,17 +4,17 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Validators
 {
     internal static class EntityValidator
     {
         public static async IAsyncEnumerable<ValidationResult> ValidateAsync(
-            IReadOnlyList<IValidationSetup> validators,
+            IReadOnlyList<ValidationSetup> validators,
             IRelationContainer relationContainer,
             IServiceProvider serviceProvider,
             IEntity entity,

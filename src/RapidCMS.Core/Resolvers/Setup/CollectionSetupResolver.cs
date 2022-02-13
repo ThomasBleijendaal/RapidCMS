@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
@@ -17,9 +16,9 @@ namespace RapidCMS.Core.Resolvers.Setup
     internal class CollectionSetupResolver : ISetupResolver<CollectionSetup>
     {
         private readonly ICmsConfig _cmsConfig;
-        private readonly ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> _treeElementResolver;
+        private readonly ISetupResolver<IEnumerable<TreeElementSetup>, IEnumerable<ITreeElementConfig>> _treeElementResolver;
         private readonly ISetupResolver<EntityVariantSetup, EntityVariantConfig> _entityVariantResolver;
-        private readonly ISetupResolver<ITreeViewSetup, TreeViewConfig> _treeViewResolver;
+        private readonly ISetupResolver<TreeViewSetup, TreeViewConfig> _treeViewResolver;
         private readonly ISetupResolver<ElementSetup, ElementConfig> _elementResolver;
         private readonly ISetupResolver<ListSetup, ListConfig> _listResolver;
         private readonly ISetupResolver<NodeSetup, NodeConfig> _nodeResolver;
@@ -31,9 +30,9 @@ namespace RapidCMS.Core.Resolvers.Setup
         private Dictionary<string, CollectionSetup> _cachedCollectionMap { get; set; } = new Dictionary<string, CollectionSetup>();
 
         public CollectionSetupResolver(ICmsConfig cmsConfig,
-            ISetupResolver<IEnumerable<ITreeElementSetup>, IEnumerable<ITreeElementConfig>> treeElementResolver,
+            ISetupResolver<IEnumerable<TreeElementSetup>, IEnumerable<ITreeElementConfig>> treeElementResolver,
             ISetupResolver<EntityVariantSetup, EntityVariantConfig> entityVariantResolver,
-            ISetupResolver<ITreeViewSetup, TreeViewConfig> treeViewResolver,
+            ISetupResolver<TreeViewSetup, TreeViewConfig> treeViewResolver,
             ISetupResolver<ElementSetup, ElementConfig> elementResolver,
             ISetupResolver<ListSetup, ListConfig> listResolver,
             ISetupResolver<NodeSetup, NodeConfig> nodeResolver,

@@ -4,7 +4,6 @@ using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Navigation;
@@ -14,21 +13,21 @@ namespace RapidCMS.Core.Factories
 {
     internal class UIResolverFactory : IUIResolverFactory
     {
-        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
+        private readonly ISetupResolver<CollectionSetup> _collectionResolver;
         private readonly IDataProviderResolver _dataProviderResolver;
-        private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
+        private readonly IButtonSetupActionHandlerResolver _buttonActionHandlerResolver;
         private readonly IDataViewResolver _dataViewResolver;
         private readonly IAuthService _authService;
-        private readonly IConventionBasedResolver<INodeSetup> _conventionBasedNodeSetupResolver;
+        private readonly IConventionBasedResolver<NodeSetup> _conventionBasedNodeSetupResolver;
         private readonly INavigationStateProvider _navigationStateProvider;
 
         public UIResolverFactory(
-            ISetupResolver<ICollectionSetup> collectionResolver,
+            ISetupResolver<CollectionSetup> collectionResolver,
             IDataProviderResolver dataProviderResolver,
-            IButtonActionHandlerResolver buttonActionHandlerResolver,
+            IButtonSetupActionHandlerResolver buttonActionHandlerResolver,
             IDataViewResolver dataViewResolver,
             IAuthService authService,
-            IConventionBasedResolver<INodeSetup> conventionBasedNodeSetupResolver,
+            IConventionBasedResolver<NodeSetup> conventionBasedNodeSetupResolver,
             INavigationStateProvider navigationStateProvider)
         {
             _collectionResolver = collectionResolver;

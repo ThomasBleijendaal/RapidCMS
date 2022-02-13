@@ -4,24 +4,24 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Api;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Dispatchers.Api
 {
     internal class GetEntityDispatcher : IPresentationDispatcher<GetEntityRequestModel, IEntity>
     {
-        private readonly ISetupResolver<IEntityVariantSetup> _entityVariantResolver;
+        private readonly ISetupResolver<EntityVariantSetup> _entityVariantResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IParentService _parentService;
         private readonly IAuthService _authService;
 
         public GetEntityDispatcher(
-            ISetupResolver<IEntityVariantSetup> entityVariantResolver,
+            ISetupResolver<EntityVariantSetup> entityVariantResolver,
             IRepositoryResolver repositoryResolver,
             IParentService parentService,
             IAuthService authService)

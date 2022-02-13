@@ -5,7 +5,6 @@ using RapidCMS.Core.Abstractions.Handlers;
 using RapidCMS.Core.Abstractions.Interactions;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Forms;
@@ -23,35 +22,35 @@ namespace RapidCMS.Core.Tests.Interactions
 {
     public class ButtonInteractionHandlerTests
     {
-        private IButtonInteraction _subject = default!;
+        private IButtonSetupInteraction _subject = default!;
 
-        private Mock<ISetupResolver<ICollectionSetup>> _collectionResolver = default!;
-        private Mock<IButtonActionHandler> _buttonActionHandler = default!;
-        private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
+        private Mock<ISetupResolver<CollectionSetup>> _collectionResolver = default!;
+        private Mock<IButtonSetupActionHandler> _buttonActionHandler = default!;
+        private Mock<IButtonSetupActionHandlerResolver> _buttonActionHandlerResolver = default!;
         private Mock<IAuthService> _authService = default!;
-        private Mock<IButtonSetup> _button = default!;
-        private Mock<ICollectionSetup> _collection = default!;
+        private Mock<ButtonSetup> _button = default!;
+        private Mock<CollectionSetup> _collection = default!;
         private IServiceProvider _serviceProvider = default!;
 
         [SetUp]
         public void Setup()
         {
-            _button = new Mock<IButtonSetup>();
+            _button = new Mock<ButtonSetup>();
 
-            _collection = new Mock<ICollectionSetup>();
+            _collection = new Mock<CollectionSetup>();
             _collection
                 .Setup(x => x.FindButton(It.IsAny<string>()))
                 .Returns(_button.Object);
 
-            _collectionResolver = new Mock<ISetupResolver<ICollectionSetup>>();
+            _collectionResolver = new Mock<ISetupResolver<CollectionSetup>>();
             _collectionResolver
                 .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
                 .ReturnsAsync(_collection.Object);
 
-            _buttonActionHandler = new Mock<IButtonActionHandler>();
-            _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
+            _buttonActionHandler = new Mock<IButtonSetupActionHandler>();
+            _buttonActionHandlerResolver = new Mock<IButtonSetupActionHandlerResolver>();
             _buttonActionHandlerResolver
-                .Setup(x => x.GetButtonActionHandler(It.IsAny<IButtonSetup>()))
+                .Setup(x => x.GetButtonActionHandler(It.IsAny<ButtonSetup>()))
                 .Returns(_buttonActionHandler.Object);
 
             _authService = new Mock<IAuthService>();
@@ -65,8 +64,8 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenValidationOfEditorButtonIsRequested_ThenValidityOfEditContextIsTested(bool requiresTesting)
         {
             // arrange
-            _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<FormEditContext>())).Returns(requiresTesting);
-            var editContext = new FormEditContext("alias", "repo", "entity", new ValidEntity(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
+            _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>())).Returns(requiresTesting);
+            var editContext = new FormEditContext("alias", "repo", "entity", new ValidEntity(), default, UsageType.Edit, new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             Expression<Func<ValidEntity, string>> property = x => x.Name;
             editContext.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata(property)!);
             var request = new PersistEntityRequestModel()
@@ -79,7 +78,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _buttonActionHandler.Verify(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<FormEditContext>()), Times.Once());
+            _buttonActionHandler.Verify(x => x.RequiresValidForm(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>()), Times.Once());
             Assert.AreEqual(requiresTesting, editContext.WasValidated(PropertyMetadataHelper.GetPropertyMetadata(property)!));
         }
 
@@ -87,8 +86,8 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenValidationOfEditorButtonIsRequested_ThenExceptionIsThrownIfFormIsInvalid()
         {
             // arrange
-            _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<FormEditContext>())).Returns(true);
-            var editContext = new FormEditContext("alias", "repo", "entity", new InvalidEntity(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
+            _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>())).Returns(true);
+            var editContext = new FormEditContext("alias", "repo", "entity", new InvalidEntity(), default, UsageType.Edit, new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             Expression<Func<InvalidEntity, string>> property = x => x.Name;
             editContext.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata(property)!);
             var request = new PersistEntityRequestModel()
@@ -106,7 +105,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             var customData = new object();
-            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             var request = new PersistEntityRequestModel()
             {
                 ActionId = "123",
@@ -118,7 +117,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _buttonActionHandler.Verify(x => x.ButtonClickBeforeRepositoryActionAsync(It.IsAny<IButton>(), It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
+            _buttonActionHandler.Verify(x => x.ButtonClickBeforeRepositoryActionAsync(It.IsAny<ButtonSetup>(), It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
         }
 
         [Test]
@@ -126,7 +125,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             var customData = new object();
-            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
 
             var request = new PersistEntityRequestModel()
             {
@@ -139,7 +138,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.CompleteButtonInteractionAsync(request);
 
             // assert
-            _buttonActionHandler.Verify(x => x.ButtonClickAfterRepositoryActionAsync(It.IsAny<IButton>(), It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
+            _buttonActionHandler.Verify(x => x.ButtonClickAfterRepositoryActionAsync(It.IsAny<ButtonSetup>(), It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
         }
 
         [TestCase(true)]
@@ -147,8 +146,8 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenValidationOfEditorInListButtonIsRequested_ThenValidityOfEditContextIsTested(bool requiresTesting)
         {
             // arrange
-            _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<FormEditContext>())).Returns(requiresTesting);
-            var editContext = new FormEditContext("alias", "repo", "entity", new ValidEntity(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
+            _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>())).Returns(requiresTesting);
+            var editContext = new FormEditContext("alias", "repo", "entity", new ValidEntity(), default, UsageType.Edit, new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             var listContext = new ListContext("alias", editContext, default, UsageType.Edit, default, _serviceProvider);
             Expression<Func<ValidEntity, string>> property = x => x.Name;
             editContext.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata(property)!);
@@ -163,7 +162,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _buttonActionHandler.Verify(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<FormEditContext>()), Times.Once());
+            _buttonActionHandler.Verify(x => x.RequiresValidForm(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>()), Times.Once());
             Assert.AreEqual(requiresTesting, editContext.WasValidated(PropertyMetadataHelper.GetPropertyMetadata(property)!));
         }
 
@@ -171,8 +170,8 @@ namespace RapidCMS.Core.Tests.Interactions
         public void WhenValidationOfEditorInListButtonIsRequested_ThenExceptionIsThrownIfFormIsInvalid()
         {
             // arrange
-            _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<IButton>(), It.IsAny<FormEditContext>())).Returns(true);
-            var editContext = new FormEditContext("alias", "repo", "entity", new InvalidEntity(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
+            _buttonActionHandler.Setup(x => x.RequiresValidForm(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>())).Returns(true);
+            var editContext = new FormEditContext("alias", "repo", "entity", new InvalidEntity(), default, UsageType.Edit, new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             var listContext = new ListContext("alias", editContext, default, UsageType.Edit, default, _serviceProvider);
             Expression<Func<InvalidEntity, string>> property = x => x.Name;
             editContext.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata(property)!);
@@ -192,7 +191,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             var customData = new object();
-            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             var listContext = new ListContext("alias", editContext, default, UsageType.Edit, default, _serviceProvider);
             var request = new PersistEntityCollectionRequestModel()
             {
@@ -206,7 +205,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _buttonActionHandler.Verify(x => x.ButtonClickBeforeRepositoryActionAsync(It.IsAny<IButton>(), It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
+            _buttonActionHandler.Verify(x => x.ButtonClickBeforeRepositoryActionAsync(It.IsAny<ButtonSetup>(), It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
         }
 
         [Test]
@@ -214,7 +213,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             var customData = new object();
-            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             var listContext = new ListContext("alias", editContext, default, UsageType.Edit, default, _serviceProvider);
             var request = new PersistEntitiesRequestModel()
             {
@@ -227,7 +226,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.ValidateButtonInteractionAsync(request);
 
             // assert
-            _buttonActionHandler.Verify(x => x.ButtonClickBeforeRepositoryActionAsync(It.IsAny<IButton>(), It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
+            _buttonActionHandler.Verify(x => x.ButtonClickBeforeRepositoryActionAsync(It.IsAny<ButtonSetup>(), It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
         }
 
         [Test]
@@ -235,7 +234,7 @@ namespace RapidCMS.Core.Tests.Interactions
         {
             // arrange
             var customData = new object();
-            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<IValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
+            var editContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup> { new ValidationSetup(typeof(DataAnnotationEntityValidator), default) }, _serviceProvider);
             var listContext = new ListContext("alias", editContext, default, UsageType.Edit, default, _serviceProvider);
 
             var request = new PersistEntitiesRequestModel()
@@ -249,7 +248,7 @@ namespace RapidCMS.Core.Tests.Interactions
             _subject.CompleteButtonInteractionAsync(request);
 
             // assert
-            _buttonActionHandler.Verify(x => x.ButtonClickAfterRepositoryActionAsync(It.IsAny<IButton>(), It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
+            _buttonActionHandler.Verify(x => x.ButtonClickAfterRepositoryActionAsync(It.IsAny<ButtonSetup>(), It.Is<FormEditContext>(x => x == editContext), It.Is<ButtonContext>(x => x.CustomData == customData)), Times.Once());
         }
     }
 }

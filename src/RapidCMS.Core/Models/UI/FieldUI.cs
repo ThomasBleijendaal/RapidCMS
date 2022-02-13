@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Metadata;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Models.UI
 {
     public class FieldUI : ElementUI
     {
-        internal FieldUI(IFieldSetup field) : base(field.IsVisible, field.IsDisabled)
+        internal FieldUI(FieldSetup field) : base(field.IsVisible, field.IsDisabled)
         {
             Description = field.Description;
             Details = field.Details;

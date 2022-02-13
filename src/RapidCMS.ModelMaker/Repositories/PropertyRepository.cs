@@ -7,10 +7,10 @@ using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.EventArgs.Mediators;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.ModelMaker.Abstractions.CommandHandlers;
 using RapidCMS.ModelMaker.Abstractions.Config;
 using RapidCMS.ModelMaker.Abstractions.Detail;
@@ -25,13 +25,13 @@ namespace RapidCMS.ModelMaker.Repositories
     {
         private readonly IModelMakerConfig _config;
         private readonly ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse> _updateEntityCommandHandler;
-        private readonly ISetupResolver<ICollectionSetup> _collectionSetupResolver;
+        private readonly ISetupResolver<CollectionSetup> _collectionSetupResolver;
         private readonly IMediator _mediator;
 
         public PropertyRepository(
             IModelMakerConfig config,
             ICommandHandler<UpdateRequest<ModelEntity>, ConfirmResponse> updateEntityCommandHandler,
-            ISetupResolver<ICollectionSetup> collectionSetupResolver,
+            ISetupResolver<CollectionSetup> collectionSetupResolver,
             IMediator mediator)
         {
             _config = config;

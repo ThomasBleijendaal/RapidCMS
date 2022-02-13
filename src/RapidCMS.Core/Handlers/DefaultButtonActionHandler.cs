@@ -2,23 +2,23 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using RapidCMS.Core.Abstractions.Handlers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Attributes;
 using RapidCMS.Core.Authorization;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Handlers
 {
-    public class DefaultButtonActionHandler : IButtonActionHandler
+    public class DefaultButtonActionHandler : IButtonSetupActionHandler
     {
-        public Task ButtonClickAfterRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context)
+        public Task ButtonClickAfterRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context)
         {
             return Task.CompletedTask;
         }
 
-        public virtual Task<CrudType> ButtonClickBeforeRepositoryActionAsync(IButton button, FormEditContext editContext, ButtonContext context)
+        public virtual Task<CrudType> ButtonClickBeforeRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context)
         {
             return button.DefaultButtonType switch
             {
@@ -36,7 +36,7 @@ namespace RapidCMS.Core.Handlers
             };
         }
 
-        public OperationAuthorizationRequirement GetOperation(IButton button, FormEditContext editContext)
+        public OperationAuthorizationRequirement GetOperation(ButtonSetup button, FormEditContext editContext)
         {
             switch (button.DefaultButtonType)
             {
@@ -66,7 +66,7 @@ namespace RapidCMS.Core.Handlers
             }
         }
 
-        public bool IsCompatible(IButton button, FormEditContext editContext)
+        public bool IsCompatible(ButtonSetup button, FormEditContext editContext)
         {
             var usages = button.DefaultButtonType.GetCustomAttribute<ActionsAttribute>()?.Usages;
             var isCompatible = usages?.Any(x => editContext.UsageType.HasFlag(x)) ?? false;
@@ -74,12 +74,12 @@ namespace RapidCMS.Core.Handlers
             return isCompatible;
         }
 
-        public bool RequiresValidForm(IButton button, FormEditContext editContext)
+        public bool RequiresValidForm(ButtonSetup button, FormEditContext editContext)
         {
             return button.DefaultButtonType.GetCustomAttribute<ValidFormAttribute>() != null;
         }
 
-        public bool ShouldAskForConfirmation(IButton button, FormEditContext editContext)
+        public bool ShouldAskForConfirmation(ButtonSetup button, FormEditContext editContext)
         {
             return button.DefaultButtonType.GetCustomAttribute<ConfirmAttribute>() != null;
         }

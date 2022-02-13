@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
 
@@ -33,8 +32,8 @@ namespace RapidCMS.Core.Models.Setup
 
         public UsageType UsageType { get; set; }
 
-        public ITreeElementSetup? Parent { get; set; }
-        public List<ITreeElementSetup> Collections { get; set; } = new List<ITreeElementSetup>();
+        public TreeElementSetup? Parent { get; set; }
+        public List<TreeElementSetup> Collections { get; set; } = new List<TreeElementSetup>();
 
         public List<EntityVariantSetup>? SubEntityVariants { get; set; }
         public EntityVariantSetup EntityVariant { get; set; } = EntityVariantSetup.Undefined;
@@ -59,7 +58,7 @@ namespace RapidCMS.Core.Models.Setup
                 ?? EntityVariant;
         }
 
-        public ITreeViewSetup? TreeView { get; set; }
+        public TreeViewSetup? TreeView { get; set; }
         public ElementSetup? ElementSetup { get; set; }
 
         public ListSetup? ListView { get; set; }

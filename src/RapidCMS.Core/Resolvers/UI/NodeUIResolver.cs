@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.Core.Navigation;
 
@@ -14,13 +14,13 @@ namespace RapidCMS.Core.Resolvers.UI
 {
     internal class NodeUIResolver : BaseUIResolver, INodeUIResolver
     {
-        private readonly INodeSetup _node;
+        private readonly NodeSetup _node;
         private readonly INavigationStateProvider _navigationStateProvider;
 
         public NodeUIResolver(
-            INodeSetup node,
+            NodeSetup node,
             IDataProviderResolver dataProviderService,
-            IButtonActionHandlerResolver buttonActionHandlerResolver,
+            IButtonSetupActionHandlerResolver buttonActionHandlerResolver,
             INavigationStateProvider navigationStateProvider,
             IAuthService authService) : base(dataProviderService, buttonActionHandlerResolver, authService, navigationStateProvider)
         {

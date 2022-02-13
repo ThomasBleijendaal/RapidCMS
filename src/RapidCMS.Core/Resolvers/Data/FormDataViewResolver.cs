@@ -4,19 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Data
 {
     internal class FormDataViewResolver : IDataViewResolver
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
+        private readonly ISetupResolver<CollectionSetup> _collectionResolver;
 
         public FormDataViewResolver(
             IServiceProvider serviceProvider,
-            ISetupResolver<ICollectionSetup> collectionResolver)
+            ISetupResolver<CollectionSetup> collectionResolver)
         {
             _serviceProvider = serviceProvider;
             _collectionResolver = collectionResolver;
@@ -50,7 +50,7 @@ namespace RapidCMS.Core.Resolvers.Data
             return await GetDataViewsAsync(collection);
         }
 
-        private Task<IEnumerable<IDataView>> GetDataViewsAsync(ICollectionSetup collection)
+        private Task<IEnumerable<IDataView>> GetDataViewsAsync(CollectionSetup collection)
         {
             if (collection.DataViewBuilder == null)
             {

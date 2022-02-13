@@ -1,10 +1,9 @@
 ﻿using System;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Setup
 {
-    public class TreeElementSetup : ITreeElementSetup
+    public class TreeElementSetup
     {
         public TreeElementSetup(string alias, string name, PageType type)
         {

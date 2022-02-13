@@ -6,10 +6,9 @@ using Microsoft.AspNetCore.Components.Forms;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Metadata;
-using RapidCMS.Core.Abstractions.Setup;
-using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Forms
@@ -23,7 +22,7 @@ namespace RapidCMS.Core.Forms
             IEntity entity,
             IParent? parent,
             UsageType usageType,
-            IReadOnlyList<IValidationSetup> validators,
+            IReadOnlyList<ValidationSetup> validators,
             IServiceProvider serviceProvider)
         {
             CollectionAlias = collectionAlias ?? throw new ArgumentNullException(nameof(collectionAlias));
@@ -70,7 +69,7 @@ namespace RapidCMS.Core.Forms
 
         internal readonly FormState FormState;
         private readonly FormEditContext? _parentEditContext;
-        private readonly IReadOnlyList<IValidationSetup> _validators;
+        private readonly IReadOnlyList<ValidationSetup> _validators;
 
         public string CollectionAlias { get; private set; }
         public string RepositoryAlias { get; private set; }

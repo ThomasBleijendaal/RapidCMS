@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Abstractions.Validators;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
@@ -32,7 +31,7 @@ namespace RapidCMS.Core.Tests.Forms
                 new Entity { Id = "abc" },
                 default,
                 UsageType.Edit,
-                new List<IValidationSetup>
+                new List<ValidationSetup>
                 {
                     new ValidationSetup(typeof(ConfigurableEntityValidator), new ConfigurableEntityValidator.Config { InvalidId = "abc" })
                 },
@@ -60,7 +59,7 @@ namespace RapidCMS.Core.Tests.Forms
                 },
                 default,
                 UsageType.Edit,
-                new List<IValidationSetup>
+                new List<ValidationSetup>
                 {
                     new ValidationSetup(typeof(ConfigurableEntityValidator), new ConfigurableEntityValidator.Config { InvalidId = "abc" })
                 },

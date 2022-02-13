@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Services.Auth
 {
@@ -20,7 +20,7 @@ namespace RapidCMS.Core.Services.Auth
             return Task.CompletedTask;
         }
 
-        public Task EnsureAuthorizedUserAsync(FormEditContext editContext, IButtonSetup button)
+        public Task EnsureAuthorizedUserAsync(FormEditContext editContext, ButtonSetup button)
         {
             return Task.CompletedTask;
         }
@@ -35,7 +35,7 @@ namespace RapidCMS.Core.Services.Auth
             return Task.FromResult(true);
         }
 
-        public Task<bool> IsUserAuthorizedAsync(FormEditContext editContext, IButtonSetup button)
+        public Task<bool> IsUserAuthorizedAsync(FormEditContext editContext, ButtonSetup button)
         {
             return Task.FromResult(true);
         }

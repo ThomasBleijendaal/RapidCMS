@@ -8,11 +8,11 @@ namespace RapidCMS.Core.Models.Setup
     internal class CmsSetup : ICms, ILogin
     {
         private readonly CmsConfig _config;
-        private readonly ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig> _typeRegistrationSetupResolver;
+        private readonly ISetupResolver<TypeRegistrationSetup, CustomTypeRegistrationConfig> _typeRegistrationSetupResolver;
 
         public CmsSetup(
             CmsConfig config,
-            ISetupResolver<ITypeRegistration, CustomTypeRegistrationConfig> typeRegistrationSetupResolver)
+            ISetupResolver<TypeRegistrationSetup, CustomTypeRegistrationConfig> typeRegistrationSetupResolver)
         {
             _config = config;
             _typeRegistrationSetupResolver = typeRegistrationSetupResolver;
@@ -24,9 +24,9 @@ namespace RapidCMS.Core.Models.Setup
         internal string SiteName { get; set; }
         internal bool IsDevelopment { get; set; }
 
-        public ITypeRegistration? CustomLoginScreenRegistration { get; internal set; }
-        public ITypeRegistration? CustomLoginStatusRegistration { get; internal set; }
-        public ITypeRegistration? CustomLandingPageRegistration { get; internal set; }
+        public TypeRegistrationSetup? CustomLoginScreenRegistration { get; internal set; }
+        public TypeRegistrationSetup? CustomLoginStatusRegistration { get; internal set; }
+        public TypeRegistrationSetup? CustomLandingPageRegistration { get; internal set; }
 
         string ICms.SiteName => SiteName;
         bool ICms.IsDevelopment
@@ -35,7 +35,7 @@ namespace RapidCMS.Core.Models.Setup
             set => IsDevelopment = value;
         }
 
-        public async Task<ITypeRegistration?> CustomLoginScreenRegistrationAsync()
+        public async Task<TypeRegistrationSetup?> CustomLoginScreenRegistrationAsync()
         {
             if (_config.CustomLoginScreenRegistration != null)
             {
@@ -45,7 +45,7 @@ namespace RapidCMS.Core.Models.Setup
             return default;
         }
 
-        public async Task<ITypeRegistration?> CustomLoginStatusRegistrationAsync()
+        public async Task<TypeRegistrationSetup?> CustomLoginStatusRegistrationAsync()
         {
             if (_config.CustomLoginStatusRegistration != null)
             {
@@ -55,7 +55,7 @@ namespace RapidCMS.Core.Models.Setup
             return default;
         }
 
-        public async Task<ITypeRegistration?> CustomLandingPageRegistrationAsync()
+        public async Task<TypeRegistrationSetup?> CustomLandingPageRegistrationAsync()
         {
             if (_config.CustomLandingPageRegistration != null)
             {

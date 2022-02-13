@@ -4,18 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.ModelMaker.DataCollections
 {
     internal class CollectionsDataCollection : IDataCollection
     {
-        private readonly ISetupResolver<IEnumerable<ITreeElementSetup>> _setupResolver;
+        private readonly ISetupResolver<IEnumerable<TreeElementSetup>> _setupResolver;
 
-        public CollectionsDataCollection(ISetupResolver<IEnumerable<ITreeElementSetup>> setupResolver)
+        public CollectionsDataCollection(ISetupResolver<IEnumerable<TreeElementSetup>> setupResolver)
         {
             _setupResolver = setupResolver;
         }

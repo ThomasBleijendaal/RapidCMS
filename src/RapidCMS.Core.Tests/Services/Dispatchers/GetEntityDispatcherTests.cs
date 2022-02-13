@@ -6,11 +6,9 @@ using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Dispatchers.Form;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
-using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Setup;
@@ -26,7 +24,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
     {
         private IPresentationDispatcher<GetEntityRequestModel, FormEditContext> _subject = default!;
 
-        private Mock<ISetupResolver<ICollectionSetup>> _collectionResolver = default!;
+        private Mock<ISetupResolver<CollectionSetup>> _collectionResolver = default!;
         private Mock<IRepository> _repository = default!;
         private Mock<IRepositoryResolver> _repositoryResolver = default!;
         private Mock<IParentService> _parentService = default!;
@@ -39,7 +37,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         [SetUp]
         public void Setup()
         {
-            _collectionResolver = new Mock<ISetupResolver<ICollectionSetup>>();
+            _collectionResolver = new Mock<ISetupResolver<CollectionSetup>>();
             _collectionResolver
                 .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
                 .ReturnsAsync((string alias) =>
@@ -50,7 +48,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
                         $"repo-{alias}")
                     {
                         EntityVariant = new EntityVariantSetup("default", default, typeof(DefaultEntityVariant), "defaultentityvariant"),
-                        SubEntityVariants = new List<IEntityVariantSetup>
+                        SubEntityVariants = new List<EntityVariantSetup>
                         {
                             new EntityVariantSetup("sub1", default, typeof(SubEntityVariant1), "subentityvariant1"),
                             new EntityVariantSetup("sub3", default, typeof(SubEntityVariant3), "subentityvariant3"),

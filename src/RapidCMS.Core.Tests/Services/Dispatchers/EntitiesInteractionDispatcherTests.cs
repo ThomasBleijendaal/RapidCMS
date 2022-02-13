@@ -8,12 +8,12 @@ using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Dispatchers.Form;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Services.Concurrency;
 using System;
 using System.Collections.Generic;
@@ -28,12 +28,12 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
         private Mock<IServiceProvider> _serviceProviderMock = default!;
 
         private Mock<INavigationStateProvider> _navigationStateProvider = default!;
-        private Mock<ISetupResolver<ICollectionSetup>> _collectionResolver = default!;
-        private Mock<ICollectionSetup> _collection = default!;
-        private Mock<IEntityVariantSetup> _entityVariant = default!;
+        private Mock<ISetupResolver<CollectionSetup>> _collectionResolver = default!;
+        private Mock<CollectionSetup> _collection = default!;
+        private Mock<EntityVariantSetup> _entityVariant = default!;
         private Mock<IRepositoryResolver> _repositoryResolver = default!;
         private IConcurrencyService _concurrencyService = default!;
-        private Mock<IButtonInteraction> _buttonInteraction = default!;
+        private Mock<IButtonSetupInteraction> _buttonInteraction = default!;
         private Mock<IEditContextFactory> _editContextFactory = default!;
         private Mock<IMediator> _mediator = default!;
 
@@ -43,19 +43,19 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             _serviceProviderMock = new Mock<IServiceProvider>();
 
             _navigationStateProvider = new Mock<INavigationStateProvider>();
-            _entityVariant = new Mock<IEntityVariantSetup>();
-            _collection = new Mock<ICollectionSetup>();
+            _entityVariant = new Mock<EntityVariantSetup>();
+            _collection = new Mock<CollectionSetup>();
             _collection
                 .Setup(x => x.GetEntityVariant(It.IsAny<IEntity>()))
                 .Returns(_entityVariant.Object);
-            _collectionResolver = new Mock<ISetupResolver<ICollectionSetup>>();
+            _collectionResolver = new Mock<ISetupResolver<CollectionSetup>>();
             _collectionResolver
                 .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
                 .ReturnsAsync(_collection.Object);
 
             _repositoryResolver = new Mock<IRepositoryResolver>();
             _concurrencyService = new ConcurrencyService(new SemaphoreSlim(1, 1));
-            _buttonInteraction = new Mock<IButtonInteraction>();
+            _buttonInteraction = new Mock<IButtonSetupInteraction>();
             _editContextFactory = new Mock<IEditContextFactory>();
             _mediator = new Mock<IMediator>();
 
@@ -76,7 +76,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // arrange
             var request = new PersistEntitiesRequestModel
             {
-                ListContext = new ListContext(alias, new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, new List<IValidationSetup>(), _serviceProviderMock.Object), default, UsageType.Add, default, _serviceProviderMock.Object)
+                ListContext = new ListContext(alias, new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, new List<ValidationSetup>(), _serviceProviderMock.Object), default, UsageType.Add, default, _serviceProviderMock.Object)
             };
 
             // act
@@ -93,14 +93,14 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // arrange
             var request = new PersistEntitiesRequestModel
             {
-                ListContext = new ListContext(alias, new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, new List<IValidationSetup>(), _serviceProviderMock.Object), default, UsageType.Add, default, _serviceProviderMock.Object)
+                ListContext = new ListContext(alias, new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, new List<ValidationSetup>(), _serviceProviderMock.Object), default, UsageType.Add, default, _serviceProviderMock.Object)
             };
 
             // act
             _subject.InvokeAsync(request);
 
             // assert
-            _repositoryResolver.Verify(x => x.GetRepository(It.Is<ICollectionSetup>(x => x == _collection.Object)));
+            _repositoryResolver.Verify(x => x.GetRepository(It.Is<CollectionSetup>(x => x == _collection.Object)));
         }
 
         [TestCase("alias1")]
@@ -110,7 +110,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // arrange
             var request = new PersistEntitiesRequestModel
             {
-                ListContext = new ListContext(alias, new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, new List<IValidationSetup>(), _serviceProviderMock.Object), default, UsageType.Add, default, _serviceProviderMock.Object)
+                ListContext = new ListContext(alias, new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, new List<ValidationSetup>(), _serviceProviderMock.Object), default, UsageType.Add, default, _serviceProviderMock.Object)
             };
 
             // act
@@ -127,7 +127,7 @@ namespace RapidCMS.Core.Tests.Services.Dispatchers
             // arrange
             var request = new PersistEntitiesRequestModel
             {
-                ListContext = new ListContext(alias, new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, new List<IValidationSetup>(), _serviceProviderMock.Object), default, UsageType.Add, default, _serviceProviderMock.Object)
+                ListContext = new ListContext(alias, new FormEditContext(alias, alias, alias, new DefaultEntityVariant(), default, UsageType.Add, new List<ValidationSetup>(), _serviceProviderMock.Object), default, UsageType.Add, default, _serviceProviderMock.Object)
             };
 
             // act

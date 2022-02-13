@@ -1,10 +1,10 @@
 ﻿using RapidCMS.Core.Abstractions.Handlers;
-using RapidCMS.Core.Abstractions.Setup;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Resolvers
 {
-    internal interface IButtonActionHandlerResolver
+    internal interface IButtonSetupActionHandlerResolver
     {
-        IButtonActionHandler GetButtonActionHandler(IButtonSetup button);
+        IButtonSetupActionHandler GetButtonActionHandler(ButtonSetup button);
     }
 }

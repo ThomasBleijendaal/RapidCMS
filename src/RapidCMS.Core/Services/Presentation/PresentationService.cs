@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Dispatchers;
 using RapidCMS.Core.Abstractions.Services;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Extensions;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Services.Presentation
 {
@@ -25,8 +25,8 @@ namespace RapidCMS.Core.Services.Presentation
             => _dispatchers.GetTypeFromList<IPresentationDispatcher<TRequest, TResult>>()?.GetAsync(request)
                 ?? throw new InvalidOperationException();
 
-        public Task<IEnumerable<ITypeRegistration>> GetPageAsync(string pageAlias)
-            => _dispatchers.GetTypeFromList<IPresentationDispatcher<string, IEnumerable<ITypeRegistration>>>()?.GetAsync(pageAlias)
+        public Task<IEnumerable<TypeRegistrationSetup>> GetPageAsync(string pageAlias)
+            => _dispatchers.GetTypeFromList<IPresentationDispatcher<string, IEnumerable<TypeRegistrationSetup>>>()?.GetAsync(pageAlias)
             ?? throw new InvalidOperationException();
     }
 }

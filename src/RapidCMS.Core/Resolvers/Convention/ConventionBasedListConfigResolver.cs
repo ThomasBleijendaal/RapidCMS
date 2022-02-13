@@ -6,6 +6,7 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Config;
+using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Convention
 {
@@ -22,7 +23,7 @@ namespace RapidCMS.Core.Resolvers.Convention
             _languageResolver = languageResolver;
         }
 
-        public Task<ListConfig> ResolveByConventionAsync(Type subject, Features features, ICollectionSetup? collection)
+        public Task<ListConfig> ResolveByConventionAsync(Type subject, Features features, CollectionSetup? collection)
         {
             var listButtons = new List<ButtonConfig>();
 

@@ -7,25 +7,26 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Dispatchers
 {
-    internal class GetPageDispatcher : IPresentationDispatcher<string, IEnumerable<ITypeRegistration>>
+    internal class GetPageDispatcher : IPresentationDispatcher<string, IEnumerable<TypeRegistrationSetup>>
     {
-        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
+        private readonly ISetupResolver<CollectionSetup> _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IAuthService _authService;
         private readonly ILogin _loginRegistration;
-        private readonly ISetupResolver<IPageSetup> _pageResolver;
+        private readonly ISetupResolver<PageSetup> _pageResolver;
         private readonly INavigationStateProvider _navigationStateProvider;
 
         public GetPageDispatcher(
-            ISetupResolver<ICollectionSetup> collectionResolver,
+            ISetupResolver<CollectionSetup> collectionResolver,
             IRepositoryResolver repositoryResolver,
             IAuthService authService,
             ILogin loginRegistration,
-            ISetupResolver<IPageSetup> pageResolver,
+            ISetupResolver<PageSetup> pageResolver,
             INavigationStateProvider navigationStateProvider)
         {
             _collectionResolver = collectionResolver;
@@ -36,12 +37,12 @@ namespace RapidCMS.Core.Dispatchers
             _navigationStateProvider = navigationStateProvider;
         }
 
-        public async Task<IEnumerable<ITypeRegistration>> GetAsync(string request)
+        public async Task<IEnumerable<TypeRegistrationSetup>> GetAsync(string request)
         {
             var currentNavigationState = _navigationStateProvider.GetCurrentState();
 
             var configuredSections = (await _pageResolver.ResolveSetupAsync(request)).Sections;
-            var sections = new List<ITypeRegistration>();
+            var sections = new List<TypeRegistrationSetup>();
             var isAuthorized = default(bool?);
 
             foreach (var section in configuredSections)
@@ -76,7 +77,7 @@ namespace RapidCMS.Core.Dispatchers
 
             if (isAuthorized == false && 
                 sections.Count == 0 &&
-                (await _loginRegistration.CustomLandingPageRegistrationAsync()) is ITypeRegistration landingPage)
+                (await _loginRegistration.CustomLandingPageRegistrationAsync()) is TypeRegistrationSetup landingPage)
             {
                 sections.Insert(0, landingPage);
             }

@@ -12,6 +12,7 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.Core.Navigation;
 
@@ -19,9 +20,9 @@ namespace RapidCMS.Core.Services.Tree
 {
     internal class TreeService : ITreeService
     {
-        private readonly ISetupResolver<ICollectionSetup> _collectionResolver;
-        private readonly ISetupResolver<IPageSetup> _pageResolver;
-        private readonly ISetupResolver<IEnumerable<ITreeElementSetup>> _treeElementResolver;
+        private readonly ISetupResolver<CollectionSetup> _collectionResolver;
+        private readonly ISetupResolver<PageSetup> _pageResolver;
+        private readonly ISetupResolver<IEnumerable<TreeElementSetup>> _treeElementResolver;
         private readonly ICms _cms;
         private readonly IRepositoryResolver _repositoryResolver;
         private readonly IAuthService _authService;
@@ -30,9 +31,9 @@ namespace RapidCMS.Core.Services.Tree
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public TreeService(
-            ISetupResolver<ICollectionSetup> collectionResolver,
-            ISetupResolver<IPageSetup> pageResolver,
-            ISetupResolver<IEnumerable<ITreeElementSetup>> treeElementResolver,
+            ISetupResolver<CollectionSetup> collectionResolver,
+            ISetupResolver<PageSetup> pageResolver,
+            ISetupResolver<IEnumerable<TreeElementSetup>> treeElementResolver,
             ICms cms,
             IRepositoryResolver repositoryResolver,
             IAuthService authService,
