@@ -19,7 +19,7 @@ namespace RapidCMS.Core.Tests.Interactions
         private IButtonInteraction _subject = default!;
 
         private Mock<ISetupResolver<CollectionSetup>> _collectionResolver = default!;
-        private Mock<IButtonSetupActionHandlerResolver> _buttonActionHandlerResolver = default!;
+        private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
         private Mock<IAuthService> _authService = default!;
         private Mock<IServiceProvider> _serviceProvider = default!;
 
@@ -39,7 +39,7 @@ namespace RapidCMS.Core.Tests.Interactions
                         EntityVariant = new EntityVariantSetup("default", default, typeof(DefaultEntityVariant), "alias")
                     });
 
-            _buttonActionHandlerResolver = new Mock<IButtonSetupActionHandlerResolver>();
+            _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
 
             _authService = new Mock<IAuthService>();
             _serviceProvider = new Mock<IServiceProvider>();

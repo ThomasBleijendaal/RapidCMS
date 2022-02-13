@@ -14,12 +14,12 @@ namespace RapidCMS.Core.Interactions
     internal class ButtonInteraction : IButtonInteraction
     {
         private readonly ISetupResolver<CollectionSetup> _collectionResolver;
-        private readonly IButtonSetupActionHandlerResolver _buttonActionHandlerResolver;
+        private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
         private readonly IAuthService _authService;
 
         public ButtonInteraction(
             ISetupResolver<CollectionSetup> collectionResolver,
-            IButtonSetupActionHandlerResolver buttonActionHandlerResolver,
+            IButtonActionHandlerResolver buttonActionHandlerResolver,
             IAuthService authService)
         {
             _collectionResolver = collectionResolver;

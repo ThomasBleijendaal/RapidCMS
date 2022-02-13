@@ -20,7 +20,7 @@ namespace RapidCMS.Core.Resolvers.UI
         public NodeUIResolver(
             NodeSetup node,
             IDataProviderResolver dataProviderService,
-            IButtonSetupActionHandlerResolver buttonActionHandlerResolver,
+            IButtonActionHandlerResolver buttonActionHandlerResolver,
             INavigationStateProvider navigationStateProvider,
             IAuthService authService) : base(dataProviderService, buttonActionHandlerResolver, authService, navigationStateProvider)
         {

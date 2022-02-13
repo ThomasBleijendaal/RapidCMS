@@ -3,7 +3,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Resolvers
 {
-    internal interface IButtonSetupActionHandlerResolver
+    internal interface IButtonActionHandlerResolver
     {
         IButtonActionHandler GetButtonActionHandler(ButtonSetup button);
     }

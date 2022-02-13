@@ -25,7 +25,7 @@ namespace RapidCMS.Core.Tests.Services.Auth
 
         private Mock<IAuthorizationService> _authorizationService = default!;
         private Mock<IButtonActionHandler> _buttonActionHandler = default!;
-        private Mock<IButtonSetupActionHandlerResolver> _buttonActionHandlerResolver = default!;
+        private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
         private Mock<AuthenticationStateProvider> _authenticationStateProvider = default!;
         private readonly ClaimsPrincipal _user = new ClaimsPrincipal();
 
@@ -35,7 +35,7 @@ namespace RapidCMS.Core.Tests.Services.Auth
             _authorizationService = new Mock<IAuthorizationService>();
 
             _buttonActionHandler = new Mock<IButtonActionHandler>();
-            _buttonActionHandlerResolver = new Mock<IButtonSetupActionHandlerResolver>();
+            _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
             _buttonActionHandlerResolver
                 .Setup(x => x.GetButtonActionHandler(It.IsAny<ButtonSetup>()))
                 .Returns(_buttonActionHandler.Object);

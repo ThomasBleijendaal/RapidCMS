@@ -26,7 +26,7 @@ namespace RapidCMS.Core.Tests.Interactions
 
         private Mock<ISetupResolver<CollectionSetup>> _collectionResolver = default!;
         private Mock<IButtonActionHandler> _buttonActionHandler = default!;
-        private Mock<IButtonSetupActionHandlerResolver> _buttonActionHandlerResolver = default!;
+        private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
         private Mock<IAuthService> _authService = default!;
         private Mock<ButtonSetup> _button = default!;
         private Mock<CollectionSetup> _collection = default!;
@@ -48,7 +48,7 @@ namespace RapidCMS.Core.Tests.Interactions
                 .ReturnsAsync(_collection.Object);
 
             _buttonActionHandler = new Mock<IButtonActionHandler>();
-            _buttonActionHandlerResolver = new Mock<IButtonSetupActionHandlerResolver>();
+            _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
             _buttonActionHandlerResolver
                 .Setup(x => x.GetButtonActionHandler(It.IsAny<ButtonSetup>()))
                 .Returns(_buttonActionHandler.Object);

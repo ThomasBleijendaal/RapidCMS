@@ -86,7 +86,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IEditContextFactory, FormEditContextWrapperFactory>();
             services.AddTransient<IUIResolverFactory, UIResolverFactory>();
 
-            services.AddTransient<IButtonSetupActionHandlerResolver, ButtonActionHandlerResolver>();
+            services.AddTransient<IButtonActionHandlerResolver, ButtonActionHandlerResolver>();
             services.AddTransient<IDataProviderResolver, DataProviderResolver>();
             services.AddTransient<IRepositoryResolver, RepositoryResolver>();
 

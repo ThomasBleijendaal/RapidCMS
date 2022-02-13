@@ -19,13 +19,13 @@ namespace RapidCMS.Core.Resolvers.UI
     internal class BaseUIResolver
     {
         private readonly IDataProviderResolver _dataProviderResolver;
-        private readonly IButtonSetupActionHandlerResolver _buttonActionHandlerResolver;
+        private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
         protected readonly IAuthService _authService;
         private readonly INavigationStateProvider _navigationStateProvider;
 
         protected BaseUIResolver(
             IDataProviderResolver dataProviderResolver,
-            IButtonSetupActionHandlerResolver buttonActionHandlerResolver,
+            IButtonActionHandlerResolver buttonActionHandlerResolver,
             IAuthService authService,
             INavigationStateProvider navigationStateProvider)
         {

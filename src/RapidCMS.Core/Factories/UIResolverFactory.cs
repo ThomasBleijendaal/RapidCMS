@@ -15,7 +15,7 @@ namespace RapidCMS.Core.Factories
     {
         private readonly ISetupResolver<CollectionSetup> _collectionResolver;
         private readonly IDataProviderResolver _dataProviderResolver;
-        private readonly IButtonSetupActionHandlerResolver _buttonActionHandlerResolver;
+        private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
         private readonly IDataViewResolver _dataViewResolver;
         private readonly IAuthService _authService;
         private readonly IConventionBasedResolver<NodeSetup> _conventionBasedNodeSetupResolver;
@@ -24,7 +24,7 @@ namespace RapidCMS.Core.Factories
         public UIResolverFactory(
             ISetupResolver<CollectionSetup> collectionResolver,
             IDataProviderResolver dataProviderResolver,
-            IButtonSetupActionHandlerResolver buttonActionHandlerResolver,
+            IButtonActionHandlerResolver buttonActionHandlerResolver,
             IDataViewResolver dataViewResolver,
             IAuthService authService,
             IConventionBasedResolver<NodeSetup> conventionBasedNodeSetupResolver,

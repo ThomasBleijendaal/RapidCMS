@@ -6,7 +6,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Resolvers.Buttons
 {
-    internal class ButtonActionHandlerResolver : IButtonSetupActionHandlerResolver
+    internal class ButtonActionHandlerResolver : IButtonActionHandlerResolver
     {
         private readonly IServiceProvider _serviceProvider;
 

@@ -15,12 +15,12 @@ namespace RapidCMS.Core.Services.Auth
 {
     internal class ServerSideAuthService : IAuthService
     {
-        private readonly IButtonSetupActionHandlerResolver _buttonActionHandlerResolver;
+        private readonly IButtonActionHandlerResolver _buttonActionHandlerResolver;
         private readonly IAuthorizationService _authorizationService;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
 
         public ServerSideAuthService(
-            IButtonSetupActionHandlerResolver buttonActionHandlerResolver,
+            IButtonActionHandlerResolver buttonActionHandlerResolver,
             IAuthorizationService authorizationService,
             AuthenticationStateProvider authenticationStateProvider)
         {

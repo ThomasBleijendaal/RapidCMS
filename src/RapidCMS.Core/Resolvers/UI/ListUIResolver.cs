@@ -26,7 +26,7 @@ namespace RapidCMS.Core.Resolvers.UI
             ListSetup list,
             IDataProviderResolver dataProviderService,
             IDataViewResolver dataViewResolver,
-            IButtonSetupActionHandlerResolver buttonActionHandlerResolver,
+            IButtonActionHandlerResolver buttonActionHandlerResolver,
             INavigationStateProvider navigationStateProvider,
             IAuthService authService) : base(dataProviderService, buttonActionHandlerResolver, authService, navigationStateProvider)
         {
