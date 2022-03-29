@@ -213,6 +213,13 @@ namespace RapidCMS.Example.Shared.Collections
                             .SetType(EditorType.ModelEditor);
                     });
                 });
+
+                // adds a custom page in the tree under the Person. The CustomPageSection has access to the entity 
+                // making these custom pages ideal to create custom pages that are not limited by the features of RapidCMS
+                collection.AddPage("TestBeakerSolid", "Green10", "Nested page", config =>
+                {
+                    config.AddSection(typeof(CustomPageSection));
+                });
             });
         }
     }

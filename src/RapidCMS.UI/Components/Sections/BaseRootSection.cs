@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Config;
+using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Factories;
 using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Navigation;
@@ -41,7 +42,7 @@ namespace RapidCMS.UI.Components.Sections
 
         protected IEnumerable<ButtonUI>? Buttons { get; set; }
         protected List<(FormEditContext editContext, IEnumerable<SectionUI> sections)>? Sections { get; set; }
-        protected IEnumerable<TypeRegistrationSetup>? PageContents { get; set; }
+        protected (PageContext? pageContext, IEnumerable<TypeRegistrationSetup>? sections) PageContents { get; set; }
 
         private CancellationTokenSource _loadCancellationTokenSource = new CancellationTokenSource();
 

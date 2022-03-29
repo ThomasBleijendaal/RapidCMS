@@ -126,6 +126,33 @@ namespace RapidCMS.Core.Abstractions.Config
             where TDetailRepository : IRepository;
 
         /// <summary>
+        /// Adds a page to the CMS.
+        /// </summary>
+        /// <param name="name">Human readable name of this page</param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ICollectionConfig<TEntity> AddPage(string name, Action<IPageConfig> configure);
+
+        /// <summary>
+        /// Add a page to the CMS.
+        /// </summary>
+        /// <param name="icon">Icon for this page (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
+        /// <param name="name">Human readable name of this page</param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ICollectionConfig<TEntity> AddPage(string icon, string name, Action<IPageConfig> configure);
+
+        /// <summary>
+        /// Add a page to the CMS.
+        /// </summary>
+        /// <param name="icon">Icon for this page (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
+        /// <param name="color">Color of the icon</param>
+        /// <param name="name">Human readable name of this page</param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
+        ICollectionConfig<TEntity> AddPage(string icon, string color, string name, Action<IPageConfig> configure);
+
+        /// <summary>
         /// Adds a data view to the collection. Data views are displayed as separate tabs on the collection, and allow
         /// the user to filter the collection data easily.
         /// </summary>

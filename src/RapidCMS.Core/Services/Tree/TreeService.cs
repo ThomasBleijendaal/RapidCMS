@@ -123,7 +123,7 @@ namespace RapidCMS.Core.Services.Tree
             return tree;
         }
 
-        public async Task<TreePageUI?> GetPageAsync(string alias)
+        public async Task<TreePageUI?> GetPageAsync(string alias, ParentPath? parentPath)
         {
             var page = await _pageResolver.ResolveSetupAsync(alias);
             if (page == null)
@@ -131,7 +131,7 @@ namespace RapidCMS.Core.Services.Tree
                 throw new InvalidOperationException($"Failed to get page for given alias ({alias}).");
             }
 
-            return new TreePageUI(page.Name, page.Icon, page.Color, new NavigationState(page.Alias, UsageType.View));
+            return new TreePageUI(page.Name, page.Icon, page.Color, new NavigationState(page.Alias, parentPath));
         }
 
         public async Task<TreeNodesUI?> GetNodesAsync(string alias, ParentPath? parentPath, int pageNr, int pageSize)
@@ -168,7 +168,7 @@ namespace RapidCMS.Core.Services.Tree
                         entity.Id!,
                         collection.RepositoryAlias,
                         collection.TreeView.Name!.StringGetter.Invoke(entity),
-                        collection.Collections.ToList(subCollection => (subCollection.Alias, PageType.Collection)))
+                        collection.Collections.ToList(subCollection => (subCollection.Alias, subCollection.Type)))
                     {
                         RootVisibleOfCollections = collection.Collections.All(subCollection => subCollection.RootVisibility == CollectionRootVisibility.Visible),
                         DefaultOpenCollections = collection.TreeView?.DefaultOpenCollections ?? false

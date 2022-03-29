@@ -91,7 +91,7 @@ namespace RapidCMS.Core.Forms
 
         public static implicit operator EditContext(FormEditContext editContext)
             => new EditContext(editContext.Entity);
-        
+
         public IRelationContainer GetRelationContainer()
             => new RelationContainer(DataProviders.Select(x => x.GenerateRelation()).SelectNotNull(x => x));
 
@@ -126,7 +126,7 @@ namespace RapidCMS.Core.Forms
             GetPropertyState(property)!.IsBusy = false;
             OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs());
         }
-        
+
         public void NotifyValidationStateChanged()
         {
             OnValidationStateChanged?.Invoke(this, new ValidationStateChangedEventArgs(isValid: !FormState.GetValidationMessages().Any()));

@@ -53,7 +53,7 @@ namespace RapidCMS.Core.Resolvers.Setup
 
         private void Initialize()
         {
-            MapCollections(_cmsConfig.CollectionsAndPages.SelectNotNull(x => x as CollectionConfig));
+            MapCollections(_cmsConfig.CollectionsAndPages.OfType<CollectionConfig>());
 
             foreach (var plugin in _plugins)
             {
@@ -69,7 +69,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                         throw new InvalidOperationException($"Duplicate collection alias '{collection.Alias}' not allowed.");
                     }
 
-                    var subCollections = collection.CollectionsAndPages.SelectNotNull(x => x as CollectionConfig);
+                    var subCollections = collection.CollectionsAndPages.OfType<CollectionConfig>();
                     if (subCollections.Any())
                     {
                         MapCollections(subCollections);

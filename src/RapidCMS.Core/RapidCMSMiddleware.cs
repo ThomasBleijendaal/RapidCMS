@@ -91,6 +91,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IRepositoryResolver, RepositoryResolver>();
 
             services.AddTransient<IPresentationDispatcher, GetEntityDispatcher>();
+            services.AddTransient<IPresentationDispatcher, GetEntityOfPageDispatcher>();
             services.AddTransient<IPresentationDispatcher, GetEntitiesDispatcher>();
             services.AddTransient<IPresentationDispatcher, GetPageDispatcher>();
             services.AddTransient<IPresentationService, PresentationService>();

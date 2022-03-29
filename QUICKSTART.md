@@ -707,5 +707,7 @@ TODO: documentation
 
 TL;DR:
 
-1. Create a custom section and have it `@inherit BaseSection` (or `@inherit BaseEditContextSection` if you want access to `EditContext`).
-2. Have a view or editor use your section by calling `list.AddRow(typeof(YourCustomSection))` or `editor.AddSection(typeof(YourCustomSection))`.
+1. Create a custom section and have it `@inherit BaseSection` (or `@inherit BaseEditContextSection` if you want access to `EditContext`, or 
+    `@inherit BasePageContextSection` when used in nested pages and gives access to the Entity).
+2. Have a view or editor use your section by calling `list.AddRow(typeof(YourCustomSection))`, `editor.AddSection(typeof(YourCustomSection))`, or
+    `page.AddSection(typeof(YourCustomSection))`.

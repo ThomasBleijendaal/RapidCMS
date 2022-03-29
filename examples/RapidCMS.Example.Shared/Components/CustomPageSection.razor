@@ -1,0 +1,17 @@
+﻿@inherits BasePageContextSection
+
+<div class="content">
+    <h3>Custom section</h3>
+    <p>This section is just a Blazor Component, but because it is nested under a collection it has access to the Parent and Entity, 
+        making it work just like a Detail Page but gives absolute freedom of what to put in this section.
+    </p>
+
+    <p>ParentId: @this.PageContext.Parent?.Entity?.Id</p>
+    <p>Entity: @this.PageContext.Entity?.Id</p>
+
+    <p>Email: @Person.Details.Email</p>
+</div>
+
+@code {
+    Person? Person => PageContext.Entity as Person;
+}

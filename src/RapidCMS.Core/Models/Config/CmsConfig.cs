@@ -37,7 +37,7 @@ namespace RapidCMS.Core.Models.Config
         IEnumerable<Type> ICmsConfig.Plugins => Plugins;
         
         IEnumerable<Type> ICollectionConfig.RepositoryTypes 
-            => CollectionsAndPages.SelectNotNull(c => c as ICollectionConfig).SelectMany(c => c.RepositoryTypes);
+            => CollectionsAndPages.OfType<ICollectionConfig>().SelectMany(c => c.RepositoryTypes);
 
         public List<ITreeElementConfig> CollectionsAndPages { get; set; } = new List<ITreeElementConfig>
         {
@@ -48,7 +48,7 @@ namespace RapidCMS.Core.Models.Config
 
         public IAdvancedCmsConfig Advanced => AdvancedConfig;
 
-        public IPageConfig Dashboard => CollectionsAndPages.SelectNotNull(x => x as IPageConfig).First();
+        public IPageConfig Dashboard => CollectionsAndPages.OfType<IPageConfig>().First();
 
         public ICmsConfig SetCustomLoginScreen(Type loginType)
         {
