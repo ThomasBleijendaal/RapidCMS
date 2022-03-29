@@ -28,6 +28,5 @@ namespace RapidCMS.UI.Components.Shared.Tree
 
             StateHasChanged();
         }
-
     }
 }
