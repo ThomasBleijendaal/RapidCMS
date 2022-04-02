@@ -46,8 +46,9 @@ namespace RapidCMS.Core.Navigation
                             break;
 
                         case PageType.Page:
-
-                            _collectionAlias = urlItems.ElementAtOrDefault(1);
+                            UsageType = Enum.TryParse<UsageType>(urlItems.ElementAtOrDefault(1), true, out var usageType3) ? usageType3 : UsageType.View;
+                            _collectionAlias = urlItems.ElementAtOrDefault(2);
+                            ParentPath = ParentPath.TryParse(urlItems.ElementAtOrDefault(3));
 
                             break;
                     }
@@ -76,11 +77,12 @@ namespace RapidCMS.Core.Navigation
             CollectionState = new CollectionState();
         }
 
-        public NavigationState(string pageAlias, UsageType usageType)
+        public NavigationState(string pageAlias, ParentPath? parentPath)
         {
             PageType = PageType.Page;
-            UsageType = usageType;
+            UsageType = UsageType.View;
             _collectionAlias = pageAlias;
+            ParentPath = parentPath;
 
             CollectionState = new CollectionState();
         }
@@ -222,7 +224,7 @@ namespace RapidCMS.Core.Navigation
                 PageType.Dashboard => "",
                 PageType.Error => "error",
                 PageType.Node => UriHelper.CombinePath("node", usageType, _collectionAlias, VariantAlias, ParentPath?.ToPathString() ?? "-", Id),
-                PageType.Page => $"page/{_collectionAlias}",
+                PageType.Page => UriHelper.CombinePath("page", usageType, _collectionAlias, ParentPath?.ToPathString() ?? "-"),
                 PageType.Unauthorized => "unauthorized",
                 _ => ""
             };

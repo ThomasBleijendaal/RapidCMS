@@ -88,14 +88,16 @@
                            OnPageChanged="PageChanged" />
         }
     }
-    else if ((CurrentNavigationState.PageType == PageType.Page || CurrentNavigationState.PageType == PageType.Dashboard) && PageContents != null)
+    else if ((CurrentNavigationState.PageType == PageType.Page || CurrentNavigationState.PageType == PageType.Dashboard) && PageContents.sections != null)
     {
-        <CascadingValue Name="Embedded" Value="true">
-            @foreach (var section in PageContents)
-            {
-                @RenderType(section);
-            }
-        </CascadingValue>
+        <CascadingPageContext PageContext=PageContents.pageContext>
+            <CascadingValue Name="Embedded" Value="true">
+                @foreach (var section in PageContents.sections)
+                {
+                    @RenderType(section);
+                }
+            </CascadingValue>
+        </CascadingPageContext>
     }
     else if (CurrentNavigationState.PageType == PageType.Unauthorized)
     {

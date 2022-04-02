@@ -18,7 +18,7 @@ namespace RapidCMS.Core.Models.Config
 {
     internal class CollectionConfig : ICollectionConfig
     {
-        protected List<ICollectionConfig> _collections = new List<ICollectionConfig>();
+        protected List<ITreeElementConfig> _collectionsAndPages = new List<ITreeElementConfig>();
 
         internal CollectionConfig(string alias, string? parentAlias, string? icon, string? color, string name, Type repositoryType, EntityVariantConfig entityVariant)
         {
@@ -42,7 +42,7 @@ namespace RapidCMS.Core.Models.Config
 
         public IEnumerable<ITreeElementConfig> CollectionsAndPages
         {
-            get => _collections.Union(InlineCollections);
+            get => _collectionsAndPages.Union(InlineCollections);
         }
 
         public IEnumerable<Type> RepositoryTypes
@@ -53,7 +53,7 @@ namespace RapidCMS.Core.Models.Config
                 var repositoryTypesFromListEditor = ListEditor?.Panes.GetRepositoryTypes() ?? Enumerable.Empty<Type>();
 
                 return new[] { RepositoryType }
-                    .Union(_collections.Union(InlineCollections)
+                    .Union(CollectionsAndPages.OfType<ICollectionConfig>()
                     .SelectMany(x => x.RepositoryTypes))
                     .Union(repositoryTypesFromNodeEditor)
                     .Union(repositoryTypesFromListEditor);
@@ -223,7 +223,7 @@ namespace RapidCMS.Core.Models.Config
         {
             var configReceiver = new ReferencedCollectionConfig(alias);
 
-            _collections.Add(configReceiver);
+            _collectionsAndPages.Add(configReceiver);
 
             return this;
         }
@@ -268,7 +268,7 @@ namespace RapidCMS.Core.Models.Config
 
             configure.Invoke(configReceiver);
 
-            _collections.Add(configReceiver);
+            _collectionsAndPages.Add(configReceiver);
 
             return configReceiver;
         }
@@ -279,7 +279,7 @@ namespace RapidCMS.Core.Models.Config
 
             ParentAlias = Alias;
 
-            _collections.Add(configReceiver);
+            _collectionsAndPages.Add(configReceiver);
 
             return this;
         }
@@ -302,7 +302,7 @@ namespace RapidCMS.Core.Models.Config
 
             configure?.Invoke(configReceiver);
 
-            _collections.Add(configReceiver);
+            _collectionsAndPages.Add(configReceiver);
 
             return configReceiver;
         }
@@ -365,6 +365,36 @@ namespace RapidCMS.Core.Models.Config
         public ICollectionConfig<TEntity> AddAsyncEntityValidator<TAsyncEntityValidator>(object configuration) where TAsyncEntityValidator : IAsyncEntityValidator
         {
             Validators.Add(new ValidationConfig(typeof(TAsyncEntityValidator), configuration));
+
+            return this;
+        }
+
+        public ICollectionConfig<TEntity> AddPage(string name, Action<IPageConfig> configure)
+        {
+            return AddPage("Document", name, configure);
+        }
+
+        public ICollectionConfig<TEntity> AddPage(string icon, string name, Action<IPageConfig> configure)
+        {
+            return AddPage(icon, "Green10", name, configure);
+        }
+
+        public ICollectionConfig<TEntity> AddPage(string icon, string color, string name, Action<IPageConfig> configure)
+        {
+            var alias = name.ToUrlFriendlyString();
+
+            if (CmsConfig.CollectionAliases.Contains(alias))
+            {
+                throw new NotUniqueException(nameof(alias));
+            }
+
+            CmsConfig.CollectionAliases.Add(alias);
+
+            var page = new PageConfig(name, icon, color, alias);
+
+            configure.Invoke(page);
+
+            _collectionsAndPages.Add(page);
 
             return this;
         }

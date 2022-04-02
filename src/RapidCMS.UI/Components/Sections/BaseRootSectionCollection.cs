@@ -66,7 +66,7 @@ namespace RapidCMS.UI.Components.Sections
                     ListContext = listContext;
                     Sections = sections;
 
-                    PageContents = null;
+                    PageContents = default;
                 }
                 catch
                 {

@@ -38,9 +38,16 @@
                 <ul class="nav flex-column">
                     @if (CollectionsVisible[node.Id])
                     {
-                        @foreach (var (subCollection, _) in node.Collections)
+                        @foreach (var (alias, type) in node.Collections)
                         {
-                            <Collections CollectionAlias=@subCollection ParentPath=@(ParentPath.AddLevel(ParentPath, node.RepositoryAlias, node.Id)) />
+                            if (type == PageType.Collection)
+                            {
+                                <Collections CollectionAlias=@alias ParentPath=@(ParentPath.AddLevel(ParentPath, node.RepositoryAlias, node.Id)) />
+                            }
+                            else if (type == PageType.Page)
+                            {
+                                <Page PageAlias="@alias" ParentPath=@(ParentPath.AddLevel(ParentPath, node.RepositoryAlias, node.Id)) />
+                            }
                         }
                     }
                 </ul>

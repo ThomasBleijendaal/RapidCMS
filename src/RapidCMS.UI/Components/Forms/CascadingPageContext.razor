@@ -1,0 +1,8 @@
+<CascadingValue @key=@PageContext.Entity Name="PageContext" Value=@PageContext>
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; } = default!;
+    [Parameter] public PageContext PageContext { get; set; } = default!;
+}

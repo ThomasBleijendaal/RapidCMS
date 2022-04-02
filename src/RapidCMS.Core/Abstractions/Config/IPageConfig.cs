@@ -24,10 +24,5 @@ namespace RapidCMS.Core.Abstractions.Config
 
         string Icon { get; }
         string Color { get; }
-
-        /// <summary>
-        /// Registered sections of the page.
-        /// </summary>
-        IEnumerable<CustomTypeRegistrationConfig> SectionRegistrations { get; }
     }
 }

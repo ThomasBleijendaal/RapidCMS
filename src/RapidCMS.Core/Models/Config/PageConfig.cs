@@ -24,9 +24,7 @@ namespace RapidCMS.Core.Models.Config
         public string Color { get; set; }
         public string Alias { get; set; }
 
-        IEnumerable<CustomTypeRegistrationConfig> IPageConfig.SectionRegistrations => SectionRegistrations;
-
-        private List<CustomTypeRegistrationConfig> SectionRegistrations { get; set; } = new List<CustomTypeRegistrationConfig>();
+        internal List<CustomTypeRegistrationConfig> SectionRegistrations { get; set; } = new List<CustomTypeRegistrationConfig>();
 
         public IPageConfig AddSection(string collectionAlias, bool edit = false)
         {

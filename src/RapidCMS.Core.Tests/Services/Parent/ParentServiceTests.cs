@@ -6,7 +6,9 @@ using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.Core.Services.Concurrency;
 using RapidCMS.Core.Services.Parent;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RapidCMS.Core.Tests.Services.Parent
@@ -15,6 +17,7 @@ namespace RapidCMS.Core.Tests.Services.Parent
     {
         private Mock<IRepository> _repository = default!;
         private Mock<IRepositoryResolver> _repositoryResolver = default!;
+        private IConcurrencyService _concurrencyService = default!;
         private IParentService _subject = default!;
 
         [SetUp]
@@ -31,7 +34,8 @@ namespace RapidCMS.Core.Tests.Services.Parent
                 });
             _repositoryResolver = new Mock<IRepositoryResolver>();
 
-            _subject = new ParentService(_repositoryResolver.Object);
+            _concurrencyService = new ConcurrencyService(new SemaphoreSlim(1, 1));
+            _subject = new ParentService(_repositoryResolver.Object, _concurrencyService);
         }
 
         [Test]

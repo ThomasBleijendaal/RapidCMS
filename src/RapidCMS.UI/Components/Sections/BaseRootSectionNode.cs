@@ -49,7 +49,7 @@ namespace RapidCMS.UI.Components.Sections
                 ListContext = null;
                 Tabs = null;
                 ListUI = null;
-                PageContents = null;
+                PageContents = default;
             }
             catch
             {

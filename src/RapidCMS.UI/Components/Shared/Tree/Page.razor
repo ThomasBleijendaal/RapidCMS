@@ -4,9 +4,9 @@
 {
     <li>Loading tree..</li>
 }
-else if (!string.IsNullOrWhiteSpace(error))
+else if (!string.IsNullOrWhiteSpace(Error))
 {
-    <li>@error</li>
+    <li>@Error</li>
 }
 else
 {
@@ -15,25 +15,3 @@ else
     </li>
 }
 
-@code {
-
-    TreePageUI? UI;
-    string? error;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        try
-        {
-            UI = await TreeService.GetPageAsync(PageAlias);
-        }
-        catch (Exception ex)
-        {
-            UI = null;
-            error = ex.Message;
-        }
-
-        StateHasChanged();
-    }
-
-    [Parameter] public string PageAlias { get; set; } = default!;
-}

@@ -41,7 +41,7 @@ namespace RapidCMS.Core.Handlers
 
                 if (request.IsPage)
                 {
-                    navigationState = new NavigationState(request.CollectionAlias, usageType);
+                    navigationState = new NavigationState(request.CollectionAlias, request.ParentPath);
                 }
                 else if (request.IsList)
                 {

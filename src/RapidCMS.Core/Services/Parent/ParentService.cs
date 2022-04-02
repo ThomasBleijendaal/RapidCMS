@@ -10,10 +10,14 @@ namespace RapidCMS.Core.Services.Parent
     internal class ParentService : IParentService
     {
         private readonly IRepositoryResolver _repositoryResolver;
+        private readonly IConcurrencyService _concurrencyService;
 
-        public ParentService(IRepositoryResolver repositoryResolver)
+        public ParentService(
+            IRepositoryResolver repositoryResolver,
+            IConcurrencyService concurrencyService)
         {
             _repositoryResolver = repositoryResolver;
+            _concurrencyService = concurrencyService;
         }
 
         public async Task<IParent?> GetParentAsync(ParentPath? parentPath)
@@ -28,7 +32,7 @@ namespace RapidCMS.Core.Services.Parent
             foreach (var (repositoryAlias, id) in parentPath)
             {
                 var repo = _repositoryResolver.GetRepository(repositoryAlias);
-                var entity = await repo.GetByIdAsync(id, new ViewContext(null, parent));
+                var entity = await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repo.GetByIdAsync(id, new ViewContext(null, parent)));
                 if (entity == null)
                 {
                     break;

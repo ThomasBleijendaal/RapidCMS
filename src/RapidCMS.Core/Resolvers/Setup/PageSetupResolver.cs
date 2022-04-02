@@ -14,6 +14,7 @@ namespace RapidCMS.Core.Resolvers.Setup
     {
         private readonly ICmsConfig _cmsConfig;
         private readonly ISetupResolver<TypeRegistrationSetup, CustomTypeRegistrationConfig> _typeRegistrationSetupResolver;
+        private Dictionary<string, PageConfig> _pageMap { get; set; } = new Dictionary<string, PageConfig>();
         private readonly Dictionary<string, PageSetup> _cache = new Dictionary<string, PageSetup>();
 
         public PageSetupResolver(
@@ -22,6 +23,33 @@ namespace RapidCMS.Core.Resolvers.Setup
         {
             _cmsConfig = cmsConfig;
             _typeRegistrationSetupResolver = typeRegistrationSetupResolver;
+
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            MapPages(_cmsConfig.CollectionsAndPages);
+
+            void MapPages(IEnumerable<ITreeElementConfig> elements)
+            {
+                foreach (var page in elements.OfType<PageConfig>())
+                {
+                    if (!_pageMap.TryAdd(page.Alias, page))
+                    {
+                        throw new InvalidOperationException($"Duplicate page alias '{page.Alias}' not allowed.");
+                    }
+                }
+
+                foreach (var collection in elements.OfType<CollectionConfig>().Where(col => col is not ReferencedCollectionConfig))
+                {
+                    var subElements = collection.CollectionsAndPages;
+                    if (subElements.Any())
+                    {
+                        MapPages(subElements);
+                    }
+                }
+            }
         }
 
         Task<PageSetup> ISetupResolver<PageSetup>.ResolveSetupAsync()
@@ -36,8 +64,7 @@ namespace RapidCMS.Core.Resolvers.Setup
                 return pageSetup;
             }
 
-            var config = _cmsConfig.CollectionsAndPages.SelectNotNull(x => x as IPageConfig).FirstOrDefault(x => x.Alias == alias);
-            if (config == null)
+            if (!_pageMap.TryGetValue(alias, out var config))
             {
                 throw new InvalidOperationException($"Cannot find page with alias {alias}.");
             }
