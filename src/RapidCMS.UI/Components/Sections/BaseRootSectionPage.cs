@@ -18,6 +18,8 @@ namespace RapidCMS.UI.Components.Sections
                 throw new InvalidOperationException();
             }
 
+            PageContents = default;
+
             var pageAlias = CurrentNavigationState.PageType == PageType.Dashboard
                 ? "__dashboard"
                 : CurrentNavigationState.CollectionAlias;
