@@ -97,6 +97,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                             new NavigationState(
                                 request.ListContext.CollectionAlias,
                                 request.ListContext.Parent?.GetParentPath(),
+                                entityVariant.Alias,
                                 request.Related,
                                 UsageType.New,
                                 PageType.Collection)
@@ -165,6 +166,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                             new NavigationState(
                                 request.ListContext.CollectionAlias,
                                 parentPath,
+                                null,
                                 request.Related,
                                 collection.ListEditor == null ? UsageType.View : UsageType.Edit,
                                 PageType.Collection));

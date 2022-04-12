@@ -95,6 +95,7 @@ namespace RapidCMS.Core.Resolvers.UI
                     var nestedState = new NavigationState(
                         relatedCollection.CollectionAlias,
                         parentPath,
+                        null,
                         new RelatedEntity(editContext),
                         relatedCollection.SupportsUsageType.FindSupportedUsageType(editContext.UsageType) | UsageType.List,
                         PageType.Collection);
