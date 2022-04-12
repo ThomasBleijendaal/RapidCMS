@@ -107,11 +107,12 @@ namespace RapidCMS.Core.Navigation
             CollectionState = new CollectionState();
         }
 
-        public NavigationState(string collectionAlias, ParentPath? parentPath, IRelated? related, UsageType usageType, PageType pageType)
+        public NavigationState(string collectionAlias, ParentPath? parentPath, string? variantAlias, IRelated? related, UsageType usageType, PageType pageType)
         {
             PageType = pageType;
             UsageType = usageType;
             _collectionAlias = collectionAlias;
+            VariantAlias = variantAlias;
             ParentPath = parentPath;
             Related = related;
 
