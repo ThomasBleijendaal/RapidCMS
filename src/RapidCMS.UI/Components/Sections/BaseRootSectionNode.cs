@@ -20,6 +20,9 @@ namespace RapidCMS.UI.Components.Sections
                 throw new InvalidOperationException();
             }
 
+            Buttons = null;
+            Sections = null;
+
             var editContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, FormEditContext>(new GetEntityRequestModel
             {
                 CollectionAlias = CurrentNavigationState.CollectionAlias,
