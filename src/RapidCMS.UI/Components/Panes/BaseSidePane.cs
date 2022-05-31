@@ -11,7 +11,7 @@ namespace RapidCMS.UI.Components.Panes
     {
         [Inject] private IMediator Mediator { get; set; } = default!;
 
-        [Parameter] public FormEditContext EditContext { get; set; } = default!;
+        [Parameter] public FormEditContext? EditContext { get; set; }
         [Parameter] public ButtonContext ButtonContext { get; set; } = default!;
         [Parameter] public Guid RequestId { get; set; } = default!;
 
