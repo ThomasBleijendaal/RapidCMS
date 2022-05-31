@@ -16,10 +16,6 @@ jobs:
       with:
         dotnet-version: '6.0.x'
         include-prerelease: true
-    - uses: nuget/setup-nuget@v1
-      with:
-        nuget-api-key: ${{ secrets.NUGET_APIKEY }}
-        nuget-version: '5.x'
     - name: Build Api Core
       run: dotnet build --configuration Release ./src/RapidCMS.Api.Core/RapidCMS.Api.Core.csproj
     - name: Build Api Functions
