@@ -61,9 +61,11 @@
                               Sections="Sections"
                               CurrentPage="CurrentNavigationState.CollectionState.CurrentPage" 
                               MaxPage="CurrentNavigationState.CollectionState.MaxPage" 
+                              Sorts="CurrentNavigationState.CollectionState.Sorts"
                               OnButtonClick="NodeButtonOnClickAsync"
                               OnRowDragged="OnRowDragged"
-                              OnPageChanged="PageChanged" />
+                              OnPageChanged="PageChanged"
+                              OnSortChanged="SortChanged" />
             </div>
         }
         else if (ListUI.ListType == ListType.Block)

@@ -11,6 +11,6 @@ namespace RapidCMS.Core.Abstractions.Resolvers
         ListUI GetListDetails();
         Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(FormEditContext editContext);
         Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(FormEditContext editContext, NavigationState navigationState);
-        Task<IEnumerable<TabUI>?> GetTabsAsync(FormEditContext editContext);
+        Task<IEnumerable<TabUI>?> GetTabsAsync(string collectionAlias);
     }
 }

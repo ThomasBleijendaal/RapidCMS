@@ -23,7 +23,7 @@ namespace RapidCMS.Core.Abstractions.Navigation
 
         void UpdateCollectionState(NavigationState currentState, CollectionState collectionState);
 
-        IView GetCurrentView(NavigationState currentState, ListUI list);
+        IView GetCurrentView(NavigationState currentState, ListUI list, TabUI? activeTab);
 
         bool TryProcessView(NavigationState currentState, IView view, bool hasSections);
     }

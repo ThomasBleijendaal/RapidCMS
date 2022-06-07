@@ -9,6 +9,7 @@ namespace RapidCMS.Core.Models.UI
     {
         internal FieldUI(FieldSetup field) : base(field.IsVisible, field.IsDisabled)
         {
+            Index = field.Index;
             Description = field.Description;
             Details = field.Details;
             Name = field.Name;
@@ -16,10 +17,11 @@ namespace RapidCMS.Core.Models.UI
             Expression = field.Expression;
             Property = field.Property;
             OrderByExpression = field.OrderByExpression;
-            SortDescending = field.DefaultOrder;
+            SortDirection = field.DefaultOrder;
             Configuration = field.Configuration;
         }
 
+        public int Index { get; private set; }
         public string? Name { get; private set; }
         public string? Description { get; private set; }
         public MarkupString? Details { get; private set; }
@@ -30,7 +32,7 @@ namespace RapidCMS.Core.Models.UI
         public IPropertyMetadata? Property { get; internal set; }
         public IExpressionMetadata? Expression { get; internal set; }
         internal IPropertyMetadata? OrderByExpression { get; private set; }
-        public OrderByType SortDescending { get; set; }
+        public OrderByType SortDirection { get; private set; }
 
         public object? Configuration { get; set; }
     }

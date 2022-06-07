@@ -60,7 +60,18 @@ namespace RapidCMS.Core.Navigation
             var searchTerm = qs.Get("q");
             var currentPage = int.TryParse(qs.Get("p"), out var p) ? p : 1;
 
-            CollectionState = new CollectionState(tab, searchTerm, currentPage);
+            var sorts = qs.Get("s")?.Split("--")
+                .Select(x => x.Split("-"))
+                .Where(x => x.Length == 2)
+                .Select(x => int.TryParse(x[0], out var index) && Enum.TryParse<OrderByType>(x[1], true, out var direction)
+                    ? new KeyValuePair<int, OrderByType>(index, direction)
+                    : default(KeyValuePair<int, OrderByType>?))
+                .OfType<KeyValuePair<int, OrderByType>>()
+                .Where(x => x.Value != OrderByType.Disabled);
+
+            var sortBag = sorts == null ? null : new SortBag(sorts);
+
+            CollectionState = new CollectionState(tab, searchTerm, currentPage, Sorts: sortBag);
         }
 
         public NavigationState()

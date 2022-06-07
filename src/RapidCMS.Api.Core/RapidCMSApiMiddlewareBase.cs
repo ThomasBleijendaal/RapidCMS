@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using RapidCMS.Api.Core.Abstractions;
@@ -25,6 +26,7 @@ using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Resolvers.Repositories;
 using RapidCMS.Core.Resolvers.Setup;
+using RapidCMS.Core.Services.Concurrency;
 using RapidCMS.Core.Services.Parent;
 using RapidCMS.Core.Services.Persistence;
 using RapidCMS.Core.Services.Presentation;
@@ -66,6 +68,8 @@ namespace RapidCMS.Api.Core
 
             services.AddTransient<IAuthService, ApiAuthService>();
             services.AddTransient<IParentService, ParentService>();
+            services.AddTransient<IConcurrencyService, ConcurrencyService>();
+            services.AddSingleton(serviceProvider => new SemaphoreSlim(5, 5));
 
             services.AddScoped<IMediator, Mediator>();
 
