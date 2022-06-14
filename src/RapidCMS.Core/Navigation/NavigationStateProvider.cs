@@ -176,7 +176,7 @@ namespace RapidCMS.Core.Navigation
             }
         }
 
-        public IView GetCurrentView(NavigationState currentState, ListUI list)
+        public IView GetCurrentView(NavigationState currentState, ListUI list, TabUI? activeTab)
         {
             var (_, state) = FindState(currentState);
 
@@ -189,7 +189,7 @@ namespace RapidCMS.Core.Navigation
                 state.CollectionState.ActiveTab,
                 state.CollectionAlias);
 
-            view.SetOrderBys(list.OrderBys);
+            view.SetOrderBys(list.GetOrderBys(currentState.CollectionState.Sorts, activeTab?.DefaultSorts));
 
             return view;
         }

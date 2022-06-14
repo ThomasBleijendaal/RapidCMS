@@ -54,10 +54,9 @@ namespace RapidCMS.UI.Components.Sections
 
                 var listUI = uiResolver.GetListDetails();
 
-                var (listContext, sections) = await LoadSectionsAsync(listUI, uiResolver);
+                var (listContext, sections, tabs) = await LoadSectionsAsync(listUI, uiResolver);
 
                 var buttons = await uiResolver.GetButtonsForEditContextAsync(listContext.ProtoEditContext);
-                var tabs = await uiResolver.GetTabsAsync(listContext.ProtoEditContext);
 
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -80,6 +79,20 @@ namespace RapidCMS.UI.Components.Sections
             }
 
             StateHasChanged();
+        }
+
+        protected void SortChanged((int index, OrderByType direction) sort)
+        {
+            if (ListUI == null)
+            {
+                return;
+            }
+
+            NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
+            {
+                CurrentPage = 1,
+                Sorts = (CollectionState.Sorts ?? new()).Add(sort.index, sort.direction)
+            });
         }
 
         protected void PageChanged(int page)
@@ -116,16 +129,32 @@ namespace RapidCMS.UI.Components.Sections
                 return;
             }
 
+            var tab = Tabs?.FirstOrDefault(x => x.Id == tabId);
+
             NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
             {
                 ActiveTab = tabId,
-                CurrentPage = 1
+                CurrentPage = 1,
+                Sorts = tab?.DefaultSorts
             });
         }
 
-        protected async Task<(ListContext listContext, List<(FormEditContext editContext, IEnumerable<SectionUI> sections)> sections)> LoadSectionsAsync(ListUI listUI, IListUIResolver uiResolver)
+        protected async Task<(ListContext listContext, List<(FormEditContext editContext, IEnumerable<SectionUI> sections)> sections, IEnumerable<TabUI>? tabs)> LoadSectionsAsync(ListUI listUI, IListUIResolver uiResolver)
         {
-            var view = NavigationStateProvider.GetCurrentView(CurrentNavigationState, listUI);
+            var tabs = await uiResolver.GetTabsAsync(CurrentNavigationState.CollectionAlias);
+            if (tabs?.Count() > 0 && CollectionState.ActiveTab == null && tabs.First().DefaultSorts != null)
+            {
+                CurrentNavigationState.CollectionState = CurrentNavigationState.CollectionState with
+                {
+                    ActiveTab = tabs.First().Id,
+                    CurrentPage = 1,
+                    Sorts = tabs.First().DefaultSorts
+                };
+            }
+
+            var activeTab = tabs?.FirstOrDefault(x => x.Id == CollectionState.ActiveTab);
+
+            var view = NavigationStateProvider.GetCurrentView(CurrentNavigationState, listUI, activeTab);
 
             var request = CurrentNavigationState.Related != null
                 ? (GetEntitiesRequestModel)new GetEntitiesOfRelationRequestModel
@@ -156,7 +185,7 @@ namespace RapidCMS.UI.Components.Sections
                 return await LoadSectionsAsync(listUI, uiResolver);
             }
 
-            return (listContext, sections);
+            return (listContext, sections, tabs);
         }
 
         protected async Task<List<(FormEditContext editContext, IEnumerable<SectionUI> sections)>> ReloadSectionsAsync(IEnumerable<string> reloadEntityIds, IListUIResolver uiResolver)

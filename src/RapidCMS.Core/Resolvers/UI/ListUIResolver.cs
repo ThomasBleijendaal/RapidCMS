@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Navigation;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
+using RapidCMS.Core.Enums;
 using RapidCMS.Core.EqualityComparers;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
@@ -76,10 +77,37 @@ namespace RapidCMS.Core.Resolvers.UI
                 .ToListAsync(pane => GetSectionUIAsync(pane, editContext, navigationState));
         }
 
-        public async Task<IEnumerable<TabUI>?> GetTabsAsync(FormEditContext editContext)
+        public async Task<IEnumerable<TabUI>?> GetTabsAsync(string collectionAlias)
         {
-            var data = await _dataViewResolver.GetDataViewsAsync(editContext.CollectionAlias);
-            return data.ToList(x => new TabUI(x.Id) { Label = x.Label });
+            var commonFields = _fieldsPerType.GetCommonValues(_equalityComparer).ToList();
+
+            var data = await _dataViewResolver.GetDataViewsAsync(collectionAlias);
+            return data.ToList(x =>
+            {
+                SortBag? sortBag = null;
+
+                if (x.DefaultOrderBys != null)
+                {
+                    var commonSortFields = commonFields.Select(f => (
+                        field: f, 
+                        orderBy: x.DefaultOrderBys.FirstOrDefault(d => 
+                            f.OrderByExpression?.Fingerprint == d.Key.Fingerprint ||
+                            (f.OrderByExpression == null && f.Property?.Fingerprint == d.Key.Fingerprint))
+                        .Value));
+
+                    var defaultSorts = commonSortFields
+                        .Where(x => x.orderBy != OrderByType.Disabled)
+                        .Select(x => new KeyValuePair<int, OrderByType>(x.field.Index, x.orderBy));
+
+                    sortBag = new SortBag(defaultSorts);
+                }
+
+                return new TabUI(x.Id)
+                {
+                    Label = x.Label,
+                    DefaultSorts = sortBag
+                };
+            });
         }
     }
 }

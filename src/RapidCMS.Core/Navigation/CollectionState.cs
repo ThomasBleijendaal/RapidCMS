@@ -6,14 +6,16 @@ namespace RapidCMS.Core.Navigation
         int? ActiveTab = default,
         string? SearchTerm = default,
         int CurrentPage = 1,
-        int? MaxPage = default)
+        int? MaxPage = default,
+        SortBag? Sorts = default)
     {
         public override string ToString()
         {
             return UriHelper.CombineQueryString(
                 ("tab", ActiveTab?.ToString()),
                 ("q", SearchTerm),
-                ("p", CurrentPage == 1 ? null : CurrentPage.ToString()));
+                ("p", CurrentPage == 1 ? null : CurrentPage.ToString()),
+                ("s", Sorts?.ToString()));
         }
     }
 }

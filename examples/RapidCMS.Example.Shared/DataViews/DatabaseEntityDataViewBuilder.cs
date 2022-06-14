@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using RapidCMS.Core.Data;
+using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Example.Shared.Data;
 
@@ -18,8 +19,10 @@ namespace RapidCMS.Example.Shared.DataViews
             {
                 // when the user selects this dataview (by clicking on the corresponding tab)
                 // the expression is given to the repository, so it can use that expression to perform the correct query
-                new DataView<DatabaseEntity>(1, "[A-K]", x => Regex.IsMatch(x.Name ?? string.Empty, "^[A-K]")),
-                new DataView<DatabaseEntity>(2, "[L-Z]", x => Regex.IsMatch(x.Name ?? string.Empty, "^[L-Z]")),
+                new DataView<DatabaseEntity>(1, "[A-K]", x => Regex.IsMatch(x.Name ?? string.Empty, "^[A-K]"))
+                    .SetOrderByExpression(x => x.Name, OrderByType.Descending),
+                new DataView<DatabaseEntity>(2, "[L-Z]", x => Regex.IsMatch(x.Name ?? string.Empty, "^[L-Z]"))
+                    .SetOrderByExpression(x => x.Name, OrderByType.Ascending),
                 new DataView<DatabaseEntity>(3, "[other]", x => Regex.IsMatch(x.Name ?? string.Empty, "^[^A-Z]"))
             };
 

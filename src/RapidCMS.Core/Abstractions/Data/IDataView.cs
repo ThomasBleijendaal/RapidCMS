@@ -1,4 +1,7 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections.Generic;
+using System.Linq.Expressions;
+using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Abstractions.Data
 {
@@ -18,5 +21,10 @@ namespace RapidCMS.Core.Abstractions.Data
         /// Associated query expression of this data view.
         /// </summary>
         LambdaExpression QueryExpression { get; }
+
+        /// <summary>
+        /// Default sorts for this data view.
+        /// </summary>
+        IEnumerable<KeyValuePair<IPropertyMetadata, OrderByType>> DefaultOrderBys { get; }
     }
 }

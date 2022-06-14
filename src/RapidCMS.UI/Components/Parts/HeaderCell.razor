@@ -6,15 +6,16 @@
 
         @if (Field.IsSortable())
         {
-            @if (Field.SortDescending == OrderByType.None)
+            var direction = GetDirection();
+            @if (direction == OrderByType.None)
             {
                 <Icon Name="Sort" />
             }
-            else if (Field.SortDescending == OrderByType.Ascending)
+            else if (direction == OrderByType.Ascending)
             {
                 <Icon Name="SortUp" />
             }
-            else if (Field.SortDescending == OrderByType.Descending)
+            else if (direction == OrderByType.Descending)
             {
                 <Icon Name="SortDown" />
             }
@@ -23,21 +24,24 @@
 }
 
 @code {
+    private OrderByType GetDirection() => Field == null ? default : Sorts?.Get(Field.Index) ?? Field.SortDirection;
+
     [Parameter] public FieldUI? Field { get; set; }
-    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+    [Parameter] public SortBag? Sorts { get; set; }
+    [Parameter] public EventCallback<(int, OrderByType)> OnSortChanged { get; set; }
 
     private async Task HandleClick(MouseEventArgs args)
     {
         if (Field?.IsSortable() ?? false)
         {
-            Field!.SortDescending =
-                Field.SortDescending == OrderByType.Ascending
-                ? OrderByType.Descending
-                : Field.SortDescending == OrderByType.Descending
-                ? OrderByType.None
-                : OrderByType.Ascending;
-
-            await OnPageChanged.InvokeAsync(1);
+            var newDirection = GetDirection() switch
+            {
+                OrderByType.Ascending => OrderByType.Descending,
+                OrderByType.Descending => OrderByType.None,
+                _ => OrderByType.Ascending,
+            };
+            
+            await OnSortChanged.InvokeAsync((Field.Index, newDirection));
         }
     }
 }
