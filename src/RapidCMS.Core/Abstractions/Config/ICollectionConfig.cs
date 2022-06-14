@@ -158,8 +158,9 @@ namespace RapidCMS.Core.Abstractions.Config
         /// </summary>
         /// <param name="label">Human readable label of this data view</param>
         /// <param name="queryExpression">Query defining this data view</param>
+        /// <param name="orderByExpressions">Order by expressions for this data view</param>
         /// <returns></returns>
-        ICollectionConfig<TEntity> AddDataView(string label, Expression<Func<TEntity, bool>> queryExpression);
+        ICollectionConfig<TEntity> AddDataView(string label, Expression<Func<TEntity, bool>> queryExpression, Action<IOrderByConfig<TEntity>>? orderByExpressions);
 
         /// <summary>
         /// Adds an entity variant to the collection. Entity variants are derivatives of TEntity.

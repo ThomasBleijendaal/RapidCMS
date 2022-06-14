@@ -124,9 +124,18 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
-        public ICollectionConfig<TEntity> AddDataView(string label, Expression<Func<TEntity, bool>> queryExpression)
+        public ICollectionConfig<TEntity> AddDataView(string label, Expression<Func<TEntity, bool>> queryExpression, Action<IOrderByConfig<TEntity>>? orderByExpressions)
         {
-            DataViews.Add(new DataView<TEntity>(DataViews.Count, label, queryExpression));
+            var dataView = new DataView<TEntity>(DataViews.Count, label, queryExpression);
+
+            if (orderByExpressions != null)
+            {
+                var config = new OrderByConfig<TEntity>();
+                orderByExpressions.Invoke(config);
+                dataView.SetOrderBys(config.DefaultOrderBys);
+            }
+
+            DataViews.Add(dataView);
 
             return this;
         }

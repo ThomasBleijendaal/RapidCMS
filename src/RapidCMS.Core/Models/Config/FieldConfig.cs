@@ -91,14 +91,14 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
-        IDisplayFieldConfig<TEntity, TValue> IHasOrderBy<TEntity, IDisplayFieldConfig<TEntity, TValue>>.SetOrderByExpression<TOrderByValue>(Expression<Func<TEntity, TOrderByValue>> orderByExpression, OrderByType defaultOrder)
+        IDisplayFieldConfig<TEntity, TValue> IHasOrderByEntity<TEntity, IDisplayFieldConfig<TEntity, TValue>>.SetOrderByExpression<TOrderByValue>(Expression<Func<TEntity, TOrderByValue>> orderByExpression, OrderByType defaultOrder)
         {
             OrderByExpression = PropertyMetadataHelper.GetPropertyMetadata(orderByExpression);
             DefaultOrder = defaultOrder;
             return this;
         }
 
-        IDisplayFieldConfig<TEntity, TValue> IHasOrderBy<TEntity, IDisplayFieldConfig<TEntity, TValue>>.SetOrderByExpression<TDatabaseEntity, TOrderByValue>(Expression<Func<TDatabaseEntity, TOrderByValue>> orderByExpression, OrderByType defaultOrder)
+        IDisplayFieldConfig<TEntity, TValue> IHasOrderByDatabaseEntity<IDisplayFieldConfig<TEntity, TValue>>.SetOrderByExpression<TDatabaseEntity, TOrderByValue>(Expression<Func<TDatabaseEntity, TOrderByValue>> orderByExpression, OrderByType defaultOrder)
         {
             OrderByExpression = PropertyMetadataHelper.GetPropertyMetadata(orderByExpression);
             DefaultOrder = defaultOrder;
@@ -289,14 +289,14 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
-        IEditorFieldConfig<TEntity, TValue> IHasOrderBy<TEntity, IEditorFieldConfig<TEntity, TValue>>.SetOrderByExpression<TOrderByValue>(Expression<Func<TEntity, TOrderByValue>> orderByExpression, OrderByType defaultOrder)
+        IEditorFieldConfig<TEntity, TValue> IHasOrderByEntity<TEntity, IEditorFieldConfig<TEntity, TValue>>.SetOrderByExpression<TOrderByValue>(Expression<Func<TEntity, TOrderByValue>> orderByExpression, OrderByType defaultOrder)
         {
             OrderByExpression = PropertyMetadataHelper.GetPropertyMetadata(orderByExpression);
             DefaultOrder = defaultOrder;
             return this;
         }
 
-        IEditorFieldConfig<TEntity, TValue> IHasOrderBy<TEntity, IEditorFieldConfig<TEntity, TValue>>.SetOrderByExpression<TDatabaseEntity, TOrderByValue>(Expression<Func<TDatabaseEntity, TOrderByValue>> orderByExpression, OrderByType defaultOrder)
+        IEditorFieldConfig<TEntity, TValue> IHasOrderByDatabaseEntity<IEditorFieldConfig<TEntity, TValue>>.SetOrderByExpression<TDatabaseEntity, TOrderByValue>(Expression<Func<TDatabaseEntity, TOrderByValue>> orderByExpression, OrderByType defaultOrder)
         {
             OrderByExpression = PropertyMetadataHelper.GetPropertyMetadata(orderByExpression);
             DefaultOrder = defaultOrder;
