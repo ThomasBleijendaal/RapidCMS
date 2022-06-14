@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using RapidCMS.Core.Abstractions.Data;
-using RapidCMS.Core.Navigation;
 
 namespace RapidCMS.Core.Models.Data
 {
