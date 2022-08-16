@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Models.Data;
 
@@ -14,13 +16,17 @@ namespace RapidCMS.UI.Components.Editors
         protected int _currentPage = 1;
         protected int? _maxPage;
 
-        protected string _group = Guid.NewGuid().ToString().Replace("-", "");
+        protected string _group = Guid.NewGuid().ToString("n");
+        protected string ElementId => $"picker-{_group}";
 
         protected IEnumerable<IElement>? _options;
         protected List<IElement> _selectedElements = new();
         protected CancellationTokenSource _cts = new();
 
         protected virtual bool IsMultiple { get; set; }
+
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
 
         private IRelationDataCollection RelationDataCollection
             => DataCollection as IRelationDataCollection 
@@ -64,6 +70,8 @@ namespace RapidCMS.UI.Components.Editors
             _currentPage = page;
 
             await UpdateOptionsAsync();
+
+            await JsRuntime.InvokeVoidAsync("RapidCMS.scrollToTop", ElementId);
         }
 
         protected async Task ResetViewAsync()
