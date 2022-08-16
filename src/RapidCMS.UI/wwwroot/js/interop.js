@@ -1,3 +1,5 @@
 ﻿window['RapidCMS'] = {
-    // reserved for future use
+    scrollToTop: function (id) {
+        document.getElementById(id).scroll(0, 0);
+    }
 };
