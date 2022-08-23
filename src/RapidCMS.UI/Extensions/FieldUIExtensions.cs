@@ -28,13 +28,7 @@ namespace RapidCMS.UI.Extensions
             }
             else if (field is ExpressionFieldUI expressionField)
             {
-                var displayType = expressionField.Type switch
-                {
-                    DisplayType.Label => typeof(LabelDisplay),
-                    DisplayType.Pre => typeof(PreDisplay),
-                    _ => null
-                };
-
+                var displayType = expressionField.Type.GetDisplay();
                 if (displayType == null)
                 {
                     return null;

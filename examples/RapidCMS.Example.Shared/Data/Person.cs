@@ -30,7 +30,8 @@ namespace RapidCMS.Example.Shared.Data
                 Details = new PersonDetails
                 {
                     Bio = Details.Bio,
-                    Email = Details.Email
+                    Email = Details.Email,
+                    SocialUrl = Details.SocialUrl
                 }
             };
         }
@@ -40,6 +41,10 @@ namespace RapidCMS.Example.Shared.Data
             [Required]
             [MinLength(5)]
             public string Email { get; set; } = default!;
+
+            [Url]
+            public string? SocialUrl { get; set; }
+
             public string? Bio { get; set; }
         }
     }

@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Abstractions.UI;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 
 namespace RapidCMS.UI.Components.Editors
 {
-    public class BaseEditor : EditContextComponentBase
+    public class BaseEditor : EditContextComponentBase, IBaseUIElement
     {
         protected ValidationState State { get; private set; }
 
@@ -25,7 +27,11 @@ namespace RapidCMS.UI.Components.Editors
 
         [Parameter] public string? Placeholder { get; set; }
 
-        [Parameter] public object? Configuration { get; set; }
+        /// <summary>
+        /// Implement the IWantConfiguration or IRequireConfiguration interfaces to 
+        /// leverage the GetConfigAsync extension method so handling configuration is more easy.
+        /// </summary>
+        [Parameter] public Func<object, EntityState, Task<object?>>? Configuration { get; set; }
 
         protected bool IsDisabled => IsDisabledFunc?.Invoke(Entity, EntityState) ?? false; 
 
@@ -36,8 +42,7 @@ namespace RapidCMS.UI.Components.Editors
 
         protected string GetValueAsString()
         {
-            // TODO: should this be ""  or null?
-            return TypeDescriptor.GetConverter(Property.PropertyType).ConvertToString(GetValueAsObject());
+            return TypeDescriptor.GetConverter(Property.PropertyType).ConvertToString(GetValueAsObject()) ?? "";
         }
 
         protected IEnumerable<string> GetValidationMessages()

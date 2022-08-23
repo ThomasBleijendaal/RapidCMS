@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Data;
@@ -37,12 +38,12 @@ namespace RapidCMS.Core.Models.Config
         internal IPropertyMetadata? OrderByExpression { get; set; }
         internal OrderByType DefaultOrder { get; set; }
 
-        internal object? Configuration { get; set; }
+        internal Func<object, EntityState, Task<object?>>? Configuration { get; set; }
     }
 
-    internal class FieldConfig<TEntity, TValue> 
-        : FieldConfig, 
-        IDisplayFieldConfig<TEntity, TValue>, 
+    internal class FieldConfig<TEntity, TValue>
+        : FieldConfig,
+        IDisplayFieldConfig<TEntity, TValue>,
         IEditorFieldConfig<TEntity, TValue>
         where TEntity : IEntity
     {
@@ -64,9 +65,26 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
-        IDisplayFieldConfig<TEntity, TValue> IHasConfigurability<IDisplayFieldConfig<TEntity, TValue>>.SetConfiguration<TConfig>(TConfig config)
+        IDisplayFieldConfig<TEntity, TValue> IHasConfigurability<TEntity, IDisplayFieldConfig<TEntity, TValue>>.SetConfiguration<TConfig>(TConfig config)
+            where TConfig : class
         {
-            Configuration = config;
+            Configuration = (entity, state) => Task.FromResult((object?)config);
+
+            return this;
+        }
+
+        IDisplayFieldConfig<TEntity, TValue> IHasConfigurability<TEntity, IDisplayFieldConfig<TEntity, TValue>>.SetConfiguration<TConfig>(Func<TEntity, EntityState, TConfig?> config)
+            where TConfig : class
+        {
+            Configuration = (entity, state) => Task.FromResult((object?)config.Invoke((TEntity)entity, state));
+
+            return this;
+        }
+
+        IDisplayFieldConfig<TEntity, TValue> IHasConfigurability<TEntity, IDisplayFieldConfig<TEntity, TValue>>.SetConfiguration<TConfig>(Func<TEntity, EntityState, Task<TConfig?>> config)
+            where TConfig : class
+        {
+            Configuration = async (entity, state) => await config.Invoke((TEntity)entity, state);
 
             return this;
         }
@@ -123,9 +141,26 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
-        IEditorFieldConfig<TEntity, TValue> IHasConfigurability<IEditorFieldConfig<TEntity, TValue>>.SetConfiguration<TConfig>(TConfig config)
+        IEditorFieldConfig<TEntity, TValue> IHasConfigurability<TEntity, IEditorFieldConfig<TEntity, TValue>>.SetConfiguration<TConfig>(TConfig config)
+            where TConfig : class
         {
-            Configuration = config;
+            Configuration = (entity, state) => Task.FromResult((object?)config);
+
+            return this;
+        }
+
+        IEditorFieldConfig<TEntity, TValue> IHasConfigurability<TEntity, IEditorFieldConfig<TEntity, TValue>>.SetConfiguration<TConfig>(Func<TEntity, EntityState, TConfig?> config)
+            where TConfig : class
+        {
+            Configuration = (entity, state) => Task.FromResult((object?)config.Invoke((TEntity)entity, state));
+
+            return this;
+        }
+
+        IEditorFieldConfig<TEntity, TValue> IHasConfigurability<TEntity, IEditorFieldConfig<TEntity, TValue>>.SetConfiguration<TConfig>(Func<TEntity, EntityState, Task<TConfig?>> config)
+            where TConfig : class
+        {
+            Configuration = async (entity, state) => await config.Invoke((TEntity)entity, state);
 
             return this;
         }
@@ -303,7 +338,7 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
-        private RelationType? GetRelationType() 
+        private RelationType? GetRelationType()
             => EditorType switch
             {
                 EditorType.Custom => CustomType?.GetCustomAttribute<RelationAttribute>()?.Type,

@@ -25,10 +25,9 @@ namespace RapidCMS.Example.Maui
         {
             var builder = MauiApp.CreateBuilder();
             builder
-                .RegisterBlazorMauiWebView()
                 .UseMauiApp<App>();
 
-            builder.Services.AddBlazorWebView();
+            builder.Services.AddMauiBlazorWebView();
 
             builder.Services.AddAuthorizationCore();
 

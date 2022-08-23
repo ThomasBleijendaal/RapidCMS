@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Models.Configuration;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
@@ -70,6 +72,20 @@ namespace RapidCMS.Example.Shared.Collections
                             row.AddField(p => p.Id).SetType(EditorType.Readonly);
                             row.AddField(p => p.Name);
 
+                            // the DisplayType Link requires an instance of Link to be configured to the editor.
+                            // form elements can indicate that they want or require configuration by implementing either
+                            // IWantConfiguration or INeedConfiguration.
+                            row.AddField(p => p.Details.SocialUrl).SetName("Social account")
+                                .SetType(DisplayType.Link)
+                                .SetConfiguration(async (entity, state) =>
+                                {
+                                    // this method can be async, making it possible to do some custom logic here before
+                                    // passing it into the form element
+                                    await Task.Delay(1000);
+
+                                    return new Link($"{entity.Name}'s account", false);
+                                });
+
                             // the SaveExisting button is only displayed when an entity is edited
                             row.AddDefaultButton(DefaultButtonType.SaveExisting, isPrimary: true);
                             // the SaveNew button is only displayed when an entity is inserted
@@ -111,6 +127,8 @@ namespace RapidCMS.Example.Shared.Collections
                             // so using SetName this can be set to something more user friendly
                                 .SetName("Email")
                                 .SetDetails(new MarkupString("<p>An email adress looks like <code>name@domain.tld</code>.</p>"));
+
+                            section.AddField(x => x.Details.SocialUrl);
                         });
 
                         // you can even have sections specifically for an entity type.

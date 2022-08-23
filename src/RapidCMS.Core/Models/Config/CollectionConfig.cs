@@ -124,7 +124,7 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
-        public ICollectionConfig<TEntity> AddDataView(string label, Expression<Func<TEntity, bool>> queryExpression, Action<IOrderByConfig<TEntity>>? orderByExpressions)
+        public ICollectionConfig<TEntity> AddDataView(string label, Expression<Func<TEntity, bool>> queryExpression, Action<IOrderByConfig<TEntity>>? orderByExpressions = null)
         {
             var dataView = new DataView<TEntity>(DataViews.Count, label, queryExpression);
 

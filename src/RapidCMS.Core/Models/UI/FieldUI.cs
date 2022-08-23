@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Setup;
@@ -34,6 +36,6 @@ namespace RapidCMS.Core.Models.UI
         internal IPropertyMetadata? OrderByExpression { get; private set; }
         public OrderByType SortDirection { get; private set; }
 
-        public object? Configuration { get; set; }
+        public Func<object, EntityState, Task<object?>> Configuration { get; set; }
     }
 }

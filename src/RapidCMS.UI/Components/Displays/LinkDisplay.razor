@@ -1,0 +1,33 @@
+﻿@inherits BaseDisplay
+@implements IRequireConfiguration<Link>
+
+<label class="col-form-label">
+    @if (Config == null)
+    {
+        <a href="@value">(loading)</a>
+    }
+    else
+    {
+        <a href="@value" target="@((Config.NewTab) ? "_blank" : "_self")">@(Config.Label)</a>
+    }
+</label>
+
+@code {
+    private Link? Config { get; set; }
+
+    private string? value { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        value = GetValueAsString();
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            value = " ";
+        }
+
+        Config = await this.GetConfigAsync();
+
+        StateHasChanged();
+    }
+} 
