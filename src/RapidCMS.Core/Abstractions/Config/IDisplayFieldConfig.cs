@@ -7,7 +7,7 @@ namespace RapidCMS.Core.Abstractions.Config
     public interface IDisplayFieldConfig<TEntity, TValue>
         : IHasOrderBy<TEntity, IDisplayFieldConfig<TEntity, TValue>>,
         IHasNameDescription<IDisplayFieldConfig<TEntity, TValue>>,
-        IHasConfigurability<IDisplayFieldConfig<TEntity, TValue>>
+        IHasConfigurability<TEntity, IDisplayFieldConfig<TEntity, TValue>>
         where TEntity : IEntity
     {
         /// <summary>

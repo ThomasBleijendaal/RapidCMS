@@ -202,6 +202,58 @@ editor set up for editing an entity:
 
 ![CMS](examples/images/docs3.png)
 
+### Fields
+
+Fields are either display elements in Views, or editors in Editors. They bind to properties in the
+entity you have connected to the collection. Displays and editors have the following methods to 
+configure them:
+
+#### SetName (display + editor)
+
+Sets the name in the associated table cell or label.
+
+#### SetDescription (display + editor)
+
+Sets a small text under the name.
+
+#### SetDetails (display + editor)
+
+Sets a free html element under the display or editor.
+
+#### SetPlaceholder (editor)
+
+Sets the placeholder text for editors.
+
+#### SetType (display + editor)
+
+Sets the type of the display or editor. 
+
+#### VisibleWhen (display + editor)
+
+Allows for configuring a `Func` that controls when the field is visible. 
+
+#### DisableWhen (editor)
+
+Allows for configuring a `Func` that controls when the editor is disabled.
+
+#### SetOrderByExpression (display + editor)
+
+Sets the order by expression used in list views to control the order in which the data is displayed.
+
+#### SetDataCollection (editor)
+
+Sets the associated data collection used by dropdown (and related) editors. See "DataCollection".
+
+#### SetConfiguration (display + editor)
+
+Allows for configuring an async `Func` that feeds configuration (any type of object) into 
+the field for the field to use. This object can be anything, and can be used to customize the field, or
+add custom logic to the field. As it is async, it can even be a database call or any other async process.
+
+#### SetCollectionRelation (editor)
+
+Sets the associated collection used for making and breaking releations between entities. See "Relations".
+
 ### Buttons
 
 The default buttons in RapidCMS will provide the bulk of the operations you will need when

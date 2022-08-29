@@ -11,7 +11,7 @@ namespace RapidCMS.Core.Abstractions.Config
         : IHasOrderBy<TEntity, IEditorFieldConfig<TEntity, TValue>>,
         IHasNameDescription<IEditorFieldConfig<TEntity, TValue>>,
         IHasPlaceholder<IEditorFieldConfig<TEntity, TValue>>,
-        IHasConfigurability<IEditorFieldConfig<TEntity, TValue>>
+        IHasConfigurability<TEntity, IEditorFieldConfig<TEntity, TValue>>
         where TEntity : IEntity
     {
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Enums;
@@ -46,6 +47,6 @@ namespace RapidCMS.Core.Models.Setup
         public Func<object, EntityState, bool> IsVisible { get; set; }
         public Func<object, EntityState, bool> IsDisabled { get; set; }
 
-        public object? Configuration { get; set; }
+        public Func<object, EntityState, Task<object?>>? Configuration { get; set; }
     }
 }
