@@ -346,6 +346,12 @@ thead td:hover .icon {
 .content .content {
 }
 
+.single-nested-content > .content {
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
 }
@@ -489,10 +495,11 @@ textarea.form-control {
     .form-check.form-check-inline {
         padding: .25rem 1rem .25rem 0;
     }
-    .form-check.form-check-inline .form-check-input {
-        margin-top: .3rem;
-        margin-left: -.25rem;
-    }
+
+        .form-check.form-check-inline .form-check-input {
+            margin-top: .3rem;
+            margin-left: -.25rem;
+        }
 
 pre.col-form-label {
     height: auto !important;

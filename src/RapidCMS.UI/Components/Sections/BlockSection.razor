@@ -51,13 +51,13 @@
         }
         else if (element is SubCollectionUI subCollection)
         {
-            <div class="nested-content">
+            <div class="nested-content @(Section.Elements.Count == 1 ? "single-nested-content" : "")">
                 <RootSection InitialState="@subCollection.NestedNavigationState" />
             </div>
         }
         else if (element is RelatedCollectionUI relatedCollection)
         {
-            <div class="nested-content">
+            <div class="nested-content @(Section.Elements.Count == 1 ? "single-nested-content" : "")">
                 <RootSection InitialState="@relatedCollection.NestedNavigationState" />
             </div>
         }
