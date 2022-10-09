@@ -30,12 +30,12 @@
 
         StateHasChanged();
 
-        await OnPageChanged.InvokeAsync(newPageNr);
+        await OnPageChanged.InvokeAsync(new PageEventArgs(newPageNr));
 
         disabled = false;
     }
 
     [Parameter] public int CurrentPage { get; set; }
     [Parameter] public int? MaxPage { get; set; }
-    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+    [Parameter] public EventCallback<PageEventArgs> OnPageChanged { get; set; }
 }

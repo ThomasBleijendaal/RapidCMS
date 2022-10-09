@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.UI.Models;
 
 namespace RapidCMS.UI.Components.Editors
 {
@@ -65,9 +66,9 @@ namespace RapidCMS.UI.Components.Editors
             });
         }
 
-        protected async Task PageChangedAsync(int page)
+        protected async Task PageChangedAsync(PageEventArgs args)
         {
-            _currentPage = page;
+            _currentPage = args.Page;
 
             await UpdateOptionsAsync();
 

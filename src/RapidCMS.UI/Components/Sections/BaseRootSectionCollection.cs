@@ -81,7 +81,7 @@ namespace RapidCMS.UI.Components.Sections
             StateHasChanged();
         }
 
-        protected void SortChanged((int index, OrderByType direction) sort)
+        protected void SortChanged(SortEventArgs args)
         {
             if (ListUI == null)
             {
@@ -91,11 +91,11 @@ namespace RapidCMS.UI.Components.Sections
             NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
             {
                 CurrentPage = 1,
-                Sorts = (CollectionState.Sorts ?? new()).Add(sort.index, sort.direction)
+                Sorts = (CollectionState.Sorts ?? new()).Add(args.Index, args.Direction)
             });
         }
 
-        protected void PageChanged(int page)
+        protected void PageChanged(PageEventArgs args)
         {
             if (ListUI == null)
             {
@@ -104,7 +104,7 @@ namespace RapidCMS.UI.Components.Sections
 
             NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
             {
-                CurrentPage = page
+                CurrentPage = args.Page
             });
         }
 

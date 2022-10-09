@@ -6,8 +6,6 @@
             @{
                 if (CollapseEmptyCells && UI.CommonFields != null)
                 {
-                    var i = 0;
-
                     foreach (var field in UI.CommonFields)
                     {
                         <HeaderCell Field="field" OnSortChanged="@OnSortChanged" Sorts="Sorts" />
@@ -78,8 +76,8 @@
     [Parameter] public int CurrentPage { get; set; }
     [Parameter] public int? MaxPage { get; set; }
     [Parameter] public SortBag? Sorts { get; set; }
-    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
-    [Parameter] public EventCallback<(int, OrderByType)> OnSortChanged { get; set; }
+    [Parameter] public EventCallback<PageEventArgs> OnPageChanged { get; set; }
+    [Parameter] public EventCallback<SortEventArgs> OnSortChanged { get; set; }
 
     [Inject] private IDragInteraction DragInteraction { get; set; } = default!;
 

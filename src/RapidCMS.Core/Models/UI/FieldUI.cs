@@ -36,6 +36,6 @@ namespace RapidCMS.Core.Models.UI
         internal IPropertyMetadata? OrderByExpression { get; private set; }
         public OrderByType SortDirection { get; private set; }
 
-        public Func<object, EntityState, Task<object?>> Configuration { get; set; }
+        public Func<object, EntityState, Task<object?>>? Configuration { get; set; }
     }
 }

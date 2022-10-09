@@ -28,7 +28,7 @@
 
     [Parameter] public FieldUI? Field { get; set; }
     [Parameter] public SortBag? Sorts { get; set; }
-    [Parameter] public EventCallback<(int, OrderByType)> OnSortChanged { get; set; }
+    [Parameter] public EventCallback<SortEventArgs> OnSortChanged { get; set; }
 
     private async Task HandleClick(MouseEventArgs args)
     {
@@ -41,7 +41,7 @@
                 _ => OrderByType.Ascending,
             };
             
-            await OnSortChanged.InvokeAsync((Field.Index, newDirection));
+            await OnSortChanged.InvokeAsync(new SortEventArgs(Field.Index, newDirection));
         }
     }
 }
