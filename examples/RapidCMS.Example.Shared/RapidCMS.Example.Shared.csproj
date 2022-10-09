@@ -18,6 +18,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\extensions\RapidCMS.Extensions.Markdown\RapidCMS.Extensions.Markdown.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.Core\RapidCMS.Core.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.Repositories\RapidCMS.Repositories.csproj" />
     <ProjectReference Include="..\..\src\RapidCMS.UI\RapidCMS.UI.csproj" />
