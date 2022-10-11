@@ -1,4 +1,6 @@
-﻿@using RapidCMS.Core.Abstractions.UI
+﻿@using Microsoft.AspNetCore.Components.Web
+@using RapidCMS.Core.Abstractions.UI
+@using RapidCMS.Extensions.Markdown
 @using RapidCMS.UI.Components.Editors
 @using RapidCMS.UI.Extensions
 @using RapidCMS.UI.Helpers
@@ -26,7 +28,7 @@
 else
 {
     <textarea value=@GetValueAsString()
-          @onchange=@(args => SetValueFromStringAsync(((string?)args.Value) ?? ""))
+          @onchange=@ChangeAsync
           disabled=@IsDisabled
           placeholder=@Placeholder
           class="form-control @(CssHelper.GetValidationClass(State))"></textarea>
@@ -51,5 +53,10 @@ else
         Previewing = Config?.StartWithPreview ?? false;
 
         await base.OnInitializedAsync();
+    }
+
+    private async Task ChangeAsync(ChangeEventArgs args)
+    {
+        await SetValueFromStringAsync(((string?)args.Value) ?? "");
     }
 }

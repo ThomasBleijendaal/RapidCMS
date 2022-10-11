@@ -8,7 +8,7 @@
             @foreach (var tab in Tabs)
             {
                 <li class="nav-item">
-                    <a class="nav-link @((tab.Id == activeTab) ? "active" : "")" @onclick="@(args => Tab(tab.Id))" href="javascript:;">@tab.Label</a>
+                    <a class="nav-link @((tab.Id == activeTab) ? "active" : "")" @onclick="@((args) => Tab(tab.Id))" href="javascript:;">@tab.Label</a>
                 </li>
             }
         }
@@ -21,10 +21,10 @@
                            placeholder="Search.."
                            class="form-control"
                            value="@searchTerm"
-                           @onchange="(args) => Search(((string?)args.Value) ?? string.Empty)" />
+                           @onchange="@((args) => Search(((string?)args.Value) ?? string.Empty))" />
                     <div class="input-group-append">
                         <button class="btn" 
-                                @onclick="(args) => { searchTerm = string.Empty; Search(string.Empty); }">
+                                @onclick="@((args) => { searchTerm = string.Empty; Search(string.Empty); })">
                             <Icon Name="Cancel" />
                         </button>
                     </div>

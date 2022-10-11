@@ -1,10 +1,12 @@
-﻿using RapidCMS.Core.Abstractions.Config;
+﻿using BlazorMonaco;
+using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Providers;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.Handlers;
+using RapidCMS.Extensions.Monaco;
 using RapidCMS.UI.Components.Buttons;
 using RapidCMS.UI.Components.Editors;
 using RapidCMS.UI.Components.Preview;
@@ -74,6 +76,12 @@ namespace RapidCMS.Example.Shared.Collections
 
                                 // this field uses a custom editor, which must inherit BaseEditor
                                 section.AddField(x => x.Password).SetType(typeof(PasswordEditor));
+
+                                section.AddField(x => x.CodeSnippet)
+                                    .SetAsMonacoEditor(new MonacoEditorConfiguration(new StandaloneEditorConstructionOptions
+                                    {
+                                       Language = "csharp" 
+                                    }));
 
                                 // some default editors (like FileUploadEditor) require custom components, so they must be added using their full classname
                                 // NoPreview is a default component indicating this upload editor has no preview of the file

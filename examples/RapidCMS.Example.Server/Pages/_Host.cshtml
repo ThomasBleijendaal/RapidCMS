@@ -10,11 +10,19 @@
     <title>RapidCMS.Example.Server</title>
     <base href="~/" />
     <link href="_content/rapidcms.ui/css/site.css" rel="stylesheet" />
+    <link href="_content/BlazorMonaco/lib/monaco-editor/min/vs/editor/editor.main.css" rel="stylesheet" />
+    <link href="_content/rapidcms.extensions.monaco/monaco.css" rel="stylesheet" />
 </head>
 <body>
     <component type="typeof(App)" render-mode="ServerPrerendered" />
 
     <script src="_content/rapidcms.ui/js/interop.js"></script>
+
+    <script src="_content/BlazorMonaco/lib/monaco-editor/min/vs/loader.js"></script>
+    <script>require.config({ paths: { 'vs': '_content/BlazorMonaco/lib/monaco-editor/min/vs' } });</script>
+    <script src="_content/BlazorMonaco/lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+    <script src="_content/BlazorMonaco/jsInterop.js"></script>
+
     <script src="_framework/blazor.server.js"></script>
 </body>
 </html>

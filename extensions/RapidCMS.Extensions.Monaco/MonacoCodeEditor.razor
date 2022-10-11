@@ -1,0 +1,44 @@
+﻿@using BlazorMonaco
+@using Microsoft.AspNetCore.Components.Web
+@using RapidCMS.Core.Abstractions.UI
+@using RapidCMS.Extensions.Monaco
+@using RapidCMS.UI.Components.Editors
+@using RapidCMS.UI.Extensions
+
+@inherits BasePropertyEditor
+@implements IWantConfiguration<MonacoEditorConfiguration>
+
+<div class="form-control form-control-monaco">
+    @if (Config != null)
+    {
+        <MonacoEditor Id="@Id" ConstructionOptions="EditorConstructionOptions" OnKeyUp="ChangedAsync" />
+    }
+</div>
+
+@code {
+    public string Id = Guid.NewGuid().ToString();
+
+    private MonacoEditorConfiguration? Config;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Config = await this.GetConfigAsync<MonacoEditorConfiguration>()
+            ?? new MonacoEditorConfiguration(null);
+
+        await base.OnInitializedAsync();
+    }
+
+    private StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
+    {
+        var options = Config?.Options ?? new StandaloneEditorConstructionOptions();
+
+        options.Value = GetValueAsString();
+
+        return options;
+    }
+
+    private async Task ChangedAsync(KeyboardEvent args)
+    {
+        
+    }
+}

@@ -21,6 +21,8 @@ namespace RapidCMS.Example.Shared.Data
 
         public string? ProfilePictureBase64 { get; set; }
 
+        public string? CodeSnippet { get; set; }
+
         public int Integer { get; set; }
         public double Double { get; set; }
 
@@ -40,7 +42,8 @@ namespace RapidCMS.Example.Shared.Data
                 ProfilePictureBase64 = ProfilePictureBase64,
                 Integer = Integer,
                 StartDate = StartDate,
-                Role = Role
+                Role = Role,
+                CodeSnippet = CodeSnippet
             };
         }
 
