@@ -11,7 +11,7 @@
 
       RapidCMS is a Blazor framework which allows you to build a responsive and flexible CMS purely from code.
     </Description>
-    <Copyright>2021</Copyright>
+    <Copyright>2022</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/ThomasBleijendaal/RapidCMS</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>

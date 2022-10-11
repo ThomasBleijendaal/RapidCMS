@@ -35,6 +35,8 @@ jobs:
       run: dotnet build -p:PackageVersion=${{steps.tag.outputs.tag}} --configuration Release ./src/RapidCMS.Repositories/RapidCMS.Repositories.csproj
     - name: Build UI
       run: dotnet build -p:PackageVersion=${{steps.tag.outputs.tag}} --configuration Release ./src/RapidCMS.UI/RapidCMS.UI.csproj
+    - name: Build Extensions - Markdown
+      run: dotnet build --configuration Release ./extensions/RapidCMS.Extensions.Markdown/RapidCMS.Extensions.Markdown.csproj
     - name: Publish Api Core
       run: dotnet nuget push .\src\RapidCMS.Api.Core\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Publish Api Functions
@@ -47,3 +49,5 @@ jobs:
       run: dotnet nuget push .\src\RapidCMS.Repositories\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Publish UI
       run: dotnet nuget push .\src\RapidCMS.UI\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+    - name: Publish Extensions - Markdown
+      run: dotnet nuget push .\extensions\RapidCMS.Extensions.Markdown\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate

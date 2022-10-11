@@ -1,3 +1,55 @@
-﻿<div class="my-component">
-    This component is defined in the <strong>RapidCMS.Extensions.Markdown</strong> library.
-</div>
+﻿@using RapidCMS.Core.Abstractions.UI
+@using RapidCMS.UI.Components.Editors
+@using RapidCMS.UI.Extensions
+@using RapidCMS.UI.Helpers
+
+@inherits BasePropertyEditor
+@implements IWantConfiguration<MarkdownEditorConfiguration>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link @(Previewing == false ? "active" : "")" @onclick="@(() => Previewing = false)" href="javascript:;">Markdown</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link  @(Previewing == true ? "active" : "")" @onclick="@(() => Previewing = true)" href="javascript:;">Preview</a>
+    </li>
+</ul>
+
+@if (Previewing)
+{
+    var html = new MarkupString(Markdig.Markdown.ToHtml(GetValueAsString()));
+
+    <div class="content">
+        @html
+    </div>
+}
+else
+{
+    <textarea value=@GetValueAsString()
+          @onchange=@(args => SetValueFromStringAsync(((string?)args.Value) ?? ""))
+          disabled=@IsDisabled
+          placeholder=@Placeholder
+          class="form-control @(CssHelper.GetValidationClass(State))"></textarea>
+
+    @foreach (var message in GetValidationMessages())
+    {
+        <div class="invalid-feedback">
+            @message
+        </div>
+    }
+}
+
+@code {
+    public bool Previewing { get; set; }
+
+    private MarkdownEditorConfiguration? Config;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Config = await this.GetConfigAsync();
+
+        Previewing = Config?.StartWithPreview ?? false;
+
+        await base.OnInitializedAsync();
+    }
+}

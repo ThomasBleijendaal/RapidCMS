@@ -5,7 +5,6 @@ using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
 using RapidCMS.Example.Shared.Handlers;
-using RapidCMS.Extensions.Markdown;
 using RapidCMS.UI.Components.Buttons;
 using RapidCMS.UI.Components.Editors;
 using RapidCMS.UI.Components.Preview;
@@ -67,7 +66,7 @@ namespace RapidCMS.Example.Shared.Collections
                                 section.AddDefaultButton(DefaultButtonType.SaveExisting);
                                 section.AddDefaultButton(DefaultButtonType.SaveNew);
 
-                                section.AddField(x => x.Name).SetAsMarkdownEditor();
+                                section.AddField(x => x.Name);
                                 section.AddField(x => x.StartDate).SetType(EditorType.Date);
 
                                 // this field uses the EnumFlagPicker, which will set or unset flags of the Role enum

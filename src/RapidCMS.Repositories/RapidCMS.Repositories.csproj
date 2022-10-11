@@ -17,7 +17,7 @@
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageTags>Blazor, CMS</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Copyright>2021</Copyright>
+    <Copyright>2022</Copyright>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

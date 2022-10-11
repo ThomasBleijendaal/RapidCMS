@@ -6,6 +6,7 @@ using RapidCMS.Core.Models.Configuration;
 using RapidCMS.Core.Repositories;
 using RapidCMS.Example.Shared.Components;
 using RapidCMS.Example.Shared.Data;
+using RapidCMS.Extensions.Markdown;
 
 namespace RapidCMS.Example.Shared.Collections
 {
@@ -139,12 +140,10 @@ namespace RapidCMS.Example.Shared.Collections
                             // sections can have labels to make complex forms more understandable
                             section.SetLabel("Biography");
 
-                            // sections can be hidden using VisibleWhen, based upon the entity or the state of that entity
-                            // so users won't be confronted with editors that do not apply
-                            section.VisibleWhen((person, state) => state == EntityState.IsExisting);
-
                             // there are many types of editors available, and even custom types can be used
-                            section.AddField(x => x.Details.Bio).SetType(EditorType.TextArea).SetName("Bio");
+                            section.AddField(x => x.Details.Bio)
+                                .SetAsMarkdownEditor((entity, state) => new MarkdownEditorConfiguration(StartWithPreview: state == EntityState.IsExisting))
+                                .SetName("Bio");
                         });
 
                         editor.AddSection(section =>
@@ -154,6 +153,8 @@ namespace RapidCMS.Example.Shared.Collections
                             section.AddField(x => x.FavouriteChildId)
                                 .SetName("Favorite child")
                                 .SetType(EditorType.Select)
+                                // sections can be hidden using VisibleWhen, based upon the entity or the state of that entity
+                                // so users won't be confronted with editors that do not apply
                                 .VisibleWhen((person, state) => state == EntityState.IsExisting)
                                 .SetCollectionRelation<Person>("person", config =>
                                 {

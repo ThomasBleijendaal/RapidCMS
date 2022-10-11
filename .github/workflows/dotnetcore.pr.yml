@@ -28,5 +28,7 @@ jobs:
       run: dotnet build --configuration Release ./src/RapidCMS.Repositories/RapidCMS.Repositories.csproj
     - name: Build UI
       run: dotnet build --configuration Release ./src/RapidCMS.UI/RapidCMS.UI.csproj
+    - name: Build Extensions - Markdown
+      run: dotnet build --configuration Release ./extensions/RapidCMS.Extensions.Markdown/RapidCMS.Extensions.Markdown.csproj
     - name: Run Core Tests
       run: dotnet test ./src/RapidCMS.Core.Tests/RapidCMS.Core.Tests.csproj

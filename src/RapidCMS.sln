@@ -28,14 +28,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{89191FB4-6
 		..\.github\workflows\dotnetcore.pr.yml = ..\.github\workflows\dotnetcore.pr.yml
 		..\.github\workflows\dotnetcore.yml = ..\.github\workflows\dotnetcore.yml
 		..\LICENSE.md = ..\LICENSE.md
-		..\MMQUICKSTART.md = ..\MMQUICKSTART.md
 		..\QUICKSTART.md = ..\QUICKSTART.md
 		..\README.md = ..\README.md
 		..\SETUP_CLIENTSIDE.md = ..\SETUP_CLIENTSIDE.md
 		..\SETUP_COMPANION.md = ..\SETUP_COMPANION.md
 		..\SETUP_MAUI.md = ..\SETUP_MAUI.md
-		..\SETUP_MMCLIENTSIDE.md = ..\SETUP_MMCLIENTSIDE.md
-		..\SETUP_MMSERVERSIDE.md = ..\SETUP_MMSERVERSIDE.md
 		..\SETUP_SERVERSIDE.md = ..\SETUP_SERVERSIDE.md
 	EndProjectSection
 EndProject
@@ -71,7 +68,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Example.Maui", "..
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extensions", "extensions", "{764E7D8F-3810-4CA7-B2E0-6542DECE2DE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidCMS.Extensions.Markdown", "..\extensions\RapidCMS.Extensions.Markdown\RapidCMS.Extensions.Markdown.csproj", "{E6FD2376-8EF0-4014-B64D-24E4C707635F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidCMS.Extensions.Markdown", "..\extensions\RapidCMS.Extensions.Markdown\RapidCMS.Extensions.Markdown.csproj", "{E6FD2376-8EF0-4014-B64D-24E4C707635F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
