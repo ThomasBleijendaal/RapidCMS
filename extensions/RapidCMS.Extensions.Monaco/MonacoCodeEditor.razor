@@ -11,7 +11,7 @@
 <div class="form-control form-control-monaco">
     @if (Config != null)
     {
-        <MonacoEditor Id="@Id" ConstructionOptions="EditorConstructionOptions" OnKeyUp="ChangedAsync" />
+        <MonacoEditor @ref="Editor" Id="@Id" ConstructionOptions="EditorConstructionOptions" OnKeyUp="ChangedAsync" />
     }
 </div>
 
@@ -19,6 +19,8 @@
     public string Id = Guid.NewGuid().ToString();
 
     private MonacoEditorConfiguration? Config;
+
+    private MonacoEditor? Editor { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -37,8 +39,31 @@
         return options;
     }
 
+    private bool loading;
+    private bool queued;
+
     private async Task ChangedAsync(KeyboardEvent args)
     {
-        
+        if (Editor == null)
+        {
+            return;
+        }
+
+        if (loading)
+        {
+            queued = true;
+            return;
+        }
+
+        do
+        {
+            loading = true;
+            queued = false;
+            await SetValueFromStringAsync(await Editor.GetValue());
+            loading = false;
+        }
+        while (queued);
+
+        await InvokeAsync(StateHasChanged);
     }
 }
