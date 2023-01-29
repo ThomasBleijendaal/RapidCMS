@@ -5,7 +5,7 @@ namespace RapidCMS.Core.Abstractions.Mediators
 {
     public interface IMediator
     {
-        Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request);
+        Task<TResponse> SendAsync< TResponse>(IRequest<TResponse> request);
 
         void NotifyEvent(object sender, IMediatorEventArgs @event);
 

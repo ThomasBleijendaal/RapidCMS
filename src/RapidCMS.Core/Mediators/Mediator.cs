@@ -26,7 +26,8 @@ namespace RapidCMS.Core.Mediators
 
         public event EventHandler<IMediatorEventArgs>? OnEvent;
 
-        public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request) => _serviceRequestHandler.HandleRequestAsync(request);
+        public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
+            => _serviceRequestHandler.HandleRequestAsync(request);
 
         public void NotifyEvent(object sender, IMediatorEventArgs @event)
         {
