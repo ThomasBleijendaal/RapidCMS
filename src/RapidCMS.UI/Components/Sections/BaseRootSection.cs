@@ -28,6 +28,8 @@ namespace RapidCMS.UI.Components.Sections
         [Inject] protected IMediator Mediator { get; set; } = default!;
         [Inject] private INavigationStateProvider NavigationStateProvider { get; set; } = default!;
 
+        [Obsolete("Find out how to remove this")]
+        [Inject] protected IServiceProvider ServiceProvider { get; set; } = default!;
         [Inject] protected IPresentationService PresentationService { get; set; } = default!;
         [Inject] protected IInteractionService InteractionService { get; set; } = default!;
         [Inject] protected IUIResolverFactory UIResolverFactory { get; set; } = default!;

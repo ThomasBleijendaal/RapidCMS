@@ -13,9 +13,10 @@ using RapidCMS.Core.Providers;
 
 namespace RapidCMS.Core.Forms
 {
+    [Obsolete]
     public sealed class FormEditContext
     {
-        internal FormEditContext(
+        public FormEditContext(
             string collectionAlias,
             string repositoryAlias,
             string entityVariantAlias,
@@ -35,7 +36,7 @@ namespace RapidCMS.Core.Forms
             FormState = new FormState(Entity, validators, serviceProvider);
         }
 
-        private FormEditContext(
+        public FormEditContext(
             FormEditContext parentEditContext,
             IPropertyMetadata property) : this(
                 parentEditContext.CollectionAlias,

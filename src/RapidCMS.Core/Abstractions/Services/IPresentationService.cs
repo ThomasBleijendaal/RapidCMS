@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Services
 {
+    [Obsolete]
     public interface IPresentationService
     {
         Task<TResult> GetEntityAsync<TRequest, TResult>(TRequest request) where TResult : class;

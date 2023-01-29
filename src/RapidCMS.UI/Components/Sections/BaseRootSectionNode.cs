@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
+using RapidCMS.Core.Models.Queries;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.UI.Models;
@@ -23,14 +24,22 @@ namespace RapidCMS.UI.Components.Sections
             Buttons = null;
             Sections = null;
 
-            var editContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, FormEditContext>(new GetEntityRequestModel
-            {
-                CollectionAlias = CurrentNavigationState.CollectionAlias,
-                Id = CurrentNavigationState.Id,
-                ParentPath = CurrentNavigationState.ParentPath,
-                UsageType = CurrentNavigationState.UsageType,
-                VariantAlias = CurrentNavigationState.VariantAlias
-            });
+            var result = await Mediator.SendAsync(new GetEntityQuery(
+                CurrentNavigationState.CollectionAlias,
+                CurrentNavigationState.VariantAlias,
+                CurrentNavigationState.Id,
+                CurrentNavigationState.ParentPath,
+                CurrentNavigationState.UsageType));
+
+            var editContext = new FormEditContext(
+                result.CollectionAlias,
+                result.RepositoryAlias,
+                result.EntityVariantAlias,
+                result.Entity,
+                result.Parent,
+                result.UsageType,
+                result.Validators,
+                ServiceProvider);
 
             var resolver = await UIResolverFactory.GetNodeUIResolverAsync(CurrentNavigationState);
 

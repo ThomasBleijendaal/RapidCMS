@@ -9,6 +9,7 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs;
 using RapidCMS.Core.Models.EventArgs.Mediators;
+using RapidCMS.Core.Models.Queries;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
 using RapidCMS.Core.Models.UI;
@@ -199,14 +200,22 @@ namespace RapidCMS.UI.Components.Sections
             {
                 if (reloadEntityIds.Contains<string>(x.editContext.Entity.Id!))
                 {
-                    var reloadedEditContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, FormEditContext>(new GetEntityRequestModel
-                    {
-                        CollectionAlias = x.editContext.CollectionAlias,
-                        Id = x.editContext.Entity.Id,
-                        ParentPath = x.editContext.Parent?.GetParentPath(),
-                        UsageType = x.editContext.UsageType,
-                        VariantAlias = x.editContext.EntityVariantAlias
-                    });
+                    var result = await Mediator.SendAsync(new GetEntityQuery(
+                        x.editContext.CollectionAlias,
+                        x.editContext.EntityVariantAlias,
+                        x.editContext.Entity.Id,
+                        x.editContext.Parent?.GetParentPath(),
+                        x.editContext.UsageType));
+
+                    var reloadedEditContext = new FormEditContext(
+                        result.CollectionAlias,
+                        result.RepositoryAlias,
+                        result.EntityVariantAlias,
+                        result.Entity,
+                        result.Parent,
+                        result.UsageType,
+                        result.Validators,
+                        ServiceProvider);
 
                     return (reloadedEditContext, await uiResolver.GetSectionsForEditContextAsync(reloadedEditContext, CurrentNavigationState));
                 }

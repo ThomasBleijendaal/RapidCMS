@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using RapidCMS.Core.Abstractions.Mediators;
 
 namespace RapidCMS.Core.Mediators
@@ -10,11 +9,15 @@ namespace RapidCMS.Core.Mediators
     {
         private readonly Dictionary<Type, IMediatorEventArgs> _cache = new();
         private readonly IEnumerable<IMediatorEventListener> _listeners;
+        private readonly MediatorSerivceRequestHandler _serviceRequestHandler;
         private bool _disposedValue;
 
-        public Mediator(IEnumerable<IMediatorEventListener> listeners)
+        public Mediator(
+            IEnumerable<IMediatorEventListener> listeners,
+            MediatorSerivceRequestHandler serviceRequestHandler)
         {
             _listeners = listeners;
+            _serviceRequestHandler = serviceRequestHandler;
             foreach (var listener in _listeners)
             {
                 listener.RegisterListener(this);
@@ -22,6 +25,8 @@ namespace RapidCMS.Core.Mediators
         }
 
         public event EventHandler<IMediatorEventArgs>? OnEvent;
+
+        public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request) => _serviceRequestHandler.HandleRequestAsync(request);
 
         public void NotifyEvent(object sender, IMediatorEventArgs @event)
         {

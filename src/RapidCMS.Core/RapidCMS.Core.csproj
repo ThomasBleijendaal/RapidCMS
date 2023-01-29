@@ -55,4 +55,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Handlers\CommandHandlers\" />
+    <Folder Include="Models\Commands\" />
+  </ItemGroup>
+
 </Project>

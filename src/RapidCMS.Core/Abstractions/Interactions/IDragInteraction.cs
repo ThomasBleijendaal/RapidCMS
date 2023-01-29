@@ -4,6 +4,7 @@ using RapidCMS.Core.Models.EventArgs;
 
 namespace RapidCMS.Core.Abstractions.Interactions
 {
+    [Obsolete]
     public interface IDragInteraction
     {
         void DragStart(DragEventArgs args, string id);

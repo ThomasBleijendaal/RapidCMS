@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Abstractions.Interactions
 {
+    [Obsolete]
     internal interface IButtonInteraction
     {
         Task<CrudType> ValidateButtonInteractionAsync(IEditorButtonInteractionRequestModel request);

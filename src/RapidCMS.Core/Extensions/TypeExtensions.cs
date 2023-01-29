@@ -12,13 +12,18 @@ namespace RapidCMS.Core.Extensions
         public static bool IsSameTypeOrDerivedFrom(this Type typeToTest, Type sameTypeOrSuperClass) 
             => typeToTest == sameTypeOrSuperClass || typeToTest.IsSubclassOf(sameTypeOrSuperClass);
 
-        public static bool HasInterface(this Type typeToTest, Type @interface) 
+        public static bool HasInterface(this Type typeToTest, Type @interface)
             => typeToTest.GetInterfaces().Any(x => x == @interface);
 
         public static bool HasGenericInterface(this Type typeToTest, Type @interface)
-            => @interface.IsGenericType && 
-                @interface.IsGenericTypeDefinition && 
-                typeToTest.GetInterfaces().Where(x => x.IsGenericType).Any(x => x.GetGenericTypeDefinition() == @interface);
+            => GetGenericInterface(typeToTest, @interface) != null;
+
+        public static Type? GetGenericInterface(this Type typeToTest, Type @interface)
+            => @interface.IsGenericType &&
+                @interface.IsGenericTypeDefinition &&
+                typeToTest.GetInterfaces()
+                    .Where(x => x.IsGenericType)
+                    .FirstOrDefault(x => x.GetGenericTypeDefinition() == @interface) is Type type ? type : null;
 
         public static IEnumerable<Type> GetImplementingTypes(this Type typeToFindDerivativesOf) 
             => AppDomain.CurrentDomain.GetAssemblies()

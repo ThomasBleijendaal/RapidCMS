@@ -19,10 +19,13 @@ using RapidCMS.Core.Dispatchers;
 using RapidCMS.Core.Dispatchers.Form;
 using RapidCMS.Core.Factories;
 using RapidCMS.Core.Handlers;
+using RapidCMS.Core.Handlers.QueryHandlers;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Interactions;
 using RapidCMS.Core.Mediators;
 using RapidCMS.Core.Models.Config;
+using RapidCMS.Core.Models.Queries;
+using RapidCMS.Core.Models.Results;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Navigation;
 using RapidCMS.Core.Providers;
@@ -90,7 +93,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IDataProviderResolver, DataProviderResolver>();
             services.AddTransient<IRepositoryResolver, RepositoryResolver>();
 
-            services.AddTransient<IPresentationDispatcher, GetEntityDispatcher>();
             services.AddTransient<IPresentationDispatcher, GetEntityOfPageDispatcher>();
             services.AddTransient<IPresentationDispatcher, GetEntitiesDispatcher>();
             services.AddTransient<IPresentationDispatcher, GetPageDispatcher>();
@@ -109,6 +111,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<ITreeService, TreeService>();
 
             services.AddScoped<IMediator, Mediator>();
+
+            services.AddTransient<MediatorSerivceRequestHandler>();
+            services.AddTransient<IRequestHandler<GetEntityQuery, EntityResult>, GetEntityQueryHandler>();
 
             services.AddScoped<DefaultButtonActionHandler>();
             services.AddScoped(typeof(OpenPaneButtonActionHandler<>));
