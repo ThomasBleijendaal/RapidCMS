@@ -94,7 +94,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IRepositoryResolver, RepositoryResolver>();
 
             services.AddTransient<IPresentationDispatcher, GetEntityOfPageDispatcher>();
-            services.AddTransient<IPresentationDispatcher, GetEntitiesDispatcher>();
             services.AddTransient<IPresentationDispatcher, GetPageDispatcher>();
             services.AddTransient<IPresentationService, PresentationService>();
 
@@ -114,6 +113,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddTransient<MediatorSerivceRequestHandler>();
             services.AddTransient<IRequestHandler<GetEntityQuery, EntityResult>, GetEntityQueryHandler>();
+            services.AddTransient<IRequestHandler<GetEntitiesQuery, EntitiesResult>, GetEntitiesQueryHandler>();
 
             services.AddScoped<DefaultButtonActionHandler>();
             services.AddScoped(typeof(OpenPaneButtonActionHandler<>));

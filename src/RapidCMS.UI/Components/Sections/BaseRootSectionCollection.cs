@@ -157,27 +157,24 @@ namespace RapidCMS.UI.Components.Sections
 
             var view = NavigationStateProvider.GetCurrentView(CurrentNavigationState, listUI, activeTab);
 
-            var request = CurrentNavigationState.Related != null
-                ? (GetEntitiesRequestModel)new GetEntitiesOfRelationRequestModel
-                {
-                    CollectionAlias = CurrentNavigationState.CollectionAlias,
-                    View = view,
-                    Related = CurrentNavigationState.Related,
-                    UsageType = CurrentNavigationState.UsageType,
-                    VariantAlias = CurrentNavigationState.VariantAlias,
-                    IsEmbedded = !NavigationStateProvider.IsRootState(CurrentNavigationState)
-                }
-                : (GetEntitiesRequestModel)new GetEntitiesOfParentRequestModel
-                {
-                    CollectionAlias = CurrentNavigationState.CollectionAlias,
-                    ParentPath = CurrentNavigationState.ParentPath,
-                    View = view,
-                    UsageType = CurrentNavigationState.UsageType,
-                    VariantAlias = CurrentNavigationState.VariantAlias,
-                    IsEmbedded = !NavigationStateProvider.IsRootState(CurrentNavigationState)
-                };
+            var request = new GetEntitiesQuery(
+                CurrentNavigationState.CollectionAlias,
+                CurrentNavigationState.VariantAlias,
+                CurrentNavigationState.ParentPath,
+                CurrentNavigationState.Related,
+                CurrentNavigationState.UsageType,
+                !NavigationStateProvider.IsRootState(CurrentNavigationState),
+                view);
 
-            var listContext = await PresentationService.GetEntitiesAsync<GetEntitiesRequestModel, ListContext>(request);
+            var result = await Mediator.SendAsync(request);
+
+            var listContext = new ListContext(
+                result.CollectionAlias,
+                CreateContext(result.ProtoEntity),
+                result.Parent,
+                result.UsageType,
+                result.Entities.ToList(CreateContext),
+                ServiceProvider);
 
             var sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await uiResolver.GetSectionsForEditContextAsync(editContext, CurrentNavigationState)));
 
@@ -207,15 +204,7 @@ namespace RapidCMS.UI.Components.Sections
                         x.editContext.Parent?.GetParentPath(),
                         x.editContext.UsageType));
 
-                    var reloadedEditContext = new FormEditContext(
-                        result.CollectionAlias,
-                        result.RepositoryAlias,
-                        result.EntityVariantAlias,
-                        result.Entity,
-                        result.Parent,
-                        result.UsageType,
-                        result.Validators,
-                        ServiceProvider);
+                    var reloadedEditContext = CreateContext(result);
 
                     return (reloadedEditContext, await uiResolver.GetSectionsForEditContextAsync(reloadedEditContext, CurrentNavigationState));
                 }

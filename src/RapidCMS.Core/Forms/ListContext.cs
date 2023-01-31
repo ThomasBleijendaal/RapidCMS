@@ -5,6 +5,7 @@ using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Forms
 {
+    [Obsolete]
     public sealed class ListContext
     {
         public ListContext(string collectionAlias, FormEditContext protoEditContext, IParent? parent, UsageType usageType, List<FormEditContext>? editContexts, IServiceProvider serviceProvider)

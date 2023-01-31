@@ -9,6 +9,16 @@ namespace RapidCMS.Core.Extensions
 {
     public static class EnumerableExtensions
     {
+        public static IEnumerable<T> Insert<T>(this IEnumerable<T> source, T item)
+        {
+            yield return item;
+
+            foreach (var others in source)
+            {
+                yield return others;
+            }
+        }
+
         public static List<TResult> ToList<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
         {
             return source.Select(selector).ToList();

@@ -1,5 +1,8 @@
-﻿namespace RapidCMS.Core.Models.Request.Api
+﻿using System;
+
+namespace RapidCMS.Core.Models.Request.Api
 {
+    [Obsolete]
     public class EntityDescriptor
     {
         public EntityDescriptor(string? id, string? repositoryAlias, string? parentPath, string? variantAlias)

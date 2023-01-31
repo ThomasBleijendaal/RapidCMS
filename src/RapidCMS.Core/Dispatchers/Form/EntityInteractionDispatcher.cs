@@ -11,6 +11,8 @@ using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Forms;
+using RapidCMS.Core.Models;
+using RapidCMS.Core.Models.Commands;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Request.Form;
 using RapidCMS.Core.Models.Response;
@@ -160,7 +162,7 @@ namespace RapidCMS.Core.Dispatchers.Form
                     break;
 
                 case CrudType.Delete:
-                    await _concurrencyService.EnsureCorrectConcurrencyAsync(() => repository.DeleteAsync(request.EditContext.Entity.Id!, new ViewContext(collection.Alias, request.EditContext.Parent)));
+                    await _mediator.SendAsync(new DeleteEntityCommand(collection.RepositoryAlias, request.EditContext.Entity, request.EditContext.Parent));
 
                     if (response is NodeViewCommandResponseModel)
                     {

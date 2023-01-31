@@ -16,6 +16,7 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Response;
+using RapidCMS.Core.Models.Results;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.Core.Navigation;
@@ -191,5 +192,15 @@ namespace RapidCMS.UI.Components.Sections
             _loadCancellationTokenSource = new CancellationTokenSource();
             currentSource.Cancel();
         }
+
+        protected FormEditContext CreateContext(EntityResult result) => new FormEditContext(
+            result.CollectionAlias,
+            result.RepositoryAlias,
+            result.EntityVariantAlias,
+            result.Entity,
+            result.Parent,
+            result.UsageType,
+            result.Validators,
+            ServiceProvider);
     }
 }

@@ -5,6 +5,7 @@ using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Enums;
+using RapidCMS.Core.Exceptions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Queries;
 using RapidCMS.Core.Models.Results;
@@ -12,7 +13,7 @@ using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Handlers.QueryHandlers
 {
-    public class GetEntityQueryHandler : IRequestHandler<GetEntityQuery, EntityResult>
+    internal class GetEntityQueryHandler : IRequestHandler<GetEntityQuery, EntityResult>
     {
         private readonly ISetupResolver<CollectionSetup> _collectionResolver;
         private readonly IRepositoryResolver _repositoryResolver;
@@ -69,12 +70,12 @@ namespace RapidCMS.Core.Handlers.QueryHandlers
             var entity = await _concurrencyService.EnsureCorrectConcurrencyAsync(action);
             if (entity == null)
             {
-                throw new Exception("Failed to get entity for given id(s)");
+                throw new NotFoundException("Failed to get entity for given id(s)");
             }
             await _authService.EnsureAuthorizedUserAsync(request.UsageType, entity);
 
             return new EntityResult(
-                request.CollectionAlias, 
+                collection.Alias, 
                 collection.RepositoryAlias, 
                 variant.Alias, 
                 entity, 
