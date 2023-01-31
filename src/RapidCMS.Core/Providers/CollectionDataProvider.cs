@@ -12,11 +12,10 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs.Mediators;
-using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Providers
 {
-    internal class CollectionDataProvider : IRelationDataCollection, IDisposable
+    internal class CollectionDataProvider : IRelationDataCollection
     {
         private readonly IRepository _repository;
         private readonly IConcurrencyService _concurrencyService;
@@ -29,7 +28,6 @@ namespace RapidCMS.Core.Providers
         private readonly IReadOnlyList<IExpressionMetadata> _displayProperties;
         private readonly Type _relatedEntityType;
         private readonly IPropertyMetadata _property;
-        private readonly IMediator _mediator;
 
         private FormEditContext? _editContext { get; set; }
         private IParent? _parent;
@@ -63,12 +61,19 @@ namespace RapidCMS.Core.Providers
             _displayProperties = displayProperties ?? throw new ArgumentNullException(nameof(displayProperties));
             _relatedEntityType = relatedEntityType ?? throw new ArgumentNullException(nameof(relatedEntityType));
             _property = property ?? throw new ArgumentNullException(nameof(property));
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 
-            _eventHandle = _mediator.RegisterCallback<CollectionRepositoryEventArgs>(OnRepositoryChangeAsync);
+            _eventHandle = mediator.RegisterCallback<CollectionRepositoryEventArgs>(OnRepositoryChangeAsync);
         }
 
-        public void Configure(object configuration) { }
+        ~CollectionDataProvider()
+        {
+            Dispose();
+        }
+
+        public void Configure(object configuration)
+        {
+            // not implemented
+        }
 
         public event EventHandler? OnDataChange;
 

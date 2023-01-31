@@ -5,8 +5,7 @@ using RapidCMS.Core.Forms;
 
 namespace RapidCMS.UI.Components
 {
-    // TODO: implement disposablecomponent instead of componentbase
-    public abstract class EditContextComponentBase : ComponentBase, IDisposable
+    public abstract class EditContextComponentBase : DisposableComponent
     {
         [CascadingParameter(Name = "EditContext")] private FormEditContext CascadedEditContext { get; set; } = default!;
         protected FormEditContext EditContext { get; set; } = default!;
@@ -41,7 +40,7 @@ namespace RapidCMS.UI.Components
         protected abstract void AttachListener();
         protected abstract void DetachListener();
 
-        public virtual void Dispose()
+        protected override void Dispose()
         {
             DetachListener();
         }

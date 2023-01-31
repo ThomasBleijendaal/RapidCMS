@@ -17,13 +17,13 @@
                     <div class="col">
                         <label class="form-check-label row" for="@group-option@(index)">
                             <input class="form-check-input"
-                                   type="radio"
-                                   value=@option.Id
-                                   id="@group-option@(index)"
-                                   name=@group
-                                   checked=@(option.Id.Equals(value))
-                                   disabled=@IsDisabled
-                                   @onchange=@(args => SetValueFromObjectAsync(option.Id)) />
+                           type="radio"
+                           value=@option.Id
+                           id="@group-option@(index)"
+                           name=@group
+                           checked=@(option.Id.Equals(value))
+                           disabled=@IsDisabled
+                           @onchange=@(args => SetValueFromObjectAsync(option.Id)) />
                             @option.Labels.First()
                         </label>
                     </div>
@@ -57,25 +57,22 @@
     {
         if (DataCollection != null)
         {
-            DataCollection.OnDataChange += UpdateOptionsAsync;
-
             await DataCollection.SetEntityAsync(EditContext, Parent);
             await UpdateOptionsAsync();
         }
     }
 
-    private async void UpdateOptionsAsync(object? sender, EventArgs args)
+    protected override async Task UpdateOptionsAsync()
     {
         if (DataCollection == null)
         {
             return;
         }
-
         await InvokeAsync(async () =>
         {
             var currentValue = GetValueAsObject();
 
-            await UpdateOptionsAsync();
+            Options = await DataCollection.GetAvailableElementsAsync(View.Default());
 
             if (currentValue != null && Options != null && !Options.Any(x => x.Id.Equals(currentValue)))
             {
@@ -84,25 +81,5 @@
 
             StateHasChanged();
         });
-    }
-
-    private async Task UpdateOptionsAsync()
-    {
-        if (DataCollection == null)
-        {
-            return;
-        }
-
-        Options = await DataCollection.GetAvailableElementsAsync(View.Default());
-    }
-
-    public override void Dispose()
-    {
-        base.Dispose();
-
-        if (DataCollection != null)
-        {
-            DataCollection.OnDataChange -= UpdateOptionsAsync;
-        }
     }
 }

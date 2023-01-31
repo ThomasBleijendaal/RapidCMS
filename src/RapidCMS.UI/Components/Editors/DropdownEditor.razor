@@ -35,8 +35,6 @@
     {
         if (DataCollection != null)
         {
-            DataCollection.OnDataChange += UpdateOptionsAsync;
-
             IsNotNullableValueType = Property.PropertyType.IsValueType && Nullable.GetUnderlyingType(Property.PropertyType) == null;
             IsNullable = !Property.PropertyType.IsValueType || !IsNotNullableValueType;
 
@@ -55,7 +53,7 @@
         }
     }
 
-    private async void UpdateOptionsAsync(object? sender, EventArgs args)
+    protected override  async Task UpdateOptionsAsync()
     {
         if (DataCollection == null)
         {
@@ -89,16 +87,6 @@
         });
     }
 
-    private async Task UpdateOptionsAsync()
-    {
-        if (DataCollection == null)
-        {
-            return;
-        }
-
-        Options = await DataCollection.GetAvailableElementsAsync(View.Default());
-    }
-
     private async Task OnChange(ChangeEventArgs args)
     {
         var index = int.Parse(((string?)args.Value) ?? "");
@@ -118,16 +106,6 @@
             IsNullable = false;
 
             StateHasChanged();
-        }
-    }
-
-    public override void Dispose()
-    {
-        base.Dispose();
-
-        if (DataCollection != null)
-        {
-            DataCollection.OnDataChange -= UpdateOptionsAsync;
         }
     }
 }

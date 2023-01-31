@@ -61,8 +61,6 @@
     {
         if (RelationDataCollection != null)
         {
-            RelationDataCollection.OnDataChange += UpdateOptionsAsync;
-
             await RelationDataCollection.SetEntityAsync(EditContext, Parent);
             await UpdateOptionsAsync();
 
@@ -84,7 +82,7 @@
         });
     }
 
-    private async Task UpdateOptionsAsync()
+    protected override async Task UpdateOptionsAsync()
     {
         if (RelationDataCollection == null)
         {
@@ -108,15 +106,5 @@
         }
 
         await EditContext.NotifyPropertyChangedAsync(Property);
-    }
-
-    public override void Dispose()
-    {
-        base.Dispose();
-
-        if (RelationDataCollection != null)
-        {
-            RelationDataCollection.OnDataChange -= UpdateOptionsAsync;
-        }
     }
 }

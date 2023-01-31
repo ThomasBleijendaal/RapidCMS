@@ -30,40 +30,16 @@ namespace RapidCMS.UI.Components.Editors
         private IJSRuntime JsRuntime { get; set; } = null!;
 
         private IRelationDataCollection RelationDataCollection
-            => DataCollection as IRelationDataCollection 
+            => DataCollection as IRelationDataCollection
                 ?? throw new InvalidOperationException("Incorrect DataCollection assigned to Entity/iesPicker");
 
         protected override async Task OnInitializedAsync()
         {
             if (DataCollection != null)
             {
-                DataCollection.OnDataChange += UpdateOptionsAsync;
-
                 await DataCollection.SetEntityAsync(EditContext, Parent);
                 await UpdateOptionsAsync();
             }
-        }
-
-        private async void UpdateOptionsAsync(object? sender, EventArgs args)
-        {
-            if (DataCollection == null)
-            {
-                return;
-            }
-
-            await InvokeAsync(async () =>
-            {
-                var currentValue = GetValueAsObject();
-
-                await UpdateOptionsAsync();
-
-                if (currentValue != null && _options != null && !_options.Any(x => x.Id.Equals(currentValue)))
-                {
-                    await SetValueFromObjectAsync(default!);
-                }
-
-                StateHasChanged();
-            });
         }
 
         protected async Task PageChangedAsync(PageEventArgs args)
@@ -84,24 +60,34 @@ namespace RapidCMS.UI.Components.Editors
             await UpdateOptionsAsync();
         }
 
-        private async Task UpdateOptionsAsync()
+        protected override async Task UpdateOptionsAsync()
         {
             if (DataCollection == null)
             {
                 return;
             }
-
-            var view = View.Create(25, _currentPage, _searchTerm, default);
-            _options = await DataCollection.GetAvailableElementsAsync(view);
-
-            if (view.MoreDataAvailable)
+            await InvokeAsync(async () =>
             {
-                _maxPage = null;
-            }
-            else
-            {
-                _maxPage = _currentPage;
-            }
+                var currentValue = GetValueAsObject();
+
+                var view = View.Create(25, _currentPage, _searchTerm, default);
+                _options = await DataCollection.GetAvailableElementsAsync(view);
+
+                if (view.MoreDataAvailable)
+                {
+                    _maxPage = null;
+                }
+                else
+                {
+                    _maxPage = _currentPage;
+                }
+                if (currentValue != null && _options != null && !_options.Any(x => x.Id.Equals(currentValue)))
+                {
+                    await SetValueFromObjectAsync(default!);
+                }
+
+                StateHasChanged();
+            });
         }
 
         protected bool IsSelected(object id)
@@ -142,17 +128,6 @@ namespace RapidCMS.UI.Components.Editors
             else
             {
                 await SetValueFromObjectAsync(id);
-            }
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-
-            if (DataCollection != null)
-            {
-                DataCollection.OnDataChange -= UpdateOptionsAsync;
-                DataCollection.Dispose();
             }
         }
 
