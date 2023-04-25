@@ -219,7 +219,7 @@ namespace RapidCMS.Repositories
 
         private async Task HandleRelationsAsync(TEntity entity, IRelationContainer? relations)
         {
-            // this is some generic code to handle relations very genericly
+            // this is some generic code to handle relations very generically
             // please do not use in production (and you can't, since you cannot access IRepository)
 
             if (relations != null)
@@ -233,37 +233,49 @@ namespace RapidCMS.Repositories
                     {
                         if (relation.Property is IFullPropertyMetadata fp)
                         {
-                            // this is pretty ugly
-                            var inMemoryRepo = _serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
-                            var jsonRepo = _serviceProvider.GetService(typeof(JsonRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
-                            var lsRepo = _serviceProvider.GetService(typeof(LocalStorageRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
-                            var baseRepo = _serviceProvider.GetService(typeof(BaseRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
-
-                            var repo = inMemoryRepo ?? jsonRepo ?? lsRepo ?? baseRepo;
-
-                            if (repo != null)
+                            // magic for enums
+                            if (relation.RelatedEntityType.IsEnum && fp.Getter(entity) is IList current)
                             {
-                                var relatedEntities = await relation.RelatedElementIds
-                                    .Select(x => x?.ToString())
-                                    .OfType<string>()
-                                    .ToListAsync(async id =>
-                                    {
-                                        var entity = await repo.GetByIdAsync(id!, new ViewContext(null, default));
-                                        return entity;
-                                    });
-
-                                var orignalList = fp.Getter(entity);
-
-                                if (orignalList is IList list)
+                                current.Clear();
+                                foreach (var enumValue in relation.RelatedElementIds)
                                 {
-                                    list.Clear();
+                                    current.Add(enumValue);
+                                }
+                            }
+                            else
+                            {
+                                // this is pretty ugly
+                                var inMemoryRepo = _serviceProvider.GetService(typeof(InMemoryRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
+                                var jsonRepo = _serviceProvider.GetService(typeof(JsonRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
+                                var lsRepo = _serviceProvider.GetService(typeof(LocalStorageRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
+                                var baseRepo = _serviceProvider.GetService(typeof(BaseRepository<>).MakeGenericType(relation.RelatedEntityType)) as IRepository;
 
-                                    foreach (var relatedEntity in relatedEntities)
+                                var repo = inMemoryRepo ?? jsonRepo ?? lsRepo ?? baseRepo;
+
+                                if (repo != null)
+                                {
+                                    var relatedEntities = await relation.RelatedElementIds
+                                        .Select(x => x?.ToString())
+                                        .OfType<string>()
+                                        .ToListAsync(async id =>
+                                        {
+                                            var entity = await repo.GetByIdAsync(id!, new ViewContext(null, default));
+                                            return entity;
+                                        });
+
+                                    var orignalList = fp.Getter(entity);
+
+                                    if (orignalList is IList list)
                                     {
-                                        list.Add(relatedEntity);
-                                    }
+                                        list.Clear();
 
-                                    fp.Setter(entity, list);
+                                        foreach (var relatedEntity in relatedEntities)
+                                        {
+                                            list.Add(relatedEntity);
+                                        }
+
+                                        fp.Setter(entity, list);
+                                    }
                                 }
                             }
                         }

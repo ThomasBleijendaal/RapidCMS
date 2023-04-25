@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.ModelMaker.Validation.Config;
@@ -39,7 +40,7 @@ namespace RapidCMS.ModelMaker.DataCollections
                 }
             });
 
-        public Task SetEntityAsync(FormEditContext editContext, IParent? parent)
+        public Task SetEntityAsync(FormEditContext editContext, IPropertyMetadata property, IParent? parent)
             => Task.CompletedTask;
     }
 }

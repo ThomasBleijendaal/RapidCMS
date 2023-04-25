@@ -109,6 +109,13 @@ namespace RapidCMS.Example.Shared.Collections
                                             // with nested properties
                                             .SetElementDisplayProperties(x => x.Name, x => x.Details.Email);
                                     });
+
+                            section.AddField(x => x.FlagColors)
+                                // a multi-select is a list of checkboxes
+                                .SetType(EditorType.MultiSelect)
+                                // this bind the multi-select to a relation data provider that
+                                // is used as storage for the multi-select editor
+                                .SetCollectionRelation<EnumRelationDataProvider<Country.Color>>();
                         });
 
                         editor.AddSection(section =>

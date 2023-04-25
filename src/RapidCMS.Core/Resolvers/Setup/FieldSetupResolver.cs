@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
-using RapidCMS.Core.Abstractions.Setup;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
@@ -53,6 +52,9 @@ namespace RapidCMS.Core.Resolvers.Setup
 
                     DataProviderRelationConfig dataProviderConfig => (RelationSetup)new DataProviderRelationSetup(
                         dataProviderConfig.DataCollectionType, dataProviderConfig.Configuration),
+
+                    RelationDataProviderRelationConfig dataProviderConfig => (RelationSetup)new RelationDataProviderRelationSetup(
+                        dataProviderConfig.RelationDataCollectionType, dataProviderConfig.Configuration),
 
                     ConcreteDataProviderRelationConfig concreteDataProviderConfig => (RelationSetup)new ConcreteDataProviderRelationSetup
                         (concreteDataProviderConfig.DataCollection),

@@ -42,7 +42,7 @@
 
             var value = GetValueAsObject();
 
-            await DataCollection.SetEntityAsync(EditContext, Parent);
+            await DataCollection.SetEntityAsync(EditContext, Property, Parent);
             await UpdateOptionsAsync();
 
             SelectedIndex = Options?.FindIndex(option => option.Id.Equals(value)) ?? -1;

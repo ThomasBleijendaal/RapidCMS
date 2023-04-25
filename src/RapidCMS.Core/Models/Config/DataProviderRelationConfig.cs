@@ -1,4 +1,5 @@
 ﻿using System;
+using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.Config
 {
@@ -13,4 +14,5 @@ namespace RapidCMS.Core.Models.Config
         public Type DataCollectionType { get; }
         public object? Configuration { get; }
     }
+
 }

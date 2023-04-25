@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
@@ -68,7 +69,7 @@ namespace RapidCMS.ModelMaker.DataCollections
             return new List<IElement>();
         }
 
-        public Task SetEntityAsync(FormEditContext editContext, IParent? parent)
+        public Task SetEntityAsync(FormEditContext editContext, IPropertyMetadata property, IParent? parent)
         {
             if (_editContext != null)
             {
@@ -77,11 +78,11 @@ namespace RapidCMS.ModelMaker.DataCollections
 
             _editContext = editContext;
 
-            if (_editContext.Entity is PropertyModel property)
+            if (_editContext.Entity is PropertyModel propertyModel)
             {
                 _editContext.OnFieldChanged += EditContext_OnFieldChanged;
 
-                _property = property;
+                _property = propertyModel;
             }
 
             return Task.CompletedTask;

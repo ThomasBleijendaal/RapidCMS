@@ -83,7 +83,7 @@ namespace RapidCMS.Core.Providers
             return Task.CompletedTask;
         }
 
-        public Task SetEntityAsync(FormEditContext editContext, IParent? parent)
+        public Task SetEntityAsync(FormEditContext editContext, IPropertyMetadata property, IParent? parent)
         {
             _editContext = editContext;
             _parent = parent;

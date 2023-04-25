@@ -115,6 +115,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped(typeof(NavigateButtonActionHandler<>));
 
             services.AddScoped(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
+            services.AddTransient(typeof(EnumRelationDataProvider<>), typeof(EnumRelationDataProvider<>));
 
             services.AddTransient<DataAnnotationEntityValidator>();
 
