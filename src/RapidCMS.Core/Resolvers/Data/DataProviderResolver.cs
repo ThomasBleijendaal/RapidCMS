@@ -51,16 +51,12 @@ namespace RapidCMS.Core.Resolvers.Data
                         ? default
                         : await _collectionSetupResolver.ResolveSetupAsync(collectionRelation.CollectionAlias);
 
-                    var repo = collectionRelation.RepositoryAlias != null
+                    var repo = (collectionRelation.RepositoryAlias != null
                             ? _repositoryResolver.GetRepository(collectionRelation.RepositoryAlias)
                             : collectionSetup != null
                                 ? _repositoryResolver.GetRepository(collectionSetup)
-                                : default;
-
-                    if (repo == null)
-                    {
-                        throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrectly configure relation, cannot find repository for alias {(collectionRelation.CollectionAlias ?? collectionRelation.RepositoryAlias)}.");
-                    }
+                                : default)
+                            ?? throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrectly configure relation, cannot find repository for alias {(collectionRelation.CollectionAlias ?? collectionRelation.RepositoryAlias)}.");
 
                     // TODO: investigate whether this can be moved to Setup to allow for better caching
                     var idProperty = collectionRelation.IdProperty
@@ -103,6 +99,16 @@ namespace RapidCMS.Core.Resolvers.Data
                     }
 
                     return new FormDataProvider(propertyField.Property!, dataCollection);
+
+                case RelationDataProviderRelationSetup relationDataProviderRelation:
+
+                    var relationDataCollection = _serviceProvider.GetService<IRelationDataCollection>(relationDataProviderRelation.RelationDataCollectionType);
+                    if (relationDataProviderRelation.Configuration != null)
+                    {
+                        relationDataCollection.Configure(relationDataProviderRelation.Configuration);
+                    }
+
+                    return new FormDataProvider(propertyField.Property!, relationDataCollection);
 
                 case ConcreteDataProviderRelationSetup concreteDataProvider:
 

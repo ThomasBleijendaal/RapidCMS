@@ -38,7 +38,7 @@ namespace RapidCMS.UI.Components.Editors
             {
                 DataCollection.OnDataChange += UpdateOptionsAsync;
 
-                await DataCollection.SetEntityAsync(EditContext, Parent);
+                await DataCollection.SetEntityAsync(EditContext, Property, Parent);
                 await UpdateOptionsAsync();
             }
         }

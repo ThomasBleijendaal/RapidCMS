@@ -53,7 +53,7 @@
                 throw new InvalidOperationException($"{nameof(EnumFlagPicker)} needs an {nameof(EnumDataProvider<Enum>)}.");
             }
 
-            await DataCollection.SetEntityAsync(EditContext, Parent);
+            await DataCollection.SetEntityAsync(EditContext, Property, Parent);
             await UpdateOptionsAsync();
 
             var value = (Enum)GetValueAsObject();

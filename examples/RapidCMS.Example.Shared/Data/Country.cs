@@ -13,6 +13,8 @@ namespace RapidCMS.Example.Shared.Data
 
         public string? Name { get; set; }
 
+        public List<Color> FlagColors { get; set; } = new List<Color>();
+
         public List<Person> People { get; set; } = new List<Person>();
 
         string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? "0"); }
@@ -24,6 +26,7 @@ namespace RapidCMS.Example.Shared.Data
                 Id = Id,
                 Name = Name,
                 People = People.ToList(),
+                FlagColors = FlagColors.ToList(),
                 Metadata = new CountryMetadata
                 {
                     Continent = Metadata.Continent,
@@ -41,6 +44,13 @@ namespace RapidCMS.Example.Shared.Data
             public string? Continent { get; set; }
 
             public string? Tag { get; set; }
+        }
+
+        public enum Color
+        {
+            Red,
+            Green,
+            Blue
         }
     }
 }

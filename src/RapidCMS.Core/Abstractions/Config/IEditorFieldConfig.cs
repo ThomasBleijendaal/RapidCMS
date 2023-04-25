@@ -63,6 +63,33 @@ namespace RapidCMS.Core.Abstractions.Config
             where TDataCollection : IDataCollection;
 
         /// <summary>
+        /// Binds a DataCollection to this field. This collection is used by dropdowns and selects to display options.
+        /// </summary>
+        /// <typeparam name="TDataCollection"></typeparam>
+        /// <returns></returns>
+        IEditorFieldConfig<TEntity, TValue> SetCollectionRelation<TDataCollection>()
+            where TDataCollection : IRelationDataCollection;
+
+        /// <summary>
+        /// Binds a DataCollection to this field. This collection is used by dropdowns and selects to display options.
+        /// </summary>
+        /// <typeparam name="TDataCollection"></typeparam>
+        /// <param name="dataCollection"></param>
+        /// <returns></returns>
+        IEditorFieldConfig<TEntity, TValue> SetCollectionRelation<TDataCollection>(TDataCollection dataCollection)
+            where TDataCollection : IRelationDataCollection;
+
+        /// <summary>
+        /// Binds a DataCollection to this field. This collection is used by dropdowns and selects to display options.
+        /// </summary>
+        /// <typeparam name="TDataCollection"></typeparam>
+        /// <typeparam name="TConfig"></typeparam>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        IEditorFieldConfig<TEntity, TValue> SetCollectionRelation<TDataCollection, TConfig>(TConfig config)
+            where TDataCollection : IRelationDataCollection;
+
+        /// <summary>
         /// Binds a Collection to this field. This collection is used by dropdowns and selects to display options.
         /// 
         /// Uses the default Element configuration of the referenced collection to display the options.

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.Metadata;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
@@ -43,7 +44,7 @@ namespace RapidCMS.ModelMaker.DataCollections
                 .ToList();
         }
 
-        public Task SetEntityAsync(FormEditContext editContext, IParent? parent)
+        public Task SetEntityAsync(FormEditContext editContext, IPropertyMetadata property, IParent? parent)
         {
             return Task.CompletedTask;
         }

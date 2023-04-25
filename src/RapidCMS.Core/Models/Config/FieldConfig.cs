@@ -225,6 +225,39 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
+        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetCollectionRelation<TDataCollection>()
+            => (this as IEditorFieldConfig<TEntity, TValue>).SetCollectionRelation<TDataCollection, object?>(default);
+
+        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetCollectionRelation<TDataCollection, TConfig>(TConfig configuration)
+        {
+            var relationType = GetRelationType();
+            if (!relationType.In(RelationType.One, RelationType.Many))
+            {
+                throw new InvalidOperationException("Cannot add RelationDataRelation to Editor with no support for RelationType.One / RelationType.Many. Use an editor that has the attribute [Relation(RelationType.One)] / [Relation(RelationType.Many)].");
+            }
+
+            var config = new RelationDataProviderRelationConfig(typeof(TDataCollection), configuration);
+
+            Relation = config;
+
+            return this;
+        }
+
+        IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetCollectionRelation<TDataCollection>(TDataCollection dataCollection)
+        {
+            var relationType = GetRelationType();
+            if (!relationType.In(RelationType.One, RelationType.Many))
+            {
+                throw new InvalidOperationException("Cannot add CollectionRelation to Editor with no support for RelationType.One / RelationType.Many. Use an editor that has the attribute [Relation(RelationType.One)] / [Relation(RelationType.Many)].");
+            }
+
+            var config = new ConcreteDataProviderRelationConfig(dataCollection);
+
+            Relation = config;
+
+            return this;
+        }
+
         IEditorFieldConfig<TEntity, TValue> IEditorFieldConfig<TEntity, TValue>.SetCollectionRelation(
             string collectionAlias)
         {
