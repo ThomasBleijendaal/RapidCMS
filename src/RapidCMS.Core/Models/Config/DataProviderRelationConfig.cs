@@ -1,5 +1,4 @@
 ﻿using System;
-using RapidCMS.Core.Models.Data;
 
 namespace RapidCMS.Core.Models.Config
 {

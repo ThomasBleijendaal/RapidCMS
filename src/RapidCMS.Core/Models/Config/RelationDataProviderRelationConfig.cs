@@ -13,5 +13,4 @@ namespace RapidCMS.Core.Models.Config
         public Type RelationDataCollectionType { get; }
         public object? Configuration { get; }
     }
-
 }
