@@ -58,7 +58,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\examples\RapidCMS.Example.ModelMaker.Models\RapidCMS.Example.ModelMaker.Models.csproj" />
     <ProjectReference Include="..\RapidCMS.Core\RapidCMS.Core.csproj" />
   </ItemGroup>
 
