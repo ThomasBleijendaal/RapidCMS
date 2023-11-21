@@ -1,9 +1,8 @@
-﻿namespace RapidCMS.Core.Abstractions.Config
+﻿namespace RapidCMS.Core.Abstractions.Config;
+
+public interface IHasOrderBy<TEntity, TReturn> : 
+    IHasOrderByEntity<TEntity, TReturn>, 
+    IHasOrderByDatabaseEntity<TReturn>
 {
-    public interface IHasOrderBy<TEntity, TReturn> : 
-        IHasOrderByEntity<TEntity, TReturn>, 
-        IHasOrderByDatabaseEntity<TReturn>
-    {
-        
-    }
+    
 }

@@ -3,6 +3,4 @@
 [assembly: InternalsVisibleTo("RapidCMS.Api.Functions")]
 [assembly: InternalsVisibleTo("RapidCMS.Api.WebApi")]
 
-namespace RapidCMS.Api.Core
-{
-}
+namespace RapidCMS.Api.Core;

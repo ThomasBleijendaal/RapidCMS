@@ -2,38 +2,37 @@
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Mediators;
 
-namespace RapidCMS.Core.Mediators
+namespace RapidCMS.Core.Mediators;
+
+public class MediatorEventHandler<TResponse>
 {
-    public class MediatorEventHandler<TResponse>
+    private readonly TaskCompletionSource<TResponse> _tcs = new TaskCompletionSource<TResponse>();
+    private readonly IDisposable _responseHandle;
+    private readonly IMediator _mediator;
+    private readonly Guid _handlerId = Guid.NewGuid();
+
+    public MediatorEventHandler(IMediator mediator)
     {
-        private readonly TaskCompletionSource<TResponse> _tcs = new TaskCompletionSource<TResponse>();
-        private readonly IDisposable _responseHandle;
-        private readonly IMediator _mediator;
-        private readonly Guid _handlerId = Guid.NewGuid();
+        _responseHandle = mediator.RegisterCallback<IMediatorResponseEventArgs<TResponse>>(HandleEventCallbackAsync);
+        _mediator = mediator;
+    }
 
-        public MediatorEventHandler(IMediator mediator)
+    public Task<TResponse> HandleEventAsync(IMediatorRequestEventArgs<TResponse> @event)
+    {
+        @event.RequestId = _handlerId;
+
+        _mediator.NotifyEvent(this, @event);
+        return _tcs.Task;
+    }
+
+    private Task HandleEventCallbackAsync(object sender, IMediatorResponseEventArgs<TResponse> @event)
+    {
+        if (@event.RequestId == _handlerId)
         {
-            _responseHandle = mediator.RegisterCallback<IMediatorResponseEventArgs<TResponse>>(HandleEventCallbackAsync);
-            _mediator = mediator;
+            _responseHandle.Dispose();
+            _tcs.SetResult(@event.Response);
         }
 
-        public Task<TResponse> HandleEventAsync(IMediatorRequestEventArgs<TResponse> @event)
-        {
-            @event.RequestId = _handlerId;
-
-            _mediator.NotifyEvent(this, @event);
-            return _tcs.Task;
-        }
-
-        private Task HandleEventCallbackAsync(object sender, IMediatorResponseEventArgs<TResponse> @event)
-        {
-            if (@event.RequestId == _handlerId)
-            {
-                _responseHandle.Dispose();
-                _tcs.SetResult(@event.Response);
-            }
-
-            return Task.CompletedTask;
-        }
+        return Task.CompletedTask;
     }
 }

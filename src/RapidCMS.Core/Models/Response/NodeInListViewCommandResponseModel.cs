@@ -1,7 +1,6 @@
-﻿namespace RapidCMS.Core.Models.Response
-{
-    public class NodeInListViewCommandResponseModel : ViewCommandResponseModel
-    {
+﻿namespace RapidCMS.Core.Models.Response;
 
-    }
+public class NodeInListViewCommandResponseModel : ViewCommandResponseModel
+{
+
 }

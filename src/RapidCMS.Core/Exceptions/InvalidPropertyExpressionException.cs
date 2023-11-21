@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace RapidCMS.Core.Exceptions
+namespace RapidCMS.Core.Exceptions;
+
+public class InvalidPropertyExpressionException : Exception
 {
-    public class InvalidPropertyExpressionException : Exception
+    public InvalidPropertyExpressionException(string attribute) : base($"Cannot process property expression in {attribute} to Func<object, object> and Action<object, object> (Getter and Setter).")
     {
-        public InvalidPropertyExpressionException(string attribute) : base($"Cannot process property expression in {attribute} to Func<object, object> and Action<object, object> (Getter and Setter).")
-        {
-        }
     }
 }

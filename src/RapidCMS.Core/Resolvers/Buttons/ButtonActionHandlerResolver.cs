@@ -4,20 +4,19 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Core.Resolvers.Buttons
+namespace RapidCMS.Core.Resolvers.Buttons;
+
+internal class ButtonActionHandlerResolver : IButtonActionHandlerResolver
 {
-    internal class ButtonActionHandlerResolver : IButtonActionHandlerResolver
+    private readonly IServiceProvider _serviceProvider;
+
+    public ButtonActionHandlerResolver(IServiceProvider serviceProvider)
     {
-        private readonly IServiceProvider _serviceProvider;
+        _serviceProvider = serviceProvider;
+    }
 
-        public ButtonActionHandlerResolver(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
-
-        public IButtonActionHandler GetButtonActionHandler(ButtonSetup button)
-        {
-            return _serviceProvider.GetService<IButtonActionHandler>(button.ButtonHandlerType);
-        }
+    public IButtonActionHandler GetButtonActionHandler(ButtonSetup button)
+    {
+        return _serviceProvider.GetService<IButtonActionHandler>(button.ButtonHandlerType);
     }
 }

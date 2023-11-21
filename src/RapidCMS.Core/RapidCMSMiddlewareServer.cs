@@ -7,31 +7,30 @@ using RapidCMS.Core.Resolvers.Data;
 using RapidCMS.Core.Services.Auth;
 using Tewr.Blazor.FileReader;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Microsoft.Extensions.DependencyInjection;
+
+// TODO: disable authentication/ route in server mode
+public static partial class RapidCMSMiddleware
 {
-    // TODO: disable authentication/ route in server mode
-    public static partial class RapidCMSMiddleware
+    /// <summary>
+    /// Use this method to configure RapidCMS to run on a Blazor Server App, fully server side.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="config"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddRapidCMSServer(this IServiceCollection services, Action<ICmsConfig>? config = null)
     {
-        /// <summary>
-        /// Use this method to configure RapidCMS to run on a Blazor Server App, fully server side.
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="config"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddRapidCMSServer(this IServiceCollection services, Action<ICmsConfig>? config = null)
-        {
-            var rootConfig = GetRootConfig(config);
+        var rootConfig = GetRootConfig(config);
 
-            services.AddTransient<IAuthService, ServerSideAuthService>();
+        services.AddTransient<IAuthService, ServerSideAuthService>();
 
-            services.AddTransient<IDataViewResolver, FormDataViewResolver>();
+        services.AddTransient<IDataViewResolver, FormDataViewResolver>();
 
-            services.AddFileReaderService();
+        services.AddFileReaderService();
 
-            // Semaphore for repositories
-            services.AddSingleton(serviceProvider => new SemaphoreSlim(rootConfig.Advanced.SemaphoreCount, rootConfig.Advanced.SemaphoreCount));
+        // Semaphore for repositories
+        services.AddSingleton(serviceProvider => new SemaphoreSlim(rootConfig.Advanced.SemaphoreCount, rootConfig.Advanced.SemaphoreCount));
 
-            return services.AddRapidCMSCore(rootConfig);
-        }
+        return services.AddRapidCMSCore(rootConfig);
     }
 }

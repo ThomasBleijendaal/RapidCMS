@@ -1,6 +1,5 @@
-﻿namespace RapidCMS.Core.Models.Response
+﻿namespace RapidCMS.Core.Models.Response;
+
+public class ApiCommandResponseModel
 {
-    public class ApiCommandResponseModel
-    {
-    }
 }

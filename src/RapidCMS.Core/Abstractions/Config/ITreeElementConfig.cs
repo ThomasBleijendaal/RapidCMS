@@ -1,8 +1,7 @@
-﻿namespace RapidCMS.Core.Abstractions.Config
+﻿namespace RapidCMS.Core.Abstractions.Config;
+
+public interface ITreeElementConfig
 {
-    public interface ITreeElementConfig
-    {
-        string Alias { get; }
-        string Name { get; }
-    }
+    string Alias { get; }
+    string Name { get; }
 }

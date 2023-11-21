@@ -12,137 +12,136 @@ using RapidCMS.Core.Tests.Services.Dispatchers;
 using System;
 using System.Collections.Generic;
 
-namespace RapidCMS.Core.Tests.Interactions
+namespace RapidCMS.Core.Tests.Interactions;
+
+public class ButtonInteractionCollectionTests
 {
-    public class ButtonInteractionCollectionTests
+    private IButtonInteraction _subject = default!;
+
+    private Mock<ISetupResolver<CollectionSetup>> _collectionResolver = default!;
+    private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
+    private Mock<IAuthService> _authService = default!;
+    private Mock<IServiceProvider> _serviceProvider = default!;
+
+    [SetUp]
+    public void Setup()
     {
-        private IButtonInteraction _subject = default!;
-
-        private Mock<ISetupResolver<CollectionSetup>> _collectionResolver = default!;
-        private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
-        private Mock<IAuthService> _authService = default!;
-        private Mock<IServiceProvider> _serviceProvider = default!;
-
-        [SetUp]
-        public void Setup()
-        {
-            _collectionResolver = new Mock<ISetupResolver<CollectionSetup>>();
-            _collectionResolver
-                .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
-                .ReturnsAsync((string alias) =>
-                    new CollectionSetup(default,
-                        default,
-                        "name",
-                        alias,
-                        default)
-                    {
-                        EntityVariant = new EntityVariantSetup("default", default, typeof(DefaultEntityVariant), "alias")
-                    });
-
-            _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
-
-            _authService = new Mock<IAuthService>();
-            _serviceProvider = new Mock<IServiceProvider>();
-
-            _subject = new ButtonInteraction(_collectionResolver.Object, _buttonActionHandlerResolver.Object, _authService.Object);
-        }
-
-        [Test]
-        public void WhenValidationOfEditorButtonIsRequested_ThenCorrespondingCollectionShouldBeFetched()
-        {
-            // arrange
-            var request = new PersistEntityRequestModel()
-            {
-                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object)
-            };
-
-            // act
-            _subject.ValidateButtonInteractionAsync(request);
-
-            // assert
-            _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
-        }
-
-        [Test]
-        public void WhenInteractionCompletionOfEditorButtonIsRequested_ThenCorrespondingCollectionShouldBeFetched()
-        {
-            // arrange
-            var request = new PersistEntityRequestModel()
-            {
-                EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object)
-            };
-
-            // act
-            _subject.CompleteButtonInteractionAsync(request);
-
-            // assert
-            _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
-        }
-
-        [Test]
-        public void WhenValidationOfEditorInListButtonIsRequested_ThenCorrespondingCollectionShouldBeFetched()
-        {
-            // arrange
-            var request = new PersistEntityCollectionRequestModel()
-            {
-                ListContext = new ListContext(
-                    "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object),
+        _collectionResolver = new Mock<ISetupResolver<CollectionSetup>>();
+        _collectionResolver
+            .Setup(x => x.ResolveSetupAsync(It.IsAny<string>()))
+            .ReturnsAsync((string alias) =>
+                new CollectionSetup(default,
                     default,
-                    UsageType.Edit,
-                    default,
-                    _serviceProvider.Object)
-            };
+                    "name",
+                    alias,
+                    default)
+                {
+                    EntityVariant = new EntityVariantSetup("default", default, typeof(DefaultEntityVariant), "alias")
+                });
 
-            // act
-            _subject.ValidateButtonInteractionAsync(request);
+        _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
 
-            // assert
-            _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
-        }
+        _authService = new Mock<IAuthService>();
+        _serviceProvider = new Mock<IServiceProvider>();
 
-        [Test]
-        public void WhenValidationOfListButtonIsRequested_ThenCorrespondingCollectionShouldBeFetched()
+        _subject = new ButtonInteraction(_collectionResolver.Object, _buttonActionHandlerResolver.Object, _authService.Object);
+    }
+
+    [Test]
+    public void WhenValidationOfEditorButtonIsRequested_ThenCorrespondingCollectionShouldBeFetched()
+    {
+        // arrange
+        var request = new PersistEntityRequestModel()
         {
-            // arrange
-            var request = new PersistEntitiesRequestModel()
-            {
-                ListContext = new ListContext(
-                    "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object),
-                    default,
-                    UsageType.Edit,
-                    default,
-                    _serviceProvider.Object)
-            };
+            EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object)
+        };
 
-            // act
-            _subject.ValidateButtonInteractionAsync(request);
+        // act
+        _subject.ValidateButtonInteractionAsync(request);
 
-            // assert
-            _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
-        }
+        // assert
+        _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
+    }
 
-        [Test]
-        public void WhenInteractionCompletionOfListButtonIsRequested_ThenCorrespondingCollectionShouldBeFetched()
+    [Test]
+    public void WhenInteractionCompletionOfEditorButtonIsRequested_ThenCorrespondingCollectionShouldBeFetched()
+    {
+        // arrange
+        var request = new PersistEntityRequestModel()
         {
-            // arrange
-            var request = new PersistEntitiesRequestModel()
-            {
-                ListContext = new ListContext(
-                    "alias",
-                    new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object),
-                    default,
-                    UsageType.Edit,
-                    default,
-                    _serviceProvider.Object)
-            };
+            EditContext = new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object)
+        };
 
-            // act
-            _subject.CompleteButtonInteractionAsync(request);
+        // act
+        _subject.CompleteButtonInteractionAsync(request);
 
-            // assert
-            _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
-        }
+        // assert
+        _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
+    }
+
+    [Test]
+    public void WhenValidationOfEditorInListButtonIsRequested_ThenCorrespondingCollectionShouldBeFetched()
+    {
+        // arrange
+        var request = new PersistEntityCollectionRequestModel()
+        {
+            ListContext = new ListContext(
+                "alias",
+                new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object),
+                default,
+                UsageType.Edit,
+                default,
+                _serviceProvider.Object)
+        };
+
+        // act
+        _subject.ValidateButtonInteractionAsync(request);
+
+        // assert
+        _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
+    }
+
+    [Test]
+    public void WhenValidationOfListButtonIsRequested_ThenCorrespondingCollectionShouldBeFetched()
+    {
+        // arrange
+        var request = new PersistEntitiesRequestModel()
+        {
+            ListContext = new ListContext(
+                "alias",
+                new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object),
+                default,
+                UsageType.Edit,
+                default,
+                _serviceProvider.Object)
+        };
+
+        // act
+        _subject.ValidateButtonInteractionAsync(request);
+
+        // assert
+        _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
+    }
+
+    [Test]
+    public void WhenInteractionCompletionOfListButtonIsRequested_ThenCorrespondingCollectionShouldBeFetched()
+    {
+        // arrange
+        var request = new PersistEntitiesRequestModel()
+        {
+            ListContext = new ListContext(
+                "alias",
+                new FormEditContext("alias", "repo", "entity", new DefaultEntityVariant(), default, UsageType.Edit, new List<ValidationSetup>(), _serviceProvider.Object),
+                default,
+                UsageType.Edit,
+                default,
+                _serviceProvider.Object)
+        };
+
+        // act
+        _subject.CompleteButtonInteractionAsync(request);
+
+        // assert
+        _collectionResolver.Verify(x => x.ResolveSetupAsync(It.Is<string>(x => x == "alias")), Times.Once());
     }
 }

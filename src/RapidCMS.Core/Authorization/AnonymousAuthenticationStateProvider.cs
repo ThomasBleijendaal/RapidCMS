@@ -2,18 +2,17 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace RapidCMS.Core.Authorization
+namespace RapidCMS.Core.Authorization;
+
+internal class AnonymousAuthenticationStateProvider : AuthenticationStateProvider
 {
-    internal class AnonymousAuthenticationStateProvider : AuthenticationStateProvider
+    public override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        public override Task<AuthenticationState> GetAuthenticationStateAsync()
-        {
-            var id = new ClaimsIdentity("anonymous");
-            id.AddClaim(new Claim(ClaimTypes.Name, "Anonymous"));
+        var id = new ClaimsIdentity("anonymous");
+        id.AddClaim(new Claim(ClaimTypes.Name, "Anonymous"));
 
-            var principal = new ClaimsPrincipal(id);
+        var principal = new ClaimsPrincipal(id);
 
-            return Task.FromResult(new AuthenticationState(principal));
-        }
+        return Task.FromResult(new AuthenticationState(principal));
     }
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace RapidCMS.Core.Exceptions
-{
-    public class InvalidEntityException : Exception
-    {
+namespace RapidCMS.Core.Exceptions;
 
-    }
+public class InvalidEntityException : Exception
+{
+
 }

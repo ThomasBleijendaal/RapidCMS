@@ -1,12 +1,11 @@
-﻿namespace RapidCMS.Core.Abstractions.Config
+﻿namespace RapidCMS.Core.Abstractions.Config;
+
+public interface IHasSearchBar<TReturn>
 {
-    public interface IHasSearchBar<TReturn>
-    {
-        /// <summary>
-        /// Sets the visibility of the search bar atop of the ListEditor.
-        /// </summary>
-        /// <param name="visible"></param>
-        /// <returns></returns>
-        TReturn SetSearchBarVisibility(bool visible);
-    }
+    /// <summary>
+    /// Sets the visibility of the search bar atop of the ListEditor.
+    /// </summary>
+    /// <param name="visible"></param>
+    /// <returns></returns>
+    TReturn SetSearchBarVisibility(bool visible);
 }

@@ -15,327 +15,326 @@ using RapidCMS.Core.Models.UI;
 using RapidCMS.Core.Navigation;
 using RapidCMS.UI.Models;
 
-namespace RapidCMS.UI.Components.Sections
+namespace RapidCMS.UI.Components.Sections;
+
+public abstract partial class BaseRootSection
 {
-    public abstract partial class BaseRootSection
+    protected ListContext? ListContext { get; set; }
+
+    protected IEnumerable<TabUI>? Tabs { get; set; }
+
+    protected ListUI? ListUI { get; set; }
+
+    private CollectionState CollectionState => CurrentNavigationState.CollectionState;
+
+    protected async Task LoadCollectionDataAsync(CancellationToken cancellationToken, IEnumerable<string>? reloadEntityIds = null)
     {
-        protected ListContext? ListContext { get; set; }
+        var uiResolver = await UIResolverFactory.GetListUIResolverAsync(CurrentNavigationState);
 
-        protected IEnumerable<TabUI>? Tabs { get; set; }
-
-        protected ListUI? ListUI { get; set; }
-
-        private CollectionState CollectionState => CurrentNavigationState.CollectionState;
-
-        protected async Task LoadCollectionDataAsync(CancellationToken cancellationToken, IEnumerable<string>? reloadEntityIds = null)
+        if (reloadEntityIds?.Any() == true)
         {
-            var uiResolver = await UIResolverFactory.GetListUIResolverAsync(CurrentNavigationState);
+            var sections = await ReloadSectionsAsync(reloadEntityIds, uiResolver);
 
-            if (reloadEntityIds?.Any() == true)
+            if (cancellationToken.IsCancellationRequested || ListContext == null)
             {
-                var sections = await ReloadSectionsAsync(reloadEntityIds, uiResolver);
+                return;
+            }
 
-                if (cancellationToken.IsCancellationRequested || ListContext == null)
-                {
-                    return;
-                }
+            ListContext.EditContexts.Clear();
+            ListContext.EditContexts.AddRange(sections.Select(x => x.editContext));
+            Sections = sections;
+        }
+        else
+        {
+            ListUI = null;
+            Buttons = null;
+            Tabs = null;
+            ListContext = null;
+            Sections = null;
 
-                ListContext.EditContexts.Clear();
-                ListContext.EditContexts.AddRange(sections.Select(x => x.editContext));
+            var listUI = uiResolver.GetListDetails();
+
+            var (listContext, sections, tabs) = await LoadSectionsAsync(listUI, uiResolver);
+
+            var buttons = await uiResolver.GetButtonsForEditContextAsync(listContext.ProtoEditContext);
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            try
+            {
+                ListUI = listUI;
+                Buttons = buttons;
+                Tabs = tabs;
+                ListContext = listContext;
                 Sections = sections;
+
+                PageContents = default;
+            }
+            catch
+            {
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    protected void SortChanged((int index, OrderByType direction) sort)
+    {
+        if (ListUI == null)
+        {
+            return;
+        }
+
+        NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
+        {
+            CurrentPage = 1,
+            Sorts = (CollectionState.Sorts ?? new()).Add(sort.index, sort.direction)
+        });
+    }
+
+    protected void PageChanged(int page)
+    {
+        if (ListUI == null)
+        {
+            return;
+        }
+
+        NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
+        {
+            CurrentPage = page
+        });
+    }
+
+    protected void Search(string? search)
+    {
+        if (ListUI == null)
+        {
+            return;
+        }
+
+        NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
+        {
+            CurrentPage = 1,
+            SearchTerm = search
+        });
+    }
+
+    protected void TabChange(int? tabId)
+    {
+        if (ListUI == null)
+        {
+            return;
+        }
+
+        var tab = Tabs?.FirstOrDefault(x => x.Id == tabId);
+
+        NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
+        {
+            ActiveTab = tabId,
+            CurrentPage = 1,
+            Sorts = tab?.DefaultSorts
+        });
+    }
+
+    protected async Task<(ListContext listContext, List<(FormEditContext editContext, IEnumerable<SectionUI> sections)> sections, IEnumerable<TabUI>? tabs)> LoadSectionsAsync(ListUI listUI, IListUIResolver uiResolver)
+    {
+        var tabs = await uiResolver.GetTabsAsync(CurrentNavigationState.CollectionAlias);
+        if (tabs?.Count() > 0 && CollectionState.ActiveTab == null && tabs.First().DefaultSorts != null)
+        {
+            CurrentNavigationState.CollectionState = CurrentNavigationState.CollectionState with
+            {
+                ActiveTab = tabs.First().Id,
+                CurrentPage = 1,
+                Sorts = tabs.First().DefaultSorts
+            };
+        }
+
+        var activeTab = tabs?.FirstOrDefault(x => x.Id == CollectionState.ActiveTab);
+
+        var view = NavigationStateProvider.GetCurrentView(CurrentNavigationState, listUI, activeTab);
+
+        var request = CurrentNavigationState.Related != null
+            ? (GetEntitiesRequestModel)new GetEntitiesOfRelationRequestModel
+            {
+                CollectionAlias = CurrentNavigationState.CollectionAlias,
+                View = view,
+                Related = CurrentNavigationState.Related,
+                UsageType = CurrentNavigationState.UsageType,
+                VariantAlias = CurrentNavigationState.VariantAlias,
+                IsEmbedded = !NavigationStateProvider.IsRootState(CurrentNavigationState)
+            }
+            : (GetEntitiesRequestModel)new GetEntitiesOfParentRequestModel
+            {
+                CollectionAlias = CurrentNavigationState.CollectionAlias,
+                ParentPath = CurrentNavigationState.ParentPath,
+                View = view,
+                UsageType = CurrentNavigationState.UsageType,
+                VariantAlias = CurrentNavigationState.VariantAlias,
+                IsEmbedded = !NavigationStateProvider.IsRootState(CurrentNavigationState)
+            };
+
+        var listContext = await PresentationService.GetEntitiesAsync<GetEntitiesRequestModel, ListContext>(request);
+
+        var sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await uiResolver.GetSectionsForEditContextAsync(editContext, CurrentNavigationState)));
+
+        if (!NavigationStateProvider.TryProcessView(CurrentNavigationState, view, sections.Any() == true))
+        {
+            return await LoadSectionsAsync(listUI, uiResolver);
+        }
+
+        return (listContext, sections, tabs);
+    }
+
+    protected async Task<List<(FormEditContext editContext, IEnumerable<SectionUI> sections)>> ReloadSectionsAsync(IEnumerable<string> reloadEntityIds, IListUIResolver uiResolver)
+    {
+        if (Sections == null)
+        {
+            return new List<(FormEditContext editContext, IEnumerable<SectionUI> sections)>();
+        }
+
+        var newSections = await Sections.ToListAsync(async x =>
+        {
+            if (reloadEntityIds.Contains<string>(x.editContext.Entity.Id!))
+            {
+                var reloadedEditContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, FormEditContext>(new GetEntityRequestModel
+                {
+                    CollectionAlias = x.editContext.CollectionAlias,
+                    Id = x.editContext.Entity.Id,
+                    ParentPath = x.editContext.Parent?.GetParentPath(),
+                    UsageType = x.editContext.UsageType,
+                    VariantAlias = x.editContext.EntityVariantAlias
+                });
+
+                return (reloadedEditContext, await uiResolver.GetSectionsForEditContextAsync(reloadedEditContext, CurrentNavigationState));
             }
             else
             {
-                ListUI = null;
-                Buttons = null;
-                Tabs = null;
-                ListContext = null;
-                Sections = null;
-
-                var listUI = uiResolver.GetListDetails();
-
-                var (listContext, sections, tabs) = await LoadSectionsAsync(listUI, uiResolver);
-
-                var buttons = await uiResolver.GetButtonsForEditContextAsync(listContext.ProtoEditContext);
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
-
-                try
-                {
-                    ListUI = listUI;
-                    Buttons = buttons;
-                    Tabs = tabs;
-                    ListContext = listContext;
-                    Sections = sections;
-
-                    PageContents = default;
-                }
-                catch
-                {
-                }
+                return x;
             }
+        });
 
-            StateHasChanged();
-        }
+        return newSections;
+    }
 
-        protected void SortChanged((int index, OrderByType direction) sort)
+    protected async Task ListButtonOnClickAsync(ButtonClickEventArgs args)
+    {
+        try
         {
-            if (ListUI == null)
+            if (CurrentNavigationState == null)
             {
-                return;
+                throw new InvalidOperationException();
             }
 
-            NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
+            var request = new PersistEntitiesRequestModel
             {
-                CurrentPage = 1,
-                Sorts = (CollectionState.Sorts ?? new()).Add(sort.index, sort.direction)
-            });
+                ActionId = args.ViewModel.ButtonId,
+                CustomData = args.Data,
+                ListContext = ListContext!,
+                Related = CurrentNavigationState.Related,
+                NavigationState = CurrentNavigationState
+            };
+
+            if (CurrentNavigationState.UsageType.HasFlag(UsageType.Edit))
+            {
+                await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListEditorCommandResponseModel>(request));
+            }
+            else
+            {
+                await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListViewCommandResponseModel>(request));
+            }
         }
-
-        protected void PageChanged(int page)
+        catch (Exception ex)
         {
-            if (ListUI == null)
-            {
-                return;
-            }
-
-            NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
-            {
-                CurrentPage = page
-            });
+            Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
         }
+    }
 
-        protected void Search(string? search)
+    protected async Task NodeButtonOnClickAsync(ButtonClickEventArgs args)
+    {
+        try
         {
-            if (ListUI == null)
+            if (CurrentNavigationState.Related != null)
             {
-                return;
-            }
-
-            NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
-            {
-                CurrentPage = 1,
-                SearchTerm = search
-            });
-        }
-
-        protected void TabChange(int? tabId)
-        {
-            if (ListUI == null)
-            {
-                return;
-            }
-
-            var tab = Tabs?.FirstOrDefault(x => x.Id == tabId);
-
-            NavigationStateProvider.UpdateCollectionState(CurrentNavigationState, CollectionState with
-            {
-                ActiveTab = tabId,
-                CurrentPage = 1,
-                Sorts = tab?.DefaultSorts
-            });
-        }
-
-        protected async Task<(ListContext listContext, List<(FormEditContext editContext, IEnumerable<SectionUI> sections)> sections, IEnumerable<TabUI>? tabs)> LoadSectionsAsync(ListUI listUI, IListUIResolver uiResolver)
-        {
-            var tabs = await uiResolver.GetTabsAsync(CurrentNavigationState.CollectionAlias);
-            if (tabs?.Count() > 0 && CollectionState.ActiveTab == null && tabs.First().DefaultSorts != null)
-            {
-                CurrentNavigationState.CollectionState = CurrentNavigationState.CollectionState with
-                {
-                    ActiveTab = tabs.First().Id,
-                    CurrentPage = 1,
-                    Sorts = tabs.First().DefaultSorts
-                };
-            }
-
-            var activeTab = tabs?.FirstOrDefault(x => x.Id == CollectionState.ActiveTab);
-
-            var view = NavigationStateProvider.GetCurrentView(CurrentNavigationState, listUI, activeTab);
-
-            var request = CurrentNavigationState.Related != null
-                ? (GetEntitiesRequestModel)new GetEntitiesOfRelationRequestModel
-                {
-                    CollectionAlias = CurrentNavigationState.CollectionAlias,
-                    View = view,
-                    Related = CurrentNavigationState.Related,
-                    UsageType = CurrentNavigationState.UsageType,
-                    VariantAlias = CurrentNavigationState.VariantAlias,
-                    IsEmbedded = !NavigationStateProvider.IsRootState(CurrentNavigationState)
-                }
-                : (GetEntitiesRequestModel)new GetEntitiesOfParentRequestModel
-                {
-                    CollectionAlias = CurrentNavigationState.CollectionAlias,
-                    ParentPath = CurrentNavigationState.ParentPath,
-                    View = view,
-                    UsageType = CurrentNavigationState.UsageType,
-                    VariantAlias = CurrentNavigationState.VariantAlias,
-                    IsEmbedded = !NavigationStateProvider.IsRootState(CurrentNavigationState)
-                };
-
-            var listContext = await PresentationService.GetEntitiesAsync<GetEntitiesRequestModel, ListContext>(request);
-
-            var sections = await listContext.EditContexts.ToListAsync(async editContext => (editContext, await uiResolver.GetSectionsForEditContextAsync(editContext, CurrentNavigationState)));
-
-            if (!NavigationStateProvider.TryProcessView(CurrentNavigationState, view, sections.Any() == true))
-            {
-                return await LoadSectionsAsync(listUI, uiResolver);
-            }
-
-            return (listContext, sections, tabs);
-        }
-
-        protected async Task<List<(FormEditContext editContext, IEnumerable<SectionUI> sections)>> ReloadSectionsAsync(IEnumerable<string> reloadEntityIds, IListUIResolver uiResolver)
-        {
-            if (Sections == null)
-            {
-                return new List<(FormEditContext editContext, IEnumerable<SectionUI> sections)>();
-            }
-
-            var newSections = await Sections.ToListAsync(async x =>
-            {
-                if (reloadEntityIds.Contains<string>(x.editContext.Entity.Id!))
-                {
-                    var reloadedEditContext = await PresentationService.GetEntityAsync<GetEntityRequestModel, FormEditContext>(new GetEntityRequestModel
-                    {
-                        CollectionAlias = x.editContext.CollectionAlias,
-                        Id = x.editContext.Entity.Id,
-                        ParentPath = x.editContext.Parent?.GetParentPath(),
-                        UsageType = x.editContext.UsageType,
-                        VariantAlias = x.editContext.EntityVariantAlias
-                    });
-
-                    return (reloadedEditContext, await uiResolver.GetSectionsForEditContextAsync(reloadedEditContext, CurrentNavigationState));
-                }
-                else
-                {
-                    return x;
-                }
-            });
-
-            return newSections;
-        }
-
-        protected async Task ListButtonOnClickAsync(ButtonClickEventArgs args)
-        {
-            try
-            {
-                if (CurrentNavigationState == null)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                var request = new PersistEntitiesRequestModel
+                await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistRelatedEntityRequestModel
                 {
                     ActionId = args.ViewModel.ButtonId,
                     CustomData = args.Data,
-                    ListContext = ListContext!,
+                    EditContext = args.EditContext,
                     Related = CurrentNavigationState.Related,
                     NavigationState = CurrentNavigationState
-                };
-
-                if (CurrentNavigationState.UsageType.HasFlag(UsageType.Edit))
-                {
-                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListEditorCommandResponseModel>(request));
-                }
-                else
-                {
-                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntitiesRequestModel, ListViewCommandResponseModel>(request));
-                }
+                }));
             }
-            catch (Exception ex)
+            else
             {
-                Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
+                await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistEntityRequestModel
+                {
+                    ActionId = args.ViewModel.ButtonId,
+                    CustomData = args.Data,
+                    EditContext = args.EditContext,
+                    NavigationState = CurrentNavigationState
+                }));
             }
         }
-
-        protected async Task NodeButtonOnClickAsync(ButtonClickEventArgs args)
+        catch (Exception ex)
         {
-            try
-            {
-                if (CurrentNavigationState.Related != null)
-                {
-                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistRelatedEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistRelatedEntityRequestModel
-                    {
-                        ActionId = args.ViewModel.ButtonId,
-                        CustomData = args.Data,
-                        EditContext = args.EditContext,
-                        Related = CurrentNavigationState.Related,
-                        NavigationState = CurrentNavigationState
-                    }));
-                }
-                else
-                {
-                    await HandleViewCommandAsync(() => InteractionService.InteractAsync<PersistEntityRequestModel, NodeInListViewCommandResponseModel>(new PersistEntityRequestModel
-                    {
-                        ActionId = args.ViewModel.ButtonId,
-                        CustomData = args.Data,
-                        EditContext = args.EditContext,
-                        NavigationState = CurrentNavigationState
-                    }));
-                }
-            }
-            catch (Exception ex)
-            {
-                Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
-            }
+            Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
         }
-
-        protected void OnRowDragged(RowDragEventArgs args)
-        {
-            try
-            {
-                if (ListContext == null || Sections == null)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                var beforeIds = ListContext.EditContexts.Select(x => x.Entity.Id).ToArray();
-                var beforeSections = Sections.Select(x => x.editContext.Entity.Id).ToArray();
-
-                var subjectIndex = ListContext.EditContexts.FindIndex(x => x.Entity.Id == args.SubjectId);
-                var targetIndex = args.TargetId == null ? -1 : ListContext.EditContexts.FindIndex(x => x.Entity.Id == args.TargetId);
-                if (targetIndex > subjectIndex)
-                {
-                    targetIndex--;
-                }
-
-                var editContext = ListContext.EditContexts.ElementAt(subjectIndex);
-                var section = Sections.ElementAt(subjectIndex);
-                if (editContext == null)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                editContext.NotifyReordered(args.TargetId);
-
-                ListContext.EditContexts.Remove(editContext);
-                Sections.Remove(section);
-
-                if (targetIndex == -1)
-                {
-                    ListContext.EditContexts.Add(editContext);
-                    Sections.Add(section);
-                }
-                else
-                {
-                    ListContext.EditContexts.Insert(targetIndex, editContext);
-                    Sections.Insert(targetIndex, section);
-                }
-
-                var afterIds = ListContext.EditContexts.Select(x => x.Entity.Id).ToArray();
-                var afterSections = Sections.Select(x => x.editContext.Entity.Id).ToArray();
-
-                StateHasChanged();
-            }
-            catch (Exception ex)
-            {
-                Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
-            }
-        }
-
     }
+
+    protected void OnRowDragged(RowDragEventArgs args)
+    {
+        try
+        {
+            if (ListContext == null || Sections == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var beforeIds = ListContext.EditContexts.Select(x => x.Entity.Id).ToArray();
+            var beforeSections = Sections.Select(x => x.editContext.Entity.Id).ToArray();
+
+            var subjectIndex = ListContext.EditContexts.FindIndex(x => x.Entity.Id == args.SubjectId);
+            var targetIndex = args.TargetId == null ? -1 : ListContext.EditContexts.FindIndex(x => x.Entity.Id == args.TargetId);
+            if (targetIndex > subjectIndex)
+            {
+                targetIndex--;
+            }
+
+            var editContext = ListContext.EditContexts.ElementAt(subjectIndex);
+            var section = Sections.ElementAt(subjectIndex);
+            if (editContext == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            editContext.NotifyReordered(args.TargetId);
+
+            ListContext.EditContexts.Remove(editContext);
+            Sections.Remove(section);
+
+            if (targetIndex == -1)
+            {
+                ListContext.EditContexts.Add(editContext);
+                Sections.Add(section);
+            }
+            else
+            {
+                ListContext.EditContexts.Insert(targetIndex, editContext);
+                Sections.Insert(targetIndex, section);
+            }
+
+            var afterIds = ListContext.EditContexts.Select(x => x.Entity.Id).ToArray();
+            var afterSections = Sections.Select(x => x.editContext.Entity.Id).ToArray();
+
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Mediator.NotifyEvent(this, new ExceptionEventArgs(ex));
+        }
+    }
+
 }

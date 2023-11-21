@@ -32,90 +32,89 @@ using RapidCMS.Core.Services.Persistence;
 using RapidCMS.Core.Services.Presentation;
 using RapidCMS.Core.Validators;
 
-namespace RapidCMS.Api.Core
+namespace RapidCMS.Api.Core;
+
+internal static class RapidCMSApiMiddlewareBase
 {
-    internal static class RapidCMSApiMiddlewareBase
+    public static IServiceCollection AddRapidCMSApiCore(this IServiceCollection services, ApiConfig config)
     {
-        public static IServiceCollection AddRapidCMSApiCore(this IServiceCollection services, ApiConfig config)
+        services.AddSingleton<IApiConfig>(config);
+        services.AddTransient<IApiHandlerResolver, ApiHandlerResolver>();
+        services.AddTransient<IFileHandlerResolver, FileHandlerResolver>();
+
+        //services.AddHttpContextAccessor();
+
+        if (config.AllowAnonymousUsage)
         {
-            services.AddSingleton<IApiConfig>(config);
-            services.AddTransient<IApiHandlerResolver, ApiHandlerResolver>();
-            services.AddTransient<IFileHandlerResolver, FileHandlerResolver>();
-
-            services.AddHttpContextAccessor();
-
-            if (config.AllowAnonymousUsage)
-            {
-                services.AddSingleton<IAuthorizationHandler, AllowAllAuthorizationHandler>();
-                services.AddSingleton<IUserResolver, AnonymousUserResolver>();
-            }
-
-            services.AddSingleton<ISetupResolver<EntityVariantSetup>, GlobalEntityVariantSetupResolver>();
-
-            services.AddTransient<IDataViewResolver, ApiDataViewResolver>();
-            services.AddTransient<IRepositoryResolver, RepositoryResolver>();
-            services.AddSingleton<IRepositoryTypeResolver, ApiRepositoryTypeResolver>();
-
-            services.AddTransient<IPresentationDispatcher, GetEntityDispatcher>();
-            services.AddTransient<IPresentationDispatcher, GetEntitiesDispatcher>();
-            services.AddTransient<IPresentationService, PresentationService>();
-
-            services.AddTransient<IInteractionDispatcher, RelateEntityDispatcher>();
-            services.AddTransient<IInteractionDispatcher, ReorderEntityDispatcher>();
-            services.AddTransient<IInteractionDispatcher, PersistEntityDispatcher>();
-            services.AddTransient<IInteractionDispatcher, DeleteEntityDispatcher>();
-            services.AddTransient<IInteractionService, InteractionService>();
-
-            services.AddTransient<IAuthService, ApiAuthService>();
-            services.AddTransient<IParentService, ParentService>();
-            services.AddTransient<IConcurrencyService, ConcurrencyService>();
-            services.AddSingleton(serviceProvider => new SemaphoreSlim(5, 5));
-
-            services.AddScoped<IMediator, Mediator>();
-
-            services.AddTransient<IEditContextFactory, ApiEditContextWrapperFactory>();
-
-            var apiHandlers = config.Repositories.ToList(
-                repository => repository.DatabaseType == default
-                    ? typeof(ApiHandler<,,>).MakeGenericType(repository.EntityType, repository.EntityType, repository.ApiRepositoryType)
-                    : typeof(ApiHandler<,,>).MakeGenericType(repository.EntityType, repository.DatabaseType, repository.ApiRepositoryType));
-
-            foreach (var apiHandler in apiHandlers)
-            {
-                services.AddTransient(apiHandler);
-            }
-
-            var entityVariants = config.Repositories.ToDictionary(x => x.Alias, x =>
-            {
-                var entityTypes = new[] { x.EntityType }
-                    .Union(x.EntityType.GetSubTypes())
-                    .ToList();
-                return (entityType: x.EntityType, variants: (IReadOnlyList<Type>)entityTypes);
-            });
-
-            services.AddSingleton<IEntityVariantResolver>(new EntityVariantResolver(entityVariants));
-
-            foreach (var fileHandler in config.FileUploadHandlers.ToList(fileHandler => typeof(FileHandler<>).MakeGenericType(fileHandler.HandlerType)))
-            {
-                services.AddTransient(fileHandler);
-            }
-            if (!config.AdvancedConfig.RemoveDataAnnotationEntityValidator)
-            {
-                services.AddSingleton<DataAnnotationEntityValidator>();
-
-                foreach (var variant in entityVariants.SelectMany(x => x.Value.variants))
-                {
-                    config.EntityValidationConfig.Add((AliasHelper.GetEntityVariantAlias(variant), new ValidationConfig(typeof(DataAnnotationEntityValidator), default)));
-                }
-            }
-
-            var validations = config.EntityValidationConfig
-                .GroupBy(x => x.entity)
-                .ToDictionary(x => x.Key, x => x.ToList(x => new ValidationSetup(x.validation.Type, x.validation.Configuration) as ValidationSetup) as IReadOnlyList<ValidationSetup>);
-
-            services.AddSingleton<ISetupResolver<IReadOnlyList<ValidationSetup>>>(new ValidationSetupResolver(validations));
-
-            return services;
+            services.AddSingleton<IAuthorizationHandler, AllowAllAuthorizationHandler>();
+            services.AddSingleton<IUserResolver, AnonymousUserResolver>();
         }
+
+        services.AddSingleton<ISetupResolver<EntityVariantSetup>, GlobalEntityVariantSetupResolver>();
+
+        services.AddTransient<IDataViewResolver, ApiDataViewResolver>();
+        services.AddTransient<IRepositoryResolver, RepositoryResolver>();
+        services.AddSingleton<IRepositoryTypeResolver, ApiRepositoryTypeResolver>();
+
+        services.AddTransient<IPresentationDispatcher, GetEntityDispatcher>();
+        services.AddTransient<IPresentationDispatcher, GetEntitiesDispatcher>();
+        services.AddTransient<IPresentationService, PresentationService>();
+
+        services.AddTransient<IInteractionDispatcher, RelateEntityDispatcher>();
+        services.AddTransient<IInteractionDispatcher, ReorderEntityDispatcher>();
+        services.AddTransient<IInteractionDispatcher, PersistEntityDispatcher>();
+        services.AddTransient<IInteractionDispatcher, DeleteEntityDispatcher>();
+        services.AddTransient<IInteractionService, InteractionService>();
+
+        services.AddTransient<IAuthService, ApiAuthService>();
+        services.AddTransient<IParentService, ParentService>();
+        services.AddTransient<IConcurrencyService, ConcurrencyService>();
+        services.AddSingleton(serviceProvider => new SemaphoreSlim(5, 5));
+
+        services.AddScoped<IMediator, Mediator>();
+
+        services.AddTransient<IEditContextFactory, ApiEditContextWrapperFactory>();
+
+        var apiHandlers = config.Repositories.ToList(
+            repository => repository.DatabaseType == default
+                ? typeof(ApiHandler<,,>).MakeGenericType(repository.EntityType, repository.EntityType, repository.ApiRepositoryType)
+                : typeof(ApiHandler<,,>).MakeGenericType(repository.EntityType, repository.DatabaseType, repository.ApiRepositoryType));
+
+        foreach (var apiHandler in apiHandlers)
+        {
+            services.AddTransient(apiHandler);
+        }
+
+        var entityVariants = config.Repositories.ToDictionary(x => x.Alias, x =>
+        {
+            var entityTypes = new[] { x.EntityType }
+                .Union(x.EntityType.GetSubTypes())
+                .ToList();
+            return (entityType: x.EntityType, variants: (IReadOnlyList<Type>)entityTypes);
+        });
+
+        services.AddSingleton<IEntityVariantResolver>(new EntityVariantResolver(entityVariants));
+
+        foreach (var fileHandler in config.FileUploadHandlers.ToList(fileHandler => typeof(FileHandler<>).MakeGenericType(fileHandler.HandlerType)))
+        {
+            services.AddTransient(fileHandler);
+        }
+        if (!config.AdvancedConfig.RemoveDataAnnotationEntityValidator)
+        {
+            services.AddSingleton<DataAnnotationEntityValidator>();
+
+            foreach (var variant in entityVariants.SelectMany(x => x.Value.variants))
+            {
+                config.EntityValidationConfig.Add((AliasHelper.GetEntityVariantAlias(variant), new ValidationConfig(typeof(DataAnnotationEntityValidator), default)));
+            }
+        }
+
+        var validations = config.EntityValidationConfig
+            .GroupBy(x => x.entity)
+            .ToDictionary(x => x.Key, x => x.ToList(x => new ValidationSetup(x.validation.Type, x.validation.Configuration) as ValidationSetup) as IReadOnlyList<ValidationSetup>);
+
+        services.AddSingleton<ISetupResolver<IReadOnlyList<ValidationSetup>>>(new ValidationSetupResolver(validations));
+
+        return services;
     }
 }

@@ -17,126 +17,125 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
-namespace RapidCMS.Core.Tests.Services.Auth
+namespace RapidCMS.Core.Tests.Services.Auth;
+
+public class AuthServiceTests
 {
-    public class AuthServiceTests
+    private IAuthService _subject = default!;
+
+    private Mock<IAuthorizationService> _authorizationService = default!;
+    private Mock<IButtonActionHandler> _buttonActionHandler = default!;
+    private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
+    private Mock<AuthenticationStateProvider> _authenticationStateProvider = default!;
+    private readonly ClaimsPrincipal _user = new ClaimsPrincipal();
+
+    [SetUp]
+    public void Setup()
     {
-        private IAuthService _subject = default!;
+        _authorizationService = new Mock<IAuthorizationService>();
 
-        private Mock<IAuthorizationService> _authorizationService = default!;
-        private Mock<IButtonActionHandler> _buttonActionHandler = default!;
-        private Mock<IButtonActionHandlerResolver> _buttonActionHandlerResolver = default!;
-        private Mock<AuthenticationStateProvider> _authenticationStateProvider = default!;
-        private readonly ClaimsPrincipal _user = new ClaimsPrincipal();
+        _buttonActionHandler = new Mock<IButtonActionHandler>();
+        _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
+        _buttonActionHandlerResolver
+            .Setup(x => x.GetButtonActionHandler(It.IsAny<ButtonSetup>()))
+            .Returns(_buttonActionHandler.Object);
 
-        [SetUp]
-        public void Setup()
-        {
-            _authorizationService = new Mock<IAuthorizationService>();
+        var state = new AuthenticationState(_user);
 
-            _buttonActionHandler = new Mock<IButtonActionHandler>();
-            _buttonActionHandlerResolver = new Mock<IButtonActionHandlerResolver>();
-            _buttonActionHandlerResolver
-                .Setup(x => x.GetButtonActionHandler(It.IsAny<ButtonSetup>()))
-                .Returns(_buttonActionHandler.Object);
+        _authenticationStateProvider = new Mock<AuthenticationStateProvider>();
+        _authenticationStateProvider.Setup(x => x.GetAuthenticationStateAsync()).ReturnsAsync(state);
 
-            var state = new AuthenticationState(_user);
+        _subject = new ServerSideAuthService(
+            _buttonActionHandlerResolver.Object,
+            _authorizationService.Object,
+            _authenticationStateProvider.Object);
+    }
 
-            _authenticationStateProvider = new Mock<AuthenticationStateProvider>();
-            _authenticationStateProvider.Setup(x => x.GetAuthenticationStateAsync()).ReturnsAsync(state);
+    [TestCase(UsageType.Add, "Add")]
+    [TestCase(UsageType.Edit, "Update")]
+    [TestCase(UsageType.New, "Create")]
+    [TestCase(UsageType.Pick, "Add")]
+    [TestCase(UsageType.View, "Read")]
+    public void WhenCheckingIfUsageTypeIsAllowedOnEntity_AuthorizationServiceShouldBeConsulted(UsageType usageType, string requirement)
+    {
+        // arrange
+        var entity = new Mock<IEntity>();
 
-            _subject = new ServerSideAuthService(
-                _buttonActionHandlerResolver.Object,
-                _authorizationService.Object,
-                _authenticationStateProvider.Object);
-        }
+        // act
+        _subject.EnsureAuthorizedUserAsync(usageType, entity.Object);
 
-        [TestCase(UsageType.Add, "Add")]
-        [TestCase(UsageType.Edit, "Update")]
-        [TestCase(UsageType.New, "Create")]
-        [TestCase(UsageType.Pick, "Add")]
-        [TestCase(UsageType.View, "Read")]
-        public void WhenCheckingIfUsageTypeIsAllowedOnEntity_AuthorizationServiceShouldBeConsulted(UsageType usageType, string requirement)
-        {
-            // arrange
-            var entity = new Mock<IEntity>();
+        // assert
+        _authenticationStateProvider.Verify(x => x.GetAuthenticationStateAsync(), Times.Once());
+        _authenticationStateProvider.VerifyNoOtherCalls();
+        _authorizationService.Verify(x => x.AuthorizeAsync(
+            It.Is<ClaimsPrincipal>(x => x == _user),
+            It.Is<IEntity>(x => x == entity.Object),
+            It.Is<IEnumerable<IAuthorizationRequirement>>(x => (x.First() as OperationAuthorizationRequirement)!.Name == requirement)));
+        _authorizationService.VerifyNoOtherCalls();
+    }
 
-            // act
-            _subject.EnsureAuthorizedUserAsync(usageType, entity.Object);
+    [TestCase(UsageType.Add, "Add")]
+    [TestCase(UsageType.Edit, "Update")]
+    [TestCase(UsageType.New, "Create")]
+    [TestCase(UsageType.Pick, "Add")]
+    [TestCase(UsageType.View, "Read")]
+    public void WhenUsageTypeIsNotAllowed_AuthServiceShouldThrowUnauthorizedAccessException(UsageType usageType, string requirement)
+    {
+        // arrange
+        var entity = new Mock<IEntity>();
+        _authorizationService
+            .Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<IEntity>(), It.IsAny<IEnumerable<IAuthorizationRequirement>>()))
+            .ReturnsAsync(AuthorizationResult.Failed());
 
-            // assert
-            _authenticationStateProvider.Verify(x => x.GetAuthenticationStateAsync(), Times.Once());
-            _authenticationStateProvider.VerifyNoOtherCalls();
-            _authorizationService.Verify(x => x.AuthorizeAsync(
-                It.Is<ClaimsPrincipal>(x => x == _user),
-                It.Is<IEntity>(x => x == entity.Object),
-                It.Is<IEnumerable<IAuthorizationRequirement>>(x => (x.First() as OperationAuthorizationRequirement)!.Name == requirement)));
-            _authorizationService.VerifyNoOtherCalls();
-        }
+        // act & assert
+        Assert.ThrowsAsync(typeof(UnauthorizedAccessException), () => _subject.EnsureAuthorizedUserAsync(usageType, entity.Object));
+    }
 
-        [TestCase(UsageType.Add, "Add")]
-        [TestCase(UsageType.Edit, "Update")]
-        [TestCase(UsageType.New, "Create")]
-        [TestCase(UsageType.Pick, "Add")]
-        [TestCase(UsageType.View, "Read")]
-        public void WhenUsageTypeIsNotAllowed_AuthServiceShouldThrowUnauthorizedAccessException(UsageType usageType, string requirement)
-        {
-            // arrange
-            var entity = new Mock<IEntity>();
-            _authorizationService
-                .Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<IEntity>(), It.IsAny<IEnumerable<IAuthorizationRequirement>>()))
-                .ReturnsAsync(AuthorizationResult.Failed());
+    [TestCase(UsageType.Add, "Add")]
+    [TestCase(UsageType.Edit, "Update")]
+    [TestCase(UsageType.New, "Create")]
+    [TestCase(UsageType.Pick, "Add")]
+    [TestCase(UsageType.View, "Read")]
+    public void WhenCheckingButtonIsAllowed_AuthorizationServiceShouldBeConsulted(UsageType usageType, string requirement)
+    {
+        // arrange
+        _buttonActionHandler.Setup(x => x.GetOperation(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
+        var serviceProvider = new Mock<IServiceProvider>();
+        var entity = new Mock<IEntity>();
+        var editContext = new FormEditContext("alias", "repo", "entity", entity.Object, default, usageType, new List<ValidationSetup>(), serviceProvider.Object);
+        var button = new ButtonSetup();
 
-            // act & assert
-            Assert.ThrowsAsync(typeof(UnauthorizedAccessException), () => _subject.EnsureAuthorizedUserAsync(usageType, entity.Object));
-        }
+        // act
+        _subject.EnsureAuthorizedUserAsync(editContext, button);
 
-        [TestCase(UsageType.Add, "Add")]
-        [TestCase(UsageType.Edit, "Update")]
-        [TestCase(UsageType.New, "Create")]
-        [TestCase(UsageType.Pick, "Add")]
-        [TestCase(UsageType.View, "Read")]
-        public void WhenCheckingButtonIsAllowed_AuthorizationServiceShouldBeConsulted(UsageType usageType, string requirement)
-        {
-            // arrange
-            _buttonActionHandler.Setup(x => x.GetOperation(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
-            var serviceProvider = new Mock<IServiceProvider>();
-            var entity = new Mock<IEntity>();
-            var editContext = new FormEditContext("alias", "repo", "entity", entity.Object, default, usageType, new List<ValidationSetup>(), serviceProvider.Object);
-            var button = new ButtonSetup();
+        // assert
+        _authenticationStateProvider.Verify(x => x.GetAuthenticationStateAsync(), Times.Once());
+        _authenticationStateProvider.VerifyNoOtherCalls();
+        _authorizationService.Verify(x => x.AuthorizeAsync(
+            It.Is<ClaimsPrincipal>(x => x == _user),
+            It.Is<IEntity>(x => x == entity.Object),
+            It.Is<IEnumerable<IAuthorizationRequirement>>(x => (x.First() as OperationAuthorizationRequirement)!.Name == requirement)));
+        _authorizationService.VerifyNoOtherCalls();
+    }
 
-            // act
-            _subject.EnsureAuthorizedUserAsync(editContext, button);
+    [TestCase(UsageType.Add, "Add")]
+    [TestCase(UsageType.Edit, "Update")]
+    [TestCase(UsageType.New, "Create")]
+    [TestCase(UsageType.Pick, "Add")]
+    [TestCase(UsageType.View, "Read")]
+    public void WhenButtonIsNotAllowed_AuthServiceShouldThrowUnauthorizedAccessException(UsageType usageType, string requirement)
+    {
+        // arrange
+        _buttonActionHandler.Setup(x => x.GetOperation(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
+        var serviceProvider = new Mock<IServiceProvider>();
+        var entity = new Mock<IEntity>();
+        var editContext = new FormEditContext("alias", "repo", "entity", entity.Object, default, usageType, new List<ValidationSetup>(), serviceProvider.Object);
+        var button = new ButtonSetup();
+        _authorizationService
+            .Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<IEntity>(), It.IsAny<IEnumerable<IAuthorizationRequirement>>()))
+            .ReturnsAsync(AuthorizationResult.Failed());
 
-            // assert
-            _authenticationStateProvider.Verify(x => x.GetAuthenticationStateAsync(), Times.Once());
-            _authenticationStateProvider.VerifyNoOtherCalls();
-            _authorizationService.Verify(x => x.AuthorizeAsync(
-                It.Is<ClaimsPrincipal>(x => x == _user),
-                It.Is<IEntity>(x => x == entity.Object),
-                It.Is<IEnumerable<IAuthorizationRequirement>>(x => (x.First() as OperationAuthorizationRequirement)!.Name == requirement)));
-            _authorizationService.VerifyNoOtherCalls();
-        }
-
-        [TestCase(UsageType.Add, "Add")]
-        [TestCase(UsageType.Edit, "Update")]
-        [TestCase(UsageType.New, "Create")]
-        [TestCase(UsageType.Pick, "Add")]
-        [TestCase(UsageType.View, "Read")]
-        public void WhenButtonIsNotAllowed_AuthServiceShouldThrowUnauthorizedAccessException(UsageType usageType, string requirement)
-        {
-            // arrange
-            _buttonActionHandler.Setup(x => x.GetOperation(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>())).Returns(Operations.GetOperationForUsageType(usageType));
-            var serviceProvider = new Mock<IServiceProvider>();
-            var entity = new Mock<IEntity>();
-            var editContext = new FormEditContext("alias", "repo", "entity", entity.Object, default, usageType, new List<ValidationSetup>(), serviceProvider.Object);
-            var button = new ButtonSetup();
-            _authorizationService
-                .Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<IEntity>(), It.IsAny<IEnumerable<IAuthorizationRequirement>>()))
-                .ReturnsAsync(AuthorizationResult.Failed());
-
-            // act & assert
-            Assert.ThrowsAsync(typeof(UnauthorizedAccessException), () => _subject.EnsureAuthorizedUserAsync(editContext, button));
-        }
+        // act & assert
+        Assert.ThrowsAsync(typeof(UnauthorizedAccessException), () => _subject.EnsureAuthorizedUserAsync(editContext, button));
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace RapidCMS.Core.Enums
+﻿namespace RapidCMS.Core.Enums;
+
+public enum EmptyVariantColumnVisibility
 {
-    public enum EmptyVariantColumnVisibility
-    {
-        Collapse = 0,
-        Visible = 1
-    }
+    Collapse = 0,
+    Visible = 1
 }

@@ -2,16 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace RapidCMS.Example.Server.Pages
+namespace RapidCMS.Example.Server.Pages;
+
+public class SignOutModel : PageModel
 {
-    public class SignOutModel : PageModel
+    public IActionResult OnGet()
     {
-        public IActionResult OnGet()
+        return SignOut(new AuthenticationProperties 
         {
-            return SignOut(new AuthenticationProperties 
-            {
-                RedirectUri = Url.Content("~/") 
-            }, "Cookies", "OpenIdConnect");
-        }
+            RedirectUri = Url.Content("~/") 
+        }, "Cookies", "OpenIdConnect");
     }
 }

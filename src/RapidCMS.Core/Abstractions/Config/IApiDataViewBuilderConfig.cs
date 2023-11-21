@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace RapidCMS.Core.Abstractions.Config
+namespace RapidCMS.Core.Abstractions.Config;
+
+public interface IApiDataViewBuilderConfig
 {
-    public interface IApiDataViewBuilderConfig
-    {
-        string Alias { get; }
-        Type DataViewBuilder { get; }
-    }
+    string Alias { get; }
+    Type DataViewBuilder { get; }
 }

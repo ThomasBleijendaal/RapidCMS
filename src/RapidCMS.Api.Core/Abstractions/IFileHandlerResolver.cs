@@ -1,7 +1,6 @@
-﻿namespace RapidCMS.Api.Core.Abstractions
+﻿namespace RapidCMS.Api.Core.Abstractions;
+
+public interface IFileHandlerResolver
 {
-    public interface IFileHandlerResolver
-    {
-        IFileHandler GetFileHandler(string uploadHandlerAlias);
-    }
+    IFileHandler GetFileHandler(string uploadHandlerAlias);
 }

@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace RapidCMS.Core.Abstractions.Mediators
+namespace RapidCMS.Core.Abstractions.Mediators;
+
+public interface IMediator
 {
-    public interface IMediator
-    {
-        void NotifyEvent(object sender, IMediatorEventArgs @event);
+    void NotifyEvent(object sender, IMediatorEventArgs @event);
 
-        Task<TResponse> NotifyEventAsync<TResponse>(object sender, IMediatorRequestEventArgs<TResponse> @event);
+    Task<TResponse> NotifyEventAsync<TResponse>(object sender, IMediatorRequestEventArgs<TResponse> @event);
 
-        event EventHandler<IMediatorEventArgs> OnEvent;
+    event EventHandler<IMediatorEventArgs> OnEvent;
 
-        IDisposable RegisterCallback<TMediatorEventArgs>(Func<object, TMediatorEventArgs, Task> callback)
-            where TMediatorEventArgs : IMediatorEventArgs;
+    IDisposable RegisterCallback<TMediatorEventArgs>(Func<object, TMediatorEventArgs, Task> callback)
+        where TMediatorEventArgs : IMediatorEventArgs;
 
-        TMediatorEventArgs? GetLatestEventArgs<TMediatorEventArgs>()
-             where TMediatorEventArgs : IMediatorEventArgs;
-    }
+    TMediatorEventArgs? GetLatestEventArgs<TMediatorEventArgs>()
+         where TMediatorEventArgs : IMediatorEventArgs;
 }

@@ -2,56 +2,55 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace RapidCMS.Core.Extensions
+namespace RapidCMS.Core.Extensions;
+
+public static class AsyncEnumerableExtensions
 {
-    public static class AsyncEnumerableExtensions
+    public static async IAsyncEnumerable<TSource> WhereAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> asyncPredicate)
     {
-        public static async IAsyncEnumerable<TSource> WhereAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task<bool>> asyncPredicate)
+        foreach (var element in source)
         {
-            foreach (var element in source)
+            if (await asyncPredicate(element))
             {
-                if (await asyncPredicate(element))
-                {
-                    yield return element;
-                }
+                yield return element;
             }
         }
+    }
 
-        public static async Task<List<TSource>> ToListAsync<TSource>(this IAsyncEnumerable<TSource> source)
+    public static async Task<List<TSource>> ToListAsync<TSource>(this IAsyncEnumerable<TSource> source)
+    {
+        var result = new List<TSource>();
+
+        await foreach (var element in source)
         {
-            var result = new List<TSource>();
-
-            await foreach (var element in source)
-            {
-                result.Add(element);
-            }
-
-            return result;
+            result.Add(element);
         }
 
-        public static async Task<List<TResult>> ToListAsync<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, TResult> selector)
+        return result;
+    }
+
+    public static async Task<List<TResult>> ToListAsync<TSource, TResult>(this IAsyncEnumerable<TSource> source, Func<TSource, TResult> selector)
+    {
+        var result = new List<TResult>();
+
+        await foreach (var element in source)
         {
-            var result = new List<TResult>();
-
-            await foreach (var element in source)
-            {
-                result.Add(selector(element));
-            }
-
-            return result;
+            result.Add(selector(element));
         }
 
-        public static async Task<Dictionary<TKey, TValue>> ToDictionaryAsync<TSource, TKey, TValue>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TValue>> asyncValueSelector)
-            where TKey: notnull
+        return result;
+    }
+
+    public static async Task<Dictionary<TKey, TValue>> ToDictionaryAsync<TSource, TKey, TValue>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TValue>> asyncValueSelector)
+        where TKey: notnull
+    {
+        var result = new Dictionary<TKey, TValue>();
+
+        foreach (var element in source)
         {
-            var result = new Dictionary<TKey, TValue>();
-
-            foreach (var element in source)
-            {
-                result.Add(keySelector(element), await asyncValueSelector(element));
-            }
-
-            return result;
+            result.Add(keySelector(element), await asyncValueSelector(element));
         }
+
+        return result;
     }
 }

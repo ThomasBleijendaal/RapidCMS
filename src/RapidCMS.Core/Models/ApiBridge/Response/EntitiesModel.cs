@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace RapidCMS.Core.Models.ApiBridge.Response
+namespace RapidCMS.Core.Models.ApiBridge.Response;
+
+public class EntitiesModel<TEntity>
 {
-    public class EntitiesModel<TEntity>
-    {
-        public IEnumerable<EntityModel<TEntity>> Entities { get; set; } = default!;
-        public bool MoreDataAvailable { get; set; }
-    }
+    public IEnumerable<EntityModel<TEntity>> Entities { get; set; } = default!;
+    public bool MoreDataAvailable { get; set; }
 }

@@ -5,42 +5,41 @@ using RapidCMS.Api.Core.Handlers;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Extensions;
 
-namespace RapidCMS.Api.Core.Resolvers
+namespace RapidCMS.Api.Core.Resolvers;
+
+internal class ApiHandlerResolver : IApiHandlerResolver
 {
-    internal class ApiHandlerResolver : IApiHandlerResolver
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IApiConfig _config;
+
+    public ApiHandlerResolver(
+        IServiceProvider serviceProvider,
+        IApiConfig config)
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly IApiConfig _config;
+        _serviceProvider = serviceProvider;
+        _config = config;
+    }
 
-        public ApiHandlerResolver(
-            IServiceProvider serviceProvider,
-            IApiConfig config)
+    public IApiHandler GetApiHandler(string repositoryAlias)
+    {
+        var repoConfig = _config.Repositories.FirstOrDefault(x => x.Alias == repositoryAlias);
+        if (repoConfig == null)
         {
-            _serviceProvider = serviceProvider;
-            _config = config;
+            throw new InvalidOperationException($"Could not find repository with alias {repositoryAlias}. Available: {string.Join(",", _config.Repositories.Select(x => $"[{x.ApiRepositoryType}: {x.Alias}]"))}.");
         }
 
-        public IApiHandler GetApiHandler(string repositoryAlias)
+        Type repoType;
+        if (repoConfig.DatabaseType == default)
         {
-            var repoConfig = _config.Repositories.FirstOrDefault(x => x.Alias == repositoryAlias);
-            if (repoConfig == null)
-            {
-                throw new InvalidOperationException($"Could not find repository with alias {repositoryAlias}. Available: {string.Join(",", _config.Repositories.Select(x => $"[{x.ApiRepositoryType}: {x.Alias}]"))}.");
-            }
-
-            Type repoType;
-            if (repoConfig.DatabaseType == default)
-            {
-                repoType = typeof(ApiHandler<,,>)
-                    .MakeGenericType(repoConfig.EntityType, repoConfig.EntityType, repoConfig.ApiRepositoryType);
-            }
-            else
-            {
-                repoType = typeof(ApiHandler<,,>)
-                    .MakeGenericType(repoConfig.EntityType, repoConfig.DatabaseType, repoConfig.ApiRepositoryType);
-            }
-
-            return _serviceProvider.GetService<IApiHandler>(repoType);
+            repoType = typeof(ApiHandler<,,>)
+                .MakeGenericType(repoConfig.EntityType, repoConfig.EntityType, repoConfig.ApiRepositoryType);
         }
+        else
+        {
+            repoType = typeof(ApiHandler<,,>)
+                .MakeGenericType(repoConfig.EntityType, repoConfig.DatabaseType, repoConfig.ApiRepositoryType);
+        }
+
+        return _serviceProvider.GetService<IApiHandler>(repoType);
     }
 }

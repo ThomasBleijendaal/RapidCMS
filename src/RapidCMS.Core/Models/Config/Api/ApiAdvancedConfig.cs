@@ -1,9 +1,8 @@
 ﻿using RapidCMS.Core.Abstractions.Config;
 
-namespace RapidCMS.Core.Models.Config.Api
+namespace RapidCMS.Core.Models.Config.Api;
+
+internal class ApiAdvancedConfig : IAdvancedApiConfig
 {
-    internal class ApiAdvancedConfig : IAdvancedApiConfig
-    {
-        public bool RemoveDataAnnotationEntityValidator { get; set; }
-    }
+    public bool RemoveDataAnnotationEntityValidator { get; set; }
 }

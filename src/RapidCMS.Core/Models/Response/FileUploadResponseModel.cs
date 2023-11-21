@@ -1,7 +1,6 @@
-﻿namespace RapidCMS.Core.Models.Response
+﻿namespace RapidCMS.Core.Models.Response;
+
+public class FileUploadResponseModel
 {
-    public class FileUploadResponseModel
-    {
-        public object Result { get; set; } = default!;
-    }
+    public object Result { get; set; } = default!;
 }

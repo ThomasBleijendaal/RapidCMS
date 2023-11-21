@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace RapidCMS.Core.Abstractions.Metadata
+namespace RapidCMS.Core.Abstractions.Metadata;
+
+public interface IFullPropertyMetadata : IPropertyMetadata
 {
-    public interface IFullPropertyMetadata : IPropertyMetadata
-    {
-        Action<object, object> Setter { get; }
-    }
+    Action<object, object> Setter { get; }
 }

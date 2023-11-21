@@ -1,8 +1,7 @@
-﻿namespace RapidCMS.Core.Abstractions.Setup
+﻿namespace RapidCMS.Core.Abstractions.Setup;
+
+public interface ICms
 {
-    public interface ICms
-    {
-        string SiteName { get; }
-        bool IsDevelopment { get; set; }
-    }
+    string SiteName { get; }
+    bool IsDevelopment { get; set; }
 }

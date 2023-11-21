@@ -1,6 +1,5 @@
-﻿namespace RapidCMS.Api.WebApi.Controllers
+﻿namespace RapidCMS.Api.WebApi.Controllers;
+
+public interface IFunctionExecutionContextAccessor
 {
-    public interface IFunctionExecutionContextAccessor
-    {
-    }
 }

@@ -1,9 +1,8 @@
 ﻿
-namespace RapidCMS.Core.Enums
+namespace RapidCMS.Core.Enums;
+
+public enum CollectionRootVisibility
 {
-    public enum CollectionRootVisibility
-    {
-        Visible,
-        Hidden
-    }
+    Visible,
+    Hidden
 }

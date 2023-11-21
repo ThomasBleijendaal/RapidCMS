@@ -1,12 +1,11 @@
-﻿namespace RapidCMS.Core.Enums
+﻿namespace RapidCMS.Core.Enums;
+
+public enum CollectionConvention
 {
-    public enum CollectionConvention
-    {
-        ListView = 1,
-        ListViewNodeView = 2,
-        ListViewNodeEditor = 3,
-        ListEditor = 4,
-        ListBlockEditor = 5,
-        ListEditorNodeEditor = 6
-    }
+    ListView = 1,
+    ListViewNodeView = 2,
+    ListViewNodeEditor = 3,
+    ListEditor = 4,
+    ListBlockEditor = 5,
+    ListEditorNodeEditor = 6
 }

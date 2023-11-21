@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace RapidCMS.Core.Abstractions.Metadata
+namespace RapidCMS.Core.Abstractions.Metadata;
+
+public interface IExpressionMetadata
 {
-    public interface IExpressionMetadata
-    {
-        string PropertyName { get; }
-        Func<object, string> StringGetter { get; }
-    }
+    string PropertyName { get; }
+    Func<object, string> StringGetter { get; }
 }

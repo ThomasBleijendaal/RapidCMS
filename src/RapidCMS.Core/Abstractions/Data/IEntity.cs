@@ -1,7 +1,6 @@
-﻿namespace RapidCMS.Core.Abstractions.Data
+﻿namespace RapidCMS.Core.Abstractions.Data;
+
+public interface IEntity
 {
-    public interface IEntity
-    {
-        string? Id { get; set; }
-    }
+    string? Id { get; set; }
 }

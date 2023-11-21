@@ -8,93 +8,92 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Core.Resolvers.Convention
+namespace RapidCMS.Core.Resolvers.Convention;
+
+internal class ConventionBasedListConfigResolver : IConventionBasedResolver<ListConfig>
 {
-    internal class ConventionBasedListConfigResolver : IConventionBasedResolver<ListConfig>
+    private readonly IFieldConfigResolver _fieldConfigResolver;
+    private readonly ILanguageResolver _languageResolver;
+
+    public ConventionBasedListConfigResolver(
+        IFieldConfigResolver fieldConfigResolver,
+        ILanguageResolver languageResolver)
     {
-        private readonly IFieldConfigResolver _fieldConfigResolver;
-        private readonly ILanguageResolver _languageResolver;
+        _fieldConfigResolver = fieldConfigResolver;
+        _languageResolver = languageResolver;
+    }
 
-        public ConventionBasedListConfigResolver(
-            IFieldConfigResolver fieldConfigResolver,
-            ILanguageResolver languageResolver)
+    public Task<ListConfig> ResolveByConventionAsync(Type subject, Features features, CollectionSetup? collection)
+    {
+        var listButtons = new List<ButtonConfig>();
+
+        if (features.HasFlag(Features.CanEdit) || features.HasFlag(Features.CanGoToEdit))
         {
-            _fieldConfigResolver = fieldConfigResolver;
-            _languageResolver = languageResolver;
+            listButtons.Add(new DefaultButtonConfig
+            {
+                ButtonType = DefaultButtonType.New,
+                Label = !(collection?.SubEntityVariants?.Any() ?? false) ? null : _languageResolver.ResolveText("New {0}")
+            });
+            listButtons.Add(new DefaultButtonConfig
+            {
+                ButtonType = DefaultButtonType.Return
+            });
+            listButtons.Add(new DefaultButtonConfig
+            {
+                ButtonType = DefaultButtonType.SaveExisting,
+                Label = _languageResolver.ResolveText("Update all")
+            });
+        };
+        var paneButtons = new List<ButtonConfig>();
+        if (features.HasFlag(Features.CanGoToView))
+        {
+            paneButtons.Add(new DefaultButtonConfig
+            {
+                ButtonType = DefaultButtonType.View
+            });
+        }
+        if (features.HasFlag(Features.CanGoToEdit))
+        {
+            paneButtons.Add(new DefaultButtonConfig
+            {
+                ButtonType = DefaultButtonType.Edit
+            });
+        }
+        if (features.HasFlag(Features.CanEdit))
+        {
+            paneButtons.Add(new DefaultButtonConfig
+            {
+                ButtonType = DefaultButtonType.SaveExisting
+            });
+            paneButtons.Add(new DefaultButtonConfig
+            {
+                ButtonType = DefaultButtonType.SaveNew
+            });
+            paneButtons.Add(new DefaultButtonConfig
+            {
+                ButtonType = DefaultButtonType.Delete
+            });
         }
 
-        public Task<ListConfig> ResolveByConventionAsync(Type subject, Features features, CollectionSetup? collection)
+        var result = new ListConfig(subject)
         {
-            var listButtons = new List<ButtonConfig>();
+            PageSize = 25,
+            Buttons = listButtons,
+            ListEditorType = features.HasFlag(Features.IsBlockList) ? ListType.Block : ListType.Table,
+            Panes = new List<PaneConfig>
+            {
+                new PaneConfig(subject)
+                {
+                    Buttons =  paneButtons,
+                    FieldIndex = 1,
+                    Fields = _fieldConfigResolver.GetFields(subject, features).ToList(),
+                    VariantType = subject
+                }
+            },
+            ReorderingAllowed = false,
+            SearchBarVisible = true
+        };
 
-            if (features.HasFlag(Features.CanEdit) || features.HasFlag(Features.CanGoToEdit))
-            {
-                listButtons.Add(new DefaultButtonConfig
-                {
-                    ButtonType = DefaultButtonType.New,
-                    Label = !(collection?.SubEntityVariants?.Any() ?? false) ? null : _languageResolver.ResolveText("New {0}")
-                });
-                listButtons.Add(new DefaultButtonConfig
-                {
-                    ButtonType = DefaultButtonType.Return
-                });
-                listButtons.Add(new DefaultButtonConfig
-                {
-                    ButtonType = DefaultButtonType.SaveExisting,
-                    Label = _languageResolver.ResolveText("Update all")
-                });
-            };
-            var paneButtons = new List<ButtonConfig>();
-            if (features.HasFlag(Features.CanGoToView))
-            {
-                paneButtons.Add(new DefaultButtonConfig
-                {
-                    ButtonType = DefaultButtonType.View
-                });
-            }
-            if (features.HasFlag(Features.CanGoToEdit))
-            {
-                paneButtons.Add(new DefaultButtonConfig
-                {
-                    ButtonType = DefaultButtonType.Edit
-                });
-            }
-            if (features.HasFlag(Features.CanEdit))
-            {
-                paneButtons.Add(new DefaultButtonConfig
-                {
-                    ButtonType = DefaultButtonType.SaveExisting
-                });
-                paneButtons.Add(new DefaultButtonConfig
-                {
-                    ButtonType = DefaultButtonType.SaveNew
-                });
-                paneButtons.Add(new DefaultButtonConfig
-                {
-                    ButtonType = DefaultButtonType.Delete
-                });
-            }
-
-            var result = new ListConfig(subject)
-            {
-                PageSize = 25,
-                Buttons = listButtons,
-                ListEditorType = features.HasFlag(Features.IsBlockList) ? ListType.Block : ListType.Table,
-                Panes = new List<PaneConfig>
-                {
-                    new PaneConfig(subject)
-                    {
-                        Buttons =  paneButtons,
-                        FieldIndex = 1,
-                        Fields = _fieldConfigResolver.GetFields(subject, features).ToList(),
-                        VariantType = subject
-                    }
-                },
-                ReorderingAllowed = false,
-                SearchBarVisible = true
-            };
-
-            return Task.FromResult(result);
-        }
+        return Task.FromResult(result);
     }
 }

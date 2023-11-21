@@ -1,6 +1,5 @@
-﻿namespace RapidCMS.Core.Models.Setup
+﻿namespace RapidCMS.Core.Models.Setup;
+
+public class RelationSetup
 {
-    public class RelationSetup
-    {
-    }
 }

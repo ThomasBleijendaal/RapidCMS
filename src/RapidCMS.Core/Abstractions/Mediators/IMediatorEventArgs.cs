@@ -1,6 +1,5 @@
-﻿namespace RapidCMS.Core.Abstractions.Mediators
+﻿namespace RapidCMS.Core.Abstractions.Mediators;
+
+public interface IMediatorEventArgs
 {
-    public interface IMediatorEventArgs
-    {
-    }
 }

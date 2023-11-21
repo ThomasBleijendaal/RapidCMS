@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace RapidCMS.Core.Abstractions.Services
+namespace RapidCMS.Core.Abstractions.Services;
+
+public interface IInteractionService
 {
-    public interface IInteractionService
-    {
-        Task<TResponse> InteractAsync<TRequest, TResponse>(TRequest request);
-    }
+    Task<TResponse> InteractAsync<TRequest, TResponse>(TRequest request);
 }

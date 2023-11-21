@@ -12,70 +12,69 @@ using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
 
-namespace RapidCMS.Core.Dispatchers.Api
+namespace RapidCMS.Core.Dispatchers.Api;
+
+internal class GetEntitiesDispatcher : IPresentationDispatcher<GetEntitiesRequestModel, EntitiesResponseModel>
 {
-    internal class GetEntitiesDispatcher : IPresentationDispatcher<GetEntitiesRequestModel, EntitiesResponseModel>
+    private readonly IRepositoryResolver _repositoryResolver;
+    private readonly IDataViewResolver _dataViewResolver;
+    private readonly IParentService _parentService;
+    private readonly IAuthService _authService;
+
+    public GetEntitiesDispatcher(
+        IRepositoryResolver repositoryResolver,
+        IDataViewResolver dataViewResolver,
+        IParentService parentService,
+        IAuthService authService)
     {
-        private readonly IRepositoryResolver _repositoryResolver;
-        private readonly IDataViewResolver _dataViewResolver;
-        private readonly IParentService _parentService;
-        private readonly IAuthService _authService;
+        _repositoryResolver = repositoryResolver;
+        _dataViewResolver = dataViewResolver;
+        _parentService = parentService;
+        _authService = authService;
+    }
 
-        public GetEntitiesDispatcher(
-            IRepositoryResolver repositoryResolver,
-            IDataViewResolver dataViewResolver,
-            IParentService parentService,
-            IAuthService authService)
+    public async Task<EntitiesResponseModel> GetAsync(GetEntitiesRequestModel request)
+    {
+        var subjectRepository = _repositoryResolver.GetRepository(request.RepositoryAlias);
+
+        var parentPath = request is GetEntitiesOfParentRequestModel parentRequest ? parentRequest.ParentPath 
+            : request is GetEntitiesOfRelationRequestModel relationRequest ? relationRequest.Related.ParentPath 
+            : default;
+        var parent = await _parentService.GetParentAsync(ParentPath.TryParse(parentPath));
+        var related = default(IRelated);
+        if (request is GetEntitiesOfRelationRequestModel relatedRequest)
         {
-            _repositoryResolver = repositoryResolver;
-            _dataViewResolver = dataViewResolver;
-            _parentService = parentService;
-            _authService = authService;
+            var relatedRepository = _repositoryResolver.GetRepository(relatedRequest.Related.RepositoryAlias ?? throw new ArgumentNullException());
+            var relatedEntity = await relatedRepository.GetByIdAsync(relatedRequest.Related.Id ?? throw new ArgumentNullException(), new ViewContext(null, default))
+                ?? throw new NotFoundException("Could not find related entity");
+            related = new RelatedEntity(parent, relatedEntity, relatedRequest.Related.RepositoryAlias);
         }
 
-        public async Task<EntitiesResponseModel> GetAsync(GetEntitiesRequestModel request)
+        var protoEntity = await subjectRepository.NewAsync(new ViewContext(null, parent), default);
+
+        await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity);
+        await _dataViewResolver.ApplyDataViewToViewAsync(request.View);
+
+        var action = (request.UsageType & ~(UsageType.List)) switch
         {
-            var subjectRepository = _repositoryResolver.GetRepository(request.RepositoryAlias);
+            UsageType.Add when related != null => async () => await subjectRepository.GetAllNonRelatedAsync(new RelatedViewContext(related, null, default), request.View),
+            _ when related != null => async () => await subjectRepository.GetAllRelatedAsync(new RelatedViewContext(related, null, default), request.View),
+            _ when related == null => async () => await subjectRepository.GetAllAsync(new ViewContext(null, parent), request.View),
 
-            var parentPath = request is GetEntitiesOfParentRequestModel parentRequest ? parentRequest.ParentPath 
-                : request is GetEntitiesOfRelationRequestModel relationRequest ? relationRequest.Related.ParentPath 
-                : default;
-            var parent = await _parentService.GetParentAsync(ParentPath.TryParse(parentPath));
-            var related = default(IRelated);
-            if (request is GetEntitiesOfRelationRequestModel relatedRequest)
-            {
-                var relatedRepository = _repositoryResolver.GetRepository(relatedRequest.Related.RepositoryAlias ?? throw new ArgumentNullException());
-                var relatedEntity = await relatedRepository.GetByIdAsync(relatedRequest.Related.Id ?? throw new ArgumentNullException(), new ViewContext(null, default))
-                    ?? throw new NotFoundException("Could not find related entity");
-                related = new RelatedEntity(parent, relatedEntity, relatedRequest.Related.RepositoryAlias);
-            }
+            _ => default(Func<Task<IEnumerable<IEntity>>>)
+        };
 
-            var protoEntity = await subjectRepository.NewAsync(new ViewContext(null, parent), default);
-
-            await _authService.EnsureAuthorizedUserAsync(request.UsageType, protoEntity);
-            await _dataViewResolver.ApplyDataViewToViewAsync(request.View);
-
-            var action = (request.UsageType & ~(UsageType.List)) switch
-            {
-                UsageType.Add when related != null => async () => await subjectRepository.GetAllNonRelatedAsync(new RelatedViewContext(related, null, default), request.View),
-                _ when related != null => async () => await subjectRepository.GetAllRelatedAsync(new RelatedViewContext(related, null, default), request.View),
-                _ when related == null => async () => await subjectRepository.GetAllAsync(new ViewContext(null, parent), request.View),
-
-                _ => default(Func<Task<IEnumerable<IEntity>>>)
-            };
-
-            if (action == default)
-            {
-                throw new InvalidOperationException($"UsageType {request.UsageType} is invalid for this method");
-            }
-
-            var entities = await action.Invoke();
-
-            return new EntitiesResponseModel
-            {
-                Entities = entities,
-                MoreDataAvailable = request.View.MoreDataAvailable
-            };
+        if (action == default)
+        {
+            throw new InvalidOperationException($"UsageType {request.UsageType} is invalid for this method");
         }
+
+        var entities = await action.Invoke();
+
+        return new EntitiesResponseModel
+        {
+            Entities = entities,
+            MoreDataAvailable = request.View.MoreDataAvailable
+        };
     }
 }

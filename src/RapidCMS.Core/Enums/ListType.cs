@@ -1,8 +1,7 @@
-﻿namespace RapidCMS.Core.Enums
+﻿namespace RapidCMS.Core.Enums;
+
+public enum ListType
 {
-    public enum ListType
-    {
-        Table = 0,
-        Block = 1
-    }
+    Table = 0,
+    Block = 1
 }

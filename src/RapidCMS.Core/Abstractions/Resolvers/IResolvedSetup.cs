@@ -1,8 +1,7 @@
-﻿namespace RapidCMS.Core.Abstractions.Resolvers
+﻿namespace RapidCMS.Core.Abstractions.Resolvers;
+
+public interface IResolvedSetup<T>
 {
-    public interface IResolvedSetup<T>
-    {
-        T Setup { get; }
-        bool Cachable { get; }
-    }
+    T Setup { get; }
+    bool Cachable { get; }
 }

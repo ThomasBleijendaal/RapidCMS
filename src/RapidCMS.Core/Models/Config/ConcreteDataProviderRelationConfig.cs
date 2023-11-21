@@ -1,15 +1,14 @@
 ﻿using System;
 using RapidCMS.Core.Abstractions.Data;
 
-namespace RapidCMS.Core.Models.Config
-{
-    internal class ConcreteDataProviderRelationConfig : RelationConfig
-    {
-        internal ConcreteDataProviderRelationConfig(IDataCollection dataCollection)
-        {
-            DataCollection = dataCollection ?? throw new ArgumentNullException(nameof(dataCollection));
-        }
+namespace RapidCMS.Core.Models.Config;
 
-        internal IDataCollection DataCollection { get; set; }
+internal class ConcreteDataProviderRelationConfig : RelationConfig
+{
+    internal ConcreteDataProviderRelationConfig(IDataCollection dataCollection)
+    {
+        DataCollection = dataCollection ?? throw new ArgumentNullException(nameof(dataCollection));
     }
+
+    internal IDataCollection DataCollection { get; set; }
 }

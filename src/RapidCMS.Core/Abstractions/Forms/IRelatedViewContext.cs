@@ -1,12 +1,11 @@
 ﻿using RapidCMS.Core.Abstractions.Data;
 
-namespace RapidCMS.Core.Abstractions.Forms
+namespace RapidCMS.Core.Abstractions.Forms;
+
+public interface IRelatedViewContext : IViewContext
 {
-    public interface IRelatedViewContext : IViewContext
-    {
-        /// <summary>
-        /// The related entity
-        /// </summary>
-        IRelated Related { get; }
-    }
+    /// <summary>
+    /// The related entity
+    /// </summary>
+    IRelated Related { get; }
 }

@@ -9,56 +9,55 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 
-namespace RapidCMS.Core.Providers
+namespace RapidCMS.Core.Providers;
+
+public class EnumDataProvider<TEnum> : IDataCollection
+    where TEnum : Enum
 {
-    public class EnumDataProvider<TEnum> : IDataCollection
-        where TEnum : Enum
-    {
 #pragma warning disable CS0067
-        public event EventHandler? OnDataChange;
+    public event EventHandler? OnDataChange;
 #pragma warning restore CS0067
 
-        public void Configure(object configuration) { }
+    public void Configure(object configuration) { }
 
-        public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IView view)
+    public Task<IReadOnlyList<IElement>> GetAvailableElementsAsync(IView view)
+    {
+        var values = Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
+
+        var list = new List<IElement>();
+
+        foreach (var value in values)
         {
-            var values = Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
+            var attribute = value.GetCustomAttribute<DisplayAttribute>();
 
-            var list = new List<IElement>();
-
-            foreach (var value in values)
+            if (attribute != null)
             {
-                var attribute = value.GetCustomAttribute<DisplayAttribute>();
-
-                if (attribute != null)
+                list.Add(new Element
                 {
-                    list.Add(new Element
-                    {
-                        Id = value,
-                        Labels = new[] { attribute.Name ?? string.Empty }
-                    });
-                }
-                else
-                {
-                    list.Add(new Element
-                    {
-                        Id = value,
-                        Labels = new[] { value.ToString() }
-                    });
-                }
+                    Id = value,
+                    Labels = new[] { attribute.Name ?? string.Empty }
+                });
             }
-
-            return Task.FromResult<IReadOnlyList<IElement>>(list);
+            else
+            {
+                list.Add(new Element
+                {
+                    Id = value,
+                    Labels = new[] { value.ToString() }
+                });
+            }
         }
 
-        public Task SetEntityAsync(FormEditContext editContext, IPropertyMetadata property, IParent? parent)
-        {
-            return Task.CompletedTask;
-        }
+        return Task.FromResult<IReadOnlyList<IElement>>(list);
+    }
 
-        public void Dispose()
-        {
+    public Task SetEntityAsync(FormEditContext editContext, IPropertyMetadata property, IParent? parent)
+    {
+        return Task.CompletedTask;
+    }
 
-        }
+    public void Dispose()
+    {
+
     }
 }

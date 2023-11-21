@@ -1,12 +1,11 @@
-﻿namespace RapidCMS.Core.Abstractions.Config
+﻿namespace RapidCMS.Core.Abstractions.Config;
+
+public interface IHasPageSize<TReturn>
 {
-    public interface IHasPageSize<TReturn>
-    {
-        /// <summary>
-        /// Sets the pagesize of the ListEditor. 
-        /// </summary>
-        /// <param name="pageSize"></param>
-        /// <returns></returns>
-        TReturn SetPageSize(int pageSize);
-    }
+    /// <summary>
+    /// Sets the pagesize of the ListEditor. 
+    /// </summary>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
+    TReturn SetPageSize(int pageSize);
 }

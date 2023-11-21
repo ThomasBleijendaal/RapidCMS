@@ -2,14 +2,13 @@
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Navigation;
 
-namespace RapidCMS.Core.Models.Request.Form
+namespace RapidCMS.Core.Models.Request.Form;
+
+public class PersistEntityCollectionRequestModel : IEditorInListInteractionRequestModel
 {
-    public class PersistEntityCollectionRequestModel : IEditorInListInteractionRequestModel
-    {
-        public FormEditContext EditContext { get; set; } = default!; 
-        public ListContext ListContext { get; set; } = default!;
-        public NavigationState NavigationState { get; set; } = default!;
-        public string ActionId { get; set; } = default!;
-        public object? CustomData { get; set; }
-    }
+    public FormEditContext EditContext { get; set; } = default!; 
+    public ListContext ListContext { get; set; } = default!;
+    public NavigationState NavigationState { get; set; } = default!;
+    public string ActionId { get; set; } = default!;
+    public object? CustomData { get; set; }
 }

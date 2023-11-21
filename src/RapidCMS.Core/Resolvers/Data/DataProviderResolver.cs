@@ -12,111 +12,110 @@ using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
 
-namespace RapidCMS.Core.Resolvers.Data
+namespace RapidCMS.Core.Resolvers.Data;
+
+internal class DataProviderResolver : IDataProviderResolver
 {
-    internal class DataProviderResolver : IDataProviderResolver
+    private readonly ISetupResolver<CollectionSetup> _collectionSetupResolver;
+    private readonly IConcurrencyService _concurrencyService;
+    private readonly IRepositoryResolver _repositoryResolver;
+    private readonly IMediator _mediator;
+    private readonly IServiceProvider _serviceProvider;
+
+    public DataProviderResolver(
+        ISetupResolver<CollectionSetup> collectionSetupResolver,
+        IConcurrencyService concurrencyService,
+        IRepositoryResolver repositoryResolver,
+        IMediator mediator,
+        IServiceProvider serviceProvider)
     {
-        private readonly ISetupResolver<CollectionSetup> _collectionSetupResolver;
-        private readonly IConcurrencyService _concurrencyService;
-        private readonly IRepositoryResolver _repositoryResolver;
-        private readonly IMediator _mediator;
-        private readonly IServiceProvider _serviceProvider;
+        _collectionSetupResolver = collectionSetupResolver;
+        _concurrencyService = concurrencyService;
+        _repositoryResolver = repositoryResolver;
+        _mediator = mediator;
+        _serviceProvider = serviceProvider;
+    }
 
-        public DataProviderResolver(
-            ISetupResolver<CollectionSetup> collectionSetupResolver,
-            IConcurrencyService concurrencyService,
-            IRepositoryResolver repositoryResolver,
-            IMediator mediator,
-            IServiceProvider serviceProvider)
+    public async Task<FormDataProvider?> GetDataProviderAsync(FieldSetup field)
+    {
+        if (!(field is PropertyFieldSetup propertyField && propertyField.Relation != null))
         {
-            _collectionSetupResolver = collectionSetupResolver;
-            _concurrencyService = concurrencyService;
-            _repositoryResolver = repositoryResolver;
-            _mediator = mediator;
-            _serviceProvider = serviceProvider;
+            return null;
         }
 
-        public async Task<FormDataProvider?> GetDataProviderAsync(FieldSetup field)
+        switch (propertyField.Relation)
         {
-            if (!(field is PropertyFieldSetup propertyField && propertyField.Relation != null))
-            {
-                return null;
-            }
+            case RepositoryRelationSetup collectionRelation:
 
-            switch (propertyField.Relation)
-            {
-                case RepositoryRelationSetup collectionRelation:
+                var collectionSetup = collectionRelation.CollectionAlias == null
+                    ? default
+                    : await _collectionSetupResolver.ResolveSetupAsync(collectionRelation.CollectionAlias);
 
-                    var collectionSetup = collectionRelation.CollectionAlias == null
-                        ? default
-                        : await _collectionSetupResolver.ResolveSetupAsync(collectionRelation.CollectionAlias);
+                var repo = (collectionRelation.RepositoryAlias != null
+                        ? _repositoryResolver.GetRepository(collectionRelation.RepositoryAlias)
+                        : collectionSetup != null
+                            ? _repositoryResolver.GetRepository(collectionSetup)
+                            : default)
+                        ?? throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrectly configure relation, cannot find repository for alias {(collectionRelation.CollectionAlias ?? collectionRelation.RepositoryAlias)}.");
 
-                    var repo = (collectionRelation.RepositoryAlias != null
-                            ? _repositoryResolver.GetRepository(collectionRelation.RepositoryAlias)
-                            : collectionSetup != null
-                                ? _repositoryResolver.GetRepository(collectionSetup)
-                                : default)
-                            ?? throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrectly configure relation, cannot find repository for alias {(collectionRelation.CollectionAlias ?? collectionRelation.RepositoryAlias)}.");
+                // TODO: investigate whether this can be moved to Setup to allow for better caching
+                var idProperty = collectionRelation.IdProperty
+                    ?? collectionSetup?.ElementSetup?.IdProperty
+                    ?? throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrect Id property metadata.");
 
-                    // TODO: investigate whether this can be moved to Setup to allow for better caching
-                    var idProperty = collectionRelation.IdProperty
-                        ?? collectionSetup?.ElementSetup?.IdProperty
-                        ?? throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrect Id property metadata.");
+                var displayProperties = collectionRelation.DisplayProperties
+                    ?? collectionSetup?.ElementSetup?.DisplayProperties
+                    ?? throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrect display properties metadata.");
 
-                    var displayProperties = collectionRelation.DisplayProperties
-                        ?? collectionSetup?.ElementSetup?.DisplayProperties
-                        ?? throw new InvalidOperationException($"Field {propertyField.Property!.PropertyName} has incorrect display properties metadata.");
+                var relatedElementGetter = collectionRelation.RelatedElementsGetter
+                    ?? ((collectionRelation.IsRelationToMany && propertyField.Property != null && propertyField.Property.PropertyType.IsAssignableTo(typeof(IEnumerable<IEntity>)))
+                        ? PropertyMetadataHelper.GetPropertyMetadata<IEnumerable<IEntity>, IEnumerable<object?>>(x => x.Select(idProperty.Getter))
+                        : default);
 
-                    var relatedElementGetter = collectionRelation.RelatedElementsGetter
-                        ?? ((collectionRelation.IsRelationToMany && propertyField.Property != null && propertyField.Property.PropertyType.IsAssignableTo(typeof(IEnumerable<IEntity>)))
-                            ? PropertyMetadataHelper.GetPropertyMetadata<IEnumerable<IEntity>, IEnumerable<object?>>(x => x.Select(idProperty.Getter))
-                            : default);
+                var provider = new CollectionDataProvider(
+                    repo,
+                    _concurrencyService,
+                    collectionRelation.RepositoryAlias,
+                    collectionRelation.CollectionAlias,
+                    relatedElementGetter,
+                    collectionRelation.EntityAsParent,
+                    collectionRelation.RepositoryParentSelector,
+                    idProperty,
+                    displayProperties,
+                    collectionRelation.RelatedEntityType ?? collectionSetup?.EntityVariant.Type ?? typeof(object),
+                    propertyField.Property!,
+                    _mediator);
 
-                    var provider = new CollectionDataProvider(
-                        repo,
-                        _concurrencyService,
-                        collectionRelation.RepositoryAlias,
-                        collectionRelation.CollectionAlias,
-                        relatedElementGetter,
-                        collectionRelation.EntityAsParent,
-                        collectionRelation.RepositoryParentSelector,
-                        idProperty,
-                        displayProperties,
-                        collectionRelation.RelatedEntityType ?? collectionSetup?.EntityVariant.Type ?? typeof(object),
-                        propertyField.Property!,
-                        _mediator);
+                return new FormDataProvider(
+                    propertyField.Property!,
+                    provider);
 
-                    return new FormDataProvider(
-                        propertyField.Property!,
-                        provider);
+            case DataProviderRelationSetup dataProviderRelation:
 
-                case DataProviderRelationSetup dataProviderRelation:
+                var dataCollection = _serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType);
+                if (dataProviderRelation.Configuration != null)
+                {
+                    dataCollection.Configure(dataProviderRelation.Configuration);
+                }
 
-                    var dataCollection = _serviceProvider.GetService<IDataCollection>(dataProviderRelation.DataCollectionType);
-                    if (dataProviderRelation.Configuration != null)
-                    {
-                        dataCollection.Configure(dataProviderRelation.Configuration);
-                    }
+                return new FormDataProvider(propertyField.Property!, dataCollection);
 
-                    return new FormDataProvider(propertyField.Property!, dataCollection);
+            case RelationDataProviderRelationSetup relationDataProviderRelation:
 
-                case RelationDataProviderRelationSetup relationDataProviderRelation:
+                var relationDataCollection = _serviceProvider.GetService<IRelationDataCollection>(relationDataProviderRelation.RelationDataCollectionType);
+                if (relationDataProviderRelation.Configuration != null)
+                {
+                    relationDataCollection.Configure(relationDataProviderRelation.Configuration);
+                }
 
-                    var relationDataCollection = _serviceProvider.GetService<IRelationDataCollection>(relationDataProviderRelation.RelationDataCollectionType);
-                    if (relationDataProviderRelation.Configuration != null)
-                    {
-                        relationDataCollection.Configure(relationDataProviderRelation.Configuration);
-                    }
+                return new FormDataProvider(propertyField.Property!, relationDataCollection);
 
-                    return new FormDataProvider(propertyField.Property!, relationDataCollection);
+            case ConcreteDataProviderRelationSetup concreteDataProvider:
 
-                case ConcreteDataProviderRelationSetup concreteDataProvider:
+                return new FormDataProvider(propertyField.Property!, concreteDataProvider.DataCollection);
 
-                    return new FormDataProvider(propertyField.Property!, concreteDataProvider.DataCollection);
-
-                default:
-                    throw new InvalidOperationException();
-            };
-        }
+            default:
+                throw new InvalidOperationException();
+        };
     }
 }

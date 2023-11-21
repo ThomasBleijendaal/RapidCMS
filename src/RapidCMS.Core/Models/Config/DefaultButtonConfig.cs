@@ -1,9 +1,8 @@
 ﻿using RapidCMS.Core.Enums;
 
-namespace RapidCMS.Core.Models.Config
+namespace RapidCMS.Core.Models.Config;
+
+internal class DefaultButtonConfig : ButtonConfig
 {
-    internal class DefaultButtonConfig : ButtonConfig
-    {
-        internal DefaultButtonType ButtonType { get; set; }
-    }
+    internal DefaultButtonType ButtonType { get; set; }
 }

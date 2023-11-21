@@ -10,57 +10,56 @@ using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
 
-namespace RapidCMS.Core.Dispatchers.Api
+namespace RapidCMS.Core.Dispatchers.Api;
+
+internal class RelateEntityDispatcher : IInteractionDispatcher<PersistRelatedEntityRequestModel, ApiCommandResponseModel>
 {
-    internal class RelateEntityDispatcher : IInteractionDispatcher<PersistRelatedEntityRequestModel, ApiCommandResponseModel>
+    private readonly IRepositoryResolver _repositoryResolver;
+    private readonly IAuthService _authService;
+    private readonly IParentService _parentService;
+
+    public RelateEntityDispatcher(
+        IRepositoryResolver repositoryResolver,
+        IAuthService authService,
+        IParentService parentService)
     {
-        private readonly IRepositoryResolver _repositoryResolver;
-        private readonly IAuthService _authService;
-        private readonly IParentService _parentService;
+        _repositoryResolver = repositoryResolver;
+        _authService = authService;
+        _parentService = parentService;
+    }
 
-        public RelateEntityDispatcher(
-            IRepositoryResolver repositoryResolver,
-            IAuthService authService,
-            IParentService parentService)
+    public async Task<ApiCommandResponseModel> InvokeAsync(PersistRelatedEntityRequestModel request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Subject.RepositoryAlias) ||
+            string.IsNullOrWhiteSpace(request.Subject.Id) ||
+            string.IsNullOrWhiteSpace(request.Related.RepositoryAlias) ||
+            string.IsNullOrWhiteSpace(request.Related.Id))
         {
-            _repositoryResolver = repositoryResolver;
-            _authService = authService;
-            _parentService = parentService;
+            throw new ArgumentNullException();
         }
 
-        public async Task<ApiCommandResponseModel> InvokeAsync(PersistRelatedEntityRequestModel request)
+        var subjectRepository = _repositoryResolver.GetRepository(request.Subject.RepositoryAlias);
+        var relatedRepository = _repositoryResolver.GetRepository(request.Related.RepositoryAlias);
+
+        var subjectEntity = await subjectRepository.GetByIdAsync(request.Subject.Id, new ViewContext(null, default))
+            ?? throw new NotFoundException("Subject entity was not found");
+        var relatedEntity = await relatedRepository.GetByIdAsync(request.Related.Id, new ViewContext(null, default))
+            ?? throw new NotFoundException("Related entity was not found");
+        var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Related.ParentPath));
+
+        var related = new RelatedEntity(parent, relatedEntity, request.Related.RepositoryAlias);
+
+        if (request.Action == PersistRelatedEntityRequestModel.Actions.Add)
         {
-            if (string.IsNullOrWhiteSpace(request.Subject.RepositoryAlias) ||
-                string.IsNullOrWhiteSpace(request.Subject.Id) ||
-                string.IsNullOrWhiteSpace(request.Related.RepositoryAlias) ||
-                string.IsNullOrWhiteSpace(request.Related.Id))
-            {
-                throw new ArgumentNullException();
-            }
-
-            var subjectRepository = _repositoryResolver.GetRepository(request.Subject.RepositoryAlias);
-            var relatedRepository = _repositoryResolver.GetRepository(request.Related.RepositoryAlias);
-
-            var subjectEntity = await subjectRepository.GetByIdAsync(request.Subject.Id, new ViewContext(null, default))
-                ?? throw new NotFoundException("Subject entity was not found");
-            var relatedEntity = await relatedRepository.GetByIdAsync(request.Related.Id, new ViewContext(null, default))
-                ?? throw new NotFoundException("Related entity was not found");
-            var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Related.ParentPath));
-
-            var related = new RelatedEntity(parent, relatedEntity, request.Related.RepositoryAlias);
-
-            if (request.Action == PersistRelatedEntityRequestModel.Actions.Add)
-            {
-                await _authService.EnsureAuthorizedUserAsync(Operations.Add, subjectEntity);
-                await subjectRepository.AddAsync(new RelatedViewContext(related, null, default), request.Subject.Id);
-            }
-            else if (request.Action == PersistRelatedEntityRequestModel.Actions.Remove)
-            {
-                await _authService.EnsureAuthorizedUserAsync(Operations.Remove, subjectEntity);
-                await subjectRepository.AddAsync(new RelatedViewContext(related, null, default), request.Subject.Id);
-            }
-
-            return new ApiCommandResponseModel();
+            await _authService.EnsureAuthorizedUserAsync(Operations.Add, subjectEntity);
+            await subjectRepository.AddAsync(new RelatedViewContext(related, null, default), request.Subject.Id);
         }
+        else if (request.Action == PersistRelatedEntityRequestModel.Actions.Remove)
+        {
+            await _authService.EnsureAuthorizedUserAsync(Operations.Remove, subjectEntity);
+            await subjectRepository.AddAsync(new RelatedViewContext(related, null, default), request.Subject.Id);
+        }
+
+        return new ApiCommandResponseModel();
     }
 }

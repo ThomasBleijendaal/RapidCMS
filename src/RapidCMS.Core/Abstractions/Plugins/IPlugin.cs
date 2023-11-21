@@ -4,16 +4,15 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Core.Abstractions.Plugins
+namespace RapidCMS.Core.Abstractions.Plugins;
+
+public interface IPlugin
 {
-    public interface IPlugin
-    {
-        Task<IEnumerable<TreeElementSetup>> GetTreeElementsAsync();
+    Task<IEnumerable<TreeElementSetup>> GetTreeElementsAsync();
 
-        Task<IResolvedSetup<CollectionSetup>?> GetCollectionAsync(string collectionAlias);
+    Task<IResolvedSetup<CollectionSetup>?> GetCollectionAsync(string collectionAlias);
 
-        Type? GetRepositoryType(string collectionAlias);
+    Type? GetRepositoryType(string collectionAlias);
 
-        string CollectionPrefix { get; }
-    }
+    string CollectionPrefix { get; }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Dispatchers;
@@ -39,164 +38,155 @@ using RapidCMS.Core.Services.Presentation;
 using RapidCMS.Core.Services.Tree;
 using RapidCMS.Core.Validators;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Microsoft.Extensions.DependencyInjection;
+
+public static partial class RapidCMSMiddleware
 {
-    public static partial class RapidCMSMiddleware
+    private static IServiceCollection AddRapidCMSCore(this IServiceCollection services, CmsConfig rootConfig)
     {
-        private static IServiceCollection AddRapidCMSCore(this IServiceCollection services, CmsConfig rootConfig)
+        services.AddSingleton(rootConfig);
+        services.AddSingleton<ICmsConfig>(rootConfig);
+
+        services.AddSingleton<ICms, CmsSetup>();
+        services.AddSingleton(x => (ILogin)x.GetRequiredService(typeof(ICms)));
+
+        services.AddSingleton<ISetupResolver<PageSetup>, PageSetupResolver>();
+        services.AddSingleton<ISetupResolver<CollectionSetup>, CollectionSetupResolver>();
+        services.AddSingleton(sp => new Lazy<ISetupResolver<CollectionSetup>>(() => sp.GetRequiredService<ISetupResolver<CollectionSetup>>()));
+        services.AddSingleton<ISetupResolver<IEnumerable<TreeElementSetup>>, TreeElementsSetupResolver>();
+        services.AddSingleton<ISetupResolver<IEnumerable<TreeElementSetup>, IEnumerable<ITreeElementConfig>>, TreeElementSetupResolver>();
+
+        services.AddSingleton<ISetupResolver<TypeRegistrationSetup, CustomTypeRegistrationConfig>, TypeRegistrationSetupResolver>();
+        services.AddSingleton<ISetupResolver<EntityVariantSetup, EntityVariantConfig>, EntityVariantSetupResolver>();
+        services.AddSingleton<ISetupResolver<TreeViewSetup, TreeViewConfig>, TreeViewSetupResolver>();
+        services.AddSingleton<ISetupResolver<ElementSetup, ElementConfig>, ElementSetupResolver>();
+        services.AddSingleton<ISetupResolver<PaneSetup, PaneConfig>, PaneSetupResolver>();
+        services.AddSingleton<ISetupResolver<ListSetup, ListConfig>, ListSetupResolver>();
+        services.AddSingleton<ISetupResolver<NodeSetup, NodeConfig>, NodeSetupResolver>();
+        services.AddSingleton<ISetupResolver<FieldSetup, FieldConfig>, FieldSetupResolver>();
+        services.AddSingleton<ISetupResolver<ButtonSetup, ButtonConfig>, ButtonSetupResolver>();
+        services.AddSingleton<ISetupResolver<SubCollectionListSetup, CollectionListConfig>, SubCollectionListSetupResolver>();
+        services.AddSingleton<ISetupResolver<RelatedCollectionListSetup, CollectionListConfig>, RelatedCollectionListSetupResolver>();
+
+        services.AddSingleton<IConventionBasedResolver<ListConfig>, ConventionBasedListConfigResolver>();
+        services.AddSingleton<IConventionBasedResolver<NodeConfig>, ConventionBasedNodeConfigResolver>();
+        services.AddSingleton<IConventionBasedResolver<NodeSetup>, ConventionBasedNodeSetupResolver>();
+        services.AddSingleton<IFieldConfigResolver, FieldConfigResolver>();
+        services.AddSingleton<ILanguageResolver, LanguageResolver>();
+
+        services.AddSingleton<ISetupResolver<IEnumerable<TreeElementSetup>, IPlugin>, PluginTreeElementsSetupResolver>();
+
+        if (rootConfig.AllowAnonymousUsage)
         {
-            services.AddSingleton(rootConfig);
-            services.AddSingleton<ICmsConfig>(rootConfig);
-
-            services.AddSingleton<ICms, CmsSetup>();
-            services.AddSingleton(x => (ILogin)x.GetRequiredService(typeof(ICms)));
-
-            services.AddSingleton<ISetupResolver<PageSetup>, PageSetupResolver>();
-            services.AddSingleton<ISetupResolver<CollectionSetup>, CollectionSetupResolver>();
-            services.AddSingleton(sp => new Lazy<ISetupResolver<CollectionSetup>>(() => sp.GetRequiredService<ISetupResolver<CollectionSetup>>()));
-            services.AddSingleton<ISetupResolver<IEnumerable<TreeElementSetup>>, TreeElementsSetupResolver>();
-            services.AddSingleton<ISetupResolver<IEnumerable<TreeElementSetup>, IEnumerable<ITreeElementConfig>>, TreeElementSetupResolver>();
-
-            services.AddSingleton<ISetupResolver<TypeRegistrationSetup, CustomTypeRegistrationConfig>, TypeRegistrationSetupResolver>();
-            services.AddSingleton<ISetupResolver<EntityVariantSetup, EntityVariantConfig>, EntityVariantSetupResolver>();
-            services.AddSingleton<ISetupResolver<TreeViewSetup, TreeViewConfig>, TreeViewSetupResolver>();
-            services.AddSingleton<ISetupResolver<ElementSetup, ElementConfig>, ElementSetupResolver>();
-            services.AddSingleton<ISetupResolver<PaneSetup, PaneConfig>, PaneSetupResolver>();
-            services.AddSingleton<ISetupResolver<ListSetup, ListConfig>, ListSetupResolver>();
-            services.AddSingleton<ISetupResolver<NodeSetup, NodeConfig>, NodeSetupResolver>();
-            services.AddSingleton<ISetupResolver<FieldSetup, FieldConfig>, FieldSetupResolver>();
-            services.AddSingleton<ISetupResolver<ButtonSetup, ButtonConfig>, ButtonSetupResolver>();
-            services.AddSingleton<ISetupResolver<SubCollectionListSetup, CollectionListConfig>, SubCollectionListSetupResolver>();
-            services.AddSingleton<ISetupResolver<RelatedCollectionListSetup, CollectionListConfig>, RelatedCollectionListSetupResolver>();
-
-            services.AddSingleton<IConventionBasedResolver<ListConfig>, ConventionBasedListConfigResolver>();
-            services.AddSingleton<IConventionBasedResolver<NodeConfig>, ConventionBasedNodeConfigResolver>();
-            services.AddSingleton<IConventionBasedResolver<NodeSetup>, ConventionBasedNodeSetupResolver>();
-            services.AddSingleton<IFieldConfigResolver, FieldConfigResolver>();
-            services.AddSingleton<ILanguageResolver, LanguageResolver>();
-
-            services.AddSingleton<ISetupResolver<IEnumerable<TreeElementSetup>, IPlugin>, PluginTreeElementsSetupResolver>();
-
-            if (rootConfig.AllowAnonymousUsage)
-            {
-                services.AddSingleton<IAuthorizationHandler, AllowAllAuthorizationHandler>();
-                services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
-            }
-
-            services.AddTransient<IEditContextFactory, FormEditContextWrapperFactory>();
-            services.AddTransient<IUIResolverFactory, UIResolverFactory>();
-
-            services.AddTransient<IButtonActionHandlerResolver, ButtonActionHandlerResolver>();
-            services.AddTransient<IDataProviderResolver, DataProviderResolver>();
-            services.AddTransient<IRepositoryResolver, RepositoryResolver>();
-
-            services.AddTransient<IPresentationDispatcher, GetEntityDispatcher>();
-            services.AddTransient<IPresentationDispatcher, GetEntityOfPageDispatcher>();
-            services.AddTransient<IPresentationDispatcher, GetEntitiesDispatcher>();
-            services.AddTransient<IPresentationDispatcher, GetPageDispatcher>();
-            services.AddTransient<IPresentationService, PresentationService>();
-
-            services.AddTransient<IInteractionDispatcher, EntityInteractionDispatcher>();
-            services.AddTransient<IInteractionDispatcher, EntitiesInteractionDispatcher>();
-            services.AddTransient<IButtonInteraction, ButtonInteraction>();
-            services.AddTransient<IDragInteraction, DragInteraction>();
-            services.AddTransient<IInteractionService, InteractionService>();
-
-            services.AddScoped<INavigationStateProvider, NavigationStateProvider>();
-
-            services.AddTransient<IConcurrencyService, ConcurrencyService>();
-            services.AddTransient<IParentService, ParentService>();
-            services.AddTransient<ITreeService, TreeService>();
-
-            services.AddScoped<IMediator, Mediator>();
-
-            services.AddScoped<DefaultButtonActionHandler>();
-            services.AddScoped(typeof(OpenPaneButtonActionHandler<>));
-            services.AddScoped(typeof(NavigateButtonActionHandler<>));
-
-            services.AddScoped(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
-            services.AddTransient(typeof(EnumRelationDataProvider<>), typeof(EnumRelationDataProvider<>));
-
-            services.AddTransient<DataAnnotationEntityValidator>();
-
-            AddServicesRequiringRepositories(services, rootConfig);
-
-            services.AddScoped<IMediatorEventListener, RepositoryMediatorEventConverter>();
-
-            // UI requirements
-            services.AddHttpContextAccessor();
-            services.AddHttpClient();
-
-            services.AddMemoryCache();
-
-            return services;
+            services.AddSingleton<IAuthorizationHandler, AllowAllAuthorizationHandler>();
+            services.AddSingleton<AuthenticationStateProvider, AnonymousAuthenticationStateProvider>();
         }
 
-        private static void AddServicesRequiringRepositories(IServiceCollection services, CmsConfig rootConfig)
+        services.AddTransient<IEditContextFactory, FormEditContextWrapperFactory>();
+        services.AddTransient<IUIResolverFactory, UIResolverFactory>();
+
+        services.AddTransient<IButtonActionHandlerResolver, ButtonActionHandlerResolver>();
+        services.AddTransient<IDataProviderResolver, DataProviderResolver>();
+        services.AddTransient<IRepositoryResolver, RepositoryResolver>();
+
+        services.AddTransient<IPresentationDispatcher, GetEntityDispatcher>();
+        services.AddTransient<IPresentationDispatcher, GetEntityOfPageDispatcher>();
+        services.AddTransient<IPresentationDispatcher, GetEntitiesDispatcher>();
+        services.AddTransient<IPresentationDispatcher, GetPageDispatcher>();
+        services.AddTransient<IPresentationService, PresentationService>();
+
+        services.AddTransient<IInteractionDispatcher, EntityInteractionDispatcher>();
+        services.AddTransient<IInteractionDispatcher, EntitiesInteractionDispatcher>();
+        services.AddTransient<IButtonInteraction, ButtonInteraction>();
+        services.AddTransient<IDragInteraction, DragInteraction>();
+        services.AddTransient<IInteractionService, InteractionService>();
+
+        services.AddScoped<INavigationStateProvider, NavigationStateProvider>();
+
+        services.AddTransient<IConcurrencyService, ConcurrencyService>();
+        services.AddTransient<IParentService, ParentService>();
+        services.AddTransient<ITreeService, TreeService>();
+
+        services.AddScoped<IMediator, Mediator>();
+
+        services.AddScoped<DefaultButtonActionHandler>();
+        services.AddScoped(typeof(OpenPaneButtonActionHandler<>));
+        services.AddScoped(typeof(NavigateButtonActionHandler<>));
+
+        services.AddScoped(typeof(EnumDataProvider<>), typeof(EnumDataProvider<>));
+        services.AddTransient(typeof(EnumRelationDataProvider<>), typeof(EnumRelationDataProvider<>));
+
+        services.AddTransient<DataAnnotationEntityValidator>();
+
+        AddServicesRequiringRepositories(services, rootConfig);
+
+        services.AddScoped<IMediatorEventListener, RepositoryMediatorEventConverter>();
+
+        // UI requirements
+        services.AddHttpClient();
+
+        services.AddMemoryCache();
+
+        return services;
+    }
+
+    private static void AddServicesRequiringRepositories(IServiceCollection services, CmsConfig rootConfig)
+    {
+        var repositoryTypeDictionary = new Dictionary<string, Type>();
+        var reverseRepositoryTypeDictionary = new Dictionary<Type, string>();
+        var collectionAliasDictionary = new Dictionary<string, List<string>>();
+
+        foreach (var collection in rootConfig.CollectionsAndPages.OfType<ICollectionConfig>())
         {
-            var repositoryTypeDictionary = new Dictionary<string, Type>();
-            var reverseRepositoryTypeDictionary = new Dictionary<Type, string>();
-            var collectionAliasDictionary = new Dictionary<string, List<string>>();
+            ProcessCollection(collection);
+        }
 
-            foreach (var collection in rootConfig.CollectionsAndPages.OfType<ICollectionConfig>())
+        services.AddSingleton<IRepositoryTypeResolver>(new CmsRepositoryTypeResolver(repositoryTypeDictionary, reverseRepositoryTypeDictionary));
+        services.AddSingleton<ICollectionAliasResolver>(new CollectionAliasResolver(collectionAliasDictionary));
+
+        void ProcessCollection(ICollectionConfig collection)
+        {
+            foreach (var repository in collection.RepositoryTypes)
             {
-                ProcessCollection(collection);
-            }
-
-            services.AddSingleton<IRepositoryTypeResolver>(new CmsRepositoryTypeResolver(repositoryTypeDictionary, reverseRepositoryTypeDictionary));
-            services.AddSingleton<ICollectionAliasResolver>(new CollectionAliasResolver(collectionAliasDictionary));
-
-            void ProcessCollection(ICollectionConfig collection)
-            {
-                foreach (var repository in collection.RepositoryTypes)
+                var descriptor = services.FirstOrDefault(x => x.ServiceType == repository);
+                if (descriptor == null)
                 {
-                    var descriptor = services.FirstOrDefault(x => x.ServiceType == repository);
-                    if (descriptor == null)
-                    {
-                        continue;
-                    }
-
-                    var implementationType = descriptor.ImplementationType;
-                    if (implementationType == null)
-                    {
-                        continue;
-                    }
-
-                    var repositoryAlias = AliasHelper.GetRepositoryAlias(implementationType);
-
-                    repositoryTypeDictionary[repositoryAlias] = repository;
-                    reverseRepositoryTypeDictionary[repository] = repositoryAlias;
-                    if (implementationType != repository)
-                    {
-                        reverseRepositoryTypeDictionary[implementationType] = repositoryAlias;
-                    }
-
-                    if (!collectionAliasDictionary.ContainsKey(repositoryAlias))
-                    {
-                        collectionAliasDictionary.Add(repositoryAlias, new List<string>());
-                    }
-                    collectionAliasDictionary[repositoryAlias].Add(collection.Alias);
+                    continue;
                 }
 
-                foreach (var subCollection in collection.CollectionsAndPages.OfType<ICollectionConfig>().Where(x => x is not ReferencedCollectionConfig))
+                var implementationType = descriptor.ImplementationType;
+                if (implementationType == null)
                 {
-                    ProcessCollection(subCollection);
+                    continue;
                 }
+
+                var repositoryAlias = AliasHelper.GetRepositoryAlias(implementationType);
+
+                repositoryTypeDictionary[repositoryAlias] = repository;
+                reverseRepositoryTypeDictionary[repository] = repositoryAlias;
+                if (implementationType != repository)
+                {
+                    reverseRepositoryTypeDictionary[implementationType] = repositoryAlias;
+                }
+
+                if (!collectionAliasDictionary.ContainsKey(repositoryAlias))
+                {
+                    collectionAliasDictionary.Add(repositoryAlias, new List<string>());
+                }
+                collectionAliasDictionary[repositoryAlias].Add(collection.Alias);
+            }
+
+            foreach (var subCollection in collection.CollectionsAndPages.OfType<ICollectionConfig>().Where(x => x is not ReferencedCollectionConfig))
+            {
+                ProcessCollection(subCollection);
             }
         }
+    }
 
-        public static IApplicationBuilder UseRapidCMS(this IApplicationBuilder app, bool isDevelopment = false)
-        {
-            app.ApplicationServices.GetRequiredService<ICms>().IsDevelopment = isDevelopment;
-
-            return app;
-        }
-
-        private static CmsConfig GetRootConfig(Action<ICmsConfig>? config = null)
-        {
-            var rootConfig = new CmsConfig();
-            config?.Invoke(rootConfig);
-            return rootConfig;
-        }
+    private static CmsConfig GetRootConfig(Action<ICmsConfig>? config = null)
+    {
+        var rootConfig = new CmsConfig();
+        config?.Invoke(rootConfig);
+        return rootConfig;
     }
 }

@@ -42,7 +42,7 @@
     {
         <div class="content">
             <p>To enable exception view, set <code>isDevelopment</code>:</p>
-            <pre>app.UseRapidCMS(isDevelopment: env.IsDevelopment());</pre>
+            <pre>services.AddRapidCMS(config => config.EnableDevelopmentLogging(true));</pre>
         </div>
     }
 }

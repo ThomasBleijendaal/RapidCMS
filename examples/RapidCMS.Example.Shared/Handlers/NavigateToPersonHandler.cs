@@ -5,15 +5,14 @@ using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Request;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Example.Shared.Handlers
+namespace RapidCMS.Example.Shared.Handlers;
+
+public class NavigateToPersonHandler : INavigationHandler
 {
-    public class NavigateToPersonHandler : INavigationHandler
+    public Task<NavigationRequest?> CreateNavigationRequestAsync(ButtonSetup button, FormEditContext editContext)
     {
-        public Task<NavigationRequest?> CreateNavigationRequestAsync(ButtonSetup button, FormEditContext editContext)
-        {
-            // this method can return a NavigationRequest to instruct the CMS to go to that page
-            // if null is returned, the action is canceled.
-            return Task.FromResult(NavigationRequest.NavigateToCreateNewEntity("person", default))!;
-        }
+        // this method can return a NavigationRequest to instruct the CMS to go to that page
+        // if null is returned, the action is canceled.
+        return Task.FromResult(NavigationRequest.NavigateToCreateNewEntity("person", default))!;
     }
 }

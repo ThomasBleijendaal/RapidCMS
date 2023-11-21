@@ -1,9 +1,8 @@
 ﻿
-namespace RapidCMS.Core.Enums
+namespace RapidCMS.Core.Enums;
+
+public enum EntityState
 {
-    public enum EntityState
-    {
-        IsNew,
-        IsExisting
-    }
+    IsNew,
+    IsExisting
 }

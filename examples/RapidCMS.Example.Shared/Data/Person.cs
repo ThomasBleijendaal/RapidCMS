@@ -3,49 +3,48 @@ using System.ComponentModel.DataAnnotations;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Attributes;
 
-namespace RapidCMS.Example.Shared.Data
+namespace RapidCMS.Example.Shared.Data;
+
+public class Person : IEntity, ICloneable
 {
-    public class Person : IEntity, ICloneable
+    public int Id { get; set; }
+
+    [Required(AllowEmptyStrings = false)]
+    public string Name { get; set; } = default!;
+
+    // use validate object to instruct validation to also validate PersonDetails
+    [ValidateObject]
+    public PersonDetails Details { get; set; } = new PersonDetails();
+
+    public int FavouriteChildId { get; set; }
+
+    string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? "0"); }
+
+    public object Clone()
     {
-        public int Id { get; set; }
-
-        [Required(AllowEmptyStrings = false)]
-        public string Name { get; set; } = default!;
-
-        // use validate object to instruct validation to also validate PersonDetails
-        [ValidateObject]
-        public PersonDetails Details { get; set; } = new PersonDetails();
-
-        public int FavouriteChildId { get; set; }
-
-        string? IEntity.Id { get => Id.ToString(); set => Id = int.Parse(value ?? "0"); }
-
-        public object Clone()
+        return new Person
         {
-            return new Person
+            Id = Id,
+            Name = Name,
+            FavouriteChildId = FavouriteChildId,
+            Details = new PersonDetails
             {
-                Id = Id,
-                Name = Name,
-                FavouriteChildId = FavouriteChildId,
-                Details = new PersonDetails
-                {
-                    Bio = Details.Bio,
-                    Email = Details.Email,
-                    SocialUrl = Details.SocialUrl
-                }
-            };
-        }
+                Bio = Details.Bio,
+                Email = Details.Email,
+                SocialUrl = Details.SocialUrl
+            }
+        };
+    }
 
-        public class PersonDetails
-        {
-            [Required]
-            [MinLength(5)]
-            public string Email { get; set; } = default!;
+    public class PersonDetails
+    {
+        [Required]
+        [MinLength(5)]
+        public string Email { get; set; } = default!;
 
-            [Url]
-            public string? SocialUrl { get; set; }
+        [Url]
+        public string? SocialUrl { get; set; }
 
-            public string? Bio { get; set; }
-        }
+        public string? Bio { get; set; }
     }
 }

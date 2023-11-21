@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace RapidCMS.Core.Abstractions.Config
+namespace RapidCMS.Core.Abstractions.Config;
+
+public interface IFileUploadHandlerConfig
 {
-    public interface IFileUploadHandlerConfig
-    {
-        string Alias { get; }
-        Type HandlerType { get; }
-    }
+    string Alias { get; }
+    Type HandlerType { get; }
 }

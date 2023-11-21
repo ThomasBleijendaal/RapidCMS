@@ -8,46 +8,45 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Core.Resolvers.Setup
+namespace RapidCMS.Core.Resolvers.Setup;
+
+internal class NodeSetupResolver : ISetupResolver<NodeSetup, NodeConfig>
 {
-    internal class NodeSetupResolver : ISetupResolver<NodeSetup, NodeConfig>
+    private readonly ISetupResolver<PaneSetup, PaneConfig> _paneSetupResolver;
+    private readonly ISetupResolver<ButtonSetup, ButtonConfig> _buttonSetupResolver;
+    private readonly IConventionBasedResolver<NodeConfig> _conventionNodeConfigResolver;
+
+    public NodeSetupResolver(
+        ISetupResolver<PaneSetup, PaneConfig> paneSetupResolver,
+        ISetupResolver<ButtonSetup, ButtonConfig> buttonSetupResolver,
+        IConventionBasedResolver<NodeConfig> conventionNodeConfigResolver)
     {
-        private readonly ISetupResolver<PaneSetup, PaneConfig> _paneSetupResolver;
-        private readonly ISetupResolver<ButtonSetup, ButtonConfig> _buttonSetupResolver;
-        private readonly IConventionBasedResolver<NodeConfig> _conventionNodeConfigResolver;
+        _paneSetupResolver = paneSetupResolver;
+        _buttonSetupResolver = buttonSetupResolver;
+        _conventionNodeConfigResolver = conventionNodeConfigResolver;
+    }
 
-        public NodeSetupResolver(
-            ISetupResolver<PaneSetup, PaneConfig> paneSetupResolver,
-            ISetupResolver<ButtonSetup, ButtonConfig> buttonSetupResolver,
-            IConventionBasedResolver<NodeConfig> conventionNodeConfigResolver)
+    public async Task<IResolvedSetup<NodeSetup>> ResolveSetupAsync(NodeConfig config, CollectionSetup? collection = default)
+    {
+        if (collection == null)
         {
-            _paneSetupResolver = paneSetupResolver;
-            _buttonSetupResolver = buttonSetupResolver;
-            _conventionNodeConfigResolver = conventionNodeConfigResolver;
+            throw new ArgumentNullException(nameof(collection));
         }
 
-        public async Task<IResolvedSetup<NodeSetup>> ResolveSetupAsync(NodeConfig config, CollectionSetup? collection = default)
+        if (config is IIsConventionBased isConventionBasedConfig)
         {
-            if (collection == null)
-            {
-                throw new ArgumentNullException(nameof(collection));
-            }
-
-            if (config is IIsConventionBased isConventionBasedConfig)
-            {
-                config = await _conventionNodeConfigResolver.ResolveByConventionAsync(config.BaseType, isConventionBasedConfig.GetFeatures(), collection);
-            }
-
-            var cacheable = true;
-
-            var panes = (await _paneSetupResolver.ResolveSetupAsync(config.Panes, collection)).CheckIfCachable(ref cacheable).ToList();
-            var buttons = (await _buttonSetupResolver.ResolveSetupAsync(config.Buttons, collection)).CheckIfCachable(ref cacheable).ToList();
-
-            return new ResolvedSetup<NodeSetup>(new NodeSetup(
-                config.BaseType,
-                panes,
-                buttons),
-                cacheable);
+            config = await _conventionNodeConfigResolver.ResolveByConventionAsync(config.BaseType, isConventionBasedConfig.GetFeatures(), collection);
         }
+
+        var cacheable = true;
+
+        var panes = (await _paneSetupResolver.ResolveSetupAsync(config.Panes, collection)).CheckIfCachable(ref cacheable).ToList();
+        var buttons = (await _buttonSetupResolver.ResolveSetupAsync(config.Buttons, collection)).CheckIfCachable(ref cacheable).ToList();
+
+        return new ResolvedSetup<NodeSetup>(new NodeSetup(
+            config.BaseType,
+            panes,
+            buttons),
+            cacheable);
     }
 }

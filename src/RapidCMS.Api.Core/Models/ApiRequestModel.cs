@@ -1,8 +1,7 @@
-﻿namespace RapidCMS.Api.Core.Models
+﻿namespace RapidCMS.Api.Core.Models;
+
+public class ApiRequestModel
 {
-    public class ApiRequestModel
-    {
-        public string? Id { get; set; }
-        public string? Body { get; set; }
-    }
+    public string? Id { get; set; }
+    public string? Body { get; set; }
 }

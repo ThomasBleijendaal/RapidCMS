@@ -1,10 +1,9 @@
 ﻿using RapidCMS.Core.Abstractions.Config;
 
-namespace RapidCMS.Core.Models.Config
+namespace RapidCMS.Core.Models.Config;
+
+internal class CmsAdvancedConfig : IAdvancedCmsConfig
 {
-    internal class CmsAdvancedConfig : IAdvancedCmsConfig
-    {
-        public int SemaphoreCount { get; set; }
-        public bool RemoveDataAnnotationEntityValidator { get; set; }
-    }
+    public int SemaphoreCount { get; set; }
+    public bool RemoveDataAnnotationEntityValidator { get; set; }
 }

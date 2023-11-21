@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace RapidCMS.Core.Abstractions.Mediators
+namespace RapidCMS.Core.Abstractions.Mediators;
+
+public interface IMediatorRequestEventArgs<TResponse> : IMediatorEventArgs
 {
-    public interface IMediatorRequestEventArgs<TResponse> : IMediatorEventArgs
-    {
-        Guid RequestId { get; set; }
-    }
+    Guid RequestId { get; set; }
 }

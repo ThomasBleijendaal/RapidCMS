@@ -2,24 +2,23 @@
 using RapidCMS.Api.WebApi.Controllers;
 using RapidCMS.Core.Extensions;
 
-namespace RapidCMS.Api.WebApi.Conventions
+namespace RapidCMS.Api.WebApi.Conventions;
+
+public class CollectionControllerRouteConvention : IControllerModelConvention
 {
-    public class CollectionControllerRouteConvention : IControllerModelConvention
+    public const string RouteTemplatePrefix = "/api/";
+    
+    public void Apply(ControllerModel controller)
     {
-        public const string RouteTemplatePrefix = "/api/";
-        
-        public void Apply(ControllerModel controller)
+        if (controller.ControllerType.In(typeof(ApiRepositoryController), typeof(ApiFileUploadController)))
         {
-            if (controller.ControllerType.In(typeof(ApiRepositoryController), typeof(ApiFileUploadController)))
+            controller.Selectors.Add(new SelectorModel
             {
-                controller.Selectors.Add(new SelectorModel
+                AttributeRouteModel = new AttributeRouteModel
                 {
-                    AttributeRouteModel = new AttributeRouteModel
-                    {
-                        Template = RouteTemplatePrefix
-                    }
-                });
-            }
+                    Template = RouteTemplatePrefix
+                }
+            });
         }
     }
 }

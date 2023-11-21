@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RapidCMS.Core.Abstractions.Resolvers
+namespace RapidCMS.Core.Abstractions.Resolvers;
+
+public interface IEntityVariantResolver
 {
-    public interface IEntityVariantResolver
-    {
-        (Type? baseType, IReadOnlyList<Type>? derivedTypes) GetValidVariantsForRepository(string repositoryAlias);
-    }
+    (Type? baseType, IReadOnlyList<Type>? derivedTypes) GetValidVariantsForRepository(string repositoryAlias);
 }

@@ -11,10 +11,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Setup .NET Core
+    - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '6.0.x'
+        include-prerelease: true
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.0.x'
         include-prerelease: true
     - name: Build Api Core
       run: dotnet build --configuration Release ./src/RapidCMS.Api.Core/RapidCMS.Api.Core.csproj
@@ -24,15 +29,9 @@ jobs:
       run: dotnet build --configuration Release ./src/RapidCMS.Api.WebApi/RapidCMS.Api.WebApi.csproj
     - name: Build Core
       run: dotnet build --configuration Release ./src/RapidCMS.Core/RapidCMS.Core.csproj
-    - name: Build ModelMaker
-      run: dotnet build --configuration Release ./src/RapidCMS.ModelMaker/RapidCMS.ModelMaker.csproj
-    - name: Build ModelMaker SourceGenerator EFCore
-      run: dotnet build --configuration Release ./src/RapidCMS.ModelMaker.SourceGenerator.EFCore/RapidCMS.ModelMaker.SourceGenerator.EFCore.csproj
     - name: Build Repositories
       run: dotnet build --configuration Release ./src/RapidCMS.Repositories/RapidCMS.Repositories.csproj
     - name: Build UI
       run: dotnet build --configuration Release ./src/RapidCMS.UI/RapidCMS.UI.csproj
     - name: Run Core Tests
       run: dotnet test ./src/RapidCMS.Core.Tests/RapidCMS.Core.Tests.csproj
-    - name: Run Model Maker Tests
-      run: dotnet test ./src/RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests/RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests.csproj
