@@ -8,7 +8,7 @@ using RapidCMS.Core.Enums;
 
 namespace RapidCMS.Core.Models.Data;
 
-internal class TypedView<TEntity> : IView, IView<TEntity>
+public class TypedView<TEntity> : IView<TEntity>
 {
     private readonly View _query;
 
