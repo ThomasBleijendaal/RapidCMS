@@ -1,7 +1,6 @@
-﻿namespace RapidCMS.Api.Core.Abstractions
+﻿namespace RapidCMS.Api.Core.Abstractions;
+
+public interface IApiHandlerResolver
 {
-    public interface IApiHandlerResolver
-    {
-        IApiHandler GetApiHandler(string repositoryAlias);
-    }
+    IApiHandler GetApiHandler(string repositoryAlias);
 }

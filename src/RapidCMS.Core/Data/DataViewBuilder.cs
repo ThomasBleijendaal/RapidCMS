@@ -4,16 +4,15 @@ using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Models.Data;
 
-namespace RapidCMS.Core.Data
-{
-    public abstract class DataViewBuilder<TDatabaseEntity> : IDataViewBuilder
-    {
-        public abstract Task<IEnumerable<DataView<TDatabaseEntity>>> GetDataViewsAsync();
+namespace RapidCMS.Core.Data;
 
-        async Task<IEnumerable<IDataView>> IDataViewBuilder.GetDataViewsAsync()
-        {
-            var elements = await GetDataViewsAsync();
-            return elements.AsEnumerable<IDataView>();
-        }
+public abstract class DataViewBuilder<TDatabaseEntity> : IDataViewBuilder
+{
+    public abstract Task<IEnumerable<DataView<TDatabaseEntity>>> GetDataViewsAsync();
+
+    async Task<IEnumerable<IDataView>> IDataViewBuilder.GetDataViewsAsync()
+    {
+        var elements = await GetDataViewsAsync();
+        return elements.AsEnumerable<IDataView>();
     }
 }

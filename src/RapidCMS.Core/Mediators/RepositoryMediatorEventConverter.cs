@@ -5,48 +5,47 @@ using RapidCMS.Core.Abstractions.Mediators;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 
-namespace RapidCMS.Core.Mediators
+namespace RapidCMS.Core.Mediators;
+
+internal class RepositoryMediatorEventConverter : IMediatorEventListener
 {
-    internal class RepositoryMediatorEventConverter : IMediatorEventListener
+    private IDisposable? _eventHander;
+    private IMediator? _mediator;
+    private readonly IRepositoryTypeResolver _repositoryTypeResolver;
+    private readonly ICollectionAliasResolver _collectionAliasResolver;
+
+    public RepositoryMediatorEventConverter(
+        IRepositoryTypeResolver repositoryTypeResolver,
+        ICollectionAliasResolver collectionAliasResolver)
     {
-        private IDisposable? _eventHander;
-        private IMediator? _mediator;
-        private readonly IRepositoryTypeResolver _repositoryTypeResolver;
-        private readonly ICollectionAliasResolver _collectionAliasResolver;
+        _repositoryTypeResolver = repositoryTypeResolver;
+        _collectionAliasResolver = collectionAliasResolver;
+    }
 
-        public RepositoryMediatorEventConverter(
-            IRepositoryTypeResolver repositoryTypeResolver,
-            ICollectionAliasResolver collectionAliasResolver)
-        {
-            _repositoryTypeResolver = repositoryTypeResolver;
-            _collectionAliasResolver = collectionAliasResolver;
-        }
+    public void RegisterListener(IMediator mediator)
+    {
+        _mediator = mediator;
+        _eventHander = mediator.RegisterCallback<RepositoryEventArgs>(ConvertRepositoryEventAsync);
+    }
 
-        public void RegisterListener(IMediator mediator)
+    private Task ConvertRepositoryEventAsync(object sender, RepositoryEventArgs args)
+    {
+        if (_mediator != null)
         {
-            _mediator = mediator;
-            _eventHander = mediator.RegisterCallback<RepositoryEventArgs>(ConvertRepositoryEventAsync);
-        }
+            var repositoryAlias = _repositoryTypeResolver.GetAlias(args.RepositoryType);
+            var collectionAliases = _collectionAliasResolver.GetAlias(repositoryAlias);
 
-        private Task ConvertRepositoryEventAsync(object sender, RepositoryEventArgs args)
-        {
-            if (_mediator != null)
+            foreach (var collection in collectionAliases)
             {
-                var repositoryAlias = _repositoryTypeResolver.GetAlias(args.RepositoryType);
-                var collectionAliases = _collectionAliasResolver.GetAlias(repositoryAlias);
-
-                foreach (var collection in collectionAliases)
-                {
-                    _mediator.NotifyEvent(sender, new CollectionRepositoryEventArgs(collection, repositoryAlias, args.ParentPath, args.Id, args.Action));
-                }
+                _mediator.NotifyEvent(sender, new CollectionRepositoryEventArgs(collection, repositoryAlias, args.ParentPath, args.Id, args.Action));
             }
-
-            return Task.CompletedTask;
         }
 
-        public void Dispose()
-        {
-            _eventHander?.Dispose();
-        }
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _eventHander?.Dispose();
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace RapidCMS.UI.Components.Editors
+﻿namespace RapidCMS.UI.Components.Editors;
+
+public abstract class BaseMultiplePickerEditor : BasePicker
 {
-    public abstract class BaseMultiplePickerEditor : BasePicker
-    {
-        protected override bool IsMultiple { get; set; } = true;
-    }
+    protected override bool IsMultiple { get; set; } = true;
 }

@@ -5,143 +5,142 @@ using RapidCMS.Core.Abstractions.Plugins;
 using RapidCMS.Core.Abstractions.Repositories;
 using RapidCMS.Core.Enums;
 
-namespace RapidCMS.Core.Abstractions.Config
+namespace RapidCMS.Core.Abstractions.Config;
+
+public interface ICmsConfig : ICollectionConfig
 {
-    public interface ICmsConfig : ICollectionConfig
-    {
-        /// <summary>
-        /// Adds a collection to the CMS.
-        /// </summary>
-        /// <typeparam name="TEntity">Type of the entity of this collection</typeparam>
-        /// <typeparam name="TRepository">Type of the repository this collection will use</typeparam>
-        /// <param name="alias">Alias of the collection</param>
-        /// <param name="name">Human readable name of this collection</param>
-        /// <param name="configure"></param>
-        /// <returns></returns>
-        ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string name, Action<ICollectionConfig<TEntity>> configure)
-            where TEntity : class, IEntity
-            where TRepository : IRepository;
+    /// <summary>
+    /// Adds a collection to the CMS.
+    /// </summary>
+    /// <typeparam name="TEntity">Type of the entity of this collection</typeparam>
+    /// <typeparam name="TRepository">Type of the repository this collection will use</typeparam>
+    /// <param name="alias">Alias of the collection</param>
+    /// <param name="name">Human readable name of this collection</param>
+    /// <param name="configure"></param>
+    /// <returns></returns>
+    ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string name, Action<ICollectionConfig<TEntity>> configure)
+        where TEntity : class, IEntity
+        where TRepository : IRepository;
 
-        /// <summary>
-        /// Adds a collection to the CMS.
-        /// </summary>
-        /// <typeparam name="TEntity">Type of the entity of this collection</typeparam>
-        /// <typeparam name="TRepository">Type of the repository this collection will use</typeparam>
-        /// <param name="alias">Alias of the collection</param>
-        /// <param name="icon">Icon for this collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
-        /// <param name="name">Human readable name of this collection</param>
-        /// <param name="configure"></param>
-        /// <returns></returns>
-        ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TEntity>> configure)
-            where TEntity : class, IEntity
-            where TRepository : IRepository;
+    /// <summary>
+    /// Adds a collection to the CMS.
+    /// </summary>
+    /// <typeparam name="TEntity">Type of the entity of this collection</typeparam>
+    /// <typeparam name="TRepository">Type of the repository this collection will use</typeparam>
+    /// <param name="alias">Alias of the collection</param>
+    /// <param name="icon">Icon for this collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
+    /// <param name="name">Human readable name of this collection</param>
+    /// <param name="configure"></param>
+    /// <returns></returns>
+    ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string? icon, string name, Action<ICollectionConfig<TEntity>> configure)
+        where TEntity : class, IEntity
+        where TRepository : IRepository;
 
-        /// <summary>
-        /// Adds a collection to the CMS.
-        /// </summary>
-        /// <typeparam name="TEntity">Type of the entity of this collection</typeparam>
-        /// <typeparam name="TRepository">Type of the repository this collection will use</typeparam>
-        /// <param name="alias">Alias of the collection</param>
-        /// <param name="icon">Icon for this collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
-        /// <param name="color">The color of this collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/personas)</param>
-        /// <param name="name">Human readable name of this collection</param>
-        /// <param name="configure"></param>
-        /// <returns></returns>
-        ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string? icon, string? color, string name, Action<ICollectionConfig<TEntity>> configure)
-            where TEntity : class, IEntity
-            where TRepository : IRepository;
+    /// <summary>
+    /// Adds a collection to the CMS.
+    /// </summary>
+    /// <typeparam name="TEntity">Type of the entity of this collection</typeparam>
+    /// <typeparam name="TRepository">Type of the repository this collection will use</typeparam>
+    /// <param name="alias">Alias of the collection</param>
+    /// <param name="icon">Icon for this collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
+    /// <param name="color">The color of this collection (https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/personas)</param>
+    /// <param name="name">Human readable name of this collection</param>
+    /// <param name="configure"></param>
+    /// <returns></returns>
+    ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string? icon, string? color, string name, Action<ICollectionConfig<TEntity>> configure)
+        where TEntity : class, IEntity
+        where TRepository : IRepository;
 
-        /// <summary>
-        /// Adds a page to the CMS.
-        /// </summary>
-        /// <param name="name">Human readable name of this page</param>
-        /// <param name="configure"></param>
-        /// <returns></returns>
-        ICmsConfig AddPage(string name, Action<IPageConfig> configure);
+    /// <summary>
+    /// Adds a page to the CMS.
+    /// </summary>
+    /// <param name="name">Human readable name of this page</param>
+    /// <param name="configure"></param>
+    /// <returns></returns>
+    ICmsConfig AddPage(string name, Action<IPageConfig> configure);
 
-        /// <summary>
-        /// Add a page to the CMS.
-        /// </summary>
-        /// <param name="icon">Icon for this page (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
-        /// <param name="name">Human readable name of this page</param>
-        /// <param name="configure"></param>
-        /// <returns></returns>
-        ICmsConfig AddPage(string icon, string name, Action<IPageConfig> configure);
+    /// <summary>
+    /// Add a page to the CMS.
+    /// </summary>
+    /// <param name="icon">Icon for this page (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
+    /// <param name="name">Human readable name of this page</param>
+    /// <param name="configure"></param>
+    /// <returns></returns>
+    ICmsConfig AddPage(string icon, string name, Action<IPageConfig> configure);
 
-        /// <summary>
-        /// Add a page to the CMS.
-        /// </summary>
-        /// <param name="icon">Icon for this page (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
-        /// <param name="color">Color of the icon</param>
-        /// <param name="name">Human readable name of this page</param>
-        /// <param name="configure"></param>
-        /// <returns></returns>
-        ICmsConfig AddPage(string icon, string color, string name, Action<IPageConfig> configure);
+    /// <summary>
+    /// Add a page to the CMS.
+    /// </summary>
+    /// <param name="icon">Icon for this page (https://developer.microsoft.com/en-us/fluentui#/styles/web/icons)</param>
+    /// <param name="color">Color of the icon</param>
+    /// <param name="name">Human readable name of this page</param>
+    /// <param name="configure"></param>
+    /// <returns></returns>
+    ICmsConfig AddPage(string icon, string color, string name, Action<IPageConfig> configure);
 
-        /// <summary>
-        /// Install plugin
-        /// </summary>
-        /// <typeparam name="TPlugin"></typeparam>
-        /// <returns></returns>
-        public ICmsConfig AddPlugin<TPlugin>()
-            where TPlugin : IPlugin;
+    /// <summary>
+    /// Install plugin
+    /// </summary>
+    /// <typeparam name="TPlugin"></typeparam>
+    /// <returns></returns>
+    public ICmsConfig AddPlugin<TPlugin>()
+        where TPlugin : IPlugin;
 
-        /// <summary>
-        /// List of plugins
-        /// </summary>
-        IEnumerable<Type> Plugins { get; }
+    /// <summary>
+    /// List of plugins
+    /// </summary>
+    IEnumerable<Type> Plugins { get; }
 
-        /// <summary>
-        /// The CMS homepage.
-        /// </summary>
-        IPageConfig Dashboard { get; }
+    /// <summary>
+    /// The CMS homepage.
+    /// </summary>
+    IPageConfig Dashboard { get; }
 
-        /// <summary>
-        /// Use this to allow anonymous users to fully use your CMS. This adds a very permissive AuthorizationHandler that allows everything by anyone. 
-        /// 
-        /// Do not use in production.
-        /// </summary>
-        /// <returns></returns>
-        ICmsConfig AllowAnonymousUser();
+    /// <summary>
+    /// Use this to allow anonymous users to fully use your CMS. This adds a very permissive AuthorizationHandler that allows everything by anyone. 
+    /// 
+    /// Do not use in production.
+    /// </summary>
+    /// <returns></returns>
+    ICmsConfig AllowAnonymousUser();
 
-        /// <summary>
-        /// Enables outputting exceptions via the error page.
-        /// </summary>
-        /// <param name="enabled"></param>
-        /// <returns></returns>
-        ICmsConfig EnableDevelopmentLogging(bool enabled);
+    /// <summary>
+    /// Enables outputting exceptions via the error page.
+    /// </summary>
+    /// <param name="enabled"></param>
+    /// <returns></returns>
+    ICmsConfig EnableDevelopmentLogging(bool enabled);
 
-        /// <summary>
-        /// Draws the given razor component as login screen.
-        /// </summary>
-        /// <param name="loginType">Type of razor component.</param>
-        /// <returns></returns>
-        ICmsConfig SetCustomLoginScreen(Type loginType);
+    /// <summary>
+    /// Draws the given razor component as login screen.
+    /// </summary>
+    /// <param name="loginType">Type of razor component.</param>
+    /// <returns></returns>
+    ICmsConfig SetCustomLoginScreen(Type loginType);
 
-        /// <summary>
-        /// Draws the given razor component in the top bar of the CMS. Use this to display the status of the currently signed in user, and the possibility to sign out.
-        /// </summary>
-        /// <param name="loginType">Type of razor component.</param>
-        /// <returns></returns>
-        ICmsConfig SetCustomLoginStatus(Type loginType);
+    /// <summary>
+    /// Draws the given razor component in the top bar of the CMS. Use this to display the status of the currently signed in user, and the possibility to sign out.
+    /// </summary>
+    /// <param name="loginType">Type of razor component.</param>
+    /// <returns></returns>
+    ICmsConfig SetCustomLoginStatus(Type loginType);
 
-        /// <summary>
-        /// Draws the given razor component when user has no items to display (no user rights).
-        /// </summary>
-        /// <param name="loginType">Type of razor component.</param>
-        /// <returns></returns>
-        ICmsConfig SetEmptyLandingPage(Type loginType);
+    /// <summary>
+    /// Draws the given razor component when user has no items to display (no user rights).
+    /// </summary>
+    /// <param name="loginType">Type of razor component.</param>
+    /// <returns></returns>
+    ICmsConfig SetEmptyLandingPage(Type loginType);
 
-        /// <summary>
-        /// Sets the name of title in the top left bar of the CMS. Defaults to RapidCMS.
-        /// </summary>
-        /// <param name="siteName">Name of your CMS</param>
-        /// <returns></returns>
-        ICmsConfig SetSiteName(string siteName);
+    /// <summary>
+    /// Sets the name of title in the top left bar of the CMS. Defaults to RapidCMS.
+    /// </summary>
+    /// <param name="siteName">Name of your CMS</param>
+    /// <returns></returns>
+    ICmsConfig SetSiteName(string siteName);
 
-        /// <summary>
-        /// These settings are for advanced or debugging scenarios.
-        /// </summary>
-        IAdvancedCmsConfig Advanced { get; }
-    }
+    /// <summary>
+    /// These settings are for advanced or debugging scenarios.
+    /// </summary>
+    IAdvancedCmsConfig Advanced { get; }
 }

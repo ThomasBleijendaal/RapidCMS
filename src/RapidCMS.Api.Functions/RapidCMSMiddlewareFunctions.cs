@@ -7,33 +7,32 @@ using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Models.Config.Api;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Microsoft.Extensions.DependencyInjection;
+
+public static class RapidCMSMiddlewareFunctions
 {
-    public static class RapidCMSMiddlewareFunctions
+    private static ApiConfig? _rootConfig;
+
+    public static IServiceCollection AddRapidCMSFunctions(this IServiceCollection services, Action<IApiConfig>? config = null)
     {
-        private static ApiConfig? _rootConfig;
+        _rootConfig = GetRootConfig(config);
 
-        public static IServiceCollection AddRapidCMSFunctions(this IServiceCollection services, Action<IApiConfig>? config = null)
+        services.AddRapidCMSApiCore(_rootConfig);
+
+        services.AddSingleton<IFunctionContextAccessor, FunctionContextAccessor>();
+
+        if (!_rootConfig.AllowAnonymousUsage)
         {
-            _rootConfig = GetRootConfig(config);
-
-            services.AddRapidCMSApiCore(_rootConfig);
-
-            services.AddSingleton<IFunctionContextAccessor, FunctionContextAccessor>();
-
-            if (!_rootConfig.AllowAnonymousUsage)
-            {
-                services.AddSingleton<IUserResolver, UserResolver>();
-            }
-
-            return services;
+            services.AddSingleton<IUserResolver, UserResolver>();
         }
 
-        private static ApiConfig GetRootConfig(Action<IApiConfig>? config = null)
-        {
-            var rootConfig = new ApiConfig();
-            config?.Invoke(rootConfig);
-            return rootConfig;
-        }
+        return services;
+    }
+
+    private static ApiConfig GetRootConfig(Action<IApiConfig>? config = null)
+    {
+        var rootConfig = new ApiConfig();
+        config?.Invoke(rootConfig);
+        return rootConfig;
     }
 }

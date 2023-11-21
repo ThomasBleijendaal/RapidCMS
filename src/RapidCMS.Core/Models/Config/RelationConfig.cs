@@ -1,7 +1,6 @@
 ﻿
-namespace RapidCMS.Core.Models.Config
+namespace RapidCMS.Core.Models.Config;
+
+internal class RelationConfig
 {
-    internal class RelationConfig
-    {
-    }
 }

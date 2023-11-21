@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace RapidCMS.Core.Models.Response
+namespace RapidCMS.Core.Models.Response;
+
+public class FileUploadValidationResponseModel
 {
-    public class FileUploadValidationResponseModel
-    {
-        public IEnumerable<string> ErrorMessages { get; set; } = default!;
-    }
+    public IEnumerable<string> ErrorMessages { get; set; } = default!;
 }

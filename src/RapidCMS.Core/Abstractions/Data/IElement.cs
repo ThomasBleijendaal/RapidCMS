@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace RapidCMS.Core.Abstractions.Data
-{
-    public interface IElement
-    {
-        object Id { get; }
+namespace RapidCMS.Core.Abstractions.Data;
 
-        IEnumerable<string> Labels { get; }
-    }
+public interface IElement
+{
+    object Id { get; }
+
+    IEnumerable<string> Labels { get; }
 }

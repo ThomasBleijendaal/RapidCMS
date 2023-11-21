@@ -1,9 +1,8 @@
 ﻿
-namespace RapidCMS.Core.Enums
+namespace RapidCMS.Core.Enums;
+
+public enum ReorderedState
 {
-    public enum ReorderedState
-    {
-        Unmodified,
-        Reordered
-    }
+    Unmodified,
+    Reordered
 }

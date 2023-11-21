@@ -10,43 +10,42 @@ using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.Request.Api;
 using RapidCMS.Core.Models.Response;
 
-namespace RapidCMS.Core.Dispatchers.Api
+namespace RapidCMS.Core.Dispatchers.Api;
+
+internal class DeleteEntityDispatcher : IInteractionDispatcher<DeleteEntityRequestModel, ApiCommandResponseModel>
 {
-    internal class DeleteEntityDispatcher : IInteractionDispatcher<DeleteEntityRequestModel, ApiCommandResponseModel>
+    private readonly IAuthService _authService;
+    private readonly IRepositoryResolver _repositoryResolver;
+    private readonly IParentService _parentService;
+
+    public DeleteEntityDispatcher(
+        IAuthService authService,
+        IRepositoryResolver repositoryResolver,
+        IParentService parentService)
     {
-        private readonly IAuthService _authService;
-        private readonly IRepositoryResolver _repositoryResolver;
-        private readonly IParentService _parentService;
+        _authService = authService;
+        _repositoryResolver = repositoryResolver;
+        _parentService = parentService;
+    }
 
-        public DeleteEntityDispatcher(
-            IAuthService authService,
-            IRepositoryResolver repositoryResolver,
-            IParentService parentService)
+    public async Task<ApiCommandResponseModel> InvokeAsync(DeleteEntityRequestModel request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Descriptor.RepositoryAlias) ||
+            string.IsNullOrWhiteSpace(request.Descriptor.Id))
         {
-            _authService = authService;
-            _repositoryResolver = repositoryResolver;
-            _parentService = parentService;
+            throw new ArgumentNullException();
         }
 
-        public async Task<ApiCommandResponseModel> InvokeAsync(DeleteEntityRequestModel request)
-        {
-            if (string.IsNullOrWhiteSpace(request.Descriptor.RepositoryAlias) ||
-                string.IsNullOrWhiteSpace(request.Descriptor.Id))
-            {
-                throw new ArgumentNullException();
-            }
+        var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Descriptor.ParentPath));
 
-            var parent = await _parentService.GetParentAsync(ParentPath.TryParse(request.Descriptor.ParentPath));
+        var subjectRepository = _repositoryResolver.GetRepository(request.Descriptor.RepositoryAlias);
+        var subjectEntity = await subjectRepository.GetByIdAsync(request.Descriptor.Id, new ViewContext(null, parent))
+            ?? throw new NotFoundException("Could not find entity to delete");
 
-            var subjectRepository = _repositoryResolver.GetRepository(request.Descriptor.RepositoryAlias);
-            var subjectEntity = await subjectRepository.GetByIdAsync(request.Descriptor.Id, new ViewContext(null, parent))
-                ?? throw new NotFoundException("Could not find entity to delete");
+        await _authService.EnsureAuthorizedUserAsync(Operations.Delete, subjectEntity);
 
-            await _authService.EnsureAuthorizedUserAsync(Operations.Delete, subjectEntity);
+        await subjectRepository.DeleteAsync(request.Descriptor.Id, new ViewContext(null, parent));
 
-            await subjectRepository.DeleteAsync(request.Descriptor.Id, new ViewContext(null, parent));
-
-            return new ApiCommandResponseModel();
-        }
+        return new ApiCommandResponseModel();
     }
 }

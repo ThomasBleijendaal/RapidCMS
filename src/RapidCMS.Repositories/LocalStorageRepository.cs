@@ -6,111 +6,110 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Forms;
 using RapidCMS.Core.Abstractions.Mediators;
 
-namespace RapidCMS.Repositories
+namespace RapidCMS.Repositories;
+
+public class LocalStorageRepository<TEntity> : InMemoryRepository<TEntity>
+    where TEntity : class, IEntity, ICloneable, new()
 {
-    public class LocalStorageRepository<TEntity> : InMemoryRepository<TEntity>
-        where TEntity : class, IEntity, ICloneable, new()
+    private readonly ILocalStorageService _localStorage;
+
+    private readonly Task _initializationTask;
+
+    public LocalStorageRepository(
+        ILocalStorageService localStorage,
+        IMediator mediator,
+        IServiceProvider serviceProvider) : base(mediator, serviceProvider)
     {
-        private readonly ILocalStorageService _localStorage;
+        _localStorage = localStorage;
 
-        private readonly Task _initializationTask;
+        _initializationTask = InitializationTaskAsync();
+    }
 
-        public LocalStorageRepository(
-            ILocalStorageService localStorage,
-            IMediator mediator,
-            IServiceProvider serviceProvider) : base(mediator, serviceProvider)
+    private async Task InitializationTaskAsync()
+    {
+        var dataStorage = await _localStorage.GetItemAsync<Dictionary<string, List<TEntity>>>(GetType().FullName);
+        if (dataStorage != null)
         {
-            _localStorage = localStorage;
-
-            _initializationTask = InitializationTaskAsync();
+            _data = dataStorage;
         }
 
-        private async Task InitializationTaskAsync()
+        var relationStorage = await _localStorage.GetItemAsync<Dictionary<string, List<string>>>($"{GetType().FullName}-relation");
+        if (relationStorage != null)
         {
-            var dataStorage = await _localStorage.GetItemAsync<Dictionary<string, List<TEntity>>>(GetType().FullName);
-            if (dataStorage != null)
-            {
-                _data = dataStorage;
-            }
-
-            var relationStorage = await _localStorage.GetItemAsync<Dictionary<string, List<string>>>($"{GetType().FullName}-relation");
-            if (relationStorage != null)
-            {
-                _relations = relationStorage;
-            }
-
-            await UpdateStorageAsync();
+            _relations = relationStorage;
         }
 
-        private async Task UpdateStorageAsync()
-        {
-            try
-            {
-                await _localStorage.SetItemAsync(GetType().FullName, _data);
-                await _localStorage.SetItemAsync($"{GetType().FullName}-relation", _relations);
-            }
-            catch { }
-        }
+        await UpdateStorageAsync();
+    }
 
-        public override async Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IView<TEntity> view)
+    private async Task UpdateStorageAsync()
+    {
+        try
         {
-            await _initializationTask;
-            return await base.GetAllAsync(parent, view);
+            await _localStorage.SetItemAsync(GetType().FullName, _data);
+            await _localStorage.SetItemAsync($"{GetType().FullName}-relation", _relations);
         }
+        catch { }
+    }
 
-        public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IView<TEntity> view)
-        {
-            await _initializationTask;
-            return await base.GetAllNonRelatedAsync(related, view);
-        }
+    public override async Task<IEnumerable<TEntity>> GetAllAsync(IParent? parent, IView<TEntity> view)
+    {
+        await _initializationTask;
+        return await base.GetAllAsync(parent, view);
+    }
 
-        public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IView<TEntity> view)
-        {
-            await _initializationTask;
-            return await base.GetAllRelatedAsync(related, view);
-        }
+    public override async Task<IEnumerable<TEntity>?> GetAllNonRelatedAsync(IRelated related, IView<TEntity> view)
+    {
+        await _initializationTask;
+        return await base.GetAllNonRelatedAsync(related, view);
+    }
 
-        public override async Task<TEntity?> GetByIdAsync(string id, IParent? parent)
-        {
-            await _initializationTask;
-            return await base.GetByIdAsync(id, parent);
-        }
+    public override async Task<IEnumerable<TEntity>?> GetAllRelatedAsync(IRelated related, IView<TEntity> view)
+    {
+        await _initializationTask;
+        return await base.GetAllRelatedAsync(related, view);
+    }
 
-        public override async Task AddAsync(IRelated related, string id)
-        {
-            await base.AddAsync(related, id);
-            await UpdateStorageAsync();
-        }
+    public override async Task<TEntity?> GetByIdAsync(string id, IParent? parent)
+    {
+        await _initializationTask;
+        return await base.GetByIdAsync(id, parent);
+    }
 
-        public override async Task DeleteAsync(string id, IParent? parent)
-        {
-            await base.DeleteAsync(id, parent);
-            await UpdateStorageAsync();
-        }
+    public override async Task AddAsync(IRelated related, string id)
+    {
+        await base.AddAsync(related, id);
+        await UpdateStorageAsync();
+    }
 
-        public override async Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext)
-        {
-            var entity = await base.InsertAsync(editContext);
-            await UpdateStorageAsync();
-            return entity;
-        }
+    public override async Task DeleteAsync(string id, IParent? parent)
+    {
+        await base.DeleteAsync(id, parent);
+        await UpdateStorageAsync();
+    }
 
-        public override async Task RemoveAsync(IRelated related, string id)
-        {
-            await base.RemoveAsync(related, id);
-            await UpdateStorageAsync();
-        }
+    public override async Task<TEntity?> InsertAsync(IEditContext<TEntity> editContext)
+    {
+        var entity = await base.InsertAsync(editContext);
+        await UpdateStorageAsync();
+        return entity;
+    }
 
-        public override async Task ReorderAsync(string? beforeId, string id, IParent? parent)
-        {
-            await base.ReorderAsync(beforeId, id, parent);
-            await UpdateStorageAsync();
-        }
+    public override async Task RemoveAsync(IRelated related, string id)
+    {
+        await base.RemoveAsync(related, id);
+        await UpdateStorageAsync();
+    }
 
-        public override async Task UpdateAsync(IEditContext<TEntity> editContext)
-        {
-            await base.UpdateAsync(editContext);
-            await UpdateStorageAsync();
-        }
+    public override async Task ReorderAsync(string? beforeId, string id, IParent? parent)
+    {
+        await base.ReorderAsync(beforeId, id, parent);
+        await UpdateStorageAsync();
+    }
+
+    public override async Task UpdateAsync(IEditContext<TEntity> editContext)
+    {
+        await base.UpdateAsync(editContext);
+        await UpdateStorageAsync();
     }
 }

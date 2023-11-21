@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace RapidCMS.Core.Abstractions.Resolvers
+namespace RapidCMS.Core.Abstractions.Resolvers;
+
+internal interface ICollectionAliasResolver
 {
-    internal interface ICollectionAliasResolver
-    {
-        public IReadOnlyList<string> GetAlias(string repositoryAlias);
-    }
+    public IReadOnlyList<string> GetAlias(string repositoryAlias);
 }

@@ -5,66 +5,65 @@ using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Forms;
 using RapidCMS.UI.Models;
 
-namespace RapidCMS.UI.Components.Buttons
+namespace RapidCMS.UI.Components.Buttons;
+
+public class BaseButton : EditContextComponentBase
 {
-    public class BaseButton : EditContextComponentBase
+    [Inject] private IJSRuntime JsRuntime { get; set; } = default!;
+
+    [Inject] private ILanguageResolver LanguageResolver { get; set; } = default!;
+
+    [Parameter] public ButtonViewModel Model { get; set; } = default!;
+
+    protected bool FormIsValid { get; private set; }
+
+    protected bool IsDisabled { get; set; }
+
+    protected async Task ButtonClickAsync(object? customData = null)
     {
-        [Inject] private IJSRuntime JsRuntime { get; set; } = default!;
-
-        [Inject] private ILanguageResolver LanguageResolver { get; set; } = default!;
-
-        [Parameter] public ButtonViewModel Model { get; set; } = default!;
-
-        protected bool FormIsValid { get; private set; }
-
-        protected bool IsDisabled { get; set; }
-
-        protected async Task ButtonClickAsync(object? customData = null)
+        try
         {
-            try
+            IsDisabled = true;
+            StateHasChanged();
+
+            if (Model.RequiresValidForm && (EditContext == null || !await EditContext.IsValidAsync()))
             {
-                IsDisabled = true;
-                StateHasChanged();
-
-                if (Model.RequiresValidForm && (EditContext == null || !await EditContext.IsValidAsync()))
-                {
-                    return;
-                }
-
-                if (!Model.ShouldConfirm || await JsRuntime.InvokeAsync<bool>("confirm", LanguageResolver.ResolveText("Are you sure?")))
-                {
-                    await Model.NotifyClickAsync(EditContext!, customData);
-                }
+                return;
             }
-            finally
+
+            if (!Model.ShouldConfirm || await JsRuntime.InvokeAsync<bool>("confirm", LanguageResolver.ResolveText("Are you sure?")))
             {
-                IsDisabled = false;
-                StateHasChanged();
+                await Model.NotifyClickAsync(EditContext!, customData);
             }
         }
-
-        private void ValidationStateChangeHandler(object? sender, ValidationStateChangedEventArgs e)
+        finally
         {
-            FormIsValid = e.IsValid != false;
-
+            IsDisabled = false;
             StateHasChanged();
         }
+    }
 
-        protected override void AttachListener()
+    private void ValidationStateChangeHandler(object? sender, ValidationStateChangedEventArgs e)
+    {
+        FormIsValid = e.IsValid != false;
+
+        StateHasChanged();
+    }
+
+    protected override void AttachListener()
+    {
+        if (EditContext != null)
         {
-            if (EditContext != null)
-            {
-                EditContext.OnValidationStateChanged += ValidationStateChangeHandler;
-                FormIsValid = true;
-            }
+            EditContext.OnValidationStateChanged += ValidationStateChangeHandler;
+            FormIsValid = true;
         }
+    }
 
-        protected override void DetachListener()
+    protected override void DetachListener()
+    {
+        if (EditContext != null)
         {
-            if (EditContext != null)
-            {
-                EditContext.OnValidationStateChanged -= ValidationStateChangeHandler;
-            }
+            EditContext.OnValidationStateChanged -= ValidationStateChangeHandler;
         }
     }
 }

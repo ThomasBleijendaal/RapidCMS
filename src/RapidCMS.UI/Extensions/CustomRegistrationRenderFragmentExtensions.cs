@@ -1,24 +1,23 @@
 ﻿using Microsoft.AspNetCore.Components;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.UI.Extensions
+namespace RapidCMS.UI.Extensions;
+
+public static class CustomRegistrationRenderFragmentExtensions
 {
-    public static class CustomRegistrationRenderFragmentExtensions
+    public static RenderFragment? ToRenderFragment(this TypeRegistrationSetup? registration)
     {
-        public static RenderFragment? ToRenderFragment(this TypeRegistrationSetup? registration)
+        if (registration != null)
         {
-            if (registration != null)
+            return builder =>
             {
-                return builder =>
-                {
-                    builder.OpenComponent(0, registration.Type);
-                    builder.CloseComponent();
-                };
-            }
-            else
-            {
-                return default;
-            }
+                builder.OpenComponent(0, registration.Type);
+                builder.CloseComponent();
+            };
+        }
+        else
+        {
+            return default;
         }
     }
 }

@@ -8,47 +8,46 @@ using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Extensions;
 
-namespace RapidCMS.Core.Resolvers.Data
+namespace RapidCMS.Core.Resolvers.Data;
+
+internal class ApiDataViewResolver : IDataViewResolver
 {
-    internal class ApiDataViewResolver : IDataViewResolver
+    private readonly IReadOnlyDictionary<string, Type> _dataViewTypes;
+    private readonly IServiceProvider _serviceProvider;
+
+    public ApiDataViewResolver(
+        IApiConfig apiConfig,
+        IServiceProvider serviceProvider)
     {
-        private readonly IReadOnlyDictionary<string, Type> _dataViewTypes;
-        private readonly IServiceProvider _serviceProvider;
+        _dataViewTypes = apiConfig.DataViews.ToDictionary(dataView => dataView.Alias, dataView => dataView.DataViewBuilder);
+        _serviceProvider = serviceProvider;
+    }
 
-        public ApiDataViewResolver(
-            IApiConfig apiConfig,
-            IServiceProvider serviceProvider)
+    public async Task ApplyDataViewToViewAsync(IView view)
+    {
+        if (string.IsNullOrEmpty(view.CollectionAlias))
         {
-            _dataViewTypes = apiConfig.DataViews.ToDictionary(dataView => dataView.Alias, dataView => dataView.DataViewBuilder);
-            _serviceProvider = serviceProvider;
+            throw new ArgumentNullException($"{nameof(view)}.{nameof(view.CollectionAlias)}");
+        }
+            
+        var dataViews = await GetDataViewsAsync(view.CollectionAlias);
+        var dataView = dataViews.FirstOrDefault(x => x.Id == view.ActiveTab)
+                ?? dataViews.FirstOrDefault();
+
+        if (dataView != null)
+        {
+            view.SetDataView(dataView);
+        }
+    }
+
+    public Task<IEnumerable<IDataView>> GetDataViewsAsync(string collectionAlias)
+    {
+        if (!_dataViewTypes.TryGetValue(collectionAlias, out var dataView))
+        {
+            return Task.FromResult(Enumerable.Empty<IDataView>());
         }
 
-        public async Task ApplyDataViewToViewAsync(IView view)
-        {
-            if (string.IsNullOrEmpty(view.CollectionAlias))
-            {
-                throw new ArgumentNullException($"{nameof(view)}.{nameof(view.CollectionAlias)}");
-            }
-                
-            var dataViews = await GetDataViewsAsync(view.CollectionAlias);
-            var dataView = dataViews.FirstOrDefault(x => x.Id == view.ActiveTab)
-                    ?? dataViews.FirstOrDefault();
-
-            if (dataView != null)
-            {
-                view.SetDataView(dataView);
-            }
-        }
-
-        public Task<IEnumerable<IDataView>> GetDataViewsAsync(string collectionAlias)
-        {
-            if (!_dataViewTypes.TryGetValue(collectionAlias, out var dataView))
-            {
-                return Task.FromResult(Enumerable.Empty<IDataView>());
-            }
-
-            var builder = _serviceProvider.GetService<IDataViewBuilder>(dataView);
-            return builder.GetDataViewsAsync();
-        }
+        var builder = _serviceProvider.GetService<IDataViewBuilder>(dataView);
+        return builder.GetDataViewsAsync();
     }
 }

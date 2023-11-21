@@ -2,10 +2,9 @@
 using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Providers;
 
-namespace RapidCMS.Core.Abstractions.Resolvers
+namespace RapidCMS.Core.Abstractions.Resolvers;
+
+internal interface IDataProviderResolver
 {
-    internal interface IDataProviderResolver
-    {
-        Task<FormDataProvider?> GetDataProviderAsync(FieldSetup field);
-    }
+    Task<FormDataProvider?> GetDataProviderAsync(FieldSetup field);
 }

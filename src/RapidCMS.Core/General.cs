@@ -10,14 +10,13 @@
 
 [assembly: InternalsVisibleTo("RapidCMS.ModelMaker")]
 
-namespace RapidCMS.Core
+namespace RapidCMS.Core;
+
+public class Constants
 {
-    public class Constants
-    {
-        public const string Add = "add";
-        public const string Edit = "edit";
-        public const string New = "new";
-        public const string Pick = "pick";
-        public const string View = "view";
-    }
+    public const string Add = "add";
+    public const string Edit = "edit";
+    public const string New = "new";
+    public const string Pick = "pick";
+    public const string View = "view";
 }

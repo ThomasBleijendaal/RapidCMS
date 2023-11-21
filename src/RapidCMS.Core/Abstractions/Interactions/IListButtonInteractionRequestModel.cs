@@ -1,11 +1,10 @@
 ﻿using RapidCMS.Core.Forms;
 
-namespace RapidCMS.Core.Abstractions.Interactions
+namespace RapidCMS.Core.Abstractions.Interactions;
+
+public interface IListButtonInteractionRequestModel
 {
-    public interface IListButtonInteractionRequestModel
-    {
-        string ActionId { get; }
-        ListContext ListContext { get; }
-        object? CustomData { get; }
-    }
+    string ActionId { get; }
+    ListContext ListContext { get; }
+    object? CustomData { get; }
 }

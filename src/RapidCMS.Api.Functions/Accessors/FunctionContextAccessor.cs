@@ -2,38 +2,37 @@
 using Microsoft.Azure.Functions.Worker;
 using RapidCMS.Api.Functions.Abstractions;
 
-namespace RapidCMS.Api.Functions.Accessors
+namespace RapidCMS.Api.Functions.Accessors;
+
+// PREVIEW: this accessor is temporary and should be replaced with something first party
+// TODO: test this accessor in concurrent function requests
+internal class FunctionContextAccessor : IFunctionContextAccessor
 {
-    // PREVIEW: this accessor is temporary and should be replaced with something first party
-    // TODO: test this accessor in concurrent function requests
-    internal class FunctionContextAccessor : IFunctionContextAccessor
+    private static AsyncLocal<ContextHolder> _contextCurrent = new AsyncLocal<ContextHolder>();
+
+    FunctionContext? IFunctionContextAccessor.FunctionExecutionContext
     {
-        private static AsyncLocal<ContextHolder> _contextCurrent = new AsyncLocal<ContextHolder>();
-
-        FunctionContext? IFunctionContextAccessor.FunctionExecutionContext
+        get
         {
-            get
+            return _contextCurrent.Value?.Context;
+        }
+        set
+        {
+            var holder = _contextCurrent.Value;
+            if (holder != null)
             {
-                return _contextCurrent.Value?.Context;
+                holder.Context = null!;
             }
-            set
-            {
-                var holder = _contextCurrent.Value;
-                if (holder != null)
-                {
-                    holder.Context = null!;
-                }
 
-                if (value != null)
-                {
-                    _contextCurrent.Value = new ContextHolder { Context = value };
-                }
+            if (value != null)
+            {
+                _contextCurrent.Value = new ContextHolder { Context = value };
             }
         }
+    }
 
-        private class ContextHolder
-        {
-            public FunctionContext Context = default!;
-        }
+    private class ContextHolder
+    {
+        public FunctionContext Context = default!;
     }
 }

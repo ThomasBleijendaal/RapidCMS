@@ -10,66 +10,65 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Api.Core.Services
+namespace RapidCMS.Api.Core.Services;
+
+internal class ApiAuthService : IAuthService
 {
-    internal class ApiAuthService : IAuthService
+    private readonly IUserResolver _userResolver;
+    private readonly IAuthorizationService _authorizationService;
+
+    public ApiAuthService(
+        IUserResolver userResolver,
+        IAuthorizationService authorizationService)
     {
-        private readonly IUserResolver _userResolver;
-        private readonly IAuthorizationService _authorizationService;
+        _userResolver = userResolver;
+        _authorizationService = authorizationService;
+    }
 
-        public ApiAuthService(
-            IUserResolver userResolver,
-            IAuthorizationService authorizationService)
+    public Task<bool> IsUserAuthorizedAsync(UsageType usageType, IEntity entity)
+    {
+        return IsUserAuthorizedAsync(Operations.GetOperationForUsageType(usageType), entity);
+    }
+
+    public async Task EnsureAuthorizedUserAsync(UsageType usageType, IEntity entity)
+    {
+        if (!await IsUserAuthorizedAsync(usageType, entity))
         {
-            _userResolver = userResolver;
-            _authorizationService = authorizationService;
+            throw new UnauthorizedAccessException();
+        }
+    }
+
+    public async Task<bool> IsUserAuthorizedAsync(OperationAuthorizationRequirement operation, IEntity entity)
+    {
+        var user = _userResolver.GetUser();
+        if (user == null)
+        {
+            return false;
         }
 
-        public Task<bool> IsUserAuthorizedAsync(UsageType usageType, IEntity entity)
+        var authorizationChallenge = await _authorizationService.AuthorizeAsync(user, entity, operation);
+
+        return authorizationChallenge.Succeeded;
+    }
+
+    public async Task EnsureAuthorizedUserAsync(OperationAuthorizationRequirement operation, IEntity entity)
+    {
+        if (!await IsUserAuthorizedAsync(operation, entity))
         {
-            return IsUserAuthorizedAsync(Operations.GetOperationForUsageType(usageType), entity);
+            throw new UnauthorizedAccessException();
         }
+    }
 
-        public async Task EnsureAuthorizedUserAsync(UsageType usageType, IEntity entity)
+    public Task<bool> IsUserAuthorizedAsync(FormEditContext editContext, ButtonSetup button)
+    {
+        throw new NotImplementedException("This method is not implemented in ApiAuthService as it makes no sense here.");
+    }
+
+    public async Task EnsureAuthorizedUserAsync(FormEditContext editContext, ButtonSetup button)
+    {
+        if (!await IsUserAuthorizedAsync(editContext, button))
         {
-            if (!await IsUserAuthorizedAsync(usageType, entity))
-            {
-                throw new UnauthorizedAccessException();
-            }
-        }
-
-        public async Task<bool> IsUserAuthorizedAsync(OperationAuthorizationRequirement operation, IEntity entity)
-        {
-            var user = _userResolver.GetUser();
-            if (user == null)
-            {
-                return false;
-            }
-
-            var authorizationChallenge = await _authorizationService.AuthorizeAsync(user, entity, operation);
-
-            return authorizationChallenge.Succeeded;
-        }
-
-        public async Task EnsureAuthorizedUserAsync(OperationAuthorizationRequirement operation, IEntity entity)
-        {
-            if (!await IsUserAuthorizedAsync(operation, entity))
-            {
-                throw new UnauthorizedAccessException();
-            }
-        }
-
-        public Task<bool> IsUserAuthorizedAsync(FormEditContext editContext, ButtonSetup button)
-        {
-            throw new NotImplementedException("This method is not implemented in ApiAuthService as it makes no sense here.");
-        }
-
-        public async Task EnsureAuthorizedUserAsync(FormEditContext editContext, ButtonSetup button)
-        {
-            if (!await IsUserAuthorizedAsync(editContext, button))
-            {
-                throw new UnauthorizedAccessException();
-            }
+            throw new UnauthorizedAccessException();
         }
     }
 }

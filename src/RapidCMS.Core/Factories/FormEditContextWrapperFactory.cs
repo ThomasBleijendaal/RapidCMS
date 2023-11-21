@@ -9,37 +9,36 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Core.Factories
+namespace RapidCMS.Core.Factories;
+
+internal class FormEditContextWrapperFactory : IEditContextFactory
 {
-    internal class FormEditContextWrapperFactory : IEditContextFactory
+    private readonly ISetupResolver<CollectionSetup> _collectionResolver;
+
+    public FormEditContextWrapperFactory(ISetupResolver<CollectionSetup> collectionResolver)
     {
-        private readonly ISetupResolver<CollectionSetup> _collectionResolver;
+        _collectionResolver = collectionResolver;
+    }
 
-        public FormEditContextWrapperFactory(ISetupResolver<CollectionSetup> collectionResolver)
-        {
-            _collectionResolver = collectionResolver;
-        }
+    public async Task<IEditContext> GetEditContextWrapperAsync(FormEditContext editContext)
+    {
+        var collection = await _collectionResolver.ResolveSetupAsync(editContext.CollectionAlias);
 
-        public async Task<IEditContext> GetEditContextWrapperAsync(FormEditContext editContext)
-        {
-            var collection = await _collectionResolver.ResolveSetupAsync(editContext.CollectionAlias);
+        var contextType = typeof(FormEditContextWrapper<>).MakeGenericType(collection.EntityVariant.Type);
+        var instance = Activator.CreateInstance(contextType, editContext);
 
-            var contextType = typeof(FormEditContextWrapper<>).MakeGenericType(collection.EntityVariant.Type);
-            var instance = Activator.CreateInstance(contextType, editContext);
+        return instance as IEditContext ?? throw new InvalidOperationException("Cannot create FormEditContextWrapper");
+    }
 
-            return instance as IEditContext ?? throw new InvalidOperationException("Cannot create FormEditContextWrapper");
-        }
-
-        public Task<IEditContext> GetEditContextWrapperAsync(
-            UsageType usageType,
-            EntityState entityState,
-            Type repositoryEntityType,
-            IEntity updatedEntity,
-            IEntity referenceEntity,
-            IParent? parent,
-            IEnumerable<(string propertyName, string typeName, IEnumerable<object> elements)> relations)
-        {
-            throw new NotImplementedException();
-        }
+    public Task<IEditContext> GetEditContextWrapperAsync(
+        UsageType usageType,
+        EntityState entityState,
+        Type repositoryEntityType,
+        IEntity updatedEntity,
+        IEntity referenceEntity,
+        IParent? parent,
+        IEnumerable<(string propertyName, string typeName, IEnumerable<object> elements)> relations)
+    {
+        throw new NotImplementedException();
     }
 }

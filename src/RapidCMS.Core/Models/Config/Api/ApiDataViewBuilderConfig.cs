@@ -1,12 +1,11 @@
 ﻿using System;
 using RapidCMS.Core.Abstractions.Config;
 
-namespace RapidCMS.Core.Models.Config.Api
-{
-    internal class ApiDataViewBuilderConfig : IApiDataViewBuilderConfig
-    {
-        public string Alias { get; set; } = default!;
+namespace RapidCMS.Core.Models.Config.Api;
 
-        public Type DataViewBuilder { get; set; } = default!;
-    }
+internal class ApiDataViewBuilderConfig : IApiDataViewBuilderConfig
+{
+    public string Alias { get; set; } = default!;
+
+    public Type DataViewBuilder { get; set; } = default!;
 }

@@ -11,57 +11,56 @@ using RapidCMS.Core.Services.Parent;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RapidCMS.Core.Tests.Services.Parent
+namespace RapidCMS.Core.Tests.Services.Parent;
+
+public class ParentServiceTests
 {
-    public class ParentServiceTests
+    private Mock<IRepository> _repository = default!;
+    private Mock<IRepositoryResolver> _repositoryResolver = default!;
+    private IConcurrencyService _concurrencyService = default!;
+    private IParentService _subject = default!;
+
+    [SetUp]
+    public void Setup()
     {
-        private Mock<IRepository> _repository = default!;
-        private Mock<IRepositoryResolver> _repositoryResolver = default!;
-        private IConcurrencyService _concurrencyService = default!;
-        private IParentService _subject = default!;
+        _repository = new Mock<IRepository>();
+        _repository
+            .Setup(x => x.GetByIdAsync(It.IsAny<string>(), It.IsAny<IViewContext>()))
+            .ReturnsAsync((string id, IViewContext context) =>
+            {
+                var mock = new Mock<IEntity>();
+                mock.Setup(x => x.Id).Returns(id);
+                return mock.Object;
+            });
+        _repositoryResolver = new Mock<IRepositoryResolver>();
 
-        [SetUp]
-        public void Setup()
-        {
-            _repository = new Mock<IRepository>();
-            _repository
-                .Setup(x => x.GetByIdAsync(It.IsAny<string>(), It.IsAny<IViewContext>()))
-                .ReturnsAsync((string id, IViewContext context) =>
-                {
-                    var mock = new Mock<IEntity>();
-                    mock.Setup(x => x.Id).Returns(id);
-                    return mock.Object;
-                });
-            _repositoryResolver = new Mock<IRepositoryResolver>();
+        _concurrencyService = new ConcurrencyService(new SemaphoreSlim(1, 1));
+        _subject = new ParentService(_repositoryResolver.Object, _concurrencyService);
+    }
 
-            _concurrencyService = new ConcurrencyService(new SemaphoreSlim(1, 1));
-            _subject = new ParentService(_repositoryResolver.Object, _concurrencyService);
-        }
+    [Test]
+    public async Task WhenParentPathIsEmpty_NoParentsAreReturned()
+    {
+        // arrange
 
-        [Test]
-        public async Task WhenParentPathIsEmpty_NoParentsAreReturned()
-        {
-            // arrange
+        // act
+        var parents = await _subject.GetParentAsync(default);
 
-            // act
-            var parents = await _subject.GetParentAsync(default);
+        // assert
+        Assert.IsNull(parents);
+    }
 
-            // assert
-            Assert.IsNull(parents);
-        }
+    [Test]
+    public async Task WhenParentPathContainsOneLevel_OneParentIsReturned()
+    {
+        // arrange
+        _repositoryResolver.Setup(x => x.GetRepository("alias")).Returns(_repository.Object);
 
-        [Test]
-        public async Task WhenParentPathContainsOneLevel_OneParentIsReturned()
-        {
-            // arrange
-            _repositoryResolver.Setup(x => x.GetRepository("alias")).Returns(_repository.Object);
+        // act
+        var parents = await _subject.GetParentAsync(ParentPath.TryParse("alias:123"));
 
-            // act
-            var parents = await _subject.GetParentAsync(ParentPath.TryParse("alias:123"));
-
-            // assert
-            Assert.NotNull(parents!.Entity);
-            Assert.AreEqual("alias:123", parents.GetParentPath()!.ToPathString());
-        }
+        // assert
+        Assert.NotNull(parents!.Entity);
+        Assert.AreEqual("alias:123", parents.GetParentPath()!.ToPathString());
     }
 }

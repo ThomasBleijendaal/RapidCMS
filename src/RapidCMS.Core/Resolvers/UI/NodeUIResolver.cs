@@ -10,48 +10,47 @@ using RapidCMS.Core.Models.Setup;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.Core.Navigation;
 
-namespace RapidCMS.Core.Resolvers.UI
+namespace RapidCMS.Core.Resolvers.UI;
+
+internal class NodeUIResolver : BaseUIResolver, INodeUIResolver
 {
-    internal class NodeUIResolver : BaseUIResolver, INodeUIResolver
+    private readonly NodeSetup _node;
+    private readonly INavigationStateProvider _navigationStateProvider;
+
+    public NodeUIResolver(
+        NodeSetup node,
+        IDataProviderResolver dataProviderService,
+        IButtonActionHandlerResolver buttonActionHandlerResolver,
+        INavigationStateProvider navigationStateProvider,
+        IAuthService authService) : base(dataProviderService, buttonActionHandlerResolver, authService, navigationStateProvider)
     {
-        private readonly NodeSetup _node;
-        private readonly INavigationStateProvider _navigationStateProvider;
+        _node = node;
+        _navigationStateProvider = navigationStateProvider;
+    }
 
-        public NodeUIResolver(
-            NodeSetup node,
-            IDataProviderResolver dataProviderService,
-            IButtonActionHandlerResolver buttonActionHandlerResolver,
-            INavigationStateProvider navigationStateProvider,
-            IAuthService authService) : base(dataProviderService, buttonActionHandlerResolver, authService, navigationStateProvider)
+    public async Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(FormEditContext editContext)
+    {
+        if (_node.Buttons == null)
         {
-            _node = node;
-            _navigationStateProvider = navigationStateProvider;
+            return Enumerable.Empty<ButtonUI>();
         }
 
-        public async Task<IEnumerable<ButtonUI>> GetButtonsForEditContextAsync(FormEditContext editContext)
-        {
-            if (_node.Buttons == null)
-            {
-                return Enumerable.Empty<ButtonUI>();
-            }
+        return await GetButtonsAsync(_node.Buttons, editContext);
+    }
 
-            return await GetButtonsAsync(_node.Buttons, editContext);
+    public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(FormEditContext editContext, NavigationState navigationState)
+    {
+        if (_node.Panes == null)
+        {
+            return Enumerable.Empty<SectionUI>();
         }
 
-        public async Task<IEnumerable<SectionUI>> GetSectionsForEditContextAsync(FormEditContext editContext, NavigationState navigationState)
-        {
-            if (_node.Panes == null)
-            {
-                return Enumerable.Empty<SectionUI>();
-            }
+        var type = editContext.Entity.GetType();
 
-            var type = editContext.Entity.GetType();
-
-            var panes = await _node.Panes
-                .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(type))
-                .ToListAsync(pane => GetSectionUIAsync(pane, editContext, navigationState));
-            
-            return panes;
-        }
+        var panes = await _node.Panes
+            .Where(pane => pane.VariantType.IsSameTypeOrBaseTypeOf(type))
+            .ToListAsync(pane => GetSectionUIAsync(pane, editContext, navigationState));
+        
+        return panes;
     }
 }

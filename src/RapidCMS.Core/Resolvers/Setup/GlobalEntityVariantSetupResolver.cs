@@ -9,30 +9,29 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Helpers;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Core.Resolvers.Setup
+namespace RapidCMS.Core.Resolvers.Setup;
+
+internal class GlobalEntityVariantSetupResolver : ISetupResolver<EntityVariantSetup>
 {
-    internal class GlobalEntityVariantSetupResolver : ISetupResolver<EntityVariantSetup>
+    private readonly IReadOnlyDictionary<string, Type> _types;
+
+    public GlobalEntityVariantSetupResolver()
     {
-        private readonly IReadOnlyDictionary<string, Type> _types;
+        _types = typeof(IEntity).GetImplementingTypes().ToDictionary(x => AliasHelper.GetEntityVariantAlias(x));
+    }
 
-        public GlobalEntityVariantSetupResolver()
+    public Task<EntityVariantSetup> ResolveSetupAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<EntityVariantSetup> ResolveSetupAsync(string alias)
+    {
+        if (!_types.TryGetValue(alias, out var type))
         {
-            _types = typeof(IEntity).GetImplementingTypes().ToDictionary(x => AliasHelper.GetEntityVariantAlias(x));
+            throw new InvalidOperationException($"Cannot find type with alias {alias}.");
         }
 
-        public Task<EntityVariantSetup> ResolveSetupAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<EntityVariantSetup> ResolveSetupAsync(string alias)
-        {
-            if (!_types.TryGetValue(alias, out var type))
-            {
-                throw new InvalidOperationException($"Cannot find type with alias {alias}.");
-            }
-
-            return Task.FromResult(new EntityVariantSetup(alias, default, type, alias));
-        }
+        return Task.FromResult(new EntityVariantSetup(alias, default, type, alias));
     }
 }

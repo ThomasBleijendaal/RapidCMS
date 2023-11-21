@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace RapidCMS.Core.Abstractions.Mediators
+namespace RapidCMS.Core.Abstractions.Mediators;
+
+public interface IMediatorEventListener : IDisposable
 {
-    public interface IMediatorEventListener : IDisposable
-    {
-        void RegisterListener(IMediator mediator);
-    }
+    void RegisterListener(IMediator mediator);
 }

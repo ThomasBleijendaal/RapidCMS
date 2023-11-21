@@ -1,9 +1,8 @@
 ﻿using RapidCMS.Core.Models.Data;
 
-namespace RapidCMS.Core.Models.Request.Api
+namespace RapidCMS.Core.Models.Request.Api;
+
+public class GetEntitiesOfParentRequestModel : GetEntitiesRequestModel
 {
-    public class GetEntitiesOfParentRequestModel : GetEntitiesRequestModel
-    {
-        public string? ParentPath { get; set; }
-    }
+    public string? ParentPath { get; set; }
 }

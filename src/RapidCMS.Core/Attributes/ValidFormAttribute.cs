@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace RapidCMS.Core.Attributes
-{
-    internal class ValidFormAttribute : Attribute
-    {
+namespace RapidCMS.Core.Attributes;
 
-    }
+internal class ValidFormAttribute : Attribute
+{
+
 }

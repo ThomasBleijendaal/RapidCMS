@@ -5,32 +5,31 @@ using RapidCMS.Api.Core.Handlers;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Extensions;
 
-namespace RapidCMS.Api.Core.Resolvers
+namespace RapidCMS.Api.Core.Resolvers;
+
+internal class FileHandlerResolver : IFileHandlerResolver
 {
-    internal class FileHandlerResolver : IFileHandlerResolver
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IApiConfig _config;
+
+    public FileHandlerResolver(
+        IServiceProvider serviceProvider,
+        IApiConfig config)
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly IApiConfig _config;
+        _serviceProvider = serviceProvider;
+        _config = config;
+    }
 
-        public FileHandlerResolver(
-            IServiceProvider serviceProvider,
-            IApiConfig config)
+    public IFileHandler GetFileHandler(string uploadHandlerAlias)
+    {
+        var handlerConfig = _config.FileUploadHandlers.FirstOrDefault(x => x.Alias == uploadHandlerAlias);
+        if (handlerConfig == null)
         {
-            _serviceProvider = serviceProvider;
-            _config = config;
+            throw new InvalidOperationException();
         }
 
-        public IFileHandler GetFileHandler(string uploadHandlerAlias)
-        {
-            var handlerConfig = _config.FileUploadHandlers.FirstOrDefault(x => x.Alias == uploadHandlerAlias);
-            if (handlerConfig == null)
-            {
-                throw new InvalidOperationException();
-            }
+        var handlerType = typeof(FileHandler<>).MakeGenericType(handlerConfig.HandlerType);
 
-            var handlerType = typeof(FileHandler<>).MakeGenericType(handlerConfig.HandlerType);
-
-            return _serviceProvider.GetService<IFileHandler>(handlerType);
-        }
+        return _serviceProvider.GetService<IFileHandler>(handlerType);
     }
 }

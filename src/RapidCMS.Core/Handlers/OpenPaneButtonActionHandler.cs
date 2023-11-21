@@ -5,18 +5,17 @@ using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.EventArgs.Mediators;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Core.Handlers
+namespace RapidCMS.Core.Handlers;
+
+public class OpenPaneButtonActionHandler<TSidePane> : DefaultButtonActionHandler
 {
-    public class OpenPaneButtonActionHandler<TSidePane> : DefaultButtonActionHandler
+    private readonly IMediator _mediator;
+
+    public OpenPaneButtonActionHandler(IMediator mediator)
     {
-        private readonly IMediator _mediator;
-
-        public OpenPaneButtonActionHandler(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
-        public override Task<CrudType> ButtonClickBeforeRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context) 
-            => _mediator.NotifyEventAsync(this, new PaneRequestEventArgs(typeof(TSidePane), editContext, context));
+        _mediator = mediator;
     }
+
+    public override Task<CrudType> ButtonClickBeforeRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context) 
+        => _mediator.NotifyEventAsync(this, new PaneRequestEventArgs(typeof(TSidePane), editContext, context));
 }

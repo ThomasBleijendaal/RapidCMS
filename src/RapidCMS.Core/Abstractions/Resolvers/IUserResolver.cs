@@ -1,9 +1,8 @@
 ﻿using System.Security.Claims;
 
-namespace RapidCMS.Core.Abstractions.Resolvers
+namespace RapidCMS.Core.Abstractions.Resolvers;
+
+internal interface IUserResolver
 {
-    internal interface IUserResolver
-    {
-        ClaimsPrincipal? GetUser();
-    }
+    ClaimsPrincipal? GetUser();
 }

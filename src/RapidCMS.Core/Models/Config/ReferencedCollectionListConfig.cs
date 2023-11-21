@@ -1,9 +1,8 @@
-﻿namespace RapidCMS.Core.Models.Config
+﻿namespace RapidCMS.Core.Models.Config;
+
+internal class ReferencedCollectionListConfig : CollectionListConfig
 {
-    internal class ReferencedCollectionListConfig : CollectionListConfig
+    internal ReferencedCollectionListConfig(string collectionAlias) : base(collectionAlias)
     {
-        internal ReferencedCollectionListConfig(string collectionAlias) : base(collectionAlias)
-        {
-        }
     }
 }

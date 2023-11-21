@@ -1,15 +1,14 @@
 ﻿using RapidCMS.Core.Enums;
 using System;
 
-namespace RapidCMS.Core.Attributes
-{
-    public class RelationAttribute : Attribute
-    {
-        public RelationAttribute(RelationType type)
-        {
-            Type = type;
-        }
+namespace RapidCMS.Core.Attributes;
 
-        public RelationType Type { get; }
+public class RelationAttribute : Attribute
+{
+    public RelationAttribute(RelationType type)
+    {
+        Type = type;
     }
+
+    public RelationType Type { get; }
 }

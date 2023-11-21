@@ -1,9 +1,8 @@
 ﻿using RapidCMS.Core.Enums;
 
-namespace RapidCMS.Core.Abstractions.Config
+namespace RapidCMS.Core.Abstractions.Config;
+
+internal interface IIsConventionBased
 {
-    internal interface IIsConventionBased
-    {
-        Features GetFeatures();
-    }
+    Features GetFeatures();
 }

@@ -11,75 +11,74 @@ using RapidCMS.Example.Shared.Validators;
 using RapidCMS.Example.WebAssembly.FunctionAPI.Authentication;
 using RapidCMS.Repositories;
 
-namespace RapidCMS.Example.WebAssembly.FunctionAPI
+namespace RapidCMS.Example.WebAssembly.FunctionAPI;
+
+public class Startup
 {
-    public class Startup
+    private const bool ConfigureAuthentication = false;
+
+    public Startup(IConfiguration configuration)
     {
-        private const bool ConfigureAuthentication = false;
+        Configuration = configuration;
+    }
 
-        public Startup(IConfiguration configuration)
+    public IConfiguration Configuration { get; }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddScoped<JsonRepository<Person>>();
+        services.AddScoped<JsonRepository<Details>>();
+        services.AddScoped<JsonRepository<ConventionalPerson>>();
+        services.AddScoped<JsonRepository<Country>>();
+        services.AddScoped<JsonRepository<User>>();
+        services.AddScoped<JsonRepository<TagGroup>>();
+        services.AddScoped<JsonRepository<Tag>>();
+        services.AddScoped<JsonRepository<EntityVariantBase>>();
+        services.AddScoped<MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
+        services.AddSingleton<IConverter<MappedEntity, DatabaseEntity>, Mapper>();
+        services.AddSingleton<DatabaseEntityDataViewBuilder>();
+
+        services.AddTransient<Base64TextFileUploadHandler>();
+        services.AddTransient<Base64ImageUploadHandler>();
+
+        services.AddOptions<AuthenticationConfig>().Bind(Configuration.GetSection("AzureAd"));
+
+        services.AddAuthorizationCore();
+        services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();
+
+        // the country entity is validated by a FluentValidator
+        services.AddSingleton<CountryValidator>();
+
+        services.AddRapidCMSFunctions(config =>
         {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddScoped<JsonRepository<Person>>();
-            services.AddScoped<JsonRepository<Details>>();
-            services.AddScoped<JsonRepository<ConventionalPerson>>();
-            services.AddScoped<JsonRepository<Country>>();
-            services.AddScoped<JsonRepository<User>>();
-            services.AddScoped<JsonRepository<TagGroup>>();
-            services.AddScoped<JsonRepository<Tag>>();
-            services.AddScoped<JsonRepository<EntityVariantBase>>();
-            services.AddScoped<MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
-            services.AddSingleton<IConverter<MappedEntity, DatabaseEntity>, Mapper>();
-            services.AddSingleton<DatabaseEntityDataViewBuilder>();
-
-            services.AddTransient<Base64TextFileUploadHandler>();
-            services.AddTransient<Base64ImageUploadHandler>();
-
-            services.AddOptions<AuthenticationConfig>().Bind(Configuration.GetSection("AzureAd"));
-
-            services.AddAuthorizationCore();
-            services.AddSingleton<IAuthorizationHandler, VeryPermissiveAuthorizationHandler>();
-
-            // the country entity is validated by a FluentValidator
-            services.AddSingleton<CountryValidator>();
-
-            services.AddRapidCMSFunctions(config =>
+            if (!ConfigureAuthentication)
             {
-                if (!ConfigureAuthentication)
-                {
-                    config.AllowAnonymousUser();
-                }
-
-                config.RegisterRepository<Person, JsonRepository<Person>>();
-                config.RegisterRepository<Details, JsonRepository<Details>>();
-                config.RegisterRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>();
-                config.RegisterRepository<Country, JsonRepository<Country>>();
-                config.RegisterRepository<TagGroup, JsonRepository<TagGroup>>();
-                config.RegisterRepository<Tag, JsonRepository<Tag>>();
-                config.RegisterRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>();
-                config.RegisterRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
-
-                config.RegisterDataViewBuilder<DatabaseEntityDataViewBuilder>("mapped");
-
-                config.RegisterFileUploadHandler<Base64TextFileUploadHandler>();
-                config.RegisterFileUploadHandler<Base64ImageUploadHandler>();
-            });
-        }
-
-        public void ConfigureWorker(IFunctionsWorkerApplicationBuilder builder)
-        {
-            if (ConfigureAuthentication)
-            {
-                builder.UseAuthorization();
+                config.AllowAnonymousUser();
             }
 
-            builder.UseFunctionExecutionMiddleware();
+            config.RegisterRepository<Person, JsonRepository<Person>>();
+            config.RegisterRepository<Details, JsonRepository<Details>>();
+            config.RegisterRepository<ConventionalPerson, JsonRepository<ConventionalPerson>>();
+            config.RegisterRepository<Country, JsonRepository<Country>>();
+            config.RegisterRepository<TagGroup, JsonRepository<TagGroup>>();
+            config.RegisterRepository<Tag, JsonRepository<Tag>>();
+            config.RegisterRepository<EntityVariantBase, JsonRepository<EntityVariantBase>>();
+            config.RegisterRepository<MappedEntity, DatabaseEntity, MappedInMemoryRepository<MappedEntity, DatabaseEntity>>();
+
+            config.RegisterDataViewBuilder<DatabaseEntityDataViewBuilder>("mapped");
+
+            config.RegisterFileUploadHandler<Base64TextFileUploadHandler>();
+            config.RegisterFileUploadHandler<Base64ImageUploadHandler>();
+        });
+    }
+
+    public void ConfigureWorker(IFunctionsWorkerApplicationBuilder builder)
+    {
+        if (ConfigureAuthentication)
+        {
+            builder.UseAuthorization();
         }
+
+        builder.UseFunctionExecutionMiddleware();
     }
 }

@@ -1,9 +1,8 @@
 ﻿using RapidCMS.Core.Abstractions.Metadata;
 
-namespace RapidCMS.Core.Abstractions.Data
+namespace RapidCMS.Core.Abstractions.Data;
+
+internal interface IDataValidationProvider
 {
-    internal interface IDataValidationProvider
-    {
-        IPropertyMetadata Property { get; }
-    }
+    IPropertyMetadata Property { get; }
 }

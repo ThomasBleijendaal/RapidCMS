@@ -2,18 +2,17 @@
 using RapidCMS.Core.Abstractions.Data;
 using RapidCMS.Core.Enums;
 
-namespace RapidCMS.Core.Models.Config.Convention
-{
-    internal class ConventionNodeViewConfig<TEntity> : NodeConfig, IIsConventionBased
-        where TEntity : IEntity
-    {
-        public ConventionNodeViewConfig() : base(typeof(TEntity))
-        {
-        }
+namespace RapidCMS.Core.Models.Config.Convention;
 
-        public Features GetFeatures()
-        {
-            return Features.CanView;
-        }
+internal class ConventionNodeViewConfig<TEntity> : NodeConfig, IIsConventionBased
+    where TEntity : IEntity
+{
+    public ConventionNodeViewConfig() : base(typeof(TEntity))
+    {
+    }
+
+    public Features GetFeatures()
+    {
+        return Features.CanView;
     }
 }

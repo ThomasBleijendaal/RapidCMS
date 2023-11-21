@@ -1,12 +1,11 @@
 ﻿using RapidCMS.Core.Models.Data;
 
-namespace RapidCMS.Core.Abstractions.Data
-{
-    public interface IParent
-    {
-        IParent? Parent { get; }
-        IEntity Entity { get; }
+namespace RapidCMS.Core.Abstractions.Data;
 
-        ParentPath? GetParentPath();
-    }
+public interface IParent
+{
+    IParent? Parent { get; }
+    IEntity Entity { get; }
+
+    ParentPath? GetParentPath();
 }

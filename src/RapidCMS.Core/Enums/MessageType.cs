@@ -1,10 +1,9 @@
-﻿namespace RapidCMS.Core.Enums
+﻿namespace RapidCMS.Core.Enums;
+
+public enum MessageType
 {
-    public enum MessageType
-    {
-        Information,
-        Success,
-        Warning,
-        Error
-    }
+    Information,
+    Success,
+    Warning,
+    Error
 }

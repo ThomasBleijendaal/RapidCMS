@@ -1,10 +1,9 @@
-﻿namespace RapidCMS.Core.Abstractions.Data
-{
-    public interface IRelated
-    {
-        IParent? Parent { get; }
-        IEntity Entity { get; }
+﻿namespace RapidCMS.Core.Abstractions.Data;
 
-        string RepositoryAlias { get; }
-    }
+public interface IRelated
+{
+    IParent? Parent { get; }
+    IEntity Entity { get; }
+
+    string RepositoryAlias { get; }
 }

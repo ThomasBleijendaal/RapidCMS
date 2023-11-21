@@ -2,13 +2,12 @@
 using System.Threading.Tasks;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Core.Abstractions.Services
-{
-    public interface IPresentationService
-    {
-        Task<TResult> GetEntityAsync<TRequest, TResult>(TRequest request) where TResult : class;
-        Task<TResult> GetEntitiesAsync<TRequest, TResult>(TRequest request) where TResult : class;
+namespace RapidCMS.Core.Abstractions.Services;
 
-        Task<IEnumerable<TypeRegistrationSetup>> GetPageAsync(string pageAlias);
-    }
+public interface IPresentationService
+{
+    Task<TResult> GetEntityAsync<TRequest, TResult>(TRequest request) where TResult : class;
+    Task<TResult> GetEntitiesAsync<TRequest, TResult>(TRequest request) where TResult : class;
+
+    Task<IEnumerable<TypeRegistrationSetup>> GetPageAsync(string pageAlias);
 }

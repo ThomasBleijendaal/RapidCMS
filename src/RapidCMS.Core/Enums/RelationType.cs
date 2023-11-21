@@ -1,8 +1,7 @@
-﻿namespace RapidCMS.Core.Enums
+﻿namespace RapidCMS.Core.Enums;
+
+public enum RelationType
 {
-    public enum RelationType
-    {
-        One,
-        Many
-    }
+    One,
+    Many
 }

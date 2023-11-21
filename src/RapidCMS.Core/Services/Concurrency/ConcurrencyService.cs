@@ -3,43 +3,42 @@ using System.Threading;
 using System.Threading.Tasks;
 using RapidCMS.Core.Abstractions.Services;
 
-namespace RapidCMS.Core.Services.Concurrency
+namespace RapidCMS.Core.Services.Concurrency;
+
+internal class ConcurrencyService : IConcurrencyService
 {
-    internal class ConcurrencyService : IConcurrencyService
+    private readonly SemaphoreSlim _semaphore;
+
+    public ConcurrencyService(SemaphoreSlim semaphore)
     {
-        private readonly SemaphoreSlim _semaphore;
+        _semaphore = semaphore;
+    }
 
-        public ConcurrencyService(SemaphoreSlim semaphore)
+    public async Task EnsureCorrectConcurrencyAsync(Func<Task> function)
+    {
+        await _semaphore.WaitAsync();
+
+        try
         {
-            _semaphore = semaphore;
+            await function.Invoke();
         }
-
-        public async Task EnsureCorrectConcurrencyAsync(Func<Task> function)
+        finally
         {
-            await _semaphore.WaitAsync();
-
-            try
-            {
-                await function.Invoke();
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+            _semaphore.Release();
         }
+    }
 
-        public async Task<T> EnsureCorrectConcurrencyAsync<T>(Func<Task<T>> function)
+    public async Task<T> EnsureCorrectConcurrencyAsync<T>(Func<Task<T>> function)
+    {
+        await _semaphore.WaitAsync();
+
+        try
         {
-            await _semaphore.WaitAsync();
-
-            try
-            {
-                return await function.Invoke();
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+            return await function.Invoke();
+        }
+        finally
+        {
+            _semaphore.Release();
         }
     }
 }

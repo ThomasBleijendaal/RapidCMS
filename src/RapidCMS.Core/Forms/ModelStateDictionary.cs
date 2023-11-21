@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace RapidCMS.Core.Forms
+namespace RapidCMS.Core.Forms;
+
+public class ModelStateDictionary : Dictionary<string, string>
 {
-    public class ModelStateDictionary : Dictionary<string, string>
-    {
-    }
 }

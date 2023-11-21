@@ -7,73 +7,72 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Core.Resolvers.Convention
+namespace RapidCMS.Core.Resolvers.Convention;
+
+internal class ConventionBasedNodeConfigResolver : IConventionBasedResolver<NodeConfig>
 {
-    internal class ConventionBasedNodeConfigResolver : IConventionBasedResolver<NodeConfig>
+    private readonly IFieldConfigResolver _fieldConfigResolver;
+
+    public ConventionBasedNodeConfigResolver(IFieldConfigResolver fieldConfigResolver)
     {
-        private readonly IFieldConfigResolver _fieldConfigResolver;
+        _fieldConfigResolver = fieldConfigResolver;
+    }
 
-        public ConventionBasedNodeConfigResolver(IFieldConfigResolver fieldConfigResolver)
+    public Task<NodeConfig> ResolveByConventionAsync(Type subject, Features features, CollectionSetup? collection)
+    {
+        var result = new NodeConfig(subject);
+
+        if (features.HasFlag(Features.CanView) || features.HasFlag(Features.CanEdit))
         {
-            _fieldConfigResolver = fieldConfigResolver;
-        }
-
-        public Task<NodeConfig> ResolveByConventionAsync(Type subject, Features features, CollectionSetup? collection)
-        {
-            var result = new NodeConfig(subject);
-
-            if (features.HasFlag(Features.CanView) || features.HasFlag(Features.CanEdit))
+            result.Buttons.Add(new DefaultButtonConfig
             {
-                result.Buttons.Add(new DefaultButtonConfig
-                {
-                    ButtonType = DefaultButtonType.Up
-                });
+                ButtonType = DefaultButtonType.Up
+            });
 
-                result.Panes = new List<PaneConfig>
-                {
-                    new PaneConfig(subject)
-                    {
-                        FieldIndex = 1,
-                        Fields = _fieldConfigResolver.GetFields(subject, features).ToList(),
-                        VariantType = subject
-                    }
-                };
-            }
-
-            if (features.HasFlag(Features.CanEdit))
+            result.Panes = new List<PaneConfig>
             {
-                result.Buttons.AddRange(new[] {
-                    new DefaultButtonConfig
-                    {
-                        ButtonType = DefaultButtonType.SaveExisting
-                    },
-                    new DefaultButtonConfig
-                    {
-                        ButtonType = DefaultButtonType.SaveNew
-                    },
-                    new DefaultButtonConfig
-                    {
-                        ButtonType = DefaultButtonType.Delete
-                    }
-                });
-            }
-
-            if (collection?.Collections.Any() ?? false)
-            {
-                foreach (var subCollection in collection.Collections)
+                new PaneConfig(subject)
                 {
-                    result.Panes.Add(new PaneConfig(subject)
-                    {
-                        IsVisible = (entity, state) => state == EntityState.IsExisting,
-                        SubCollectionLists = new List<CollectionListConfig>
-                        {
-                            new ReferencedCollectionListConfig(subCollection.Alias)
-                        }
-                    });
+                    FieldIndex = 1,
+                    Fields = _fieldConfigResolver.GetFields(subject, features).ToList(),
+                    VariantType = subject
                 }
-            }
-
-            return Task.FromResult(result);
+            };
         }
+
+        if (features.HasFlag(Features.CanEdit))
+        {
+            result.Buttons.AddRange(new[] {
+                new DefaultButtonConfig
+                {
+                    ButtonType = DefaultButtonType.SaveExisting
+                },
+                new DefaultButtonConfig
+                {
+                    ButtonType = DefaultButtonType.SaveNew
+                },
+                new DefaultButtonConfig
+                {
+                    ButtonType = DefaultButtonType.Delete
+                }
+            });
+        }
+
+        if (collection?.Collections.Any() ?? false)
+        {
+            foreach (var subCollection in collection.Collections)
+            {
+                result.Panes.Add(new PaneConfig(subject)
+                {
+                    IsVisible = (entity, state) => state == EntityState.IsExisting,
+                    SubCollectionLists = new List<CollectionListConfig>
+                    {
+                        new ReferencedCollectionListConfig(subCollection.Alias)
+                    }
+                });
+            }
+        }
+
+        return Task.FromResult(result);
     }
 }

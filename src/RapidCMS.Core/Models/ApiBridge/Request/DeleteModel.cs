@@ -1,16 +1,15 @@
 ﻿using RapidCMS.Core.Abstractions.Data;
 
-namespace RapidCMS.Core.Models.ApiBridge.Request
+namespace RapidCMS.Core.Models.ApiBridge.Request;
+
+public class DeleteModel
 {
-    public class DeleteModel
+    public DeleteModel() { }
+
+    public DeleteModel(IParent? parent)
     {
-        public DeleteModel() { }
-
-        public DeleteModel(IParent? parent)
-        {
-            ParentPath = parent?.GetParentPath()?.ToPathString();
-        }
-
-        public string? ParentPath { get; set; }
+        ParentPath = parent?.GetParentPath()?.ToPathString();
     }
+
+    public string? ParentPath { get; set; }
 }

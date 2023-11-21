@@ -2,39 +2,38 @@
 using System.Linq;
 using RapidCMS.Core.Enums;
 
-namespace RapidCMS.Core.Extensions
+namespace RapidCMS.Core.Extensions;
+
+internal static class EnumExtensions
 {
-    internal static class EnumExtensions
+    public static TAttribute? GetCustomAttribute<TAttribute>(this Enum e)
+        where TAttribute : Attribute
     {
-        public static TAttribute? GetCustomAttribute<TAttribute>(this Enum e)
-            where TAttribute : Attribute
+        var member = e.GetType().GetMember(e.ToString()).FirstOrDefault();
+
+        if (member != null)
         {
-            var member = e.GetType().GetMember(e.ToString()).FirstOrDefault();
+            var attribute = member
+                .GetCustomAttributes(typeof(TAttribute), true)
+                ?.FirstOrDefault();
 
-            if (member != null)
-            {
-                var attribute = member
-                    .GetCustomAttributes(typeof(TAttribute), true)
-                    ?.FirstOrDefault();
-
-                return attribute as TAttribute;
-            }
-
-            return default;
+            return attribute as TAttribute;
         }
 
-        public static UsageType FindSupportedUsageType(this UsageType supportsUsageType, UsageType requestedUsageType)
-        {
-            var supportedUsageType = (supportsUsageType & requestedUsageType) & UsageType.ViewOrEdit;
+        return default;
+    }
 
-            if (supportedUsageType > 0)
-            {
-                return supportedUsageType;
-            }
-            else
-            {
-                return UsageType.View | (requestedUsageType & ~UsageType.ViewOrEdit);
-            } 
+    public static UsageType FindSupportedUsageType(this UsageType supportsUsageType, UsageType requestedUsageType)
+    {
+        var supportedUsageType = (supportsUsageType & requestedUsageType) & UsageType.ViewOrEdit;
+
+        if (supportedUsageType > 0)
+        {
+            return supportedUsageType;
         }
+        else
+        {
+            return UsageType.View | (requestedUsageType & ~UsageType.ViewOrEdit);
+        } 
     }
 }

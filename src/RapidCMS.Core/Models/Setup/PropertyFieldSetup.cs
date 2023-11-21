@@ -2,23 +2,22 @@
 using RapidCMS.Core.Enums;
 using RapidCMS.Core.Models.Config;
 
-namespace RapidCMS.Core.Models.Setup
+namespace RapidCMS.Core.Models.Setup;
+
+public class PropertyFieldSetup : FieldSetup
 {
-    public class PropertyFieldSetup : FieldSetup
+    internal PropertyFieldSetup(FieldConfig field) : base(field)
     {
-        internal PropertyFieldSetup(FieldConfig field) : base(field)
-        {
-            Property = field.Property ?? throw new ArgumentNullException(nameof(field.Property));
-            EditorType = field.EditorType;
-        }
-
-        public PropertyFieldSetup() : base(default)
-        {
-
-        }
-
-        public EditorType EditorType { get; set; } = EditorType.Readonly;
-
-        public RelationSetup? Relation { get; set; }
+        Property = field.Property ?? throw new ArgumentNullException(nameof(field.Property));
+        EditorType = field.EditorType;
     }
+
+    public PropertyFieldSetup() : base(default)
+    {
+
+    }
+
+    public EditorType EditorType { get; set; } = EditorType.Readonly;
+
+    public RelationSetup? Relation { get; set; }
 }

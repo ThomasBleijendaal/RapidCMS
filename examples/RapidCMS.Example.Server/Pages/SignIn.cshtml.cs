@@ -2,16 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace RapidCMS.Example.Server.Pages
+namespace RapidCMS.Example.Server.Pages;
+
+public class SignInModel : PageModel
 {
-    public class SignInModel : PageModel
+    public IActionResult OnGet()
     {
-        public IActionResult OnGet()
+        return Challenge(new AuthenticationProperties
         {
-            return Challenge(new AuthenticationProperties
-            {
-                RedirectUri = Url.Content("~/")
-            }, "OpenIdConnect");
-        }
+            RedirectUri = Url.Content("~/")
+        }, "OpenIdConnect");
     }
 }

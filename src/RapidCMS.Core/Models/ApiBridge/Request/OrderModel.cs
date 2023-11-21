@@ -1,11 +1,10 @@
 ﻿using RapidCMS.Core.Enums;
 
-namespace RapidCMS.Core.Models.ApiBridge.Request
+namespace RapidCMS.Core.Models.ApiBridge.Request;
+
+public class OrderModel
 {
-    public class OrderModel
-    {
-        public string PropertyName { get; set; } = default!;
-        public string Fingerprint { get; set; } = default!;
-        public OrderByType OrderByType { get; set; }
-    }
+    public string PropertyName { get; set; } = default!;
+    public string Fingerprint { get; set; } = default!;
+    public OrderByType OrderByType { get; set; }
 }

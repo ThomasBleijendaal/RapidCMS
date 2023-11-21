@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RapidCMS.Core.Helpers
+namespace RapidCMS.Core.Helpers;
+
+internal static class EnumHelper
 {
-    internal static class EnumHelper
+    public static IEnumerable<TEnum> GetValues<TEnum>()
+        where TEnum : Enum
     {
-        public static IEnumerable<TEnum> GetValues<TEnum>()
-            where TEnum : Enum
-        {
-            return Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
-        }
+        return Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
     }
 }

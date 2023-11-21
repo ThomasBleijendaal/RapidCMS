@@ -4,17 +4,16 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Core.Abstractions.Handlers
+namespace RapidCMS.Core.Abstractions.Handlers;
+
+public interface IButtonActionHandler
 {
-    public interface IButtonActionHandler
-    {
-        OperationAuthorizationRequirement GetOperation(ButtonSetup button, FormEditContext editContext);
+    OperationAuthorizationRequirement GetOperation(ButtonSetup button, FormEditContext editContext);
 
-        bool IsCompatible(ButtonSetup button, FormEditContext editContext);
-        bool ShouldAskForConfirmation(ButtonSetup button, FormEditContext editContext);
-        bool RequiresValidForm(ButtonSetup button, FormEditContext editContext);
+    bool IsCompatible(ButtonSetup button, FormEditContext editContext);
+    bool ShouldAskForConfirmation(ButtonSetup button, FormEditContext editContext);
+    bool RequiresValidForm(ButtonSetup button, FormEditContext editContext);
 
-        Task<CrudType> ButtonClickBeforeRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context);
-        Task ButtonClickAfterRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context);
-    }
+    Task<CrudType> ButtonClickBeforeRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context);
+    Task ButtonClickAfterRepositoryActionAsync(ButtonSetup button, FormEditContext editContext, ButtonContext context);
 }

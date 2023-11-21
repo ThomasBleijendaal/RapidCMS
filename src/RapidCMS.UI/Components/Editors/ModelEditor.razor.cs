@@ -7,61 +7,60 @@ using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.UI;
 using RapidCMS.Core.Navigation;
 
-namespace RapidCMS.UI.Components.Editors
+namespace RapidCMS.UI.Components.Editors;
+
+public partial class ModelEditor
 {
-    public partial class ModelEditor
+    protected IEnumerable<FieldUI>? Fields { get; set; }
+
+    protected FormEditContext? PropertyEditContext { get; set; }
+
+    [Inject]
+    private IUIResolverFactory UIResolverFactory { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
     {
-        protected IEnumerable<FieldUI>? Fields { get; set; }
+        PropertyEditContext = EditContext.EntityProperty(Property);
 
-        protected FormEditContext? PropertyEditContext { get; set; }
+        var nodeUI = await UIResolverFactory.GetConventionNodeUIResolverAsync(Property.PropertyType);
 
-        [Inject]
-        private IUIResolverFactory UIResolverFactory { get; set; } = default!;
+        var sections = await nodeUI.GetSectionsForEditContextAsync(PropertyEditContext, new NavigationState());
 
-        protected override async Task OnInitializedAsync()
+        Fields = sections.FirstOrDefault()?.Elements?.OfType<FieldUI>();
+
+        EditContext.OnValidationStateChanged += EditContext_OnValidationStateChangedAsync;
+        if (PropertyEditContext != null)
         {
-            PropertyEditContext = EditContext.EntityProperty(Property);
-
-            var nodeUI = await UIResolverFactory.GetConventionNodeUIResolverAsync(Property.PropertyType);
-
-            var sections = await nodeUI.GetSectionsForEditContextAsync(PropertyEditContext, new NavigationState());
-
-            Fields = sections.FirstOrDefault()?.Elements?.OfType<FieldUI>();
-
-            EditContext.OnValidationStateChanged += EditContext_OnValidationStateChangedAsync;
-            if (PropertyEditContext != null)
-            {
-                PropertyEditContext.OnValidationStateChanged += PropertyEditContext_OnValidationStateChangedAsync;
-            }
-
-            await base.OnInitializedAsync();
+            PropertyEditContext.OnValidationStateChanged += PropertyEditContext_OnValidationStateChangedAsync;
         }
 
-        protected override void DetachListener()
-        {
-            EditContext.OnValidationStateChanged -= EditContext_OnValidationStateChangedAsync;
-            if (PropertyEditContext != null)
-            {
-                PropertyEditContext.OnValidationStateChanged -= PropertyEditContext_OnValidationStateChangedAsync;
-            }
+        await base.OnInitializedAsync();
+    }
 
-            base.DetachListener();
+    protected override void DetachListener()
+    {
+        EditContext.OnValidationStateChanged -= EditContext_OnValidationStateChangedAsync;
+        if (PropertyEditContext != null)
+        {
+            PropertyEditContext.OnValidationStateChanged -= PropertyEditContext_OnValidationStateChangedAsync;
         }
 
-        private async void EditContext_OnValidationStateChangedAsync(object? sender, ValidationStateChangedEventArgs e)
-        {
-            if (PropertyEditContext != null)
-            {
-                await PropertyEditContext.IsValidAsync();
-            }
-        }
+        base.DetachListener();
+    }
 
-        private async void PropertyEditContext_OnValidationStateChangedAsync(object? sender, ValidationStateChangedEventArgs e)
+    private async void EditContext_OnValidationStateChangedAsync(object? sender, ValidationStateChangedEventArgs e)
+    {
+        if (PropertyEditContext != null)
         {
-            if (!EditContext.IsValid(Property) && e.IsValid == true)
-            {
-                await EditContext.IsValidAsync();
-            }
+            await PropertyEditContext.IsValidAsync();
+        }
+    }
+
+    private async void PropertyEditContext_OnValidationStateChangedAsync(object? sender, ValidationStateChangedEventArgs e)
+    {
+        if (!EditContext.IsValid(Property) && e.IsValid == true)
+        {
+            await EditContext.IsValidAsync();
         }
     }
 }

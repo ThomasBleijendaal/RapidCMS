@@ -6,51 +6,50 @@ using RapidCMS.Core.Extensions;
 using RapidCMS.Core.Models.Config;
 using RapidCMS.Core.Models.Setup;
 
-namespace RapidCMS.Core.Resolvers.Setup
+namespace RapidCMS.Core.Resolvers.Setup;
+
+internal class PaneSetupResolver : ISetupResolver<PaneSetup, PaneConfig>
 {
-    internal class PaneSetupResolver : ISetupResolver<PaneSetup, PaneConfig>
+    private readonly ISetupResolver<ButtonSetup, ButtonConfig> _buttonSetupResolver;
+    private readonly ISetupResolver<FieldSetup, FieldConfig> _fieldSetupResolver;
+    private readonly ISetupResolver<SubCollectionListSetup, CollectionListConfig> _subCollectionSetupResolver;
+    private readonly ISetupResolver<RelatedCollectionListSetup, CollectionListConfig> _relatedCollectionSetupResolver;
+
+    public PaneSetupResolver(
+        ISetupResolver<ButtonSetup, ButtonConfig> buttonSetupResolver,
+        ISetupResolver<FieldSetup, FieldConfig> fieldSetupResolver,
+        ISetupResolver<SubCollectionListSetup, CollectionListConfig> subCollectionSetupResolver,
+        ISetupResolver<RelatedCollectionListSetup, CollectionListConfig> relatedCollectionSetupResolver)
     {
-        private readonly ISetupResolver<ButtonSetup, ButtonConfig> _buttonSetupResolver;
-        private readonly ISetupResolver<FieldSetup, FieldConfig> _fieldSetupResolver;
-        private readonly ISetupResolver<SubCollectionListSetup, CollectionListConfig> _subCollectionSetupResolver;
-        private readonly ISetupResolver<RelatedCollectionListSetup, CollectionListConfig> _relatedCollectionSetupResolver;
+        _buttonSetupResolver = buttonSetupResolver;
+        _fieldSetupResolver = fieldSetupResolver;
+        _subCollectionSetupResolver = subCollectionSetupResolver;
+        _relatedCollectionSetupResolver = relatedCollectionSetupResolver;
+    }
 
-        public PaneSetupResolver(
-            ISetupResolver<ButtonSetup, ButtonConfig> buttonSetupResolver,
-            ISetupResolver<FieldSetup, FieldConfig> fieldSetupResolver,
-            ISetupResolver<SubCollectionListSetup, CollectionListConfig> subCollectionSetupResolver,
-            ISetupResolver<RelatedCollectionListSetup, CollectionListConfig> relatedCollectionSetupResolver)
+    public async Task<IResolvedSetup<PaneSetup>> ResolveSetupAsync(PaneConfig config, CollectionSetup? collection = default)
+    {
+        if (collection == null)
         {
-            _buttonSetupResolver = buttonSetupResolver;
-            _fieldSetupResolver = fieldSetupResolver;
-            _subCollectionSetupResolver = subCollectionSetupResolver;
-            _relatedCollectionSetupResolver = relatedCollectionSetupResolver;
+            throw new ArgumentNullException(nameof(collection));
         }
 
-        public async Task<IResolvedSetup<PaneSetup>> ResolveSetupAsync(PaneConfig config, CollectionSetup? collection = default)
-        {
-            if (collection == null)
-            {
-                throw new ArgumentNullException(nameof(collection));
-            }
+        var cacheable = true;
 
-            var cacheable = true;
+        var buttons = (await _buttonSetupResolver.ResolveSetupAsync(config.Buttons, collection)).CheckIfCachable(ref cacheable).ToList();
+        var fields = (await _fieldSetupResolver.ResolveSetupAsync(config.Fields, collection)).CheckIfCachable(ref cacheable).ToList();
+        var subCollectionLists = (await _subCollectionSetupResolver.ResolveSetupAsync(config.SubCollectionLists, collection)).CheckIfCachable(ref cacheable).ToList();
+        var relatedCollectionLists = (await _relatedCollectionSetupResolver.ResolveSetupAsync(config.RelatedCollectionLists, collection)).CheckIfCachable(ref cacheable).ToList();
 
-            var buttons = (await _buttonSetupResolver.ResolveSetupAsync(config.Buttons, collection)).CheckIfCachable(ref cacheable).ToList();
-            var fields = (await _fieldSetupResolver.ResolveSetupAsync(config.Fields, collection)).CheckIfCachable(ref cacheable).ToList();
-            var subCollectionLists = (await _subCollectionSetupResolver.ResolveSetupAsync(config.SubCollectionLists, collection)).CheckIfCachable(ref cacheable).ToList();
-            var relatedCollectionLists = (await _relatedCollectionSetupResolver.ResolveSetupAsync(config.RelatedCollectionLists, collection)).CheckIfCachable(ref cacheable).ToList();
-
-            return new ResolvedSetup<PaneSetup>(new PaneSetup(
-                config.CustomType,
-                config.Label,
-                config.IsVisible,
-                config.VariantType,
-                buttons,
-                fields,
-                subCollectionLists,
-                relatedCollectionLists),
-                cacheable);
-        }
+        return new ResolvedSetup<PaneSetup>(new PaneSetup(
+            config.CustomType,
+            config.Label,
+            config.IsVisible,
+            config.VariantType,
+            buttons,
+            fields,
+            subCollectionLists,
+            relatedCollectionLists),
+            cacheable);
     }
 }

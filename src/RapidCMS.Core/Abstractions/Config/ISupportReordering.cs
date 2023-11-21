@@ -1,11 +1,10 @@
-﻿namespace RapidCMS.Core.Abstractions.Config
+﻿namespace RapidCMS.Core.Abstractions.Config;
+
+public interface ISupportReordering<TReturn>
 {
-    public interface ISupportReordering<TReturn>
-    {
-        /// <summary>
-        /// Allows entities to be reordered in the ListEditor.
-        /// </summary>
-        /// <returns></returns>
-        TReturn AllowReordering(bool allowReordering);
-    }
+    /// <summary>
+    /// Allows entities to be reordered in the ListEditor.
+    /// </summary>
+    /// <returns></returns>
+    TReturn AllowReordering(bool allowReordering);
 }
