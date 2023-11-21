@@ -123,7 +123,6 @@ public static partial class RapidCMSMiddleware
         services.AddScoped<IMediatorEventListener, RepositoryMediatorEventConverter>();
 
         // UI requirements
-        //services.AddHttpContextAccessor();
         services.AddHttpClient();
 
         services.AddMemoryCache();
@@ -183,13 +182,6 @@ public static partial class RapidCMSMiddleware
             }
         }
     }
-
-    //public static IApplicationBuilder UseRapidCMS(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, bool isDevelopment = false)
-    //{
-    //    app.ApplicationServices.GetRequiredService<ICms>().IsDevelopment = isDevelopment;
-
-    //    return app;
-    //}
 
     private static CmsConfig GetRootConfig(Action<ICmsConfig>? config = null)
     {
