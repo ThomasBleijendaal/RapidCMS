@@ -6,8 +6,6 @@
             @{
                 if (CollapseEmptyCells && UI.CommonFields != null)
                 {
-                    var i = 0;
-
                     foreach (var field in UI.CommonFields)
                     {
                         <HeaderCell Field="field" OnSortChanged="@OnSortChanged" Sorts="Sorts" />

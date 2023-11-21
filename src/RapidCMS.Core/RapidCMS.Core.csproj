@@ -36,12 +36,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.25" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.25" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="6.0.25" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.25" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.25" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.25" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.25" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Net.Http.Json" Version="6.0.25" />
+    <PackageReference Include="System.Net.Http.Json" Version="6.0.1" />
     <PackageReference Include="Tewr.Blazor.FileReader" Version="3.3.2.23201" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
