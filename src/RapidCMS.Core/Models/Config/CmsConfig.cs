@@ -100,6 +100,13 @@ namespace RapidCMS.Core.Models.Config
             return this;
         }
 
+        public ICmsConfig EnableDevelopmentLogging(bool enabled)
+        {
+            IsDevelopment = enabled;
+
+            return this;
+        }
+
         public ICollectionConfig<TEntity> AddCollection<TEntity, TRepository>(string alias, string name, Action<ICollectionConfig<TEntity>> configure)
             where TEntity : class, IEntity
             where TRepository : IRepository

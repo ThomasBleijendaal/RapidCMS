@@ -86,6 +86,7 @@ namespace RapidCMS.Example.Server
                     // not have access to all of the sections and no other sections are defined on the dashboard
                     config.SetEmptyLandingPage(typeof(LandingPage));
                 }
+                config.EnableDevelopmentLogging(true);
 
                 // CRUD editor for simple POCO with recursive sub collections
                 // --> see Collections/PersonCollection for the basics of this CMS
@@ -131,8 +132,6 @@ namespace RapidCMS.Example.Server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseRapidCMS(isDevelopment: env.IsDevelopment());
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

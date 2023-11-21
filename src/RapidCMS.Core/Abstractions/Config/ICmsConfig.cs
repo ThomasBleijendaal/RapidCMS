@@ -105,6 +105,13 @@ namespace RapidCMS.Core.Abstractions.Config
         ICmsConfig AllowAnonymousUser();
 
         /// <summary>
+        /// Enables outputting exceptions via the error page.
+        /// </summary>
+        /// <param name="enabled"></param>
+        /// <returns></returns>
+        ICmsConfig EnableDevelopmentLogging(bool enabled);
+
+        /// <summary>
         /// Draws the given razor component as login screen.
         /// </summary>
         /// <param name="loginType">Type of razor component.</param>

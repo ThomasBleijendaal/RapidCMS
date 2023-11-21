@@ -42,7 +42,7 @@ namespace RapidCMS.Api.Core
             services.AddTransient<IApiHandlerResolver, ApiHandlerResolver>();
             services.AddTransient<IFileHandlerResolver, FileHandlerResolver>();
 
-            services.AddHttpContextAccessor();
+            //services.AddHttpContextAccessor();
 
             if (config.AllowAnonymousUsage)
             {

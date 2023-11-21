@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using RapidCMS.Core.Abstractions.Resolvers;
 using RapidCMS.Core.Abstractions.Services;
 using RapidCMS.Core.Abstractions.Setup;
@@ -28,7 +27,6 @@ namespace RapidCMS.Core.Services.Tree
         private readonly IAuthService _authService;
         private readonly IParentService _parentService;
         private readonly IConcurrencyService _concurrencyService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public TreeService(
             ISetupResolver<CollectionSetup> collectionResolver,
@@ -38,8 +36,7 @@ namespace RapidCMS.Core.Services.Tree
             IRepositoryResolver repositoryResolver,
             IAuthService authService,
             IParentService parentService,
-            IConcurrencyService concurrencyService,
-            IHttpContextAccessor httpContextAccessor)
+            IConcurrencyService concurrencyService)
         {
             _collectionResolver = collectionResolver;
             _pageResolver = pageResolver;
@@ -49,7 +46,6 @@ namespace RapidCMS.Core.Services.Tree
             _authService = authService;
             _parentService = parentService;
             _concurrencyService = concurrencyService;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<TreeCollectionUI?> GetCollectionAsync(string alias, ParentPath? parentPath)
@@ -136,8 +132,6 @@ namespace RapidCMS.Core.Services.Tree
 
         public async Task<TreeNodesUI?> GetNodesAsync(string alias, ParentPath? parentPath, int pageNr, int pageSize)
         {
-            var x = _httpContextAccessor.HttpContext;
-
             var collection = await _collectionResolver.ResolveSetupAsync(alias);
             if (collection == null)
             {

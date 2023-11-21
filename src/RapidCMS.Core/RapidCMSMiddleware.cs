@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using RapidCMS.Core.Abstractions.Config;
 using RapidCMS.Core.Abstractions.Dispatchers;
@@ -124,7 +123,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IMediatorEventListener, RepositoryMediatorEventConverter>();
 
             // UI requirements
-            services.AddHttpContextAccessor();
+            //services.AddHttpContextAccessor();
             services.AddHttpClient();
 
             services.AddMemoryCache();
@@ -185,12 +184,12 @@ namespace Microsoft.Extensions.DependencyInjection
             }
         }
 
-        public static IApplicationBuilder UseRapidCMS(this IApplicationBuilder app, bool isDevelopment = false)
-        {
-            app.ApplicationServices.GetRequiredService<ICms>().IsDevelopment = isDevelopment;
+        //public static IApplicationBuilder UseRapidCMS(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, bool isDevelopment = false)
+        //{
+        //    app.ApplicationServices.GetRequiredService<ICms>().IsDevelopment = isDevelopment;
 
-            return app;
-        }
+        //    return app;
+        //}
 
         private static CmsConfig GetRootConfig(Action<ICmsConfig>? config = null)
         {
