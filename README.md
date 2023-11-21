@@ -38,17 +38,11 @@ Since RapidCMS can be used in various ways, please pick a deployment mode. And r
 - [Server-side RapidCMS](SETUP_SERVERSIDE.md) - requires an ASP.NET Core web server.
 - [Client-side RapidCMS](SETUP_CLIENTSIDE.md) - can be statically hosted.
 - [Companion API for client-side RapidCMS](SETUP_COMPANION.md) - requires an ASP.NET Core web server or Azure Function App.
-- [MAUI RapidCMS](SETUP_MAUI.md).
 
 ### Authentication
 
 - [Add authentication to Server-side](AUTHserver.md)
 - [Add authentication to Client-side + Companion API](AUTHclient.md)
-
-## How to setup RapidCMS Model Maker
-
-- [Plugin into server-side RapidCMS](SETUP_MMSERVERSIDE.md).
-- [Plugin into client-side RapidCMS with Companion API](SETUP_MMCLIENTSIDE.md).
 
 ## Quick starts
 
