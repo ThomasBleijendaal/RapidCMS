@@ -4,10 +4,6 @@
 
 [![#](https://img.shields.io/nuget/v/RapidCMS.UI?style=flat-square)](https://www.nuget.org/packages/RapidCMS.UI)
 
-#### RapidCMS Model Maker
-
-[![#](https://img.shields.io/nuget/v/RapidCMS.ModelMaker.SourceGenerator.EFCore?style=flat-square)](https://www.nuget.org/packages/RapidCMS.ModelMaker.SourceGenerator.EFCore)
-
 RapidCMS is a Blazor framework that allows you to build a CMS purely from code. It provides a comprehensive set of
 editors and controls, next to allowing you to add your own razor components for custom editors, buttons, labels, complete 
 sections and pages, and dashboard sections. By running as an element within your ASP.NET Core application, you have full control
@@ -29,7 +25,7 @@ in the browser.
 
 A demo of the WebAssembly variant of the CMS (running version 4.3.x) can be found here: 
 [https://rapidcms.z6.web.core.windows.net/](https://rapidcms.z6.web.core.windows.net/). This uses a repository that saves its data to the 
-local storage of the browser. .NET 5.0 WebAssembly tends to load slowly the first time but that will be fixed when .NET 6.0 is released.
+local storage of the browser.
 
 ## How to setup RapidCMS
 
