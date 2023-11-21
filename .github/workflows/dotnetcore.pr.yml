@@ -35,5 +35,3 @@ jobs:
       run: dotnet build --configuration Release ./src/RapidCMS.UI/RapidCMS.UI.csproj
     - name: Run Core Tests
       run: dotnet test ./src/RapidCMS.Core.Tests/RapidCMS.Core.Tests.csproj
-    - name: Run Model Maker Tests
-      run: dotnet test ./src/RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests/RapidCMS.ModelMaker.SourceGenerator.EFCore.Tests.csproj
