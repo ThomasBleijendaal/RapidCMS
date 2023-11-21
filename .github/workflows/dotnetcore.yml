@@ -14,10 +14,15 @@ jobs:
     - name: Get tag
       id: tag
       uses: dawidd6/action-get-tag@v1
-    - name: Setup .NET Core
+    - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '6.0.x'
+        include-prerelease: true
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.0.x'
         include-prerelease: true
     - uses: nuget/setup-nuget@v1
       with:
