@@ -43,3 +43,4 @@ Since RapidCMS can be used in various ways, please pick a deployment mode. And r
 ## Quick starts
 
 - [RapidCMS](QUICKSTART.md)
+
