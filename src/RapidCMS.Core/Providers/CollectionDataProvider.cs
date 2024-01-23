@@ -12,7 +12,6 @@ using RapidCMS.Core.Enums;
 using RapidCMS.Core.Forms;
 using RapidCMS.Core.Models.Data;
 using RapidCMS.Core.Models.EventArgs.Mediators;
-using RapidCMS.Core.Models.Setup;
 
 namespace RapidCMS.Core.Providers;
 
@@ -156,13 +155,19 @@ internal class CollectionDataProvider : IRelationDataCollection, IDisposable
         return elements.Where(x => _relatedIds.Contains(x.Id)).ToList();
     }
 
-    public void AddElement(object id) => _relatedIds.Add(id);
+    public void AddElement(object id)
+    {
+        if (!_relatedIds.Contains(id))
+        {
+            _relatedIds.Add(id);
+        }
+    }
 
     public void RemoveElement(object id) => _relatedIds.Remove(id);
 
     public bool IsRelated(object id) => _relatedIds.Any(x => x.Equals(id));
 
-    public IReadOnlyList<object> GetCurrentRelatedElementIds() => _relatedIds;
+    public IReadOnlyList<object> GetCurrentRelatedElementIds() => _relatedIds.ToList();
 
     public Type GetRelatedEntityType() => _relatedEntityType ?? typeof(object);
 

@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using RapidCMS.Core.Abstractions.Data;
+using RapidCMS.Core.Abstractions.UI;
+using RapidCMS.Core.Models.Configuration;
 using RapidCMS.Core.Models.Data;
+using RapidCMS.UI.Extensions;
 
 namespace RapidCMS.UI.Components.Editors;
 
-public abstract class BasePicker : BaseDataEditor
+public abstract class BasePicker : BaseDataEditor, IWantConfiguration<Picker>
 {
     protected string? _searchTerm;
     protected int _currentPage = 1;
@@ -25,15 +28,19 @@ public abstract class BasePicker : BaseDataEditor
 
     protected virtual bool IsMultiple { get; set; }
 
+    protected Picker Config { get; set; }
+
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
     private IRelationDataCollection RelationDataCollection
-        => DataCollection as IRelationDataCollection 
+        => DataCollection as IRelationDataCollection
             ?? throw new InvalidOperationException("Incorrect DataCollection assigned to Entity/iesPicker");
 
     protected override async Task OnInitializedAsync()
     {
+        Config = await this.GetConfigAsync() ?? new();
+
         if (DataCollection != null)
         {
             DataCollection.OnDataChange += UpdateOptionsAsync;
@@ -83,6 +90,49 @@ public abstract class BasePicker : BaseDataEditor
         await UpdateOptionsAsync();
     }
 
+    protected async Task SelectAllAsync()
+    {
+        if (RelationDataCollection == null)
+        {
+            return;
+        }
+
+        var page = 1;
+        do
+        {
+            var view = View.Create(Config.PageSize, page, null, null);
+            var data = await RelationDataCollection.GetAvailableElementsAsync(view);
+
+            foreach (var item in data)
+            {
+                RelationDataCollection.AddElement(item.Id);
+            }
+
+            if (data.Count < Config.PageSize)
+            {
+                break;
+            }
+            else
+            {
+                page++;
+            }
+        }
+        while (true);
+
+        StateHasChanged();
+    }
+
+    protected async Task UnselectAllAsync()
+    {
+        var items = RelationDataCollection.GetCurrentRelatedElementIds();
+        foreach (var item in items)
+        {
+            RelationDataCollection.RemoveElement(item);
+        }
+
+        StateHasChanged();
+    }
+
     private async Task UpdateOptionsAsync()
     {
         if (DataCollection == null)
@@ -90,7 +140,7 @@ public abstract class BasePicker : BaseDataEditor
             return;
         }
 
-        var view = View.Create(25, _currentPage, _searchTerm, default);
+        var view = View.Create(Config.PageSize, _currentPage, _searchTerm, default);
         _options = await DataCollection.GetAvailableElementsAsync(view);
 
         if (view.MoreDataAvailable)
