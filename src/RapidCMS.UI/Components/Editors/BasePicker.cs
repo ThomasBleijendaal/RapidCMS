@@ -124,6 +124,11 @@ public abstract class BasePicker : BaseDataEditor, IWantConfiguration<Picker>
 
     protected async Task UnselectAllAsync()
     {
+        if (RelationDataCollection == null)
+        {
+            return;
+        }
+
         var items = RelationDataCollection.GetCurrentRelatedElementIds();
         foreach (var item in items)
         {
