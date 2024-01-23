@@ -1,7 +1,22 @@
 ﻿<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <button type="button" class="btn btn-light" @onclick="@(async (x) => await OnResetView.InvokeAsync())"><Icon Name="Refresh" /> Reset</button>
-    </li>
+    @if (Config.EnableSelectAll)
+    {
+        <li class="nav-item">
+            <button type="button" class="btn btn-light" @onclick="@(async (x) => await OnSelectAll.InvokeAsync())"><Icon Name="MultiSelect" /> Select all</button>
+        </li>
+    }
+    @if (Config.EnableUnselectAll)
+    {
+        <li class="nav-item">
+            <button type="button" class="btn btn-light" @onclick="@(async (x) => await OnUnselectAll.InvokeAsync())"><Icon Name="RemoveFilter" /> Unselect all</button>
+        </li>
+    }
+    @if (Config.EnableReset)
+    {
+        <li class="nav-item">
+            <button type="button" class="btn btn-light" @onclick="@(async (x) => await OnResetView.InvokeAsync())"><Icon Name="Refresh" /> Reset</button>
+        </li>
+    }
 
     <li class="nav-item search">
         <div class="input-group">
@@ -24,5 +39,8 @@
     private string? _searchTerm;
 
     [Parameter] public EventCallback OnResetView { get; set; } = default!;
+    [Parameter] public EventCallback OnSelectAll { get; set; } = default!;
+    [Parameter] public EventCallback OnUnselectAll { get; set; } = default!;
     [Parameter] public EventCallback<string> OnSearch { get; set; } = default!;
-} 
+    [Parameter] public Picker Config { get; set; } = default!;
+}

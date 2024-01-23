@@ -153,7 +153,9 @@ public static class PersonCollection
                         // so this field will allow the user to select an entity that is one level deeper in the person-tree
                         section.AddField(x => x.FavouriteChildId)
                             .SetName("Favorite child")
-                            .SetType(EditorType.Select)
+                            .SetType(EditorType.EntityPicker)
+                            // use the Picker configuration class to configure EntityPicker and EntitiesPicker editors
+                            .SetConfiguration(new Picker(PageSize: 3))
                             .VisibleWhen((person, state) => state == EntityState.IsExisting)
                             .SetCollectionRelation<Person>("person", config =>
                             {
