@@ -78,7 +78,7 @@ thead td:hover .icon {
     width: 100px;
     position: fixed;
     top: 3.5rem;
-    height: 100vh;
+    height: calc(100vh - 3.5rem);
     overflow-x: hidden;
     background-color: #fff;
     padding-top: 1rem;
