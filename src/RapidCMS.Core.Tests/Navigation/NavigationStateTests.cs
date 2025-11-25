@@ -13,7 +13,7 @@ public class NavigationStateTests
     {
         var state = new NavigationState(url, query);
 
-        Assert.IsTrue(expectedState.Equals(state));
+        Assert.That(expectedState.Equals(state), Is.True);
     }
 
     private class NavigationStateTestCases : IEnumerable

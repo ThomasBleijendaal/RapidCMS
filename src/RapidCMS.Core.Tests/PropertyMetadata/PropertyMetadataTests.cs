@@ -1,11 +1,10 @@
-﻿using System;
+﻿using NUnit.Framework;
+using RapidCMS.Core.Abstractions.Metadata;
+using RapidCMS.Core.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using NUnit.Framework;
-using RapidCMS.Core.Abstractions.Metadata;
-using RapidCMS.Core.Helpers;
-using RapidCMS.Core.Models;
 
 namespace RapidCMS.Core.Tests.PropertyMetadata;
 
@@ -19,15 +18,15 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(func) as IFullPropertyMetadata;
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("Test", data.PropertyName);
-        Assert.AreEqual("Test Value", data.Getter(instance));
-        Assert.AreEqual(typeof(string), data.PropertyType);
-        Assert.AreEqual(typeof(BasicClass), data.ObjectType);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo("Test"));
+        Assert.That(data.Getter(instance), Is.EqualTo("Test Value"));
+        Assert.That(data.PropertyType, Is.EqualTo(typeof(string)));
+        Assert.That(data.ObjectType, Is.EqualTo(typeof(BasicClass)));
 
         data.Setter(instance, "New Value");
 
-        Assert.AreEqual("New Value", instance.Test);
+        Assert.That(instance.Test, Is.EqualTo("New Value"));
     }
 
     [Test]
@@ -38,15 +37,15 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(func) as IFullPropertyMetadata;
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("Id", data.PropertyName);
-        Assert.AreEqual(1, data.Getter(instance));
-        Assert.AreEqual(typeof(int), data.PropertyType);
-        Assert.AreEqual(typeof(BasicClass), data.ObjectType);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo("Id"));
+        Assert.That(data.Getter(instance), Is.EqualTo(1));
+        Assert.That(data.PropertyType, Is.EqualTo(typeof(int)));
+        Assert.That(data.ObjectType, Is.EqualTo(typeof(BasicClass)));
 
         data.Setter(instance, 2);
 
-        Assert.AreEqual(2, instance.Id);
+        Assert.That(instance.Id, Is.EqualTo(2));
     }
 
     [Test]
@@ -57,15 +56,15 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(func) as IFullPropertyMetadata;
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("Basic.Test", data.PropertyName);
-        Assert.AreEqual("Test Value", data.Getter(instance));
-        Assert.AreEqual(typeof(string), data.PropertyType);
-        Assert.AreEqual(typeof(ParentClass), data.ObjectType);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo("Basic.Test"));
+        Assert.That(data.Getter(instance), Is.EqualTo("Test Value"));
+        Assert.That(data.PropertyType, Is.EqualTo(typeof(string)));
+        Assert.That(data.ObjectType, Is.EqualTo(typeof(ParentClass)));
 
         data.Setter(instance, "New Value");
 
-        Assert.AreEqual("New Value", instance.Basic.Test);
+        Assert.That(instance.Basic.Test, Is.EqualTo("New Value"));
     }
 
     [Test]
@@ -76,15 +75,15 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(func) as IFullPropertyMetadata;
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("Basic.Id", data.PropertyName);
-        Assert.AreEqual(1, data.Getter(instance));
-        Assert.AreEqual(typeof(int), data.PropertyType);
-        Assert.AreEqual(typeof(ParentClass), data.ObjectType);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo("Basic.Id"));
+        Assert.That(data.Getter(instance), Is.EqualTo(1));
+        Assert.That(data.PropertyType, Is.EqualTo(typeof(int)));
+        Assert.That(data.ObjectType, Is.EqualTo(typeof(ParentClass)));
 
         data.Setter(instance, 2);
 
-        Assert.AreEqual(2, instance.Basic.Id);
+        Assert.That(instance.Basic.Id, Is.EqualTo(2));
     }
 
     [Test]
@@ -95,16 +94,16 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetExpressionMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("Test Value - Blub", data.StringGetter(instance));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.StringGetter(instance), Is.EqualTo("Test Value - Blub"));
 
         var propertyData = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(propertyData);
-        Assert.IsNull(propertyData as IFullPropertyMetadata);
-        Assert.AreEqual("x => Format(\"{0} - Blub\", x.Test)", propertyData.PropertyName);
-        Assert.AreEqual("Test Value - Blub", propertyData.Getter(instance));
-        Assert.AreEqual(typeof(string), propertyData.PropertyType);
+        Assert.That(propertyData, Is.Not.Null);
+        Assert.That(propertyData as IFullPropertyMetadata, Is.Null);
+        Assert.That(propertyData.PropertyName, Is.EqualTo("x => Format(\"{0} - Blub\", x.Test)"));
+        Assert.That(propertyData.Getter(instance), Is.EqualTo("Test Value - Blub"));
+        Assert.That(propertyData.PropertyType, Is.EqualTo(typeof(string)));
     }
 
     [Test]
@@ -115,15 +114,15 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetExpressionMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("", data.StringGetter(instance));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.StringGetter(instance), Is.EqualTo(""));
 
         var propertyData = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(propertyData as IFullPropertyMetadata);
-        Assert.AreEqual("Test", propertyData.PropertyName);
-        Assert.AreEqual(null, propertyData.Getter(instance));
-        Assert.AreEqual(typeof(string), propertyData.PropertyType);
+        Assert.That(propertyData as IFullPropertyMetadata, Is.Not.Null);
+        Assert.That(propertyData.PropertyName, Is.EqualTo("Test"));
+        Assert.That(propertyData.Getter(instance), Is.EqualTo(null));
+        Assert.That(propertyData.PropertyType, Is.EqualTo(typeof(string)));
     }
 
     [Test]
@@ -134,8 +133,8 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetExpressionMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual(string.Empty, data.StringGetter(instance));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.StringGetter(instance), Is.EqualTo(string.Empty));
     }
 
     [Test]
@@ -146,8 +145,8 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetExpressionMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("test", data.StringGetter(instance));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.StringGetter(instance), Is.EqualTo("test"));
     }
 
     [Test]
@@ -158,16 +157,16 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetExpressionMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("Blaat", data.StringGetter(instance));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.StringGetter(instance), Is.EqualTo("Blaat"));
 
         var propertyData = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(propertyData);
-        Assert.IsNull(propertyData as IFullPropertyMetadata);
-        Assert.AreEqual("x => \"Blaat\"", propertyData.PropertyName);
-        Assert.AreEqual("Blaat", propertyData.Getter(instance));
-        Assert.AreEqual(typeof(string), propertyData.PropertyType);
+        Assert.That(propertyData, Is.Not.Null);
+        Assert.That(propertyData as IFullPropertyMetadata, Is.Null);
+        Assert.That(propertyData.PropertyName, Is.EqualTo("x => \"Blaat\""));
+        Assert.That(propertyData.Getter(instance), Is.EqualTo("Blaat"));
+        Assert.That(propertyData.PropertyType, Is.EqualTo(typeof(string)));
     }
 
     [Test]
@@ -178,15 +177,15 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetExpressionMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("T e s t   V a l u e", data.StringGetter(instance));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.StringGetter(instance), Is.EqualTo("T e s t   V a l u e"));
 
         var propertyData = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(propertyData);
-        Assert.IsNull(propertyData as IFullPropertyMetadata);
-        Assert.AreEqual("x => Join( , x.Test.ToCharArray())", propertyData.PropertyName);
-        Assert.AreEqual("T e s t   V a l u e", propertyData.Getter(instance));
+        Assert.That(propertyData, Is.Not.Null);
+        Assert.That(propertyData as IFullPropertyMetadata, Is.Null);
+        Assert.That(propertyData.PropertyName, Is.EqualTo("x => Join( , x.Test.ToCharArray())"));
+        Assert.That(propertyData.Getter(instance), Is.EqualTo("T e s t   V a l u e"));
     }
 
     [Test]
@@ -197,15 +196,15 @@ public class PropertyMetadataTests
 
         var propertyData = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(propertyData);
-        Assert.IsNull(propertyData as IFullPropertyMetadata);
-        Assert.AreEqual("x => Join( , x.Test.ToCharArray())", propertyData.PropertyName);
-        Assert.AreEqual("T e s t   V a l u e", propertyData.Getter(instance));
+        Assert.That(propertyData, Is.Not.Null);
+        Assert.That(propertyData as IFullPropertyMetadata, Is.Null);
+        Assert.That(propertyData.PropertyName, Is.EqualTo("x => Join( , x.Test.ToCharArray())"));
+        Assert.That(propertyData.Getter(instance), Is.EqualTo("T e s t   V a l u e"));
 
         var data = PropertyMetadataHelper.GetExpressionMetadata(propertyData);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("T e s t   V a l u e", data.StringGetter(instance));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.StringGetter(instance), Is.EqualTo("T e s t   V a l u e"));
     }
 
     [Test]
@@ -216,14 +215,14 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetExpressionMetadata(func);
 
-        Assert.IsNull(data);
+        Assert.That(data, Is.Null);
 
         var propertyData = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(propertyData);
-        Assert.AreEqual("Id", propertyData.PropertyName);
-        Assert.AreEqual(3, propertyData.Getter(instance));
-        Assert.AreEqual(typeof(int), propertyData.PropertyType);
+        Assert.That(propertyData, Is.Not.Null);
+        Assert.That(propertyData.PropertyName, Is.EqualTo("Id"));
+        Assert.That(propertyData.Getter(instance), Is.EqualTo(3));
+        Assert.That(propertyData.PropertyType, Is.EqualTo(typeof(int)));
     }
 
     [Test]
@@ -234,16 +233,16 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetExpressionMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("RapidCMS.Core.Tests.PropertyMetadata.PropertyMetadataTests+BasicClass Test Value", data.StringGetter(instance));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.StringGetter(instance), Is.EqualTo("RapidCMS.Core.Tests.PropertyMetadata.PropertyMetadataTests+BasicClass Test Value"));
 
         var propertyData = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(propertyData);
-        Assert.IsNull(propertyData as IFullPropertyMetadata);
-        Assert.AreEqual("x => Format(\"{0} {1}\", x.Basic, x.Basic.Test)", propertyData.PropertyName);
-        Assert.AreEqual("RapidCMS.Core.Tests.PropertyMetadata.PropertyMetadataTests+BasicClass Test Value", propertyData.Getter(instance));
-        Assert.AreEqual(typeof(string), propertyData.PropertyType);
+        Assert.That(propertyData, Is.Not.Null);
+        Assert.That(propertyData as IFullPropertyMetadata, Is.Null);
+        Assert.That(propertyData.PropertyName, Is.EqualTo("x => Format(\"{0} {1}\", x.Basic, x.Basic.Test)"));
+        Assert.That(propertyData.Getter(instance), Is.EqualTo("RapidCMS.Core.Tests.PropertyMetadata.PropertyMetadataTests+BasicClass Test Value"));
+        Assert.That(propertyData.PropertyType, Is.EqualTo(typeof(string)));
     }
 
     [Test]
@@ -254,13 +253,13 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("x => x.Test.ToLower()", data.PropertyName);
-        Assert.AreEqual("test value", data.Getter(instance));
-        Assert.AreEqual(typeof(string), data.PropertyType);
-        Assert.AreEqual(typeof(BasicClass), data.ObjectType);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo("x => x.Test.ToLower()"));
+        Assert.That(data.Getter(instance), Is.EqualTo("test value"));
+        Assert.That(data.PropertyType, Is.EqualTo(typeof(string)));
+        Assert.That(data.ObjectType, Is.EqualTo(typeof(BasicClass)));
 
-        Assert.IsNull(data as IFullPropertyMetadata);
+        Assert.That(data as IFullPropertyMetadata, Is.Null);
     }
 
     [Test]
@@ -271,13 +270,13 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("x => (x.Id * 2)", data.PropertyName);
-        Assert.AreEqual(2, data.Getter(instance));
-        Assert.AreEqual(typeof(int), data.PropertyType);
-        Assert.AreEqual(typeof(BasicClass), data.ObjectType);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo("x => (x.Id * 2)"));
+        Assert.That(data.Getter(instance), Is.EqualTo(2));
+        Assert.That(data.PropertyType, Is.EqualTo(typeof(int)));
+        Assert.That(data.ObjectType, Is.EqualTo(typeof(BasicClass)));
 
-        Assert.IsNull(data as IFullPropertyMetadata);
+        Assert.That(data as IFullPropertyMetadata, Is.Null);
     }
 
     [Test]
@@ -288,13 +287,13 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("x => x.Basic.Test.ToLower()", data.PropertyName);
-        Assert.AreEqual("test value", data.Getter(instance));
-        Assert.AreEqual(typeof(string), data.PropertyType);
-        Assert.AreEqual(typeof(ParentClass), data.ObjectType);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo("x => x.Basic.Test.ToLower()"));
+        Assert.That(data.Getter(instance), Is.EqualTo("test value"));
+        Assert.That(data.PropertyType, Is.EqualTo(typeof(string)));
+        Assert.That(data.ObjectType, Is.EqualTo(typeof(ParentClass)));
 
-        Assert.IsNull(data as IFullPropertyMetadata);
+        Assert.That(data as IFullPropertyMetadata, Is.Null);
     }
 
     [Test]
@@ -305,13 +304,13 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("x => (x.Basic.Id * 2)", data.PropertyName);
-        Assert.AreEqual(2, data.Getter(instance));
-        Assert.AreEqual(typeof(int), data.PropertyType);
-        Assert.AreEqual(typeof(ParentClass), data.ObjectType);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo("x => (x.Basic.Id * 2)"));
+        Assert.That(data.Getter(instance), Is.EqualTo(2));
+        Assert.That(data.PropertyType, Is.EqualTo(typeof(int)));
+        Assert.That(data.ObjectType, Is.EqualTo(typeof(ParentClass)));
 
-        Assert.IsNull(data as IFullPropertyMetadata);
+        Assert.That(data as IFullPropertyMetadata, Is.Null);
     }
 
     [Test]
@@ -322,13 +321,13 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("NullableTest", data.PropertyName);
-        Assert.AreEqual("Test Value", data.Getter(instance));
-        Assert.AreEqual(typeof(string), data.PropertyType);
-        Assert.AreEqual(typeof(BasicClass), data.ObjectType);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo("NullableTest"));
+        Assert.That(data.Getter(instance), Is.EqualTo("Test Value"));
+        Assert.That(data.PropertyType, Is.EqualTo(typeof(string)));
+        Assert.That(data.ObjectType, Is.EqualTo(typeof(BasicClass)));
 
-        Assert.IsNotNull(data as IFullPropertyMetadata);
+        Assert.That(data as IFullPropertyMetadata, Is.Not.Null);
     }
 
     [Test]
@@ -339,12 +338,12 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual(10, data.Getter(instance));
-        Assert.AreEqual(typeof(int?), data.PropertyType);
-        Assert.AreEqual(typeof(BasicClass), data.ObjectType);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.Getter(instance), Is.EqualTo(10));
+        Assert.That(data.PropertyType, Is.EqualTo(typeof(int?)));
+        Assert.That(data.ObjectType, Is.EqualTo(typeof(BasicClass)));
 
-        Assert.IsNull(data as IFullPropertyMetadata);
+        Assert.That(data as IFullPropertyMetadata, Is.Null);
     }
 
     [Test]
@@ -355,13 +354,13 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("Basic.NullableTest", data.PropertyName);
-        Assert.AreEqual("Test Value", data.Getter(instance));
-        Assert.AreEqual(typeof(string), data.PropertyType);
-        Assert.AreEqual(typeof(ParentClass), data.ObjectType);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo("Basic.NullableTest"));
+        Assert.That(data.Getter(instance), Is.EqualTo("Test Value"));
+        Assert.That(data.PropertyType, Is.EqualTo(typeof(string)));
+        Assert.That(data.ObjectType, Is.EqualTo(typeof(ParentClass)));
 
-        Assert.IsNotNull(data as IFullPropertyMetadata);
+        Assert.That(data as IFullPropertyMetadata, Is.Not.Null);
     }
 
     [Test]
@@ -372,12 +371,12 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual(10, data.Getter(instance));
-        Assert.AreEqual(typeof(int?), data.PropertyType);
-        Assert.AreEqual(typeof(ParentClass), data.ObjectType);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.Getter(instance), Is.EqualTo(10));
+        Assert.That(data.PropertyType, Is.EqualTo(typeof(int?)));
+        Assert.That(data.ObjectType, Is.EqualTo(typeof(ParentClass)));
 
-        Assert.IsNull(data as IFullPropertyMetadata);
+        Assert.That(data as IFullPropertyMetadata, Is.Null);
     }
 
     [Test]
@@ -389,9 +388,9 @@ public class PropertyMetadataTests
         Expression<Func<ParentCollectionClass, IEnumerable<int>>> func2 = (ParentCollectionClass x) => x.Basics.Select(x => x.Id);
         var data2 = PropertyMetadataHelper.GetPropertyMetadata(func2);
 
-        Assert.IsNotNull(data1.Fingerprint);
-        Assert.IsNotNull(data2.Fingerprint);
-        Assert.AreNotEqual(data1.Fingerprint, data2.Fingerprint);
+        Assert.That(data1.Fingerprint, Is.Not.Null);
+        Assert.That(data2.Fingerprint, Is.Not.Null);
+        Assert.That(data2.Fingerprint, Is.Not.EqualTo(data1.Fingerprint));
     }
 
     [Test]
@@ -403,9 +402,9 @@ public class PropertyMetadataTests
         Expression<Func<ParentCollectionClass, IEnumerable<int>>> func2 = (ParentCollectionClass x) => x.Basics.Select(x => x.Id);
         var data2 = PropertyMetadataHelper.GetPropertyMetadata(func2);
 
-        Assert.IsNotNull(data1.Fingerprint);
-        Assert.IsNotNull(data2.Fingerprint);
-        Assert.AreEqual(data1.Fingerprint, data2.Fingerprint);
+        Assert.That(data1.Fingerprint, Is.Not.Null);
+        Assert.That(data2.Fingerprint, Is.Not.Null);
+        Assert.That(data2.Fingerprint, Is.EqualTo(data1.Fingerprint));
     }
 
     [Test]
@@ -417,9 +416,9 @@ public class PropertyMetadataTests
         Expression<Func<ParentCollectionClass, IEnumerable<int>>> func2 = (ParentCollectionClass x) => x.Basics2.Select(x => x.Id);
         var data2 = PropertyMetadataHelper.GetPropertyMetadata(func2);
 
-        Assert.IsNotNull(data1.Fingerprint);
-        Assert.IsNotNull(data2.Fingerprint);
-        Assert.AreNotEqual(data1.Fingerprint, data2.Fingerprint);
+        Assert.That(data1.Fingerprint, Is.Not.Null);
+        Assert.That(data2.Fingerprint, Is.Not.Null);
+        Assert.That(data2.Fingerprint, Is.Not.EqualTo(data1.Fingerprint));
     }
 
     [Test]
@@ -431,9 +430,9 @@ public class PropertyMetadataTests
         Expression<Func<ParentCollectionClass, IEnumerable<int>>> func2 = (ParentCollectionClass x) => x.Basics.Select(x => 1);
         var data2 = PropertyMetadataHelper.GetPropertyMetadata(func2);
 
-        Assert.IsNotNull(data1.Fingerprint);
-        Assert.IsNotNull(data2.Fingerprint);
-        Assert.AreNotEqual(data1.Fingerprint, data2.Fingerprint);
+        Assert.That(data1.Fingerprint, Is.Not.Null);
+        Assert.That(data2.Fingerprint, Is.Not.Null);
+        Assert.That(data2.Fingerprint, Is.Not.EqualTo(data1.Fingerprint));
     }
 
     [Test]
@@ -447,12 +446,12 @@ public class PropertyMetadataTests
 
         var data3 = PropertyMetadataHelper.GetPropertyMetadata(typeof(ParentClass), "Basic.Test");
 
-        Assert.IsNotNull(data1.Fingerprint);
-        Assert.IsNotNull(data2.Fingerprint);
-        Assert.IsNotNull(data3.Fingerprint);
-        Assert.AreEqual(data1.Fingerprint, data2.Fingerprint);
-        Assert.AreEqual(data2.Fingerprint, data3.Fingerprint);
-        Assert.AreEqual(data1.Fingerprint, data3.Fingerprint);
+        Assert.That(data1.Fingerprint, Is.Not.Null);
+        Assert.That(data2.Fingerprint, Is.Not.Null);
+        Assert.That(data3.Fingerprint, Is.Not.Null);
+        Assert.That(data2.Fingerprint, Is.EqualTo(data1.Fingerprint));
+        Assert.That(data3.Fingerprint, Is.EqualTo(data2.Fingerprint));
+        Assert.That(data3.Fingerprint, Is.EqualTo(data1.Fingerprint));
     }
 
     [Test]
@@ -463,8 +462,8 @@ public class PropertyMetadataTests
         Expression<Func<RecursiveClass, RecursiveClass>> func = x => x;
         var data = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("Self", ((RecursiveClass)data.Getter(instance)).Name);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(((RecursiveClass)data.Getter(instance)).Name, Is.EqualTo("Self"));
     }
 
     [Test]
@@ -475,8 +474,8 @@ public class PropertyMetadataTests
         Expression<Func<RecursiveClass, RecursiveClass>> func = x => x.Parent;
         var data = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("Parent", ((RecursiveClass)data.Getter(instance)).Name);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(((RecursiveClass)data.Getter(instance)).Name, Is.EqualTo("Parent"));
     }
 
     [Test]
@@ -487,8 +486,8 @@ public class PropertyMetadataTests
         Expression<Func<IRecursiveClass, IRecursiveClass>> func = x => x.Parent;
         var data = PropertyMetadataHelper.GetPropertyMetadata(func);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual("Parent", ((RecursiveClass)data.Getter(instance)).Name);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(((RecursiveClass)data.Getter(instance)).Name, Is.EqualTo("Parent"));
     }
 
     [Test]
@@ -501,9 +500,9 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(instance.GetType(), property);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual(nameof(BasicClass.Test), data.PropertyName);
-        Assert.AreEqual(expected, data.Getter(instance));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo(nameof(BasicClass.Test)));
+        Assert.That(data.Getter(instance), Is.EqualTo(expected));
     }
 
     [Test]
@@ -517,9 +516,9 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(instance.GetType(), new[] { property1 }, property2);
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual($"{nameof(ParentClass.Basic)}.{nameof(BasicClass.Test)}", data.PropertyName);
-        Assert.AreEqual(expected, data.Getter(instance));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo($"{nameof(ParentClass.Basic)}.{nameof(BasicClass.Test)}"));
+        Assert.That(data.Getter(instance), Is.EqualTo(expected));
     }
 
     [Test]
@@ -530,9 +529,9 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(instance.GetType(), "Test");
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual(nameof(BasicClass.Test), data.PropertyName);
-        Assert.AreEqual(expected, data.Getter(instance));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo(nameof(BasicClass.Test)));
+        Assert.That(data.Getter(instance), Is.EqualTo(expected));
     }
 
     [Test]
@@ -543,9 +542,9 @@ public class PropertyMetadataTests
 
         var data = PropertyMetadataHelper.GetPropertyMetadata(instance.GetType(), "Basic.Test");
 
-        Assert.IsNotNull(data);
-        Assert.AreEqual($"{nameof(ParentClass.Basic)}.{nameof(BasicClass.Test)}", data.PropertyName);
-        Assert.AreEqual(expected, data.Getter(instance));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(data.PropertyName, Is.EqualTo($"{nameof(ParentClass.Basic)}.{nameof(BasicClass.Test)}"));
+        Assert.That(data.Getter(instance), Is.EqualTo(expected));
     }
 
     [Test]
@@ -555,9 +554,9 @@ public class PropertyMetadataTests
 
         var dataProperty = (IFullPropertyMetadata)PropertyMetadataHelper.GetPropertyMetadata<ReferenceType, string>(x => x.Data);
 
-        Assert.IsNotNull(dataProperty);
+        Assert.That(dataProperty, Is.Not.Null);
         Assert.DoesNotThrow(() => dataProperty.Setter(instance, null));
-        Assert.IsNull(instance.Data);
+        Assert.That(instance.Data, Is.Null);
     }
 
     [Test]
@@ -567,9 +566,9 @@ public class PropertyMetadataTests
 
         var dataProperty = (IFullPropertyMetadata)PropertyMetadataHelper.GetPropertyMetadata<ValueType, int>(x => x.Data);
 
-        Assert.IsNotNull(dataProperty);
+        Assert.That(dataProperty, Is.Not.Null);
         Assert.DoesNotThrow(() => dataProperty.Setter(instance, null));
-        Assert.AreEqual(0, instance.Data);
+        Assert.That(instance.Data, Is.EqualTo(0));
     }
 
     [Test]
@@ -579,9 +578,9 @@ public class PropertyMetadataTests
 
         var dataProperty = (IFullPropertyMetadata)PropertyMetadataHelper.GetPropertyMetadata<NullableValueType, int?>(x => x.Data);
 
-        Assert.IsNotNull(dataProperty);
+        Assert.That(dataProperty, Is.Not.Null);
         Assert.DoesNotThrow(() => dataProperty.Setter(instance, null));
-        Assert.IsNull(instance.Data);
+        Assert.That(instance.Data, Is.Null);
     }
 
     class BasicClass

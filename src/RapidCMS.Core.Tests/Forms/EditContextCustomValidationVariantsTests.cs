@@ -45,7 +45,7 @@ public class EditContextCustomValidationVariantsTests
 
         // assert
         Assert.That(await _subject.IsValidAsync(), Is.False);
-        Assert.AreEqual("Id is null", _subject.GetPropertyState("Id").GetValidationMessages().First());
+        Assert.That(_subject.GetPropertyState("Id").GetValidationMessages().First(), Is.EqualTo("Id is null"));
     }
 
     [Test]
@@ -74,7 +74,7 @@ public class EditContextCustomValidationVariantsTests
 
         // assert
         Assert.That(await _subject.IsValidAsync(), Is.False);
-        Assert.AreEqual("Id of A-variant cannot be A", _subject.GetPropertyState("Id").GetValidationMessages().First());
+        Assert.That(_subject.GetPropertyState("Id").GetValidationMessages().First(), Is.EqualTo("Id of A-variant cannot be A"));
     }
 
     [Test]
@@ -103,7 +103,7 @@ public class EditContextCustomValidationVariantsTests
 
         // assert
         Assert.That(await _subject.IsValidAsync(), Is.False);
-        Assert.AreEqual("Id of B-variant cannot be B", _subject.GetPropertyState("Id").GetValidationMessages().First());
+        Assert.That(_subject.GetPropertyState("Id").GetValidationMessages().First(), Is.EqualTo("Id of B-variant cannot be B"));
     }
 
     [Test]
@@ -134,7 +134,7 @@ public class EditContextCustomValidationVariantsTests
         _subject.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata<Entity, string>(x => x.Id));
 
         // assert
-        Assert.IsTrue(await _subject.IsValidAsync());
+        Assert.That(await _subject.IsValidAsync(), Is.True);
     }
 
     [Test]
@@ -162,7 +162,7 @@ public class EditContextCustomValidationVariantsTests
         _subject.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata<Entity, string>(x => x.Id));
 
         // assert
-        Assert.IsTrue(await _subject.IsValidAsync());
+        Assert.That(await _subject.IsValidAsync(), Is.True);
     }
 
     [Test]
@@ -190,7 +190,7 @@ public class EditContextCustomValidationVariantsTests
         _subject.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata<Entity, string>(x => x.Id));
 
         // assert
-        Assert.IsTrue(await _subject.IsValidAsync());
+        Assert.That(await _subject.IsValidAsync(), Is.True);
     }
 
     public class Entity : IEntity
