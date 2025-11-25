@@ -26,8 +26,8 @@ public class EntityModelJsonConverter
 
         var deserializedModel = JsonConvert.DeserializeObject<EntityModel<Entity>>(json, _jsonSerializerSettings);
 
-        Assert.AreEqual(model.Entity.GetType(), deserializedModel.Entity.GetType());
-        Assert.AreEqual(model.VariantAlias, deserializedModel.VariantAlias);
+        Assert.That(deserializedModel.Entity.GetType(), Is.EqualTo(model.Entity.GetType()));
+        Assert.That(deserializedModel.VariantAlias, Is.EqualTo(model.VariantAlias));
     }
 
     [Test]
@@ -39,8 +39,8 @@ public class EntityModelJsonConverter
 
         var deserializedModel = JsonConvert.DeserializeObject<EntityModel<Entity>>(json, _jsonSerializerSettings);
 
-        Assert.AreEqual(model.Entity.GetType(), deserializedModel.Entity.GetType());
-        Assert.AreEqual(model.VariantAlias, deserializedModel.VariantAlias);
+        Assert.That(deserializedModel.Entity.GetType(), Is.EqualTo(model.Entity.GetType()));
+        Assert.That(deserializedModel.VariantAlias, Is.EqualTo(model.VariantAlias));
     }
 
     class Entity : IEntity

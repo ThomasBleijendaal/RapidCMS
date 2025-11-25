@@ -229,10 +229,10 @@ public class GetEntitiesDispatcherTests
         var response = await _subject.GetAsync(new GetEntitiesOfParentRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias", ParentPath = parentPath });
 
         // assert
-        Assert.AreEqual(expectedUsageTypes1, response.EditContexts.ElementAtOrDefault(0)?.UsageType ?? 0);
-        Assert.AreEqual(expectedUsageTypes2, response.EditContexts.ElementAtOrDefault(1)?.UsageType ?? 0);
-        Assert.AreEqual(expectedUsageTypes3, response.EditContexts.ElementAtOrDefault(2)?.UsageType ?? 0);
-        Assert.AreEqual(expectedUsageTypes4, response.EditContexts.ElementAtOrDefault(3)?.UsageType ?? 0);
+        Assert.That(response.EditContexts.ElementAtOrDefault(0)?.UsageType ?? 0, Is.EqualTo(expectedUsageTypes1));
+        Assert.That(response.EditContexts.ElementAtOrDefault(1)?.UsageType ?? 0, Is.EqualTo(expectedUsageTypes2));
+        Assert.That(response.EditContexts.ElementAtOrDefault(2)?.UsageType ?? 0, Is.EqualTo(expectedUsageTypes3));
+        Assert.That(response.EditContexts.ElementAtOrDefault(3)?.UsageType ?? 0, Is.EqualTo(expectedUsageTypes4));
     }
 
     [TestCase(UsageType.Add, UsageType.Node | UsageType.Pick, UsageType.Node | UsageType.Pick, UsageType.Node | UsageType.Pick, null)]
@@ -244,10 +244,10 @@ public class GetEntitiesDispatcherTests
         var response = await _subject.GetAsync(new GetEntitiesOfRelationRequestModel { UsageType = usageType, View = view, CollectionAlias = "alias", Related = related });
 
         // assert
-        Assert.AreEqual(expectedUsageTypes1, response.EditContexts.ElementAtOrDefault(0)?.UsageType ?? 0);
-        Assert.AreEqual(expectedUsageTypes2, response.EditContexts.ElementAtOrDefault(1)?.UsageType ?? 0);
-        Assert.AreEqual(expectedUsageTypes3, response.EditContexts.ElementAtOrDefault(2)?.UsageType ?? 0);
-        Assert.AreEqual(expectedUsageTypes4, response.EditContexts.ElementAtOrDefault(3)?.UsageType ?? 0);
+        Assert.That(response.EditContexts.ElementAtOrDefault(0)?.UsageType ?? 0, Is.EqualTo(expectedUsageTypes1));
+        Assert.That(response.EditContexts.ElementAtOrDefault(1)?.UsageType ?? 0, Is.EqualTo(expectedUsageTypes2));
+        Assert.That(response.EditContexts.ElementAtOrDefault(2)?.UsageType ?? 0, Is.EqualTo(expectedUsageTypes3));
+        Assert.That(response.EditContexts.ElementAtOrDefault(3)?.UsageType ?? 0, Is.EqualTo(expectedUsageTypes4));
     }
 
     [TestCase(UsageType.List)]

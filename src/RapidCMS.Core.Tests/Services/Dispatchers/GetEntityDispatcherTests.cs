@@ -204,7 +204,7 @@ public class GetEntityDispatcherTests
         var context = await _subject.GetAsync(new GetEntityRequestModel { UsageType = usageType, CollectionAlias = "alias", Id = id, VariantAlias = "defaultentityvariant" });
 
         // assert
-        Assert.AreEqual(context.Entity, _entity);
+        Assert.That(_entity, Is.EqualTo(context.Entity));
     }
 
     [TestCase(UsageType.New, "defaultentityvariant", typeof(DefaultEntityVariant))]
@@ -217,7 +217,7 @@ public class GetEntityDispatcherTests
         var context = await _subject.GetAsync(new GetEntityRequestModel { UsageType = usageType, CollectionAlias = "alias", VariantAlias = variantAlias });
 
         // assert
-        Assert.AreEqual(context.Entity, _entity);
+        Assert.That(_entity, Is.EqualTo(context.Entity));
     }
 
     [TestCase(UsageType.View, "1")]
@@ -243,6 +243,6 @@ public class GetEntityDispatcherTests
         var context = await _subject.GetAsync(new GetEntityRequestModel { UsageType = usageType, CollectionAlias = "alias", VariantAlias = variantAlias });
 
         // assert
-        Assert.AreEqual(context.Entity, _entity);
+        Assert.That(_entity, Is.EqualTo(context.Entity));
     }
 }

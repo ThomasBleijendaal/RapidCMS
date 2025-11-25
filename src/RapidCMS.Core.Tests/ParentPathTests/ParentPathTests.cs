@@ -19,7 +19,7 @@ public class ParentPathTests
         var path = ParentPath.TryParse("test:123");
 
         // assert
-        Assert.AreEqual("test:123", path!.ToPathString());
+        Assert.That(path!.ToPathString(), Is.EqualTo("test:123"));
     }
 
     [Test]
@@ -32,8 +32,8 @@ public class ParentPathTests
         var newPath = ParentPath.AddLevel(path, "test2", "1234");
 
         // assert
-        Assert.AreEqual("test:123", path!.ToPathString());
-        Assert.AreEqual("test:123;test2:1234", newPath.ToPathString());
+        Assert.That(path!.ToPathString(), Is.EqualTo("test:123"));
+        Assert.That(newPath.ToPathString(), Is.EqualTo("test:123;test2:1234"));
     }
 
     [Test]
@@ -46,7 +46,7 @@ public class ParentPathTests
         var newPath = ParentPath.AddLevel(path, "test2", "1234");
 
         // assert
-        Assert.AreEqual("test2:1234", newPath.ToPathString());
+        Assert.That(newPath.ToPathString(), Is.EqualTo("test2:1234"));
     }
 
     [Test]
@@ -59,10 +59,10 @@ public class ParentPathTests
         var (newPath, collectionAlias, id) = ParentPath.RemoveLevel(path);
 
         // assert
-        Assert.AreEqual("test:123;test2:1234", path!.ToPathString());
-        Assert.AreEqual("test:123", newPath.ToPathString());
-        Assert.AreEqual("test2", collectionAlias);
-        Assert.AreEqual("1234", id);
+        Assert.That(path!.ToPathString(), Is.EqualTo("test:123;test2:1234"));
+        Assert.That(newPath.ToPathString(), Is.EqualTo("test:123"));
+        Assert.That(collectionAlias, Is.EqualTo("test2"));
+        Assert.That(id, Is.EqualTo("1234"));
     }
 
     [Test]
@@ -76,10 +76,10 @@ public class ParentPathTests
         var (newPath, collectionAlias, id) = ParentPath.RemoveLevel(intPath);
 
         // assert
-        Assert.AreEqual("test:123;test2:1234", path!.ToPathString());
-        Assert.AreEqual(null, newPath);
-        Assert.AreEqual("test", collectionAlias);
-        Assert.AreEqual("123", id);
+        Assert.That(path!.ToPathString(), Is.EqualTo("test:123;test2:1234"));
+        Assert.That(newPath, Is.EqualTo(null));
+        Assert.That(collectionAlias, Is.EqualTo("test"));
+        Assert.That(id, Is.EqualTo("123"));
     }
 
     [Test]
@@ -92,9 +92,9 @@ public class ParentPathTests
         var (newPath, collectionAlias, id) = ParentPath.RemoveLevel(path);
 
         // assert
-        Assert.AreEqual(null, path?.ToPathString());
-        Assert.AreEqual("", newPath?.ToPathString());
-        Assert.AreEqual(null, collectionAlias);
-        Assert.AreEqual(null, id);
+        Assert.That(path?.ToPathString(), Is.EqualTo(null));
+        Assert.That(newPath?.ToPathString(), Is.EqualTo(""));
+        Assert.That(collectionAlias, Is.EqualTo(null));
+        Assert.That(id, Is.EqualTo(null));
     }
 }

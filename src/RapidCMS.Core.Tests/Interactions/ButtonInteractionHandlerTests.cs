@@ -93,7 +93,7 @@ public class ButtonInteractionHandlerTests
 
         // assert
         _buttonActionHandler.Verify(x => x.RequiresValidForm(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>()), Times.Once());
-        Assert.AreEqual(requiresTesting, editContext.WasValidated(PropertyMetadataHelper.GetPropertyMetadata(property)!));
+        Assert.That(editContext.WasValidated(PropertyMetadataHelper.GetPropertyMetadata(property)!), Is.EqualTo(requiresTesting));
     }
 
     [Test]
@@ -177,7 +177,7 @@ public class ButtonInteractionHandlerTests
 
         // assert
         _buttonActionHandler.Verify(x => x.RequiresValidForm(It.IsAny<ButtonSetup>(), It.IsAny<FormEditContext>()), Times.Once());
-        Assert.AreEqual(requiresTesting, editContext.WasValidated(PropertyMetadataHelper.GetPropertyMetadata(property)!));
+        Assert.That(editContext.WasValidated(PropertyMetadataHelper.GetPropertyMetadata(property)!), Is.EqualTo(requiresTesting));
     }
 
     [Test]

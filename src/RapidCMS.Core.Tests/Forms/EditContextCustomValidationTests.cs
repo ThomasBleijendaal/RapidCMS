@@ -40,8 +40,8 @@ public class EditContextCustomValidationTests
         _subject.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata<Entity, string>(x => x.Id));
 
         // assert
-        Assert.IsFalse(await _subject.IsValidAsync());
-        Assert.AreEqual("Id is null", _subject.GetPropertyState("Id").GetValidationMessages().First());
+        Assert.That(await _subject.IsValidAsync(), Is.False);
+        Assert.That(_subject.GetPropertyState("Id").GetValidationMessages().First(), Is.EqualTo("Id is null"));
     }
 
     [Test]
@@ -68,7 +68,7 @@ public class EditContextCustomValidationTests
         _subject.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata<Entity, string>(x => x.Id));
 
         // assert
-        Assert.IsTrue(await _subject.IsValidAsync());
+        Assert.That(await _subject.IsValidAsync(), Is.True);
     }
 
     public class Entity : IEntity

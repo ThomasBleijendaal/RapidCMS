@@ -21,7 +21,7 @@ public class ParentEntityPathTests
         var path = parent.GetParentPath();
 
         // assert
-        Assert.AreEqual("test1:1", path!.ToPathString());
+        Assert.That(path!.ToPathString(), Is.EqualTo("test1:1"));
     }
 
     [Test]
@@ -36,7 +36,7 @@ public class ParentEntityPathTests
         var path = parent.GetParentPath();
 
         // assert
-        Assert.AreEqual("test2:2;test1:1", path!.ToPathString());
+        Assert.That(path!.ToPathString(), Is.EqualTo("test2:2;test1:1"));
     }
 
     [Test]
@@ -53,7 +53,7 @@ public class ParentEntityPathTests
         var path = parent.GetParentPath();
 
         // assert
-        Assert.AreEqual("test3:3;test2:2;test1:1", path!.ToPathString());
+        Assert.That(path!.ToPathString(), Is.EqualTo("test3:3;test2:2;test1:1"));
     }
 
     public class Entity : IEntity

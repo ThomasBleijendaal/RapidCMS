@@ -47,7 +47,7 @@ public class ParentServiceTests
         var parents = await _subject.GetParentAsync(default);
 
         // assert
-        Assert.IsNull(parents);
+        Assert.That(parents, Is.Null);
     }
 
     [Test]
@@ -60,7 +60,7 @@ public class ParentServiceTests
         var parents = await _subject.GetParentAsync(ParentPath.TryParse("alias:123"));
 
         // assert
-        Assert.NotNull(parents!.Entity);
-        Assert.AreEqual("alias:123", parents.GetParentPath()!.ToPathString());
+        Assert.That(parents!.Entity, Is.Not.Null);
+        Assert.That(parents.GetParentPath()!.ToPathString(), Is.EqualTo("alias:123"));
     }
 }
