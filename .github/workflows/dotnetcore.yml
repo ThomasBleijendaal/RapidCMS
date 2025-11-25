@@ -25,8 +25,6 @@ jobs:
         nuget-version: '5.x'
     - name: Build Api Core
       run: dotnet build -p:PackageVersion=${{steps.tag.outputs.tag}} --configuration Release ./src/RapidCMS.Api.Core/RapidCMS.Api.Core.csproj
-    - name: Build Api Functions
-      run: dotnet build -p:FunctionPreviewPackageVersion=${{steps.tag.outputs.tag}}-preview --configuration Release ./src/RapidCMS.Api.Functions/RapidCMS.Api.Functions.csproj
     - name: Build Api WebApi
       run: dotnet build -p:PackageVersion=${{steps.tag.outputs.tag}} --configuration Release ./src/RapidCMS.Api.WebApi/RapidCMS.Api.WebApi.csproj
     - name: Build Core
@@ -37,8 +35,6 @@ jobs:
       run: dotnet build -p:PackageVersion=${{steps.tag.outputs.tag}} --configuration Release ./src/RapidCMS.UI/RapidCMS.UI.csproj
     - name: Publish Api Core
       run: dotnet nuget push .\src\RapidCMS.Api.Core\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
-    - name: Publish Api Functions
-      run: dotnet nuget push .\src\RapidCMS.Api.Functions\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Publish Api WebApi
       run: dotnet nuget push .\src\RapidCMS.Api.WebApi\bin\Release\*.nupkg -k ${{ secrets.NUGET_APIKEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Publish Core
