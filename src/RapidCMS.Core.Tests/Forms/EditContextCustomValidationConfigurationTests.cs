@@ -40,6 +40,7 @@ public class EditContextCustomValidationConfigurationTests
         _subject.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata<Entity, string>(x => x.Id));
 
         // assert
+        Assert.That(await _subject.IsValidAsync(), Is.False);
         Assert.IsFalse(await _subject.IsValidAsync());
         Assert.AreEqual("Id is null", _subject.GetPropertyState("Id").GetValidationMessages().First());
     }
