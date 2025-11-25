@@ -41,7 +41,7 @@ public class EditContextCustomValidationConfigurationTests
 
         // assert
         Assert.That(await _subject.IsValidAsync(), Is.False);
-        Assert.IsFalse(await _subject.IsValidAsync());
+        Assert.That(await _subject.IsValidAsync(), Is.False);
         Assert.AreEqual("Id is null", _subject.GetPropertyState("Id").GetValidationMessages().First());
     }
 

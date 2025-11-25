@@ -44,7 +44,7 @@ public class EditContextCustomValidationVariantsTests
         _subject.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata<Entity, string>(x => x.Id));
 
         // assert
-        Assert.IsFalse(await _subject.IsValidAsync());
+        Assert.That(await _subject.IsValidAsync(), Is.False);
         Assert.AreEqual("Id is null", _subject.GetPropertyState("Id").GetValidationMessages().First());
     }
 
@@ -73,7 +73,7 @@ public class EditContextCustomValidationVariantsTests
         _subject.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata<Entity, string>(x => x.Id));
 
         // assert
-        Assert.IsFalse(await _subject.IsValidAsync());
+        Assert.That(await _subject.IsValidAsync(), Is.False);
         Assert.AreEqual("Id of A-variant cannot be A", _subject.GetPropertyState("Id").GetValidationMessages().First());
     }
 
@@ -102,7 +102,7 @@ public class EditContextCustomValidationVariantsTests
         _subject.NotifyPropertyIncludedInForm(PropertyMetadataHelper.GetPropertyMetadata<Entity, string>(x => x.Id));
 
         // assert
-        Assert.IsFalse(await _subject.IsValidAsync());
+        Assert.That(await _subject.IsValidAsync(), Is.False);
         Assert.AreEqual("Id of B-variant cannot be B", _subject.GetPropertyState("Id").GetValidationMessages().First());
     }
 

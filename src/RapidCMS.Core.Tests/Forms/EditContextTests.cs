@@ -115,7 +115,7 @@ public class EditContextTests
         _subject.NotifyPropertyIncludedInForm(_property);
 
         // act & assert
-        Assert.IsFalse(await _subject.IsValidAsync());
+        Assert.That(await _subject.IsValidAsync(), Is.False);
     }
 
     [Test]
@@ -173,7 +173,7 @@ public class EditContextTests
         await _subject.NotifyPropertyChangedAsync(_property);
 
         // act & assert
-        Assert.IsFalse(_subject.IsValid(_property));
+        Assert.That(_subject.IsValid(_property), Is.False);
     }
 
     [Test]
@@ -199,7 +199,7 @@ public class EditContextTests
     public void WhenEntityIsNotTouched_ThenEditContextIsNotModified()
     {
         // act & assert
-        Assert.IsFalse(_subject.IsModified());
+        Assert.That(_subject.IsModified(), Is.False);
     }
 
     [Test]
@@ -216,7 +216,7 @@ public class EditContextTests
     public void WhenPropertyIsNotTouched_ThenPropertyIsNotValidated()
     {
         // act & assert
-        Assert.IsFalse(_subject.WasValidated(_property));
+        Assert.That(_subject.WasValidated(_property), Is.False);
     }
 
     [Test]
@@ -237,7 +237,7 @@ public class EditContextTests
 
         // assert
         Assert.IsTrue(_subject.WasValidated(_property));
-        Assert.IsFalse(_subject.IsValid(_property));
+        Assert.That(_subject.IsValid(_property), Is.False);
     }
 
     [Test]
@@ -258,7 +258,7 @@ public class EditContextTests
 
         // assert
         Assert.IsTrue(_subject.WasValidated(_nestedProperty));
-        Assert.IsFalse(_subject.IsValid(_nestedProperty));
+        Assert.That(_subject.IsValid(_nestedProperty), Is.False);
     }
 
     [Test]
@@ -287,7 +287,7 @@ public class EditContextTests
     public void WhenNestedPropertyIsNotTouched_ThenPropertyIsNotValidated()
     {
         // assert
-        Assert.IsFalse(_subject.WasValidated(_nestedProperty));
+        Assert.That(_subject.WasValidated(_nestedProperty), Is.False);
         Assert.IsTrue(_subject.IsValid(_nestedProperty));
     }
 
